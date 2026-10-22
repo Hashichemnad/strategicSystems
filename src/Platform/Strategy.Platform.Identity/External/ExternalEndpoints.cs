@@ -97,8 +97,8 @@ internal static class ExternalEndpoints
         (await administration.SetEnabledAsync(id, enabled, ct)).ToOk();
 
     private static async Task<Results<Ok<ProviderTestResultDto>, ProblemHttpResult>> TestAsync(
-        Guid id, ProviderTestInput body, ProviderAdministration administration, CancellationToken ct) =>
-        (await administration.TestAsync(id, body.TestUserName, ct)).ToOk();
+        Guid id, ProviderTestInput? body, ProviderAdministration administration, CancellationToken ct) =>
+        (await administration.TestAsync(id, body?.TestUserName, ct)).ToOk();
 
     /// <summary>Starts sign-in at an enabled provider; unknown or disabled codes answer 404.</summary>
     private static async Task<IResult> ChallengeAsync(
@@ -276,6 +276,12 @@ internal sealed class ProviderAdministration(
 
         var provider = new IdentityProvider { Code = input.Code ?? string.Empty, Type = type, CreatedAt = clock.UtcNow, MatchField = ProviderSchema.For(type)!.DefaultMatchField };
         var applied = Apply(provider, input, fields);
+        if (applied.IsSuccess && type == ProviderTypes.Saml2)
+        {
+            // The SP signs its requests with its own key pair (published in the SP metadata); kept encrypted in the secret column.
+            provider.SecretProtected = protector.Protect(SecretPurposes.SamlSigningKey, SamlServiceCertificate.Create(provider.Code, clock.UtcNow));
+        }
+
         if (applied.IsFailure)
         {
             return applied.Error;
@@ -327,6 +333,7 @@ internal sealed class ProviderAdministration(
                 return Error.Validation(errors);
             }
         }
+
 
         provider.Enabled = enabled;
         return await SaveAsync(provider, enabled ? "enabled" : "disabled", cancellationToken).ConfigureAwait(false);
@@ -388,7 +395,8 @@ internal sealed class ProviderAdministration(
         }
 
         var settings = ProviderSchema.Normalise(provider.Type, input.Settings);
-        var hasSecret = input.ClearSecret ? false : !string.IsNullOrEmpty(input.Secret) || provider.SecretProtected is not null;
+        var secretAllowed = ProviderSchema.For(provider.Type)!.HasSecret;
+        var hasSecret = secretAllowed && (input.ClearSecret ? false : !string.IsNullOrEmpty(input.Secret) || provider.SecretProtected is not null);
         fields.AddRange(ProviderSchema.Validate(provider.Type, settings, hasSecret));
         if (input.Secret?.Length > 4096)
         {
@@ -407,11 +415,11 @@ internal sealed class ProviderAdministration(
         provider.MatchField = matchField;
         provider.AutoLink = input.AutoLink;
         provider.JitCreateUser = input.JitCreateUser;
-        if (input.ClearSecret)
+        if (secretAllowed && input.ClearSecret)
         {
             provider.SecretProtected = null;
         }
-        else if (!string.IsNullOrEmpty(input.Secret))
+        else if (secretAllowed && !string.IsNullOrEmpty(input.Secret))
         {
             provider.SecretProtected = protector.Protect(SecretPurposes.ProviderSecret, input.Secret);
         }
@@ -421,7 +429,8 @@ internal sealed class ProviderAdministration(
     }
 
     private static ProviderDto ToDto(IdentityProvider p) => new(
-        p.Id, p.Code, p.Type, p.DisplayNameAr, p.DisplayNameEn, p.Enabled, p.Sort, p.Settings, p.SecretProtected is not null, p.MatchField,
+        p.Id, p.Code, p.Type, p.DisplayNameAr, p.DisplayNameEn, p.Enabled, p.Sort, p.Settings,
+        p.SecretProtected is not null && ProviderSchema.For(p.Type)?.HasSecret == true, p.MatchField,
         p.AutoLink, p.JitCreateUser, p.LastTestAt, p.LastTestOk, p.LastTestMessageKey,
         p.Type switch
         {

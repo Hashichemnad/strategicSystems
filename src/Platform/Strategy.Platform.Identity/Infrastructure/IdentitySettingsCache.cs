@@ -22,8 +22,8 @@ public sealed class IdentitySettingsCache(IServiceScopeFactory scopeFactory)
     {
         await using var scope = scopeFactory.CreateAsyncScope();
         var db = scope.ServiceProvider.GetRequiredService<IdentityStoreDbContext>();
-        _security = await db.SecuritySettings.AsNoTracking().FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false) ?? new SecuritySettings();
-        _smtp = await db.SmtpSettings.AsNoTracking().FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false) ?? new SmtpSettings();
+        _security = await db.SecuritySettings.AsNoTracking().SingleOrDefaultAsync(cancellationToken).ConfigureAwait(false) ?? new SecuritySettings();
+        _smtp = await db.SmtpSettings.AsNoTracking().SingleOrDefaultAsync(cancellationToken).ConfigureAwait(false) ?? new SmtpSettings();
     }
 }
 

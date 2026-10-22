@@ -128,6 +128,23 @@ internal sealed partial class ExternalSchemeRefresher(ExternalSchemeRegistry reg
     private static partial void LogReloadFailed(ILogger logger, Exception exception);
 }
 
+/// <summary>Self-signed key pair the service provider signs its SAML requests with (10 years; replaced by creating a new provider).</summary>
+public static class SamlServiceCertificate
+{
+    public static string Create(string code, DateTimeOffset now)
+    {
+        using var rsa = System.Security.Cryptography.RSA.Create(2048);
+        var request = new System.Security.Cryptography.X509Certificates.CertificateRequest(
+            $"CN=Strategy SAML SP {code}", rsa, System.Security.Cryptography.HashAlgorithmName.SHA256, System.Security.Cryptography.RSASignaturePadding.Pkcs1);
+        using var certificate = request.CreateSelfSigned(now.AddDays(-1), now.AddYears(10));
+        return Convert.ToBase64String(certificate.Export(System.Security.Cryptography.X509Certificates.X509ContentType.Pkcs12));
+    }
+
+    public static System.Security.Cryptography.X509Certificates.X509Certificate2 Load(string pkcs12) =>
+        System.Security.Cryptography.X509Certificates.X509CertificateLoader.LoadPkcs12(
+            Convert.FromBase64String(pkcs12), null, System.Security.Cryptography.X509Certificates.X509KeyStorageFlags.EphemeralKeySet);
+}
+
 /// <summary>Callback paths per provider; outside <c>/api</c>, protected by the protocols' own state / nonce / correlation.</summary>
 public static class ExternalPaths
 {
@@ -260,7 +277,8 @@ internal sealed class UaePassOptionsSetup(ExternalSchemeRegistry registry, ISecr
     }
 }
 
-internal sealed class SamlOptionsSetup(ExternalSchemeRegistry registry, IdentitySettingsCache settings) : IConfigureNamedOptions<Saml2Options>
+internal sealed class SamlOptionsSetup(ExternalSchemeRegistry registry, IdentitySettingsCache settings, ISecretProtector protector)
+    : IConfigureNamedOptions<Saml2Options>
 {
     public void Configure(Saml2Options options)
     {
@@ -285,6 +303,15 @@ internal sealed class SamlOptionsSetup(ExternalSchemeRegistry registry, Identity
         if (publicBase is not null)
         {
             options.SPOptions.PublicOrigin = new Uri(publicBase.TrimEnd('/') + "/");
+        }
+
+        if (protector.Unprotect(SecretPurposes.SamlSigningKey, provider.SecretProtected) is { } signingKey)
+        {
+            options.SPOptions.ServiceCertificates.Add(new Sustainsys.Saml2.ServiceCertificate
+            {
+                Certificate = SamlServiceCertificate.Load(signingKey),
+                Use = Sustainsys.Saml2.CertificateUse.Signing,
+            });
         }
 
         var idp = new Sustainsys.Saml2.IdentityProvider(new EntityId(provider.Setting("idpEntityId")), options.SPOptions)

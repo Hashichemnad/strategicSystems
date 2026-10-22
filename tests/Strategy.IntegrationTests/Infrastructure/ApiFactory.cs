@@ -14,7 +14,8 @@ namespace Strategy.IntegrationTests.Infrastructure;
 /// The real host on a fresh database. Environment <c>Testing</c> by default (modules open to signed-in users, ADR 0009);
 /// pass <c>environment: "Production"</c> to test fail-closed behaviour. Email goes to <see cref="Emails"/>.
 /// </summary>
-public sealed class ApiFactory(string connectionString, string environment = "Testing", IDictionary<string, string?>? settings = null)
+public sealed class ApiFactory(
+    string connectionString, string environment = "Testing", IDictionary<string, string?>? settings = null, bool backgroundServices = true)
     : WebApplicationFactory<Program>
 {
     public static async Task<ApiFactory> CreateAsync(
@@ -48,6 +49,14 @@ public sealed class ApiFactory(string connectionString, string environment = "Te
         {
             services.RemoveAll<IIdentityEmailSender>();
             services.AddSingleton<IIdentityEmailSender>(Emails);
+            if (!backgroundServices)
+            {
+                foreach (var hosted in services.Where(d => d.ServiceType == typeof(Microsoft.Extensions.Hosting.IHostedService)
+                    && d.ImplementationType?.Assembly.GetName().Name?.StartsWith("Strategy.", StringComparison.Ordinal) == true).ToList())
+                {
+                    services.Remove(hosted);
+                }
+            }
         });
     }
 

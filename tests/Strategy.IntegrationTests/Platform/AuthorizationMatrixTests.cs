@@ -82,7 +82,8 @@ public partial class AuthorizationMatrixTests(ApiFixture api) : IClassFixture<Ap
     {
         // Only the endpoint catalogue is needed: no database, no migrations.
         using var factory = new ApiFactory(
-            "Host=127.0.0.1;Port=1;Database=unused;Timeout=1", settings: new Dictionary<string, string?> { ["Database:MigrateOnStartup"] = "false" });
+            "Host=127.0.0.1;Port=1;Database=unused;Timeout=1", settings: new Dictionary<string, string?> { ["Database:MigrateOnStartup"] = "false" },
+            backgroundServices: false);
         var endpoints = factory.Services.GetRequiredService<EndpointDataSource>().Endpoints.OfType<RouteEndpoint>()
             .Where(e => e.RoutePattern.RawText?.StartsWith("/api", StringComparison.Ordinal) == true)
             .Where(filter)

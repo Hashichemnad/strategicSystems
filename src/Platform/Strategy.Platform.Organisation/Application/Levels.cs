@@ -100,7 +100,7 @@ internal sealed class GetOrgSettingsHandler(OrgDbContext db) : IQueryHandler<Get
 {
     public async Task<Result<OrgSettingsDto>> HandleAsync(GetOrgSettings query, CancellationToken cancellationToken)
     {
-        var settings = await db.Settings.AsNoTracking().FirstAsync(cancellationToken).ConfigureAwait(false);
+        var settings = await db.Settings.AsNoTracking().SingleAsync(cancellationToken).ConfigureAwait(false);
         return new OrgSettingsDto(settings.EnforceLevelOrder, settings.Version);
     }
 }
@@ -111,7 +111,7 @@ internal sealed class UpdateOrgSettingsHandler(OrgDbContext db) : ICommandHandle
 {
     public async Task<Result<OrgSettingsDto>> HandleAsync(UpdateOrgSettings command, CancellationToken cancellationToken)
     {
-        var settings = await db.Settings.FirstAsync(cancellationToken).ConfigureAwait(false);
+        var settings = await db.Settings.SingleAsync(cancellationToken).ConfigureAwait(false);
         db.Entry(settings).Property(x => x.Version).OriginalValue = command.Version;
         settings.EnforceLevelOrder = command.EnforceLevelOrder;
         try

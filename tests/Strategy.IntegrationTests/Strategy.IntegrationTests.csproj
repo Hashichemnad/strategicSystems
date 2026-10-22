@@ -2,8 +2,12 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
     <PackageReference Include="Testcontainers.PostgreSql" />
+    <PackageReference Include="Testcontainers" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Host\Strategy.Host\Strategy.Host.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="External\Resources\*" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

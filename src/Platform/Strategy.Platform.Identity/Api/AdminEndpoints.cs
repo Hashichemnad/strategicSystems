@@ -167,7 +167,7 @@ internal static class AdminEndpoints
             return Error.Validation(fields).ToProblem();
         }
 
-        var settings = await db.SecuritySettings.FirstAsync(ct);
+        var settings = await db.SecuritySettings.SingleAsync(ct);
         db.Entry(settings).Property(s => s.Version).OriginalValue = body.Version;
         body.ApplyTo(settings);
         try
@@ -198,7 +198,7 @@ internal static class AdminEndpoints
             return Error.Validation(fields).ToProblem();
         }
 
-        var settings = await db.SmtpSettings.FirstAsync(ct);
+        var settings = await db.SmtpSettings.SingleAsync(ct);
         db.Entry(settings).Property(s => s.Version).OriginalValue = body.Version;
         body.ApplyTo(settings, protector);
         try

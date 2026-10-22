@@ -285,7 +285,7 @@ internal sealed class OrgStructure(OrgDbContext db, IClock clock)
 
     private async Task<Result> CheckLevelOrderAsync(string parentLevel, string childLevel, CancellationToken cancellationToken)
     {
-        var settings = await db.Settings.AsNoTracking().FirstAsync(cancellationToken).ConfigureAwait(false);
+        var settings = await db.Settings.AsNoTracking().SingleAsync(cancellationToken).ConfigureAwait(false);
         if (!settings.EnforceLevelOrder)
         {
             return Result.Success();

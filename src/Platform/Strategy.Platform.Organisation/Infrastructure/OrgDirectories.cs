@@ -63,7 +63,7 @@ internal sealed class EmployeeDirectory(OrgDbContext db, IClock clock) : IEmploy
     {
         var pattern = "%" + Kernel.Text.SearchText.Normalise(search).Replace("\\", "\\\\", StringComparison.Ordinal)
             .Replace("%", "\\%", StringComparison.Ordinal).Replace("_", "\\_", StringComparison.Ordinal) + "%";
-        return await db.Employees.AsNoTracking().Where(e => EF.Functions.ILike(e.NameSearch, pattern, "\\")).Select(e => e.Id).Take(500)
+        return await db.Employees.AsNoTracking().Where(e => EF.Functions.ILike(e.NameSearch, pattern, "\\")).OrderBy(e => e.EmployeeNo).Select(e => e.Id).Take(500)
             .ToListAsync(cancellationToken).ConfigureAwait(false);
     }
 

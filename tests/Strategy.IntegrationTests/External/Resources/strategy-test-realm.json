@@ -1,0 +1,98 @@
+{
+  "realm": "strategy-test",
+  "enabled": true,
+  "sslRequired": "none",
+  "loginWithEmailAllowed": true,
+  "users": [
+    {
+      "username": "kc.user",
+      "email": "kc.user@example.test",
+      "emailVerified": true,
+      "firstName": "Keycloak",
+      "lastName": "User",
+      "enabled": true,
+      "attributes": { "userType": ["SOP2"], "employeeNumber": ["KC-0001"] },
+      "credentials": [{ "type": "password", "value": "Kc#Password2026", "temporary": false }]
+    },
+    {
+      "username": "kc.visitor",
+      "email": "kc.visitor@example.test",
+      "emailVerified": true,
+      "firstName": "Visitor",
+      "lastName": "User",
+      "enabled": true,
+      "attributes": { "userType": ["SOP1"] },
+      "credentials": [{ "type": "password", "value": "Kc#Password2026", "temporary": false }]
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "strategy-oidc",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "oidc-client-secret",
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": false,
+      "redirectUris": ["http://localhost/*"],
+      "webOrigins": ["+"],
+      "attributes": { "pkce.code.challenge.method": "S256" }
+    },
+    {
+      "clientId": "strategy-uaepass",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "uaepass-client-secret",
+      "standardFlowEnabled": true,
+      "redirectUris": ["http://localhost/*"],
+      "protocolMappers": [
+        {
+          "name": "userType",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "config": {
+            "user.attribute": "userType",
+            "claim.name": "userType",
+            "jsonType.label": "String",
+            "userinfo.token.claim": "true",
+            "id.token.claim": "false",
+            "access.token.claim": "false"
+          }
+        }
+      ]
+    },
+    {
+      "clientId": "urn:strategy:sp:kc-saml",
+      "enabled": true,
+      "protocol": "saml",
+      "frontchannelLogout": false,
+      "redirectUris": ["http://localhost/*"],
+      "attributes": {
+        "saml_assertion_consumer_url_post": "http://localhost/saml2/kc-saml/Acs",
+        "saml.client.signature": "false",
+        "saml.force.post.binding": "true",
+        "saml.server.signature": "true",
+        "saml.assertion.signature": "true",
+        "saml.signature.algorithm": "RSA_SHA256",
+        "saml_name_id_format": "email",
+        "saml.force.name.id.format": "true",
+        "saml.authnstatement": "true"
+      },
+      "protocolMappers": [
+        {
+          "name": "email",
+          "protocol": "saml",
+          "protocolMapper": "saml-user-property-mapper",
+          "config": { "user.attribute": "email", "attribute.name": "email", "attribute.nameformat": "Basic" }
+        },
+        {
+          "name": "employeeNumber",
+          "protocol": "saml",
+          "protocolMapper": "saml-user-attribute-mapper",
+          "config": { "user.attribute": "employeeNumber", "attribute.name": "employeeNumber", "attribute.nameformat": "Basic" }
+        }
+      ]
+    }
+  ]
+}
