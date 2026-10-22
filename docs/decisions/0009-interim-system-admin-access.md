@@ -9,6 +9,7 @@
 | Caller / permission | Result |
 |---|---|
 | Not authenticated | refused (401 from the authentication fallback, never reaching handlers) |
+| In-process system principal (`StrategyClaims.CreateSystemPrincipal()`: seeding, `--create-admin`, later scheduled jobs) | allowed; never issued to an HTTP caller |
 | Vendor principal (Phase 11) | refused |
 | `*.read` permissions of `org` and `identity` | allowed for any signed-in internal user |
 | any other permission of `org` / `identity` (`*.manage`) | allowed only for users with `is_system_admin` |

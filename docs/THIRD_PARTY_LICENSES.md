@@ -28,6 +28,14 @@ Update this file in the same commit that adds a dependency.
 | OpenTelemetry.Instrumentation.AspNetCore | Apache-2.0 | HTTP server instrumentation |
 | OpenTelemetry.Instrumentation.Http | Apache-2.0 | HTTP client instrumentation |
 | OpenTelemetry.Exporter.OpenTelemetryProtocol | Apache-2.0 | OTLP export (optional) |
+| Microsoft.AspNetCore.Identity.EntityFrameworkCore | MIT | local accounts, lockout, MFA tokens |
+| Microsoft.AspNetCore.Authentication.OpenIdConnect | MIT | OpenID Connect sign-in (Entra ID, ADFS, UAE Pass) |
+| Microsoft.AspNetCore.DataProtection.EntityFrameworkCore | MIT | Data Protection key ring in PostgreSQL |
+| Sustainsys.Saml2.AspNetCore2 | MIT | SAML 2.0 sign-in |
+| System.DirectoryServices.Protocols | MIT | LDAP / Active Directory bind (needs `libldap` on Linux) |
+| MailKit | MIT | SMTP email |
+| System.Security.Cryptography.Pkcs | MIT | pinned patched version of a transitive dependency (MimeKit) |
+| ClosedXML | MIT | Excel import templates and reports |
 | Microsoft.AspNetCore.OpenApi | MIT | OpenAPI document |
 | Microsoft.Extensions.ApiDescription.Server | MIT | build-time OpenAPI generation |
 | Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore | MIT | readiness checks |
@@ -35,6 +43,7 @@ Update this file in the same commit that adds a dependency.
 | Shouldly | BSD-3-Clause | test assertions |
 | NSubstitute | BSD-3-Clause | test doubles |
 | Testcontainers.PostgreSql | MIT | integration tests on real PostgreSQL |
+| Testcontainers, Testcontainers.Keycloak | MIT | integration tests against Keycloak (OIDC, SAML) and OpenLDAP |
 | Microsoft.AspNetCore.Mvc.Testing | MIT | in-memory host for API tests |
 | NetArchTest.Rules | MIT ¹ | architecture tests |
 

@@ -36,7 +36,10 @@ public class PipelineTests(ApiFixture api) : IClassFixture<ApiFixture>
         ready.StatusCode.ShouldBe(HttpStatusCode.OK);
         var body = JsonDocument.Parse(await ready.Content.ReadAsStringAsync()).RootElement;
         body.GetProperty("status").GetString().ShouldBe("Healthy");
-        body.GetProperty("checks").EnumerateArray().Select(c => c.GetProperty("name").GetString()).ShouldContain("db:sample");
+        var checks = body.GetProperty("checks").EnumerateArray().Select(c => c.GetProperty("name").GetString()).ToList();
+        checks.ShouldContain("db:sample");
+        checks.ShouldContain("db:core");
+        checks.ShouldContain("db:identity");
     }
 
     [Fact]
@@ -72,7 +75,8 @@ public class PipelineTests(ApiFixture api) : IClassFixture<ApiFixture>
     [Fact]
     public async Task State_changing_call_without_antiforgery_token_is_refused()
     {
-        var client = api.Factory.CreateClient();
+        var client = await api.Factory.CreateSignedInClientAsync();
+        client.DefaultRequestHeaders.Remove("X-XSRF-TOKEN");
 
         var response = await client.PostAsJsonAsync("/api/v1/sample/items", new { nameEn = "No token" });
 
@@ -82,12 +86,21 @@ public class PipelineTests(ApiFixture api) : IClassFixture<ApiFixture>
     [Fact]
     public async Task Antiforgery_token_from_another_session_is_refused()
     {
-        var first = await api.Factory.CreateSpaClientAsync();
+        var first = await api.Factory.CreateSignedInClientAsync();
         var token = first.DefaultRequestHeaders.GetValues("X-XSRF-TOKEN").Single();
-        var attacker = api.Factory.CreateClient();
+        var attacker = await api.Factory.CreateSignedInClientAsync();
+        attacker.DefaultRequestHeaders.Remove("X-XSRF-TOKEN");
         attacker.DefaultRequestHeaders.Add("X-XSRF-TOKEN", token);
 
         var response = await attacker.PostAsJsonAsync("/api/v1/sample/items", new { nameEn = "Forged" });
+
+        await response.ShouldBeProblemAsync(HttpStatusCode.BadRequest, "antiforgery.invalid");
+    }
+
+    [Fact]
+    public async Task Public_login_endpoint_also_requires_the_antiforgery_token()
+    {
+        var response = await api.Factory.CreateClient().PostAsJsonAsync("/api/v1/identity/auth/login", new { login = "x", password = "y" });
 
         await response.ShouldBeProblemAsync(HttpStatusCode.BadRequest, "antiforgery.invalid");
     }

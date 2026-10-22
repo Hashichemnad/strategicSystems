@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Users, sign-in (local, MFA, OIDC, SAML, LDAP), sessions, personal access tokens (SPEC §0, docs/design/identity.md). -->
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Strategy.Platform.Kernel\Strategy.Platform.Kernel.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Persistence\Strategy.Platform.Persistence.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Access\Strategy.Platform.Access.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Http\Strategy.Platform.Http.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Organisation\Strategy.Platform.Organisation.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" />
+    <PackageReference Include="Sustainsys.Saml2.AspNetCore2" />
+    <PackageReference Include="System.DirectoryServices.Protocols" />
+    <PackageReference Include="MailKit" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Email\Templates\*.html" />
+    <EmbeddedResource Include="Email\Templates\*.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Strategy.UnitTests" />
+    <InternalsVisibleTo Include="Strategy.IntegrationTests" />
+    <InternalsVisibleTo Include="Strategy.Host" />
+  </ItemGroup>
+</Project>

@@ -27,20 +27,25 @@ public static class PersistenceServiceCollectionExtensions
     }
 
     /// <summary>Registers a module DbContext on its own schema, with its own migrations history and readiness check.</summary>
-    public static IServiceCollection AddModuleDbContext<TContext>(this IServiceCollection services, string schema)
+    /// <param name="services">The service collection.</param>
+    /// <param name="schema">The schema the context owns.</param>
+    /// <param name="historyTable">Migrations history table; only change it when two contexts share a schema (ADR 0010).</param>
+    public static IServiceCollection AddModuleDbContext<TContext>(
+        this IServiceCollection services, string schema, string historyTable = MigrationsHistoryTable)
         where TContext : ModuleDbContext
     {
         services.AddDbContext<TContext>((sp, options) => options
             .UseNpgsql(
                 sp.GetRequiredService<NpgsqlDataSource>(),
                 npgsql => npgsql
-                    .MigrationsHistoryTable(MigrationsHistoryTable, schema)
+                    .MigrationsHistoryTable(historyTable, schema)
                     .MigrationsAssembly(typeof(TContext).Assembly.GetName().Name))
             .UseSnakeCaseNamingConvention()
             .AddInterceptors(sp.GetRequiredService<AuditFieldsInterceptor>()));
 
         services.AddSingleton(new ModuleDatabase(typeof(TContext), schema));
-        services.AddHealthChecks().AddDbContextCheck<TContext>($"db:{schema}", tags: [ReadyTag]);
+        var checkName = historyTable == MigrationsHistoryTable ? $"db:{schema}" : $"db:{schema}:{typeof(TContext).Name}";
+        services.AddHealthChecks().AddDbContextCheck<TContext>(checkName, tags: [ReadyTag]);
         return services;
     }
 }

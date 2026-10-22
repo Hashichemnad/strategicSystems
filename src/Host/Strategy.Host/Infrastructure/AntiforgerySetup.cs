@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Strategy.Platform.Http.Access;
 using Strategy.Platform.Http.Problems;
+using Strategy.Platform.Identity.Authentication;
 using Strategy.Platform.Kernel.Results;
 
 namespace Strategy.Host.Infrastructure;
@@ -39,13 +40,14 @@ internal static class AntiforgerySetup
 
 /// <summary>
 /// Rejects state-changing <c>/api</c> calls without a valid antiforgery header + cookie pair (400 <c>antiforgery.invalid</c>).
-/// Token-authenticated clients (personal access tokens, MCP) will be exempted when token auth arrives in Phase 1 / 5.
+/// Calls authenticated by a personal access token are exempt: they carry no ambient cookie a forged cross-site request
+/// could ride on (the token is in the <c>Authorization</c> header, which browsers never add on their own).
 /// </summary>
 internal sealed class AntiforgeryValidationMiddleware(RequestDelegate next)
 {
     public async Task InvokeAsync(HttpContext context, IAntiforgery antiforgery)
     {
-        if (RequiresValidation(context.Request) && !await antiforgery.IsRequestValidAsync(context).ConfigureAwait(false))
+        if (RequiresValidation(context.Request) && !context.User.IsToken() && !await antiforgery.IsRequestValidAsync(context).ConfigureAwait(false))
         {
             await new Error("antiforgery.invalid", "errors.antiforgery", ErrorKind.Validation)
                 .ToProblem()

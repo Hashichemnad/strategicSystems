@@ -10,10 +10,16 @@ internal sealed class RateLimitingOptions
     public int PermitLimit { get; set; } = 300;
 
     public int WindowSeconds { get; set; } = 60;
+
+    /// <summary>Sign-in endpoints (login, MFA, password reset, external challenge): requests per minute per client IP.</summary>
+    public int AuthPermitLimit { get; set; } = 30;
 }
 
 internal static class RateLimiting
 {
+    /// <summary>Must match the policy name the Identity endpoints use.</summary>
+    public const string AuthPolicy = "auth";
+
     /// <summary>Fixed window per client IP on <c>/api</c> and <c>/mcp</c>; static files and health checks are not limited.</summary>
     public static IServiceCollection AddStrategyRateLimiting(this IServiceCollection services, IConfiguration configuration)
     {
@@ -36,6 +42,9 @@ internal static class RateLimiting
                     QueueLimit = 0,
                 });
             });
+            limiter.AddPolicy(AuthPolicy, context => RateLimitPartition.GetFixedWindowLimiter(
+                "auth:" + (context.Connection.RemoteIpAddress?.ToString() ?? "unknown"),
+                _ => new FixedWindowRateLimiterOptions { PermitLimit = options.AuthPermitLimit, Window = TimeSpan.FromMinutes(1), QueueLimit = 0 }));
             limiter.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
             limiter.OnRejected = async (context, cancellationToken) =>
             {

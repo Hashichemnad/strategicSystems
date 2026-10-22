@@ -11,6 +11,8 @@
     <ProjectReference Include="..\..\Platform\Strategy.Platform.Persistence\Strategy.Platform.Persistence.csproj" />
     <ProjectReference Include="..\..\Platform\Strategy.Platform.Access\Strategy.Platform.Access.csproj" />
     <ProjectReference Include="..\..\Platform\Strategy.Platform.Http\Strategy.Platform.Http.csproj" />
+    <ProjectReference Include="..\..\Platform\Strategy.Platform.Organisation\Strategy.Platform.Organisation.csproj" />
+    <ProjectReference Include="..\..\Platform\Strategy.Platform.Identity\Strategy.Platform.Identity.csproj" />
     <ProjectReference Include="..\..\Modules\Sample\Strategy.Modules.Sample\Strategy.Modules.Sample.csproj" />
   </ItemGroup>
   <ItemGroup>

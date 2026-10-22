@@ -13,6 +13,12 @@ public sealed record RequiredPermission(string Permission);
 /// <summary>Endpoint metadata: the endpoint is deliberately public (health, antiforgery token, login).</summary>
 public sealed record PublicEndpoint;
 
+/// <summary>
+/// Endpoint metadata: any signed-in user may call it, because it only acts on the caller's own data
+/// (profile, own tokens, own sessions). The handler checks ownership and answers 404 for anyone else's record.
+/// </summary>
+public sealed record SelfServiceEndpoint;
+
 public static class PermissionEndpointExtensions
 {
     /// <summary>
@@ -33,7 +39,12 @@ public static class PermissionEndpointExtensions
         return builder;
     }
 
-    /// <summary>Marks an endpoint as intentionally public. Every API endpoint must be either public or permission-guarded.</summary>
+    /// <summary>Marks an endpoint as self-service: signed-in callers only, ownership checked in the handler.</summary>
+    public static TBuilder RequireSignedIn<TBuilder>(this TBuilder builder)
+        where TBuilder : IEndpointConventionBuilder =>
+        builder.WithMetadata(new SelfServiceEndpoint());
+
+    /// <summary>Marks an endpoint as intentionally public. Every API endpoint must be public, self-service or permission-guarded.</summary>
     public static TBuilder AsPublic<TBuilder>(this TBuilder builder)
         where TBuilder : IEndpointConventionBuilder =>
         builder.WithMetadata(new PublicEndpoint());
