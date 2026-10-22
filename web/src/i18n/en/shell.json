@@ -1,0 +1,38 @@
+{
+  "skipToContent": "Skip to main content",
+  "navigation": "Main navigation",
+  "openMenu": "Open menu",
+  "closeMenu": "Close menu",
+  "nav": {
+    "home": "My Work",
+    "sample": "Sample module",
+    "uiKit": "UI kit"
+  },
+  "language": {
+    "label": "Language",
+    "switchTo": "العربية"
+  },
+  "theme": {
+    "label": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "profile": {
+    "menu": "Profile menu",
+    "guest": "Guest",
+    "signInLater": "Sign-in arrives in Phase 1",
+    "settings": "Settings"
+  },
+  "home": {
+    "title": "My Work",
+    "description": "Your approvals, tasks and due items from every system will appear here.",
+    "emptyTitle": "Nothing needs your attention",
+    "emptyDescription": "Pending approvals, tasks and reminders will show up here as systems are added."
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "The page you are looking for does not exist or has moved.",
+    "goHome": "Go to My Work"
+  }
+}

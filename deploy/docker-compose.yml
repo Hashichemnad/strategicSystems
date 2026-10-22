@@ -1,0 +1,109 @@
+# Integrated Strategy System — development dependencies and a containerised install.
+#
+#   Dev dependencies:   docker compose -f deploy/docker-compose.yml up -d postgres gotenberg mailpit
+#   Full stack:         docker compose -f deploy/docker-compose.yml --profile app up -d --build
+#   Optional services:  --profile search (Meilisearch) · --profile antivirus (ClamAV) · --profile ai (Ollama)
+#
+# Copy .env.example to .env (same folder) and change the passwords before any non-dev use.
+# Behind a Docker Hub rate limit or in a restricted network set REGISTRY_PREFIX (e.g. "mirror.gcr.io/").
+name: strategy
+
+services:
+  postgres:
+    image: ${REGISTRY_PREFIX:-}library/postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-strategy}
+      POSTGRES_USER: ${POSTGRES_USER:-strategy}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-strategy}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  # HTML → PDF with headless Chromium (correct Arabic shaping). Used from Phase 3.
+  gotenberg:
+    image: ${REGISTRY_PREFIX:-}gotenberg/gotenberg:8
+    restart: unless-stopped
+    ports:
+      - "${GOTENBERG_PORT:-3000}:3000"
+
+  # Catches all outgoing email in development (UI on :8025). Never use in production.
+  mailpit:
+    image: ${REGISTRY_PREFIX:-}axllent/mailpit:v1.29
+    profiles: ["dev"]
+    ports:
+      - "${MAILPIT_UI_PORT:-8025}:8025"
+      - "${MAILPIT_SMTP_PORT:-1025}:1025"
+
+  # One-shot: applies every module's pending migrations, then exits. The app waits for it.
+  migrate:
+    profiles: ["app"]
+    image: strategy-app:${APP_VERSION:-dev}
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+      args:
+        REGISTRY_PREFIX: ${REGISTRY_PREFIX:-}
+      secrets:
+        - build_ca
+    command: ["dotnet", "Strategy.Host.dll", "--migrate"]
+    environment:
+      ConnectionStrings__Strategy: Host=postgres;Port=5432;Database=${POSTGRES_DB:-strategy};Username=${POSTGRES_USER:-strategy};Password=${POSTGRES_PASSWORD:-strategy}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
+  app:
+    profiles: ["app"]
+    image: strategy-app:${APP_VERSION:-dev}
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Production}
+      ConnectionStrings__Strategy: Host=postgres;Port=5432;Database=${POSTGRES_DB:-strategy};Username=${POSTGRES_USER:-strategy};Password=${POSTGRES_PASSWORD:-strategy}
+      Modules__Sample__Enabled: ${MODULE_SAMPLE_ENABLED:-false}
+      OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-}
+    ports:
+      - "${APP_PORT:-8080}:8080"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  meilisearch:
+    image: ${REGISTRY_PREFIX:-}getmeili/meilisearch:v1.20
+    profiles: ["search"]
+    environment:
+      MEILI_MASTER_KEY: ${MEILI_MASTER_KEY:-change-me-to-a-long-random-key}
+      MEILI_NO_ANALYTICS: "true"
+    volumes:
+      - meili-data:/meili_data
+
+  # GPL-2.0 — runs as a separate, optional container only; never linked or bundled (ADR 0007).
+  clamav:
+    image: ${REGISTRY_PREFIX:-}clamav/clamav:1.5
+    profiles: ["antivirus"]
+    volumes:
+      - clamav-data:/var/lib/clamav
+
+  ollama:
+    image: ${REGISTRY_PREFIX:-}ollama/ollama:0.12.6
+    profiles: ["ai"]
+    volumes:
+      - ollama-data:/root/.ollama
+
+secrets:
+  # Optional CA bundle for builds behind a TLS-inspecting proxy; an empty file means "not needed".
+  build_ca:
+    file: ${BUILD_CA_FILE:-./empty-ca.pem}
+
+volumes:
+  postgres-data:
+  meili-data:
+  clamav-data:
+  ollama-data:

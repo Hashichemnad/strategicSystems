@@ -1,0 +1,48 @@
+{
+  "appName": "Strategy Suite",
+  "actions": {
+    "save": "Save",
+    "saveDraft": "Save as draft",
+    "cancel": "Cancel",
+    "close": "Close",
+    "confirm": "Confirm",
+    "create": "Create",
+    "edit": "Edit",
+    "back": "Back",
+    "next": "Next",
+    "finish": "Finish",
+    "retry": "Try again",
+    "clear": "Clear",
+    "search": "Search",
+    "more": "More actions"
+  },
+  "table": {
+    "page": "Page {{page}} of {{pages}}",
+    "previous": "Previous page",
+    "nextPage": "Next page",
+    "results_one": "{{count}} result",
+    "results_other": "{{count}} results",
+    "sortAscending": "Sorted ascending",
+    "sortDescending": "Sorted descending"
+  },
+  "status": {
+    "loading": "Loading…",
+    "saved": "Saved",
+    "aiGenerated": "AI-generated",
+    "notification": "Notification"
+  },
+  "stepper": {
+    "label": "Progress",
+    "completed": "Completed",
+    "current": "Current step",
+    "upcoming": "Not started"
+  },
+  "wizard": {
+    "stepOf": "Step {{current}} of {{total}}",
+    "draftSaved": "Draft saved"
+  },
+  "datePicker": {
+    "placeholder": "Pick a date",
+    "open": "Open calendar"
+  }
+}

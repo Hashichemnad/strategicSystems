@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Strategy.Modules.Sample.Contracts\Strategy.Modules.Sample.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\Platform\Strategy.Platform.Kernel\Strategy.Platform.Kernel.csproj" />
+    <ProjectReference Include="..\..\..\Platform\Strategy.Platform.Persistence\Strategy.Platform.Persistence.csproj" />
+    <ProjectReference Include="..\..\..\Platform\Strategy.Platform.Access\Strategy.Platform.Access.csproj" />
+    <ProjectReference Include="..\..\..\Platform\Strategy.Platform.Http\Strategy.Platform.Http.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Strategy.UnitTests" />
+    <InternalsVisibleTo Include="Strategy.IntegrationTests" />
+  </ItemGroup>
+</Project>

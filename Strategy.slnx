@@ -1,0 +1,22 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/Host/">
+    <Project Path="src/Host/Strategy.Host/Strategy.Host.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/" />
+  <Folder Name="/src/Modules/Sample/">
+    <Project Path="src/Modules/Sample/Strategy.Modules.Sample.Contracts/Strategy.Modules.Sample.Contracts.csproj" />
+    <Project Path="src/Modules/Sample/Strategy.Modules.Sample/Strategy.Modules.Sample.csproj" />
+  </Folder>
+  <Folder Name="/src/Platform/">
+    <Project Path="src/Platform/Strategy.Platform.Access/Strategy.Platform.Access.csproj" />
+    <Project Path="src/Platform/Strategy.Platform.Http/Strategy.Platform.Http.csproj" />
+    <Project Path="src/Platform/Strategy.Platform.Kernel/Strategy.Platform.Kernel.csproj" />
+    <Project Path="src/Platform/Strategy.Platform.Persistence/Strategy.Platform.Persistence.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Strategy.ArchitectureTests/Strategy.ArchitectureTests.csproj" />
+    <Project Path="tests/Strategy.IntegrationTests/Strategy.IntegrationTests.csproj" />
+    <Project Path="tests/Strategy.UnitTests/Strategy.UnitTests.csproj" />
+  </Folder>
+</Solution>

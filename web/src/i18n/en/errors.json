@@ -1,0 +1,14 @@
+{
+  "title": "Something went wrong",
+  "validationFailed": "Some fields need your attention.",
+  "notFound": "This record does not exist or you do not have access to it.",
+  "forbidden": "You do not have permission to do this.",
+  "unauthorized": "Please sign in to continue.",
+  "concurrencyConflict": "Someone else changed this record while you were editing. Reload it and try again.",
+  "moduleDisabled": "This system is switched off for your organisation.",
+  "tooManyRequests": "Too many requests. Please wait a moment and try again.",
+  "antiforgery": "Your session security token expired. Please try again.",
+  "badRequest": "The request could not be understood.",
+  "unexpected": "An unexpected error occurred. If it keeps happening, contact support with reference {{reference}}.",
+  "network": "The server could not be reached. Check your connection and try again."
+}

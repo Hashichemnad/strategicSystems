@@ -1,0 +1,12 @@
+**/bin/
+**/obj/
+**/node_modules/
+web/dist/
+web/playwright-report/
+web/test-results/
+tests/
+docs/
+.git/
+.github/
+**/*.user
+deploy/.env

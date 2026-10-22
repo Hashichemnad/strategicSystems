@@ -40,12 +40,12 @@ Enter plan mode and propose the plan for the Phase 0 scope listed in BUILD_PLAN.
 After I approve, implement it, prove the module pattern with one sample module end-to-end (DB → API → generated TS client → page in AR and EN), and run every quality gate in CLAUDE.md §16. Finish with the phase summary (CLAUDE.md §17.5) and update CLAUDE.md §18 commands to the real ones.
 ```
 
-**Acceptance checks**
-- [ ] `docker compose up` + `dotnet run` + `npm run dev` give a working shell; language toggle flips the whole layout RTL ↔ LTR instantly.
-- [ ] Sample module round-trip works; migration applies from empty DB.
-- [ ] All quality gates green in CI; architecture tests fail if a module references another module's internals or a banned package.
-- [ ] Security headers present; OpenAPI published; health endpoints respond.
-- [ ] ADRs and `THIRD_PARTY_LICENSES.md` written.
+**Acceptance checks** (verified by Claude Code in the build session; owner acceptance pending — see `docs/phase-summaries/phase-0.md`)
+- [x] `docker compose up` + `dotnet run` + `npm run dev` give a working shell; language toggle flips the whole layout RTL ↔ LTR instantly.
+- [x] Sample module round-trip works; migration applies from empty DB.
+- [x] All quality gates green (locally, with the exact CI commands; the GitHub Actions run starts with the pull request); architecture tests fail if a module references another module's internals or a banned package.
+- [x] Security headers present; OpenAPI published; health endpoints respond.
+- [x] ADRs and `THIRD_PARTY_LICENSES.md` written.
 
 ---
 
@@ -506,7 +506,7 @@ Implement, then run the full hardening review and fix findings, run performance 
 
 | Phase | Name | Status | Accepted on |
 |---|---|---|---|
-| 0 | Foundations | ☐ | |
+| 0 | Foundations | ☑ built — awaiting owner acceptance | |
 | 1 | Identity, Organisation, Employees | ☐ | |
 | 2 | Access control & Settings | ☐ | |
 | 3 | Audit, Files, Notifications, Jobs | ☐ | |

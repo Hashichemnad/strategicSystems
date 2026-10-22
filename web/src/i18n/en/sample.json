@@ -1,0 +1,48 @@
+{
+  "title": "Sample module",
+  "description": "A template system that proves the module pattern end to end: database, API, generated client and this page.",
+  "new": "New item",
+  "editTitle": "Edit item",
+  "createTitle": "New item",
+  "searchPlaceholder": "Search by name",
+  "fields": {
+    "name": "Name",
+    "nameAr": "Name (Arabic)",
+    "nameEn": "Name (English)",
+    "descriptionAr": "Description (Arabic)",
+    "descriptionEn": "Description (English)",
+    "status": "Status",
+    "updatedAt": "Last updated",
+    "actions": "Actions"
+  },
+  "status": {
+    "all": "All statuses",
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "actions": {
+    "activate": "Activate",
+    "deactivate": "Deactivate"
+  },
+  "confirmDeactivate": {
+    "title": "Deactivate this item?",
+    "description": "“{{name}}” will become read-only. You can activate it again later. Nothing is deleted."
+  },
+  "toast": {
+    "created": "Item created",
+    "updated": "Item updated",
+    "activated": "Item activated",
+    "deactivated": "Item deactivated"
+  },
+  "empty": {
+    "title": "No items yet",
+    "description": "Create the first item to see the module pattern working.",
+    "filteredTitle": "No matching items",
+    "filteredDescription": "Try another search or status."
+  },
+  "errors": {
+    "inactive": "Inactive items cannot be edited. Activate it first.",
+    "alreadyActive": "This item is already active.",
+    "alreadyInactive": "This item is already inactive."
+  }
+}

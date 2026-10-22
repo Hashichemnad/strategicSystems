@@ -1,0 +1,57 @@
+{
+  "title": "UI kit",
+  "description": "Shared components every system uses. Check each one in Arabic and English, light and dark.",
+  "sections": {
+    "buttons": "Buttons and chips",
+    "form": "Form controls",
+    "stepper": "Stage stepper and current status",
+    "wizard": "Wizard",
+    "tabs": "Tabs",
+    "feedback": "Feedback"
+  },
+  "demo": {
+    "stages": {
+      "request": "Request",
+      "charter": "Charter",
+      "planning": "Planning",
+      "execution": "Execution",
+      "closure": "Closure"
+    },
+    "bannerTitle": "Waiting for the charter to be approved",
+    "bannerDescription": "Next: the Department Director reviews the charter.",
+    "approve": "Approve",
+    "returnForCorrection": "Return for correction",
+    "title": "Title",
+    "titlePlaceholder": "e.g. Digital services roadmap",
+    "category": "Category",
+    "categoryPlaceholder": "Choose a category",
+    "categories": {
+      "strategic": "Strategic",
+      "operational": "Operational",
+      "compliance": "Compliance"
+    },
+    "startDate": "Start date",
+    "notes": "Notes",
+    "wizardSteps": {
+      "basics": "Basics",
+      "details": "Details",
+      "review": "Review"
+    },
+    "reviewText": "Review the information, then finish.",
+    "tabs": {
+      "overview": "Overview",
+      "documents": "Documents",
+      "history": "History"
+    },
+    "tabContent": "Content of the {{tab}} tab.",
+    "showToast": "Show a toast",
+    "toastTitle": "Changes saved",
+    "toastDescription": "Your draft is stored safely.",
+    "openDialog": "Open a dialog",
+    "dialogTitle": "Dialog title",
+    "dialogDescription": "Dialogs trap focus, close on Escape and mirror in Arabic.",
+    "skeleton": "Loading placeholder",
+    "emptyTitle": "Nothing here yet",
+    "emptyDescription": "Empty states explain what will appear and offer the next step."
+  }
+}
