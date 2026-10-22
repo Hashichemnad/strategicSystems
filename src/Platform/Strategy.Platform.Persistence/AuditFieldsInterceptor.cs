@@ -32,7 +32,9 @@ public sealed class AuditFieldsInterceptor(IClock clock, IRequestContext request
             return;
         }
 
-        var now = clock.UtcNow;
+        // PostgreSQL stores microseconds; truncate so the value we return equals the value read back later.
+        var utcNow = clock.UtcNow;
+        var now = utcNow.AddTicks(-(utcNow.Ticks % TimeSpan.TicksPerMicrosecond));
         foreach (var entry in context.ChangeTracker.Entries<IAuditable>())
         {
             switch (entry.State)
