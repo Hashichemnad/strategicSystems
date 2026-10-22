@@ -1,0 +1,134 @@
+# Quality gates from CLAUDE.md §16. Steps are plain shell commands so they port to Azure DevOps unchanged.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_NOLOGO: "1"
+  DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+
+jobs:
+  backend:
+    name: Back end (build, format, tests, vulnerabilities, API client)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Restore
+        run: |
+          dotnet tool restore
+          dotnet restore Strategy.slnx
+      - name: Build (warnings are errors)
+        run: dotnet build Strategy.slnx -c Release --no-restore
+      - name: Format
+        run: dotnet format Strategy.slnx --verify-no-changes --no-restore
+      - name: Tests (unit, architecture, integration with Testcontainers)
+        run: dotnet test --solution Strategy.slnx -c Release --no-build
+      - name: Vulnerable packages (High / Critical fail)
+        run: tools/check-vulnerable.sh
+      - name: OpenAPI document and generated TS client are committed
+        run: |
+          (cd web && npm ci --no-audit --no-fund)
+          tools/check-api-client.sh
+
+  frontend:
+    name: Front end (lint, format, types, tests, build, audit, licences)
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - name: Lint (ESLint + RTL logical-class guard)
+        run: npm run lint
+      - run: npm run format:check
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+      - name: npm audit (High / Critical fail)
+        run: npm audit --audit-level=high
+      - name: Licence allow-list
+        run: npm run lint:licenses
+
+  e2e:
+    name: E2E (Arabic + English)
+    needs: [backend, frontend]
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: strategy
+          POSTGRES_USER: strategy
+          POSTGRES_PASSWORD: strategy
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U strategy" --health-interval 5s --health-timeout 5s --health-retries 20
+    env:
+      CI: "true"
+      ConnectionStrings__Strategy: Host=localhost;Port=5432;Database=strategy;Username=strategy;Password=strategy
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Install and build
+        run: |
+          dotnet build src/Host/Strategy.Host/Strategy.Host.csproj
+          cd web
+          npm ci --no-audit --no-fund
+          npx playwright install --with-deps chromium
+          npm run build
+      - name: Playwright (projects ar and en)
+        working-directory: web
+        run: npx playwright test
+      - name: Upload report and screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-report
+          path: |
+            web/playwright-report
+            web/test-results
+            docs/screenshots
+          retention-days: 14
+
+  docker:
+    name: Container image builds
+    needs: [backend, frontend]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image (not pushed)
+        run: docker build -f deploy/Dockerfile -t strategy-app:ci .
+      - name: Compose file is valid
+        run: docker compose -f deploy/docker-compose.yml --profile app --profile dev --profile search --profile antivirus --profile ai config -q

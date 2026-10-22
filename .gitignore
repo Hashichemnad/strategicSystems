@@ -22,3 +22,4 @@ deploy/.env
 .idea/
 .vscode/*
 !.vscode/extensions.json
+deploy/*.local.pem
