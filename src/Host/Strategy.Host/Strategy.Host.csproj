@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <RootNamespace>Strategy.Host</RootNamespace>
+    <UserSecretsId>strategy-host</UserSecretsId>
+    <!-- Build-time OpenAPI document (ADR 0004). The TS client is generated from this file. -->
+    <OpenApiDocumentsDirectory>$(MSBuildProjectDirectory)/../../../web/openapi</OpenApiDocumentsDirectory>
+    <OpenApiGenerateDocumentsOptions>--file-name strategy</OpenApiGenerateDocumentsOptions>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Platform\Strategy.Platform.Kernel\Strategy.Platform.Kernel.csproj" />
+    <ProjectReference Include="..\..\Platform\Strategy.Platform.Persistence\Strategy.Platform.Persistence.csproj" />
+    <ProjectReference Include="..\..\Platform\Strategy.Platform.Access\Strategy.Platform.Access.csproj" />
+    <ProjectReference Include="..\..\Platform\Strategy.Platform.Http\Strategy.Platform.Http.csproj" />
+    <ProjectReference Include="..\..\Modules\Sample\Strategy.Modules.Sample\Strategy.Modules.Sample.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Serilog.AspNetCore" />
+    <PackageReference Include="Serilog.Sinks.Console" />
+    <PackageReference Include="Serilog.Settings.Configuration" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Http" />
+    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
+    <PackageReference Include="Npgsql.OpenTelemetry" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="Microsoft.Extensions.ApiDescription.Server">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Strategy.IntegrationTests" />
+  </ItemGroup>
+</Project>
