@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <PackageReference Include="NetArchTest.Rules" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- The host references every module and platform project, so their assemblies are in the output folder. -->
+    <ProjectReference Include="..\..\src\Host\Strategy.Host\Strategy.Host.csproj" />
+  </ItemGroup>
+</Project>
