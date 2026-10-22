@@ -1,0 +1,24 @@
+# .NET
+bin/
+obj/
+*.user
+.vs/
+TestResults/
+*.trx
+# Node / web
+node_modules/
+web/dist/
+web/playwright-report/
+web/test-results/
+web/coverage/
+# Host static output (SPA is copied here at publish time)
+src/Host/Strategy.Host/wwwroot/
+# Env / secrets
+.env
+deploy/.env
+*.pfx
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
