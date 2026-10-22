@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Public surface other modules may use. No EF Core, no module internals (architecture tests). -->
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Platform\Strategy.Platform.Kernel\Strategy.Platform.Kernel.csproj" />
+  </ItemGroup>
+</Project>
