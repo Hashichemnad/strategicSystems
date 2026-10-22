@@ -11,5 +11,5 @@ Write an ADR for every choice the SPEC or CLAUDE.md leaves open (CLAUDE.md §2 r
 | [0004](0004-openapi-ts-client.md) | OpenAPI → TypeScript client pipeline | Accepted |
 | [0005](0005-phase-0-access-placeholder.md) | Phase 0 access placeholder that fails closed | Accepted (temporary, until Phase 2) |
 | [0006](0006-module-pattern.md) | Module pattern, persistence and extra platform projects | Accepted |
-| [0007](0007-licence-notes.md) | Licence notes: ClamAV sidecar and dev-only tooling licences | **Proposed — needs owner decision** |
+| [0007](0007-licence-notes.md) | Licence notes: ClamAV sidecar and dev-only tooling licences | Accepted |
 | [0008](0008-test-and-tooling-versions.md) | Test runner and front-end tool versions | Accepted |

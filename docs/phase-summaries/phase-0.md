@@ -49,7 +49,7 @@ three architecture tests red, with messages naming the violation. Reverting turn
 - [0004](../decisions/0004-openapi-ts-client.md) OpenAPI → TS client pipeline
 - [0005](../decisions/0005-phase-0-access-placeholder.md) Fail-closed access placeholder until Phase 2
 - [0006](../decisions/0006-module-pattern.md) Module pattern; extra platform projects `Persistence` and `Http`
-- [0007](../decisions/0007-licence-notes.md) **Needs your decision:** ClamAV as an optional GPL sidecar; four permissive licences allowed for dev tooling only
+- [0007](../decisions/0007-licence-notes.md) Accepted by the owner: ClamAV only as an optional, customer-enabled GPL sidecar; four permissive licences allowed for dev tooling only
 - [0008](../decisions/0008-test-and-tooling-versions.md) xunit v3 on Microsoft.Testing.Platform; pinned front-end majors; npm 11 for dependency changes; Playwright 1.56.1
 
 ## Deviations

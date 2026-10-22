@@ -78,7 +78,7 @@ Tools: `dotnet-ef` (MIT), local tool in `dotnet-tools.json`.
 | @types/react, @types/react-dom, @types/node | MIT |
 
 Transitive dev-only packages under BlueOak-1.0.0, Python-2.0, CC-BY-4.0 and CC0-1.0 are accepted for tooling only,
-pending the owner's confirmation in [ADR 0007](decisions/0007-licence-notes.md).
+as accepted by the owner in [ADR 0007](decisions/0007-licence-notes.md).
 
 ## Container images (docker-compose, not bundled into the product image)
 
