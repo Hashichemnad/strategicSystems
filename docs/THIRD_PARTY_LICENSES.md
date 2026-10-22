@@ -42,3 +42,52 @@ Update this file in the same commit that adds a dependency.
 <https://github.com/BenMorris/NetArchTest/blob/master/LICENSE> (listed in `PackagePolicy.ManuallyVerified`).
 
 Tools: `dotnet-ef` (MIT), local tool in `dotnet-tools.json`.
+
+## npm — `web/package.json`
+
+### Runtime (shipped in the SPA bundle)
+
+| Package | Licence | Used for |
+|---|---|---|
+| react, react-dom | MIT | UI |
+| @tanstack/react-query | MIT | server state |
+| @tanstack/react-router | MIT | routing, typed search params |
+| i18next, react-i18next | MIT | translations |
+| @radix-ui/react-direction, -dialog, -dropdown-menu, -label, -popover, -select, -slot, -tabs, -toast | MIT | accessible primitives |
+| class-variance-authority | Apache-2.0 | component variants |
+| clsx, tailwind-merge | MIT | class names |
+| lucide-react | ISC | icons |
+| react-hook-form, @hookform/resolvers | MIT | forms |
+| zod | MIT | schemas (forms, search params) |
+| react-day-picker | MIT | date picker |
+| date-fns | MIT | calendar locales for the date picker |
+| openapi-fetch | MIT | typed HTTP client |
+| @fontsource/ibm-plex-sans-arabic, @fontsource/ibm-plex-sans | OFL-1.1 (fonts) | self-hosted fonts (offline installs) |
+
+### Development and build only (not shipped)
+
+| Package | Licence |
+|---|---|
+| vite, @vitejs/plugin-react, @tailwindcss/vite, tailwindcss | MIT |
+| typescript | Apache-2.0 |
+| eslint, @eslint/js, typescript-eslint, eslint-plugin-react-hooks, eslint-plugin-jsx-a11y, globals | MIT |
+| vitest, jsdom, @testing-library/react, @testing-library/user-event, @testing-library/jest-dom | MIT |
+| @playwright/test | Apache-2.0 |
+| openapi-typescript | MIT |
+| prettier | MIT |
+| @types/react, @types/react-dom, @types/node | MIT |
+
+Transitive dev-only packages under BlueOak-1.0.0, Python-2.0, CC-BY-4.0 and CC0-1.0 are accepted for tooling only,
+pending the owner's confirmation in [ADR 0007](decisions/0007-licence-notes.md).
+
+## Container images (docker-compose, not bundled into the product image)
+
+| Image | Licence | Profile |
+|---|---|---|
+| postgres | PostgreSQL | default |
+| gotenberg/gotenberg | MIT | default |
+| axllent/mailpit | MIT | `dev` only |
+| getmeili/meilisearch | MIT | `search` (optional) |
+| clamav/clamav | GPL-2.0 — separate optional service, see [ADR 0007](decisions/0007-licence-notes.md) | `antivirus` (optional) |
+| ollama/ollama | MIT | `ai` (optional) |
+| mcr.microsoft.com/dotnet/aspnet (base of the product image) | MIT | — |

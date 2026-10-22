@@ -90,7 +90,7 @@ The original systems ran on Salesforce. They are a **functional reference, not a
 One deployable, strictly modular inside.
 
 - **Platform projects** (`src/Platform/`):
-  `Kernel` (base entity, result / error types, clock, IDs, domain events, paging) · `Identity` (users, employees link, auth providers, MFA, API tokens) · `Organisation` (units, hierarchy with history, employees) · `Access` (permissions, roles, record roles, data scope, system ownership) · `Workflow` (approval engine, delegation, current-status engine) · `Audit` (interceptor, hash chain, audit queries) · `Notifications` (templates, email, in-app, SignalR, outbox dispatch) · `Files` (storage, versions, scanning, preview) · `Settings` (typed settings, lookups / picklists, numbering, branding, feature flags, localisation overrides) · `Scheduling` (Quartz jobs) · `Reporting` (dashboard widgets, aggregates, exports, PDF rendering) · `Links` (generic cross-system links registry: "team-able", "task-able", "remark-source" records) · `AI` (provider registry, feature routing, prompt templates, usage log) · `Mcp` (MCP server, tool registry) · `Search`.
+  `Kernel` (base entity, result / error types, clock, IDs, domain events, paging, dispatcher) · `Persistence` (module DbContext base, EF conventions, migrations runner) · `Http` (module contract, endpoint conventions, Problem Details) — ADR 0006 · `Identity` (users, employees link, auth providers, MFA, API tokens) · `Organisation` (units, hierarchy with history, employees) · `Access` (permissions, roles, record roles, data scope, system ownership) · `Workflow` (approval engine, delegation, current-status engine) · `Audit` (interceptor, hash chain, audit queries) · `Notifications` (templates, email, in-app, SignalR, outbox dispatch) · `Files` (storage, versions, scanning, preview) · `Settings` (typed settings, lookups / picklists, numbering, branding, feature flags, localisation overrides) · `Scheduling` (Quartz jobs) · `Reporting` (dashboard widgets, aggregates, exports, PDF rendering) · `Links` (generic cross-system links registry: "team-able", "task-able", "remark-source" records) · `AI` (provider registry, feature routing, prompt templates, usage log) · `Mcp` (MCP server, tool registry) · `Search`.
 - **Module projects** (`src/Modules/<Name>/`): one project per system with folders `Domain/`, `Application/` (commands, queries, handlers, validators, DTOs), `Infrastructure/` (DbContext, configurations, migrations), `Api/` (endpoints), `Jobs/`, `Ai/`, `Mcp/`. Plus `<Name>.Contracts` (public interfaces, DTOs and integration events other modules may use).
 - **Boundaries (enforced by architecture tests):**
   - A module may reference Platform projects and other modules' `.Contracts` only — never another module's internals or DbContext.
@@ -218,11 +218,34 @@ Implement as pure, deterministic services in the owning module with table-driven
 ## 18. Commands
 
 ```bash
-docker compose -f deploy/docker-compose.yml up -d postgres gotenberg mailpit   # dev dependencies
-dotnet build && dotnet test                                                     # back end
-dotnet ef migrations add <Name> -p src/Modules/<Module> -s src/Host             # module migration
-cd web && npm ci && npm run dev                                                 # front end
-npm run lint && npm run typecheck && npm test                                    # front-end gates
-npx playwright test                                                             # E2E (AR + EN)
+# Dev dependencies (PostgreSQL 16, Gotenberg, Mailpit). Behind a Docker Hub limit: REGISTRY_PREFIX=mirror.gcr.io/
+docker compose -f deploy/docker-compose.yml up -d postgres gotenberg mailpit
+
+# Back end (http://localhost:5080; Development applies migrations on start)
+dotnet tool restore
+dotnet run --project src/Host/Strategy.Host
+dotnet run --project src/Host/Strategy.Host -- --migrate                      # apply migrations and exit
+
+# Module migration (one DbContext + schema per module, ADR 0006)
+dotnet ef migrations add <Name> -p src/Modules/<M>/Strategy.Modules.<M> -s src/Host/Strategy.Host -c <M>DbContext -o Infrastructure/Migrations
+
+# Front end (http://localhost:5173, proxies /api to :5080)
+cd web && npm ci && npm run dev
+npx npm@11 install <pkg>                                                      # change npm dependencies (ADR 0008)
+
+# API client after any endpoint change (CI fails on drift: tools/check-api-client.sh)
+dotnet build src/Host/Strategy.Host && (cd web && npm run api:generate)
+
+# Quality gates (CLAUDE.md §16, same as .github/workflows/ci.yml)
+dotnet build Strategy.slnx -c Release && dotnet format Strategy.slnx --verify-no-changes
+dotnet test --solution Strategy.slnx                                          # unit + architecture + integration (Docker)
+tools/check-vulnerable.sh && tools/check-api-client.sh
+cd web && npm run lint && npm run format:check && npm run typecheck && npm test
+npm run build && npm audit --audit-level=high && npm run lint:licenses
+npx playwright test                                                           # E2E, projects "ar" and "en"
+
+# Containerised install (http://localhost:8080)
+docker compose -f deploy/docker-compose.yml --profile app up -d --build
 ```
-(Adjust in Phase 0 once the solution exists, and keep this section accurate.)
+Integration tests: `TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX=mirror.gcr.io/` behind a Docker Hub limit, or
+`STRATEGY_TEST_POSTGRES=<admin connection string>` to reuse a running server. Keep this section accurate.

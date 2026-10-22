@@ -1,4 +1,87 @@
-# Integrated Strategy System — Claude Code build package
+# Integrated Strategy System
+
+Self-hosted, bilingual (Arabic / English, full RTL) strategy management suite: one application, one database,
+one login, eleven systems on a shared platform. **What** to build: [`docs/SPEC.md`](docs/SPEC.md) ·
+**how**: [`CLAUDE.md`](CLAUDE.md) · **in which order**: [`docs/BUILD_PLAN.md`](docs/BUILD_PLAN.md) ·
+decisions: [`docs/decisions/`](docs/decisions/) · phase summaries: [`docs/phase-summaries/`](docs/phase-summaries/).
+
+## Developer setup
+
+Prerequisites: .NET 10 SDK, Node.js 22+, Docker (with Compose), Git.
+
+```bash
+# 1. Dependencies: PostgreSQL 16, Gotenberg, Mailpit (UI http://localhost:8025)
+docker compose -f deploy/docker-compose.yml up -d postgres gotenberg mailpit
+
+# 2. Back end on http://localhost:5080 (Development: applies migrations on start, sample module on)
+dotnet tool restore
+dotnet run --project src/Host/Strategy.Host
+
+# 3. Front end on http://localhost:5173 (proxies /api to :5080)
+cd web && npm ci && npm run dev
+```
+
+Open http://localhost:5173. The language button in the top bar flips the whole layout between Arabic (RTL) and
+English (LTR) instantly. `/sample` is the template module, `/ui-kit` shows every shared component.
+To serve the built SPA from the host instead (as in production): `cd web && npm run build`, then open http://localhost:5080.
+
+| URL | What |
+|---|---|
+| `/openapi/v1.json` (`/openapi` redirects) | OpenAPI document |
+| `/health/live`, `/health/ready` | liveness, readiness (database of every module) |
+| `/api/v1/<module>/…` | REST API (Problem Details errors with `code` + `messageKey`) |
+
+### Quality gates (same as CI)
+
+```bash
+dotnet build Strategy.slnx -c Release                 # zero warnings (warnings are errors)
+dotnet format Strategy.slnx --verify-no-changes
+dotnet test --solution Strategy.slnx                  # unit + architecture + integration (Testcontainers, needs Docker)
+tools/check-vulnerable.sh                             # NuGet High/Critical advisories
+tools/check-api-client.sh                             # OpenAPI + TS client regenerated and committed
+cd web
+npm run lint && npm run format:check && npm run typecheck && npm test
+npm run build && npm audit --audit-level=high && npm run lint:licenses
+npx playwright test                                   # E2E, projects "ar" and "en"; starts the host itself
+```
+
+E2E needs PostgreSQL on `localhost:5432` (or `ConnectionStrings__Strategy`) and `npm run build` first.
+Screenshots for review are written to `docs/screenshots/phase-<n>/`.
+
+### Common tasks
+
+| Task | Command |
+|---|---|
+| Add a migration | `dotnet ef migrations add <Name> -p src/Modules/<M>/Strategy.Modules.<M> -s src/Host/Strategy.Host -c <M>DbContext -o Infrastructure/Migrations` |
+| Apply migrations (install / upgrade) | `dotnet run --project src/Host/Strategy.Host -- --migrate` |
+| Regenerate the TS client after an API change | `dotnet build src/Host/Strategy.Host && (cd web && npm run api:generate)` |
+| Add an npm dependency | `cd web && npx npm@11 install <pkg>` (see ADR 0008), then update `docs/THIRD_PARTY_LICENSES.md` |
+| Run everything in containers | `docker compose -f deploy/docker-compose.yml --profile app up -d --build` → http://localhost:8080 |
+
+### Restricted networks and cloud sessions
+
+- **Docker Hub rate limits / mirrors:** set `REGISTRY_PREFIX=mirror.gcr.io/` for compose and
+  `TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX=mirror.gcr.io/` for the integration tests.
+- **TLS-inspecting proxy during image builds:** `BUILD_CA_FILE=<path to CA bundle inside deploy/>` (see `deploy/.env.example`).
+- **Reuse a running PostgreSQL for integration tests** instead of Docker: `STRATEGY_TEST_POSTGRES="Host=…;Username=…;Password=…"`.
+- The Docker daemon may need starting by hand in a fresh container: `sudo dockerd &`.
+
+## Repository layout
+
+```
+src/Host/                 Strategy.Host — composition root, middleware, serves the SPA
+src/Platform/             Strategy.Platform.* — Kernel, Persistence, Http, Access (more per phase)
+src/Modules/<Name>/       Strategy.Modules.<Name> (+ .Contracts) — Sample is the template
+tests/                    UnitTests, IntegrationTests (Testcontainers), ArchitectureTests
+web/                      React + TypeScript SPA (Vite); e2e/ holds the Playwright suite
+deploy/                   docker-compose.yml, Dockerfile, .env.example
+tools/                    quality-gate scripts
+docs/                     SPEC, BUILD_PLAN, design notes, ADRs, licences, screenshots, phase summaries
+```
+
+---
+
+# How this repository is built with Claude Code
 
 This package contains everything Claude Code needs to build the product.
 
