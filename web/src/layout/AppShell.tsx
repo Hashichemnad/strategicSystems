@@ -1,6 +1,10 @@
 import { Outlet, useRouterState } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useTheme } from '@/app/theme';
+import { useMe } from '@/features/auth/session';
+import { isLanguage } from '@/i18n';
+import { writePreference } from '@/lib/preferences';
 import { Sidebar } from './Sidebar';
 import { TopBar } from './TopBar';
 
@@ -11,6 +15,7 @@ export function AppShell() {
   const pathname = useRouterState({ select: (state) => state.location.pathname });
 
   useEffect(() => setMenuOpen(false), [pathname]);
+  usePreferencesFromProfile();
 
   return (
     <div className="flex min-h-dvh">
@@ -33,4 +38,25 @@ export function AppShell() {
       </div>
     </div>
   );
+}
+
+/** Language and theme saved on the profile win over this browser's last choice (they follow the user). */
+function usePreferencesFromProfile() {
+  const me = useMe();
+  const { i18n } = useTranslation();
+  const { setTheme } = useTheme();
+  const language = me?.language;
+  const theme = me?.theme;
+  useEffect(() => {
+    if (isLanguage(language) && language !== i18n.language) {
+      writePreference('language', language);
+      void i18n.changeLanguage(language);
+    }
+    // Only when the profile value changes (e.g. after sign-in), not on every language switch.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [language]);
+  useEffect(() => {
+    if (theme === 'light' || theme === 'dark' || theme === 'system') setTheme(theme);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [theme]);
 }

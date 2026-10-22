@@ -6,7 +6,22 @@
   "nav": {
     "home": "My Work",
     "sample": "Sample module",
-    "uiKit": "UI kit"
+    "uiKit": "UI kit",
+    "units": "Units",
+    "chart": "Org chart",
+    "employees": "Employees",
+    "levels": "Levels",
+    "import": "Import",
+    "users": "Users",
+    "providers": "Identity providers",
+    "security": "Security",
+    "email": "Email server",
+    "sections": {
+      "main": "Main",
+      "organisation": "Organisation",
+      "administration": "Administration",
+      "development": "Development"
+    }
   },
   "language": {
     "label": "Language",
@@ -20,8 +35,8 @@
   },
   "profile": {
     "menu": "Profile menu",
-    "guest": "Guest",
-    "signInLater": "Sign-in arrives in Phase 1",
+    "myProfile": "My profile",
+    "signOut": "Sign out",
     "settings": "Settings"
   },
   "home": {

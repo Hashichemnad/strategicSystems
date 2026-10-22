@@ -28,7 +28,7 @@ import {
 import { useChangeSampleItemStatus, useSampleItems, type SampleItem } from './api';
 import { SampleItemDialog } from './SampleItemDialog';
 
-const route = getRouteApi('/sample');
+const route = getRouteApi('/app/sample');
 const PAGE_SIZE = 10;
 
 export function SampleListPage() {

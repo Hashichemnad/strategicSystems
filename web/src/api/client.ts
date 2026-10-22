@@ -18,6 +18,17 @@ async function fetchAntiforgeryToken(): Promise<string> {
   return data.token;
 }
 
+/** Antiforgery tokens are bound to the signed-in user: drop the cached one after signing in or out. */
+export function resetAntiforgeryToken(): void {
+  antiforgeryToken = null;
+}
+
+/** Fired when the session ended (401) on a call that needed it; the router sends the user to the login page. */
+export const UNAUTHORIZED_EVENT = 'strategy:unauthorized';
+
+/** Calls whose 401 is part of their normal answer and must not end the session in the SPA. */
+const SESSION_PROBES = ['/api/v1/identity/auth/', '/api/v1/identity/me'];
+
 function getAntiforgeryToken(): Promise<string> {
   antiforgeryToken ??= fetchAntiforgeryToken().catch((error: unknown) => {
     antiforgeryToken = null;
@@ -40,7 +51,11 @@ const platformHeaders: Middleware = {
     }
     return request;
   },
-  async onResponse({ request, response }) {
+  async onResponse({ request, response, schemaPath }) {
+    if (response.status === 401 && !SESSION_PROBES.some((probe) => schemaPath.startsWith(probe))) {
+      window.dispatchEvent(new Event(UNAUTHORIZED_EVENT));
+    }
+
     // A stale antiforgery token (e.g. server keys rotated) is dropped so the user's next attempt fetches a new one.
     if (response.status === 400 && UNSAFE_METHODS.has(request.method)) {
       const problem = (await response

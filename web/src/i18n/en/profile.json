@@ -1,0 +1,105 @@
+{
+  "title": "My profile",
+  "saved": "Saved",
+  "tabs": {
+    "preferences": "Preferences",
+    "security": "Security",
+    "sessions": "Sessions",
+    "tokens": "Access tokens",
+    "delegations": "Delegations"
+  },
+  "preferences": {
+    "title": "Preferences",
+    "description": "Saved on your profile, so they follow you to other devices.",
+    "language": "Language",
+    "theme": "Theme"
+  },
+  "password": {
+    "title": "Password",
+    "description": "Changing the password signs you out everywhere else.",
+    "current": "Current password",
+    "new": "New password",
+    "submit": "Change password",
+    "changed": "Password changed"
+  },
+  "mfa": {
+    "title": "Two-step verification",
+    "description": "A second step at sign-in protects your account even if your password leaks.",
+    "requiredByPolicy": "Your organisation requires two-step verification for your account.",
+    "methods": {
+      "totp": "Authenticator app",
+      "email": "Code by email"
+    },
+    "on": "On",
+    "off": "Off",
+    "turnOff": "Turn off",
+    "add": "Add a method",
+    "regenerate_one": "New recovery codes ({{count}} left)",
+    "regenerate_other": "New recovery codes ({{count}} left)"
+  },
+  "sessions": {
+    "title": "Where you are signed in",
+    "description": "End any session you do not recognise.",
+    "device": "Device",
+    "method": "Signed in with",
+    "started": "Started",
+    "lastSeen": "Last activity",
+    "current": "This session",
+    "end": "Sign out",
+    "endOthers": "Sign out of all other sessions",
+    "othersEnded": "All other sessions were ended.",
+    "methods": {
+      "pwd": "Password",
+      "mfa": "Password + verification",
+      "ldap": "Directory account",
+      "ext": "External provider"
+    }
+  },
+  "tokens": {
+    "title": "Personal access tokens",
+    "description": "Tokens let scripts and integrations call the API as you, with your permissions. Treat them like passwords.",
+    "empty": "You have no access tokens.",
+    "name": "Name",
+    "scopes": "Access",
+    "expires": "Expires",
+    "lastUsed": "Last used",
+    "state": "State",
+    "states": {
+      "active": "Active",
+      "expired": "Expired",
+      "revoked": "Revoked"
+    },
+    "create": "New token",
+    "lifetimeDays": "Valid for (days)",
+    "scopeLabels": {
+      "api.read": "Read data",
+      "api.write": "Read and change data",
+      "mcp": "AI assistants (MCP)"
+    },
+    "copyNow": "Copy the token now. It will not be shown again.",
+    "token": "Access token",
+    "revoke": "Revoke",
+    "revokeTitle": "Revoke this token?",
+    "revokeDescription": "Anything using it stops working immediately."
+  },
+  "delegations": {
+    "title": "Delegations",
+    "description": "Let a colleague approve on your behalf while you are away. Every approval records that it was on your behalf.",
+    "noEmployee": "Your account is not linked to an employee, so delegations are not available.",
+    "empty": "No delegations.",
+    "from": "From",
+    "to": "To",
+    "period": "Period",
+    "status": "Status",
+    "statuses": {
+      "active": "Active",
+      "cancelled": "Cancelled"
+    },
+    "create": "Delegate my approvals",
+    "fromDate": "First day",
+    "toDate": "Last day",
+    "reason": "Reason",
+    "created": "Delegation created",
+    "cancelledByUser": "Cancelled by the delegator"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "errors": {
+    "passwordTooShort": "استخدم {{length}} أحرف على الأقل.",
+    "passwordRequiresUpper": "أضف حرفاً لاتينياً كبيراً.",
+    "passwordRequiresLower": "أضف حرفاً لاتينياً صغيراً.",
+    "passwordRequiresDigit": "أضف رقماً.",
+    "passwordRequiresNonAlphanumeric": "أضف رمزاً.",
+    "passwordRequiresUniqueChars": "استخدم أحرفاً أكثر تنوعاً.",
+    "passwordReused": "اختر كلمة مرور لم تستخدمها مؤخراً.",
+    "passwordMismatch": "كلمة المرور الحالية غير صحيحة.",
+    "passwordManagedExternally": "تُدار كلمة مرورك من خلال دليل جهتك.",
+    "invalidUserName": "اسم المستخدم يحتوي على أحرف غير مسموح بها.",
+    "duplicateUserName": "اسم المستخدم مستخدم بالفعل.",
+    "userNameTaken": "اسم المستخدم مستخدم بالفعل.",
+    "emailTaken": "يوجد حساب آخر بهذا البريد الإلكتروني.",
+    "employeeHasUser": "لهذا الموظف حساب بالفعل.",
+    "employeeLeft": "الموظف غادر الجهة.",
+    "employeeNotFound": "لم يتم العثور على الموظف.",
+    "userSelf": "لا يمكنك تنفيذ هذا الإجراء على حسابك.",
+    "lastAdmin": "يجب أن يبقى مسؤول نظام فعّال واحد على الأقل.",
+    "userInactive": "الحساب موقوف.",
+    "tokenLifetime": "اختر مدة بين يوم واحد و{{max}} يوماً.",
+    "noMfaMethod": "اسمح بطريقة تحقق واحدة على الأقل.",
+    "smtpNotConfigured": "لم يُعدّ خادم البريد بعد. تواصل مع مسؤول النظام.",
+    "smtpFailed": "تعذّر إرسال البريد. تحقّق من إعدادات خادم البريد.",
+    "publicUrlMissing": "حدّد عنوان التطبيق في صفحة خادم البريد لتتضمن الرسائل روابط.",
+    "duplicateProviderCode": "يوجد مزود آخر بهذا الرمز.",
+    "samlSource": "أدخل عنوان البيانات الوصفية، أو عنوان تسجيل الدخول مع شهادة مزود الهوية.",
+    "certificate": "تعذّرت قراءة الشهادة. الصقها بصيغة PEM.",
+    "ldapFilter": "يجب أن يكون المرشّح بين قوسين وأن يحتوي {0} في موضع اسم المستخدم.",
+    "invalidToken": "الرابط غير صالح أو منتهي الصلاحية."
+  }
+}
