@@ -37,6 +37,7 @@ public sealed class ApiFactory(string connectionString, string environment = "Te
         builder.UseSetting("Modules:Sample:Enabled", "true");
         builder.UseSetting("Spa:RootPath", "does-not-exist");
         builder.UseSetting("Serilog:MinimumLevel:Default", "Warning");
+        builder.UseSetting("RateLimiting:PermitLimit", "100000");
         builder.UseSetting("RateLimiting:AuthPermitLimit", "100000");
         foreach (var (key, value) in settings ?? new Dictionary<string, string?>())
         {

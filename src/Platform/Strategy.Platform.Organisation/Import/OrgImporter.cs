@@ -35,7 +35,12 @@ public interface IUserProvisioning
 /// Bulk import of units and employees from the Excel / CSV templates (docs/design/organisation.md). Validates every row first;
 /// commit is all-or-nothing and upserts by unit code / employee number.
 /// </summary>
-internal sealed class OrgImporter(OrgDbContext db, OrgStructure structure, EmployeeRegister register, IEnumerable<IUserProvisioning> provisioning)
+internal sealed class OrgImporter(
+    OrgDbContext db,
+    OrgStructure structure,
+    EmployeeRegister register,
+    IEnumerable<IUserProvisioning> provisioning,
+    IEnumerable<Contracts.IEmployeeLifecycleHook> lifecycleHooks)
 {
     public static readonly IReadOnlyList<ImportColumn> UnitColumns =
     [
@@ -97,6 +102,14 @@ internal sealed class OrgImporter(OrgDbContext db, OrgStructure structure, Emplo
             await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
             committed = true;
+            foreach (var employeeId in outcome.Left)
+            {
+                foreach (var hook in lifecycleHooks)
+                {
+                    await hook.EmployeeLeftAsync(employeeId, cancellationToken).ConfigureAwait(false);
+                }
+            }
+
             if (outcome.UsersToProvision.Count > 0)
             {
                 foreach (var provider in provisioning)
@@ -110,7 +123,10 @@ internal sealed class OrgImporter(OrgDbContext db, OrgStructure structure, Emplo
         return new ImportReportDto(kind, committed, rows.Count, outcome.Created, outcome.Updated, issues.OrderBy(i => i.Row).ToList());
     }
 
-    private sealed record Outcome(int Created, int Updated, IReadOnlyList<Guid> UsersToProvision);
+    private sealed record Outcome(int Created, int Updated, IReadOnlyList<Guid> UsersToProvision, IReadOnlyList<Guid>? LeftEmployees = null)
+    {
+        public IReadOnlyList<Guid> Left => LeftEmployees ?? [];
+    }
 
     private async Task<Outcome> ImportUnitsAsync(IReadOnlyList<ImportRow> rows, List<ImportIssue> issues, CancellationToken cancellationToken)
     {
@@ -341,6 +357,7 @@ internal sealed class OrgImporter(OrgDbContext db, OrgStructure structure, Emplo
         int created = 0, updated = 0;
         var people = new Dictionary<string, Domain.Employee>(StringComparer.Ordinal);
         var provision = new List<Guid>();
+        var left = new List<Guid>();
         foreach (var (number, entry) in valid)
         {
             var row = entry.Row;
@@ -398,6 +415,10 @@ internal sealed class OrgImporter(OrgDbContext db, OrgStructure structure, Emplo
             if (employee.Status != entry.Status)
             {
                 employee.ChangeStatus(entry.Status);
+                if (entry.Status == EmployeeStatus.Left)
+                {
+                    left.Add(employee.Id);
+                }
             }
 
             if (entry.CreateUser && entry.Status != EmployeeStatus.Left)
@@ -406,7 +427,7 @@ internal sealed class OrgImporter(OrgDbContext db, OrgStructure structure, Emplo
             }
         }
 
-        return new Outcome(created, updated, provision);
+        return new Outcome(created, updated, provision, left);
     }
 
     private static string? Required(ImportRow row, string column, List<ImportIssue> issues)
