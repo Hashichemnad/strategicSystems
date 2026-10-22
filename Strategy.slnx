@@ -14,4 +14,9 @@
     <Project Path="src/Platform/Strategy.Platform.Kernel/Strategy.Platform.Kernel.csproj" />
     <Project Path="src/Platform/Strategy.Platform.Persistence/Strategy.Platform.Persistence.csproj" />
   </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Strategy.ArchitectureTests/Strategy.ArchitectureTests.csproj" />
+    <Project Path="tests/Strategy.IntegrationTests/Strategy.IntegrationTests.csproj" />
+    <Project Path="tests/Strategy.UnitTests/Strategy.UnitTests.csproj" />
+  </Folder>
 </Solution>
