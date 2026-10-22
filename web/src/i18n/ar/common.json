@@ -1,0 +1,51 @@
+{
+  "appName": "منظومة الاستراتيجية",
+  "actions": {
+    "save": "حفظ",
+    "saveDraft": "حفظ كمسودة",
+    "cancel": "إلغاء",
+    "close": "إغلاق",
+    "confirm": "تأكيد",
+    "create": "إنشاء",
+    "edit": "تعديل",
+    "back": "السابق",
+    "next": "التالي",
+    "finish": "إنهاء",
+    "retry": "إعادة المحاولة",
+    "clear": "مسح",
+    "search": "بحث",
+    "more": "إجراءات أخرى"
+  },
+  "table": {
+    "page": "صفحة {{page}} من {{pages}}",
+    "previous": "الصفحة السابقة",
+    "nextPage": "الصفحة التالية",
+    "results_zero": "لا توجد نتائج",
+    "results_one": "نتيجة واحدة",
+    "results_two": "نتيجتان",
+    "results_few": "{{count}} نتائج",
+    "results_many": "{{count}} نتيجة",
+    "results_other": "{{count}} نتيجة",
+    "sortAscending": "مرتب تصاعديًا",
+    "sortDescending": "مرتب تنازليًا"
+  },
+  "status": {
+    "loading": "جارٍ التحميل…",
+    "saved": "تم الحفظ",
+    "aiGenerated": "مُنشأ بالذكاء الاصطناعي"
+  },
+  "stepper": {
+    "label": "مراحل التقدم",
+    "completed": "مكتملة",
+    "current": "المرحلة الحالية",
+    "upcoming": "لم تبدأ"
+  },
+  "wizard": {
+    "stepOf": "الخطوة {{current}} من {{total}}",
+    "draftSaved": "تم حفظ المسودة"
+  },
+  "datePicker": {
+    "placeholder": "اختر تاريخًا",
+    "open": "فتح التقويم"
+  }
+}

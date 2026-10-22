@@ -25,10 +25,10 @@ internal static class SampleEndpoints
     }
 
     private static async Task<Results<Ok<PagedResult<SampleItemDto>>, ProblemHttpResult>> ListAsync(
-        [AsParameters] ListSampleItemsRequest request, IDispatcher dispatcher, CancellationToken cancellationToken)
+        int? page, int? pageSize, string? sort, string? search, string? status, IDispatcher dispatcher, CancellationToken cancellationToken)
     {
-        var paging = new PageRequest(request.Page ?? 1, request.PageSize ?? PageRequest.DefaultPageSize, request.Sort);
-        var result = await dispatcher.SendAsync(new ListSampleItems(paging, request.Search, request.Status), cancellationToken);
+        var paging = new PageRequest(page ?? 1, pageSize ?? PageRequest.DefaultPageSize, sort);
+        var result = await dispatcher.SendAsync(new ListSampleItems(paging, search, status), cancellationToken);
         return result.ToOk();
     }
 
@@ -60,8 +60,6 @@ internal static class SampleEndpoints
         Guid id, VersionInput body, IDispatcher dispatcher, CancellationToken cancellationToken) =>
         (await dispatcher.SendAsync(new DeactivateSampleItem(id, body.Version), cancellationToken)).ToOk();
 }
-
-internal sealed record ListSampleItemsRequest(int? Page, int? PageSize, string? Sort, string? Search, string? Status);
 
 internal sealed record SampleItemInput(string? NameAr, string? NameEn, string? DescriptionAr, string? DescriptionEn);
 

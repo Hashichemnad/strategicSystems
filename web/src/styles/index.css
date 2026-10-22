@@ -1,0 +1,121 @@
+@import 'tailwindcss';
+
+/* Dark mode follows the `dark` class on <html> (set from the user's theme preference). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * Design tokens. Components use only these semantic colours, so branding (Phase 2 Settings) can override
+ * the CSS variables at runtime without rebuilding. Layout uses logical properties only (CLAUDE.md §4.2).
+ */
+:root {
+  --background: oklch(0.985 0.002 247);
+  --foreground: oklch(0.21 0.03 265);
+  --card: oklch(1 0 0);
+  --card-foreground: var(--foreground);
+  --muted: oklch(0.96 0.005 250);
+  --muted-foreground: oklch(0.47 0.03 257);
+  --border: oklch(0.91 0.01 255);
+  --input: oklch(0.86 0.015 255);
+  --ring: oklch(0.55 0.11 185);
+  --primary: oklch(0.51 0.09 186);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.95 0.01 250);
+  --secondary-foreground: var(--foreground);
+  --accent: oklch(0.95 0.025 186);
+  --accent-foreground: oklch(0.35 0.07 186);
+  --danger: oklch(0.55 0.2 27);
+  --danger-foreground: oklch(0.99 0 0);
+  --danger-soft: oklch(0.96 0.03 20);
+  --success: oklch(0.55 0.13 150);
+  --success-soft: oklch(0.96 0.04 150);
+  --warning: oklch(0.58 0.13 70);
+  --warning-soft: oklch(0.97 0.05 85);
+  --info: oklch(0.55 0.13 245);
+  --info-soft: oklch(0.96 0.03 245);
+  --sidebar: oklch(0.99 0.002 247);
+  --radius: 0.625rem;
+}
+
+.dark {
+  --background: oklch(0.17 0.02 265);
+  --foreground: oklch(0.95 0.01 255);
+  --card: oklch(0.21 0.02 265);
+  --card-foreground: var(--foreground);
+  --muted: oklch(0.25 0.02 265);
+  --muted-foreground: oklch(0.72 0.02 257);
+  --border: oklch(0.3 0.02 265);
+  --input: oklch(0.36 0.02 265);
+  --ring: oklch(0.7 0.11 185);
+  --primary: oklch(0.7 0.11 185);
+  --primary-foreground: oklch(0.18 0.03 200);
+  --secondary: oklch(0.27 0.02 265);
+  --secondary-foreground: var(--foreground);
+  --accent: oklch(0.3 0.05 190);
+  --accent-foreground: oklch(0.88 0.08 186);
+  --danger: oklch(0.68 0.19 25);
+  --danger-foreground: oklch(0.15 0.02 25);
+  --danger-soft: oklch(0.3 0.08 25);
+  --success: oklch(0.72 0.14 150);
+  --success-soft: oklch(0.3 0.06 150);
+  --warning: oklch(0.78 0.13 80);
+  --warning-soft: oklch(0.32 0.06 80);
+  --info: oklch(0.72 0.12 245);
+  --info-soft: oklch(0.3 0.06 245);
+  --sidebar: oklch(0.19 0.02 265);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-danger: var(--danger);
+  --color-danger-foreground: var(--danger-foreground);
+  --color-danger-soft: var(--danger-soft);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+  --color-sidebar: var(--sidebar);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --font-sans: 'IBM Plex Sans', 'IBM Plex Sans Arabic', ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+  }
+  html.dark {
+    color-scheme: dark;
+  }
+  /* Arabic text first in Arabic, so Latin digits and words inside Arabic sentences share the Arabic metrics. */
+  html:lang(ar) {
+    --font-sans: 'IBM Plex Sans Arabic', 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-sans);
+  }
+  * {
+    @apply border-border;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-ring;
+  }
+}

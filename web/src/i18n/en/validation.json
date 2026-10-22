@@ -1,0 +1,12 @@
+{
+  "notEmpty": "This field is required.",
+  "notNull": "This field is required.",
+  "maximumLength": "Use at most {{maxLength}} characters.",
+  "minimumLength": "Use at least {{minLength}} characters.",
+  "atLeastOneLanguage": "Enter this in Arabic, English or both.",
+  "unknownSortField": "This column cannot be sorted.",
+  "unknownCode": "Choose a value from the list.",
+  "greaterThanOrEqual": "Must be at least {{comparisonValue}}.",
+  "inclusiveBetween": "Must be between {{from}} and {{to}}.",
+  "invalid": "This value is not valid."
+}

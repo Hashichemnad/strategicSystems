@@ -17,6 +17,8 @@ internal static class SpaHosting
             return;
         }
 
+        // "/" itself: the catch-all fallback route below does not match an empty path.
+        app.UseDefaultFiles(new DefaultFilesOptions { FileProvider = files });
         app.UseStaticFiles(new StaticFileOptions
         {
             FileProvider = files,
@@ -38,7 +40,7 @@ internal static class SpaHosting
         }
 
         app.MapFallbackToFile(
-            "{*path:regex(^(?!(api|mcp|health|openapi)(/|$)).*$)}",
+            "{*path:nonfile:regex(^(?!(api|mcp|health|openapi)(/|$)).*$)}",
             "index.html",
             new StaticFileOptions
             {
