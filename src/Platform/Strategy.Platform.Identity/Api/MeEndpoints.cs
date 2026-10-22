@@ -19,9 +19,6 @@ namespace Strategy.Platform.Identity.Api;
 /// <summary>Self-service profile (<c>/api/v1/identity/me</c>): the caller's own account only.</summary>
 internal static class MeEndpoints
 {
-    /// <summary>Claim the cookie handler adds when a server-side session store is used.</summary>
-    private const string SessionIdClaim = "Microsoft.AspNetCore.Authentication.Cookies-SessionId";
-
     private static Error InteractiveOnly => new("auth.interactiveOnly", "auth.errors.interactiveOnly", ErrorKind.Forbidden);
 
     public static void Map(RouteGroupBuilder group)
@@ -409,7 +406,7 @@ internal static class MeEndpoints
         context.User.UserId() is { } id ? await users.FindByIdAsync(id.ToString()) : null;
 
     private static Guid? CurrentSessionId(HttpContext context) =>
-        Guid.TryParse(context.User.FindFirst(SessionIdClaim)?.Value, out var id) ? id : null;
+        Guid.TryParse(context.User.FindFirst(IdentityClaims.SessionId)?.Value, out var id) ? id : null;
 }
 
 public sealed record MeEmployeeDto(Guid Id, string EmployeeNo, string? NameAr, string? NameEn, Guid UnitId, string? UnitNameAr, string? UnitNameEn);

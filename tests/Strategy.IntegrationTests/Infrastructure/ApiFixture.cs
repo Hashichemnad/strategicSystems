@@ -9,6 +9,8 @@ public sealed class ApiFixture(PostgresFixture postgres) : IAsyncLifetime
 
     public ApiFactory Factory { get; private set; } = null!;
 
+    public PostgresFixture Postgres => postgres;
+
     /// <summary>One signed-in regular user per test class (tests that change the user's own state create their own).</summary>
     public Task<HttpClient> UserClientAsync() => CachedAsync(() => _userClient, c => _userClient = c, admin: false);
 

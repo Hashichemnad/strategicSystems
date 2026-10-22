@@ -10,6 +10,9 @@ public static class IdentityClaims
     public const string Enrolment = "strategy:enrol";
 
     public const string PreferredLanguage = "strategy:lang";
+
+    /// <summary>Id of the server-side session (<c>identity.user_session</c>) the request belongs to.</summary>
+    public const string SessionId = "strategy:sid";
 }
 
 /// <summary>Values of the <c>amr</c> claim.</summary>

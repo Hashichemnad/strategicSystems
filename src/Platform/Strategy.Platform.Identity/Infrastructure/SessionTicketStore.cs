@@ -34,8 +34,11 @@ internal sealed class SessionTicketStore(
     {
         ArgumentNullException.ThrowIfNull(ticket);
         var now = clock.UtcNow;
+        var sessionId = Guid.CreateVersion7();
+        WithSessionId(ticket, sessionId);
         var session = new UserSession
         {
+            Id = sessionId,
             UserId = ticket.Principal.UserId() ?? throw new InvalidOperationException("Ticket without user id."),
             Ticket = Protect(ticket),
             Method = ticket.Principal.FindFirst(StrategyClaims.AuthMethod)?.Value ?? "pwd",
@@ -67,6 +70,7 @@ internal sealed class SessionTicketStore(
         var session = await db.Sessions.FirstOrDefaultAsync(s => s.Id == id, cancellationToken).ConfigureAwait(false);
         if (session is { RevokedAt: null })
         {
+            WithSessionId(ticket, id);
             session.Ticket = Protect(ticket);
             session.LastSeenAt = clock.UtcNow;
             await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
@@ -135,6 +139,20 @@ internal sealed class SessionTicketStore(
         {
             session.RevokedAt = clock.UtcNow;
             await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        }
+    }
+
+    /// <summary>Puts the session id on the principal, so "this session" can be recognised (renewals rebuild the principal).</summary>
+    private static void WithSessionId(AuthenticationTicket ticket, Guid sessionId)
+    {
+        if (ticket.Principal.Identity is System.Security.Claims.ClaimsIdentity identity)
+        {
+            foreach (var existing in identity.FindAll(IdentityClaims.SessionId).ToList())
+            {
+                identity.RemoveClaim(existing);
+            }
+
+            identity.AddClaim(new System.Security.Claims.Claim(IdentityClaims.SessionId, sessionId.ToString("N")));
         }
     }
 
