@@ -38,7 +38,7 @@ export function SampleListPage() {
   const toast = useToast();
   const search = route.useSearch();
   const navigate = route.useNavigate();
-  const [searchText, setSearchText] = useState(search.search);
+  const [searchText, setSearchText] = useState(search.search ?? '');
   const [editing, setEditing] = useState<SampleItem | undefined>();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [confirming, setConfirming] = useState<SampleItem | undefined>();
@@ -54,9 +54,9 @@ export function SampleListPage() {
 
   // Debounce typing into the URL (so the view is shareable) and reset to page 1.
   useEffect(() => {
-    if (searchText === search.search) return;
+    if (searchText === (search.search ?? '')) return;
     const timer = window.setTimeout(
-      () => void navigate({ search: (prev) => ({ ...prev, search: searchText, page: 1 }) }),
+      () => void navigate({ search: (prev) => ({ ...prev, search: searchText || undefined, page: 1 }) }),
       300,
     );
     return () => window.clearTimeout(timer);

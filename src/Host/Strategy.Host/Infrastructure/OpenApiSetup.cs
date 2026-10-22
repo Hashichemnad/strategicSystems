@@ -52,7 +52,7 @@ internal static class OpenApiSetup
     private static OpenApiSchema ProblemSchema()
     {
         static OpenApiSchema Str() => new() { Type = JsonSchemaType.String };
-        static OpenApiSchema Obj() => new() { Type = JsonSchemaType.Object, AdditionalPropertiesAllowed = true };
+        static OpenApiSchema Obj() => new() { Type = JsonSchemaType.Object, AdditionalProperties = new OpenApiSchema() };
 
         return new OpenApiSchema
         {

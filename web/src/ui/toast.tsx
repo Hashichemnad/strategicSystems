@@ -38,7 +38,11 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 
   return (
     <ToastContext value={show}>
-      <ToastPrimitive.Provider swipeDirection={rtl ? 'left' : 'right'} duration={5000}>
+      <ToastPrimitive.Provider
+        label={t('status.notification')}
+        swipeDirection={rtl ? 'left' : 'right'}
+        duration={5000}
+      >
         {children}
         {toasts.map((toast) => {
           const { className, icon: Icon } = toneStyles[toast.tone];

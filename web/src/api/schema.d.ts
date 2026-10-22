@@ -114,14 +114,18 @@ export interface components {
       instance?: string;
       code: string;
       messageKey: string;
-      params?: Record<string, never>;
+      params?: {
+        [key: string]: unknown;
+      };
       traceId?: string;
       correlationId?: string;
       errors?: {
         field: string;
         code: string;
         messageKey: string;
-        params?: Record<string, never>;
+        params?: {
+          [key: string]: unknown;
+        };
       }[];
     };
     SampleItemDto: {

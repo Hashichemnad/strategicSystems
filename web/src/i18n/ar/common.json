@@ -32,7 +32,8 @@
   "status": {
     "loading": "جارٍ التحميل…",
     "saved": "تم الحفظ",
-    "aiGenerated": "مُنشأ بالذكاء الاصطناعي"
+    "aiGenerated": "مُنشأ بالذكاء الاصطناعي",
+    "notification": "إشعار"
   },
   "stepper": {
     "label": "مراحل التقدم",

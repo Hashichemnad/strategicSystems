@@ -419,7 +419,8 @@
             "type": "string"
           },
           "params": {
-            "type": "object"
+            "type": "object",
+            "additionalProperties": { }
           },
           "traceId": {
             "type": "string"
@@ -447,7 +448,8 @@
                   "type": "string"
                 },
                 "params": {
-                  "type": "object"
+                  "type": "object",
+                  "additionalProperties": { }
                 }
               }
             }

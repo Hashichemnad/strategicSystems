@@ -11,7 +11,7 @@ const homeRoute = createRoute({ getParentRoute: () => rootRoute, path: '/', comp
 /** List state lives in typed search params, so views are shareable links (and saved views later). */
 export const sampleSearchSchema = z.object({
   page: z.coerce.number().int().min(1).catch(1),
-  search: z.string().max(200).catch(''),
+  search: z.string().max(200).optional().catch(undefined),
   status: z.enum(['active', 'inactive']).optional().catch(undefined),
   sort: z.string().max(50).catch('-createdAt'),
 });
@@ -22,7 +22,7 @@ export const sampleRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/sample',
   validateSearch: (search: Record<string, unknown>): SampleSearch =>
-    sampleSearchSchema.parse({ page: 1, search: '', sort: '-createdAt', ...search }),
+    sampleSearchSchema.parse({ page: 1, sort: '-createdAt', ...search }),
   // Each system's pages load on demand, so the shell stays small as modules are added.
   component: lazyRouteComponent(() => import('@/features/sample/SampleListPage'), 'SampleListPage'),
 });

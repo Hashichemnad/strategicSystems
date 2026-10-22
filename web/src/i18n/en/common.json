@@ -28,7 +28,8 @@
   "status": {
     "loading": "Loading…",
     "saved": "Saved",
-    "aiGenerated": "AI-generated"
+    "aiGenerated": "AI-generated",
+    "notification": "Notification"
   },
   "stepper": {
     "label": "Progress",
