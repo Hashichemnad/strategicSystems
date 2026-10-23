@@ -1,4 +1,4 @@
-import { createItemViaApi, expect, test, text } from './fixtures';
+import { apiPut, createItemViaApi, expect, test, text } from './fixtures';
 
 test('shell renders in the user language and direction', async ({ page, language, shot }) => {
   await page.goto('/');
@@ -68,7 +68,8 @@ test('UI kit renders every shared component', async ({ page, language, shot }) =
   ).toBeVisible();
   await shot('ui-kit', { fullPage: true });
 
-  await page.evaluate(() => localStorage.setItem('strategy.theme', 'dark'));
+  // The theme follows the profile once signed in.
+  await apiPut(page, '/api/v1/identity/me/preferences', { language, theme: 'dark' });
   await page.reload();
   await expect(page.locator('html')).toHaveClass(/dark/);
   await shot('ui-kit-dark', { fullPage: true });

@@ -68,6 +68,8 @@ services:
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Production}
       ConnectionStrings__Strategy: Host=postgres;Port=5432;Database=${POSTGRES_DB:-strategy};Username=${POSTGRES_USER:-strategy};Password=${POSTGRES_PASSWORD:-strategy}
       Modules__Sample__Enabled: ${MODULE_SAMPLE_ENABLED:-false}
+      DataProtection__CertificatePath: ${DATAPROTECTION_CERTIFICATE_PATH:-}
+      DataProtection__CertificatePassword: ${DATAPROTECTION_CERTIFICATE_PASSWORD:-}
       OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-}
     ports:
       - "${APP_PORT:-8080}:8080"

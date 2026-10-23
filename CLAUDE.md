@@ -225,6 +225,9 @@ docker compose -f deploy/docker-compose.yml up -d postgres gotenberg mailpit
 dotnet tool restore
 dotnet run --project src/Host/Strategy.Host
 dotnet run --project src/Host/Strategy.Host -- --migrate                      # apply migrations and exit
+dotnet run --project src/Host/Strategy.Host -- --create-admin --email <e> --password-file <f>   # first administrator
+# Development seed (empty DB): mariam@strategy.local (admin, must use MFA) / ahmed@strategy.local, password Strategy#Demo2026.
+# Seed__AdminTotpKey=<base32> gives the admin a known authenticator key (E2E uses JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP).
 
 # Module migration (one DbContext + schema per module, ADR 0006)
 dotnet ef migrations add <Name> -p src/Modules/<M>/Strategy.Modules.<M> -s src/Host/Strategy.Host -c <M>DbContext -o Infrastructure/Migrations
@@ -242,10 +245,12 @@ dotnet test --solution Strategy.slnx                                          # 
 tools/check-vulnerable.sh && tools/check-api-client.sh
 cd web && npm run lint && npm run format:check && npm run typecheck && npm test
 npm run build && npm audit --audit-level=high && npm run lint:licenses
-npx playwright test                                                           # E2E, projects "ar" and "en"
+npx playwright test                                                           # E2E, projects "ar" and "en" (needs postgres + mailpit; starts the host)
 
 # Containerised install (http://localhost:8080)
 docker compose -f deploy/docker-compose.yml --profile app up -d --build
 ```
+CI resolves `global.json` (`rollForward: latestFeature`) to the newest .NET 10 SDK, whose analyzers can be stricter than an
+older local SDK (e.g. IDE0005): check `dotnet --version` and keep the local SDK current.
 Integration tests: `TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX=mirror.gcr.io/` behind a Docker Hub limit, or
 `STRATEGY_TEST_POSTGRES=<admin connection string>` to reuse a running server. Keep this section accurate.

@@ -33,3 +33,11 @@ export {
 export { Tabs, TabsContent, TabsList, TabsTrigger } from './tabs';
 export { ToastProvider, useToast } from './toast';
 export { Wizard, type WizardStep } from './wizard';
+export { Avatar } from './avatar';
+export { CopyField } from './copy-field';
+export { FileDrop } from './file-drop';
+export { OrgChart } from './org-chart';
+export { OtpInput } from './otp-input';
+export { Checkbox, Switch } from './toggle';
+export { buildTree, type FlatNode, type TreeNode } from './tree';
+export { TreeView } from './tree-view';

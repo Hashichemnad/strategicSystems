@@ -1,0 +1,34 @@
+{
+  "passwordReset": {
+    "subject": { "en": "Reset your password", "ar": "إعادة تعيين كلمة المرور" },
+    "body": {
+      "en": ["Hello {{name}},", "We received a request to reset your password. The link below is valid for 60 minutes.", "{{button}}", "If you did not ask for this, ignore this email; your password stays the same."],
+      "ar": ["مرحباً {{name}}،", "تلقّينا طلباً لإعادة تعيين كلمة المرور. الرابط أدناه صالح لمدة 60 دقيقة.", "{{button}}", "إذا لم تطلب ذلك فتجاهل هذه الرسالة، ولن تتغير كلمة المرور."]
+    },
+    "button": { "en": "Reset password", "ar": "إعادة تعيين كلمة المرور" }
+  },
+  "invitation": {
+    "subject": { "en": "Your account is ready", "ar": "حسابك جاهز" },
+    "body": {
+      "en": ["Hello {{name}},", "An account has been created for you. Your user name is {{userName}}. Set your password with the link below (valid for 3 days).", "{{button}}"],
+      "ar": ["مرحباً {{name}}،", "تم إنشاء حساب لك. اسم المستخدم: {{userName}}. عيّن كلمة المرور من الرابط أدناه (صالح لمدة 3 أيام).", "{{button}}"]
+    },
+    "button": { "en": "Set password", "ar": "تعيين كلمة المرور" }
+  },
+  "emailCode": {
+    "subject": { "en": "Your sign-in code", "ar": "رمز تسجيل الدخول" },
+    "body": {
+      "en": ["Hello {{name}},", "Your one-time sign-in code is:", "{{code}}", "It expires in a few minutes. Never share it with anyone."],
+      "ar": ["مرحباً {{name}}،", "رمز الدخول لمرة واحدة هو:", "{{code}}", "تنتهي صلاحيته خلال دقائق. لا تشاركه مع أي شخص."]
+    }
+  },
+  "test": {
+    "subject": { "en": "Test email", "ar": "رسالة تجريبية" },
+    "body": {
+      "en": ["This is a test email from the Integrated Strategy System. Email delivery works."],
+      "ar": ["هذه رسالة تجريبية من نظام الاستراتيجية المتكامل. إرسال البريد يعمل."]
+    }
+  },
+  "footer": { "en": "This is an automated message. Please do not reply.", "ar": "هذه رسالة آلية، يرجى عدم الرد عليها." },
+  "orgName": { "en": "Integrated Strategy System", "ar": "نظام الاستراتيجية المتكامل" }
+}

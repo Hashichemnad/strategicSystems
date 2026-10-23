@@ -34,7 +34,8 @@ export function StatusBanner({ tone = 'info', title, description, actions, class
   const { className: toneClass, icon: Icon } = tones[tone];
   return (
     <section
-      role="status"
+      // Errors interrupt (alert); everything else is announced politely (status).
+      role={tone === 'danger' ? 'alert' : 'status'}
       className={cn(
         'flex flex-col gap-3 rounded-lg border p-4 sm:flex-row sm:items-center sm:justify-between',
         toneClass,

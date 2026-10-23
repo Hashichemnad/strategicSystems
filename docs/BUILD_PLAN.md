@@ -73,12 +73,12 @@ Implement, test (unit, integration with Testcontainers, E2E login in AR and EN),
 ```
 
 **Acceptance checks**
-- [ ] Admin builds a 4-level org structure, re-parents a unit, and historical records still show the old structure.
-- [ ] Import employees and units from the Excel templates (with validation report).
-- [ ] Local login with MFA works; lockout after failed attempts; password reset by email (Mailpit).
-- [ ] OIDC and SAML providers can be configured and tested against a test IdP (document how); LDAP bind tested against a container.
-- [ ] Personal access token created, used on an API call, revoked.
-- [ ] All auth events visible in logs (audit UI comes in Phase 3).
+- [x] Admin builds a 4-level org structure, re-parents a unit, and historical records still show the old structure.
+- [x] Import employees and units from the Excel templates (with validation report).
+- [x] Local login with MFA works; lockout after failed attempts; password reset by email (Mailpit).
+- [x] OIDC and SAML providers can be configured and tested against a test IdP (document how); LDAP bind tested against a container.
+- [x] Personal access token created, used on an API call, revoked.
+- [x] All auth events visible in logs (audit UI comes in Phase 3).
 
 ---
 
@@ -507,7 +507,7 @@ Implement, then run the full hardening review and fix findings, run performance 
 | Phase | Name | Status | Accepted on |
 |---|---|---|---|
 | 0 | Foundations | ☑ built — awaiting owner acceptance | |
-| 1 | Identity, Organisation, Employees | ☐ | |
+| 1 | Identity, Organisation, Employees | ☑ built — awaiting owner acceptance | |
 | 2 | Access control & Settings | ☐ | |
 | 3 | Audit, Files, Notifications, Jobs | ☐ | |
 | 4 | Approval engine & My Work | ☐ | |

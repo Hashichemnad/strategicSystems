@@ -48,5 +48,18 @@
   "datePicker": {
     "placeholder": "اختر تاريخًا",
     "open": "فتح التقويم"
+  },
+  "copy": {
+    "copy": "نسخ",
+    "copied": "تم النسخ"
+  },
+  "tree": {
+    "expand_zero": "إظهار {{count}} وحدة",
+    "expand_one": "إظهار وحدة واحدة",
+    "expand_two": "إظهار وحدتين",
+    "expand_few": "إظهار {{count}} وحدات",
+    "expand_many": "إظهار {{count}} وحدة",
+    "expand_other": "إظهار {{count}} وحدة",
+    "collapse": "إخفاء"
   }
 }
