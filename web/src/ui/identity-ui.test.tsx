@@ -135,6 +135,20 @@ describe('TreeView', () => {
     expect(onSelect).toHaveBeenCalledWith(units[1]);
   });
 
+  it('opens the branch of a unit selected from outside', async () => {
+    await renderWithProviders(
+      <TreeView
+        items={units}
+        label="Units"
+        selectedId="section"
+        onSelect={vi.fn()}
+        renderLabel={(u) => u.name}
+      />,
+    );
+    expect(screen.getByRole('treeitem', { name: 'Section' })).toHaveAttribute('aria-selected', 'true');
+    expect(screen.getByRole('treeitem', { name: 'Department' })).toHaveAttribute('aria-expanded', 'true');
+  });
+
   it.each([
     ['en', 'ArrowRight', 'ArrowLeft'],
     ['ar', 'ArrowLeft', 'ArrowRight'],

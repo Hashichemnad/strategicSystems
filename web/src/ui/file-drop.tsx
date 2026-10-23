@@ -42,6 +42,8 @@ export function FileDrop({ label, hint, accept, file, onFile, disabled }: FileDr
         id={id}
         type="file"
         accept={accept}
+        // The visible text turns into the file name; the control keeps its purpose as its name.
+        aria-label={label}
         disabled={disabled}
         className="sr-only"
         onChange={(event) => onFile(event.target.files?.[0] ?? null)}

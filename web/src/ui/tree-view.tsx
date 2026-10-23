@@ -1,5 +1,5 @@
 import { ChevronRight } from 'lucide-react';
-import { useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/cn';
 import { buildTree, type FlatNode, type TreeNode } from './tree';
@@ -33,6 +33,19 @@ export function TreeView<T extends FlatNode>({
     () => new Set(defaultExpanded ?? items.filter((item) => !item.parentId).map((item) => item.id)),
   );
   const [focusId, setFocusId] = useState<string | undefined>(selectedId);
+
+  // A selection made elsewhere (a link, the URL) is revealed: its ancestors open.
+  useEffect(() => {
+    if (!selectedId) return;
+    const parents = new Map(items.map((item) => [item.id, item.parentId ?? undefined]));
+    const ancestors: string[] = [];
+    for (let id = parents.get(selectedId); id && !ancestors.includes(id); id = parents.get(id))
+      ancestors.push(id);
+    if (ancestors.length === 0) return;
+    setExpanded((current) =>
+      ancestors.every((id) => current.has(id)) ? current : new Set([...current, ...ancestors]),
+    );
+  }, [selectedId, items]);
   const refs = useRef(new Map<string, HTMLDivElement>());
 
   const visible: TreeNode<T>[] = [];

@@ -46,12 +46,19 @@ function namespace(language: Language, ns: string): Tree {
   return tree;
 }
 
-/** `tr('ar', 'auth:login.submit')`, with `{{param}}` interpolation; plurals take the `_other` form. */
+/** `tr('ar', 'auth:login.submit')`, with `{{param}}` interpolation; plurals follow the language's rules (`_one`, `_two`, `_few`…), else `_other`. */
 export function tr(language: Language, key: string, params: Record<string, string | number> = {}): string {
   const [ns = 'common', path = ''] = key.includes(':') ? key.split(':', 2) : ['common', key];
   let node: string | Tree | undefined = namespace(language, ns);
   for (const part of path.split('.')) {
-    node = typeof node === 'object' ? (node[part] ?? node[`${part}_other`]) : undefined;
+    node =
+      typeof node === 'object'
+        ? (node[part] ??
+          (typeof params.count === 'number'
+            ? node[`${part}_${new Intl.PluralRules(language).select(params.count)}`]
+            : undefined) ??
+          node[`${part}_other`])
+        : undefined;
   }
   if (typeof node !== 'string') throw new Error(`Missing translation ${language}:${key}`);
   return node.replace(/\{\{(\w+)\}\}/gu, (_, name: string) => String(params[name] ?? ''));
@@ -62,7 +69,7 @@ export function tr(language: Language, key: string, params: Record<string, strin
 /** RFC 6238 code (SHA-1, 30 s, 6 digits) for a base32 key, as an authenticator app shows it. */
 export function totp(base32Key: string, at = Date.now()): string {
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
-  const bits = [...base32Key.replace(/[=\s]/gu, '').toUpperCase()]
+  const bits = Array.from(base32Key.replace(/[=\s]/gu, '').toUpperCase())
     .map((c) => alphabet.indexOf(c).toString(2).padStart(5, '0'))
     .join('');
   const key = Buffer.from((bits.match(/.{8}/gu) ?? []).map((byte) => parseInt(byte, 2)));
