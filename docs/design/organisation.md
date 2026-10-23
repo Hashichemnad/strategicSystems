@@ -21,7 +21,7 @@
 | `employee` | `employee_no` (unique), `name_ar`, `name_en`, `email` (unique, lower-cased), `mobile`, `job_title_ar`, `job_title_en`, `grade`, `unit_id`, `manager_employee_id`, `status`, `join_date`, `name_search` | Auditable, `xmin` |
 | `employee_assignment` | `employee_id`, `unit_id`, `manager_employee_id`, `job_title_ar`, `job_title_en`, `valid_from`, `valid_to` | History of placement |
 | `employee_photo` | `employee_id` (PK), `content_type`, `content`, `updated_at` | PNG/JPEG/WebP checked by magic number, ≤ 1 MB (ADR 0014) |
-| `delegation` | `delegator_employee_id`, `delegate_employee_id`, `from_date`, `to_date`, `scope` (jsonb list; empty = all), `reason`, `status`, `cancel_reason` | Auditable, `xmin` |
+| `delegation` | `delegator_employee_id`, `delegate_employee_id`, `from_date`, `to_date`, `scope` (`text[]` of system codes / process keys; empty = all), `reason`, `status`, `cancel_reason` | Auditable, `xmin` |
 | `org_settings` | singleton row: `enforce_level_order` | Moves to the Settings centre in Phase 2 |
 
 - **`path`** is the chain of unit ids from the root, formatted as `/<id>/<id>/…/`. It makes "unit and below" a `LIKE 'path%'` index scan, which Phase 2 data scopes use.

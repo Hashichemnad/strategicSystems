@@ -88,6 +88,10 @@ jobs:
         ports: ["5432:5432"]
         options: >-
           --health-cmd "pg_isready -U strategy" --health-interval 5s --health-timeout 5s --health-retries 20
+      # Invitation and password-reset emails are read back from Mailpit's API by the sign-in specs.
+      mailpit:
+        image: axllent/mailpit:v1.29
+        ports: ["1025:1025", "8025:8025"]
     env:
       CI: "true"
       ConnectionStrings__Strategy: Host=localhost;Port=5432;Database=strategy;Username=strategy;Password=strategy
