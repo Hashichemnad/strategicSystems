@@ -659,6 +659,10 @@ namespace Strategy.Platform.Identity.Infrastructure.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("totp_enabled");
 
+                    b.Property<long?>("TotpLastStep")
+                        .HasColumnType("bigint")
+                        .HasColumnName("totp_last_step");
+
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean")
                         .HasColumnName("two_factor_enabled");

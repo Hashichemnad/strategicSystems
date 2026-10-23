@@ -1,4 +1,4 @@
-import { test as base, expect, type Page } from '@playwright/test';
+import { test as base, expect, type APIRequestContext, type Page } from '@playwright/test';
 import { createHmac } from 'node:crypto';
 import { mkdirSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
@@ -80,34 +80,65 @@ export function totp(base32Key: string, at = Date.now()): string {
   return ((hmac.readUInt32BE(offset) & 0x7fffffff) % 1_000_000).toString().padStart(6, '0');
 }
 
-async function antiforgeryHeaders(page: Page): Promise<Record<string, string>> {
-  const response = await page.request.get('/api/v1/antiforgery/token');
+const usedSteps = new Map<string, number>();
+
+/**
+ * The code an authenticator app shows next. The server accepts each time step once (and never an older one), so repeated
+ * sign-ins with one key take the following steps, waiting for the clock only when one step ahead is already used.
+ */
+export async function nextTotp(base32Key: string): Promise<string> {
+  const key = base32Key.replace(/\s/gu, '').toUpperCase();
+  for (;;) {
+    const current = Math.floor(Date.now() / 30_000);
+    const step = Math.max(current, (usedSteps.get(key) ?? current - 1) + 1);
+    if (step <= current + 1) {
+      usedSteps.set(key, step);
+      return totp(key, step * 30_000);
+    }
+    await new Promise((resolve) => setTimeout(resolve, 30_000 - (Date.now() % 30_000) + 100));
+  }
+}
+
+/** A page (its browser session) or a separate API session. */
+export type Requester = Page | APIRequestContext;
+const requestOf = (requester: Requester): APIRequestContext =>
+  'goto' in requester ? requester.request : requester;
+
+async function antiforgeryHeaders(requester: Requester): Promise<Record<string, string>> {
+  const response = await requestOf(requester).get('/api/v1/antiforgery/token');
   const { token, headerName } = (await response.json()) as { token: string; headerName: string };
   return { [headerName]: token, 'X-Client': 'spa' };
 }
 
 /** POST as the SPA does (antiforgery token for the current session + header). */
-export async function apiPost(page: Page, url: string, data?: unknown) {
-  return page.request.post(url, { data: data ?? {}, headers: await antiforgeryHeaders(page) });
+export async function apiPost(requester: Requester, url: string, data?: unknown) {
+  return requestOf(requester).post(url, { data: data ?? {}, headers: await antiforgeryHeaders(requester) });
 }
 
-export async function apiPut(page: Page, url: string, data: unknown) {
-  return page.request.put(url, { data, headers: await antiforgeryHeaders(page) });
+export async function apiPut(requester: Requester, url: string, data: unknown) {
+  return requestOf(requester).put(url, { data, headers: await antiforgeryHeaders(requester) });
 }
 
-/** Signs a seeded user in through the API (the browser context shares the session cookie). */
-export async function signInViaApi(page: Page, user: SeedUser) {
-  const login = await apiPost(page, '/api/v1/identity/auth/login', {
+/** Signs a seeded user in through the API (a page's browser context shares the session cookie). */
+export async function signInViaApi(requester: Requester, user: SeedUser) {
+  const login = await apiPost(requester, '/api/v1/identity/auth/login', {
     login: seed.users[user],
     password: seed.password,
   });
   expect(login.status()).toBe(200);
   const { status } = (await login.json()) as { status: string };
   if (status === 'mfaRequired') {
-    const verify = await apiPost(page, '/api/v1/identity/auth/mfa/verify', {
+    // A run started less than 90 s after the previous one may find this step already used: take the next one.
+    let verify = await apiPost(requester, '/api/v1/identity/auth/mfa/verify', {
       method: 'totp',
-      code: totp(seed.adminTotpKey),
+      code: await nextTotp(seed.adminTotpKey),
     });
+    for (let retry = 0; retry < 3 && verify.status() === 400; retry++) {
+      verify = await apiPost(requester, '/api/v1/identity/auth/mfa/verify', {
+        method: 'totp',
+        code: await nextTotp(seed.adminTotpKey),
+      });
+    }
     expect(verify.status()).toBe(200);
   } else {
     expect(status).toBe('signedIn');
@@ -119,16 +150,10 @@ export async function savePreferences(page: Page, language: Language) {
   expect(response.ok()).toBe(true);
 }
 
-/** Signs out of the API session and forgets the cookies, so the next step starts signed out. */
-export async function signOutViaApi(page: Page) {
-  await apiPost(page, '/api/v1/identity/auth/logout');
-  await page.context().clearCookies();
-}
-
 // ---- Organisation data (as an administrator) --------------------------------------------------------------------
 
-export async function unitIdByCode(page: Page, code: string): Promise<string> {
-  const response = await page.request.get('/api/v1/org/units/tree');
+export async function unitIdByCode(requester: Requester, code: string): Promise<string> {
+  const response = await requestOf(requester).get('/api/v1/org/units/tree');
   const units = (await response.json()) as { id: string; code: string }[];
   const unit = units.find((u) => u.code === code);
   if (!unit) throw new Error(`Unit ${code} not found`);
@@ -136,11 +161,11 @@ export async function unitIdByCode(page: Page, code: string): Promise<string> {
 }
 
 /** Points the email settings at Mailpit (the dev SMTP sink) and links back to this installation. */
-export async function useMailpit(page: Page, baseURL: string) {
-  const current = (await (await page.request.get('/api/v1/identity/admin/smtp')).json()) as {
+export async function useMailpit(admin: Requester, baseURL: string) {
+  const current = (await (await requestOf(admin).get('/api/v1/identity/admin/smtp')).json()) as {
     version: number;
   };
-  const response = await apiPut(page, '/api/v1/identity/admin/smtp', {
+  const response = await apiPut(admin, '/api/v1/identity/admin/smtp', {
     enabled: true,
     host: new URL(mailpitUrl).hostname,
     port: Number(process.env.E2E_MAILPIT_SMTP_PORT ?? 1025),
@@ -158,30 +183,33 @@ export async function useMailpit(page: Page, baseURL: string) {
 }
 
 /**
- * A fresh employee with an account and a known password (invitation email → reset endpoint), signed out afterwards.
+ * A fresh employee with an account and a known password (invitation email → reset endpoint); `page` stays signed out.
  * Tests that change MFA or tokens use one, so the shared demo users stay as seeded.
  */
-export async function createUserWithPassword(page: Page, baseURL: string, tag: string) {
+export async function createUserWithPassword(
+  page: Page,
+  admin: APIRequestContext,
+  baseURL: string,
+  tag: string,
+) {
   const email = `user.${tag}@strategy.local`;
   const password = `Start#${tag}Pw9`;
-  await signInViaApi(page, 'mariam');
-  await useMailpit(page, baseURL);
-  const employee = await apiPost(page, '/api/v1/org/employees', {
+  await useMailpit(admin, baseURL);
+  const employee = await apiPost(admin, '/api/v1/org/employees', {
     employeeNo: `E2E-${tag}`,
     nameAr: `مستخدم تجريبي ${tag}`,
     nameEn: `Test User ${tag}`,
     email,
-    unitId: await unitIdByCode(page, 'DEP-STR'),
+    unitId: await unitIdByCode(admin, 'DEP-STR'),
     joinDate: '2024-01-01',
   });
   expect(employee.status()).toBe(201);
   const since = new Date(Date.now() - 1000);
-  const account = await apiPost(page, '/api/v1/identity/admin/users', {
+  const account = await apiPost(admin, '/api/v1/identity/admin/users', {
     employeeId: ((await employee.json()) as { id: string }).id,
     sendInvitation: true,
   });
   expect(account.ok()).toBe(true);
-  await signOutViaApi(page);
 
   const link = new URL(
     /https?:\/\/\S*\/reset-password\?\S+/u.exec((await latestEmail(page, email, since)).text)?.[0] ?? '',
@@ -228,11 +256,25 @@ export async function latestEmail(
 }
 
 export const test = base.extend<
-  E2eOptions & { shot: (name: string, options?: { fullPage?: boolean }) => Promise<void> }
+  E2eOptions & { shot: (name: string, options?: { fullPage?: boolean }) => Promise<void> },
+  { adminApi: APIRequestContext }
 >({
+  /**
+   * One administrator session per worker (the admin signs in with an authenticator code, and each code is accepted once):
+   * used for setup calls and shared with pages of tests that run as the administrator. Never signed out.
+   */
+  adminApi: [
+    async ({ playwright }, use, workerInfo) => {
+      const context = await playwright.request.newContext({ baseURL: workerInfo.project.use.baseURL });
+      await signInViaApi(context, 'mariam');
+      await use(context);
+      await context.dispose();
+    },
+    { scope: 'worker' },
+  ],
   language: ['en', { option: true }],
   signedInAs: ['ahmed', { option: true }],
-  page: async ({ page, language, signedInAs }, use) => {
+  page: async ({ page, language, signedInAs, adminApi }, use) => {
     await page.addInitScript((lang) => {
       if (!sessionStorage.getItem('e2e.initialised')) {
         localStorage.setItem('strategy.language', lang);
@@ -240,8 +282,12 @@ export const test = base.extend<
         sessionStorage.setItem('e2e.initialised', '1');
       }
     }, language);
-    if (signedInAs) {
+    if (signedInAs === 'mariam') {
+      await page.context().addCookies((await adminApi.storageState()).cookies);
+    } else if (signedInAs) {
       await signInViaApi(page, signedInAs);
+    }
+    if (signedInAs) {
       // The profile's language wins after sign-in; keep it on this project's language.
       await savePreferences(page, language);
     }

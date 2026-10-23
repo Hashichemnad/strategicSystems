@@ -32,6 +32,12 @@ public sealed class StrategyUser : IdentityUser<Guid>
     /// <summary>The user has confirmed an authenticator app (TOTP) as a second factor.</summary>
     public bool TotpEnabled { get; set; }
 
+    /// <summary>
+    /// RFC 6238 time step of the last accepted authenticator code. A code is accepted only for a later step, so a seen code
+    /// cannot be replayed within the validity window. Cleared when a new authenticator key is set.
+    /// </summary>
+    public long? TotpLastStep { get; set; }
+
     /// <summary>The user has chosen email one-time codes as a second factor.</summary>
     public bool EmailOtpEnabled { get; set; }
 

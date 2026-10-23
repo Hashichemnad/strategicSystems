@@ -1,4 +1,4 @@
-import { createUserWithPassword, expect, test, totp, tr } from './fixtures';
+import { createUserWithPassword, expect, nextTotp, test, tr } from './fixtures';
 
 test.use({ signedInAs: null });
 
@@ -7,10 +7,16 @@ test('a user turns on an authenticator app, signs in with it and manages access 
   language,
   shot,
   baseURL,
+  adminApi,
   playwright,
 }) => {
   const tag = `p${language}${Date.now().toString(36)}`;
-  const { email, password } = await createUserWithPassword(page, baseURL ?? 'http://localhost:5080', tag);
+  const { email, password } = await createUserWithPassword(
+    page,
+    adminApi,
+    baseURL ?? 'http://localhost:5080',
+    tag,
+  );
   const signIn = async () => {
     await page.goto('/login?redirect=/profile');
     await page.getByLabel(tr(language, 'auth:login.userName')).fill(email);
@@ -29,7 +35,7 @@ test('a user turns on an authenticator app, signs in with it and manages access 
   const key = (await setup.getByLabel(tr(language, 'auth:setup.manualKey')).textContent()) ?? '';
   expect(key).toMatch(/^[a-z2-7 ]{16,}$/iu);
   await setup.getByLabel(`${tr(language, 'auth:mfa.code')} 1`).click();
-  await page.keyboard.type(totp(key));
+  await page.keyboard.type(await nextTotp(key));
   await shot('profile-totp-setup');
   await setup.getByRole('button', { name: tr(language, 'auth:setup.confirm') }).click();
   await expect(setup).toBeHidden();
@@ -84,7 +90,7 @@ test('a user turns on an authenticator app, signs in with it and manages access 
   await signIn();
   await expect(page).toHaveURL(/\/login\/mfa/u);
   await page.getByLabel(`${tr(language, 'auth:mfa.code')} 1`).click();
-  await page.keyboard.type(totp(key));
+  await page.keyboard.type(await nextTotp(key));
   await page.getByRole('button', { name: tr(language, 'auth:mfa.verify') }).click();
   await expect(page.getByRole('heading', { level: 1, name: tr(language, 'profile:title') })).toBeVisible();
 });

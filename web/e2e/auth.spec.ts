@@ -1,16 +1,4 @@
-import {
-  apiPost,
-  expect,
-  latestEmail,
-  seed,
-  signInViaApi,
-  signOutViaApi,
-  test,
-  totp,
-  tr,
-  unitIdByCode,
-  useMailpit,
-} from './fixtures';
+import { apiPost, expect, latestEmail, nextTotp, seed, test, tr, unitIdByCode, useMailpit } from './fixtures';
 
 test.use({ signedInAs: null });
 
@@ -36,7 +24,7 @@ test('wrong password is refused; the administrator signs in with an authenticato
   await expect(page).toHaveURL(/\/login\/mfa/u);
   await expect(page.getByText(tr(language, 'auth:mfa.instructions.totp'))).toBeVisible();
   await page.getByLabel(`${tr(language, 'auth:mfa.code')} 1`).click();
-  await page.keyboard.type(totp(seed.adminTotpKey));
+  await page.keyboard.type(await nextTotp(seed.adminTotpKey));
   await shot('login-mfa');
   await page.getByRole('button', { name: tr(language, 'auth:mfa.verify') }).click();
 
@@ -59,6 +47,7 @@ test('an invited employee sets a password from the email, then resets a forgotte
   language,
   shot,
   baseURL,
+  adminApi,
 }) => {
   const tag = `${language}${Date.now().toString(36)}`;
   const email = `invitee.${tag}@strategy.local`;
@@ -66,22 +55,23 @@ test('an invited employee sets a password from the email, then resets a forgotte
   const secondPassword = `Changed#${tag}B2`;
 
   // The administrator adds the employee and an account; the invitation goes out by email.
-  await signInViaApi(page, 'mariam');
-  await useMailpit(page, baseURL ?? 'http://localhost:5080');
-  const employee = await apiPost(page, '/api/v1/org/employees', {
+  await useMailpit(adminApi, baseURL ?? 'http://localhost:5080');
+  const employee = await apiPost(adminApi, '/api/v1/org/employees', {
     employeeNo: `E2E-${tag}`,
     nameAr: `موظف تجريبي ${tag}`,
     nameEn: `Test Employee ${tag}`,
     email,
-    unitId: await unitIdByCode(page, 'DEP-STR'),
+    unitId: await unitIdByCode(adminApi, 'DEP-STR'),
     joinDate: '2024-01-01',
   });
   expect(employee.status()).toBe(201);
   const { id: employeeId } = (await employee.json()) as { id: string };
   const invitedAt = new Date(Date.now() - 1000);
-  const account = await apiPost(page, '/api/v1/identity/admin/users', { employeeId, sendInvitation: true });
+  const account = await apiPost(adminApi, '/api/v1/identity/admin/users', {
+    employeeId,
+    sendInvitation: true,
+  });
   expect(account.status()).toBe(200);
-  await signOutViaApi(page);
 
   const invitation = await latestEmail(page, email, invitedAt);
   const inviteLink = /https?:\/\/\S*\/reset-password\?\S+/u.exec(invitation.text)?.[0];

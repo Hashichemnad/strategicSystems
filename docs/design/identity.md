@@ -9,7 +9,7 @@
 ## Data model (schema `identity`)
 | Table | Notes |
 |---|---|
-| `users` | ASP.NET Core Identity user (Guid v7 key) + `employee_id` (unique; null only for the bootstrap admin), `principal_type` (`internal`), `is_system_admin` (interim, ADR 0009), `language`, `theme`, `active`, `last_sign_in_at`, `created_at`, `password_changed_at` |
+| `users` | ASP.NET Core Identity user (Guid v7 key) + `employee_id` (unique; null only for the bootstrap admin), `principal_type` (`internal`), `is_system_admin` (interim, ADR 0009), `language`, `theme`, `active`, `last_sign_in_at`, `created_at`, `password_changed_at`, `totp_last_step` (last accepted authenticator time step; replay protection) |
 | `user_logins` | External logins: `login_provider` = provider code, `provider_key` = subject / NameID / LDAP DN |
 | `user_tokens` | Authenticator key (protected), recovery codes (hashed) |
 | `user_claims` | Unused (roles come from `access` in Phase 2) |
@@ -44,7 +44,7 @@
 | anonymous | valid credentials, user has MFA | **mfaRequired** (two-factor cookie, 5 min) |
 | anonymous | valid credentials, policy requires MFA, none set up | **mfaEnrolmentRequired** (enrolment cookie: TOTP or email only) |
 | anonymous | invalid credentials / inactive / locked | stays anonymous; 400 `auth.invalidCredentials` or 423-style 400 `auth.lockedOut` (no user enumeration) |
-| mfaRequired | `POST /auth/mfa/verify` with a correct code | signedIn |
+| mfaRequired | `POST /auth/mfa/verify` with a correct code (an authenticator code only for a time step later than the last one used) | signedIn |
 | mfaEnrolmentRequired | `POST /auth/mfa/enrol/totp/confirm` or `.../email/confirm` | signedIn (+ recovery codes shown once) |
 | signedIn | `POST /auth/logout` | anonymous (session revoked) |
 | any | password expired | **passwordChangeRequired** (Phase 1: only when max age > 0) |

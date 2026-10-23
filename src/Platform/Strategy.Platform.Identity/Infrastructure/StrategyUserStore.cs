@@ -17,8 +17,12 @@ internal sealed class StrategyUserStore(IdentityStoreDbContext context, ISecretP
     private const string AuthenticatorKeyTokenName = "AuthenticatorKey";
     private const string RecoveryCodeTokenName = "RecoveryCodes";
 
-    public override Task SetAuthenticatorKeyAsync(StrategyUser user, string key, CancellationToken cancellationToken) =>
-        SetTokenAsync(user, InternalLoginProvider, AuthenticatorKeyTokenName, protector.Protect(SecretPurposes.AuthenticatorKey, key), cancellationToken);
+    public override Task SetAuthenticatorKeyAsync(StrategyUser user, string key, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(user);
+        user.TotpLastStep = null; // a new key starts with no used codes
+        return SetTokenAsync(user, InternalLoginProvider, AuthenticatorKeyTokenName, protector.Protect(SecretPurposes.AuthenticatorKey, key), cancellationToken);
+    }
 
     public override async Task<string?> GetAuthenticatorKeyAsync(StrategyUser user, CancellationToken cancellationToken) =>
         protector.Unprotect(SecretPurposes.AuthenticatorKey,

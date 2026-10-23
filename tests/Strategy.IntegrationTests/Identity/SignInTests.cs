@@ -103,7 +103,7 @@ public class SignInTests(ApiFixture api) : IClassFixture<ApiFixture>
         await (await client.PostAsJsonAsync($"{Auth}/mfa/verify", new { method = "email", code = "123456" }))
             .ShouldBeProblemAsync(HttpStatusCode.BadRequest, "auth.invalidCode"); // email codes are not enabled for this user
 
-        var verified = await client.PostAsJsonAsync($"{Auth}/mfa/verify", new { method = "totp", code = Totp.Code(user.TotpKey!) });
+        var verified = await client.PostAsJsonAsync($"{Auth}/mfa/verify", new { method = "totp", code = await Totp.NextCodeAsync(user.TotpKey!) });
         (await verified.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("status").GetString().ShouldBe(SignInStatuses.SignedIn);
         await client.RefreshAntiforgeryAsync();
         (await client.GetFromJsonAsync<JsonElement>("/api/v1/identity/me")).GetProperty("authMethod").GetString().ShouldBe("mfa");
@@ -119,6 +119,49 @@ public class SignInTests(ApiFixture api) : IClassFixture<ApiFixture>
         (await third.LoginAsync(user.UserName, user.Password)).ShouldBe(SignInStatuses.MfaRequired);
         await (await third.PostAsJsonAsync($"{Auth}/mfa/verify", new { method = "recovery", code = recovery }))
             .ShouldBeProblemAsync(HttpStatusCode.BadRequest, "auth.invalidCode");
+    }
+
+    [Fact]
+    public async Task A_totp_code_is_accepted_once_and_older_codes_are_refused()
+    {
+        var user = await api.Factory.CreateUserAsync(withMfa: true);
+        var now = DateTimeOffset.UtcNow;
+        var previous = Totp.Code(user.TotpKey!, now.AddSeconds(-30));
+        var current = Totp.Code(user.TotpKey!, now);
+        var next = Totp.Code(user.TotpKey!, now.AddSeconds(30));
+
+        (await VerifyTotpAsync(user, current)).StatusCode.ShouldBe(HttpStatusCode.OK);
+        // The same code again (someone who saw it), and an unused code of an earlier step, are both refused.
+        await (await VerifyTotpAsync(user, current)).ShouldBeProblemAsync(HttpStatusCode.BadRequest, "auth.invalidCode");
+        await (await VerifyTotpAsync(user, previous)).ShouldBeProblemAsync(HttpStatusCode.BadRequest, "auth.invalidCode");
+        // The app's next code works.
+        (await VerifyTotpAsync(user, next)).StatusCode.ShouldBe(HttpStatusCode.OK);
+        await (await VerifyTotpAsync(user, next)).ShouldBeProblemAsync(HttpStatusCode.BadRequest, "auth.invalidCode");
+    }
+
+    [Fact]
+    public async Task The_code_that_confirms_an_authenticator_cannot_be_used_again_to_sign_in()
+    {
+        var user = await api.Factory.CreateUserAsync();
+        var client = await api.Factory.SignInAsync(user);
+        var setup = await (await client.PostAsync("/api/v1/identity/me/mfa/totp", null)).Content.ReadFromJsonAsync<JsonElement>();
+        var key = setup.GetProperty("sharedKey").GetString()!.Replace(" ", string.Empty, StringComparison.Ordinal);
+        var now = DateTimeOffset.UtcNow;
+        var confirmCode = Totp.Code(key, now);
+        (await client.PostAsJsonAsync("/api/v1/identity/me/mfa/confirm", new { method = "totp", code = confirmCode }))
+            .StatusCode.ShouldBe(HttpStatusCode.OK);
+
+        var withTotp = user with { TotpKey = key };
+        await (await VerifyTotpAsync(withTotp, confirmCode)).ShouldBeProblemAsync(HttpStatusCode.BadRequest, "auth.invalidCode");
+        (await VerifyTotpAsync(withTotp, Totp.Code(key, now.AddSeconds(30)))).StatusCode.ShouldBe(HttpStatusCode.OK);
+    }
+
+    /// <summary>Password, then the given authenticator code, on a new browser-like client.</summary>
+    private async Task<HttpResponseMessage> VerifyTotpAsync(TestUser user, string code)
+    {
+        var client = await api.Factory.CreateSpaClientAsync();
+        (await client.LoginAsync(user.UserName, user.Password)).ShouldBe(SignInStatuses.MfaRequired);
+        return await client.PostAsJsonAsync($"{Auth}/mfa/verify", new { method = "totp", code });
     }
 
     [Fact]
@@ -138,7 +181,7 @@ public class SignInTests(ApiFixture api) : IClassFixture<ApiFixture>
 
         await (await client.PostAsJsonAsync($"{Auth}/mfa/enrol/confirm", new { method = "totp", code = "111111" }))
             .ShouldBeProblemAsync(HttpStatusCode.BadRequest, "auth.invalidCode");
-        var confirmed = await client.PostAsJsonAsync($"{Auth}/mfa/enrol/confirm", new { method = "totp", code = Totp.Code(key) });
+        var confirmed = await client.PostAsJsonAsync($"{Auth}/mfa/enrol/confirm", new { method = "totp", code = await Totp.NextCodeAsync(key) });
         var result = await confirmed.Content.ReadFromJsonAsync<JsonElement>();
         result.GetProperty("status").GetString().ShouldBe(SignInStatuses.SignedIn);
         result.GetProperty("recoveryCodes").GetArrayLength().ShouldBe(10);

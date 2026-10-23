@@ -77,7 +77,7 @@ public static class TestIdentity
         var outcome = await client.LoginAsync(user.UserName, user.Password);
         if (outcome == SignInStatuses.MfaRequired)
         {
-            var verify = await client.PostAsJsonAsync("/api/v1/identity/auth/mfa/verify", new { method = "totp", code = Totp.Code(user.TotpKey!) });
+            var verify = await client.PostAsJsonAsync("/api/v1/identity/auth/mfa/verify", new { method = "totp", code = await Totp.NextCodeAsync(user.TotpKey!) });
             verify.StatusCode.ShouldBe(HttpStatusCode.OK, await verify.Content.ReadAsStringAsync());
             outcome = (await verify.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("status").GetString();
         }
@@ -140,6 +140,39 @@ public static class Totp
         }
 
         return builder.ToString();
+    }
+
+    private static readonly Dictionary<string, long> LastStepUsed = new(StringComparer.Ordinal);
+    private static readonly SemaphoreSlim LastStepGate = new(1, 1);
+
+    /// <summary>
+    /// The code an authenticator app would show next for this key: the server accepts each time step once (and never an older
+    /// one), so repeated sign-ins of one user take the following steps, waiting for the clock only when one step ahead is used.
+    /// </summary>
+    public static async Task<string> NextCodeAsync(string base32Key)
+    {
+        var key = base32Key.Replace(" ", string.Empty, StringComparison.Ordinal).ToUpperInvariant();
+        await LastStepGate.WaitAsync();
+        try
+        {
+            while (true)
+            {
+                var now = DateTimeOffset.UtcNow;
+                var current = now.ToUnixTimeSeconds() / 30;
+                var step = LastStepUsed.TryGetValue(key, out var last) ? Math.Max(current, last + 1) : current;
+                if (step <= current + 1)
+                {
+                    LastStepUsed[key] = step;
+                    return Code(key, DateTimeOffset.FromUnixTimeSeconds(step * 30));
+                }
+
+                await Task.Delay(TimeSpan.FromSeconds(30 - (now.ToUnixTimeSeconds() % 30)) + TimeSpan.FromMilliseconds(100));
+            }
+        }
+        finally
+        {
+            LastStepGate.Release();
+        }
     }
 
     public static string Code(string base32Key, DateTimeOffset? at = null)
