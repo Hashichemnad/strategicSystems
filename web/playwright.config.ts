@@ -54,6 +54,10 @@ export default defineConfig<E2eOptions>({
           ASPNETCORE_ENVIRONMENT: 'Development',
           ConnectionStrings__Strategy: connectionString,
           Spa__RootPath: '../../../web/dist',
+          // Many sign-ins from one IP in a few seconds; production keeps the default limit.
+          RateLimiting__AuthPermitLimit: '1000',
+          // Known authenticator key for the seeded administrator, so tests can compute codes.
+          Seed__AdminTotpKey: process.env.E2E_ADMIN_TOTP_KEY ?? 'JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP',
         },
       },
 });

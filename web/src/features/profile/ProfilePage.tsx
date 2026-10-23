@@ -55,8 +55,12 @@ export function ProfilePage() {
     <div className="flex flex-col gap-6">
       <PageHeader
         title={t('title')}
-        description={name}
-        meta={me?.employee && pickText(i18n.language, me.employee.unitNameAr, me.employee.unitNameEn)}
+        description={[
+          name,
+          me?.employee && pickText(i18n.language, me.employee.unitNameAr, me.employee.unitNameEn),
+        ]
+          .filter(Boolean)
+          .join(' · ')}
       />
       <Tabs
         value={tab}
@@ -416,6 +420,7 @@ function SessionsPanel() {
 }
 
 const tokenScopes = ['api.read', 'api.write', 'mcp'] as const;
+const scopeLabelKeys = { 'api.read': 'apiRead', 'api.write': 'apiWrite', mcp: 'mcp' } as const;
 
 function TokensPanel() {
   const { t } = useTranslation('profile');
@@ -546,7 +551,7 @@ function TokensPanel() {
                 {tokenScopes.map((scope) => (
                   <Checkbox
                     key={scope}
-                    label={t(`tokens.scopeLabels.${scope}`)}
+                    label={t(`tokens.scopeLabels.${scopeLabelKeys[scope]}`)}
                     description={scope}
                     checked={scopes.includes(scope)}
                     onChange={(e) =>

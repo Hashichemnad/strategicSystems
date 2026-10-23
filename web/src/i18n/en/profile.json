@@ -72,8 +72,8 @@
     "create": "New token",
     "lifetimeDays": "Valid for (days)",
     "scopeLabels": {
-      "api.read": "Read data",
-      "api.write": "Read and change data",
+      "apiRead": "Read data",
+      "apiWrite": "Read and change data",
       "mcp": "AI assistants (MCP)"
     },
     "copyNow": "Copy the token now. It will not be shown again.",
