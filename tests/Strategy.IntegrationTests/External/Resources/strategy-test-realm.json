@@ -23,6 +23,16 @@
       "enabled": true,
       "attributes": { "userType": ["SOP1"] },
       "credentials": [{ "type": "password", "value": "Kc#Password2026", "temporary": false }]
+    },
+    {
+      "username": "kc.stranger",
+      "email": "kc.stranger@example.test",
+      "emailVerified": true,
+      "firstName": "Stranger",
+      "lastName": "User",
+      "enabled": true,
+      "attributes": { "userType": ["SOP2"] },
+      "credentials": [{ "type": "password", "value": "Kc#Password2026", "temporary": false }]
     }
   ],
   "clients": [

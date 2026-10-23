@@ -58,8 +58,9 @@ public partial class ExternalProviderTests(IdentityProviderContainers idp) : ICl
         // Second time: the stored link is used.
         (await RedirectSignInAsync(Browser(), "kc", "kc.user")).ShouldBe("/org/units");
 
-        // Nobody matches this person: no account is created, the login page shows why.
-        (await RedirectSignInAsync(Browser(), "kc", "kc.visitor")).ShouldBe("/login?error=auth.errors.externalNoMatch");
+        // Nobody matches this person: no account is created, the login page shows why. (kc.stranger is never made an
+        // employee by any test, so the outcome does not depend on the order the tests run in.)
+        (await RedirectSignInAsync(Browser(), "kc", "kc.stranger")).ShouldBe("/login?error=auth.errors.externalNoMatch");
     }
 
     [Fact]
