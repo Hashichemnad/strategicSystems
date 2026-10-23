@@ -25,6 +25,9 @@
     <PackageVersion Include="MailKit" Version="4.18.1" />
     <!-- Transitive via MimeKit: pinned to patched builds (GHSA-2fmv-rv2c-59x7, GHSA-846f-f764-76mx). -->
     <PackageVersion Include="System.Security.Cryptography.Pkcs" Version="10.0.13" />
+    <!-- Lift Sustainsys.Saml2's old transitive dependencies to current MIT releases (see Strategy.Platform.Identity.csproj). -->
+    <PackageVersion Include="Microsoft.IdentityModel.Tokens.Saml" Version="8.19.2" />
+    <PackageVersion Include="System.Configuration.ConfigurationManager" Version="10.0.13" />
   </ItemGroup>
   <ItemGroup Label="Documents">
     <PackageVersion Include="ClosedXML" Version="0.105.1" />

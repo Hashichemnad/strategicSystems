@@ -17,6 +17,13 @@
     <PackageReference Include="System.DirectoryServices.Protocols" />
     <PackageReference Include="MailKit" />
     <PackageReference Include="System.Security.Cryptography.Pkcs" />
+    <!--
+      Sustainsys.Saml2 2.11 asks for Microsoft.IdentityModel.Tokens.Saml >= 5.2.4 and ConfigurationManager >= 4.4.1, whose
+      netstandard1.x chain (NETStandard.Library 1.6.1) carries the non-OSI .NET Library licence. Current MIT versions,
+      aligned with the IdentityModel 8.x the OIDC handler already uses (CLAUDE.md §4.3).
+    -->
+    <PackageReference Include="Microsoft.IdentityModel.Tokens.Saml" />
+    <PackageReference Include="System.Configuration.ConfigurationManager" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Email\Templates\*.html" />

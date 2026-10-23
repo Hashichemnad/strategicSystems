@@ -35,6 +35,8 @@ Update this file in the same commit that adds a dependency.
 | System.DirectoryServices.Protocols | MIT | LDAP / Active Directory bind (needs `libldap` on Linux) |
 | MailKit | MIT | SMTP email |
 | System.Security.Cryptography.Pkcs | MIT | pinned patched version of a transitive dependency (MimeKit) |
+| Microsoft.IdentityModel.Tokens.Saml | MIT | current release in place of Sustainsys.Saml2's 5.2.4 minimum, whose netstandard1.x chain (NETStandard.Library 1.6.1, Microsoft.NETCore.Platforms 1.1.0) carries the non-OSI .NET Library licence |
+| System.Configuration.ConfigurationManager | MIT | current release in place of Sustainsys.Saml2's 4.4.1 minimum (no SPDX metadata) |
 | ClosedXML | MIT | Excel import templates and reports |
 | Microsoft.AspNetCore.OpenApi | MIT | OpenAPI document |
 | Microsoft.Extensions.ApiDescription.Server | MIT | build-time OpenAPI generation |
