@@ -1,7 +1,6 @@
 using System.DirectoryServices.Protocols;
 using System.Net;
 using System.Text;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Strategy.Platform.Identity.Application;
