@@ -1,6 +1,7 @@
 import { test as base, expect, type APIRequestContext, type Page } from '@playwright/test';
 import { createHmac } from 'node:crypto';
-import { mkdirSync, readFileSync } from 'node:fs';
+import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -80,22 +81,42 @@ export function totp(base32Key: string, at = Date.now()): string {
   return ((hmac.readUInt32BE(offset) & 0x7fffffff) % 1_000_000).toString().padStart(6, '0');
 }
 
-const usedSteps = new Map<string, number>();
+/**
+ * Time steps already used per key, kept in a file rather than in memory: Playwright restarts the worker after a failed
+ * test, and runs follow each other on one machine, and a reused step is refused by the server.
+ */
+const usedStepsFile = join(tmpdir(), 'strategy-e2e-totp-steps.json');
+
+function readUsedSteps(): Record<string, number> {
+  try {
+    return JSON.parse(readFileSync(usedStepsFile, 'utf8')) as Record<string, number>;
+  } catch {
+    return {};
+  }
+}
 
 /**
- * The code an authenticator app shows next. The server accepts each time step once (and never an older one), so repeated
- * sign-ins with one key take the following steps, waiting for the clock only when one step ahead is already used.
+ * The code an authenticator app shows next. The server accepts each time step once (and never an older one), within
+ * two steps of the current one, so repeated sign-ins with one key take the following steps. The clock is waited for only
+ * when two steps ahead are used; the running test then gets that time added to its timeout.
  */
 export async function nextTotp(base32Key: string): Promise<string> {
   const key = base32Key.replace(/\s/gu, '').toUpperCase();
   for (;;) {
     const current = Math.floor(Date.now() / 30_000);
-    const step = Math.max(current, (usedSteps.get(key) ?? current - 1) + 1);
-    if (step <= current + 1) {
-      usedSteps.set(key, step);
+    const steps = readUsedSteps();
+    const step = Math.max(current, (steps[key] ?? current - 1) + 1);
+    if (step <= current + 2) {
+      writeFileSync(usedStepsFile, JSON.stringify({ ...steps, [key]: step }));
       return totp(key, step * 30_000);
     }
-    await new Promise((resolve) => setTimeout(resolve, 30_000 - (Date.now() % 30_000) + 100));
+    const wait = 30_000 - (Date.now() % 30_000) + 100;
+    try {
+      base.info().setTimeout(base.info().timeout + wait);
+    } catch {
+      // Not inside a test (worker fixture): its own timeout applies.
+    }
+    await new Promise((resolve) => setTimeout(resolve, wait));
   }
 }
 

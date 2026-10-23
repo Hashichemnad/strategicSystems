@@ -1,4 +1,4 @@
-import { expect, test, tr } from './fixtures';
+import { expect, test, tr, useMailpit } from './fixtures';
 
 test.use({ signedInAs: 'mariam' });
 
@@ -59,13 +59,15 @@ test('an identity provider is configured from the UI and stays disabled until en
   expect(await offered()).toBe(false);
 });
 
-test('administration settings screens', async ({ page, language, shot }) => {
+test('administration settings screens', async ({ page, language, shot, adminApi, baseURL }) => {
   await page.goto('/admin/security');
   await expect(
     page.getByRole('heading', { level: 1, name: tr(language, 'admin:security.title') }),
   ).toBeVisible();
   await shot('admin-security', { fullPage: true });
 
+  // A configured mail server, whichever specs ran before (CI starts from an empty database).
+  await useMailpit(adminApi, baseURL ?? 'http://localhost:5080');
   await page.goto('/admin/email');
   await expect(
     page.getByRole('heading', { level: 1, name: tr(language, 'admin:email.title') }),
