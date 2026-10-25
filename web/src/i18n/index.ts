@@ -1,5 +1,17 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
+import arAdmin from './ar/admin.json';
+import enAdmin from './en/admin.json';
+import arAuth from './ar/auth.json';
+import enAuth from './en/auth.json';
+import arIdentity from './ar/identity.json';
+import enIdentity from './en/identity.json';
+import arImport from './ar/import.json';
+import enImport from './en/import.json';
+import arOrg from './ar/org.json';
+import enOrg from './en/org.json';
+import arProfile from './ar/profile.json';
+import enProfile from './en/profile.json';
 import arCommon from './ar/common.json';
 import arErrors from './ar/errors.json';
 import arSample from './ar/sample.json';
@@ -25,6 +37,12 @@ export const resources = {
     validation: arValidation,
     sample: arSample,
     uiKit: arUiKit,
+    auth: arAuth,
+    profile: arProfile,
+    org: arOrg,
+    import: arImport,
+    identity: arIdentity,
+    admin: arAdmin,
   },
   en: {
     common: enCommon,
@@ -33,6 +51,12 @@ export const resources = {
     validation: enValidation,
     sample: enSample,
     uiKit: enUiKit,
+    auth: enAuth,
+    profile: enProfile,
+    org: enOrg,
+    import: enImport,
+    identity: enIdentity,
+    admin: enAdmin,
   },
 } as const;
 
@@ -40,7 +64,7 @@ export function isLanguage(value: unknown): value is Language {
   return typeof value === 'string' && (languages as readonly string[]).includes(value);
 }
 
-/** Stored choice, else the browser's language, else Arabic. Phase 1 moves the choice to the user's profile. */
+/** Stored choice, else the browser's language, else Arabic. Signed in, the profile's language wins (AppShell). */
 export function initialLanguage(): Language {
   const stored = readPreference('language');
   if (isLanguage(stored)) return stored;

@@ -54,6 +54,11 @@ export default defineConfig<E2eOptions>({
           ASPNETCORE_ENVIRONMENT: 'Development',
           ConnectionStrings__Strategy: connectionString,
           Spa__RootPath: '../../../web/dist',
+          // The whole suite calls the API from one IP within a minute; production keeps the default limits.
+          RateLimiting__PermitLimit: '10000',
+          RateLimiting__AuthPermitLimit: '1000',
+          // Known authenticator key for the seeded administrator, so tests can compute codes.
+          Seed__AdminTotpKey: process.env.E2E_ADMIN_TOTP_KEY ?? 'JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP',
         },
       },
 });

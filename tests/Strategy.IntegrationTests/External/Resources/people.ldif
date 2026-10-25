@@ -1,0 +1,20 @@
+dn: ou=people,dc=example,dc=test
+objectClass: organizationalUnit
+ou: people
+
+dn: uid=ldap.user,ou=people,dc=example,dc=test
+objectClass: inetOrgPerson
+uid: ldap.user
+cn: LDAP User
+sn: User
+mail: ldap.user@example.test
+employeeNumber: LDAP-0001
+userPassword: Ldap#Password2026
+
+dn: uid=ldap.stranger,ou=people,dc=example,dc=test
+objectClass: inetOrgPerson
+uid: ldap.stranger
+cn: LDAP Stranger
+sn: Stranger
+mail: ldap.stranger@example.test
+userPassword: Ldap#Password2026

@@ -1,6 +1,6 @@
 # 0005 — Phase 0 access placeholder that fails closed
 
-- **Status:** Accepted, temporary (replaced in Phase 2)
+- **Status:** Superseded by [0009](0009-interim-system-admin-access.md) (Phase 1)
 - **Context:** CLAUDE.md §7 requires every endpoint to go through `IAccessService`. Users and roles arrive in
   Phases 1–2, but Phase 0 must already prove the pattern end to end.
 

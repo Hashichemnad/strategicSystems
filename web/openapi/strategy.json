@@ -36,6 +36,3266 @@
         }
       }
     },
+    "/api/v1/org/levels": {
+      "get": {
+        "tags": [
+          "org"
+        ],
+        "operationId": "ListOrgLevels",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrgLevelDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "org"
+        ],
+        "operationId": "CreateOrgLevel",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LevelInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrgLevelDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/org/levels/{id}": {
+      "put": {
+        "tags": [
+          "org"
+        ],
+        "operationId": "UpdateOrgLevel",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateLevelInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrgLevelDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/org/settings": {
+      "get": {
+        "tags": [
+          "org"
+        ],
+        "operationId": "GetOrgSettings",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrgSettingsDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "org"
+        ],
+        "operationId": "UpdateOrgSettings",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrgSettingsInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrgSettingsDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/org/units/tree": {
+      "get": {
+        "tags": [
+          "org"
+        ],
+        "operationId": "GetOrgUnitTree",
+        "parameters": [
+          {
+            "name": "asOf",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "includeInactive",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrgTreeNodeDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/org/units/{id}": {
+      "get": {
+        "tags": [
+          "org"
+        ],
+        "operationId": "GetOrgUnit",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrgUnitDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "org"
+        ],
+        "operationId": "UpdateOrgUnit",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUnitInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrgUnitDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/org/units/{id}/history": {
+      "get": {
+        "tags": [
+          "org"
+        ],
+        "operationId": "GetOrgUnitHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrgUnitVersionDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/org/units/{id}/path": {
+      "get": {
+        "tags": [
+          "org"
+        ],
+        "operationId": "GetOrgUnitPath",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "asOf",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OrgUnitPathItemDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/org/units": {
+      "post": {
+        "tags": [
+          "org"
+        ],
+        "operationId": "CreateOrgUnit",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UnitInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrgUnitDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/org/units/{id}/move": {
+      "post": {
+        "tags": [
+          "org"
+        ],
+        "operationId": "MoveOrgUnit",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MoveUnitInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrgUnitDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/org/units/{id}/deactivate": {
+      "post": {
+        "tags": [
+          "org"
+        ],
+        "operationId": "DeactivateOrgUnit",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EffectiveChangeInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrgUnitDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/org/units/{id}/activate": {
+      "post": {
+        "tags": [
+          "org"
+        ],
+        "operationId": "ActivateOrgUnit",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EffectiveChangeInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrgUnitDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/org/employees": {
+      "get": {
+        "tags": [
+          "org"
+        ],
+        "operationId": "ListEmployees",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "unitId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "includeDescendants",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResultOfEmployeeListItemDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "org"
+        ],
+        "operationId": "CreateEmployee",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmployeeInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmployeeDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/org/employees/{id}": {
+      "get": {
+        "tags": [
+          "org"
+        ],
+        "operationId": "GetEmployee",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmployeeDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "org"
+        ],
+        "operationId": "UpdateEmployee",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateEmployeeInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmployeeDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/org/employees/{id}/history": {
+      "get": {
+        "tags": [
+          "org"
+        ],
+        "operationId": "GetEmployeeHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EmployeeAssignmentDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/org/employees/{id}/change-status": {
+      "post": {
+        "tags": [
+          "org"
+        ],
+        "operationId": "ChangeEmployeeStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangeStatusInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EmployeeDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/org/employees/{id}/photo": {
+      "get": {
+        "tags": [
+          "org"
+        ],
+        "operationId": "GetEmployeePhoto",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "org"
+        ],
+        "operationId": "PutEmployeePhoto",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "file"
+                ],
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "$ref": "#/components/schemas/IFormFile"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/org/delegations/mine": {
+      "get": {
+        "tags": [
+          "org"
+        ],
+        "operationId": "ListMyDelegations",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DelegationDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/org/delegations": {
+      "get": {
+        "tags": [
+          "org"
+        ],
+        "operationId": "ListDelegations",
+        "parameters": [
+          {
+            "name": "employeeId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DelegationDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "org"
+        ],
+        "operationId": "CreateDelegation",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DelegationInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DelegationDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/org/delegations/{id}/cancel": {
+      "post": {
+        "tags": [
+          "org"
+        ],
+        "operationId": "CancelDelegation",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CancelInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DelegationDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/org/import/templates/{kind}": {
+      "get": {
+        "tags": [
+          "org"
+        ],
+        "operationId": "GetOrgImportTemplate",
+        "parameters": [
+          {
+            "name": "kind",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/org/import/{kind}": {
+      "post": {
+        "tags": [
+          "org"
+        ],
+        "operationId": "RunOrgImport",
+        "parameters": [
+          {
+            "name": "kind",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "mode",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "file"
+                ],
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "$ref": "#/components/schemas/IFormFile"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportReportDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/org/import/{kind}/report": {
+      "post": {
+        "tags": [
+          "org"
+        ],
+        "operationId": "GetOrgImportReport",
+        "parameters": [
+          {
+            "name": "kind",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "file"
+                ],
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "$ref": "#/components/schemas/IFormFile"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/auth/providers": {
+      "get": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "ListSignInProviders",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SignInProviderDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/auth/password-policy": {
+      "get": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "GetPasswordPolicy",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PasswordPolicyDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/auth/login": {
+      "post": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "Login",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SignInOutcome"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/auth/mfa/verify": {
+      "post": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "VerifySecondFactor",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MfaCodeInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SignInOutcome"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/auth/mfa/email-code": {
+      "post": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "SendSignInEmailCode",
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/auth/mfa/enrol/totp": {
+      "post": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "StartTotpEnrolment",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TotpSetupDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/auth/mfa/enrol/email": {
+      "post": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "StartEmailEnrolment",
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/auth/mfa/enrol/confirm": {
+      "post": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "ConfirmMfaEnrolment",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MfaCodeInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnrolmentResultDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/auth/password/forgot": {
+      "post": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "ForgotPassword",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ForgotPasswordInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/auth/password/reset": {
+      "post": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "ResetPassword",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/auth/logout": {
+      "post": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "Logout",
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/me": {
+      "get": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "GetMe",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/me/preferences": {
+      "put": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "UpdateMyPreferences",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PreferencesInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/me/password": {
+      "post": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "ChangeMyPassword",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangePasswordInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/me/mfa": {
+      "get": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "GetMyMfa",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MyMfaDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/me/mfa/totp": {
+      "post": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "StartMyTotpSetup",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TotpSetupDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/me/mfa/email": {
+      "post": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "StartMyEmailMfaSetup",
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/me/mfa/confirm": {
+      "post": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "ConfirmMyMfaSetup",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MfaConfirmInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecoveryCodesDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/me/mfa/disable": {
+      "post": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "DisableMyMfaMethod",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MfaDisableInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MyMfaDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/me/mfa/recovery-codes": {
+      "post": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "RegenerateMyRecoveryCodes",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecoveryCodesDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/me/sessions": {
+      "get": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "ListMySessions",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SessionDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/me/sessions/{id}/revoke": {
+      "post": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "RevokeMySession",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/me/sessions/revoke-others": {
+      "post": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "RevokeMyOtherSessions",
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/me/tokens": {
+      "get": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "ListMyTokens",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AccessTokenDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "CreateMyToken",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTokenInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatedAccessTokenDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/me/tokens/{id}/revoke": {
+      "post": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "RevokeMyToken",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessTokenDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/admin/users": {
+      "get": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "ListUsers",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "active",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResultOfUserDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "CreateUser",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatedUserDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/admin/users/{id}": {
+      "get": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "GetUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/admin/users/{id}/activate": {
+      "post": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "ActivateUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/admin/users/{id}/deactivate": {
+      "post": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "DeactivateUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/admin/users/{id}/unlock": {
+      "post": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "UnlockUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/admin/users/{id}/reset-mfa": {
+      "post": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "ResetUserMfa",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/admin/users/{id}/revoke-sessions": {
+      "post": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "RevokeUserSessions",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/admin/users/{id}/set-admin": {
+      "post": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "SetUserAdmin",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetAdminInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/admin/users/{id}/send-password-reset": {
+      "post": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "SendUserPasswordReset",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/admin/users/{id}/tokens": {
+      "get": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "ListUserTokens",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AccessTokenDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/admin/users/{id}/tokens/{tokenId}/revoke": {
+      "post": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "RevokeUserToken",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "tokenId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccessTokenDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/admin/auth-events": {
+      "get": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "ListAuthEvents",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResultOfAuthEventDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/admin/security-settings": {
+      "get": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "GetSecuritySettings",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SecuritySettingsDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "UpdateSecuritySettings",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SecuritySettingsDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SecuritySettingsDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/admin/smtp": {
+      "get": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "GetSmtpSettings",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SmtpSettingsDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "UpdateSmtpSettings",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SmtpSettingsInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SmtpSettingsDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/admin/smtp/test": {
+      "post": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "TestSmtpSettings",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SmtpTestInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/admin/providers/schema": {
+      "get": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "GetProviderSchema",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProviderTypeSchema"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/admin/providers": {
+      "get": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "ListProviders",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProviderDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "CreateProvider",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProviderInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProviderDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/admin/providers/{id}": {
+      "get": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "GetProvider",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProviderDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "UpdateProvider",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProviderInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProviderDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/admin/providers/{id}/enable": {
+      "post": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "EnableProvider",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProviderDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/admin/providers/{id}/disable": {
+      "post": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "DisableProvider",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProviderDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/identity/admin/providers/{id}/test": {
+      "post": {
+        "tags": [
+          "identity"
+        ],
+        "operationId": "TestProvider",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "oneOf": [
+                  {
+                    "type": "null"
+                  },
+                  {
+                    "$ref": "#/components/schemas/ProviderTestInput"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProviderTestResultDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/sample/items": {
       "get": {
         "tags": [
@@ -338,6 +3598,63 @@
   },
   "components": {
     "schemas": {
+      "AccessTokenDto": {
+        "required": [
+          "id",
+          "name",
+          "prefix",
+          "scopes",
+          "createdAt",
+          "expiresAt",
+          "lastUsedAt",
+          "revokedAt",
+          "state"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "prefix": {
+            "type": "string"
+          },
+          "scopes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastUsedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "revokedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "state": {
+            "type": "string"
+          }
+        }
+      },
       "AntiforgeryToken": {
         "required": [
           "token",
@@ -353,6 +3670,1582 @@
           }
         },
         "description": "The token the SPA sends back in string AntiforgerySetup.HeaderName on every state-changing call."
+      },
+      "AuthEventDto": {
+        "required": [
+          "id",
+          "type",
+          "success",
+          "userId",
+          "userName",
+          "actorUserId",
+          "provider",
+          "detail",
+          "ipAddress",
+          "at"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "type": {
+            "type": "string"
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "userId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "userName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "actorUserId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "provider": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "detail": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "ipAddress": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "CancelInput": {
+        "required": [
+          "reason",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "ChangePasswordInput": {
+        "required": [
+          "currentPassword",
+          "newPassword"
+        ],
+        "type": "object",
+        "properties": {
+          "currentPassword": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "newPassword": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "ChangeStatusInput": {
+        "required": [
+          "status",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "CreatedAccessTokenDto": {
+        "required": [
+          "details",
+          "token"
+        ],
+        "type": "object",
+        "properties": {
+          "details": {
+            "$ref": "#/components/schemas/AccessTokenDto"
+          },
+          "token": {
+            "type": "string"
+          }
+        },
+        "description": "The new token: string CreatedAccessTokenDto.Token is shown once and never stored."
+      },
+      "CreatedUserDto": {
+        "required": [
+          "user",
+          "invitationSent",
+          "invitationMessageKey"
+        ],
+        "type": "object",
+        "properties": {
+          "user": {
+            "$ref": "#/components/schemas/UserDto"
+          },
+          "invitationSent": {
+            "type": "boolean"
+          },
+          "invitationMessageKey": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "CreateTokenInput": {
+        "required": [
+          "name",
+          "scopes",
+          "days"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "scopes": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "days": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          }
+        }
+      },
+      "CreateUserInput": {
+        "required": [
+          "employeeId",
+          "userName",
+          "isSystemAdmin",
+          "sendInvitation"
+        ],
+        "type": "object",
+        "properties": {
+          "employeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "userName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "isSystemAdmin": {
+            "type": "boolean"
+          },
+          "sendInvitation": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          }
+        }
+      },
+      "DelegationDto": {
+        "required": [
+          "id",
+          "delegator",
+          "delegate",
+          "fromDate",
+          "toDate",
+          "scope",
+          "reason",
+          "status",
+          "cancelReason",
+          "createdAt",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "delegator": {
+            "$ref": "#/components/schemas/EmployeeRefDto"
+          },
+          "delegate": {
+            "$ref": "#/components/schemas/EmployeeRefDto"
+          },
+          "fromDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "toDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "scope": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "cancelReason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "DelegationInput": {
+        "required": [
+          "delegatorEmployeeId",
+          "delegateEmployeeId",
+          "fromDate",
+          "toDate",
+          "scope",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "delegatorEmployeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "delegateEmployeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "fromDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "toDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "scope": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "EffectiveChangeInput": {
+        "required": [
+          "effectiveDate",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "effectiveDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "EmployeeAssignmentDto": {
+        "required": [
+          "validFrom",
+          "validTo",
+          "unit",
+          "manager",
+          "jobTitleAr",
+          "jobTitleEn"
+        ],
+        "type": "object",
+        "properties": {
+          "validFrom": {
+            "type": "string",
+            "format": "date"
+          },
+          "validTo": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "unit": {
+            "$ref": "#/components/schemas/OrgUnitPathItemDto"
+          },
+          "manager": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/EmployeeRefDto"
+              }
+            ]
+          },
+          "jobTitleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "jobTitleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "EmployeeDto": {
+        "required": [
+          "id",
+          "employeeNo",
+          "nameAr",
+          "nameEn",
+          "email",
+          "mobile",
+          "jobTitleAr",
+          "jobTitleEn",
+          "grade",
+          "unitId",
+          "unit",
+          "manager",
+          "status",
+          "joinDate",
+          "hasPhoto",
+          "createdAt",
+          "updatedAt",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "employeeNo": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "email": {
+            "type": "string"
+          },
+          "mobile": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "jobTitleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "jobTitleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "grade": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "unitId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "unit": {
+            "$ref": "#/components/schemas/OrgUnitPathItemDto"
+          },
+          "manager": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/EmployeeRefDto"
+              }
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "joinDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "hasPhoto": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "EmployeeInput": {
+        "required": [
+          "employeeNo",
+          "nameAr",
+          "nameEn",
+          "email",
+          "mobile",
+          "jobTitleAr",
+          "jobTitleEn",
+          "grade",
+          "unitId",
+          "managerEmployeeId",
+          "joinDate"
+        ],
+        "type": "object",
+        "properties": {
+          "employeeNo": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "email": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "mobile": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "jobTitleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "jobTitleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "grade": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "unitId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "managerEmployeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "joinDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          }
+        }
+      },
+      "EmployeeListItemDto": {
+        "required": [
+          "id",
+          "employeeNo",
+          "nameAr",
+          "nameEn",
+          "email",
+          "jobTitleAr",
+          "jobTitleEn",
+          "unitId",
+          "unitCode",
+          "unitNameAr",
+          "unitNameEn",
+          "status",
+          "hasPhoto"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "employeeNo": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "email": {
+            "type": "string"
+          },
+          "jobTitleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "jobTitleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "unitId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "unitCode": {
+            "type": "string"
+          },
+          "unitNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "unitNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "hasPhoto": {
+            "type": "boolean"
+          }
+        }
+      },
+      "EmployeeRefDto": {
+        "required": [
+          "id",
+          "employeeNo",
+          "nameAr",
+          "nameEn"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "employeeNo": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "description": "A short reference to an employee shown next to units, managers and delegations."
+      },
+      "EnrolmentResultDto": {
+        "required": [
+          "status",
+          "recoveryCodes"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "recoveryCodes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "description": "Result of a completed MFA enrolment: signed in, plus the recovery codes to show once."
+      },
+      "ForgotPasswordInput": {
+        "required": [
+          "login"
+        ],
+        "type": "object",
+        "properties": {
+          "login": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "IFormFile": {
+        "type": "string",
+        "format": "binary"
+      },
+      "ImportIssue": {
+        "required": [
+          "row",
+          "column",
+          "code",
+          "messageKey"
+        ],
+        "type": "object",
+        "properties": {
+          "row": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "column": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "code": {
+            "type": "string"
+          },
+          "messageKey": {
+            "type": "string"
+          },
+          "params": {
+            "type": [
+              "null",
+              "object"
+            ]
+          }
+        },
+        "description": "One problem found in an uploaded file. int ImportIssue.Row is the sheet row number; string? ImportIssue.Column a column key."
+      },
+      "ImportReportDto": {
+        "required": [
+          "kind",
+          "committed",
+          "totalRows",
+          "created",
+          "updated",
+          "issues"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "committed": {
+            "type": "boolean"
+          },
+          "totalRows": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "created": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "updated": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "issues": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ImportIssue"
+            }
+          }
+        }
+      },
+      "JsonObject": {
+        "type": "object"
+      },
+      "LevelInput": {
+        "required": [
+          "code",
+          "nameAr",
+          "nameEn",
+          "sort"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sort": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "LoginInput": {
+        "required": [
+          "login",
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "login": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "password": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "MeDto": {
+        "required": [
+          "id",
+          "userName",
+          "email",
+          "isSystemAdmin",
+          "principalType",
+          "language",
+          "theme",
+          "employee",
+          "mfaEnabled",
+          "hasPassword",
+          "authMethod"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "userName": {
+            "type": "string"
+          },
+          "email": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "isSystemAdmin": {
+            "type": "boolean"
+          },
+          "principalType": {
+            "type": "string"
+          },
+          "language": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "theme": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "employee": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/MeEmployeeDto"
+              }
+            ]
+          },
+          "mfaEnabled": {
+            "type": "boolean"
+          },
+          "hasPassword": {
+            "type": "boolean"
+          },
+          "authMethod": {
+            "type": "string"
+          }
+        }
+      },
+      "MeEmployeeDto": {
+        "required": [
+          "id",
+          "employeeNo",
+          "nameAr",
+          "nameEn",
+          "unitId",
+          "unitNameAr",
+          "unitNameEn"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "employeeNo": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "unitId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "unitNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "unitNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "MfaCodeInput": {
+        "required": [
+          "method",
+          "code"
+        ],
+        "type": "object",
+        "properties": {
+          "method": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "code": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "MfaConfirmInput": {
+        "required": [
+          "method",
+          "code"
+        ],
+        "type": "object",
+        "properties": {
+          "method": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "code": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "MfaDisableInput": {
+        "required": [
+          "method"
+        ],
+        "type": "object",
+        "properties": {
+          "method": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "MoveUnitInput": {
+        "required": [
+          "newParentId",
+          "effectiveDate",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "newParentId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "effectiveDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "MyMfaDto": {
+        "required": [
+          "enabled",
+          "totp",
+          "email",
+          "recoveryCodesLeft",
+          "requiredByPolicy",
+          "totpAllowed",
+          "emailAllowed"
+        ],
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "totp": {
+            "type": "boolean"
+          },
+          "email": {
+            "type": "boolean"
+          },
+          "recoveryCodesLeft": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "requiredByPolicy": {
+            "type": "boolean"
+          },
+          "totpAllowed": {
+            "type": "boolean"
+          },
+          "emailAllowed": {
+            "type": "boolean"
+          }
+        }
+      },
+      "OrgLevelDto": {
+        "required": [
+          "id",
+          "code",
+          "nameAr",
+          "nameEn",
+          "sort",
+          "active",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sort": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "OrgSettingsDto": {
+        "required": [
+          "enforceLevelOrder",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "enforceLevelOrder": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "OrgSettingsInput": {
+        "required": [
+          "enforceLevelOrder",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "enforceLevelOrder": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "OrgTreeNodeDto": {
+        "required": [
+          "id",
+          "parentId",
+          "code",
+          "nameAr",
+          "nameEn",
+          "levelCode",
+          "depth",
+          "active",
+          "head",
+          "employeeCount"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "parentId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "levelCode": {
+            "type": "string"
+          },
+          "depth": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "head": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/EmployeeRefDto"
+              }
+            ]
+          },
+          "employeeCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "description": "A node of the organisation tree (flat list; the client builds the tree from Guid? OrgTreeNodeDto.ParentId)."
+      },
+      "OrgUnitDto": {
+        "required": [
+          "id",
+          "code",
+          "nameAr",
+          "nameEn",
+          "levelCode",
+          "parentId",
+          "path",
+          "head",
+          "deputy",
+          "costCentre",
+          "active",
+          "effectiveFrom",
+          "effectiveTo",
+          "currentVersionFrom",
+          "createdAt",
+          "updatedAt",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "levelCode": {
+            "type": "string"
+          },
+          "parentId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "path": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrgUnitPathItemDto"
+            }
+          },
+          "head": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/EmployeeRefDto"
+              }
+            ]
+          },
+          "deputy": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/EmployeeRefDto"
+              }
+            ]
+          },
+          "costCentre": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "effectiveFrom": {
+            "type": "string",
+            "format": "date"
+          },
+          "effectiveTo": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "currentVersionFrom": {
+            "type": "string",
+            "format": "date"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "OrgUnitPathItemDto": {
+        "required": [
+          "id",
+          "code",
+          "nameAr",
+          "nameEn",
+          "levelCode"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "levelCode": {
+            "type": "string"
+          }
+        }
+      },
+      "OrgUnitVersionDto": {
+        "required": [
+          "validFrom",
+          "validTo",
+          "code",
+          "nameAr",
+          "nameEn",
+          "levelCode",
+          "path",
+          "head",
+          "deputy",
+          "costCentre",
+          "active"
+        ],
+        "type": "object",
+        "properties": {
+          "validFrom": {
+            "type": "string",
+            "format": "date"
+          },
+          "validTo": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "code": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "levelCode": {
+            "type": "string"
+          },
+          "path": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrgUnitPathItemDto"
+            }
+          },
+          "head": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/EmployeeRefDto"
+              }
+            ]
+          },
+          "deputy": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/EmployeeRefDto"
+              }
+            ]
+          },
+          "costCentre": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "active": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PagedResultOfAuthEventDto": {
+        "required": [
+          "items",
+          "page",
+          "pageSize",
+          "totalCount"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuthEventDto"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "description": "One page of items plus the total count across all pages."
+      },
+      "PagedResultOfEmployeeListItemDto": {
+        "required": [
+          "items",
+          "page",
+          "pageSize",
+          "totalCount"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EmployeeListItemDto"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "description": "One page of items plus the total count across all pages."
       },
       "PagedResultOfSampleItemDto": {
         "required": [
@@ -387,6 +5280,94 @@
           }
         },
         "description": "One page of items plus the total count across all pages."
+      },
+      "PagedResultOfUserDto": {
+        "required": [
+          "items",
+          "page",
+          "pageSize",
+          "totalCount"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UserDto"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "description": "One page of items plus the total count across all pages."
+      },
+      "PasswordPolicyDto": {
+        "required": [
+          "minLength",
+          "requireUpper",
+          "requireLower",
+          "requireDigit",
+          "requireSymbol",
+          "history"
+        ],
+        "type": "object",
+        "properties": {
+          "minLength": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "requireUpper": {
+            "type": "boolean"
+          },
+          "requireLower": {
+            "type": "boolean"
+          },
+          "requireDigit": {
+            "type": "boolean"
+          },
+          "requireSymbol": {
+            "type": "boolean"
+          },
+          "history": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "PreferencesInput": {
+        "required": [
+          "language",
+          "theme"
+        ],
+        "type": "object",
+        "properties": {
+          "language": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "theme": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
       },
       "Problem": {
         "required": [
@@ -453,6 +5434,345 @@
                 }
               }
             }
+          }
+        }
+      },
+      "ProviderDto": {
+        "required": [
+          "id",
+          "code",
+          "type",
+          "displayNameAr",
+          "displayNameEn",
+          "enabled",
+          "sort",
+          "settings",
+          "hasSecret",
+          "matchField",
+          "autoLink",
+          "jitCreateUser",
+          "lastTestAt",
+          "lastTestOk",
+          "lastTestMessageKey",
+          "callbackPath",
+          "metadataPath",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "displayNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "displayNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "sort": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "settings": {
+            "$ref": "#/components/schemas/JsonObject"
+          },
+          "hasSecret": {
+            "type": "boolean"
+          },
+          "matchField": {
+            "type": "string"
+          },
+          "autoLink": {
+            "type": "boolean"
+          },
+          "jitCreateUser": {
+            "type": "boolean"
+          },
+          "lastTestAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "lastTestOk": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          },
+          "lastTestMessageKey": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "callbackPath": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "metadataPath": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "ProviderField": {
+        "required": [
+          "key",
+          "kind"
+        ],
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean",
+            "default": false
+          },
+          "default": { },
+          "options": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "group": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "description": "One setting of a provider type. Labels come from the UI translations (`admin:providers.fields.&lt;key&gt;`)."
+      },
+      "ProviderInput": {
+        "required": [
+          "code",
+          "type",
+          "displayNameAr",
+          "displayNameEn",
+          "sort",
+          "settings",
+          "secret",
+          "clearSecret",
+          "matchField",
+          "autoLink",
+          "jitCreateUser",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "type": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "displayNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "displayNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sort": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "settings": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/JsonObject"
+              }
+            ]
+          },
+          "secret": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "clearSecret": {
+            "type": "boolean"
+          },
+          "matchField": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "autoLink": {
+            "type": "boolean"
+          },
+          "jitCreateUser": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "ProviderTestInput": {
+        "required": [
+          "testUserName"
+        ],
+        "type": "object",
+        "properties": {
+          "testUserName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "ProviderTestResultDto": {
+        "required": [
+          "ok",
+          "messageKey",
+          "details"
+        ],
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          },
+          "messageKey": {
+            "type": "string"
+          },
+          "details": {
+            "type": [
+              "null",
+              "object"
+            ],
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ProviderTypeSchema": {
+        "required": [
+          "type",
+          "fields",
+          "hasSecret",
+          "secretRequired",
+          "defaultMatchField"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProviderField"
+            }
+          },
+          "hasSecret": {
+            "type": "boolean"
+          },
+          "secretRequired": {
+            "type": "boolean"
+          },
+          "defaultMatchField": {
+            "type": "string"
+          }
+        },
+        "description": "Settings form of a provider type: its fields, whether it has a secret, and whether the secret is required."
+      },
+      "RecoveryCodesDto": {
+        "required": [
+          "codes"
+        ],
+        "type": "object",
+        "properties": {
+          "codes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ResetPasswordInput": {
+        "required": [
+          "userId",
+          "token",
+          "newPassword",
+          "invitation"
+        ],
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "token": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "newPassword": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "invitation": {
+            "type": "boolean"
           }
         }
       },
@@ -550,6 +5870,603 @@
           }
         }
       },
+      "SecuritySettingsDto": {
+        "required": [
+          "passwordMinLength",
+          "passwordRequireUpper",
+          "passwordRequireLower",
+          "passwordRequireDigit",
+          "passwordRequireSymbol",
+          "passwordHistory",
+          "lockoutThreshold",
+          "lockoutMinutes",
+          "sessionIdleMinutes",
+          "sessionAbsoluteHours",
+          "mfaPolicy",
+          "mfaAllowTotp",
+          "mfaAllowEmail",
+          "requireLocalMfaAfterSso",
+          "tokenDefaultDays",
+          "tokenMaxDays",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "passwordMinLength": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "passwordRequireUpper": {
+            "type": "boolean"
+          },
+          "passwordRequireLower": {
+            "type": "boolean"
+          },
+          "passwordRequireDigit": {
+            "type": "boolean"
+          },
+          "passwordRequireSymbol": {
+            "type": "boolean"
+          },
+          "passwordHistory": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lockoutThreshold": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lockoutMinutes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sessionIdleMinutes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sessionAbsoluteHours": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "mfaPolicy": {
+            "type": "string"
+          },
+          "mfaAllowTotp": {
+            "type": "boolean"
+          },
+          "mfaAllowEmail": {
+            "type": "boolean"
+          },
+          "requireLocalMfaAfterSso": {
+            "type": "boolean"
+          },
+          "tokenDefaultDays": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "tokenMaxDays": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "SessionDto": {
+        "required": [
+          "id",
+          "method",
+          "provider",
+          "createdAt",
+          "lastSeenAt",
+          "ipAddress",
+          "userAgent",
+          "current"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "method": {
+            "type": "string"
+          },
+          "provider": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastSeenAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ipAddress": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "userAgent": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "current": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SetAdminInput": {
+        "required": [
+          "isSystemAdmin"
+        ],
+        "type": "object",
+        "properties": {
+          "isSystemAdmin": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SignInOutcome": {
+        "required": [
+          "status",
+          "methods"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "methods": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "description": "Outcome of a sign-in step. IReadOnlyList&lt;string&gt; SignInOutcome.Methods lists the second factors the user may use (or enrol)."
+      },
+      "SignInProviderDto": {
+        "required": [
+          "code",
+          "type",
+          "displayNameAr",
+          "displayNameEn",
+          "challengeUrl"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "displayNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "displayNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "challengeUrl": {
+            "type": "string"
+          }
+        }
+      },
+      "SmtpSettingsDto": {
+        "required": [
+          "enabled",
+          "host",
+          "port",
+          "security",
+          "userName",
+          "hasPassword",
+          "fromAddress",
+          "fromNameAr",
+          "fromNameEn",
+          "publicBaseUrl",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "host": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "port": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "security": {
+            "type": "string"
+          },
+          "userName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "hasPassword": {
+            "type": "boolean"
+          },
+          "fromAddress": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "fromNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "fromNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "publicBaseUrl": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "SmtpSettingsInput": {
+        "required": [
+          "enabled",
+          "host",
+          "port",
+          "security",
+          "userName",
+          "password",
+          "clearPassword",
+          "fromAddress",
+          "fromNameAr",
+          "fromNameEn",
+          "publicBaseUrl",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "host": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "port": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "security": {
+            "type": "string"
+          },
+          "userName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "password": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "clearPassword": {
+            "type": "boolean"
+          },
+          "fromAddress": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "fromNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "fromNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "publicBaseUrl": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        },
+        "description": "SMTP form. A blank string? SmtpSettingsInput.Password keeps the stored one; bool SmtpSettingsInput.ClearPassword removes it."
+      },
+      "SmtpTestInput": {
+        "required": [
+          "to",
+          "settings"
+        ],
+        "type": "object",
+        "properties": {
+          "to": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "settings": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/SmtpSettingsInput"
+              }
+            ]
+          }
+        }
+      },
+      "TotpSetupDto": {
+        "required": [
+          "sharedKey",
+          "authenticatorUri"
+        ],
+        "type": "object",
+        "properties": {
+          "sharedKey": {
+            "type": "string"
+          },
+          "authenticatorUri": {
+            "type": "string"
+          }
+        }
+      },
+      "UnitInput": {
+        "required": [
+          "code",
+          "nameAr",
+          "nameEn",
+          "levelCode",
+          "parentId",
+          "headEmployeeId",
+          "deputyEmployeeId",
+          "costCentre",
+          "effectiveFrom"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "levelCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "parentId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "headEmployeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "deputyEmployeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "costCentre": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "effectiveFrom": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          }
+        }
+      },
+      "UpdateEmployeeInput": {
+        "required": [
+          "employeeNo",
+          "nameAr",
+          "nameEn",
+          "email",
+          "mobile",
+          "jobTitleAr",
+          "jobTitleEn",
+          "grade",
+          "unitId",
+          "managerEmployeeId",
+          "joinDate",
+          "effectiveDate",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "employeeNo": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "email": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "mobile": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "jobTitleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "jobTitleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "grade": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "unitId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "managerEmployeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "joinDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "effectiveDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "UpdateLevelInput": {
+        "required": [
+          "nameAr",
+          "nameEn",
+          "sort",
+          "active",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sort": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
       "UpdateSampleItemInput": {
         "required": [
           "nameAr",
@@ -590,6 +6507,203 @@
           }
         }
       },
+      "UpdateUnitInput": {
+        "required": [
+          "code",
+          "nameAr",
+          "nameEn",
+          "levelCode",
+          "headEmployeeId",
+          "deputyEmployeeId",
+          "costCentre",
+          "effectiveDate",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "levelCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "headEmployeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "deputyEmployeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "costCentre": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "effectiveDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "UserDto": {
+        "required": [
+          "id",
+          "userName",
+          "email",
+          "employee",
+          "active",
+          "isSystemAdmin",
+          "lockedOut",
+          "lockoutEnd",
+          "mfaEnabled",
+          "hasPassword",
+          "externalLogins",
+          "lastSignInAt",
+          "createdAt",
+          "activeSessions",
+          "activeTokens"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "userName": {
+            "type": "string"
+          },
+          "email": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "employee": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/UserEmployeeDto"
+              }
+            ]
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "isSystemAdmin": {
+            "type": "boolean"
+          },
+          "lockedOut": {
+            "type": "boolean"
+          },
+          "lockoutEnd": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "mfaEnabled": {
+            "type": "boolean"
+          },
+          "hasPassword": {
+            "type": "boolean"
+          },
+          "externalLogins": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "lastSignInAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "activeSessions": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "activeTokens": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "UserEmployeeDto": {
+        "required": [
+          "id",
+          "employeeNo",
+          "nameAr",
+          "nameEn",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "employeeNo": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
       "VersionInput": {
         "required": [
           "version"
@@ -607,6 +6721,12 @@
   "tags": [
     {
       "name": "platform"
+    },
+    {
+      "name": "org"
+    },
+    {
+      "name": "identity"
     },
     {
       "name": "sample"

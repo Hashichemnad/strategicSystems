@@ -26,6 +26,10 @@ RUN dotnet publish src/Host/Strategy.Host/Strategy.Host.csproj -c Release -o /ap
     -p:OpenApiGenerateDocuments=false -p:UseAppHost=false
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
+# libldap: LDAP / Active Directory sign-in (System.DirectoryServices.Protocols needs the native library on Linux).
+RUN apt-get update \
+    && (apt-get install -y --no-install-recommends libldap2 || apt-get install -y --no-install-recommends libldap-2.5-0) \
+    && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 ENV ASPNETCORE_URLS=http://+:8080 \
     ASPNETCORE_ENVIRONMENT=Production \

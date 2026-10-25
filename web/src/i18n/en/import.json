@@ -1,0 +1,37 @@
+{
+  "title": "Import organisation data",
+  "description": "Load units and employees from Excel or CSV. Nothing is saved until the whole file is valid.",
+  "steps": {
+    "template": "Template",
+    "upload": "Upload",
+    "review": "Review and import"
+  },
+  "templateIntro": "Choose what to import and download the bilingual template.",
+  "kinds": {
+    "units": "Organisation units",
+    "employees": "Employees"
+  },
+  "downloadTemplate": "Download template",
+  "orderHint": "Import units first, then employees, then units again to set unit heads.",
+  "drop": "Drop the file here or choose it",
+  "dropHint": "Excel (.xlsx) or CSV (UTF-8), up to 10 MB",
+  "valid_one": "{{count}} row checked, no problems found.",
+  "valid_other": "{{count}} rows checked, no problems found.",
+  "validHint": "Choose Import to save everything.",
+  "invalid_one": "{{count}} problem to fix in the file.",
+  "invalid_other": "{{count}} problems to fix in the file.",
+  "downloadReport": "Download the report",
+  "row": "Row",
+  "column": "Column",
+  "problem": "Problem",
+  "commit": "Import",
+  "done": "Imported: {{created}} new, {{updated}} updated.",
+  "errors": {
+    "fileType": "Use an .xlsx or .csv file.",
+    "fileSize": "The file is empty or larger than {{maxMb}} MB.",
+    "unreadable": "The file could not be read. Use the template.",
+    "duplicateInFile": "This value appears more than once in the file.",
+    "yesNo": "Use Y or N.",
+    "date": "Use a date like 2025-03-01."
+  }
+}

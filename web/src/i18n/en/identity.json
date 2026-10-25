@@ -1,0 +1,33 @@
+{
+  "errors": {
+    "passwordTooShort": "Use at least {{length}} characters.",
+    "passwordRequiresUpper": "Add an upper-case letter.",
+    "passwordRequiresLower": "Add a lower-case letter.",
+    "passwordRequiresDigit": "Add a digit.",
+    "passwordRequiresNonAlphanumeric": "Add a symbol.",
+    "passwordRequiresUniqueChars": "Use more different characters.",
+    "passwordReused": "Choose a password you have not used recently.",
+    "passwordMismatch": "The current password is incorrect.",
+    "passwordManagedExternally": "Your password is managed by your organisation's directory.",
+    "invalidUserName": "The user name contains characters that are not allowed.",
+    "duplicateUserName": "This user name is taken.",
+    "userNameTaken": "This user name is taken.",
+    "emailTaken": "Another account uses this email address.",
+    "employeeHasUser": "This employee already has an account.",
+    "employeeLeft": "The employee has left the organisation.",
+    "employeeNotFound": "The employee was not found.",
+    "userSelf": "You cannot do this to your own account.",
+    "lastAdmin": "At least one active administrator must remain.",
+    "userInactive": "The account is deactivated.",
+    "tokenLifetime": "Choose between 1 and {{max}} days.",
+    "noMfaMethod": "Allow at least one verification method.",
+    "smtpNotConfigured": "The email server is not set up. Ask an administrator.",
+    "smtpFailed": "The email could not be sent. Check the email server settings.",
+    "publicUrlMissing": "Set the application address on the Email server page so emails can contain links.",
+    "duplicateProviderCode": "Another provider already uses this code.",
+    "samlSource": "Give the metadata address, or the sign-in address with the identity provider's certificate.",
+    "certificate": "The certificate could not be read. Paste it in PEM format.",
+    "ldapFilter": "The filter must be in parentheses and contain {0} where the user name goes.",
+    "invalidToken": "The link is invalid or has expired."
+  }
+}

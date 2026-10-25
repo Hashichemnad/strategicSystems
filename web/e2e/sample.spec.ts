@@ -1,4 +1,4 @@
-import { expect, test, text } from './fixtures';
+import { createItemViaApi, expect, test, text } from './fixtures';
 
 test('sample module round trip: create, find, edit and deactivate', async ({ page, language, shot }) => {
   const t = text[language];
@@ -49,6 +49,8 @@ test('sample module round trip: create, find, edit and deactivate', async ({ pag
   await page.getByRole('dialog').getByRole('button', { name: t.deactivate }).click();
   await expect(row.getByText(t.inactive)).toBeVisible();
 
+  // The full list holds more than this item, also on an empty database.
+  await createItemViaApi(page, { nameAr: `بند آخر ${tag}`, nameEn: `Another item ${tag}` });
   await page.getByRole('searchbox', { name: t.search }).fill('');
   await expect(page).not.toHaveURL(/search=/);
   await expect.poll(() => page.getByTestId('sample-row').count()).toBeGreaterThan(1);

@@ -5,10 +5,11 @@ namespace Strategy.Platform.Access;
 public static class AccessServiceCollectionExtensions
 {
     /// <param name="services">The service collection.</param>
-    /// <param name="allowAllForDevelopment">True only for the Development and Testing environments.</param>
-    public static IServiceCollection AddPlatformAccess(this IServiceCollection services, bool allowAllForDevelopment)
+    /// <param name="allowModulesForDevelopment">True only for the Development and Testing environments (ADR 0009).</param>
+    public static IServiceCollection AddPlatformAccess(this IServiceCollection services, bool allowModulesForDevelopment)
     {
-        services.AddSingleton<IAccessService>(new PlaceholderAccessService(allowAllForDevelopment));
+        services.AddSingleton(new InterimAccessService(allowModulesForDevelopment));
+        services.AddSingleton<IAccessService>(sp => sp.GetRequiredService<InterimAccessService>());
         return services;
     }
 }

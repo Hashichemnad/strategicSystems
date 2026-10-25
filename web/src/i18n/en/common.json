@@ -44,5 +44,14 @@
   "datePicker": {
     "placeholder": "Pick a date",
     "open": "Open calendar"
+  },
+  "copy": {
+    "copy": "Copy",
+    "copied": "Copied"
+  },
+  "tree": {
+    "expand_one": "Show {{count}} unit",
+    "expand_other": "Show {{count}} units",
+    "collapse": "Hide"
   }
 }

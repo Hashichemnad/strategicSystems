@@ -1,0 +1,83 @@
+/*
+ * Organisation chart connectors. Only logical properties are used (inset-inline-*, border-inline-*), so the chart
+ * mirrors automatically in RTL. Classic technique: every node draws its half of the horizontal bar and the
+ * vertical stub above it with ::before / ::after.
+ */
+.org-chart .org-chart-level {
+  display: flex;
+  justify-content: center;
+  padding-top: 1.25rem;
+  position: relative;
+}
+
+.org-chart > .org-chart-level {
+  padding-top: 0;
+}
+
+.org-chart .org-chart-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  padding: 1.25rem 0.5rem 0;
+}
+
+.org-chart > .org-chart-level > .org-chart-node {
+  padding-top: 0;
+}
+
+.org-chart .org-chart-node::before,
+.org-chart .org-chart-node::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  inset-inline-end: 50%;
+  width: 50%;
+  height: 1.25rem;
+  border-top: 1px solid var(--border);
+}
+
+.org-chart .org-chart-node::after {
+  inset-inline-end: auto;
+  inset-inline-start: 50%;
+  border-inline-start: 1px solid var(--border);
+}
+
+.org-chart .org-chart-node:only-child::before,
+.org-chart .org-chart-node:only-child::after {
+  border-top: 0;
+}
+
+.org-chart .org-chart-node:first-child::before,
+.org-chart .org-chart-node:last-child::after {
+  border-top: 0;
+}
+
+.org-chart > .org-chart-level > .org-chart-node::before,
+.org-chart > .org-chart-level > .org-chart-node::after {
+  display: none;
+}
+
+/* Vertical line from a parent box down to its children's bar. */
+.org-chart .org-chart-level .org-chart-level::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  inset-inline-start: 50%;
+  height: 1.25rem;
+  border-inline-start: 1px solid var(--border);
+}
+
+.org-chart .org-chart-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 10rem;
+  max-width: 14rem;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background: var(--card);
+  text-align: center;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
+}

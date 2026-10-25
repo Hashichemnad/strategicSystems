@@ -3,7 +3,8 @@ import { Target, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/cn';
 import { Button } from '@/ui';
-import { navigation } from './navigation';
+import { useMe } from '@/features/auth/session';
+import { visibleNavigation } from './navigation';
 
 interface SidebarProps {
   open: boolean;
@@ -13,6 +14,7 @@ interface SidebarProps {
 export function Sidebar({ open, onClose }: SidebarProps) {
   const { t } = useTranslation('shell');
   const { t: tc } = useTranslation();
+  const me = useMe();
 
   return (
     <>
@@ -41,21 +43,30 @@ export function Sidebar({ open, onClose }: SidebarProps) {
             <X aria-hidden />
           </Button>
         </div>
-        <nav aria-label={t('navigation')} className="flex flex-1 flex-col gap-1 overflow-y-auto p-3">
-          {navigation.map(({ to, labelKey, icon: Icon }) => (
-            <Link
-              key={to}
-              to={to}
-              activeOptions={{ exact: to === '/', includeSearch: false }}
-              className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
-              activeProps={{
-                className: 'bg-accent text-accent-foreground hover:bg-accent',
-                'aria-current': 'page',
-              }}
-            >
-              <Icon className="size-4" aria-hidden />
-              {t(labelKey)}
-            </Link>
+        <nav aria-label={t('navigation')} className="flex flex-1 flex-col gap-4 overflow-y-auto p-3">
+          {visibleNavigation(me?.isSystemAdmin ?? false).map((section) => (
+            <div key={section.key} className="flex flex-col gap-1">
+              {section.key !== 'main' && (
+                <p className="px-3 pb-1 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+                  {t(section.labelKey)}
+                </p>
+              )}
+              {section.items.map(({ to, labelKey, icon: Icon }) => (
+                <Link
+                  key={to}
+                  to={to}
+                  activeOptions={{ exact: to === '/', includeSearch: false }}
+                  className="flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
+                  activeProps={{
+                    className: 'bg-accent text-accent-foreground hover:bg-accent',
+                    'aria-current': 'page',
+                  }}
+                >
+                  <Icon className="size-4" aria-hidden />
+                  {t(labelKey)}
+                </Link>
+              ))}
+            </div>
           ))}
         </nav>
       </aside>

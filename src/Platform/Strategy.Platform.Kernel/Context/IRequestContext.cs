@@ -54,6 +54,13 @@ public sealed class RequestContext : IRequestContext
         IpAddress = ipAddress;
         UserAgent = userAgent;
     }
+
+    /// <summary>Sets the authenticated caller once authentication has run (after <see cref="Initialise"/>).</summary>
+    public void SetUser(ClaimsPrincipal user) => User = user;
+
+    /// <summary>Sets the channel when the entry point learns it later, e.g. a personal access token makes a call <c>api</c>.</summary>
+    public void SetChannel(string channel) =>
+        Channel = Channels.IsKnown(channel) ? channel : throw new ArgumentException($"Unknown channel '{channel}'.", nameof(channel));
 }
 
 /// <summary>How a change entered the system (CLAUDE.md §8). Stored on every audit entry.</summary>

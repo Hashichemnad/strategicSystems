@@ -7,7 +7,7 @@ namespace Strategy.IntegrationTests.Platform;
 
 public class EndpointCatalogueTests(ApiFixture api) : IClassFixture<ApiFixture>
 {
-    /// <summary>CLAUDE.md §7: every endpoint declares its permission, or is explicitly public. No silent gaps.</summary>
+    /// <summary>CLAUDE.md §7: every endpoint declares its permission, or is explicitly public or self-service. No silent gaps.</summary>
     [Fact]
     public void Every_api_endpoint_declares_a_permission_or_is_explicitly_public()
     {
@@ -17,7 +17,8 @@ public class EndpointCatalogueTests(ApiFixture api) : IClassFixture<ApiFixture>
 
         endpoints.ShouldNotBeEmpty();
         var undeclared = endpoints
-            .Where(e => e.Metadata.GetMetadata<RequiredPermission>() is null && e.Metadata.GetMetadata<PublicEndpoint>() is null)
+            .Where(e => e.Metadata.GetMetadata<RequiredPermission>() is null && e.Metadata.GetMetadata<PublicEndpoint>() is null
+                && e.Metadata.GetMetadata<SelfServiceEndpoint>() is null)
             .Select(e => e.DisplayName)
             .ToList();
         undeclared.ShouldBeEmpty();

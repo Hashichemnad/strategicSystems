@@ -2,15 +2,20 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Strategy.Host.Infrastructure;
+using Strategy.Platform.Identity.Email;
 
 namespace Strategy.IntegrationTests.Infrastructure;
 
 /// <summary>
-/// The real host on a fresh database. Environment <c>Testing</c> by default (access placeholder allows all);
-/// pass <c>environment: "Production"</c> to test fail-closed behaviour.
+/// The real host on a fresh database. Environment <c>Testing</c> by default (modules open to signed-in users, ADR 0009);
+/// pass <c>environment: "Production"</c> to test fail-closed behaviour. Email goes to <see cref="Emails"/>.
 /// </summary>
-public sealed class ApiFactory(string connectionString, string environment = "Testing", IDictionary<string, string?>? settings = null)
+public sealed class ApiFactory(
+    string connectionString, string environment = "Testing", IDictionary<string, string?>? settings = null, bool backgroundServices = true)
     : WebApplicationFactory<Program>
 {
     public static async Task<ApiFactory> CreateAsync(
@@ -23,6 +28,8 @@ public sealed class ApiFactory(string connectionString, string environment = "Te
 
     public string ConnectionString => connectionString;
 
+    public CapturingEmailSender Emails { get; } = new();
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment(environment);
@@ -31,10 +38,26 @@ public sealed class ApiFactory(string connectionString, string environment = "Te
         builder.UseSetting("Modules:Sample:Enabled", "true");
         builder.UseSetting("Spa:RootPath", "does-not-exist");
         builder.UseSetting("Serilog:MinimumLevel:Default", "Warning");
+        builder.UseSetting("RateLimiting:PermitLimit", "100000");
+        builder.UseSetting("RateLimiting:AuthPermitLimit", "100000");
         foreach (var (key, value) in settings ?? new Dictionary<string, string?>())
         {
             builder.UseSetting(key, value);
         }
+
+        builder.ConfigureTestServices(services =>
+        {
+            services.RemoveAll<IIdentityEmailSender>();
+            services.AddSingleton<IIdentityEmailSender>(Emails);
+            if (!backgroundServices)
+            {
+                foreach (var hosted in services.Where(d => d.ServiceType == typeof(Microsoft.Extensions.Hosting.IHostedService)
+                    && d.ImplementationType?.Assembly.GetName().Name?.StartsWith("Strategy.", StringComparison.Ordinal) == true).ToList())
+                {
+                    services.Remove(hosted);
+                }
+            }
+        });
     }
 
     /// <summary>A client that behaves like the SPA: holds the antiforgery cookie and sends the token header.</summary>

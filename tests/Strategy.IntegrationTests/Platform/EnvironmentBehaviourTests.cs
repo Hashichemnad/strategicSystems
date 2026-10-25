@@ -8,10 +8,12 @@ namespace Strategy.IntegrationTests.Platform;
 public class EnvironmentBehaviourTests(PostgresFixture postgres)
 {
     [Fact]
-    public async Task Production_access_placeholder_fails_closed()
+    public async Task Production_module_access_fails_closed_for_signed_in_users_and_anonymous_calls_get_401()
     {
         await using var factory = await ApiFactory.CreateAsync(postgres, environment: "Production");
-        var client = await factory.CreateSpaClientAsync();
+        await (await (await factory.CreateSpaClientAsync()).GetAsync("/api/v1/sample/items"))
+            .ShouldBeProblemAsync(HttpStatusCode.Unauthorized, "auth.required", "errors.unauthorized");
+        var client = await factory.CreateSignedInClientAsync();
 
         await (await client.GetAsync("/api/v1/sample/items"))
             .ShouldBeProblemAsync(HttpStatusCode.Forbidden, "access.forbidden", "errors.forbidden");
@@ -38,7 +40,8 @@ public class EnvironmentBehaviourTests(PostgresFixture postgres)
         await using var factory = await ApiFactory.CreateAsync(
             postgres, settings: new Dictionary<string, string?> { ["Modules:Sample:Enabled"] = "false" });
 
-        var response = await factory.CreateClient().GetAsync("/api/v1/sample/items");
+        var client = await factory.CreateSignedInClientAsync();
+        var response = await client.GetAsync("/api/v1/sample/items");
 
         await response.ShouldBeProblemAsync(HttpStatusCode.NotFound, "module.disabled", "errors.moduleDisabled");
     }
@@ -51,9 +54,10 @@ public class EnvironmentBehaviourTests(PostgresFixture postgres)
             settings: new Dictionary<string, string?> { ["RateLimiting:PermitLimit"] = "3", ["RateLimiting:WindowSeconds"] = "60" });
         var client = factory.CreateClient();
 
+        // Anonymous calls are refused (401) but still count against the limit.
         for (var i = 0; i < 3; i++)
         {
-            (await client.GetAsync("/api/v1/sample/items")).StatusCode.ShouldBe(HttpStatusCode.OK);
+            (await client.GetAsync("/api/v1/sample/items")).StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
         }
 
         var limited = await client.GetAsync("/api/v1/sample/items");
