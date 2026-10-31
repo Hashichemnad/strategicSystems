@@ -11,6 +11,7 @@ using Strategy.Platform.Identity.Email;
 using Strategy.Platform.Identity.Infrastructure;
 using Strategy.Platform.Kernel.Paging;
 using Strategy.Platform.Kernel.Results;
+using Strategy.Platform.Settings;
 
 namespace Strategy.Platform.Identity.Api;
 
@@ -215,7 +216,7 @@ internal static class AdminEndpoints
 
     /// <summary>Sends a test message with the saved settings, or with unsaved ones from the form (blank password = saved one).</summary>
     private static async Task<Results<NoContent, ProblemHttpResult>> TestSmtpAsync(
-        SmtpTestInput body, IdentitySettingsCache cache, ISecretProtector protector, AuthEventLog events, CancellationToken ct)
+        SmtpTestInput body, IdentitySettingsCache cache, ISecretProtector protector, AuthEventLog events, ISettingsStore store, CancellationToken ct)
     {
         if (string.IsNullOrWhiteSpace(body.To) || !System.Net.Mail.MailAddress.TryCreate(body.To, out _))
         {
@@ -238,7 +239,8 @@ internal static class AdminEndpoints
 
         try
         {
-            await SmtpIdentityEmailSender.SendWithAsync(settings, password, new IdentityEmail(body.To, "test", new Dictionary<string, string>()), ct);
+            await SmtpIdentityEmailSender.SendWithAsync(
+                settings, password, new IdentityEmail(body.To, "test", new Dictionary<string, string>()), ct, await store.GetAsync<BrandingSettings>(ct));
         }
         catch (EmailDeliveryException exception)
         {

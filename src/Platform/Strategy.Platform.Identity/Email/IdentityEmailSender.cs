@@ -6,6 +6,7 @@ using MailKit.Security;
 using MimeKit;
 using Strategy.Platform.Identity.Domain;
 using Strategy.Platform.Identity.Infrastructure;
+using Strategy.Platform.Settings;
 
 namespace Strategy.Platform.Identity.Email;
 
@@ -30,14 +31,25 @@ public static class IdentityEmailRenderer
     private static readonly Lazy<string> Layout = new(() => ReadResource("layout.html"));
     private static readonly Lazy<JsonElement> Messages = new(() => JsonDocument.Parse(ReadResource("messages.json")).RootElement);
 
-    public static (string Subject, string Html, string Text) Render(IdentityEmail email, string? organisationAr = null, string? organisationEn = null)
+    public static (string Subject, string Html, string Text) Render(IdentityEmail email, BrandingSettings? branding = null)
     {
         ArgumentNullException.ThrowIfNull(email);
         var template = Messages.Value.GetProperty(email.Template);
-        string Part(string lang) => Body(template, lang, email);
+        var organisationAr = Blank(branding?.OrganisationNameAr);
+        var organisationEn = Blank(branding?.OrganisationNameEn);
+
+        // Branding from Settings (SPEC §0.2): an optional header line above the body and a footer replacing the default one.
+        string Part(string lang)
+        {
+            var header = Blank(lang == "ar" ? branding?.EmailHeaderAr : branding?.EmailHeaderEn);
+            var body = Body(template, lang, email);
+            return header is null ? body : $"<p style=\"margin:0 0 12px;line-height:1.6;font-weight:600\">{Encode(header)}</p>{body}";
+        }
+
+        string FooterText(string lang) =>
+            Blank(lang == "ar" ? branding?.EmailFooterAr : branding?.EmailFooterEn) ?? Messages.Value.GetProperty("footer").GetProperty(lang).GetString()!;
         var subjectEn = template.GetProperty("subject").GetProperty("en").GetString()!;
         var subjectAr = template.GetProperty("subject").GetProperty("ar").GetString()!;
-        var footer = Messages.Value.GetProperty("footer");
         var org = Messages.Value.GetProperty("orgName");
         var organisation = $"{organisationEn ?? org.GetProperty("en").GetString()} · {organisationAr ?? org.GetProperty("ar").GetString()}";
 
@@ -46,8 +58,8 @@ public static class IdentityEmailRenderer
             .Replace("{{subject_ar}}", Encode(subjectAr), StringComparison.Ordinal)
             .Replace("{{body_en}}", Part("en"), StringComparison.Ordinal)
             .Replace("{{body_ar}}", Part("ar"), StringComparison.Ordinal)
-            .Replace("{{footer_en}}", Encode(footer.GetProperty("en").GetString()!), StringComparison.Ordinal)
-            .Replace("{{footer_ar}}", Encode(footer.GetProperty("ar").GetString()!), StringComparison.Ordinal)
+            .Replace("{{footer_en}}", Encode(FooterText("en")), StringComparison.Ordinal)
+            .Replace("{{footer_ar}}", Encode(FooterText("ar")), StringComparison.Ordinal)
             .Replace("{{org}}", Encode(organisation), StringComparison.Ordinal);
 
         var text = new StringBuilder();
@@ -63,6 +75,8 @@ public static class IdentityEmailRenderer
 
         return ($"{subjectAr} | {subjectEn}", html, text.ToString());
     }
+
+    private static string? Blank(string? value) => string.IsNullOrWhiteSpace(value) ? null : value.Trim();
 
     private static string Body(JsonElement template, string lang, IdentityEmail email)
     {
@@ -107,23 +121,26 @@ public static class IdentityEmailRenderer
 }
 
 /// <summary>MailKit SMTP sender using the Email server settings (password decrypted only for the connection).</summary>
-internal sealed class SmtpIdentityEmailSender(IdentitySettingsCache settings, ISecretProtector protector) : IIdentityEmailSender
+internal sealed class SmtpIdentityEmailSender(IdentitySettingsCache settings, ISecretProtector protector, ISettingsStore store) : IIdentityEmailSender
 {
     public async Task SendAsync(IdentityEmail email, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(email);
         var smtp = settings.Smtp;
-        await SendWithAsync(smtp, protector.Unprotect(SecretPurposes.SmtpPassword, smtp.PasswordProtected), email, cancellationToken).ConfigureAwait(false);
+        var branding = await store.GetAsync<BrandingSettings>(cancellationToken).ConfigureAwait(false);
+        await SendWithAsync(smtp, protector.Unprotect(SecretPurposes.SmtpPassword, smtp.PasswordProtected), email, cancellationToken, branding)
+            .ConfigureAwait(false);
     }
 
-    public static async Task SendWithAsync(SmtpSettings smtp, string? password, IdentityEmail email, CancellationToken cancellationToken)
+    public static async Task SendWithAsync(
+        SmtpSettings smtp, string? password, IdentityEmail email, CancellationToken cancellationToken, BrandingSettings? branding = null)
     {
         if (!smtp.Enabled || string.IsNullOrWhiteSpace(smtp.Host) || string.IsNullOrWhiteSpace(smtp.FromAddress))
         {
             throw new EmailDeliveryException("identity.errors.smtpNotConfigured");
         }
 
-        var (subject, html, text) = IdentityEmailRenderer.Render(email);
+        var (subject, html, text) = IdentityEmailRenderer.Render(email, branding);
         var message = new MimeMessage();
         message.From.Add(new MailboxAddress(string.Join(" | ", new[] { smtp.FromNameAr, smtp.FromNameEn }.Where(n => !string.IsNullOrWhiteSpace(n))), smtp.FromAddress));
         message.To.Add(MailboxAddress.Parse(email.To));

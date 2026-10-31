@@ -268,7 +268,10 @@ internal sealed class OrgImporter(
 
             if (outcome.IsFailure)
             {
-                issues.Add(new ImportIssue(row.Number, null, outcome.Error.Code, outcome.Error.MessageKey, outcome.Error.Params));
+                // Field errors (e.g. a grade that is not an active lookup code) point at their column.
+                issues.AddRange(outcome.Error.Fields is { Count: > 0 } fields
+                    ? fields.Select(f => new ImportIssue(row.Number, f.Field, f.Code, f.MessageKey, f.Params))
+                    : [new ImportIssue(row.Number, null, outcome.Error.Code, outcome.Error.MessageKey, outcome.Error.Params)]);
             }
         }
 
@@ -386,7 +389,10 @@ internal sealed class OrgImporter(
 
             if (outcome.IsFailure)
             {
-                issues.Add(new ImportIssue(row.Number, null, outcome.Error.Code, outcome.Error.MessageKey, outcome.Error.Params));
+                // Field errors (e.g. a grade that is not an active lookup code) point at their column.
+                issues.AddRange(outcome.Error.Fields is { Count: > 0 } fields
+                    ? fields.Select(f => new ImportIssue(row.Number, f.Field, f.Code, f.MessageKey, f.Params))
+                    : [new ImportIssue(row.Number, null, outcome.Error.Code, outcome.Error.MessageKey, outcome.Error.Params)]);
             }
         }
 
