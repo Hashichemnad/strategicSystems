@@ -22,6 +22,17 @@ internal static class SampleEndpoints
         items.MapPut("/{id:guid}", UpdateAsync).WithName("UpdateSampleItem").RequirePermission(SamplePermissions.Update);
         items.MapPost("/{id:guid}/activate", ActivateAsync).WithName("ActivateSampleItem").RequirePermission(SamplePermissions.Update);
         items.MapPost("/{id:guid}/deactivate", DeactivateAsync).WithName("DeactivateSampleItem").RequirePermission(SamplePermissions.Update);
+
+        // Record roles: editors of one item (granted by someone who may edit it).
+        items.MapGet("/{id:guid}/editors", async (Guid id, IDispatcher dispatcher, CancellationToken ct) =>
+                (await dispatcher.SendAsync(new ListSampleEditors(id), ct)).ToOk())
+            .WithName("ListSampleItemEditors").RequirePermission(SamplePermissions.Read);
+        items.MapPost("/{id:guid}/editors", async (Guid id, EditorInput body, IDispatcher dispatcher, CancellationToken ct) =>
+                (await dispatcher.SendAsync(new AddSampleEditor(id, body.EmployeeId), ct)).ToOk())
+            .WithName("AddSampleItemEditor").RequirePermission(SamplePermissions.Update);
+        items.MapPost("/{id:guid}/editors/{employeeId:guid}/remove", async (Guid id, Guid employeeId, IDispatcher dispatcher, CancellationToken ct) =>
+                (await dispatcher.SendAsync(new RemoveSampleEditor(id, employeeId), ct)).ToOk())
+            .WithName("RemoveSampleItemEditor").RequirePermission(SamplePermissions.Update);
     }
 
     private static async Task<Results<Ok<PagedResult<SampleItemDto>>, ProblemHttpResult>> ListAsync(
@@ -66,3 +77,5 @@ internal sealed record SampleItemInput(string? NameAr, string? NameEn, string? D
 internal sealed record UpdateSampleItemInput(string? NameAr, string? NameEn, string? DescriptionAr, string? DescriptionEn, uint Version);
 
 internal sealed record VersionInput(uint Version);
+
+internal sealed record EditorInput(Guid? EmployeeId);

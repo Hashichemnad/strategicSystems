@@ -1,0 +1,191 @@
+{
+  "pages": {
+    "regional": {
+      "title": "Regional settings",
+      "description": "Time zone, Hijri date display, Arabic-Indic digits and currency."
+    },
+    "branding": {
+      "title": "Branding",
+      "description": "Organisation name, logos, colour and the e-mail header and footer."
+    },
+    "systems": {
+      "title": "Systems",
+      "description": "Switch systems on or off and set the owning unit of each system."
+    },
+    "features": {
+      "title": "Features",
+      "description": "Switch optional features on or off."
+    },
+    "lookups": {
+      "title": "Lists",
+      "description": "Dropdown values in Arabic and English, with order and active flag."
+    },
+    "numbering": {
+      "title": "Numbering formats",
+      "description": "The format of every reference number, with a live preview."
+    },
+    "translations": {
+      "title": "Translations",
+      "description": "Change any label of the interface in Arabic and English."
+    },
+    "roles": {
+      "title": "Roles and permissions",
+      "description": "The permission matrix of each system: roles, permissions and data scope."
+    },
+    "assignments": {
+      "title": "Role assignments",
+      "description": "Who holds each role: a user, a unit or everyone, with dates."
+    },
+    "systemAccess": {
+      "title": "System access",
+      "description": "Who may open each system."
+    },
+    "transfer": {
+      "title": "Bulk role transfer",
+      "description": "Move roles from people or a unit to someone else in one action."
+    },
+    "review": {
+      "title": "Access review",
+      "description": "Who can see and do what in each system, with Excel export."
+    },
+    "users": {
+      "title": "Users",
+      "description": "Accounts, their state and two-step verification."
+    },
+    "providers": {
+      "title": "Identity providers",
+      "description": "Single sign-on, UAE Pass and LDAP."
+    },
+    "security": {
+      "title": "Security",
+      "description": "Password policy, lockout, sessions and two-step verification."
+    },
+    "email": {
+      "title": "Email server",
+      "description": "SMTP settings and a test message."
+    },
+    "levels": {
+      "title": "Organisation levels",
+      "description": "Names and order of the structure levels."
+    },
+    "import": {
+      "title": "Import",
+      "description": "Import units and employees from Excel or CSV."
+    }
+  },
+  "title": "Settings",
+  "description": "One place for the application settings: systems, access, lists, numbering, translations and branding.",
+  "navigation": "Settings navigation",
+  "nothing": "No settings are available to you.",
+  "save": "Save",
+  "saved": "Saved",
+  "groups": {
+    "general": "General",
+    "data": "Data and language",
+    "access": "Access",
+    "identity": "Users and sign-in",
+    "organisation": "Organisation"
+  },
+  "regional": {
+    "timeZone": "Time zone",
+    "currencyCode": "Currency code",
+    "currencyHint": "Three letters (ISO 4217), e.g. AED",
+    "dateFormat": "Date format",
+    "hijriDisplay": "Show Hijri dates",
+    "hijriHint": "Off by default; data always stays Gregorian.",
+    "arabicIndicDigits": "Arabic-Indic digits",
+    "arabicIndicDigitsHint": "Numbers show as ١٢٣ in the Arabic interface.",
+    "preview": "Preview"
+  },
+  "branding": {
+    "organisationNameAr": "Organisation name (Arabic)",
+    "organisationNameEn": "Organisation name (English)",
+    "primaryColor": "Primary colour",
+    "primaryColorHint": "As #RRGGBB",
+    "emailHeaderAr": "E-mail header (Arabic)",
+    "emailHeaderEn": "E-mail header (English)",
+    "emailFooterAr": "E-mail footer (Arabic)",
+    "emailFooterEn": "E-mail footer (English)",
+    "logoLight": "Logo for the light theme",
+    "logoDark": "Logo for the dark theme",
+    "logoPreview": "Logo preview",
+    "noLogo": "No logo",
+    "upload": "Upload a logo",
+    "logoHint": "PNG, JPEG or WebP, up to 512 KB",
+    "remove": "Remove logo"
+  },
+  "systems": {
+    "system": "System",
+    "kind": "Kind",
+    "enabled": "Enabled",
+    "enabledFor": "Enable {{name}}",
+    "owningUnit": "Owning unit",
+    "platformAlwaysOn": "Part of the platform, always on",
+    "kinds": {
+      "platform": "Platform",
+      "module": "System"
+    }
+  },
+  "lookups": {
+    "types": "List types",
+    "newType": "New list",
+    "newTypeDescription": "An additional list that systems can use.",
+    "valuesOf": "Values of {{name}}",
+    "newValue": "New value",
+    "editValue": "Edit value",
+    "empty": "No values yet",
+    "code": "Code",
+    "codeHint": "Fixed once created; systems rely on it.",
+    "typeCodeHint": "e.g. category.risk",
+    "labelAr": "Arabic label",
+    "labelEn": "English label",
+    "nameAr": "Arabic name",
+    "nameEn": "English name",
+    "sort": "Order",
+    "state": "State",
+    "active": "Active",
+    "inactive": "Inactive",
+    "edit": "Edit",
+    "parent": "Parent value",
+    "parentType": "Parent list (optional)",
+    "system": "System code"
+  },
+  "numbering": {
+    "tokens": "Available tokens",
+    "token": {
+      "YYYY": "Four-digit year",
+      "YY": "Two-digit year",
+      "MM": "Month",
+      "UNIT": "Unit code",
+      "SEQ": "Sequence with the given number of digits (last token)"
+    },
+    "pattern": "Pattern",
+    "default": "Default pattern: {{pattern}}",
+    "preview": "The next number will look like",
+    "invalid": "Invalid pattern",
+    "resetDefault": "Back to default"
+  },
+  "translations": {
+    "search": "Search keys and text",
+    "onlyOverridden": "Changed only",
+    "key": "Key",
+    "arabic": "Arabic",
+    "english": "English",
+    "overridden": "Changed",
+    "edit": "Edit translation",
+    "editKey": "Edit {{key}}",
+    "overrideAr": "Arabic text",
+    "overrideEn": "English text",
+    "default": "Default: {{text}}",
+    "clearHint": "Leave a field empty to go back to the default text."
+  },
+  "errors": {
+    "patternInvalid": "Invalid pattern. Use letters, digits, - _ / . and the known tokens only.",
+    "patternSequence": "The pattern needs {SEQ} exactly once, as the last token.",
+    "patternUnit": "{UNIT} cannot be added or removed: the system passes a unit code according to its default pattern.",
+    "colour": "Enter a colour as #RRGGBB.",
+    "logoSize": "The logo is larger than {{maxKb}} KB.",
+    "logoType": "The logo must be PNG, JPEG or WebP.",
+    "duplicateCode": "This code is already used."
+  }
+}

@@ -22,7 +22,7 @@ public class SignInTests(ApiFixture api) : IClassFixture<ApiFixture>
 
         var me = await client.GetFromJsonAsync<JsonElement>("/api/v1/identity/me");
         me.GetProperty("userName").GetString().ShouldBe(user.UserName);
-        me.GetProperty("isSystemAdmin").GetBoolean().ShouldBeFalse();
+        me.TryGetProperty("isSystemAdmin", out _).ShouldBeFalse(); // ADR 0016: roles come from /api/v1/access/me
         me.GetProperty("employee").GetProperty("id").GetGuid().ShouldBe(user.EmployeeId!.Value);
         me.GetProperty("authMethod").GetString().ShouldBe("pwd");
 
@@ -186,7 +186,8 @@ public class SignInTests(ApiFixture api) : IClassFixture<ApiFixture>
         result.GetProperty("recoveryCodes").GetArrayLength().ShouldBe(10);
 
         await client.RefreshAntiforgeryAsync();
-        (await client.GetFromJsonAsync<JsonElement>("/api/v1/identity/me")).GetProperty("isSystemAdmin").GetBoolean().ShouldBeTrue();
+        var access = await client.GetFromJsonAsync<JsonElement>("/api/v1/access/me");
+        access.GetProperty("roles").EnumerateArray().Select(r => r.GetString()).ShouldContain("access.administrator");
         await AssertEventAsync(admin.Id, AuthEventTypes.MfaEnabled, success: true);
 
         // Policy: the administrator cannot remove the only second factor.
@@ -354,8 +355,6 @@ public class SignInTests(ApiFixture api) : IClassFixture<ApiFixture>
         var admin = await api.Factory.SignInAsync(adminUser);
 
         await (await admin.PostAsync($"/api/v1/identity/admin/users/{adminUser.Id}/deactivate", null))
-            .ShouldBeProblemAsync(HttpStatusCode.UnprocessableEntity, "identity.user.self");
-        await (await admin.PostAsJsonAsync($"/api/v1/identity/admin/users/{adminUser.Id}/set-admin", new { isSystemAdmin = false }))
             .ShouldBeProblemAsync(HttpStatusCode.UnprocessableEntity, "identity.user.self");
     }
 

@@ -10,6 +10,7 @@ import { useTheme, type ThemePreference } from '@/app/theme';
 import { MfaSetup, RecoveryCodes } from '@/features/auth/MfaSetup';
 import { PasswordPolicyHint } from '@/features/auth/PasswordPolicyHint';
 import { meKey, useMe } from '@/features/auth/session';
+import { useFeatureEnabled } from '@/features/settings/lookups';
 import { isLanguage } from '@/i18n';
 import { formatDateTime, pickText } from '@/lib/format';
 import { writePreference } from '@/lib/preferences';
@@ -433,6 +434,7 @@ function TokensPanel() {
   const [scopes, setScopes] = useState<string[]>(['api.read']);
   const [created, setCreated] = useState<string>();
   const [revokeId, setRevokeId] = useState<string>();
+  const tokensEnabled = useFeatureEnabled('identity.access-tokens');
   const tokens = useQuery({
     queryKey: ['identity', 'me', 'tokens'],
     queryFn: async ({ signal }) => unwrap(await api.GET('/api/v1/identity/me/tokens', { signal })),
@@ -508,9 +510,13 @@ function TokensPanel() {
           </TableBody>
         </Table>
       )}
-      <Button className="self-start" onClick={() => setCreating(true)}>
-        {t('tokens.create')}
-      </Button>
+      {tokensEnabled === false ? (
+        <StatusBanner tone="info" title={translateMessageKey(tc, 'errors.featureDisabled')} />
+      ) : (
+        <Button className="self-start" onClick={() => setCreating(true)} disabled={tokensEnabled !== true}>
+          {t('tokens.create')}
+        </Button>
+      )}
 
       <Dialog
         open={creating}

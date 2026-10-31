@@ -103,12 +103,12 @@ Finish with the phase summary.
 ```
 
 **Acceptance checks**
-- [ ] A user with "Unit-and-below" scope sees only records of their unit tree; tests cover all 5 scopes.
-- [ ] Granting a record role gives access to exactly that record.
-- [ ] Disabling a system in Settings hides it from the sidebar and blocks its API.
-- [ ] Lookup values and numbering formats edited in the UI take effect without redeploy.
-- [ ] Translation override changes a label live in both languages.
-- [ ] Access review report exports to Excel.
+- [x] A user with "Unit-and-below" scope sees only records of their unit tree; tests cover all 5 scopes.
+- [x] Granting a record role gives access to exactly that record.
+- [x] Disabling a system in Settings hides it from the sidebar and blocks its API.
+- [x] Lookup values and numbering formats edited in the UI take effect without redeploy.
+- [x] Translation override changes a label live in both languages.
+- [x] Access review report exports to Excel.
 
 ---
 

@@ -226,7 +226,7 @@ dotnet tool restore
 dotnet run --project src/Host/Strategy.Host
 dotnet run --project src/Host/Strategy.Host -- --migrate                      # apply migrations and exit
 dotnet run --project src/Host/Strategy.Host -- --create-admin --email <e> --password-file <f>   # first administrator
-# Development seed (empty DB): mariam@strategy.local (admin, must use MFA) / ahmed@strategy.local, password Strategy#Demo2026.
+# Development seed (empty DB): mariam@strategy.local (platform administrator roles, must use MFA) / ahmed@strategy.local (sample editor), password Strategy#Demo2026.
 # Seed__AdminTotpKey=<base32> gives the admin a known authenticator key (E2E uses JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP).
 
 # Module migration (one DbContext + schema per module, ADR 0006)
@@ -246,6 +246,7 @@ tools/check-vulnerable.sh && tools/check-api-client.sh
 cd web && npm run lint && npm run format:check && npm run typecheck && npm test
 npm run build && npm audit --audit-level=high && npm run lint:licenses
 npx playwright test                                                           # E2E, projects "ar" and "en" (needs postgres + mailpit; starts the host)
+# E2E screenshots go to docs/screenshots/$E2E_SCREENSHOTS (default phase-2). A sandbox Chromium of another revision: E2E_CHROMIUM_PATH=/opt/pw-browsers/chromium
 
 # Containerised install (http://localhost:8080)
 docker compose -f deploy/docker-compose.yml --profile app up -d --build

@@ -181,7 +181,7 @@ const importRoute = createRoute({
   component: lazyRouteComponent(() => import('@/features/org/ImportPage'), 'ImportPage'),
 });
 
-// Administration (system administrators, ADR 0009; the server enforces it)
+// Administration (identity permissions, ADR 0016; the server enforces them)
 export const usersRoute = createRoute({
   getParentRoute: () => appLayout,
   path: '/admin/users',
@@ -213,6 +213,97 @@ const emailRoute = createRoute({
   component: lazyRouteComponent(() => import('@/features/admin/EmailSettingsPage'), 'EmailSettingsPage'),
 });
 
+// Settings centre (docs/design/settings.md): pages are listed by permission; the server checks every call.
+const settingsLayout = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/settings',
+  component: lazyRouteComponent(() => import('@/features/settings/SettingsLayout'), 'SettingsLayout'),
+});
+
+const settingsHubRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/',
+  component: lazyRouteComponent(() => import('@/features/settings/SettingsLayout'), 'SettingsHubPage'),
+});
+
+const regionalRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/regional',
+  component: lazyRouteComponent(() => import('@/features/settings/GeneralPages'), 'RegionalPage'),
+});
+
+const brandingRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/branding',
+  component: lazyRouteComponent(() => import('@/features/settings/GeneralPages'), 'BrandingPage'),
+});
+
+const systemsRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/systems',
+  component: lazyRouteComponent(() => import('@/features/settings/GeneralPages'), 'SystemsPage'),
+});
+
+const featuresRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/features',
+  component: lazyRouteComponent(() => import('@/features/settings/GeneralPages'), 'FeaturesPage'),
+});
+
+const lookupsRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/lookups',
+  component: lazyRouteComponent(() => import('@/features/settings/DataPages'), 'LookupsPage'),
+});
+
+const numberingRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/numbering',
+  component: lazyRouteComponent(() => import('@/features/settings/DataPages'), 'NumberingPage'),
+});
+
+const translationsRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/translations',
+  component: lazyRouteComponent(() => import('@/features/settings/DataPages'), 'TranslationsPage'),
+});
+
+const systemAccessRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/access/system-access',
+  component: lazyRouteComponent(() => import('@/features/access/AccessPages'), 'SystemAccessPage'),
+});
+
+const transferRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/access/transfer',
+  component: lazyRouteComponent(() => import('@/features/access/AccessPages'), 'TransferPage'),
+});
+
+const reviewRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/access/review',
+  component: lazyRouteComponent(() => import('@/features/access/AccessPages'), 'ReviewPage'),
+});
+
+export const rolesRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/access/roles',
+  validateSearch: z.object({ system: z.string().max(64).optional().catch(undefined) }),
+  component: lazyRouteComponent(() => import('@/features/access/RolesPage'), 'RolesPage'),
+});
+
+export const assignmentsRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/access/assignments',
+  validateSearch: z.object({
+    roleId: z.string().max(64).optional().catch(undefined),
+    userId: z.string().max(64).optional().catch(undefined),
+    includeEnded: z.boolean().optional().catch(undefined),
+  }),
+  component: lazyRouteComponent(() => import('@/features/access/AccessPages'), 'AssignmentsPage'),
+});
+
 const routeTree = rootRoute.addChildren([
   publicLayout.addChildren([loginRoute, mfaRoute, enrolRoute, forgotRoute, resetRoute]),
   appLayout.addChildren([
@@ -230,6 +321,21 @@ const routeTree = rootRoute.addChildren([
     providersRoute,
     securityRoute,
     emailRoute,
+    settingsLayout.addChildren([
+      settingsHubRoute,
+      regionalRoute,
+      brandingRoute,
+      systemsRoute,
+      featuresRoute,
+      lookupsRoute,
+      numberingRoute,
+      translationsRoute,
+      rolesRoute,
+      assignmentsRoute,
+      systemAccessRoute,
+      transferRoute,
+      reviewRoute,
+    ]),
   ]),
 ]);
 

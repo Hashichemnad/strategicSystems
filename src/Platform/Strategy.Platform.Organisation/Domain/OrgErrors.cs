@@ -41,6 +41,8 @@ public static class OrgErrors
 
     public static Error ManagerNotFound => Error.Rule("org.employee.managerNotFound", "org.errors.managerNotFound");
 
+    public static Error UnknownGrade => Error.Validation([new FieldError("grade", "org.employee.unknownGrade", "org.errors.unknownGrade")]);
+
     public static Error UnitNotFound => Error.Rule("org.employee.unitNotFound", "org.errors.unitNotFound");
 
     public static Error EmployeeNotFound => Error.Rule("org.unit.employeeNotFound", "org.errors.employeeNotFound");

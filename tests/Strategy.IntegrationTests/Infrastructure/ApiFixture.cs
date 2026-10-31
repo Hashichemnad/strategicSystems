@@ -17,6 +17,30 @@ public sealed class ApiFixture(PostgresFixture postgres) : IAsyncLifetime
     /// <summary>One signed-in system administrator (with MFA) per test class.</summary>
     public Task<HttpClient> AdminClientAsync() => CachedAsync(() => _adminClient, c => _adminClient = c, admin: true);
 
+    private readonly Dictionary<string, HttpClient> _permissionClients = new(StringComparer.Ordinal);
+
+    /// <summary>A signed-in user whose only grant (besides the defaults for everyone) is a role holding exactly <paramref name="permission"/>.</summary>
+    public async Task<HttpClient> ClientWithOnlyAsync(string permission)
+    {
+        await _gate.WaitAsync();
+        try
+        {
+            if (!_permissionClients.TryGetValue(permission, out var client))
+            {
+                var system = permission[..permission.IndexOf('.', StringComparison.Ordinal)];
+                var role = await Factory.CreateRoleAsync(system, (permission, Strategy.Platform.Access.DataScope.All));
+                client = await Factory.SignInAsync(await Factory.CreateUserAsync(roles: role));
+                _permissionClients[permission] = client;
+            }
+
+            return client;
+        }
+        finally
+        {
+            _gate.Release();
+        }
+    }
+
     private async Task<HttpClient> CachedAsync(Func<HttpClient?> get, Action<HttpClient> set, bool admin)
     {
         await _gate.WaitAsync();

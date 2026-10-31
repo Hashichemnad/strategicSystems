@@ -20,8 +20,10 @@
       "main": "Main",
       "organisation": "Organisation",
       "administration": "Administration",
-      "development": "Development"
-    }
+      "development": "Development",
+      "systems": "Systems"
+    },
+    "settings": "Settings"
   },
   "language": {
     "label": "Language",

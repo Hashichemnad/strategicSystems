@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Settings centre backbone (SPEC §0.2, docs/design/settings.md): typed settings, lookups, numbering, feature flags,
+       branding, regional settings, translation overrides. -->
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Strategy.Platform.Kernel\Strategy.Platform.Kernel.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Access.Contracts\Strategy.Platform.Access.Contracts.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Persistence\Strategy.Platform.Persistence.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Http\Strategy.Platform.Http.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Strategy.UnitTests" />
+    <InternalsVisibleTo Include="Strategy.IntegrationTests" />
+  </ItemGroup>
+</Project>

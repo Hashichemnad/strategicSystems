@@ -50,3 +50,9 @@ create/edit dialog built with react-hook-form + zod, server validation errors ma
 ## Tests
 Unit: domain transitions, validator. Integration (Testcontainers): every endpoint's happy path, validation 400,
 404, 409 concurrency, 422 transition, module disabled → 404, Production placeholder → 403 / 404. E2E: create → list in AR and EN.
+
+## Phase 2: the template for access, numbering and record roles
+- **Data scopes:** `owner_employee_id` (the creator's employee) and `unit_id` (that employee's unit at creation) make the item scopable. `SampleScope.Map` declares them once; lists use `ApplyScopeAsync`, record checks use `CanAsync(…, SampleScope.Map.RefOf(item))` (404 outside the read scope, 403 readable but not editable).
+- **Catalogue:** `SampleAccessCatalogue` declares the permissions with AR/EN labels, the default roles (`sample.viewer`: read all; `sample.editor`: read all, create, update own) and the record role `sample.item / editor` (read + update one item).
+- **Record roles through the module:** `GET/POST /items/{id}/editors` and `POST /items/{id}/editors/{employeeId}/remove` grant and revoke the editor record role through `IRecordRoleService`, guarded by the update permission on that item.
+- **Numbering:** `number` comes from the Numbering service (`sample.item`, default `SMP-{YYYY}-{SEQ:4}`) inside the insert's transaction; unique index on `number`.

@@ -2,11 +2,14 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Strategy.Modules.Sample.Api;
+using Strategy.Modules.Sample.Application;
 using Strategy.Modules.Sample.Contracts;
 using Strategy.Modules.Sample.Infrastructure;
+using Strategy.Platform.Access;
 using Strategy.Platform.Http.Modules;
 using Strategy.Platform.Kernel;
 using Strategy.Platform.Persistence;
+using Strategy.Platform.Settings;
 
 namespace Strategy.Modules.Sample;
 
@@ -20,6 +23,8 @@ public sealed class SampleModule : IModule
         services.AddModuleDbContext<SampleDbContext>(SampleDbContext.SchemaName);
         services.AddRequestHandlersFrom(typeof(SampleModule).Assembly);
         services.AddScoped<ISampleItemDirectory, SampleItemDirectory>();
+        services.AddAccessCatalogue(new SampleAccessCatalogue());
+        services.AddNumberingFormat(SampleAccessCatalogue.Numbering);
     }
 
     public void MapEndpoints(IEndpointRouteBuilder endpoints) => SampleEndpoints.Map(endpoints.MapModuleGroup(this));

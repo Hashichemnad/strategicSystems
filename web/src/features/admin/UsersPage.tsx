@@ -1,11 +1,12 @@
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getRouteApi } from '@tanstack/react-router';
+import { getRouteApi, useNavigate } from '@tanstack/react-router';
 import { MoreHorizontal, Plus } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api, unwrap } from '@/api/client';
 import { errorMessage, translateMessageKey } from '@/api/problem';
 import type { components } from '@/api/schema';
+import { useCan } from '@/features/access/session';
 import { EmployeePicker } from '@/features/org/EmployeePicker';
 import { formatDateTime, pickText } from '@/lib/format';
 import {
@@ -37,14 +38,7 @@ import {
 
 type User = components['schemas']['UserDto'];
 type UserAction =
-  | 'activate'
-  | 'deactivate'
-  | 'unlock'
-  | 'reset-mfa'
-  | 'revoke-sessions'
-  | 'send-password-reset'
-  | 'grant-admin'
-  | 'revoke-admin';
+  'activate' | 'deactivate' | 'unlock' | 'reset-mfa' | 'revoke-sessions' | 'send-password-reset';
 
 const routeApi = getRouteApi('/app/admin/users');
 
@@ -57,6 +51,8 @@ export function UsersPage() {
   const toast = useToast();
   const [text, setText] = useState(search.search ?? '');
   const [creating, setCreating] = useState(false);
+  const canSeeRoles = useCan('access.assignment.read');
+  const navigateTo = useNavigate();
   const users = useQuery({
     queryKey: ['identity', 'users', search],
     queryFn: async ({ signal }) =>
@@ -92,14 +88,6 @@ export function UsersPage() {
         case 'send-password-reset':
           unwrap(await api.POST('/api/v1/identity/admin/users/{id}/send-password-reset', path));
           return;
-        case 'grant-admin':
-        case 'revoke-admin':
-          return unwrap(
-            await api.POST('/api/v1/identity/admin/users/{id}/set-admin', {
-              ...path,
-              body: { isSystemAdmin: action === 'grant-admin' },
-            }),
-          );
       }
     },
     onSuccess: (_, { action }) => {
@@ -154,7 +142,6 @@ export function UsersPage() {
                   <span className="block font-medium" dir="ltr">
                     {user.userName}
                   </span>
-                  {user.isSystemAdmin && <StatusChip tone="info">{t('users.admin')}</StatusChip>}
                 </TableCell>
                 <TableCell>
                   {user.employee ? pickText(i18n.language, user.employee.nameAr, user.employee.nameEn) : '—'}
@@ -201,14 +188,21 @@ export function UsersPage() {
                             {t(`users.actions.${action}`)}
                           </DropdownMenuItem>
                         ))}
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        onSelect={() =>
-                          act.mutate({ user, action: user.isSystemAdmin ? 'revoke-admin' : 'grant-admin' })
-                        }
-                      >
-                        {t(user.isSystemAdmin ? 'users.actions.revoke-admin' : 'users.actions.grant-admin')}
-                      </DropdownMenuItem>
+                      {canSeeRoles && (
+                        <>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
+                            onSelect={() =>
+                              void navigateTo({
+                                to: '/settings/access/assignments',
+                                search: { userId: user.id },
+                              })
+                            }
+                          >
+                            {t('users.actions.roles')}
+                          </DropdownMenuItem>
+                        </>
+                      )}
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>
@@ -237,7 +231,6 @@ function CreateUserDialog({ onClose }: { onClose: () => void }) {
   const toast = useToast();
   const [employeeId, setEmployeeId] = useState<string>();
   const [userName, setUserName] = useState('');
-  const [isAdmin, setIsAdmin] = useState(false);
   const [invite, setInvite] = useState(true);
   const create = useMutation({
     mutationFn: async () =>
@@ -246,7 +239,6 @@ function CreateUserDialog({ onClose }: { onClose: () => void }) {
           body: {
             employeeId: employeeId ?? null,
             userName: userName.trim() || null,
-            isSystemAdmin: isAdmin,
             sendInvitation: invite,
           },
         }),
@@ -293,12 +285,6 @@ function CreateUserDialog({ onClose }: { onClose: () => void }) {
             label={t('users.sendInvitation')}
             checked={invite}
             onChange={(e) => setInvite(e.target.checked)}
-          />
-          <Checkbox
-            label={t('users.makeAdmin')}
-            description={t('users.makeAdminHint')}
-            checked={isAdmin}
-            onChange={(e) => setIsAdmin(e.target.checked)}
           />
         </div>
       </DialogContent>

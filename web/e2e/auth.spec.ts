@@ -32,7 +32,7 @@ test('wrong password is refused; the administrator signs in with an authenticato
   await expect(page).toHaveURL(/\/org\/units/u);
   await expect(page.getByRole('heading', { level: 1, name: tr(language, 'org:units.title') })).toBeVisible();
   await expect(
-    page.getByRole('navigation').getByRole('link', { name: tr(language, 'shell:nav.providers') }),
+    page.getByRole('navigation').getByRole('link', { name: tr(language, 'shell:nav.settings') }),
   ).toBeVisible();
 
   await page.getByRole('button', { name: tr(language, 'shell:profile.menu') }).click();

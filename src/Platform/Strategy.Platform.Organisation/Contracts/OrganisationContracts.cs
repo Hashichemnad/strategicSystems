@@ -25,6 +25,9 @@ public interface IOrgDirectory
     /// <summary>The unit and every unit below it (current structure), for "unit and below" scopes.</summary>
     Task<IReadOnlyList<Guid>> GetSelfAndDescendantIdsAsync(Guid unitId, CancellationToken cancellationToken = default);
 
+    /// <summary>Active units whose current head is <paramref name="employeeId"/> (unit data scopes, ADR 0015).</summary>
+    Task<IReadOnlyList<Guid>> GetUnitsHeadedByAsync(Guid employeeId, CancellationToken cancellationToken = default);
+
     Task<Guid?> GetHeadOfUnitAsync(Guid unitId, DateOnly? asOf = null, CancellationToken cancellationToken = default);
 }
 
@@ -40,6 +43,9 @@ public interface IEmployeeDirectory
     Task<EmployeeReference?> FindByEmailAsync(string email, CancellationToken cancellationToken = default);
 
     Task<EmployeeReference?> FindByEmployeeNoAsync(string employeeNo, CancellationToken cancellationToken = default);
+
+    /// <summary>Active employees whose current manager is <paramref name="managerEmployeeId"/> (the "team" data scope, ADR 0015).</summary>
+    Task<IReadOnlyList<Guid>> GetDirectReportIdsAsync(Guid managerEmployeeId, CancellationToken cancellationToken = default);
 
     /// <summary>The employee's manager as of a date, from the placement history.</summary>
     Task<Guid?> GetManagerAsync(Guid employeeId, DateOnly? asOf = null, CancellationToken cancellationToken = default);

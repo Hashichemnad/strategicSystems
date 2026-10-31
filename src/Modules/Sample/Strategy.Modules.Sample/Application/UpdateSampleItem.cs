@@ -67,10 +67,17 @@ internal static class SampleItemChange
         CancellationToken cancellationToken)
     {
         var item = await db.Items.FirstOrDefaultAsync(x => x.Id == id, cancellationToken).ConfigureAwait(false);
+
+        // Outside the read scope: 404 (existence does not leak). Readable but not editable: 403 (CLAUDE.md §7).
         if (item is null
-            || !await access.CanAsync(context.User, SamplePermissions.Update, new ResourceRef(SamplePermissions.ResourceType, id), cancellationToken).ConfigureAwait(false))
+            || !await access.CanAsync(context.User, SamplePermissions.Read, SampleScope.Map.RefOf(item), cancellationToken).ConfigureAwait(false))
         {
             return Error.NotFound();
+        }
+
+        if (!await access.CanAsync(context.User, SamplePermissions.Update, SampleScope.Map.RefOf(item), cancellationToken).ConfigureAwait(false))
+        {
+            return Error.Forbidden();
         }
 
         db.Entry(item).Property(x => x.Version).OriginalValue = expectedVersion;

@@ -22,6 +22,10 @@ export default defineConfig<E2eOptions>({
     baseURL,
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
+    // Sandboxes with a preinstalled Chromium of another revision: E2E_CHROMIUM_PATH=/opt/pw-browsers/chromium/... (optional).
+    ...(process.env.E2E_CHROMIUM_PATH
+      ? { launchOptions: { executablePath: process.env.E2E_CHROMIUM_PATH } }
+      : {}),
   },
   projects: [
     {

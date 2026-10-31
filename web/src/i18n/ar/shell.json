@@ -20,8 +20,10 @@
       "main": "الرئيسية",
       "organisation": "المؤسسة",
       "administration": "الإدارة",
-      "development": "التطوير"
-    }
+      "development": "التطوير",
+      "systems": "الأنظمة"
+    },
+    "settings": "الإعدادات"
   },
   "language": {
     "label": "اللغة",

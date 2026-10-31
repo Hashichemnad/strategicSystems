@@ -41,6 +41,10 @@ internal sealed class OrgDirectory(OrgDbContext db, IClock clock) : IOrgDirector
             : await db.Units.AsNoTracking().Where(u => u.Path.StartsWith(path)).Select(u => u.Id).ToListAsync(cancellationToken).ConfigureAwait(false);
     }
 
+    public async Task<IReadOnlyList<Guid>> GetUnitsHeadedByAsync(Guid employeeId, CancellationToken cancellationToken = default) =>
+        await db.Units.AsNoTracking().Where(u => u.HeadEmployeeId == employeeId && u.Active).Select(u => u.Id)
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
+
     public async Task<Guid?> GetHeadOfUnitAsync(Guid unitId, DateOnly? asOf = null, CancellationToken cancellationToken = default) =>
         await VersionOn(unitId, asOf ?? clock.Today).Select(v => v.HeadEmployeeId).FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
 
@@ -50,6 +54,12 @@ internal sealed class OrgDirectory(OrgDbContext db, IClock clock) : IOrgDirector
 
 internal sealed class EmployeeDirectory(OrgDbContext db, IClock clock) : IEmployeeDirectory
 {
+    public async Task<IReadOnlyList<Guid>> GetDirectReportIdsAsync(Guid managerEmployeeId, CancellationToken cancellationToken = default) =>
+        await db.Employees.AsNoTracking()
+            .Where(e => e.ManagerEmployeeId == managerEmployeeId && e.Status != EmployeeStatus.Left)
+            .Select(e => e.Id)
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
+
     public Task<EmployeeReference?> GetAsync(Guid employeeId, CancellationToken cancellationToken = default) =>
         FirstAsync(db.Employees.Where(e => e.Id == employeeId), cancellationToken);
 

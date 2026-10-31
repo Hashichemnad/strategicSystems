@@ -35,16 +35,18 @@ internal sealed class ListSampleItemsHandler(SampleDbContext db, IAccessService 
     : IQueryHandler<ListSampleItems, PagedResult<SampleItemDto>>
 {
     public static readonly IReadOnlySet<string> SortableFields =
-        new HashSet<string>(StringComparer.Ordinal) { "nameAr", "nameEn", "status", "createdAt", "updatedAt" };
+        new HashSet<string>(StringComparer.Ordinal) { "number", "nameAr", "nameEn", "status", "createdAt", "updatedAt" };
 
     public async Task<Result<PagedResult<SampleItemDto>>> HandleAsync(ListSampleItems query, CancellationToken cancellationToken)
     {
-        var items = access.ApplyScope(db.Items.AsNoTracking(), context.User, SamplePermissions.Read);
+        var items = await access.ApplyScopeAsync(db.Items.AsNoTracking(), context.User, SamplePermissions.Read, SampleScope.Map, cancellationToken)
+            .ConfigureAwait(false);
 
         if (!string.IsNullOrWhiteSpace(query.Search))
         {
             var pattern = "%" + EscapeLike(query.Search.Trim()) + "%";
             items = items.Where(x => EF.Functions.ILike(x.NameAr ?? string.Empty, pattern, "\\")
+                || EF.Functions.ILike(x.Number ?? string.Empty, pattern, "\\")
                 || EF.Functions.ILike(x.NameEn ?? string.Empty, pattern, "\\"));
         }
 
@@ -67,6 +69,7 @@ internal sealed class ListSampleItemsHandler(SampleDbContext db, IAccessService 
     private static IQueryable<SampleItem> Sort(IQueryable<SampleItem> items, (string Field, bool Descending)? order) =>
         order switch
         {
+            ("number", var desc) => desc ? items.OrderByDescending(x => x.Number) : items.OrderBy(x => x.Number),
             ("nameAr", var desc) => desc ? items.OrderByDescending(x => x.NameAr) : items.OrderBy(x => x.NameAr),
             ("nameEn", var desc) => desc ? items.OrderByDescending(x => x.NameEn) : items.OrderBy(x => x.NameEn),
             ("status", var desc) => desc ? items.OrderByDescending(x => x.Status) : items.OrderBy(x => x.Status),

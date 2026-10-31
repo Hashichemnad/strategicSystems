@@ -177,7 +177,7 @@ public sealed class StrategySignInManager(
     public Task ClearTwoFactorStateAsync() => Context.SignOutAsync(IdentityConstants.TwoFactorUserIdScheme);
 }
 
-/// <summary>Adds the claims access checks rely on: principal type, system-admin flag, employee.</summary>
+/// <summary>Adds the claims access checks rely on: principal type and employee. Roles are read from Platform.Access per request.</summary>
 internal sealed class StrategyClaimsFactory(UserManager<StrategyUser> userManager, IOptions<IdentityOptions> optionsAccessor)
     : UserClaimsPrincipalFactory<StrategyUser>(userManager, optionsAccessor)
 {
@@ -185,11 +185,6 @@ internal sealed class StrategyClaimsFactory(UserManager<StrategyUser> userManage
     {
         var identity = await base.GenerateClaimsAsync(user).ConfigureAwait(false);
         identity.AddClaim(new Claim(StrategyClaims.PrincipalType, user.PrincipalType));
-        if (user.IsSystemAdmin)
-        {
-            identity.AddClaim(new Claim(StrategyClaims.SystemAdmin, "true"));
-        }
-
         if (user.EmployeeId is { } employeeId)
         {
             identity.AddClaim(new Claim(StrategyClaims.EmployeeId, employeeId.ToString()));

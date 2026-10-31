@@ -6,8 +6,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Strategy.Platform.Kernel\Strategy.Platform.Kernel.csproj" />
     <ProjectReference Include="..\Strategy.Platform.Persistence\Strategy.Platform.Persistence.csproj" />
-    <ProjectReference Include="..\Strategy.Platform.Access\Strategy.Platform.Access.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Access.Contracts\Strategy.Platform.Access.Contracts.csproj" />
     <ProjectReference Include="..\Strategy.Platform.Http\Strategy.Platform.Http.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Settings\Strategy.Platform.Settings.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ClosedXML" />

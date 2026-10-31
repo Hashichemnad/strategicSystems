@@ -15,5 +15,8 @@
   "phoneFormat": "Enter a valid phone number.",
   "dateRange": "The end date must be on or after the start date.",
   "httpsUrl": "Enter a full https:// address.",
-  "url": "Enter a full address such as https://strategy.example.org."
+  "url": "Enter a full address such as https://strategy.example.org.",
+  "code": "Use only the letters, digits and hyphens of the expected format.",
+  "json": "Invalid JSON.",
+  "unknownReference": "The selected item does not exist."
 }

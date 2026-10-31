@@ -3,7 +3,7 @@ import { Plus, UsersRound } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { errorMessage } from '@/api/problem';
-import { useMe } from '@/features/auth/session';
+import { useCan } from '@/features/access/session';
 import { pickText } from '@/lib/format';
 import {
   Avatar,
@@ -36,7 +36,7 @@ export function EmployeesPage() {
   const { t: tc, i18n } = useTranslation();
   const search = routeApi.useSearch();
   const navigate = routeApi.useNavigate();
-  const me = useMe();
+  const canManage = useCan('org.employee.manage');
   const [text, setText] = useState(search.search ?? '');
   const [creating, setCreating] = useState(false);
   const units = useUnitTree();
@@ -65,7 +65,7 @@ export function EmployeesPage() {
         title={t('employees.title')}
         description={t('employees.description')}
         actions={
-          me?.isSystemAdmin && (
+          canManage && (
             <Button onClick={() => setCreating(true)}>
               <Plus aria-hidden />
               {t('employees.create')}

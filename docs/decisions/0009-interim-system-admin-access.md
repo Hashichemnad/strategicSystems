@@ -1,6 +1,6 @@
 # 0009 — Interim access: signed-in users and a system-administrator flag
 
-- **Status:** Accepted (Phase 1, temporary until Phase 2). Supersedes the environment-based behaviour of [0005](0005-phase-0-access-placeholder.md).
+- **Status:** Superseded by [0016](0016-roles-replace-interim-admin.md) (Phase 2). Originally supersedes the environment-based behaviour of [0005](0005-phase-0-access-placeholder.md).
 - **Context:** Phase 1 brings sign-in and admin screens (users, organisation, identity providers). Roles, data scopes and the permission catalogue arrive in Phase 2. Until then, these screens still need a server-side rule that also works in Production. The owner chose this option during Phase 1 planning.
 
 ## Decision

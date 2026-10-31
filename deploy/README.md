@@ -13,7 +13,7 @@
 cp deploy/.env.example deploy/.env          # change the passwords
 docker compose -f deploy/docker-compose.yml --profile app up -d --build
 
-# Create the first system administrator (once). The password is read from a file, never from the command line.
+# Create the first administrator (once): holds the platform administrator roles (ADR 0016). The password is read from a file, never from the command line.
 printf '%s' 'a-strong-password' > /tmp/admin-password && chmod 600 /tmp/admin-password
 docker compose -f deploy/docker-compose.yml --profile app run --rm \
   -v /tmp/admin-password:/run/secrets/admin-password:ro \
@@ -22,9 +22,9 @@ rm /tmp/admin-password
 ```
 
 The administrator sets up two-step verification at the first sign-in (required for administrators by default).
-Then, in the application: **Administration → Email server** (SMTP and the public address used in email links),
-**Organisation → Import** (units, then employees), **Administration → Users**, and optionally
-**Administration → Identity providers** (see [`docs/identity-providers.md`](../docs/identity-providers.md)).
+Then, in the application (**Settings**): **Email server** (SMTP and the public address used in email links),
+**Import** (units, then employees), **Users**, **Role assignments** and **System access** (who may open each system),
+and optionally **Identity providers** (see [`docs/identity-providers.md`](../docs/identity-providers.md)).
 
 ## Data Protection keys
 
