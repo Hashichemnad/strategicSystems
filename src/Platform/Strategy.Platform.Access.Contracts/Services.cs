@@ -64,3 +64,16 @@ public interface IRoleTransferHook
 }
 
 public sealed record RoleTransfer(Guid TransferId, IReadOnlyList<string> RoleKeys, IReadOnlyList<Guid> FromUserIds, IReadOnlyList<Guid> ToUserIds);
+
+/// <summary>
+/// Raised by platform services whose data feeds access decisions (organisation structure, employee placement, manager), so
+/// cached grants and scopes are rebuilt at the next check instead of after the cache lifetime.
+/// </summary>
+public static class AccessChangeSignal
+{
+    private static long _version;
+
+    public static long Version => Interlocked.Read(ref _version);
+
+    public static void Raise() => Interlocked.Increment(ref _version);
+}

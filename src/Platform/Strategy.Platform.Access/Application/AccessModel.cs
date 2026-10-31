@@ -57,7 +57,8 @@ internal sealed class AccessModelCache(IServiceScopeFactory scopeFactory, IClock
     private AccessModel? _model;
     private DateTimeOffset _loadedAt;
 
-    public long Generation => Interlocked.Read(ref _generation);
+    /// <summary>Changes with every access change here and every <see cref="AccessChangeSignal"/> (organisation changes).</summary>
+    public long Generation => Interlocked.Read(ref _generation) + AccessChangeSignal.Version;
 
     public void Dispose() => _gate.Dispose();
 

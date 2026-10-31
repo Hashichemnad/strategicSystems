@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Strategy.Platform.Access;
 using Strategy.Platform.Organisation.Domain;
 using Strategy.Platform.Persistence;
 
@@ -27,6 +28,20 @@ public sealed class OrgDbContext(DbContextOptions<OrgDbContext> options) : Modul
     public DbSet<EmployeePhoto> Photos => Set<EmployeePhoto>();
 
     public DbSet<Delegation> Delegations => Set<Delegation>();
+
+    /// <summary>Structure, placement and manager changes feed data scopes: tell the access cache (ADR 0015).</summary>
+    public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
+    {
+        var affectsAccess = ChangeTracker.Entries()
+            .Any(e => e.State is EntityState.Added or EntityState.Modified && e.Entity is OrgUnit or Employee);
+        var result = await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken).ConfigureAwait(false);
+        if (affectsAccess)
+        {
+            AccessChangeSignal.Raise();
+        }
+
+        return result;
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
