@@ -2,15 +2,11 @@ import {
   Boxes,
   Building2,
   FileSpreadsheet,
-  KeyRound,
   Layers,
   LayoutDashboard,
-  Mail,
   Network,
   Palette,
   Settings2,
-  ShieldCheck,
-  Users,
   UsersRound,
   type LucideIcon,
 } from 'lucide-react';
@@ -122,21 +118,8 @@ export const navigation: readonly NavSection[] = [
     key: 'administration',
     labelKey: 'nav.sections.administration',
     items: [
+      // One entry: users, identity providers, security and e-mail are pages of the Settings centre.
       { to: '/settings', labelKey: 'nav.settings', icon: Settings2, permissions: settingsPermissions },
-      { to: '/admin/users', labelKey: 'nav.users', icon: Users, permissions: ['identity.user.manage'] },
-      {
-        to: '/admin/providers',
-        labelKey: 'nav.providers',
-        icon: KeyRound,
-        permissions: ['identity.provider.manage'],
-      },
-      {
-        to: '/admin/security',
-        labelKey: 'nav.security',
-        icon: ShieldCheck,
-        permissions: ['identity.security.manage'],
-      },
-      { to: '/admin/email', labelKey: 'nav.email', icon: Mail, permissions: ['identity.smtp.manage'] },
     ],
   },
   {

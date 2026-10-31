@@ -18,11 +18,11 @@
 | `org_level` | `code` (unique), `name_ar`, `name_en`, `sort`, `active` | Seeded: `organisation`, `sector`, `department`, `section`, `unit` |
 | `org_unit` | `code` (unique), `name_ar`, `name_en`, `level_code`, `parent_id`, `path`, `depth`, `head_employee_id`, `deputy_employee_id`, `cost_centre`, `active`, `effective_from`, `effective_to`, `name_search` | Current state; auditable, `xmin` |
 | `org_unit_version` | `unit_id`, `valid_from`, `valid_to` (null = current), `parent_id`, `path`, `depth`, `code`, names, `level_code`, `head_employee_id`, `deputy_employee_id`, `cost_centre`, `active` | One row per effective-dated state |
-| `employee` | `employee_no` (unique), `name_ar`, `name_en`, `email` (unique, lower-cased), `mobile`, `job_title_ar`, `job_title_en`, `grade`, `unit_id`, `manager_employee_id`, `status`, `join_date`, `name_search` | Auditable, `xmin` |
+| `employee` | `employee_no` (unique), `name_ar`, `name_en`, `email` (unique, lower-cased), `mobile`, `job_title_ar`, `job_title_en`, `grade` (code of the list `employee.grade`, Phase 2), `unit_id`, `manager_employee_id`, `status`, `join_date`, `name_search` | Auditable, `xmin` |
 | `employee_assignment` | `employee_id`, `unit_id`, `manager_employee_id`, `job_title_ar`, `job_title_en`, `valid_from`, `valid_to` | History of placement |
 | `employee_photo` | `employee_id` (PK), `content_type`, `content`, `updated_at` | PNG/JPEG/WebP checked by magic number, ≤ 1 MB (ADR 0014) |
 | `delegation` | `delegator_employee_id`, `delegate_employee_id`, `from_date`, `to_date`, `scope` (`text[]` of system codes / process keys; empty = all), `reason`, `status`, `cancel_reason` | Auditable, `xmin` |
-| `org_settings` | singleton row: `enforce_level_order` | Moves to the Settings centre in Phase 2 |
+| `org_settings` | singleton row: `enforce_level_order` | Listed in the Settings centre (Organisation → Levels); storage stays here |
 
 - **`path`** is the chain of unit ids from the root, formatted as `/<id>/<id>/…/`. It makes "unit and below" a `LIKE 'path%'` index scan, which Phase 2 data scopes use.
 - **`name_search`** holds the normalised AR/EN names (diacritics and tatweel removed; alef, ya/alef maqsura and ta marbuta/ha unified; lower case). It is written by the domain and indexed with a trigram index (`pg_trgm`).
@@ -59,10 +59,10 @@ Validation rules:
 | No active reverse delegation (B → A) overlapping in time, so chains cannot loop | `org.delegation.cycle` |
 | Cancel only `active`; cancellation needs a reason | `org.delegation.notActive` |
 
-## Permissions (interim enforcement: ADR 0009; catalogue in Phase 2)
+## Permissions (catalogue and default roles since Phase 2: `org.viewer` for everyone, `org.administrator`)
 | Permission | Used by |
 |---|---|
-| `org.unit.read` / `org.employee.read` | Directory, tree, chart, employee list (any signed-in internal user) |
+| `org.unit.read` / `org.employee.read` | Directory, tree, chart, employee list. Scopable: a unit is its own unit, an employee is owned by itself and belongs to its unit (`OrgScopes`). Granted to everyone with scope All by default |
 | `org.unit.manage` | Create / update / move / deactivate units, levels, settings |
 | `org.employee.manage` | Create / update employees, status, photo |
 | `org.import.manage` | Import templates and uploads |
@@ -119,3 +119,8 @@ Header row cells are bilingual (`English / عربي`). Columns are matched by th
 | Organisation → Levels | Editable list |
 | Organisation → Import | Wizard: choose kind → download template → upload → validation report → commit |
 | Profile → Delegations | My delegations: create, cancel |
+
+## Phase 2 changes
+- **Grade:** a lookup code of `employee.grade` (seeded G01–G12, editable in Settings → Lists). A new or changed grade must be an active code (`org.employee.unknownGrade`); unchanged legacy values are kept and were added to the list at upgrade (ADR 0014 closed).
+- **Access cache:** saving units or employees raises `AccessChangeSignal`, so cached data scopes ("unit and below", "team") follow a re-org at once.
+- **Directory:** `IEmployeeDirectory.GetDirectReportIdsAsync` serves the "team" scope.

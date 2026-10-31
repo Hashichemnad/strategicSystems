@@ -17,7 +17,7 @@ export interface E2eOptions {
 const here = dirname(fileURLToPath(import.meta.url));
 
 /** Screenshots committed for review: docs/screenshots/<phase>/<language>-<name>.png (E2E_SCREENSHOTS = phase folder). */
-const screenshotDir = join(here, '..', '..', 'docs', 'screenshots', process.env.E2E_SCREENSHOTS ?? 'phase-1');
+const screenshotDir = join(here, '..', '..', 'docs', 'screenshots', process.env.E2E_SCREENSHOTS ?? 'phase-2');
 mkdirSync(screenshotDir, { recursive: true });
 
 /** The demo seed (Development): password and the administrator's authenticator key (Seed__AdminTotpKey). */

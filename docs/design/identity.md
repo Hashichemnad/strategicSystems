@@ -9,10 +9,10 @@
 ## Data model (schema `identity`)
 | Table | Notes |
 |---|---|
-| `users` | ASP.NET Core Identity user (Guid v7 key) + `employee_id` (unique; null only for the bootstrap admin), `principal_type` (`internal`), `is_system_admin` (interim, ADR 0009), `language`, `theme`, `active`, `last_sign_in_at`, `created_at`, `password_changed_at`, `totp_last_step` (last accepted authenticator time step; replay protection) |
+| `users` | ASP.NET Core Identity user (Guid v7 key) + `employee_id` (unique; null only for the bootstrap admin), `principal_type` (`internal`), `language`, `theme`, `active`, `last_sign_in_at`, `created_at`, `password_changed_at`, `totp_last_step` (last accepted authenticator time step; replay protection) |
 | `user_logins` | External logins: `login_provider` = provider code, `provider_key` = subject / NameID / LDAP DN |
 | `user_tokens` | Authenticator key (protected), recovery codes (hashed) |
-| `user_claims` | Unused (roles come from `access` in Phase 2) |
+| `user_claims` | Unused (roles come from Platform.Access, ADR 0016) |
 | `password_history` | `user_id`, `hash`, `created_at` — supports the "no reuse of the last N passwords" rule |
 | `security_settings` | Singleton: password policy, lockout, session timeouts, MFA policy, SSO-MFA rule, PAT max lifetime |
 | `smtp_settings` | Singleton: host, port, security, user, protected password, sender address, AR/EN sender names |
@@ -32,7 +32,7 @@
 | Password | min length 12, upper, lower, digit, symbol required; history 5; max age 0 (off) |
 | Lockout | 5 failures → 15 minutes |
 | Sessions | idle 30 min, absolute 12 h |
-| MFA policy | `admins` (system administrators must use MFA); options `optional`, `admins`, `all` |
+| MFA policy | `admins` (holders of a role that requires MFA, ADR 0016); options `optional`, `admins`, `all` |
 | MFA methods | TOTP on, email code on |
 | Require local MFA after SSO | off (the IdP's MFA applies) |
 | PAT lifetime | default 90 days, max 365 |
@@ -87,14 +87,16 @@ Every transition writes an `auth_event` and a structured log line.
   - A PAT is refused when it is revoked or expired, or when its user is inactive or locked.
   - PAT requests are exempt from antiforgery. Their channel is `api`.
 
-## Permissions (interim: ADR 0009)
-| Permission | Who (Phase 1) |
+## Permissions (catalogue and default role since Phase 2: ADR 0016, docs/design/access.md)
+| Permission | Who by default |
 |---|---|
 | self-service `/me/*` | any signed-in user (ownership checked in handlers; another user's session / token → 404) |
-| `identity.user.manage` | system administrators |
-| `identity.provider.manage` | system administrators |
-| `identity.security.manage` | system administrators |
-| `identity.smtp.manage` | system administrators |
+| `identity.user.manage` | role `identity.administrator` (requires MFA) |
+| `identity.provider.manage` | role `identity.administrator` |
+| `identity.security.manage` | role `identity.administrator` |
+| `identity.smtp.manage` | role `identity.administrator` |
+
+Phase 2 changes: the `is_system_admin` column, the `set-admin` endpoint and `isSystemAdmin` in `/me` and user creation are gone (roles are assigned in Settings → Access). The last active access administrator cannot be deactivated (`identity.user.lastAdmin`). Personal access tokens can be switched off in Settings → Features (`identity.access-tokens`). Identity e-mails carry the branding header, footer and organisation name from Settings → Branding.
 
 ## API (`/api/v1/identity`)
 | Group | Routes |

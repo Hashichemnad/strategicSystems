@@ -105,7 +105,7 @@ test('a regular user does not see administration and is refused by the server', 
   await savePreferences(page, language);
   await page.goto('/org/units');
   await expect(page.getByRole('heading', { level: 1, name: tr(language, 'org:units.title') })).toBeVisible();
-  await expect(page.getByRole('link', { name: tr(language, 'shell:nav.providers') })).toHaveCount(0);
+  await expect(page.getByRole('link', { name: tr(language, 'shell:nav.settings') })).toHaveCount(0);
   await expect(page.getByRole('button', { name: tr(language, 'org:units.createRoot') })).toHaveCount(0);
   expect((await page.request.get('/api/v1/identity/admin/providers')).status()).toBe(403);
   await context.close();
