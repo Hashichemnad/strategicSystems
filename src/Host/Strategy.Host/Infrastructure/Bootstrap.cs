@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Strategy.Platform.Access;
+using Strategy.Platform.Access.Application;
 using Strategy.Platform.Identity.Application;
 using Strategy.Platform.Identity.Domain;
 using Strategy.Platform.Identity.Infrastructure;
@@ -14,7 +15,7 @@ namespace Strategy.Host.Infrastructure;
 
 /// <summary>
 /// Install-time and development helpers:
-/// <c>--create-admin --email &lt;e&gt; --password-file &lt;f&gt;</c> creates the first system administrator (ADR 0009), and the
+/// <c>--create-admin --email &lt;e&gt; --password-file &lt;f&gt;</c> creates the first administrator (platform administrator roles, ADR 0016), and the
 /// Development seed builds a small demo organisation with an administrator and a regular user.
 /// </summary>
 internal static partial class Bootstrap
@@ -41,8 +42,12 @@ internal static partial class Bootstrap
             return 1;
         }
 
-        var result = await CreateUserAsync(users, email, password, employeeId: null, isAdmin: true);
-        if (!result.Succeeded)
+        var (result, created) = await CreateUserAsync(users, email, password, employeeId: null);
+        if (result.Succeeded)
+        {
+            await scope.ServiceProvider.GetRequiredService<IUserRoleQuery>().GrantPlatformAdministratorAsync(created.Id);
+        }
+        else
         {
             foreach (var error in result.Errors)
             {
@@ -90,8 +95,22 @@ internal static partial class Bootstrap
 
         var users = provider.GetRequiredService<StrategyUserManager>();
         var password = configuration["Seed:Password"] ?? "Strategy#Demo2026";
-        var admin = await CreateUserAsync(users, "mariam@strategy.local", password, director, isAdmin: true);
-        var user = await CreateUserAsync(users, "ahmed@strategy.local", password, analyst, isAdmin: false);
+        var (admin, adminUser) = await CreateUserAsync(users, "mariam@strategy.local", password, director);
+        var (user, analystUser) = await CreateUserAsync(users, "ahmed@strategy.local", password, analyst);
+        if (admin.Succeeded)
+        {
+            await provider.GetRequiredService<IUserRoleQuery>().GrantPlatformAdministratorAsync(adminUser.Id);
+            await AccessGrants.AssignRoleAsync(provider, "sample.editor", AccessGrants.User, adminUser.Id);
+        }
+
+        // Demo: everyone may open the sample system; Ahmed edits his own items, his department sees them.
+        await AccessGrants.GrantSystemAccessAsync(provider, "sample", AccessGrants.Everyone, null);
+        await AccessGrants.AssignRoleAsync(provider, "sample.viewer", AccessGrants.Everyone, null);
+        if (user.Succeeded)
+        {
+            await AccessGrants.AssignRoleAsync(provider, "sample.editor", AccessGrants.User, analystUser.Id);
+        }
+
         if (configuration["Seed:AdminTotpKey"] is { Length: > 0 } totpKey && await users.FindByNameAsync("mariam@strategy.local") is { } seededAdmin)
         {
             // E2E only: a known authenticator key lets the browser tests compute codes.
@@ -105,7 +124,7 @@ internal static partial class Bootstrap
         LogSeeded(logger, admin.Succeeded && user.Succeeded);
     }
 
-    private static async Task<IdentityResult> CreateUserAsync(StrategyUserManager users, string email, string password, Guid? employeeId, bool isAdmin)
+    private static async Task<(IdentityResult Result, StrategyUser User)> CreateUserAsync(StrategyUserManager users, string email, string password, Guid? employeeId)
     {
         var user = new StrategyUser
         {
@@ -113,10 +132,9 @@ internal static partial class Bootstrap
             Email = email.Trim(),
             EmailConfirmed = true,
             EmployeeId = employeeId,
-            IsSystemAdmin = isAdmin,
             CreatedAt = DateTimeOffset.UtcNow,
         };
-        return await users.CreateAsync(user, password);
+        return (await users.CreateAsync(user, password), user);
     }
 
     private static string? Argument(string[] args, string name)

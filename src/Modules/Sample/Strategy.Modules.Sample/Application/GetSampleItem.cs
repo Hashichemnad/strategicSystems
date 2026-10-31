@@ -18,7 +18,7 @@ internal sealed class GetSampleItemHandler(SampleDbContext db, IAccessService ac
 
         // Missing and out-of-scope look the same (404), so record existence does not leak (CLAUDE.md §7).
         if (item is null
-            || !await access.CanAsync(context.User, SamplePermissions.Read, new ResourceRef(SamplePermissions.ResourceType, item.Id), cancellationToken).ConfigureAwait(false))
+            || !await access.CanAsync(context.User, SamplePermissions.Read, SampleScope.Map.RefOf(item), cancellationToken).ConfigureAwait(false))
         {
             return Error.NotFound();
         }

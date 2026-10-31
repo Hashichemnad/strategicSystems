@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Strategy.Platform.Access;
 using Strategy.Platform.Identity.Domain;
 using Strategy.Platform.Identity.Infrastructure;
 using Strategy.Platform.Kernel.Context;
@@ -20,7 +21,6 @@ public sealed record UserDto(
     string? Email,
     UserEmployeeDto? Employee,
     bool Active,
-    bool IsSystemAdmin,
     bool LockedOut,
     DateTimeOffset? LockoutEnd,
     bool MfaEnabled,
@@ -33,13 +33,14 @@ public sealed record UserDto(
 
 public sealed record CreatedUserDto(UserDto User, bool InvitationSent, string? InvitationMessageKey);
 
-/// <summary>Administration → Users (system administrators, ADR 0009). Every change writes an auth event.</summary>
+/// <summary>Administration → Users (<c>identity.user.manage</c>). Roles are assigned in Settings → Access (ADR 0016). Every change writes an auth event.</summary>
 internal sealed class UserAdministration(
     StrategyUserManager users,
     IdentityStoreDbContext db,
     IEmployeeDirectory employees,
     SignInService signIn,
     AuthEventLog events,
+    IUserRoleQuery roles,
     IRequestContext context,
     IClock clock)
 {
@@ -75,7 +76,7 @@ internal sealed class UserAdministration(
 
     /// <summary>Creates a password-less account for an active employee and emails an invitation to set the password.</summary>
     public async Task<Result<CreatedUserDto>> CreateForEmployeeAsync(
-        Guid employeeId, string? userName, bool isSystemAdmin, bool sendInvitation, Uri? requestOrigin, CancellationToken cancellationToken)
+        Guid employeeId, string? userName, bool sendInvitation, Uri? requestOrigin, CancellationToken cancellationToken)
     {
         var employee = await employees.GetAsync(employeeId, cancellationToken).ConfigureAwait(false);
         if (employee is null)
@@ -105,7 +106,6 @@ internal sealed class UserAdministration(
             Email = employee.Email,
             EmailConfirmed = true,
             EmployeeId = employeeId,
-            IsSystemAdmin = isSystemAdmin,
             CreatedAt = clock.UtcNow,
         };
         var created = await users.CreateAsync(user).ConfigureAwait(false);
@@ -116,7 +116,7 @@ internal sealed class UserAdministration(
                 : IdentityErrors.ToValidation(created, "userName");
         }
 
-        await events.WriteAsync(AuthEventTypes.UserCreated, true, user.Id, user.UserName, detail: isSystemAdmin ? "admin" : null,
+        await events.WriteAsync(AuthEventTypes.UserCreated, true, user.Id, user.UserName, detail: null,
             cancellationToken: cancellationToken).ConfigureAwait(false);
 
         Result sent = Result.Success();
@@ -132,7 +132,7 @@ internal sealed class UserAdministration(
     public Task<Result<UserDto>> SetActiveAsync(Guid id, bool active, CancellationToken cancellationToken) =>
         ChangeAsync(id, active ? "activate" : "deactivate", guardSelf: !active, async user =>
         {
-            if (!active && user.IsSystemAdmin && await IsLastActiveAdminAsync(user.Id, cancellationToken).ConfigureAwait(false))
+            if (!active && await roles.IsLastAccessAdministratorAsync(user.Id, cancellationToken).ConfigureAwait(false))
             {
                 return LastAdmin;
             }
@@ -145,21 +145,6 @@ internal sealed class UserAdministration(
                 await signIn.RevokeSessionsAsync(user.Id, null, cancellationToken).ConfigureAwait(false);
             }
 
-            return Result.Success();
-        }, cancellationToken);
-
-    public Task<Result<UserDto>> SetAdminAsync(Guid id, bool isAdmin, CancellationToken cancellationToken) =>
-        ChangeAsync(id, isAdmin ? "admin.grant" : "admin.revoke", guardSelf: !isAdmin, async user =>
-        {
-            if (!isAdmin && user.IsSystemAdmin && await IsLastActiveAdminAsync(user.Id, cancellationToken).ConfigureAwait(false))
-            {
-                return LastAdmin;
-            }
-
-            user.IsSystemAdmin = isAdmin;
-            await users.UpdateAsync(user).ConfigureAwait(false);
-            await users.UpdateSecurityStampAsync(user).ConfigureAwait(false);
-            await signIn.RevokeSessionsAsync(user.Id, null, cancellationToken).ConfigureAwait(false);
             return Result.Success();
         }, cancellationToken);
 
@@ -242,9 +227,6 @@ internal sealed class UserAdministration(
         return (await ToDtosAsync([user], cancellationToken).ConfigureAwait(false))[0];
     }
 
-    private Task<bool> IsLastActiveAdminAsync(Guid userId, CancellationToken cancellationToken) =>
-        users.Users.AllAsync(u => u.Id == userId || !u.IsSystemAdmin || !u.Active, cancellationToken);
-
     private async Task<List<UserDto>> ToDtosAsync(IReadOnlyList<StrategyUser> page, CancellationToken cancellationToken)
     {
         var ids = page.Select(u => u.Id).ToList();
@@ -264,7 +246,6 @@ internal sealed class UserAdministration(
             u.Email,
             u.EmployeeId is { } e && people.TryGetValue(e, out var p) ? new UserEmployeeDto(p.Id, p.EmployeeNo, p.NameAr, p.NameEn, p.Status) : null,
             u.Active,
-            u.IsSystemAdmin,
             u.LockoutEnd is { } end && end > now,
             u.LockoutEnd is { } until && until > now ? until : null,
             u.TwoFactorEnabled,
@@ -306,7 +287,7 @@ internal sealed class ImportedUserProvisioning(UserAdministration administration
         {
             if (!await users.Users.AnyAsync(u => u.EmployeeId == employeeId, cancellationToken).ConfigureAwait(false))
             {
-                await administration.CreateForEmployeeAsync(employeeId, null, isSystemAdmin: false, sendInvitation: true, null, cancellationToken)
+                await administration.CreateForEmployeeAsync(employeeId, null, sendInvitation: true, null, cancellationToken)
                     .ConfigureAwait(false);
             }
         }

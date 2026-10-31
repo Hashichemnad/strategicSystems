@@ -9,7 +9,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Platform\Strategy.Platform.Kernel\Strategy.Platform.Kernel.csproj" />
     <ProjectReference Include="..\..\Platform\Strategy.Platform.Persistence\Strategy.Platform.Persistence.csproj" />
+    <ProjectReference Include="..\..\Platform\Strategy.Platform.Access.Contracts\Strategy.Platform.Access.Contracts.csproj" />
     <ProjectReference Include="..\..\Platform\Strategy.Platform.Access\Strategy.Platform.Access.csproj" />
+    <ProjectReference Include="..\..\Platform\Strategy.Platform.Settings\Strategy.Platform.Settings.csproj" />
     <ProjectReference Include="..\..\Platform\Strategy.Platform.Http\Strategy.Platform.Http.csproj" />
     <ProjectReference Include="..\..\Platform\Strategy.Platform.Organisation\Strategy.Platform.Organisation.csproj" />
     <ProjectReference Include="..\..\Platform\Strategy.Platform.Identity\Strategy.Platform.Identity.csproj" />

@@ -41,6 +41,9 @@ public interface IEmployeeDirectory
 
     Task<EmployeeReference?> FindByEmployeeNoAsync(string employeeNo, CancellationToken cancellationToken = default);
 
+    /// <summary>Active employees whose current manager is <paramref name="managerEmployeeId"/> (the "team" data scope, ADR 0015).</summary>
+    Task<IReadOnlyList<Guid>> GetDirectReportIdsAsync(Guid managerEmployeeId, CancellationToken cancellationToken = default);
+
     /// <summary>The employee's manager as of a date, from the placement history.</summary>
     Task<Guid?> GetManagerAsync(Guid employeeId, DateOnly? asOf = null, CancellationToken cancellationToken = default);
 }

@@ -57,11 +57,24 @@ namespace Strategy.Modules.Sample.Infrastructure.Migrations
                         .HasColumnType("character varying(200)")
                         .HasColumnName("name_en");
 
+                    b.Property<string>("Number")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("number");
+
+                    b.Property<Guid?>("OwnerEmployeeId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("owner_employee_id");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(32)
                         .HasColumnType("character varying(32)")
                         .HasColumnName("status");
+
+                    b.Property<Guid?>("UnitId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("unit_id");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -83,8 +96,19 @@ namespace Strategy.Modules.Sample.Infrastructure.Migrations
                     b.HasIndex("CreatedAt")
                         .HasDatabaseName("ix_sample_items_created_at");
 
+                    b.HasIndex("Number")
+                        .IsUnique()
+                        .HasDatabaseName("ix_sample_items_number")
+                        .HasFilter("number IS NOT NULL");
+
+                    b.HasIndex("OwnerEmployeeId")
+                        .HasDatabaseName("ix_sample_items_owner_employee_id");
+
                     b.HasIndex("Status")
                         .HasDatabaseName("ix_sample_items_status");
+
+                    b.HasIndex("UnitId")
+                        .HasDatabaseName("ix_sample_items_unit_id");
 
                     b.ToTable("sample_items", "sample");
                 });

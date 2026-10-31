@@ -65,6 +65,7 @@ internal sealed class SignInService(
     IIdentityEmailSender email,
     IEnumerable<IDirectoryPasswordSignIn> directories,
     IdentityStoreDbContext db,
+    IUserRoleQuery roles,
     IHostEnvironment environment)
 {
     public const string InvitationTokenProvider = "Invitation";
@@ -161,7 +162,7 @@ internal sealed class SignInService(
             return new SignInOutcome(SignInStatuses.MfaRequired, methods);
         }
 
-        if (mfaApplies && MfaRequiredFor(user))
+        if (mfaApplies && await MfaRequiredForAsync(user, cancellationToken).ConfigureAwait(false))
         {
             await signIn.SignInTwoFactorStateAsync(user, enrolment: true, provider).ConfigureAwait(false);
             await events.WriteAsync(AuthEventTypes.MfaChallenge, true, user.Id, user.UserName, provider, "enrolmentRequired", cancellationToken)
@@ -354,11 +355,12 @@ internal sealed class SignInService(
         return methods;
     }
 
-    public bool MfaRequiredFor(StrategyUser user) =>
+    /// <summary>"Administrators" are holders of a role that requires MFA (ADR 0016).</summary>
+    public async Task<bool> MfaRequiredForAsync(StrategyUser user, CancellationToken cancellationToken) =>
         settings.Security.MfaPolicy switch
         {
             MfaPolicies.All => true,
-            MfaPolicies.Admins => user.IsSystemAdmin,
+            MfaPolicies.Admins => await roles.RequiresMfaAsync(user.Id, user.EmployeeId, cancellationToken).ConfigureAwait(false),
             _ => false,
         };
 

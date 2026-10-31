@@ -1,6 +1,5 @@
 using System.Text.Json.Serialization;
 using Serilog;
-using Strategy.Platform.Access;
 using Strategy.Platform.Http.Access;
 using Strategy.Platform.Http.Context;
 using Strategy.Platform.Http.Modules;
@@ -10,7 +9,7 @@ using Strategy.Platform.Persistence;
 namespace Strategy.Host.Infrastructure;
 
 /// <summary>Composition root: services and the middleware pipeline, in one readable place.</summary>
-internal static partial class HostSetup
+internal static class HostSetup
 {
     public const string TestingEnvironment = "Testing";
 
@@ -28,7 +27,6 @@ internal static partial class HostSetup
 
         services.AddPlatformKernel();
         services.AddPlatformPersistence(configuration);
-        services.AddPlatformAccess(allowModulesForDevelopment: IsDevelopmentLike(builder.Environment));
         services.AddStrategyDataProtection(configuration);
 
         // Numbers are numbers: no quoted numbers on input, so the OpenAPI schema stays exact.
@@ -69,8 +67,6 @@ internal static partial class HostSetup
     public static WebApplication UseStrategyPipeline(
         this WebApplication app, IReadOnlyList<IPlatformComponent> components, IReadOnlyList<IModule> modules)
     {
-        WarnIfModuleAccessIsOpen(app);
-
         app.UseMiddleware<RequestContextMiddleware>();
         app.UseSerilogRequestLogging();
         app.UseExceptionHandler();
@@ -116,16 +112,4 @@ internal static partial class HostSetup
 
     public static bool IsDevelopmentLike(IHostEnvironment environment) =>
         environment.IsDevelopment() || environment.IsEnvironment(TestingEnvironment);
-
-    private static void WarnIfModuleAccessIsOpen(WebApplication app)
-    {
-        if (app.Services.GetRequiredService<InterimAccessService>().AllowsModulesForDevelopment)
-        {
-            LogInterimAccess(app.Logger, app.Environment.EnvironmentName);
-        }
-    }
-
-    [LoggerMessage(Level = LogLevel.Warning,
-        Message = "Interim access lets every signed-in user use all modules in the {Environment} environment (ADR 0009). Never use this in production.")]
-    private static partial void LogInterimAccess(Microsoft.Extensions.Logging.ILogger logger, string environment);
 }

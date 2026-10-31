@@ -23,9 +23,19 @@ public sealed class SampleItem : AuditableEntity
 
     public string Status { get; private set; } = SampleItemStatus.Active;
 
-    public static SampleItem Create(string? nameAr, string? nameEn, string? descriptionAr, string? descriptionEn)
+    /// <summary>Human-readable number from the Numbering service (format <c>sample.item</c>). Null for items created before Phase 2.</summary>
+    public string? Number { get; private set; }
+
+    /// <summary>Owner (the creator's employee): the "own" and "team" data scopes (ADR 0015).</summary>
+    public Guid? OwnerEmployeeId { get; private set; }
+
+    /// <summary>The owner's unit at creation: the "unit" and "unit and below" data scopes.</summary>
+    public Guid? UnitId { get; private set; }
+
+    public static SampleItem Create(
+        string? nameAr, string? nameEn, string? descriptionAr, string? descriptionEn, string? number = null, Guid? ownerEmployeeId = null, Guid? unitId = null)
     {
-        var item = new SampleItem();
+        var item = new SampleItem { Number = number, OwnerEmployeeId = ownerEmployeeId, UnitId = unitId };
         item.SetText(nameAr, nameEn, descriptionAr, descriptionEn);
         return item;
     }

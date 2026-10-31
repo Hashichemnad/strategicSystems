@@ -13,7 +13,7 @@ public class SampleItemsApiTests(ApiFixture api) : IClassFixture<ApiFixture>
     [Fact]
     public async Task Create_returns_201_with_location_and_stamped_item()
     {
-        var client = await api.Factory.CreateSignedInClientAsync();
+        var client = await api.Factory.CreateSignedInClientAsync(roles: TestIdentity.SampleEditor);
 
         var response = await client.PostAsJsonAsync(Items, new { nameAr = "بند جديد", nameEn = "New item" });
 
@@ -31,7 +31,7 @@ public class SampleItemsApiTests(ApiFixture api) : IClassFixture<ApiFixture>
     [Fact]
     public async Task Create_without_any_name_returns_400_with_field_error()
     {
-        var client = await api.Factory.CreateSignedInClientAsync();
+        var client = await api.Factory.CreateSignedInClientAsync(roles: TestIdentity.SampleEditor);
 
         var response = await client.PostAsJsonAsync(Items, new { nameAr = " ", nameEn = "" });
 
@@ -44,7 +44,7 @@ public class SampleItemsApiTests(ApiFixture api) : IClassFixture<ApiFixture>
     [Fact]
     public async Task Create_with_too_long_name_reports_the_limit_as_a_param()
     {
-        var client = await api.Factory.CreateSignedInClientAsync();
+        var client = await api.Factory.CreateSignedInClientAsync(roles: TestIdentity.SampleEditor);
 
         var response = await client.PostAsJsonAsync(Items, new { nameEn = new string('x', 201) });
 
@@ -58,7 +58,7 @@ public class SampleItemsApiTests(ApiFixture api) : IClassFixture<ApiFixture>
     [Fact]
     public async Task Malformed_json_returns_400_problem()
     {
-        var client = await api.Factory.CreateSignedInClientAsync();
+        var client = await api.Factory.CreateSignedInClientAsync(roles: TestIdentity.SampleEditor);
 
         var response = await client.PostAsync(Items, new StringContent("{ not json", System.Text.Encoding.UTF8, "application/json"));
 
@@ -69,7 +69,7 @@ public class SampleItemsApiTests(ApiFixture api) : IClassFixture<ApiFixture>
     [Fact]
     public async Task Get_returns_the_item_and_404_for_unknown_id()
     {
-        var client = await api.Factory.CreateSignedInClientAsync();
+        var client = await api.Factory.CreateSignedInClientAsync(roles: TestIdentity.SampleEditor);
         var created = await CreateAsync(client, "Get me");
 
         (await client.GetFromJsonAsync<SampleItemDto>($"{Items}/{created.Id}"))!.NameEn.ShouldBe("Get me");
@@ -80,7 +80,7 @@ public class SampleItemsApiTests(ApiFixture api) : IClassFixture<ApiFixture>
     [Fact]
     public async Task Update_with_current_version_succeeds_and_returns_a_new_version()
     {
-        var client = await api.Factory.CreateSignedInClientAsync();
+        var client = await api.Factory.CreateSignedInClientAsync(roles: TestIdentity.SampleEditor);
         var created = await CreateAsync(client, "Before");
 
         var response = await client.PutAsJsonAsync($"{Items}/{created.Id}", new { nameEn = "After", nameAr = "بعد", version = created.Version });
@@ -96,7 +96,7 @@ public class SampleItemsApiTests(ApiFixture api) : IClassFixture<ApiFixture>
     [Fact]
     public async Task Update_with_stale_version_returns_409()
     {
-        var client = await api.Factory.CreateSignedInClientAsync();
+        var client = await api.Factory.CreateSignedInClientAsync(roles: TestIdentity.SampleEditor);
         var created = await CreateAsync(client, "Contended");
         (await client.PutAsJsonAsync($"{Items}/{created.Id}", new { nameEn = "First writer", version = created.Version }))
             .EnsureSuccessStatusCode();
@@ -109,7 +109,7 @@ public class SampleItemsApiTests(ApiFixture api) : IClassFixture<ApiFixture>
     [Fact]
     public async Task Invalid_transitions_return_422_and_leave_status_unchanged()
     {
-        var client = await api.Factory.CreateSignedInClientAsync();
+        var client = await api.Factory.CreateSignedInClientAsync(roles: TestIdentity.SampleEditor);
         var item = await CreateAsync(client, "Lifecycle");
 
         await (await client.PostAsJsonAsync($"{Items}/{item.Id}/activate", new { version = item.Version }))
@@ -130,7 +130,7 @@ public class SampleItemsApiTests(ApiFixture api) : IClassFixture<ApiFixture>
     [Fact]
     public async Task List_filters_searches_sorts_and_pages()
     {
-        var client = await api.Factory.CreateSignedInClientAsync();
+        var client = await api.Factory.CreateSignedInClientAsync(roles: TestIdentity.SampleEditor);
         var tag = Guid.NewGuid().ToString("N")[..8];
         var b = await CreateAsync(client, $"{tag} beta");
         await CreateAsync(client, $"{tag} alpha");
@@ -152,7 +152,7 @@ public class SampleItemsApiTests(ApiFixture api) : IClassFixture<ApiFixture>
     [Fact]
     public async Task List_search_matches_arabic_and_treats_wildcards_literally()
     {
-        var client = await api.Factory.CreateSignedInClientAsync();
+        var client = await api.Factory.CreateSignedInClientAsync(roles: TestIdentity.SampleEditor);
         var tag = Guid.NewGuid().ToString("N")[..8];
         (await client.PostAsJsonAsync(Items, new { nameAr = $"خطة {tag} الاستراتيجية" })).EnsureSuccessStatusCode();
 
@@ -170,7 +170,7 @@ public class SampleItemsApiTests(ApiFixture api) : IClassFixture<ApiFixture>
     [InlineData("status=deleted", "status")]
     public async Task List_rejects_invalid_query(string query, string field)
     {
-        var client = await api.Factory.CreateSignedInClientAsync();
+        var client = await api.Factory.CreateSignedInClientAsync(roles: TestIdentity.SampleEditor);
 
         var problem = await (await client.GetAsync($"{Items}?{query}")).ShouldBeProblemAsync(HttpStatusCode.BadRequest, "validation.failed");
 

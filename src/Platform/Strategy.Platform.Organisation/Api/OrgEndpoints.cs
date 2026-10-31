@@ -171,7 +171,7 @@ internal static class OrgEndpoints
     private static async Task<IResult> GetPhotoAsync(
         Guid id, OrgDbContext db, IAccessService access, IRequestContext context, CancellationToken ct)
     {
-        var visible = await access.ApplyScope(db.Employees.AsNoTracking(), context.User, OrgPermissions.EmployeeRead)
+        var visible = await (await access.ApplyScopeAsync(db.Employees.AsNoTracking(), context.User, OrgPermissions.EmployeeRead, OrgScopes.Employees, ct))
             .AnyAsync(e => e.Id == id, ct);
         var photo = visible ? await db.Photos.AsNoTracking().FirstOrDefaultAsync(p => p.EmployeeId == id, ct) : null;
         if (photo is null)
@@ -185,7 +185,8 @@ internal static class OrgEndpoints
     private static async Task<Results<NoContent, ProblemHttpResult>> PutPhotoAsync(
         Guid id, IFormFile file, OrgDbContext db, IAccessService access, IRequestContext context, IClock clock, CancellationToken ct)
     {
-        var exists = await access.ApplyScope(db.Employees.AsNoTracking(), context.User, OrgPermissions.EmployeeManage).AnyAsync(e => e.Id == id, ct);
+        var exists = await (await access.ApplyScopeAsync(db.Employees.AsNoTracking(), context.User, OrgPermissions.EmployeeManage, OrgScopes.Employees, ct))
+            .AnyAsync(e => e.Id == id, ct);
         if (!exists)
         {
             return Error.NotFound().ToProblem();

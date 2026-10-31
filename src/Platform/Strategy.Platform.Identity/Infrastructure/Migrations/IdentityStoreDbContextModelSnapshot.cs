@@ -592,10 +592,6 @@ namespace Strategy.Platform.Identity.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("employee_id");
 
-                    b.Property<bool>("IsSystemAdmin")
-                        .HasColumnType("boolean")
-                        .HasColumnName("is_system_admin");
-
                     b.Property<string>("Language")
                         .HasMaxLength(10)
                         .HasColumnType("character varying(10)")

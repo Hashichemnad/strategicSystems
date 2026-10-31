@@ -16,7 +16,10 @@ using Strategy.Platform.Organisation.Application;
 
 namespace Strategy.IntegrationTests.Infrastructure;
 
-/// <summary>A user created for a test. Administrators get a known authenticator key (MFA is required for them by default).</summary>
+/// <summary>
+/// A user created for a test. Administrators hold the platform administrator roles (ADR 0016) and get a known authenticator key
+/// (MFA is required for them by default).
+/// </summary>
 public sealed record TestUser(Guid Id, string UserName, string Password, Guid? EmployeeId, Guid? UnitId, string? TotpKey, bool IsAdmin);
 
 /// <summary>Creates organisation data and accounts directly through the services, and signs in through the real API.</summary>
@@ -24,23 +27,36 @@ public static class TestIdentity
 {
     public const string Password = "Test#Password2026";
 
-    public static async Task<TestUser> CreateUserAsync(this ApiFactory factory, bool admin = false, bool withEmployee = true, bool withMfa = false)
+    /// <summary>Role key of the template module's editor (read all, create, update own).</summary>
+    public const string SampleEditor = "sample.editor";
+
+    public static async Task<TestUser> CreateUserAsync(
+        this ApiFactory factory, bool admin = false, bool withEmployee = true, bool withMfa = false, Guid? unitId = null, Guid? managerEmployeeId = null,
+        params string[] roles)
     {
         await using var scope = factory.Services.CreateAsyncScope();
         var provider = scope.ServiceProvider;
         provider.GetRequiredService<RequestContext>().Initialise(Guid.CreateVersion7().ToString("N"), Channels.System, StrategyClaims.CreateSystemPrincipal());
         var suffix = Guid.CreateVersion7().ToString("N")[^10..];
         Guid? employeeId = null;
-        Guid? unitId = null;
         var email = $"user.{suffix}@example.test";
         if (withEmployee)
         {
             var dispatcher = provider.GetRequiredService<IDispatcher>();
-            var unit = await dispatcher.SendAsync(new CreateUnit($"T-{suffix}", "وحدة اختبار", $"Test unit {suffix}", "organisation", null, null, null, null, null));
-            unitId = unit.Value.Id;
+            if (unitId is null)
+            {
+                var unit = await dispatcher.SendAsync(new CreateUnit($"T-{suffix}", "وحدة اختبار", $"Test unit {suffix}", "organisation", null, null, null, null, null));
+                unitId = unit.Value.Id;
+            }
+
             var employee = await dispatcher.SendAsync(new CreateEmployee(
-                $"T{suffix}", "موظف اختبار", $"Test employee {suffix}", email, null, null, null, null, unitId, null, null));
+                $"T{suffix}", "موظف اختبار", $"Test employee {suffix}", email, null, null, null, null, unitId, managerEmployeeId, null));
+            employee.IsSuccess.ShouldBeTrue(employee.IsFailure ? employee.Error.Code : null);
             employeeId = employee.Value.Id;
+        }
+        else
+        {
+            unitId = null;
         }
 
         var users = provider.GetRequiredService<StrategyUserManager>();
@@ -50,7 +66,6 @@ public static class TestIdentity
             Email = email,
             EmailConfirmed = true,
             EmployeeId = employeeId,
-            IsSystemAdmin = admin,
             CreatedAt = DateTimeOffset.UtcNow,
         };
         var created = await users.CreateAsync(user, Password);
@@ -65,6 +80,16 @@ public static class TestIdentity
             user.TotpEnabled = true;
             user.TwoFactorEnabled = true;
             (await users.UpdateAsync(user)).Succeeded.ShouldBeTrue();
+        }
+
+        if (admin)
+        {
+            await provider.GetRequiredService<IUserRoleQuery>().GrantPlatformAdministratorAsync(user.Id);
+        }
+
+        foreach (var role in roles)
+        {
+            await TestAccess.GrantRoleAsync(provider, user.Id, role);
         }
 
         return new TestUser(user.Id, user.UserName, Password, employeeId, unitId, totpKey, admin);
@@ -87,8 +112,8 @@ public static class TestIdentity
         return client;
     }
 
-    public static async Task<HttpClient> CreateSignedInClientAsync(this ApiFactory factory, bool admin = false) =>
-        await factory.SignInAsync(await factory.CreateUserAsync(admin));
+    public static async Task<HttpClient> CreateSignedInClientAsync(this ApiFactory factory, bool admin = false, params string[] roles) =>
+        await factory.SignInAsync(await factory.CreateUserAsync(admin, roles: roles));
 
     public static async Task<string?> LoginAsync(this HttpClient client, string login, string password)
     {

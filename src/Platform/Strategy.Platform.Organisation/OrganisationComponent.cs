@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Strategy.Platform.Access;
 using Strategy.Platform.Http.Modules;
 using Strategy.Platform.Kernel;
 using Strategy.Platform.Organisation.Api;
@@ -9,6 +10,7 @@ using Strategy.Platform.Organisation.Contracts;
 using Strategy.Platform.Organisation.Import;
 using Strategy.Platform.Organisation.Infrastructure;
 using Strategy.Platform.Persistence;
+using Strategy.Platform.Settings;
 
 namespace Strategy.Platform.Organisation;
 
@@ -33,6 +35,9 @@ public sealed class OrganisationComponent : IPlatformComponent
         services.AddScoped<IEmployeeDirectory, EmployeeDirectory>();
         services.AddScoped<IDelegationQuery, DelegationQuery>();
         services.AddSingleton<IDirectorySyncSource, NoDirectorySyncSource>();
+        services.AddAccessCatalogue(new OrgAccessCatalogue());
+        services.AddLookupType(OrgLookupDefinitions.Grade);
+        services.AddScoped<ILookupBackfillSource, GradeBackfill>();
     }
 
     public void MapEndpoints(IEndpointRouteBuilder endpoints) => OrgEndpoints.Map(endpoints.MapPlatformGroup(this));

@@ -10,6 +10,7 @@ using Strategy.Platform.Kernel.Time;
 using Strategy.Platform.Organisation.Contracts;
 using Strategy.Platform.Organisation.Domain;
 using Strategy.Platform.Organisation.Infrastructure;
+using Strategy.Platform.Settings;
 
 namespace Strategy.Platform.Organisation.Application;
 
@@ -57,7 +58,7 @@ internal static class EmployeeRules
 /// Creates and updates employees with their placement history and the uniqueness / reporting-line rules.
 /// Works on the tracked context without saving (used by handlers and the importer).
 /// </summary>
-internal sealed class EmployeeRegister(OrgDbContext db, IClock clock)
+internal sealed class EmployeeRegister(OrgDbContext db, ILookupService lookups, IClock clock)
 {
     public async Task<Result<Employee>> CreateAsync(EmployeeDetails details, CancellationToken cancellationToken)
     {
@@ -75,7 +76,7 @@ internal sealed class EmployeeRegister(OrgDbContext db, IClock clock)
 
     public async Task<Result> UpdateAsync(Employee employee, EmployeeDetails details, DateOnly? effective, CancellationToken cancellationToken)
     {
-        var check = await CheckAsync(employee.Id, details, cancellationToken).ConfigureAwait(false);
+        var check = await CheckAsync(employee.Id, details, cancellationToken, employee.Grade).ConfigureAwait(false);
         if (check.IsFailure)
         {
             return check;
@@ -106,8 +107,16 @@ internal sealed class EmployeeRegister(OrgDbContext db, IClock clock)
         return Result.Success();
     }
 
-    private async Task<Result> CheckAsync(Guid? employeeId, EmployeeDetails details, CancellationToken cancellationToken)
+    private async Task<Result> CheckAsync(Guid? employeeId, EmployeeDetails details, CancellationToken cancellationToken, string? currentGrade = null)
     {
+        // Grade is a lookup code (ADR 0014 closed in Phase 2). An unchanged legacy value is kept; a new value must be an active code.
+        var grade = string.IsNullOrWhiteSpace(details.Grade) ? null : details.Grade.Trim();
+        if (grade is not null && grade != currentGrade
+            && !await lookups.IsActiveCodeAsync(OrgLookups.Grade, grade, cancellationToken).ConfigureAwait(false))
+        {
+            return OrgErrors.UnknownGrade;
+        }
+
         var number = details.EmployeeNo.Trim();
         var email = Employee.NormaliseEmail(details.Email);
         if (db.Employees.Local.Any(e => e.EmployeeNo == number && e.Id != employeeId)
@@ -332,7 +341,8 @@ internal sealed class ListEmployeesHandler(OrgDbContext db, IAccessService acces
 
     public async Task<Result<PagedResult<EmployeeListItemDto>>> HandleAsync(ListEmployees query, CancellationToken cancellationToken)
     {
-        var employees = access.ApplyScope(db.Employees.AsNoTracking(), context.User, OrgPermissions.EmployeeRead);
+        var employees = await access.ApplyScopeAsync(db.Employees.AsNoTracking(), context.User, OrgPermissions.EmployeeRead, OrgScopes.Employees, cancellationToken)
+            .ConfigureAwait(false);
 
         if (!string.IsNullOrWhiteSpace(query.Search))
         {
@@ -408,7 +418,8 @@ internal sealed class GetEmployeeHistoryHandler(OrgDbContext db, IAccessService 
 {
     public async Task<Result<IReadOnlyList<EmployeeAssignmentDto>>> HandleAsync(GetEmployeeHistory query, CancellationToken cancellationToken)
     {
-        var visible = access.ApplyScope(db.Employees.AsNoTracking(), context.User, OrgPermissions.EmployeeRead);
+        var visible = await access.ApplyScopeAsync(db.Employees.AsNoTracking(), context.User, OrgPermissions.EmployeeRead, OrgScopes.Employees, cancellationToken)
+            .ConfigureAwait(false);
         if (!await visible.AnyAsync(e => e.Id == query.Id, cancellationToken).ConfigureAwait(false))
         {
             return Error.NotFound();
@@ -430,7 +441,9 @@ internal sealed class EmployeeReader(OrgDbContext db, IAccessService access, IRe
 {
     public async Task<Result<EmployeeDto>> GetAsync(Guid id, CancellationToken cancellationToken)
     {
-        var employee = await access.ApplyScope(db.Employees.AsNoTracking(), context.User, OrgPermissions.EmployeeRead)
+        var employees = await access.ApplyScopeAsync(db.Employees.AsNoTracking(), context.User, OrgPermissions.EmployeeRead, OrgScopes.Employees, cancellationToken)
+            .ConfigureAwait(false);
+        var employee = await employees
             .FirstOrDefaultAsync(e => e.Id == id, cancellationToken).ConfigureAwait(false);
         if (employee is null)
         {

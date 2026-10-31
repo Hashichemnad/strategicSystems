@@ -5,9 +5,6 @@ namespace Strategy.Platform.Access;
 /// <summary>Claim types issued by Platform.Identity and read by access checks.</summary>
 public static class StrategyClaims
 {
-    /// <summary>Interim system-administrator flag (ADR 0009); replaced by roles in Phase 2.</summary>
-    public const string SystemAdmin = "strategy:sysadmin";
-
     /// <summary><c>internal</c> or <c>vendor</c> (Wasel, Phase 11).</summary>
     public const string PrincipalType = "strategy:principal";
 
@@ -36,9 +33,6 @@ public static class StrategyClaims
         principal.Identity?.AuthenticationType == SystemAuthenticationType && principal.FindFirst(PrincipalType)?.Value == SystemPrincipal;
 
     public static bool IsAuthenticated(this ClaimsPrincipal principal) => principal.Identity?.IsAuthenticated == true;
-
-    public static bool IsSystemAdmin(this ClaimsPrincipal principal) =>
-        principal.IsAuthenticated() && principal.HasClaim(SystemAdmin, "true");
 
     public static bool IsInternal(this ClaimsPrincipal principal) =>
         principal.IsAuthenticated() && principal.FindFirst(PrincipalType)?.Value == InternalPrincipal;

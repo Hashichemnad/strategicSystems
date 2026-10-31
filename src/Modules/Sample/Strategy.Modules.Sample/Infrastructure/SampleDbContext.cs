@@ -26,6 +26,10 @@ internal sealed class SampleItemConfiguration : IEntityTypeConfiguration<SampleI
         builder.Property(x => x.DescriptionAr).HasMaxLength(SampleItem.DescriptionMaxLength);
         builder.Property(x => x.DescriptionEn).HasMaxLength(SampleItem.DescriptionMaxLength);
         builder.Property(x => x.Status).HasMaxLength(32).IsRequired();
+        builder.Property(x => x.Number).HasMaxLength(100);
+        builder.HasIndex(x => x.Number).IsUnique().HasFilter("number IS NOT NULL");
+        builder.HasIndex(x => x.OwnerEmployeeId);
+        builder.HasIndex(x => x.UnitId);
         builder.HasIndex(x => x.Status);
         builder.HasIndex(x => x.CreatedAt);
     }

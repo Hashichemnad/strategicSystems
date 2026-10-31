@@ -75,7 +75,7 @@ public class PipelineTests(ApiFixture api) : IClassFixture<ApiFixture>
     [Fact]
     public async Task State_changing_call_without_antiforgery_token_is_refused()
     {
-        var client = await api.Factory.CreateSignedInClientAsync();
+        var client = await api.Factory.CreateSignedInClientAsync(roles: TestIdentity.SampleEditor);
         client.DefaultRequestHeaders.Remove("X-XSRF-TOKEN");
 
         var response = await client.PostAsJsonAsync("/api/v1/sample/items", new { nameEn = "No token" });
@@ -86,9 +86,9 @@ public class PipelineTests(ApiFixture api) : IClassFixture<ApiFixture>
     [Fact]
     public async Task Antiforgery_token_from_another_session_is_refused()
     {
-        var first = await api.Factory.CreateSignedInClientAsync();
+        var first = await api.Factory.CreateSignedInClientAsync(roles: TestIdentity.SampleEditor);
         var token = first.DefaultRequestHeaders.GetValues("X-XSRF-TOKEN").Single();
-        var attacker = await api.Factory.CreateSignedInClientAsync();
+        var attacker = await api.Factory.CreateSignedInClientAsync(roles: TestIdentity.SampleEditor);
         attacker.DefaultRequestHeaders.Remove("X-XSRF-TOKEN");
         attacker.DefaultRequestHeaders.Add("X-XSRF-TOKEN", token);
 

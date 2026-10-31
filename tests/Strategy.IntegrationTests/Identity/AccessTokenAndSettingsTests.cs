@@ -14,7 +14,7 @@ public class AccessTokenAndSettingsTests(ApiFixture api) : IClassFixture<ApiFixt
     [Fact]
     public async Task Personal_access_token_is_created_used_without_antiforgery_and_revoked()
     {
-        var user = await api.Factory.CreateUserAsync();
+        var user = await api.Factory.CreateUserAsync(roles: TestIdentity.SampleEditor);
         var session = await api.Factory.SignInAsync(user);
 
         var created = await session.PostAsJsonAsync("/api/v1/identity/me/tokens", new { name = "Reporting script", scopes = new[] { "api.read", "api.write" }, days = 30 });
@@ -46,7 +46,7 @@ public class AccessTokenAndSettingsTests(ApiFixture api) : IClassFixture<ApiFixt
     [Fact]
     public async Task Read_only_token_cannot_write_and_wrong_tokens_are_refused()
     {
-        var session = await api.Factory.CreateSignedInClientAsync();
+        var session = await api.Factory.CreateSignedInClientAsync(roles: TestIdentity.SampleEditor);
         var created = await session.PostAsJsonAsync("/api/v1/identity/me/tokens", new { name = "Read", scopes = new[] { "api.read" } });
         var token = (await created.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("token").GetString()!;
         var bearer = api.Factory.CreateTokenClient(token);

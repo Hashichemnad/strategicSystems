@@ -13,6 +13,7 @@ using Strategy.Platform.Identity.Infrastructure;
 using Strategy.Platform.Kernel.Results;
 using Strategy.Platform.Kernel.Time;
 using Strategy.Platform.Organisation.Contracts;
+using Strategy.Platform.Settings;
 
 namespace Strategy.Platform.Identity.Api;
 
@@ -58,7 +59,7 @@ internal static class MeEndpoints
         }
 
         return TypedResults.Ok(new MeDto(
-            user.Id, user.UserName!, user.Email, user.IsSystemAdmin, user.PrincipalType, user.Language, user.Theme, employee,
+            user.Id, user.UserName!, user.Email, user.PrincipalType, user.Language, user.Theme, employee,
             user.TwoFactorEnabled, user.HasLocalPassword, context.User.FindFirst(StrategyClaims.AuthMethod)?.Value ?? AuthMethods.Password));
     }
 
@@ -149,7 +150,7 @@ internal static class MeEndpoints
             methods.Contains(MfaMethods.Totp),
             methods.Contains(MfaMethods.Email),
             user.TwoFactorEnabled ? await users.CountRecoveryCodesAsync(user) : 0,
-            signIn.MfaRequiredFor(user),
+            await signIn.MfaRequiredForAsync(user, context.RequestAborted),
             settings.Security.MfaAllowTotp,
             settings.Security.MfaAllowEmail));
     }
@@ -248,7 +249,7 @@ internal static class MeEndpoints
         }
 
         var remaining = methods.Where(m => m != body.Method).ToList();
-        if (remaining.Count == 0 && signIn.MfaRequiredFor(user))
+        if (remaining.Count == 0 && await signIn.MfaRequiredForAsync(user, context.RequestAborted))
         {
             return Error.Rule("auth.mfaRequired", "auth.errors.mfaRequiredByPolicy").ToProblem();
         }
@@ -360,11 +361,16 @@ internal static class MeEndpoints
         TypedResults.Ok(await tokens.ListAsync(context.User.UserId()!.Value, ct));
 
     private static async Task<Results<Ok<CreatedAccessTokenDto>, ProblemHttpResult>> CreateTokenAsync(
-        CreateTokenInput body, HttpContext context, AccessTokenService tokens, AuthEventLog events, CancellationToken ct)
+        CreateTokenInput body, HttpContext context, AccessTokenService tokens, AuthEventLog events, IFeatureFlags features, CancellationToken ct)
     {
         if (context.User.IsToken())
         {
             return InteractiveOnly.ToProblem(); // a token can never mint another token
+        }
+
+        if (!await features.IsEnabledAsync(IdentityFeatures.AccessTokens, ct))
+        {
+            return new Error("feature.disabled", "errors.featureDisabled", ErrorKind.Disabled).ToProblem();
         }
 
         var fields = new List<FieldError>();
@@ -415,7 +421,6 @@ public sealed record MeDto(
     Guid Id,
     string UserName,
     string? Email,
-    bool IsSystemAdmin,
     string PrincipalType,
     string? Language,
     string? Theme,

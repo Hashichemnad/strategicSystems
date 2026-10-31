@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Strategy.Platform.Access;
 using Strategy.Platform.Http.Modules;
 using Strategy.Platform.Http.Problems;
 using Strategy.Platform.Identity.Api;
@@ -22,6 +23,7 @@ using Strategy.Platform.Kernel.Results;
 using Strategy.Platform.Organisation.Contracts;
 using Strategy.Platform.Organisation.Import;
 using Strategy.Platform.Persistence;
+using Strategy.Platform.Settings;
 
 namespace Strategy.Platform.Identity;
 
@@ -50,6 +52,9 @@ public sealed class IdentityComponent : IPlatformComponent
         services.AddScoped<IIdentityEmailSender, SmtpIdentityEmailSender>();
         services.AddScoped<IEmployeeLifecycleHook, DeactivateUserWhenEmployeeLeaves>();
         services.AddScoped<IUserProvisioning, ImportedUserProvisioning>();
+        services.AddScoped<IUserDirectory, UserDirectory>();
+        services.AddAccessCatalogue(new IdentityAccessCatalogue());
+        services.AddFeature(IdentityFeatures.AccessTokensFeature);
 
         services.AddIdentityCore<StrategyUser>(options =>
             {

@@ -11,11 +11,12 @@ namespace Strategy.Platform.Organisation.Application;
 /// <summary>Read side of the structure: current and as-of trees, paths, unit details and history (ADR 0013).</summary>
 internal sealed class OrgReader(OrgDbContext db, IAccessService access, IRequestContext context, IClock clock)
 {
-    private IQueryable<OrgUnit> VisibleUnits => access.ApplyScope(db.Units.AsNoTracking(), context.User, OrgPermissions.UnitRead);
+    private Task<IQueryable<OrgUnit>> VisibleUnitsAsync(CancellationToken cancellationToken) =>
+        access.ApplyScopeAsync(db.Units.AsNoTracking(), context.User, OrgPermissions.UnitRead, OrgScopes.Units, cancellationToken);
 
     public async Task<IReadOnlyList<OrgTreeNodeDto>> GetTreeAsync(DateOnly? asOf, bool includeInactive, CancellationToken cancellationToken)
     {
-        var visibleIds = VisibleUnits.Select(u => u.Id);
+        var visibleIds = (await VisibleUnitsAsync(cancellationToken).ConfigureAwait(false)).Select(u => u.Id);
         var counts = await db.Employees.AsNoTracking()
             .Where(e => e.Status != EmployeeStatus.Left)
             .GroupBy(e => e.UnitId)
@@ -26,7 +27,7 @@ internal sealed class OrgReader(OrgDbContext db, IAccessService access, IRequest
         List<OrgTreeNodeDto> nodes;
         if (asOf is null || asOf.Value >= clock.Today)
         {
-            var units = await VisibleUnits.Where(u => includeInactive || u.Active)
+            var units = await (await VisibleUnitsAsync(cancellationToken).ConfigureAwait(false)).Where(u => includeInactive || u.Active)
                 .OrderBy(u => u.Depth).ThenBy(u => u.Code)
                 .ToListAsync(cancellationToken).ConfigureAwait(false);
             var heads = await EmployeeRefsAsync(units.Select(u => u.HeadEmployeeId), cancellationToken).ConfigureAwait(false);
@@ -57,7 +58,7 @@ internal sealed class OrgReader(OrgDbContext db, IAccessService access, IRequest
 
     public async Task<Result<OrgUnitDto>> GetUnitAsync(Guid id, CancellationToken cancellationToken)
     {
-        var unit = await VisibleUnits.FirstOrDefaultAsync(u => u.Id == id, cancellationToken).ConfigureAwait(false);
+        var unit = await (await VisibleUnitsAsync(cancellationToken).ConfigureAwait(false)).FirstOrDefaultAsync(u => u.Id == id, cancellationToken).ConfigureAwait(false);
         if (unit is null)
         {
             return Error.NotFound();
@@ -77,7 +78,7 @@ internal sealed class OrgReader(OrgDbContext db, IAccessService access, IRequest
 
     public async Task<Result<IReadOnlyList<OrgUnitVersionDto>>> GetUnitHistoryAsync(Guid id, CancellationToken cancellationToken)
     {
-        if (!await VisibleUnits.AnyAsync(u => u.Id == id, cancellationToken).ConfigureAwait(false))
+        if (!await (await VisibleUnitsAsync(cancellationToken).ConfigureAwait(false)).AnyAsync(u => u.Id == id, cancellationToken).ConfigureAwait(false))
         {
             return Error.NotFound();
         }
@@ -101,7 +102,7 @@ internal sealed class OrgReader(OrgDbContext db, IAccessService access, IRequest
     /// <summary>The unit's chain from the root, as the structure stood on <paramref name="asOf"/> (default today).</summary>
     public async Task<IReadOnlyList<OrgUnitPathItemDto>?> GetPathAsync(Guid unitId, DateOnly? asOf, CancellationToken cancellationToken)
     {
-        if (!await VisibleUnits.AnyAsync(u => u.Id == unitId, cancellationToken).ConfigureAwait(false))
+        if (!await (await VisibleUnitsAsync(cancellationToken).ConfigureAwait(false)).AnyAsync(u => u.Id == unitId, cancellationToken).ConfigureAwait(false))
         {
             return null;
         }

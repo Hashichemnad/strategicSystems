@@ -50,6 +50,12 @@ internal sealed class OrgDirectory(OrgDbContext db, IClock clock) : IOrgDirector
 
 internal sealed class EmployeeDirectory(OrgDbContext db, IClock clock) : IEmployeeDirectory
 {
+    public async Task<IReadOnlyList<Guid>> GetDirectReportIdsAsync(Guid managerEmployeeId, CancellationToken cancellationToken = default) =>
+        await db.Employees.AsNoTracking()
+            .Where(e => e.ManagerEmployeeId == managerEmployeeId && e.Status != EmployeeStatus.Left)
+            .Select(e => e.Id)
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
+
     public Task<EmployeeReference?> GetAsync(Guid employeeId, CancellationToken cancellationToken = default) =>
         FirstAsync(db.Employees.Where(e => e.Id == employeeId), cancellationToken);
 

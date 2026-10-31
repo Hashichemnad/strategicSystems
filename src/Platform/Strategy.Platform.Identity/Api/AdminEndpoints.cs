@@ -22,7 +22,7 @@ public static class IdentityPermissions
     public const string SmtpManage = "identity.smtp.manage";
 }
 
-/// <summary>Administration endpoints (<c>/api/v1/identity/admin</c>); system administrators in Phase 1 (ADR 0009).</summary>
+/// <summary>Administration endpoints (<c>/api/v1/identity/admin</c>), guarded by the identity permissions (ADR 0016).</summary>
 internal static class AdminEndpoints
 {
     public static void Map(RouteGroupBuilder group)
@@ -43,8 +43,6 @@ internal static class AdminEndpoints
             .WithName("ResetUserMfa").RequirePermission(IdentityPermissions.UserManage);
         users.MapPost("/{id:guid}/revoke-sessions", (Guid id, UserAdministration a, CancellationToken ct) => Run(a.RevokeSessionsAsync(id, ct)))
             .WithName("RevokeUserSessions").RequirePermission(IdentityPermissions.UserManage);
-        users.MapPost("/{id:guid}/set-admin", (Guid id, SetAdminInput body, UserAdministration a, CancellationToken ct) => Run(a.SetAdminAsync(id, body.IsSystemAdmin, ct)))
-            .WithName("SetUserAdmin").RequirePermission(IdentityPermissions.UserManage);
         users.MapPost("/{id:guid}/send-password-reset", SendResetAsync).WithName("SendUserPasswordReset").RequirePermission(IdentityPermissions.UserManage);
         users.MapGet("/{id:guid}/tokens", UserTokensAsync).WithName("ListUserTokens").RequirePermission(IdentityPermissions.UserManage);
         users.MapPost("/{id:guid}/tokens/{tokenId:guid}/revoke", RevokeUserTokenAsync).WithName("RevokeUserToken")
@@ -92,7 +90,7 @@ internal static class AdminEndpoints
         }
 
         return (await administration.CreateForEmployeeAsync(
-            body.EmployeeId.Value, body.UserName, body.IsSystemAdmin, body.SendInvitation ?? true, AuthEndpoints.RequestOrigin(context), ct)).ToOk();
+            body.EmployeeId.Value, body.UserName, body.SendInvitation ?? true, AuthEndpoints.RequestOrigin(context), ct)).ToOk();
     }
 
     private static async Task<Results<NoContent, ProblemHttpResult>> SendResetAsync(
@@ -291,9 +289,7 @@ internal static class AdminEndpoints
     }
 }
 
-internal sealed record CreateUserInput(Guid? EmployeeId, string? UserName, bool IsSystemAdmin, bool? SendInvitation);
-
-internal sealed record SetAdminInput(bool IsSystemAdmin);
+internal sealed record CreateUserInput(Guid? EmployeeId, string? UserName, bool? SendInvitation);
 
 public sealed record AuthEventDto(
     Guid Id, string Type, bool Success, Guid? UserId, string? UserName, Guid? ActorUserId, string? Provider, string? Detail, string? IpAddress,

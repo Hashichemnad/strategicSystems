@@ -18,9 +18,6 @@ public sealed class StrategyUser : IdentityUser<Guid>
     /// <summary><see cref="StrategyClaims.InternalPrincipal"/> or <see cref="StrategyClaims.VendorPrincipal"/>.</summary>
     public string PrincipalType { get; set; } = StrategyClaims.InternalPrincipal;
 
-    /// <summary>Interim system-administrator flag (ADR 0009).</summary>
-    public bool IsSystemAdmin { get; set; }
-
     public bool Active { get; set; } = true;
 
     /// <summary><c>ar</c> or <c>en</c>; null = browser default.</summary>
