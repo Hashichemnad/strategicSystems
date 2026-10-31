@@ -1,13 +1,21 @@
 /**
- * Locale-aware formatting through Intl only (CLAUDE.md §10). Latin digits by default; Arabic-Indic digits and
- * Hijri display become Settings toggles in Phase 2 (`numberingSystem` / `calendar` below).
+ * Locale-aware formatting through Intl only (CLAUDE.md §10). Latin digits and the Gregorian calendar by default;
+ * Arabic-Indic digits, Hijri display and the time zone come from Settings → Regional ({@link setFormatDefaults}).
  */
 export interface FormatOptions {
   arabicIndicDigits?: boolean;
   hijri?: boolean;
+  timeZone?: string;
 }
 
-function locale(language: string, options: FormatOptions = {}): string {
+let defaults: FormatOptions = {};
+
+/** Installation-wide regional settings, applied to every call that does not pass its own options. */
+export function setFormatDefaults(options: FormatOptions): void {
+  defaults = { ...options };
+}
+
+function locale(language: string, options: FormatOptions = defaults): string {
   const base = language === 'ar' ? 'ar-AE' : 'en-GB';
   const extensions = [
     options.hijri ? 'ca-islamic-umalqura' : 'ca-gregory',
@@ -17,18 +25,22 @@ function locale(language: string, options: FormatOptions = {}): string {
 }
 
 export function formatNumber(value: number, language: string, options?: FormatOptions): string {
-  return new Intl.NumberFormat(locale(language, options)).format(value);
+  return new Intl.NumberFormat(locale(language, options ?? defaults)).format(value);
 }
 
 export function formatDateTime(value: string | Date, language: string, options?: FormatOptions): string {
-  return new Intl.DateTimeFormat(locale(language, options), {
+  const effective = options ?? defaults;
+  return new Intl.DateTimeFormat(locale(language, effective), {
     dateStyle: 'medium',
     timeStyle: 'short',
+    ...(effective.timeZone ? { timeZone: effective.timeZone } : {}),
   }).format(new Date(value));
 }
 
 export function formatDate(value: string | Date, language: string, options?: FormatOptions): string {
-  return new Intl.DateTimeFormat(locale(language, options), { dateStyle: 'medium' }).format(new Date(value));
+  return new Intl.DateTimeFormat(locale(language, options ?? defaults), { dateStyle: 'medium' }).format(
+    new Date(value),
+  );
 }
 
 /** Shows the user's language, falling back to the other one (bilingual `*_ar` / `*_en` fields). */

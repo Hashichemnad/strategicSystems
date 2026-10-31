@@ -19,6 +19,19 @@ internal sealed class UserDirectory(IdentityStoreDbContext db) : IUserDirectory
             .Select(u => new UserReference(u.Id, u.UserName!, u.EmployeeId, u.Active))
             .ToListAsync(cancellationToken).ConfigureAwait(false);
 
+    public async Task<IReadOnlyList<UserReference>> SearchAsync(
+        string search, IReadOnlyCollection<Guid> employeeIds, CancellationToken cancellationToken = default)
+    {
+        var term = search.Trim().ToUpperInvariant();
+        return await db.Users.AsNoTracking()
+            .Where(u => u.PrincipalType == StrategyClaims.InternalPrincipal
+                && (u.NormalizedUserName!.Contains(term) || u.NormalizedEmail!.Contains(term)
+                    || (u.EmployeeId != null && employeeIds.Contains(u.EmployeeId.Value))))
+            .OrderBy(u => u.UserName).Take(20)
+            .Select(u => new UserReference(u.Id, u.UserName!, u.EmployeeId, u.Active))
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
+    }
+
     public async Task<IReadOnlyList<UserReference>> ListAllAsync(CancellationToken cancellationToken = default) =>
         await db.Users.AsNoTracking().Where(u => u.PrincipalType == StrategyClaims.InternalPrincipal)
             .OrderBy(u => u.UserName)

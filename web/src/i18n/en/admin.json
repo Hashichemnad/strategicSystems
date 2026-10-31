@@ -14,7 +14,6 @@
     "state": "State",
     "signIn": "Signs in with",
     "lastSignIn": "Last sign-in",
-    "admin": "Administrator",
     "active": "Active",
     "inactive": "Deactivated",
     "locked": "Locked",
@@ -23,8 +22,6 @@
     "userName": "User name",
     "userNameHint": "Leave empty to use the employee's email address.",
     "sendInvitation": "Email an invitation to set the password",
-    "makeAdmin": "System administrator",
-    "makeAdminHint": "Full access to administration until roles arrive (Phase 2).",
     "actionsFor": "Actions for {{name}}",
     "actions": {
       "activate": "Activate",
@@ -33,8 +30,7 @@
       "reset-mfa": "Reset two-step verification",
       "revoke-sessions": "Sign out everywhere",
       "send-password-reset": "Send password email",
-      "grant-admin": "Make administrator",
-      "revoke-admin": "Remove administrator"
+      "roles": "Roles and permissions"
     },
     "done": {
       "activate": "Account activated",
@@ -42,9 +38,7 @@
       "unlock": "Account unlocked",
       "reset-mfa": "Two-step verification reset",
       "revoke-sessions": "All sessions ended",
-      "send-password-reset": "Email sent",
-      "grant-admin": "Administrator rights granted",
-      "revoke-admin": "Administrator rights removed"
+      "send-password-reset": "Email sent"
     }
   },
   "providers": {

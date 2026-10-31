@@ -7,6 +7,7 @@ using Strategy.Platform.Http.Access;
 using Strategy.Platform.Http.Problems;
 using Strategy.Platform.Kernel.Context;
 using Strategy.Platform.Kernel.Results;
+using Strategy.Platform.Organisation.Contracts;
 
 namespace Strategy.Platform.Access.Api;
 
@@ -72,6 +73,7 @@ internal static class AccessEndpoints
         transfers.MapPost("/", async (TransferInput body, AccessReporting r, CancellationToken ct) => (await r.TransferAsync(body, ct)).ToOk())
             .WithName("TransferRoles").RequirePermission(AccessPermissions.AssignmentManage);
 
+        group.MapGet("/users", SearchUsersAsync).WithName("SearchAccessUsers").RequirePermission(AccessPermissions.AssignmentRead);
         group.MapGet("/users/{id:guid}/effective", async (Guid id, AccessReporting r, CancellationToken ct) => (await r.EffectiveAsync(id, ct)).ToOk())
             .WithName("GetEffectiveAccess").RequirePermission(AccessPermissions.AssignmentRead);
 
@@ -102,6 +104,20 @@ internal static class AccessEndpoints
             snapshot.Systems.Order(StringComparer.Ordinal).ToList(),
             permissions.Order(StringComparer.Ordinal).ToList(),
             snapshot.Roles.Select(r => r.Key).Order(StringComparer.Ordinal).ToList()));
+    }
+
+    private static async Task<Results<Ok<IReadOnlyList<PrincipalDto>>, ProblemHttpResult>> SearchUsersAsync(
+        string? search, IUserDirectory users, IEmployeeDirectory employees, PrincipalNames names, CancellationToken ct)
+    {
+        if (string.IsNullOrWhiteSpace(search) || search.Length > 200)
+        {
+            return Error.Validation([new FieldError("search", "validation.notEmpty", "validation.notEmpty")]).ToProblem();
+        }
+
+        var employeeIds = await employees.SearchAsync(search, ct);
+        var found = await users.SearchAsync(search, employeeIds, ct);
+        var principals = await names.PrincipalsAsync(found.Select(u => (Domain.PrincipalKinds.User, (Guid?)u.Id)), ct);
+        return TypedResults.Ok<IReadOnlyList<PrincipalDto>>(found.Select(u => principals[(Domain.PrincipalKinds.User, u.Id)]).ToList());
     }
 
     private static async Task<FileContentHttpResult> ExportAsync(string? system, Guid? unitId, string? lang, AccessReporting reporting, CancellationToken ct)

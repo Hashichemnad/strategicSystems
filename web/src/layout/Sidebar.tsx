@@ -3,7 +3,8 @@ import { Target, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/cn';
 import { Button } from '@/ui';
-import { useMe } from '@/features/auth/session';
+import { useAccess } from '@/features/access/session';
+import { useBranding } from '@/features/settings/publicSettings';
 import { visibleNavigation } from './navigation';
 
 interface SidebarProps {
@@ -14,7 +15,8 @@ interface SidebarProps {
 export function Sidebar({ open, onClose }: SidebarProps) {
   const { t } = useTranslation('shell');
   const { t: tc } = useTranslation();
-  const me = useMe();
+  const access = useAccess();
+  const branding = useBranding();
 
   return (
     <>
@@ -28,10 +30,14 @@ export function Sidebar({ open, onClose }: SidebarProps) {
       >
         <div className="flex h-16 items-center justify-between gap-2 border-b px-5">
           <Link to="/" className="flex items-center gap-2 font-semibold">
-            <span className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-              <Target className="size-4" aria-hidden />
-            </span>
-            {tc('appName')}
+            {branding.logoUrl ? (
+              <img src={branding.logoUrl} alt="" className="size-8 rounded-lg object-contain" />
+            ) : (
+              <span className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                <Target className="size-4" aria-hidden />
+              </span>
+            )}
+            <span className="truncate">{branding.name ?? tc('appName')}</span>
           </Link>
           <Button
             variant="ghost"
@@ -44,7 +50,7 @@ export function Sidebar({ open, onClose }: SidebarProps) {
           </Button>
         </div>
         <nav aria-label={t('navigation')} className="flex flex-1 flex-col gap-4 overflow-y-auto p-3">
-          {visibleNavigation(me?.isSystemAdmin ?? false).map((section) => (
+          {visibleNavigation(access).map((section) => (
             <div key={section.key} className="flex flex-col gap-1">
               {section.key !== 'main' && (
                 <p className="px-3 pb-1 text-xs font-semibold tracking-wide text-muted-foreground uppercase">

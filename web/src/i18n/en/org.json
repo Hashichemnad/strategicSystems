@@ -152,6 +152,7 @@
     "delegationNotActive": "Only an active delegation can be cancelled.",
     "photoInvalid": "Use a PNG, JPEG or WebP image.",
     "photoTooLarge": "The photo is larger than {{maxKb}} KB.",
-    "noEmployeeLinked": "Your account is not linked to an employee."
+    "noEmployeeLinked": "Your account is not linked to an employee.",
+    "unknownGrade": "The grade is not an active value of the grades list."
   }
 }

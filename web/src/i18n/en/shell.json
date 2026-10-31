@@ -5,7 +5,7 @@
   "closeMenu": "Close menu",
   "nav": {
     "home": "My Work",
-    "sample": "Sample module",
+    "sample": "Sample system",
     "uiKit": "UI kit",
     "units": "Units",
     "chart": "Org chart",
@@ -20,8 +20,10 @@
       "main": "Main",
       "organisation": "Organisation",
       "administration": "Administration",
-      "development": "Development"
-    }
+      "development": "Development",
+      "systems": "Systems"
+    },
+    "settings": "Settings"
   },
   "language": {
     "label": "Language",

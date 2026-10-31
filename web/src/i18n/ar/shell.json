@@ -5,7 +5,7 @@
   "closeMenu": "إغلاق القائمة",
   "nav": {
     "home": "أعمالي",
-    "sample": "الوحدة النموذجية",
+    "sample": "النظام التجريبي",
     "uiKit": "مكونات الواجهة",
     "units": "الوحدات التنظيمية",
     "chart": "الهيكل التنظيمي",
@@ -20,8 +20,10 @@
       "main": "الرئيسية",
       "organisation": "المؤسسة",
       "administration": "الإدارة",
-      "development": "التطوير"
-    }
+      "development": "التطوير",
+      "systems": "الأنظمة"
+    },
+    "settings": "الإعدادات"
   },
   "language": {
     "label": "اللغة",

@@ -3,9 +3,9 @@ import { getRouteApi, Link } from '@tanstack/react-router';
 import { ArrowLeft } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useCan } from '@/features/access/session';
 import { api, ApiError, unwrap } from '@/api/client';
 import { errorMessage, translateMessageKey } from '@/api/problem';
-import { useMe } from '@/features/auth/session';
 import { formatDate, pickText } from '@/lib/format';
 import {
   Avatar,
@@ -32,8 +32,7 @@ export function EmployeePage() {
   const { t } = useTranslation('org');
   const { t: tc, i18n } = useTranslation();
   const { employeeId } = routeApi.useParams();
-  const me = useMe();
-  const admin = me?.isSystemAdmin ?? false;
+  const admin = useCan('org.employee.manage');
   const employee = useEmployee(employeeId);
   const history = useEmployeeHistory(employeeId);
   const invalidate = useInvalidateOrg();

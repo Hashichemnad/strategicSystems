@@ -4,6 +4,7 @@ import { RouterProvider } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { UNAUTHORIZED_EVENT, resetAntiforgeryToken } from '@/api/client';
+import { SettingsEffects } from '@/features/settings/publicSettings';
 import { ToastProvider } from '@/ui';
 import { createQueryClient } from './queryClient';
 import { router } from './router';
@@ -35,6 +36,7 @@ export function App() {
     <DirectionProvider dir={i18n.dir()}>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
+          <SettingsEffects />
           <ToastProvider>
             <RouterProvider router={router} context={{ queryClient }} />
           </ToastProvider>

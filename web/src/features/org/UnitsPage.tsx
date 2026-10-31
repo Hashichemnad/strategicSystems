@@ -3,10 +3,10 @@ import { Link, useNavigate } from '@tanstack/react-router';
 import { Building2, Plus } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useCan } from '@/features/access/session';
 import { api, unwrap } from '@/api/client';
 import { errorMessage } from '@/api/problem';
 import { unitsRoute } from '@/app/router';
-import { useMe } from '@/features/auth/session';
 import { formatDate, pickText } from '@/lib/format';
 import {
   Button,
@@ -43,8 +43,7 @@ export function UnitsPage() {
   const { t: tc, i18n } = useTranslation();
   const { unit: selectedId } = unitsRoute.useSearch();
   const navigate = useNavigate();
-  const me = useMe();
-  const admin = me?.isSystemAdmin ?? false;
+  const admin = useCan('org.unit.manage');
   const [includeInactive, setIncludeInactive] = useState(false);
   const tree = useUnitTree(undefined, includeInactive);
   const levels = useLevels();

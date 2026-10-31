@@ -1,5 +1,7 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
+import arAccess from './ar/access.json';
+import enAccess from './en/access.json';
 import arAdmin from './ar/admin.json';
 import enAdmin from './en/admin.json';
 import arAuth from './ar/auth.json';
@@ -15,12 +17,14 @@ import enProfile from './en/profile.json';
 import arCommon from './ar/common.json';
 import arErrors from './ar/errors.json';
 import arSample from './ar/sample.json';
+import arSettings from './ar/settings.json';
 import arShell from './ar/shell.json';
 import arUiKit from './ar/uiKit.json';
 import arValidation from './ar/validation.json';
 import enCommon from './en/common.json';
 import enErrors from './en/errors.json';
 import enSample from './en/sample.json';
+import enSettings from './en/settings.json';
 import enShell from './en/shell.json';
 import enUiKit from './en/uiKit.json';
 import enValidation from './en/validation.json';
@@ -43,6 +47,8 @@ export const resources = {
     import: arImport,
     identity: arIdentity,
     admin: arAdmin,
+    settings: arSettings,
+    access: arAccess,
   },
   en: {
     common: enCommon,
@@ -57,6 +63,8 @@ export const resources = {
     import: enImport,
     identity: enIdentity,
     admin: enAdmin,
+    settings: enSettings,
+    access: enAccess,
   },
 } as const;
 
@@ -78,7 +86,8 @@ export function applyDocumentLanguage(language: string): void {
 }
 
 void i18n.use(initReactI18next).init({
-  resources,
+  // A copy: runtime translation overrides are merged into i18next's store, and `resources` must stay the bundled text.
+  resources: structuredClone(resources),
   lng: initialLanguage(),
   fallbackLng: { ar: ['en'], default: ['en'] },
   supportedLngs: languages,
@@ -86,6 +95,8 @@ void i18n.use(initReactI18next).init({
   ns: Object.keys(resources.en),
   interpolation: { escapeValue: false },
   returnNull: false,
+  // Translation overrides from Settings are added at runtime: re-render when resources change.
+  react: { bindI18nStore: 'added' },
 });
 
 applyDocumentLanguage(i18n.language);

@@ -10,5 +10,6 @@
   "antiforgery": "Your session security token expired. Please try again.",
   "badRequest": "The request could not be understood.",
   "unexpected": "An unexpected error occurred. If it keeps happening, contact support with reference {{reference}}.",
-  "network": "The server could not be reached. Check your connection and try again."
+  "network": "The server could not be reached. Check your connection and try again.",
+  "featureDisabled": "This feature is switched off in Settings."
 }

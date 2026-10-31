@@ -156,6 +156,7 @@
     "delegationNotActive": "لا يمكن إلغاء إلا التفويض الفعّال.",
     "photoInvalid": "استخدم صورة PNG أو JPEG أو WebP.",
     "photoTooLarge": "حجم الصورة أكبر من {{maxKb}} كيلوبايت.",
-    "noEmployeeLinked": "حسابك غير مرتبط بموظف."
+    "noEmployeeLinked": "حسابك غير مرتبط بموظف.",
+    "unknownGrade": "الدرجة ليست قيمة نشطة في قائمة الدرجات الوظيفية."
   }
 }

@@ -40,6 +40,9 @@ public interface IUserDirectory
     /// <summary>Users linked to the given employees.</summary>
     Task<IReadOnlyList<UserReference>> GetByEmployeesAsync(IReadOnlyCollection<Guid> employeeIds, CancellationToken cancellationToken = default);
 
+    /// <summary>Up to 20 internal users whose user name or e-mail contains <paramref name="search"/>, or whose employee matches it.</summary>
+    Task<IReadOnlyList<UserReference>> SearchAsync(string search, IReadOnlyCollection<Guid> employeeIds, CancellationToken cancellationToken = default);
+
     /// <summary>Every internal user (access review).</summary>
     Task<IReadOnlyList<UserReference>> ListAllAsync(CancellationToken cancellationToken = default);
 }

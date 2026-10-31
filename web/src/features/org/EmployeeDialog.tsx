@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
 import { api, unwrap } from '@/api/client';
 import { applyFieldErrors, errorMessage, translateFieldMessage } from '@/api/problem';
+import { useLookupOptions } from '@/features/settings/lookups';
 import { pickText } from '@/lib/format';
 import {
   Button,
@@ -80,6 +81,7 @@ export function EmployeeDialog({
   const invalidate = useInvalidateOrg();
   const toast = useToast();
   const navigate = useNavigate();
+  const gradeOptions = useLookupOptions('employee.grade', employee?.grade, '—');
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -210,7 +212,17 @@ export function EmployeeDialog({
             <Input dir="ltr" type="tel" autoComplete="off" {...form.register('mobile')} />
           </FormField>
           <FormField label={t('fields.grade')} error={error('grade')}>
-            <Input dir="ltr" autoComplete="off" {...form.register('grade')} />
+            <Controller
+              control={form.control}
+              name="grade"
+              render={({ field }) => (
+                <Select
+                  value={field.value || '-'}
+                  onValueChange={(value) => field.onChange(value === '-' ? '' : value)}
+                  options={gradeOptions}
+                />
+              )}
+            />
           </FormField>
           <FormField label={t('fields.joinDate')} error={error('joinDate')}>
             <Controller

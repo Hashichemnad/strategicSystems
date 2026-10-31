@@ -20,6 +20,502 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/settings/public': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetPublicSettings'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/settings/translations': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetTranslationOverrides'];
+    put: operations['SetTranslationOverride'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/settings/regional': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetRegionalSettings'];
+    put: operations['UpdateRegionalSettings'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/settings/branding': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetBrandingSettings'];
+    put: operations['UpdateBrandingSettings'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/settings/branding/logo/{kind}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetBrandingLogo'];
+    put: operations['PutBrandingLogo'];
+    post?: never;
+    delete: operations['DeleteBrandingLogo'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/settings/lookups/types': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListLookupTypes'];
+    put?: never;
+    post: operations['CreateLookupType'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/settings/lookups/{type}/values': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListLookupValues'];
+    put?: never;
+    post: operations['CreateLookupValue'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/settings/lookups/values/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateLookupValue'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/settings/numbering': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListNumberingFormats'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/settings/numbering/{key}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateNumberingFormat'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/settings/numbering/preview': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['PreviewNumberingFormat'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/settings/features': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListFeatureFlags'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/settings/features/enabled': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListEnabledFeatures'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/settings/features/{code}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['SetFeatureFlag'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/access/me': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetMyAccess'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/access/record-roles/{id}/permissions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['SetRecordRolePermissions'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/access/users': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['SearchAccessUsers'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/access/users/{id}/effective': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetEffectiveAccess'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/access/review': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetAccessReview'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/access/review/export': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ExportAccessReview'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/access/systems': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListSystems'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/access/systems/{code}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateSystem'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/access/systems/{code}/matrix': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetPermissionMatrix'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/access/roles': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListRoles'];
+    put?: never;
+    post: operations['CreateRole'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/access/roles/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateRole'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/access/roles/{id}/permissions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['SetRolePermissions'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/access/assignments': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListRoleAssignments'];
+    put?: never;
+    post: operations['CreateRoleAssignment'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/access/assignments/{id}/end': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['EndRoleAssignment'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/access/system-access': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListSystemAccess'];
+    put?: never;
+    post: operations['GrantSystemAccess'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/access/system-access/{id}/revoke': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RevokeSystemAccess'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/access/transfers': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListRoleTransfers'];
+    put?: never;
+    post: operations['TransferRoles'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/org/levels': {
     parameters: {
       query?: never;
@@ -884,22 +1380,6 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/v1/identity/admin/users/{id}/set-admin': {
-    parameters: {
-      query?: never;
-      header?: never;
-      path?: never;
-      cookie?: never;
-    };
-    get?: never;
-    put?: never;
-    post: operations['SetUserAdmin'];
-    delete?: never;
-    options?: never;
-    head?: never;
-    patch?: never;
-    trace?: never;
-  };
   '/api/v1/identity/admin/users/{id}/send-password-reset': {
     parameters: {
       query?: never;
@@ -1172,10 +1652,68 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/sample/items/{id}/editors': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListSampleItemEditors'];
+    put?: never;
+    post: operations['AddSampleItemEditor'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/sample/items/{id}/editors/{employeeId}/remove': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RemoveSampleItemEditor'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
+    /** @description What the signed-in user can open and do; the UI uses it to show menus and actions (the server still checks). */
+    AccessMeDto: {
+      systems: string[];
+      permissions: string[];
+      roles: string[];
+    };
+    AccessReviewRowDto: {
+      /** Format: uuid */
+      userId: string;
+      userName: string;
+      userActive: boolean;
+      employeeNameAr: null | string;
+      employeeNameEn: null | string;
+      unitCode: null | string;
+      systemCode: string;
+      systemAccess: boolean;
+      roleCode: string;
+      roleNameAr: null | string;
+      roleNameEn: null | string;
+      source: string;
+      /** Format: date */
+      validFrom: string;
+      /** Format: date */
+      validTo: null | string;
+      permissions: components['schemas']['RolePermissionDto'][];
+    };
     AccessTokenDto: {
       /** Format: uuid */
       id: string;
@@ -1197,6 +1735,37 @@ export interface components {
       token: string;
       headerName: string;
     };
+    AssignmentDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      roleId: string;
+      systemCode: string;
+      roleCode: string;
+      roleNameAr: null | string;
+      roleNameEn: null | string;
+      principal: components['schemas']['PrincipalDto'];
+      /** Format: date */
+      validFrom: string;
+      /** Format: date */
+      validTo: null | string;
+      note: null | string;
+      active: boolean;
+      /** Format: uint32 */
+      version: number;
+    };
+    AssignmentInput: {
+      /** Format: uuid */
+      roleId: null | string;
+      principalKind: null | string;
+      /** Format: uuid */
+      principalId: null | string;
+      /** Format: date */
+      validFrom: null | string;
+      /** Format: date */
+      validTo: null | string;
+      note: null | string;
+    };
     AuthEventDto: {
       /** Format: uuid */
       id: string;
@@ -1212,6 +1781,17 @@ export interface components {
       ipAddress: null | string;
       /** Format: date-time */
       at: string;
+    };
+    /** @description Branding per installation (SPEC §0.2): names, colour, email header / footer. Logos are separate assets. */
+    BrandingSettings: {
+      organisationNameAr?: null | string;
+      organisationNameEn?: null | string;
+      /** @default #0f766e */
+      primaryColor: string;
+      emailHeaderAr?: null | string;
+      emailHeaderEn?: null | string;
+      emailFooterAr?: null | string;
+      emailFooterEn?: null | string;
     };
     CancelInput: {
       reason: null | string;
@@ -1247,7 +1827,6 @@ export interface components {
       /** Format: uuid */
       employeeId: null | string;
       userName: null | string;
-      isSystemAdmin: boolean;
       sendInvitation: null | boolean;
     };
     DelegationDto: {
@@ -1280,11 +1859,38 @@ export interface components {
       scope: null | string[];
       reason: null | string;
     };
+    EditorInput: {
+      /** Format: uuid */
+      employeeId: null | string;
+    };
+    EffectiveAccessDto: {
+      /** Format: uuid */
+      userId: string;
+      systems: string[];
+      roles: string[];
+      permissions: components['schemas']['EffectivePermissionDto'][];
+      recordRoles: components['schemas']['EffectiveRecordRoleDto'][];
+      requiresMfa: boolean;
+    };
     EffectiveChangeInput: {
       /** Format: date */
       effectiveDate: null | string;
       /** Format: uint32 */
       version: number;
+    };
+    EffectivePermissionDto: {
+      permission: string;
+      scopes: string[];
+    };
+    EffectiveRecordRoleDto: {
+      resourceType: string;
+      /** Format: uuid */
+      resourceId: string;
+      roleCode: string;
+      /** Format: date-time */
+      validFrom: string;
+      /** Format: date-time */
+      validTo: null | string;
     };
     EmployeeAssignmentDto: {
       /** Format: date */
@@ -1363,10 +1969,30 @@ export interface components {
       nameAr: null | string;
       nameEn: null | string;
     };
+    EndAssignmentInput: {
+      /** Format: date */
+      lastDay: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
     /** @description Result of a completed MFA enrolment: signed in, plus the recovery codes to show once. */
     EnrolmentResultDto: {
       status: string;
       recoveryCodes: string[];
+    };
+    FeatureFlagDto: {
+      code: string;
+      systemCode: string;
+      nameAr: string;
+      nameEn: string;
+      enabled: boolean;
+      /** Format: uint32 */
+      version: number;
+    };
+    FeatureInput: {
+      enabled: boolean;
+      /** Format: uint32 */
+      version: number;
     };
     ForgotPasswordInput: {
       login: null | string;
@@ -1405,12 +2031,59 @@ export interface components {
       login: null | string;
       password: null | string;
     };
+    LookupTypeDto: {
+      /** Format: uuid */
+      id: string;
+      code: string;
+      systemCode: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      parentTypeCode: null | string;
+      builtin: boolean;
+      /** Format: int32 */
+      valueCount: number;
+      /** Format: uint32 */
+      version: number;
+    };
+    LookupTypeInput: {
+      code: null | string;
+      systemCode: null | string;
+      nameAr: null | string;
+      nameEn: null | string;
+      parentTypeCode: null | string;
+    };
+    LookupValueDto: {
+      /** Format: uuid */
+      id: string;
+      typeCode: string;
+      code: string;
+      labelAr: null | string;
+      labelEn: null | string;
+      /** Format: int32 */
+      sort: number;
+      active: boolean;
+      /** Format: uuid */
+      parentValueId: null | string;
+      metadata: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
+    LookupValueInput: {
+      code: null | string;
+      labelAr: null | string;
+      labelEn: null | string;
+      /** Format: int32 */
+      sort: null | number;
+      active: null | boolean;
+      /** Format: uuid */
+      parentValueId: null | string;
+      metadata: null | string;
+    };
     MeDto: {
       /** Format: uuid */
       id: string;
       userName: string;
       email: null | string;
-      isSystemAdmin: boolean;
       principalType: string;
       language: null | string;
       theme: null | string;
@@ -1458,6 +2131,27 @@ export interface components {
       requiredByPolicy: boolean;
       totpAllowed: boolean;
       emailAllowed: boolean;
+    };
+    NumberingFormatDto: {
+      key: string;
+      systemCode: string;
+      nameAr: string;
+      nameEn: string;
+      pattern: string;
+      defaultPattern: string;
+      preview: string;
+      usesUnit: boolean;
+      /** Format: uint32 */
+      version: number;
+    };
+    NumberingInput: {
+      pattern: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
+    NumberingPreviewDto: {
+      pattern: string;
+      preview: string;
     };
     OrgLevelDto: {
       /** Format: uuid */
@@ -1606,9 +2300,35 @@ export interface components {
       /** Format: int32 */
       history: number;
     };
+    PermissionDto: {
+      code: string;
+      systemCode: string;
+      objectCode: string;
+      action: string;
+      labelAr: string;
+      labelEn: string;
+      scopable: boolean;
+    };
+    PermissionMatrixDto: {
+      system: components['schemas']['SystemDto'];
+      permissions: components['schemas']['PermissionDto'][];
+      roles: components['schemas']['RoleDto'][];
+      recordRoles: components['schemas']['RecordRoleTypeDto'][];
+    };
     PreferencesInput: {
       language: null | string;
       theme: null | string;
+    };
+    PreviewInput: {
+      pattern: null | string;
+    };
+    PrincipalDto: {
+      kind: string;
+      /** Format: uuid */
+      id: null | string;
+      nameAr: null | string;
+      nameEn: null | string;
+      detail: null | string;
     };
     Problem: {
       type?: string;
@@ -1701,8 +2421,48 @@ export interface components {
       secretRequired: boolean;
       defaultMatchField: string;
     };
+    PublicSettingsDto: {
+      organisationNameAr: null | string;
+      organisationNameEn: null | string;
+      primaryColor: string;
+      hasLogoLight: boolean;
+      hasLogoDark: boolean;
+      regional: components['schemas']['RegionalSettings'];
+      /** Format: int64 */
+      translationsVersion: number;
+    };
+    RecordRolePermissionsInput: {
+      permissions: null | string[];
+      /** Format: uint32 */
+      version: number;
+    };
+    RecordRoleTypeDto: {
+      /** Format: uuid */
+      id: string;
+      systemCode: string;
+      resourceType: string;
+      roleCode: string;
+      nameAr: string;
+      nameEn: string;
+      permissions: string[];
+      /** Format: uint32 */
+      version: number;
+    };
     RecoveryCodesDto: {
       codes: string[];
+    };
+    /** @description Regional settings (SPEC §0, §0.2 localisation). Hijri display is off by default. */
+    RegionalSettings: {
+      /** @default Asia/Dubai */
+      timeZone: string;
+      /** @default false */
+      hijriDisplay: boolean;
+      /** @default false */
+      arabicIndicDigits: boolean;
+      /** @default AED */
+      currencyCode: string;
+      /** @default dd/MM/yyyy */
+      dateFormat: string;
     };
     ResetPasswordInput: {
       /** Format: uuid */
@@ -1711,14 +2471,66 @@ export interface components {
       newPassword: null | string;
       invitation: boolean;
     };
+    RoleDto: {
+      /** Format: uuid */
+      id: string;
+      systemCode: string;
+      code: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      descriptionAr: null | string;
+      descriptionEn: null | string;
+      builtin: boolean;
+      active: boolean;
+      requiresMfa: boolean;
+      locked: boolean;
+      permissions: components['schemas']['RolePermissionDto'][];
+      /** Format: int32 */
+      activeAssignments: number;
+      /** Format: uint32 */
+      version: number;
+    };
+    RoleInput: {
+      systemCode: null | string;
+      code: null | string;
+      nameAr: null | string;
+      nameEn: null | string;
+      descriptionAr: null | string;
+      descriptionEn: null | string;
+      requiresMfa: boolean;
+      active: null | boolean;
+    };
+    RolePermissionDto: {
+      permission: string;
+      scope: string;
+    };
+    RolePermissionsInput: {
+      permissions: null | components['schemas']['RolePermissionDto'][];
+      /** Format: uint32 */
+      version: number;
+    };
+    /** @description An employee holding the item's "editor" record role. */
+    SampleEditorDto: {
+      /** Format: uuid */
+      employeeId: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      /** Format: date-time */
+      since: string;
+    };
     SampleItemDto: {
       /** Format: uuid */
       id: string;
+      number: null | string;
       nameAr: null | string;
       nameEn: null | string;
       descriptionAr: null | string;
       descriptionEn: null | string;
       status: string;
+      /** Format: uuid */
+      ownerEmployeeId: null | string;
+      /** Format: uuid */
+      unitId: null | string;
       /** Format: date-time */
       createdAt: string;
       /** Format: date-time */
@@ -1773,8 +2585,15 @@ export interface components {
       userAgent: null | string;
       current: boolean;
     };
-    SetAdminInput: {
-      isSystemAdmin: boolean;
+    SettingsDocumentOfBrandingSettings: {
+      value: null | components['schemas']['BrandingSettings'];
+      /** Format: uint32 */
+      version: number;
+    };
+    SettingsDocumentOfRegionalSettings: {
+      value: null | components['schemas']['RegionalSettings'];
+      /** Format: uint32 */
+      version: number;
     };
     /** @description Outcome of a sign-in step. IReadOnlyList&lt;string&gt; SignInOutcome.Methods lists the second factors the user may use (or enrol). */
     SignInOutcome: {
@@ -1824,9 +2643,86 @@ export interface components {
       to: null | string;
       settings: null | components['schemas']['SmtpSettingsInput'];
     };
+    SystemAccessDto: {
+      /** Format: uuid */
+      id: string;
+      systemCode: string;
+      principal: components['schemas']['PrincipalDto'];
+      active: boolean;
+    };
+    SystemAccessInput: {
+      systemCode: null | string;
+      principalKind: null | string;
+      /** Format: uuid */
+      principalId: null | string;
+    };
+    SystemDto: {
+      code: string;
+      kind: string;
+      nameAr: string;
+      nameEn: string;
+      enabled: boolean;
+      /** Format: uuid */
+      owningUnitId: null | string;
+      owningUnitNameAr: null | string;
+      owningUnitNameEn: null | string;
+      /** Format: int32 */
+      sort: number;
+      /** Format: uint32 */
+      version: number;
+    };
+    SystemInput: {
+      enabled: boolean;
+      /** Format: uuid */
+      owningUnitId: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
     TotpSetupDto: {
       sharedKey: string;
       authenticatorUri: string;
+    };
+    TransferDto: {
+      /** Format: uuid */
+      id: string;
+      roleKeys: string;
+      from: string;
+      to: string;
+      /** Format: int32 */
+      movedCount: number;
+      reason: null | string;
+      /** Format: date-time */
+      createdAt: string;
+    };
+    TransferInput: {
+      roleIds: null | string[];
+      fromUserIds: null | string[];
+      /** Format: uuid */
+      fromUnitId: null | string;
+      /** Format: uuid */
+      toUserId: null | string;
+      /** Format: uuid */
+      toUnitId: null | string;
+      /** Format: date */
+      effectiveDate: null | string;
+      reason: null | string;
+    };
+    TranslationInput: {
+      language: null | string;
+      namespace: null | string;
+      key: null | string;
+      value: null | string;
+    };
+    TranslationOverridesDto: {
+      languages: {
+        [key: string]: {
+          [key: string]: {
+            [key: string]: string;
+          };
+        };
+      };
+      /** Format: int64 */
+      version: number;
     };
     UnitInput: {
       code: null | string;
@@ -1872,6 +2768,28 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    UpdateLookupValueInput: {
+      labelAr: null | string;
+      labelEn: null | string;
+      /** Format: int32 */
+      sort: null | number;
+      active: null | boolean;
+      /** Format: uuid */
+      parentValueId: null | string;
+      metadata: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
+    UpdateRoleInput: {
+      nameAr: null | string;
+      nameEn: null | string;
+      descriptionAr: null | string;
+      descriptionEn: null | string;
+      requiresMfa: boolean;
+      active: null | boolean;
+      /** Format: uint32 */
+      version: number;
+    };
     UpdateSampleItemInput: {
       nameAr: null | string;
       nameEn: null | string;
@@ -1902,7 +2820,6 @@ export interface components {
       email: null | string;
       employee: null | components['schemas']['UserEmployeeDto'];
       active: boolean;
-      isSystemAdmin: boolean;
       lockedOut: boolean;
       /** Format: date-time */
       lockoutEnd: null | string;
@@ -1925,6 +2842,16 @@ export interface components {
       nameAr: null | string;
       nameEn: null | string;
       status: string;
+    };
+    VersionedInputOfBrandingSettings: {
+      value: null | components['schemas']['BrandingSettings'];
+      /** Format: uint32 */
+      version: number;
+    };
+    VersionedInputOfRegionalSettings: {
+      value: null | components['schemas']['RegionalSettings'];
+      /** Format: uint32 */
+      version: number;
     };
     VersionInput: {
       /** Format: uint32 */
@@ -1955,6 +2882,1350 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['AntiforgeryToken'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetPublicSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PublicSettingsDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetTranslationOverrides: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TranslationOverridesDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SetTranslationOverride: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['TranslationInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TranslationOverridesDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetRegionalSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SettingsDocumentOfRegionalSettings'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateRegionalSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['VersionedInputOfRegionalSettings'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SettingsDocumentOfRegionalSettings'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetBrandingSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SettingsDocumentOfBrandingSettings'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateBrandingSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['VersionedInputOfBrandingSettings'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SettingsDocumentOfBrandingSettings'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetBrandingLogo: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        kind: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Not Found */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  PutBrandingLogo: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        kind: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'multipart/form-data': {
+          file: components['schemas']['IFormFile'];
+        };
+      };
+    };
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  DeleteBrandingLogo: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        kind: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListLookupTypes: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['LookupTypeDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateLookupType: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['LookupTypeInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['LookupTypeDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListLookupValues: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        type: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['LookupValueDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateLookupValue: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        type: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['LookupValueInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['LookupValueDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateLookupValue: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateLookupValueInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['LookupValueDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListNumberingFormats: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['NumberingFormatDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateNumberingFormat: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        key: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['NumberingInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['NumberingFormatDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  PreviewNumberingFormat: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['PreviewInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['NumberingPreviewDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListFeatureFlags: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['FeatureFlagDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListEnabledFeatures: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': string[];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SetFeatureFlag: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        code: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['FeatureInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['FeatureFlagDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetMyAccess: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AccessMeDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SetRecordRolePermissions: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RecordRolePermissionsInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RecordRoleTypeDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SearchAccessUsers: {
+    parameters: {
+      query?: {
+        search?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PrincipalDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetEffectiveAccess: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['EffectiveAccessDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetAccessReview: {
+    parameters: {
+      query?: {
+        system?: string;
+        unitId?: string;
+        userId?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AccessReviewRowDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ExportAccessReview: {
+    parameters: {
+      query?: {
+        system?: string;
+        unitId?: string;
+        lang?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListSystems: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SystemDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateSystem: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        code: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SystemInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SystemDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetPermissionMatrix: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        code: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PermissionMatrixDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListRoles: {
+    parameters: {
+      query?: {
+        system?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RoleDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateRole: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RoleInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RoleDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateRole: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateRoleInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RoleDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SetRolePermissions: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RolePermissionsInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RoleDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListRoleAssignments: {
+    parameters: {
+      query?: {
+        roleId?: string;
+        userId?: string;
+        system?: string;
+        includeEnded?: boolean;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AssignmentDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateRoleAssignment: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AssignmentInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AssignmentDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  EndRoleAssignment: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['EndAssignmentInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AssignmentDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListSystemAccess: {
+    parameters: {
+      query?: {
+        system?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SystemAccessDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GrantSystemAccess: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SystemAccessInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SystemAccessDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RevokeSystemAccess: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListRoleTransfers: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TransferDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  TransferRoles: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['TransferInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TransferDto'];
         };
       };
       /** @description Problem Details (RFC 9457) */
@@ -3956,41 +6227,6 @@ export interface operations {
       };
     };
   };
-  SetUserAdmin: {
-    parameters: {
-      query?: never;
-      header?: never;
-      path: {
-        id: string;
-      };
-      cookie?: never;
-    };
-    requestBody: {
-      content: {
-        'application/json': components['schemas']['SetAdminInput'];
-      };
-    };
-    responses: {
-      /** @description OK */
-      200: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/json': components['schemas']['UserDto'];
-        };
-      };
-      /** @description Problem Details (RFC 9457) */
-      default: {
-        headers: {
-          [name: string]: unknown;
-        };
-        content: {
-          'application/problem+json': components['schemas']['Problem'];
-        };
-      };
-    };
-  };
   SendUserPasswordReset: {
     parameters: {
       query?: never;
@@ -4717,6 +6953,104 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['SampleItemDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListSampleItemEditors: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SampleEditorDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  AddSampleItemEditor: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['EditorInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SampleEditorDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RemoveSampleItemEditor: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        employeeId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SampleEditorDto'][];
         };
       };
       /** @description Problem Details (RFC 9457) */
