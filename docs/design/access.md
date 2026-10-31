@@ -63,8 +63,8 @@ Every table except `permission` and `role_permission` is auditable (`created_*`,
 |---|---|
 | `own` | its owner employee is the user's employee, or its owner user is the user |
 | `team` | `own`, or its owner is a **direct report** of the user (employees whose manager is the user's employee) |
-| `unit` | its unit is the user's employee unit |
-| `unit_and_below` | its unit is the user's unit or any unit below it (current structure) |
+| `unit` | its unit is the user's employee unit, or a unit the user's employee heads |
+| `unit_and_below` | its unit is one of those units or any unit below them (current structure) |
 | `all` | always |
 
 - **Several roles:** the scopes of all roles that grant the permission are combined with OR.

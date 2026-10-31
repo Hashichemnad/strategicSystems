@@ -147,7 +147,7 @@ internal sealed class AccessService(UserAccessLoader loader, AccessDbContext db,
         DataScope.All => true,
         DataScope.Own => IsOwner(resource, [access.EmployeeId ?? Guid.Empty], [access.UserId]),
         DataScope.Team => IsOwner(resource, access.TeamEmployeeIds, access.TeamUserIds),
-        DataScope.Unit => resource.UnitId is { } unit && unit == access.UnitId,
+        DataScope.Unit => resource.UnitId is { } unit && access.ScopeUnitIds.Contains(unit),
         DataScope.UnitAndBelow => resource.UnitId is { } unit && access.SubtreeUnitIds.Contains(unit),
         _ => false,
     };
@@ -186,11 +186,7 @@ internal sealed class ScopePredicateBuilder<T>(ScopeMap<T> map)
                 AddOwner(access.TeamEmployeeIds, access.TeamUserIds);
                 break;
             case DataScope.Unit:
-                if (access.UnitId is { } unit)
-                {
-                    AddIn(map.Unit, [unit]);
-                }
-
+                AddIn(map.Unit, access.ScopeUnitIds);
                 break;
             case DataScope.UnitAndBelow:
                 AddIn(map.Unit, access.SubtreeUnitIds);

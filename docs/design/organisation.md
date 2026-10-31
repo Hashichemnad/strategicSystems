@@ -123,4 +123,4 @@ Header row cells are bilingual (`English / عربي`). Columns are matched by th
 ## Phase 2 changes
 - **Grade:** a lookup code of `employee.grade` (seeded G01–G12, editable in Settings → Lists). A new or changed grade must be an active code (`org.employee.unknownGrade`); unchanged legacy values are kept and were added to the list at upgrade (ADR 0014 closed).
 - **Access cache:** saving units or employees raises `AccessChangeSignal`, so cached data scopes ("unit and below", "team") follow a re-org at once.
-- **Directory:** `IEmployeeDirectory.GetDirectReportIdsAsync` serves the "team" scope.
+- **Directory:** `IEmployeeDirectory.GetDirectReportIdsAsync` serves the "team" scope; `IOrgDirectory.GetUnitsHeadedByAsync` serves the unit scopes (headed units count, ADR 0015).

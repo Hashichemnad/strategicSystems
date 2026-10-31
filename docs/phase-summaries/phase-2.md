@@ -19,7 +19,7 @@
 
 | Check | Evidence |
 |---|---|
-| "Unit-and-below" sees only its unit tree; all 5 scopes tested | **Integration** `DataScopeTests` (real PostgreSQL), on a unit tree with a viewer, a direct report in a child unit, a colleague and an outsider. For each of **own, team, unit, unit and below, all** it checks:<ul><li>the exact list (SQL filter)</li><li>200 / **404** per record</li></ul>Further cases:<ul><li>**403** on an item that is readable but not editable</li><li>combined scopes of several roles</li><li>"unit and below" follows a unit move at once</li></ul>**Unit** `ScopeEvaluationTests`: the same table for the record check and for the query predicate. |
+| "Unit-and-below" sees only its unit tree; all 5 scopes tested | **Integration** `DataScopeTests` (real PostgreSQL), on a unit tree with a viewer, a direct report in a child unit, a colleague and an outsider. For each of **own, team, unit, unit and below, all** it checks:<ul><li>the exact list (SQL filter)</li><li>200 / **404** per record</li></ul>Further cases:<ul><li>**403** on an item that is readable but not editable</li><li>combined scopes of several roles</li><li>"unit and below" follows a unit move at once</li><li>**headed units**: a viewer appointed head of another unit (with a child unit) sees it under Unit and its subtree under Unit-and-below, Team is unchanged, and the access goes as soon as the head is removed</li></ul>**Unit** `ScopeEvaluationTests`: the same table for the record check and for the query predicate. |
 | Granting a record role gives access to exactly that record | `RecordRoleTests`: a user with system access but no role sees nothing (403). After an editor record role on item 1:<ul><li>the list contains only item 1</li><li>item 1 can be read and edited</li><li>item 2 → 404</li><li>create → 403</li></ul>Grant and revoke also work through the module's own API. Only someone who may edit the item can share it. |
 | Disabling a system hides it from the sidebar and blocks its API | Integration `SystemAccessTests`:<ul><li>`/sample/*` → 404 `module.disabled`</li><li>`/access/me` drops the system and its permissions</li><li>re-enable works again</li><li>platform systems cannot be disabled</li><li>system-access grants by user / unit / everyone</li></ul>**E2E** `settings.spec` (ar + en): the switch in Settings → Systems hides *Sample module* from the sidebar and the API answers 404, then both come back. |
 | Lookup values and numbering formats take effect without redeploy | **Integration:**<ul><li>a new grade value is accepted by the employee API at once, and refused after deactivation</li><li>dependent (parent) values</li><li>a changed pattern gives the next item `ITEM/26/001`; widening `{SEQ}` continues the counter</li><li>20 concurrent creates → 20 unique consecutive numbers</li></ul>**E2E:** value added and pattern changed in the UI (live preview), and the next item carries the new number. |
@@ -45,7 +45,7 @@
 |---|---|
 | `dotnet build Strategy.slnx -c Release` | 0 warnings, 0 errors |
 | `dotnet format --verify-no-changes` | clean |
-| `dotnet test --solution Strategy.slnx` | **651 / 651** passed: unit 223 · architecture 30 · integration 398 on real PostgreSQL. Integration includes 297 generated authorization-matrix cases and the external IdP tests against Keycloak and OpenLDAP |
+| `dotnet test --solution Strategy.slnx` | **666 / 666** passed: unit 235 · architecture 30 · integration 401 on real PostgreSQL. Integration includes 297 generated authorization-matrix cases and the external IdP tests against Keycloak and OpenLDAP |
 | `tools/check-vulnerable.sh` · `tools/check-api-client.sh` | no High / Critical advisories · OpenAPI document and TS client up to date |
 | `npm run lint` · `format:check` · `typecheck` | clean |
 | `npm test` (Vitest) | 69 / 69 passed. New tests cover navigation by access, translation overrides and regional formatting. The existing check that every server message key has AR + EN text covers all the new keys |
@@ -58,7 +58,7 @@ No dependency was added (THIRD_PARTY_LICENSES unchanged).
 ## Decisions (ADRs)
 - [0015](../decisions/0015-data-scope-semantics.md) Data scope semantics:
   - "team" = the user plus direct reports;
-  - the unit is the employee's placement;
+  - the unit scopes cover the unit the employee is placed in **and every unit they head** (amended after owner review; deputies excluded; team unaffected);
   - scopes from several roles are combined with OR;
   - `ApplyScopeAsync` with a `ScopeMap`.
 - [0016](../decisions/0016-roles-replace-interim-admin.md) Roles replace the interim administrator flag (supersedes 0009):

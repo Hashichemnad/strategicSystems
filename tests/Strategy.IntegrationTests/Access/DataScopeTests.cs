@@ -98,6 +98,59 @@ public class DataScopeTests(ApiFixture api) : IClassFixture<ApiFixture>
         (await world.Viewer.GetAsync($"{Items}/{world.Items["O"]}")).StatusCode.ShouldBe(HttpStatusCode.OK);
     }
 
+    /// <summary>
+    /// ADR 0015: the unit scopes cover the unit the user is placed in and every unit they head. The viewer (placed in A)
+    /// is appointed head of B, which has a child unit B1; "team" is unaffected (direct reports only).
+    /// </summary>
+    [Theory]
+    [InlineData(DataScope.Unit, new[] { "V", "E2", "O" })]
+    [InlineData(DataScope.UnitAndBelow, new[] { "V", "E1", "E2", "O", "P" })]
+    [InlineData(DataScope.Team, new[] { "V", "E1" })]
+    public async Task Unit_scopes_include_the_units_the_user_heads(DataScope scope, string[] expected)
+    {
+        var world = await BuildAsync(scope);
+        Guid b1;
+        await using (var system = TestAccess.SystemScope(api.Factory))
+        {
+            var dispatcher = system.ServiceProvider.GetRequiredService<IDispatcher>();
+            var suffix = Guid.CreateVersion7().ToString("N")[^8..];
+            b1 = (await dispatcher.SendAsync(new CreateUnit($"B1-{suffix}", "وحدة", $"B1 {suffix}", "section", world.UnitB, null, null, null, null))).Value.Id;
+        }
+
+        var creator = await api.Factory.CreateRoleAsync("sample", (SamplePermissions.Create, DataScope.All), (SamplePermissions.Read, DataScope.Own));
+        var p = await api.Factory.CreateUserAsync(unitId: b1, roles: creator);
+        world.Items["P"] = await CreateItemAsync(await api.Factory.SignInAsync(p), "P");
+
+        await SetHeadAsync(world.UnitB, world.ViewerEmployeeId);
+        (await VisibleAsync(world)).ShouldBe(expected.Order().ToArray());
+        foreach (var (owner, id) in world.Items)
+        {
+            (await world.Viewer.GetAsync($"{Items}/{id}")).StatusCode
+                .ShouldBe(expected.Contains(owner) ? HttpStatusCode.OK : HttpStatusCode.NotFound, $"{owner}'s item, {scope}");
+        }
+
+        // No longer head of B: B and B1 drop out of the unit scopes at once.
+        await SetHeadAsync(world.UnitB, null);
+        (await VisibleAsync(world)).ShouldNotContain("O");
+        (await VisibleAsync(world)).ShouldNotContain("P");
+    }
+
+    private static async Task<string[]> VisibleAsync(World world)
+    {
+        var page = await world.Viewer.GetFromJsonAsync<PagedResult<SampleItemDto>>($"{Items}?pageSize=200");
+        return world.Items.Where(i => page!.Items.Any(x => x.Id == i.Value)).Select(i => i.Key).Order().ToArray();
+    }
+
+    private async Task SetHeadAsync(Guid unitId, Guid? headEmployeeId)
+    {
+        await using var system = TestAccess.SystemScope(api.Factory);
+        var dispatcher = system.ServiceProvider.GetRequiredService<IDispatcher>();
+        var unit = (await dispatcher.SendAsync(new GetUnit(unitId))).Value;
+        var updated = await dispatcher.SendAsync(new UpdateUnit(
+            unitId, unit.Code, unit.NameAr, unit.NameEn, unit.LevelCode, headEmployeeId, null, null, null, unit.Version));
+        updated.IsSuccess.ShouldBeTrue(updated.IsFailure ? updated.Error.Code : null);
+    }
+
     private async Task<World> BuildAsync(DataScope readScope, DataScope? updateScope = null)
     {
         Guid root, a, a1, b;
@@ -135,7 +188,7 @@ public class DataScopeTests(ApiFixture api) : IClassFixture<ApiFixture>
             items[name] = await CreateItemAsync(await api.Factory.SignInAsync(user), name);
         }
 
-        return new World(viewerClient, viewer.Id, items, a, b);
+        return new World(viewerClient, viewer.Id, viewer.EmployeeId!.Value, items, a, b);
     }
 
     private static async Task<Guid> CreateItemAsync(HttpClient client, string name)
@@ -145,5 +198,5 @@ public class DataScopeTests(ApiFixture api) : IClassFixture<ApiFixture>
         return (await response.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("id").GetGuid();
     }
 
-    private sealed record World(HttpClient Viewer, Guid ViewerId, Dictionary<string, Guid> Items, Guid UnitA, Guid UnitB);
+    private sealed record World(HttpClient Viewer, Guid ViewerId, Guid ViewerEmployeeId, Dictionary<string, Guid> Items, Guid UnitA, Guid UnitB);
 }

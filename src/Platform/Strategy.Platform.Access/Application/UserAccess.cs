@@ -12,7 +12,11 @@ internal sealed class UserAccess
 
     public required Guid? EmployeeId { get; init; }
 
+    /// <summary>The unit the employee is placed in.</summary>
     public required Guid? UnitId { get; init; }
+
+    /// <summary>The "unit" scope: the placement unit and every active unit the employee heads (ADR 0015).</summary>
+    public required IReadOnlyList<Guid> ScopeUnitIds { get; init; }
 
     /// <summary>Enabled systems the user may open (platform systems always, modules through a system-access grant).</summary>
     public required IReadOnlySet<string> Systems { get; init; }
@@ -22,7 +26,7 @@ internal sealed class UserAccess
 
     public required IReadOnlyList<RoleInfo> Roles { get; init; }
 
-    /// <summary>The user's unit and every unit below it.</summary>
+    /// <summary>The "unit and below" scope: every <see cref="ScopeUnitIds"/> unit and every unit below them.</summary>
     public required IReadOnlyList<Guid> SubtreeUnitIds { get; init; }
 
     /// <summary>The user's employee and their direct reports.</summary>
@@ -63,7 +67,8 @@ internal sealed class UserAccessLoader(
     {
         Guid? unitId = null;
         IReadOnlyList<Guid> ancestors = [];
-        IReadOnlyList<Guid> subtree = [];
+        IReadOnlyList<Guid> scopeUnits = [];
+        var subtree = new List<Guid>();
         var teamEmployees = new List<Guid>();
         var teamUsers = new List<Guid> { userId };
         if (employeeId is { } employee && await employees.GetAsync(employee, cancellationToken).ConfigureAwait(false) is { } reference
@@ -71,7 +76,12 @@ internal sealed class UserAccessLoader(
         {
             unitId = reference.UnitId;
             ancestors = (await org.GetPathAsync(reference.UnitId, cancellationToken: cancellationToken).ConfigureAwait(false)).Select(u => u.Id).ToList();
-            subtree = await org.GetSelfAndDescendantIdsAsync(reference.UnitId, cancellationToken).ConfigureAwait(false);
+            var headed = await org.GetUnitsHeadedByAsync(employee, cancellationToken).ConfigureAwait(false);
+            scopeUnits = [.. new[] { reference.UnitId }.Concat(headed).Distinct()];
+            foreach (var unit in scopeUnits)
+            {
+                subtree.AddRange(await org.GetSelfAndDescendantIdsAsync(unit, cancellationToken).ConfigureAwait(false));
+            }
             var reports = await employees.GetDirectReportIdsAsync(employee, cancellationToken).ConfigureAwait(false);
             teamEmployees.Add(employee);
             teamEmployees.AddRange(reports);
@@ -124,7 +134,8 @@ internal sealed class UserAccessLoader(
             Systems = systems,
             Permissions = permissions.ToDictionary(p => p.Key, p => (IReadOnlySet<DataScope>)p.Value, StringComparer.Ordinal),
             Roles = roles,
-            SubtreeUnitIds = subtree,
+            ScopeUnitIds = scopeUnits,
+            SubtreeUnitIds = [.. subtree.Distinct()],
             TeamEmployeeIds = teamEmployees,
             TeamUserIds = teamUsers.Distinct().ToList(),
         };

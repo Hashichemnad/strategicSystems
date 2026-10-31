@@ -14,6 +14,8 @@ public class ScopeEvaluationTests
     private static readonly Guid MyUnit = Guid.CreateVersion7();
     private static readonly Guid ChildUnit = Guid.CreateVersion7();
     private static readonly Guid OtherUnit = Guid.CreateVersion7();
+    private static readonly Guid HeadedUnit = Guid.CreateVersion7();
+    private static readonly Guid HeadedChild = Guid.CreateVersion7();
 
     private static readonly ScopeMap<Item> Map = new("test.item", x => x.Id, ownerEmployee: x => x.OwnerEmployeeId, ownerUser: x => x.OwnerUserId, unit: x => x.UnitId);
 
@@ -22,10 +24,11 @@ public class ScopeEvaluationTests
         UserId = MyUser,
         EmployeeId = Me,
         UnitId = MyUnit,
+        ScopeUnitIds = [MyUnit, HeadedUnit], // placed in MyUnit, head of HeadedUnit
         Systems = new HashSet<string>(),
         Permissions = new Dictionary<string, IReadOnlySet<DataScope>>(),
         Roles = [],
-        SubtreeUnitIds = [MyUnit, ChildUnit],
+        SubtreeUnitIds = [MyUnit, ChildUnit, HeadedUnit, HeadedChild],
         TeamEmployeeIds = [Me, Report],
         TeamUserIds = [MyUser, ReportUser],
     };
@@ -39,6 +42,8 @@ public class ScopeEvaluationTests
         new Item("colleague", Guid.CreateVersion7(), Stranger, null, MyUnit),
         new Item("child", Guid.CreateVersion7(), Stranger, null, ChildUnit),
         new Item("other", Guid.CreateVersion7(), Stranger, null, OtherUnit),
+        new Item("headed", Guid.CreateVersion7(), Stranger, null, HeadedUnit),
+        new Item("headed-child", Guid.CreateVersion7(), Stranger, null, HeadedChild),
         new Item("nothing", Guid.CreateVersion7(), null, null, null),
     }.ToDictionary(i => i.Name);
 
@@ -50,6 +55,10 @@ public class ScopeEvaluationTests
         { DataScope.Team, "colleague", false }, { DataScope.Team, "other", false },
         { DataScope.Unit, "mine", true }, { DataScope.Unit, "colleague", true }, { DataScope.Unit, "child", false }, { DataScope.Unit, "other", false },
         { DataScope.UnitAndBelow, "colleague", true }, { DataScope.UnitAndBelow, "child", true }, { DataScope.UnitAndBelow, "other", false },
+        // A unit the user heads counts like the unit they are placed in (ADR 0015); team stays direct reports only.
+        { DataScope.Unit, "headed", true }, { DataScope.Unit, "headed-child", false },
+        { DataScope.UnitAndBelow, "headed", true }, { DataScope.UnitAndBelow, "headed-child", true },
+        { DataScope.Own, "headed", false }, { DataScope.Team, "headed", false },
         { DataScope.All, "other", true }, { DataScope.All, "nothing", true },
     };
 
@@ -95,6 +104,7 @@ public class ScopeEvaluationTests
         {
             UserId = MyUser,
             EmployeeId = null,
+            ScopeUnitIds = [],
             UnitId = null,
             Systems = new HashSet<string>(),
             Permissions = new Dictionary<string, IReadOnlySet<DataScope>>(),

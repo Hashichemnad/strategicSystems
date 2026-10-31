@@ -25,6 +25,9 @@ public interface IOrgDirectory
     /// <summary>The unit and every unit below it (current structure), for "unit and below" scopes.</summary>
     Task<IReadOnlyList<Guid>> GetSelfAndDescendantIdsAsync(Guid unitId, CancellationToken cancellationToken = default);
 
+    /// <summary>Active units whose current head is <paramref name="employeeId"/> (unit data scopes, ADR 0015).</summary>
+    Task<IReadOnlyList<Guid>> GetUnitsHeadedByAsync(Guid employeeId, CancellationToken cancellationToken = default);
+
     Task<Guid?> GetHeadOfUnitAsync(Guid unitId, DateOnly? asOf = null, CancellationToken cancellationToken = default);
 }
 
