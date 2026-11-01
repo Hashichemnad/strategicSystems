@@ -1952,7 +1952,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PreferencesDto"
+                  "$ref": "#/components/schemas/NotificationPreferencesDto"
                 }
               }
             }
@@ -1978,7 +1978,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PreferencesInput"
+                "$ref": "#/components/schemas/NotificationPreferencesInput"
               }
             }
           },
@@ -1990,7 +1990,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PreferencesDto"
+                  "$ref": "#/components/schemas/NotificationPreferencesDto"
                 }
               }
             }
@@ -9792,6 +9792,111 @@
           }
         }
       },
+      "NotificationPreferenceDto": {
+        "required": [
+          "eventKey",
+          "nameAr",
+          "nameEn",
+          "email",
+          "inApp",
+          "mandatory"
+        ],
+        "type": "object",
+        "properties": {
+          "eventKey": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": "string"
+          },
+          "nameEn": {
+            "type": "string"
+          },
+          "email": {
+            "type": "boolean"
+          },
+          "inApp": {
+            "type": "boolean"
+          },
+          "mandatory": {
+            "type": "boolean"
+          }
+        }
+      },
+      "NotificationPreferenceInput": {
+        "required": [
+          "eventKey",
+          "email",
+          "inApp"
+        ],
+        "type": "object",
+        "properties": {
+          "eventKey": {
+            "type": "string"
+          },
+          "email": {
+            "type": "boolean"
+          },
+          "inApp": {
+            "type": "boolean"
+          }
+        }
+      },
+      "NotificationPreferencesDto": {
+        "required": [
+          "digest",
+          "email",
+          "inApp",
+          "events"
+        ],
+        "type": "object",
+        "properties": {
+          "digest": {
+            "type": "boolean"
+          },
+          "email": {
+            "type": "boolean"
+          },
+          "inApp": {
+            "type": "boolean"
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NotificationPreferenceDto"
+            }
+          }
+        }
+      },
+      "NotificationPreferencesInput": {
+        "required": [
+          "digest",
+          "email",
+          "inApp",
+          "events"
+        ],
+        "type": "object",
+        "properties": {
+          "digest": {
+            "type": "boolean"
+          },
+          "email": {
+            "type": "boolean"
+          },
+          "inApp": {
+            "type": "boolean"
+          },
+          "events": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/NotificationPreferenceInput"
+            }
+          }
+        }
+      },
       "NumberingFormatDto": {
         "required": [
           "key",
@@ -10627,108 +10732,24 @@
           }
         }
       },
-      "PreferenceDto": {
-        "required": [
-          "eventKey",
-          "nameAr",
-          "nameEn",
-          "email",
-          "inApp",
-          "mandatory"
-        ],
-        "type": "object",
-        "properties": {
-          "eventKey": {
-            "type": "string"
-          },
-          "nameAr": {
-            "type": "string"
-          },
-          "nameEn": {
-            "type": "string"
-          },
-          "email": {
-            "type": "boolean"
-          },
-          "inApp": {
-            "type": "boolean"
-          },
-          "mandatory": {
-            "type": "boolean"
-          }
-        }
-      },
-      "PreferenceInput": {
-        "required": [
-          "eventKey",
-          "email",
-          "inApp"
-        ],
-        "type": "object",
-        "properties": {
-          "eventKey": {
-            "type": "string"
-          },
-          "email": {
-            "type": "boolean"
-          },
-          "inApp": {
-            "type": "boolean"
-          }
-        }
-      },
-      "PreferencesDto": {
-        "required": [
-          "digest",
-          "email",
-          "inApp",
-          "events"
-        ],
-        "type": "object",
-        "properties": {
-          "digest": {
-            "type": "boolean"
-          },
-          "email": {
-            "type": "boolean"
-          },
-          "inApp": {
-            "type": "boolean"
-          },
-          "events": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PreferenceDto"
-            }
-          }
-        }
-      },
       "PreferencesInput": {
         "required": [
-          "digest",
-          "email",
-          "inApp",
-          "events"
+          "language",
+          "theme"
         ],
         "type": "object",
         "properties": {
-          "digest": {
-            "type": "boolean"
-          },
-          "email": {
-            "type": "boolean"
-          },
-          "inApp": {
-            "type": "boolean"
-          },
-          "events": {
+          "language": {
             "type": [
               "null",
-              "array"
-            ],
-            "items": {
-              "$ref": "#/components/schemas/PreferenceInput"
-            }
+              "string"
+            ]
+          },
+          "theme": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },

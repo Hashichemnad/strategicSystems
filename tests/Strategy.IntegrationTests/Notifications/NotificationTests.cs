@@ -53,7 +53,7 @@ public class NotificationTests(ApiFixture api) : IClassFixture<ApiFixture>
             events = Array.Empty<object>(),
         });
         saved.StatusCode.ShouldBe(HttpStatusCode.OK, await saved.Content.ReadAsStringAsync());
-        (await saved.Content.ReadFromJsonAsync<PreferencesDto>())!.Digest.ShouldBeTrue();
+        (await saved.Content.ReadFromJsonAsync<NotificationPreferencesDto>())!.Digest.ShouldBeTrue();
 
         await SendAsync(new NotificationRequest(ApiFactory.TestEventTemplate.Key, [NotificationRecipient.User(user.Id)],
             new Dictionary<string, string> { ["subject"] = "Digest me" }));

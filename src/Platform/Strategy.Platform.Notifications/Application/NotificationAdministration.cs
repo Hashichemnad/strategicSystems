@@ -14,13 +14,13 @@ public sealed record NotificationDto(Guid Id, string TemplateKey, string TitleAr
 
 public sealed record MyNotificationsDto(IReadOnlyList<NotificationDto> Items, int Unread, int TotalCount, int Page, int PageSize);
 
-public sealed record PreferenceDto(string EventKey, string NameAr, string NameEn, bool Email, bool InApp, bool Mandatory);
+public sealed record NotificationPreferenceDto(string EventKey, string NameAr, string NameEn, bool Email, bool InApp, bool Mandatory);
 
-public sealed record PreferencesDto(bool Digest, bool Email, bool InApp, IReadOnlyList<PreferenceDto> Events);
+public sealed record NotificationPreferencesDto(bool Digest, bool Email, bool InApp, IReadOnlyList<NotificationPreferenceDto> Events);
 
-public sealed record PreferenceInput(string EventKey, bool Email, bool InApp);
+public sealed record NotificationPreferenceInput(string EventKey, bool Email, bool InApp);
 
-public sealed record PreferencesInput(bool Digest, bool Email, bool InApp, IReadOnlyList<PreferenceInput>? Events);
+public sealed record NotificationPreferencesInput(bool Digest, bool Email, bool InApp, IReadOnlyList<NotificationPreferenceInput>? Events);
 
 public sealed record TemplateDto(
     string Key, string SystemCode, string NameAr, string NameEn, string SubjectAr, string SubjectEn, string BodyAr, string BodyEn, string? ButtonAr,
@@ -76,7 +76,7 @@ internal sealed class NotificationAdministration(
 
     // ---- Preferences ----
 
-    public async Task<PreferencesDto> PreferencesAsync(CancellationToken ct)
+    public async Task<NotificationPreferencesDto> PreferencesAsync(CancellationToken ct)
     {
         var userId = context.UserId ?? Guid.Empty;
         var rows = await db.Preferences.AsNoTracking().Where(p => p.UserId == userId).ToListAsync(ct).ConfigureAwait(false);
@@ -86,12 +86,12 @@ internal sealed class NotificationAdministration(
             .Select(d =>
             {
                 var row = rows.Find(p => p.EventKey == d.Key);
-                return new PreferenceDto(d.Key, d.NameAr, d.NameEn, d.Mandatory || (row?.Email ?? general?.Email ?? true), row?.InApp ?? general?.InApp ?? true, d.Mandatory);
+                return new NotificationPreferenceDto(d.Key, d.NameAr, d.NameEn, d.Mandatory || (row?.Email ?? general?.Email ?? true), row?.InApp ?? general?.InApp ?? true, d.Mandatory);
             }).ToList();
-        return new PreferencesDto(general?.Digest ?? false, general?.Email ?? true, general?.InApp ?? true, events);
+        return new NotificationPreferencesDto(general?.Digest ?? false, general?.Email ?? true, general?.InApp ?? true, events);
     }
 
-    public async Task<PreferencesDto> SavePreferencesAsync(PreferencesInput input, CancellationToken ct)
+    public async Task<NotificationPreferencesDto> SavePreferencesAsync(NotificationPreferencesInput input, CancellationToken ct)
     {
         var userId = context.UserId ?? throw new InvalidOperationException("Signed-in user required.");
         var rows = await db.Preferences.Where(p => p.UserId == userId).ToListAsync(ct).ConfigureAwait(false);

@@ -26,7 +26,7 @@ internal static class NotificationEndpoints
 
         group.MapGet("/preferences", async (NotificationAdministration a, CancellationToken ct) => TypedResults.Ok(await a.PreferencesAsync(ct)))
             .WithName("GetNotificationPreferences").RequireSignedIn();
-        group.MapPut("/preferences", async (PreferencesInput body, NotificationAdministration a, CancellationToken ct) =>
+        group.MapPut("/preferences", async (NotificationPreferencesInput body, NotificationAdministration a, CancellationToken ct) =>
                 TypedResults.Ok(await a.SavePreferencesAsync(body, ct)))
             .WithName("SaveNotificationPreferences").RequireSignedIn();
 
