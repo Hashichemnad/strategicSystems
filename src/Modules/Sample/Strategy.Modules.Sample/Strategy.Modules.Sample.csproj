@@ -11,6 +11,7 @@
     <ProjectReference Include="..\..\..\Platform\Strategy.Platform.Organisation\Strategy.Platform.Organisation.csproj" />
     <ProjectReference Include="..\..\..\Platform\Strategy.Platform.Settings\Strategy.Platform.Settings.csproj" />
     <ProjectReference Include="..\..\..\Platform\Strategy.Platform.Files.Contracts\Strategy.Platform.Files.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\Platform\Strategy.Platform.Notifications.Contracts\Strategy.Platform.Notifications.Contracts.csproj" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Strategy.UnitTests" />

@@ -140,6 +140,6 @@ public class AuditValueTests
     public void Snapshots_list_fields_in_a_stable_order()
     {
         AuditValues.Snapshot([("NameEn", "B"), ("NameAr", "أ"), ("Status", null)])
-            .ShouldBe("{\"NameAr\":\"\\u0623\",\"NameEn\":\"B\",\"Status\":null}");
+            .ShouldBe("{\"NameAr\":\"أ\",\"NameEn\":\"B\",\"Status\":null}");
     }
 }

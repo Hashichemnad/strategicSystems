@@ -84,7 +84,6 @@ export function JobsPage() {
                 <TableHeaderCell>{t('schedule')}</TableHeaderCell>
                 <TableHeaderCell>{t('nextRun')}</TableHeaderCell>
                 <TableHeaderCell>{t('lastRun')}</TableHeaderCell>
-                <TableHeaderCell>{t('failures')}</TableHeaderCell>
                 <TableHeaderCell>
                   <span className="sr-only">{tc('actions.more')}</span>
                 </TableHeaderCell>
@@ -100,10 +99,9 @@ export function JobsPage() {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <span className="font-mono text-xs" dir="ltr">
+                    <span className="font-mono text-xs whitespace-nowrap" dir="ltr" title={job.timeZone}>
                       {job.cron}
                     </span>
-                    <div className="text-xs text-muted-foreground">{job.timeZone}</div>
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
                     {job.paused ? (
@@ -123,6 +121,11 @@ export function JobsPage() {
                         <span className="text-xs text-muted-foreground">
                           {formatDateTime(job.lastRun.firedAt, i18n.language)}
                         </span>
+                        {job.failuresLast7Days > 0 && (
+                          <span className="text-xs text-danger">
+                            {t('failuresCount', { count: job.failuresLast7Days })}
+                          </span>
+                        )}
                         {job.lastRun.message && (
                           <span
                             className="max-w-xs truncate text-xs text-muted-foreground"
@@ -137,7 +140,6 @@ export function JobsPage() {
                       <span className="text-muted-foreground">{t('never')}</span>
                     )}
                   </TableCell>
-                  <TableCell>{formatNumber(job.failuresLast7Days, i18n.language)}</TableCell>
                   <TableCell>
                     <div className="flex justify-end gap-1">
                       <Button
@@ -152,11 +154,12 @@ export function JobsPage() {
                         <>
                           <Button
                             variant="outline"
-                            size="sm"
+                            size="icon"
+                            aria-label={t('runNow')}
+                            title={t('runNow')}
                             onClick={() => act.mutate({ key: job.key, action: 'run' })}
                           >
                             <Play aria-hidden />
-                            {t('runNow')}
                           </Button>
                           <Button
                             variant="ghost"

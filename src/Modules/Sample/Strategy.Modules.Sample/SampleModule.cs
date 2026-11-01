@@ -9,6 +9,7 @@ using Strategy.Platform.Access;
 using Strategy.Platform.Files;
 using Strategy.Platform.Http.Modules;
 using Strategy.Platform.Kernel;
+using Strategy.Platform.Notifications;
 using Strategy.Platform.Persistence;
 using Strategy.Platform.Settings;
 
@@ -28,6 +29,7 @@ public sealed class SampleModule : IModule
         services.AddNumberingFormat(SampleAccessCatalogue.Numbering);
         services.AddFilePurpose(SampleAttachments.Purpose);
         services.AddFileOwnerAccess<SampleAttachments>();
+        services.AddNotificationTemplate(SampleNotifications.EditorAdded);
     }
 
     public void MapEndpoints(IEndpointRouteBuilder endpoints) => SampleEndpoints.Map(endpoints.MapModuleGroup(this));

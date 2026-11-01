@@ -6,7 +6,7 @@ import { contentUrl, type StoredFile } from './api';
 
 /**
  * In-page preview (CLAUDE.md §14): images as images, PDFs drawn page by page with pdf.js (Apache-2.0; scripting and eval off,
- * worker served from the app). Other types are downloaded instead.
+ * worker served from the app; glyphs drawn as paths, because the app's CSP forbids the inline @font-face pdf.js would inject). Other types are downloaded instead.
  */
 export function FilePreview({ file, versionId }: { file: StoredFile; versionId?: string }) {
   const url = contentUrl(file.id, versionId);
@@ -54,6 +54,10 @@ function PdfPreview({ fileId, versionId, name }: { fileId: string; versionId?: s
           data: new Uint8Array(content.data),
           isEvalSupported: false,
           enableXfa: false,
+          // Glyphs as paths: the app's CSP forbids the inline @font-face pdf.js would inject.
+          disableFontFace: true,
+          // Never substitute a font of the same name (the SPA loads IBM Plex itself): draw the PDF's own embedded glyphs.
+          useSystemFonts: false,
         }).promise;
         state.loaded = loaded;
         if (!state.cancelled) setDocument(loaded);

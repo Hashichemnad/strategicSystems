@@ -5,7 +5,6 @@
   "schedule": "الجدول",
   "nextRun": "التشغيل التالي",
   "lastRun": "آخر تشغيل",
-  "failures": "الإخفاقات (7 أيام)",
   "paused": "متوقفة مؤقتاً",
   "never": "لم تعمل بعد",
   "runNow": "تشغيل الآن",
@@ -38,5 +37,11 @@
     "attempts": "المحاولات",
     "error": "آخر خطأ",
     "requeue": "إعادة المحاولة"
-  }
+  },
+  "failuresCount_zero": "لا إخفاقات خلال 7 أيام",
+  "failuresCount_one": "إخفاق واحد خلال 7 أيام",
+  "failuresCount_two": "إخفاقان خلال 7 أيام",
+  "failuresCount_few": "{{count}} إخفاقات خلال 7 أيام",
+  "failuresCount_many": "{{count}} إخفاقاً خلال 7 أيام",
+  "failuresCount_other": "{{count}} إخفاق خلال 7 أيام"
 }

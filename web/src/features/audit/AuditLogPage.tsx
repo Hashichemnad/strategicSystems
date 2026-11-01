@@ -236,7 +236,13 @@ export function AuditLogPage() {
                           <span className="text-success">{entry.newValue ?? '∅'}</span>
                         </span>
                       ) : (
-                        <span className="text-muted-foreground">{entry.reason ?? ''}</span>
+                        <span className="line-clamp-2 text-muted-foreground" dir="auto">
+                          {summary(
+                            entry.action === 'delete' ? entry.oldValue : (entry.newValue ?? entry.data),
+                          ) ??
+                            entry.reason ??
+                            ''}
+                        </span>
                       )}
                     </TableCell>
                     <TableCell>
@@ -278,4 +284,18 @@ function Filter(props: {
       />
     </div>
   );
+}
+
+/** A create / delete snapshot or event data as short "field: value" text. */
+function summary(json: string | null): string | null {
+  if (!json) return null;
+  try {
+    const values = Object.entries(JSON.parse(json) as Record<string, unknown>)
+      .filter(([, value]) => value !== null && value !== '' && typeof value !== 'object')
+      .map(([key, value]) => `${key}: ${String(value)}`);
+    const text = values.join(' · ');
+    return text.length > 160 ? `${text.slice(0, 160)}…` : text;
+  } catch {
+    return json.slice(0, 160);
+  }
 }

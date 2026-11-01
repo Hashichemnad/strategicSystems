@@ -5,7 +5,6 @@
   "schedule": "Schedule",
   "nextRun": "Next run",
   "lastRun": "Last run",
-  "failures": "Failures (7 days)",
   "paused": "Paused",
   "never": "Not run yet",
   "runNow": "Run now",
@@ -38,5 +37,7 @@
     "attempts": "Attempts",
     "error": "Last error",
     "requeue": "Try again"
-  }
+  },
+  "failuresCount_one": "{{count}} failure in 7 days",
+  "failuresCount_other": "{{count}} failures in 7 days"
 }

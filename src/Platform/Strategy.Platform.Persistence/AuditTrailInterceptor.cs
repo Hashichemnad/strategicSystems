@@ -294,7 +294,7 @@ public static class AuditValues
             Enum e => e.ToString(),
             byte[] bytes => $"<{bytes.Length} bytes>",
             IFormattable f => f.ToString(null, CultureInfo.InvariantCulture),
-            IEnumerable sequence => JsonSerializer.Serialize(sequence.Cast<object?>().Select(Format)),
+            IEnumerable sequence => JsonSerializer.Serialize(sequence.Cast<object?>().Select(Format), Readable),
             _ => value.ToString(),
         };
         return text is { Length: > MaxLength } ? text[..MaxLength] : text;
@@ -308,7 +308,7 @@ public static class AuditValues
         try
         {
             using var document = JsonDocument.Parse(text);
-            return Format(JsonSerializer.Serialize(Sorted(document.RootElement)));
+            return Format(JsonSerializer.Serialize(Sorted(document.RootElement), Readable));
         }
         catch (JsonException)
         {
@@ -326,5 +326,8 @@ public static class AuditValues
 
     /// <summary>JSON object of field → value with keys in a stable order (create and delete snapshots).</summary>
     public static string Snapshot(IEnumerable<(string Field, string? Value)> fields) =>
-        JsonSerializer.Serialize(new SortedDictionary<string, string?>(fields.ToDictionary(f => f.Field, f => f.Value), StringComparer.Ordinal));
+        JsonSerializer.Serialize(new SortedDictionary<string, string?>(fields.ToDictionary(f => f.Field, f => f.Value), StringComparer.Ordinal), Readable);
+
+    /// <summary>Arabic and other text stay readable in stored values (they are always HTML-encoded when shown).</summary>
+    private static readonly JsonSerializerOptions Readable = new() { Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
 }

@@ -40,7 +40,8 @@ internal sealed class AuditExport(AuditDbContext db, IPdfRenderer pdf, ISettings
             }.Table(Columns, rows.Select(r => new[]
             {
                 r.OccurredAt.UtcDateTime.ToString("yyyy-MM-dd HH:mm:ss", System.Globalization.CultureInfo.InvariantCulture), r.UserName, r.Channel,
-                r.SystemCode, r.EntityType, r.RecordId, r.Success == false ? r.Action + " ✗" : r.Action, r.Field, Short(r.OldValue), Short(r.NewValue), r.Reason,
+                r.SystemCode, r.EntityType, r.RecordId, r.Success == false ? r.Action + " ✗" : r.Action, r.Field,
+                Short(r.Field is null ? Summary(r.OldValue) : r.OldValue), Short(r.Field is null ? Summary(r.NewValue) : r.NewValue), r.Reason,
             }));
             result = (await pdf.RenderAsync(document.ToHtml(), ct).ConfigureAwait(false), "application/pdf", "audit-log.pdf");
         }
@@ -58,4 +59,23 @@ internal sealed class AuditExport(AuditDbContext db, IPdfRenderer pdf, ISettings
     }
 
     private static string? Short(string? value) => value is { Length: > 300 } ? value[..300] + "…" : value;
+
+    /// <summary>A create / delete snapshot as "field: value" lines instead of raw JSON (PDF readability).</summary>
+    private static string? Summary(string? json)
+    {
+        if (json is null || !json.StartsWith('{'))
+        {
+            return json;
+        }
+
+        try
+        {
+            var values = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string?>>(json) ?? [];
+            return string.Join(" · ", values.Where(v => !string.IsNullOrEmpty(v.Value)).Select(v => $"{v.Key}: {v.Value}"));
+        }
+        catch (System.Text.Json.JsonException)
+        {
+            return json;
+        }
+    }
 }

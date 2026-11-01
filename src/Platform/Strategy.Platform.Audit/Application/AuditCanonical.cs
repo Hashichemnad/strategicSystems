@@ -99,6 +99,7 @@ public static class AuditCanonical
     private static readonly JsonSerializerOptions DataOptions = new(JsonSerializerDefaults.Web)
     {
         DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
+        Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
     };
 
     private static void Text(Utf8JsonWriter json, string name, string? value)

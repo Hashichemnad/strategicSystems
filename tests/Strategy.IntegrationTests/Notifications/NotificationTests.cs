@@ -151,6 +151,38 @@ public class NotificationTests(ApiFixture api) : IClassFixture<ApiFixture>
         payloads.ShouldNotContain(p => p.Contains(code));
     }
 
+    [Fact]
+    public async Task Sharing_a_sample_item_notifies_the_new_editor_with_a_link_to_the_item()
+    {
+        var owner = await api.Factory.CreateSignedInClientAsync(roles: TestIdentity.SampleEditor);
+        var created = await owner.PostAsJsonAsync("/api/v1/sample/items", new { nameAr = "بند مشترك", nameEn = "Shared item" });
+        var itemId = (await created.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("id").GetGuid();
+        var editor = await api.Factory.CreateUserAsync();
+        var editorClient = await api.Factory.SignInAsync(editor);
+
+        (await owner.PostAsJsonAsync($"/api/v1/sample/items/{itemId}/editors", new { employeeId = editor.EmployeeId })).StatusCode.ShouldBe(HttpStatusCode.OK);
+
+        var mine = await EventuallyAsync(() => editorClient.GetFromJsonAsync<MyNotificationsDto>("/api/v1/notifications/mine"), m => m!.Items.Count > 0);
+        var item = mine!.Items.Single();
+        item.TemplateKey.ShouldBe("sample.editorAdded");
+        item.TitleEn.ShouldBe("You can now edit “Shared item”");
+        item.TitleAr.ShouldBe("يمكنك الآن تعديل البند «بند مشترك»");
+        item.Link.ShouldBe($"/sample/items/{itemId:D}");
+        (await api.Factory.Emails.LastAsync(editor.UserName, "sample.editorAdded")).Html.ShouldContain("Shared item");
+    }
+
+    [Fact]
+    public async Task The_live_notification_hub_accepts_signed_in_users_only()
+    {
+        var anonymous = await api.Factory.CreateSpaClientAsync();
+        (await anonymous.PostAsync("/hubs/notifications/negotiate?negotiateVersion=1", null)).StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
+
+        var user = await api.Factory.CreateSignedInClientAsync();
+        var negotiated = await user.PostAsync("/hubs/notifications/negotiate?negotiateVersion=1", null);
+        negotiated.StatusCode.ShouldBe(HttpStatusCode.OK, await negotiated.Content.ReadAsStringAsync());
+        (await negotiated.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("connectionToken").GetString().ShouldNotBeNullOrEmpty();
+    }
+
     private async Task SendAsync(NotificationRequest request)
     {
         await using var scope = api.Factory.Services.CreateAsyncScope();

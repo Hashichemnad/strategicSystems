@@ -1,7 +1,8 @@
 import { Download, Eye, FileText, History, Trash2, Upload } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { errorMessage } from '@/api/problem';
+import { ApiError } from '@/api/client';
+import { errorMessage, translateMessageKey } from '@/api/problem';
 import { formatDateTime, formatNumber } from '@/lib/format';
 import {
   Button,
@@ -187,6 +188,7 @@ function UploadDialog({
   const toast = useToast();
   const [file, setFile] = useState<File | null>(null);
   const [comment, setComment] = useState('');
+  const [refusal, setRefusal] = useState<string | null>(null);
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
       <DialogContent
@@ -209,7 +211,15 @@ function UploadDialog({
                       toast({ title: t('uploaded') });
                       onClose();
                     },
-                    onError: (failure) => toast({ tone: 'error', title: errorMessage(tc, failure) }),
+                    // A refused file explains why (type, size, scan) inside the dialog, where the user picks another one.
+                    onError: (failure) => {
+                      const field = failure instanceof ApiError ? failure.problem.errors?.[0] : undefined;
+                      setRefusal(
+                        field
+                          ? translateMessageKey(tc, field.messageKey, field.params)
+                          : errorMessage(tc, failure),
+                      );
+                    },
                   },
                 )
               }
@@ -219,12 +229,16 @@ function UploadDialog({
           </>
         }
       >
+        {refusal && <StatusBanner tone="danger" title={refusal} />}
         <FileDrop
           label={t('chooseFile')}
           hint={t('allowedHint')}
           accept={ACCEPT}
           file={file}
-          onFile={setFile}
+          onFile={(chosen) => {
+            setFile(chosen);
+            setRefusal(null);
+          }}
         />
         <FormField label={t('comment')}>
           <Input value={comment} maxLength={500} onChange={(e) => setComment(e.target.value)} />

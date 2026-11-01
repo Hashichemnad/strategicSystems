@@ -94,7 +94,7 @@ One deployable, strictly modular inside.
 - **Module projects** (`src/Modules/<Name>/`): one project per system with folders `Domain/`, `Application/` (commands, queries, handlers, validators, DTOs), `Infrastructure/` (DbContext, configurations, migrations), `Api/` (endpoints), `Jobs/`, `Ai/`, `Mcp/`. Plus `<Name>.Contracts` (public interfaces, DTOs and integration events other modules may use).
 - **Boundaries (enforced by architecture tests):**
   - A module may reference Platform projects and other modules' `.Contracts` only — never another module's internals or DbContext.
-  - Each module owns its **PostgreSQL schema** (`portfolio`, `kpi`, `risk`, `teams`, `requests`, `docreg`, `ip`, `bench`, `cap`, `audit_mgmt`, `tasks`; platform schemas `core`, `access`, `workflow`, `audit`, `notify`, `files`, `settings`, `reporting`, `ai`). No foreign keys across module schemas; reference other modules by ID and validate through Contracts.
+  - Each module owns its **PostgreSQL schema** (`portfolio`, `kpi`, `risk`, `teams`, `requests`, `docreg`, `ip`, `bench`, `cap`, `audit_mgmt`, `tasks`; platform schemas `core`, `access`, `workflow`, `audit`, `notify`, `files`, `settings`, `scheduling` (outbox, Quartz — ADR 0020), `reporting`, `ai`). No foreign keys across module schemas; reference other modules by ID and validate through Contracts.
   - Cross-module reactions use **integration events** via the outbox (e.g. `ProjectClosureApproved` → Teams opens the project-team evaluation; `BenchmarkAnalysisApproved` → CAP creates remarks; `KpiResultApproved` → Risk checks KRI thresholds).
   - Synchronous cross-module reads use Contracts interfaces (e.g. `ITeamsDirectory.GetTeam(id)`).
 - **Stage / state machines** for each record lifecycle are explicit code with guards (one class per lifecycle, unit-tested transition tables). Approvers and approval steps are **configuration** in the approval engine; stages themselves are code unless the SPEC says they are configurable (Request Framework types, task workflow templates, initiative stage template, KPI period windows).
@@ -224,7 +224,7 @@ docker compose -f deploy/docker-compose.yml up -d postgres gotenberg mailpit
 # Back end (http://localhost:5080; Development applies migrations on start)
 dotnet tool restore
 dotnet run --project src/Host/Strategy.Host
-dotnet run --project src/Host/Strategy.Host -- --migrate                      # apply migrations and exit
+dotnet run --project src/Host/Strategy.Host -- --migrate                      # apply migrations and exit (as ConnectionStrings:StrategyMigrations when set, ADR 0018)
 dotnet run --project src/Host/Strategy.Host -- --create-admin --email <e> --password-file <f>   # first administrator
 # Development seed (empty DB): mariam@strategy.local (platform administrator roles, must use MFA) / ahmed@strategy.local (sample editor), password Strategy#Demo2026.
 # Seed__AdminTotpKey=<base32> gives the admin a known authenticator key (E2E uses JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP).
@@ -246,12 +246,13 @@ tools/check-vulnerable.sh && tools/check-api-client.sh
 cd web && npm run lint && npm run format:check && npm run typecheck && npm test
 npm run build && npm audit --audit-level=high && npm run lint:licenses
 npx playwright test                                                           # E2E, projects "ar" and "en" (needs postgres + mailpit; starts the host)
-# E2E screenshots go to docs/screenshots/$E2E_SCREENSHOTS (default phase-2). A sandbox Chromium of another revision: E2E_CHROMIUM_PATH=/opt/pw-browsers/chromium
+# E2E screenshots go to docs/screenshots/$E2E_SCREENSHOTS (default phase-3). A sandbox Chromium of another revision: E2E_CHROMIUM_PATH=/opt/pw-browsers/chromium
 
 # Containerised install (http://localhost:8080)
 docker compose -f deploy/docker-compose.yml --profile app up -d --build
 ```
 CI resolves `global.json` (`rollForward: latestFeature`) to the newest .NET 10 SDK, whose analyzers can be stricter than an
 older local SDK (e.g. IDE0005): check `dotnet --version` and keep the local SDK current.
+Integration tests also start Mailpit and Gotenberg containers (Mailpit delivery, PDF snapshot); `UPDATE_SNAPSHOTS=1` rewrites the PDF layout snapshot.
 Integration tests: `TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX=mirror.gcr.io/` behind a Docker Hub limit, or
 `STRATEGY_TEST_POSTGRES=<admin connection string>` to reuse a running server. Keep this section accurate.
