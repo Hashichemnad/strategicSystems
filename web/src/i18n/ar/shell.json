@@ -23,7 +23,9 @@
       "development": "التطوير",
       "systems": "الأنظمة"
     },
-    "settings": "الإعدادات"
+    "settings": "الإعدادات",
+    "auditLog": "سجل التدقيق",
+    "auditVerification": "التحقق من سجل التدقيق"
   },
   "language": {
     "label": "اللغة",

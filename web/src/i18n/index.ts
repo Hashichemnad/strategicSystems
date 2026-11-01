@@ -28,6 +28,16 @@ import enSettings from './en/settings.json';
 import enShell from './en/shell.json';
 import enUiKit from './en/uiKit.json';
 import enValidation from './en/validation.json';
+import arAudit from './ar/audit.json';
+import enAudit from './en/audit.json';
+import arFiles from './ar/files.json';
+import enFiles from './en/files.json';
+import arNotifications from './ar/notifications.json';
+import enNotifications from './en/notifications.json';
+import arJobs from './ar/jobs.json';
+import enJobs from './en/jobs.json';
+import arReporting from './ar/reporting.json';
+import enReporting from './en/reporting.json';
 import { readPreference } from '@/lib/preferences';
 
 export const languages = ['ar', 'en'] as const;
@@ -49,6 +59,11 @@ export const resources = {
     admin: arAdmin,
     settings: arSettings,
     access: arAccess,
+    audit: arAudit,
+    files: arFiles,
+    notifications: arNotifications,
+    jobs: arJobs,
+    reporting: arReporting,
   },
   en: {
     common: enCommon,
@@ -65,6 +80,11 @@ export const resources = {
     admin: enAdmin,
     settings: enSettings,
     access: enAccess,
+    audit: enAudit,
+    files: enFiles,
+    notifications: enNotifications,
+    jobs: enJobs,
+    reporting: enReporting,
   },
 } as const;
 

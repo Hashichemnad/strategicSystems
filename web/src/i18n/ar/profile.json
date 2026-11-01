@@ -6,7 +6,8 @@
     "security": "الأمان",
     "sessions": "الجلسات",
     "tokens": "رموز الوصول",
-    "delegations": "التفويضات"
+    "delegations": "التفويضات",
+    "notifications": "الإشعارات"
   },
   "preferences": {
     "title": "التفضيلات",

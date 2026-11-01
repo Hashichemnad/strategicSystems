@@ -19,17 +19,17 @@ public sealed record FilesSettings(
         var errors = new List<FieldError>();
         if (value.MaxUploadMegabytes is < 1 or > 500)
         {
-            errors.Add(new FieldError("maxUploadMegabytes", "validation.range", "validation.range", new Dictionary<string, object?> { ["min"] = 1, ["max"] = 500 }));
+            errors.Add(new FieldError("maxUploadMegabytes", "validation.inclusiveBetween", "validation.inclusiveBetween", new Dictionary<string, object?> { ["from"] = 1, ["to"] = 500 }));
         }
 
         if (value.ScanEnabled && string.IsNullOrWhiteSpace(value.ClamAvHost))
         {
-            errors.Add(new FieldError("clamAvHost", "validation.required", "validation.required"));
+            errors.Add(new FieldError("clamAvHost", "validation.notEmpty", "validation.notEmpty"));
         }
 
         if (value.ClamAvPort is < 1 or > 65535)
         {
-            errors.Add(new FieldError("clamAvPort", "validation.range", "validation.range", new Dictionary<string, object?> { ["min"] = 1, ["max"] = 65535 }));
+            errors.Add(new FieldError("clamAvPort", "validation.inclusiveBetween", "validation.inclusiveBetween", new Dictionary<string, object?> { ["from"] = 1, ["to"] = 65535 }));
         }
 
         if (value.ScanRequired && !value.ScanEnabled)

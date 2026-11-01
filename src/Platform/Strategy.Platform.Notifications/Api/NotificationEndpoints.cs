@@ -43,6 +43,22 @@ internal static class NotificationEndpoints
                 (await a.PreviewAsync(key, body, ct)).ToOk())
             .WithName("PreviewNotificationTemplate").RequirePermission(SettingsPermissions.NotificationManage);
 
+        // The rendered e-mail as its own document, so the SPA can show it in a sandboxed frame (the app's CSP forbids inline styles).
+        templates.MapGet("/{key}/preview.html", async Task<IResult> (string key, HttpContext context, NotificationAdministration a, CancellationToken ct) =>
+            {
+                var preview = await a.PreviewAsync(key, null, ct);
+                if (preview.IsFailure)
+                {
+                    return preview.Error!.ToProblem();
+                }
+
+                context.Response.Headers.ContentSecurityPolicy = "default-src 'none'; style-src 'unsafe-inline'; img-src data:; frame-ancestors 'self'; sandbox";
+                context.Response.Headers.XFrameOptions = "SAMEORIGIN";
+                return TypedResults.Content(preview.Value.Html, "text/html; charset=utf-8");
+            })
+            .WithName("PreviewNotificationTemplateHtml").RequirePermission(SettingsPermissions.NotificationManage)
+            .Produces(StatusCodes.Status200OK, contentType: "text/html");
+
         group.MapGet("/deliveries", async (int? page, int? pageSize, string? status, NotificationAdministration a, CancellationToken ct) =>
                 TypedResults.Ok(await a.DeliveriesAsync(new PageRequest(page ?? 1, pageSize ?? 50), status, ct)))
             .WithName("ListEmailDeliveries").RequirePermission(SettingsPermissions.NotificationManage);

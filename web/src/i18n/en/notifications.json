@@ -1,0 +1,60 @@
+{
+  "title": "Notifications",
+  "description": "Everything sent to you in the application, newest first.",
+  "bell": "Notifications",
+  "bellUnread_one": "Notifications: {{formatted}} unread",
+  "bellUnread_other": "Notifications: {{formatted}} unread",
+  "markAllRead": "Mark all as read",
+  "markRead": "Mark as read",
+  "empty": "No notifications.",
+  "viewAll": "All notifications",
+  "new": "New",
+  "open": "Open",
+  "preferences": {
+    "digest": "Daily digest instead of individual e-mails",
+    "digestHint": "One summary e-mail each morning. Security messages still arrive at once.",
+    "event": "Event",
+    "email": "E-mail",
+    "inApp": "In the application",
+    "mandatory": "(always sent)",
+    "emailFor": "E-mail for {{name}}",
+    "inAppFor": "In-app for {{name}}",
+    "saved": "Notification preferences saved"
+  },
+  "templates": {
+    "title": "Notifications",
+    "description": "The text of every e-mail and in-app notification, in Arabic and English. Placeholders are filled in when the message is sent.",
+    "tab": "Templates",
+    "name": "Template",
+    "subject": "Subject",
+    "system": "System",
+    "mandatory": "Always sent",
+    "customised": "Customised",
+    "placeholders": "Placeholders: {{list}}",
+    "subjectAr": "Subject (Arabic)",
+    "subjectEn": "Subject (English)",
+    "bodyAr": "Text (Arabic)",
+    "bodyEn": "Text (English)",
+    "bodyHint": "One paragraph per line. {{button}} places the link button; {{code}} alone on a line shows a code large.",
+    "buttonAr": "Button (Arabic)",
+    "buttonEn": "Button (English)",
+    "preview": "Preview (saved text)",
+    "saved": "Template saved",
+    "reset": "Back to default",
+    "resetDone": "Default text restored"
+  },
+  "deliveries": {
+    "tab": "E-mail deliveries",
+    "when": "When",
+    "to": "To",
+    "template": "Template",
+    "status": "Status",
+    "statuses": {
+      "sent": "Sent",
+      "failed": "Failed — will retry"
+    }
+  },
+  "errors": {
+    "emailNotConfigured": "E-mail is not set up."
+  }
+}

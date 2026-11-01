@@ -71,6 +71,18 @@
     "import": {
       "title": "Import",
       "description": "Import units and employees from Excel or CSV."
+    },
+    "notifications": {
+      "title": "Notifications",
+      "description": "E-mail and in-app templates in Arabic and English, and e-mail deliveries."
+    },
+    "files": {
+      "title": "Files",
+      "description": "Upload limit and the optional virus scan."
+    },
+    "jobs": {
+      "title": "Scheduled jobs",
+      "description": "Background jobs, their runs and the message queue."
     }
   },
   "title": "Settings",
@@ -84,7 +96,8 @@
     "data": "Data and language",
     "access": "Access",
     "identity": "Users and sign-in",
-    "organisation": "Organisation"
+    "organisation": "Organisation",
+    "platform": "Notifications, files and jobs"
   },
   "regional": {
     "timeZone": "Time zone",

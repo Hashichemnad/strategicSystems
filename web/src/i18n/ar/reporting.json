@@ -1,0 +1,6 @@
+{
+  "errors": {
+    "pdfNotConfigured": "إخراج PDF غير مُعدّ في هذا التثبيت (Gotenberg).",
+    "pdfFailed": "تعذّر إنتاج ملف PDF. حاول لاحقاً."
+  }
+}

@@ -644,6 +644,22 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/notifications/templates/{key}/preview.html': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['PreviewNotificationTemplateHtml'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/access/me': {
     parameters: {
       query?: never;
@@ -5363,6 +5379,35 @@ export interface operations {
         content: {
           'application/json': components['schemas']['TemplatePreviewDto'];
         };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  PreviewNotificationTemplateHtml: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        key: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
       };
       /** @description Problem Details (RFC 9457) */
       default: {

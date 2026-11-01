@@ -228,7 +228,7 @@ internal sealed class NotificationAdministration(
     {
         if (string.IsNullOrWhiteSpace(value))
         {
-            fields.Add(new FieldError(field, "validation.required", "validation.required"));
+            fields.Add(new FieldError(field, "validation.notEmpty", "validation.notEmpty"));
         }
         else
         {
@@ -240,7 +240,7 @@ internal sealed class NotificationAdministration(
     {
         if (value is { Length: > 0 } && value.Length > max)
         {
-            fields.Add(new FieldError(field, "validation.maxLength", "validation.maxLength", new Dictionary<string, object?> { ["max"] = max }));
+            fields.Add(new FieldError(field, "validation.maximumLength", "validation.maximumLength", new Dictionary<string, object?> { ["maxLength"] = max }));
         }
     }
 

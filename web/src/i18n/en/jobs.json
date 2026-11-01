@@ -1,0 +1,42 @@
+{
+  "title": "Scheduled jobs",
+  "description": "Background work that runs on a schedule: when it runs next, how it went last time, and recent runs.",
+  "job": "Job",
+  "schedule": "Schedule",
+  "nextRun": "Next run",
+  "lastRun": "Last run",
+  "failures": "Failures (7 days)",
+  "paused": "Paused",
+  "never": "Not run yet",
+  "runNow": "Run now",
+  "pause": "Pause",
+  "resume": "Resume",
+  "runsOf": "Runs of {{name}}",
+  "runsTitle": "Recent runs of {{name}}",
+  "started": "Started",
+  "duration": "Duration",
+  "status": "Status",
+  "message": "Result",
+  "manual": "Started manually",
+  "statuses": {
+    "running": "Running",
+    "succeeded": "Succeeded",
+    "failed": "Failed"
+  },
+  "toast": {
+    "run": "The job was started",
+    "pause": "The job is paused",
+    "resume": "The job is resumed"
+  },
+  "outbox": {
+    "title": "Message queue",
+    "pending": "Waiting",
+    "processed": "Delivered (24 h)",
+    "dead": "Given up",
+    "type": "Type",
+    "created": "Created",
+    "attempts": "Attempts",
+    "error": "Last error",
+    "requeue": "Try again"
+  }
+}

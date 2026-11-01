@@ -44,6 +44,8 @@ interface SwitchProps {
   disabled?: boolean;
   id?: string;
   className?: string;
+  /** Keeps the label for screen readers only (e.g. a switch in a table cell whose column header says it all). */
+  hideLabel?: boolean;
 }
 
 /** On / off control (role="switch"). The thumb moves towards the end side, so it mirrors in RTL. */
@@ -55,12 +57,13 @@ export function Switch({
   disabled,
   id,
   className,
+  hideLabel,
 }: SwitchProps) {
   const generated = useId();
   const switchId = id ?? generated;
   return (
     <div className={cn('flex items-start justify-between gap-4', className)}>
-      <span className="flex flex-col gap-0.5">
+      <span className={cn('flex flex-col gap-0.5', hideLabel && 'sr-only')}>
         <label htmlFor={switchId} className="text-sm font-medium">
           {label}
         </label>
