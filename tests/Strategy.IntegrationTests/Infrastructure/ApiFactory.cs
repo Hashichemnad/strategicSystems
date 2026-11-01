@@ -34,6 +34,11 @@ public sealed class ApiFactory(
 
     public CapturingEmailTransport Emails { get; } = new();
 
+    /// <summary>An ordinary (not mandatory) event, so tests can exercise preferences and the digest.</summary>
+    public static readonly NotificationTemplateDefinition TestEventTemplate = new(
+        "tests.event", "sample", "حدث تجريبي", "Test event", "حدث: {{subject}}", "Event: {{subject}}", "تفاصيل {{subject}}\n{{button}}",
+        "Details of {{subject}}\n{{button}}", "فتح", "Open", ["subject"]);
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment(environment);
@@ -53,6 +58,7 @@ public sealed class ApiFactory(
 
         builder.ConfigureTestServices(services =>
         {
+            services.AddNotificationTemplate(TestEventTemplate);
             if (!realEmail)
             {
                 services.RemoveAll<IEmailTransport>();

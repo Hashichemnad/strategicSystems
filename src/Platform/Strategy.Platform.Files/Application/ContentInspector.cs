@@ -152,11 +152,21 @@ public static class ContentInspector
             }
         }
 
-        // Cut-off multi-byte sequences at the end of the sample are fine; anything else must decode.
+        // A multi-byte sequence cut off at the end of the sample is fine; anything else must decode.
         var trimmed = head;
-        for (var i = 0; i < 3 && trimmed.Length > 0 && (trimmed[^1] & 0x80) != 0; i++)
+        var lead = trimmed.Length - 1;
+        while (lead > 0 && lead > trimmed.Length - 4 && (trimmed[lead] & 0xC0) == 0x80)
         {
-            trimmed = trimmed[..^1];
+            lead--;
+        }
+
+        if (lead >= 0 && (trimmed[lead] & 0xC0) == 0xC0)
+        {
+            var needed = (trimmed[lead] & 0xF0) == 0xF0 ? 4 : (trimmed[lead] & 0xE0) == 0xE0 ? 3 : 2;
+            if (trimmed.Length - lead < needed)
+            {
+                trimmed = trimmed[..lead];
+            }
         }
 
         try

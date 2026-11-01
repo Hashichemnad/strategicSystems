@@ -48,7 +48,8 @@ Update this file in the same commit that adds a dependency.
 | Shouldly | BSD-3-Clause | test assertions |
 | NSubstitute | BSD-3-Clause | test doubles |
 | Testcontainers.PostgreSql | MIT | integration tests on real PostgreSQL |
-| Testcontainers | MIT | integration tests against Keycloak (OIDC, OAuth, SAML) and OpenLDAP containers |
+| Testcontainers | MIT | integration tests against Keycloak (OIDC, OAuth, SAML) and OpenLDAP containers, Mailpit and Gotenberg |
+| PdfPig | Apache-2.0 | tests only: reads rendered PDFs (fonts, Arabic text, layout snapshot) |
 | Microsoft.AspNetCore.Mvc.Testing | MIT | in-memory host for API tests |
 | NetArchTest.Rules | MIT ¹ | architecture tests |
 
