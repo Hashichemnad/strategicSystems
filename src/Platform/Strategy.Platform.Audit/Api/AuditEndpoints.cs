@@ -65,9 +65,12 @@ internal static class AuditEndpoints
         return TypedResults.Ok(new VerificationStatusDto(total, checkpoint?.Seq, checkpoint?.VerifiedAt, runs));
     }
 
-    private static async Task<Ok<VerificationRunDto>> VerifyAsync(VerifyInput body, AuditVerifier verifier, CancellationToken ct) =>
-        TypedResults.Ok(VerificationRunDto.From(await verifier.VerifyAsync(
-            body.Mode == VerificationModes.Incremental ? VerificationModes.Incremental : VerificationModes.Full, ct)));
+    private static async Task<Ok<VerificationRunDto>> VerifyAsync(VerifyInput body, AuditVerifier verifier, ChainAlert alert, CancellationToken ct)
+    {
+        var run = await verifier.VerifyAsync(body.Mode == VerificationModes.Incremental ? VerificationModes.Incremental : VerificationModes.Full, ct);
+        await alert.RaiseIfBrokenAsync(run, ct);
+        return TypedResults.Ok(VerificationRunDto.From(run));
+    }
 }
 
 internal sealed record VerifyInput(string? Mode);

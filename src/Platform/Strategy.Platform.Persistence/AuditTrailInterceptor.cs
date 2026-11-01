@@ -196,7 +196,9 @@ public static class AuditChangeCollector
                 }
 
                 var masked = IsMasked(meta);
-                string? Format(object? value) => masked ? (value is null ? null : AuditValues.Mask) : AuditValues.Format(value);
+                var json = string.Equals(meta.GetColumnType(), "jsonb", StringComparison.OrdinalIgnoreCase);
+                string? Format(object? value) => masked ? (value is null ? null : AuditValues.Mask)
+                    : json && value is string text ? AuditValues.CompactJson(text) : AuditValues.Format(value);
                 switch (entry.State)
                 {
                     case EntityState.Added:
@@ -206,11 +208,15 @@ public static class AuditChangeCollector
                         fields.Add((meta.Name, Format(property.OriginalValue), null));
                         break;
                     default:
-                        var old = AuditValues.Format(property.OriginalValue);
-                        var current = AuditValues.Format(property.CurrentValue);
-                        if (property.IsModified && !string.Equals(old, current, StringComparison.Ordinal))
+                        var old = Format(property.OriginalValue);
+                        var current = Format(property.CurrentValue);
+                        // Masked values compare as "***": compare the raw values to see a change of a secret.
+                        var changed = masked
+                            ? !string.Equals(AuditValues.Format(property.OriginalValue), AuditValues.Format(property.CurrentValue), StringComparison.Ordinal)
+                            : !string.Equals(old, current, StringComparison.Ordinal);
+                        if (property.IsModified && changed)
                         {
-                            fields.Add((meta.Name, Format(property.OriginalValue), Format(property.CurrentValue)));
+                            fields.Add((meta.Name, old, current));
                         }
 
                         break;
@@ -293,6 +299,30 @@ public static class AuditValues
         };
         return text is { Length: > MaxLength } ? text[..MaxLength] : text;
     }
+
+    /// <summary>
+    /// jsonb comes back from PostgreSQL re-formatted (spaces, key order); both sides are compacted so only real changes show.
+    /// </summary>
+    public static string? CompactJson(string text)
+    {
+        try
+        {
+            using var document = JsonDocument.Parse(text);
+            return Format(JsonSerializer.Serialize(Sorted(document.RootElement)));
+        }
+        catch (JsonException)
+        {
+            return Format(text);
+        }
+    }
+
+    private static object? Sorted(JsonElement element) => element.ValueKind switch
+    {
+        JsonValueKind.Object => new SortedDictionary<string, object?>(
+            element.EnumerateObject().ToDictionary(p => p.Name, p => Sorted(p.Value)), StringComparer.Ordinal),
+        JsonValueKind.Array => element.EnumerateArray().Select(Sorted).ToList(),
+        _ => element.Clone(),
+    };
 
     /// <summary>JSON object of field → value with keys in a stable order (create and delete snapshots).</summary>
     public static string Snapshot(IEnumerable<(string Field, string? Value)> fields) =>

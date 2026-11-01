@@ -6,7 +6,9 @@ using Strategy.Platform.Audit.Api;
 using Strategy.Platform.Audit.Application;
 using Strategy.Platform.Audit.Infrastructure;
 using Strategy.Platform.Http.Modules;
+using Strategy.Platform.Notifications;
 using Strategy.Platform.Persistence;
+using Strategy.Platform.Scheduling;
 
 namespace Strategy.Platform.Audit;
 
@@ -25,6 +27,9 @@ public sealed class AuditComponent : IPlatformComponent
         services.AddScoped<IAuditQuery, AuditQuery>();
         services.AddScoped<AuditVerifier>();
         services.AddScoped<AuditExport>();
+        services.AddScoped<ChainAlert>();
+        services.AddScheduledJob(AuditVerifyJob.Definition);
+        services.AddNotificationTemplate(ChainAlert.Template);
         services.AddScoped<IDatabaseSeeder, AuditSeeder>();
         services.AddSingleton(new AppendOnlyTable(AuditDbContext.SchemaName, "entry"));
         services.AddAccessCatalogue(new AuditCatalogue());

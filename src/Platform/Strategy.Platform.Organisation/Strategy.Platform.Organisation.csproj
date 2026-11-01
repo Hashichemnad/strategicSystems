@@ -10,6 +10,7 @@
     <ProjectReference Include="..\Strategy.Platform.Http\Strategy.Platform.Http.csproj" />
     <ProjectReference Include="..\Strategy.Platform.Settings\Strategy.Platform.Settings.csproj" />
     <ProjectReference Include="..\Strategy.Platform.Files.Contracts\Strategy.Platform.Files.Contracts.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Scheduling\Strategy.Platform.Scheduling.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ClosedXML" />

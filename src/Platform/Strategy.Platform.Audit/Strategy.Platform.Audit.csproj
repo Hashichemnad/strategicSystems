@@ -11,6 +11,8 @@
     <ProjectReference Include="..\Strategy.Platform.Http\Strategy.Platform.Http.csproj" />
     <ProjectReference Include="..\Strategy.Platform.Reporting\Strategy.Platform.Reporting.csproj" />
     <ProjectReference Include="..\Strategy.Platform.Settings\Strategy.Platform.Settings.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Scheduling\Strategy.Platform.Scheduling.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Notifications.Contracts\Strategy.Platform.Notifications.Contracts.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ClosedXML" />

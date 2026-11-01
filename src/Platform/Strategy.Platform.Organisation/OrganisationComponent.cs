@@ -12,6 +12,7 @@ using Strategy.Platform.Organisation.Domain;
 using Strategy.Platform.Organisation.Import;
 using Strategy.Platform.Organisation.Infrastructure;
 using Strategy.Platform.Persistence;
+using Strategy.Platform.Scheduling;
 using Strategy.Platform.Settings;
 
 namespace Strategy.Platform.Organisation;
@@ -38,6 +39,7 @@ public sealed class OrganisationComponent : IPlatformComponent
         services.AddScoped<IDelegationQuery, DelegationQuery>();
         services.AddSingleton<IDirectorySyncSource, NoDirectorySyncSource>();
         services.AddFilePurpose(EmployeePhotos.Purpose);
+        services.AddScheduledJob(DirectorySyncJob.Definition);
         services.AddAccessCatalogue(new OrgAccessCatalogue());
         services.AddLookupType(OrgLookupDefinitions.Grade);
         services.AddScoped<ILookupBackfillSource, GradeBackfill>();

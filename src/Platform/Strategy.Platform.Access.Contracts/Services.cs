@@ -58,6 +58,12 @@ public interface IUserRoleQuery
 
     /// <summary>Grants the platform administrator roles to a user (install command).</summary>
     Task GrantPlatformAdministratorAsync(Guid userId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Active users assigned (directly, as users) a current role holding <paramref name="permission"/>: recipients of administrative
+    /// alerts such as a broken audit chain. Unit and everyone assignments are not expanded.
+    /// </summary>
+    Task<IReadOnlyList<Guid>> UsersWithPermissionAsync(string permission, CancellationToken cancellationToken = default);
 }
 
 /// <summary>Called during a bulk role transfer so pending approvals and open tasks move too (approval engine, Phase 4).</summary>

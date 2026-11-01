@@ -36,6 +36,9 @@ ENV ASPNETCORE_URLS=http://+:8080 \
     DOTNET_NOLOGO=1
 COPY --from=build /app ./
 COPY --from=web /src/web/dist ./wwwroot
+# File store (local provider): a volume outside the web root, owned by the app user.
+RUN mkdir -p /var/lib/strategy/files && chown -R $APP_UID /var/lib/strategy
+ENV Files__LocalPath=/var/lib/strategy/files
 USER $APP_UID
 EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=6s --start-period=30s --retries=3 \
