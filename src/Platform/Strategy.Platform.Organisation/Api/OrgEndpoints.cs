@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Strategy.Platform.Access;
 using Strategy.Platform.Http.Access;
+using Strategy.Platform.Http.Audit;
 using Strategy.Platform.Http.Problems;
 using Strategy.Platform.Kernel.Context;
 using Strategy.Platform.Kernel.Messaging;
@@ -38,6 +40,8 @@ internal static class OrgEndpoints
         units.MapGet("/{id:guid}", GetUnitAsync).WithName("GetOrgUnit").RequirePermission(OrgPermissions.UnitRead);
         units.MapGet("/{id:guid}/history", UnitHistoryAsync).WithName("GetOrgUnitHistory").RequirePermission(OrgPermissions.UnitRead);
         units.MapGet("/{id:guid}/path", UnitPathAsync).WithName("GetOrgUnitPath").RequirePermission(OrgPermissions.UnitRead);
+        units.MapRecordHistory("org.org_unit", OrgPermissions.UnitRead, "GetOrgUnit", async (id, context) =>
+            (await context.RequestServices.GetRequiredService<IDispatcher>().SendAsync(new GetUnit(id), context.RequestAborted)).IsSuccess);
         units.MapPost("/", CreateUnitAsync).WithName("CreateOrgUnit").RequirePermission(OrgPermissions.UnitManage);
         units.MapPut("/{id:guid}", UpdateUnitAsync).WithName("UpdateOrgUnit").RequirePermission(OrgPermissions.UnitManage);
         units.MapPost("/{id:guid}/move", MoveUnitAsync).WithName("MoveOrgUnit").RequirePermission(OrgPermissions.UnitManage);
@@ -48,6 +52,8 @@ internal static class OrgEndpoints
         employees.MapGet("/", ListEmployeesAsync).WithName("ListEmployees").RequirePermission(OrgPermissions.EmployeeRead);
         employees.MapGet("/{id:guid}", GetEmployeeAsync).WithName("GetEmployee").RequirePermission(OrgPermissions.EmployeeRead);
         employees.MapGet("/{id:guid}/history", EmployeeHistoryAsync).WithName("GetEmployeeHistory").RequirePermission(OrgPermissions.EmployeeRead);
+        employees.MapRecordHistory("org.employee", OrgPermissions.EmployeeRead, "GetEmployee", async (id, context) =>
+            (await context.RequestServices.GetRequiredService<IDispatcher>().SendAsync(new GetEmployee(id), context.RequestAborted)).IsSuccess);
         employees.MapPost("/", CreateEmployeeAsync).WithName("CreateEmployee").RequirePermission(OrgPermissions.EmployeeManage);
         employees.MapPut("/{id:guid}", UpdateEmployeeAsync).WithName("UpdateEmployee").RequirePermission(OrgPermissions.EmployeeManage);
         employees.MapPost("/{id:guid}/change-status", ChangeStatusAsync).WithName("ChangeEmployeeStatus").RequirePermission(OrgPermissions.EmployeeManage);

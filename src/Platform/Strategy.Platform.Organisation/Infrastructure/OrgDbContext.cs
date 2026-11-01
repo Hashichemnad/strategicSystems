@@ -13,6 +13,8 @@ public sealed class OrgDbContext(DbContextOptions<OrgDbContext> options) : Modul
 
     public override string Schema => SchemaName;
 
+    public override string AuditSystemCode => "org";
+
     public DbSet<OrgLevel> Levels => Set<OrgLevel>();
 
     public DbSet<OrgSettings> Settings => Set<OrgSettings>();

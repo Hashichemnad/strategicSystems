@@ -29,6 +29,10 @@
     <PackageVersion Include="Microsoft.IdentityModel.Tokens.Saml" Version="8.19.2" />
     <PackageVersion Include="System.Configuration.ConfigurationManager" Version="10.0.13" />
   </ItemGroup>
+  <ItemGroup Label="Scheduling">
+    <PackageVersion Include="Quartz.Extensions.Hosting" Version="3.22.9" />
+    <PackageVersion Include="Quartz.Serialization.SystemTextJson" Version="3.22.9" />
+  </ItemGroup>
   <ItemGroup Label="Documents">
     <PackageVersion Include="ClosedXML" Version="0.105.1" />
   </ItemGroup>

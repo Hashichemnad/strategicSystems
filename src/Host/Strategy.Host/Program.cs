@@ -9,6 +9,12 @@ if (args.Contains("--health-check", StringComparer.Ordinal))
 }
 
 var builder = WebApplication.CreateBuilder(args);
+if (args.Contains("--migrate", StringComparer.Ordinal))
+{
+    // Migrations run as the owner role when ConnectionStrings:StrategyMigrations is set (ADR 0018).
+    builder.Configuration["Database:UseMigrationsConnection"] = "true";
+}
+
 builder.WebHost.ConfigureKestrel(kestrel => kestrel.AddServerHeader = false);
 builder.AddStrategyHost(PlatformCatalog.All, ModuleCatalog.All);
 

@@ -2,8 +2,12 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Strategy.Platform.Access.Application;
+using Strategy.Platform.Access.Infrastructure;
 using Strategy.Platform.Http.Access;
+using Strategy.Platform.Http.Audit;
 using Strategy.Platform.Http.Problems;
 using Strategy.Platform.Kernel.Context;
 using Strategy.Platform.Kernel.Results;
@@ -39,6 +43,10 @@ internal static class AccessEndpoints
         roles.MapPut("/{id:guid}/permissions", async (Guid id, RolePermissionsInput body, AccessAdministration a, CancellationToken ct) =>
                 (await a.SetRolePermissionsAsync(id, body.Permissions ?? [], body.Version, ct)).ToOk())
             .WithName("SetRolePermissions").RequirePermission(AccessPermissions.RoleManage);
+
+        // A role's audit trail (its permissions and assignments are child rows): role administrators only.
+        roles.MapRecordHistory("access.role", AccessPermissions.RoleRead, "GetRole", async (id, context) =>
+            await context.RequestServices.GetRequiredService<AccessDbContext>().Roles.AnyAsync(r => r.Id == id, context.RequestAborted));
 
         group.MapPut("/record-roles/{id:guid}/permissions", async (Guid id, RecordRolePermissionsInput body, AccessAdministration a, CancellationToken ct) =>
                 (await a.SetRecordRolePermissionsAsync(id, body.Permissions ?? [], body.Version, ct)).ToOk())

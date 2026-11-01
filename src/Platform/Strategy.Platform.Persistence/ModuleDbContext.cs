@@ -13,6 +13,9 @@ public abstract class ModuleDbContext(DbContextOptions options) : DbContext(opti
     /// <summary>The module's schema, e.g. <c>portfolio</c>. Never shared with another module.</summary>
     public abstract string Schema { get; }
 
+    /// <summary>System code written on this context's audit entries (Audit Log filter). Defaults to the schema.</summary>
+    public virtual string AuditSystemCode => Schema;
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.HasDefaultSchema(Schema);

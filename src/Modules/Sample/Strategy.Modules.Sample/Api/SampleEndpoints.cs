@@ -2,8 +2,11 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.DependencyInjection;
 using Strategy.Modules.Sample.Application;
+using Strategy.Modules.Sample.Domain;
 using Strategy.Platform.Http.Access;
+using Strategy.Platform.Http.Audit;
 using Strategy.Platform.Http.Problems;
 using Strategy.Platform.Kernel.Messaging;
 using Strategy.Platform.Kernel.Paging;
@@ -22,6 +25,10 @@ internal static class SampleEndpoints
         items.MapPut("/{id:guid}", UpdateAsync).WithName("UpdateSampleItem").RequirePermission(SamplePermissions.Update);
         items.MapPost("/{id:guid}/activate", ActivateAsync).WithName("ActivateSampleItem").RequirePermission(SamplePermissions.Update);
         items.MapPost("/{id:guid}/deactivate", DeactivateAsync).WithName("DeactivateSampleItem").RequirePermission(SamplePermissions.Update);
+
+        // History tab: the item's audit trail, for anyone who may read the item (404 otherwise).
+        items.MapRecordHistory(SampleItem.EntityType, SamplePermissions.Read, "GetSampleItem", async (id, context) =>
+            (await context.RequestServices.GetRequiredService<IDispatcher>().SendAsync(new GetSampleItem(id), context.RequestAborted)).IsSuccess);
 
         // Record roles: editors of one item (granted by someone who may edit it).
         items.MapGet("/{id:guid}/editors", async (Guid id, IDispatcher dispatcher, CancellationToken ct) =>

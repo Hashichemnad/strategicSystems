@@ -385,7 +385,8 @@ public class SignInTests(ApiFixture api) : IClassFixture<ApiFixture>
     private async Task AssertEventAsync(Guid userId, string type, bool success)
     {
         await using var scope = api.Factory.Services.CreateAsyncScope();
-        var db = scope.ServiceProvider.GetRequiredService<IdentityStoreDbContext>();
-        (await db.AuthEvents.AnyAsync(e => e.UserId == userId && e.Type == type && e.Success == success)).ShouldBeTrue($"{type} event");
+        var events = scope.ServiceProvider.GetRequiredService<AuthEventLog>();
+        var found = await events.ListAsync(new Strategy.Platform.Kernel.Paging.PageRequest(1, 200), userId, type, CancellationToken.None);
+        found.Items.Any(e => e.Success == success).ShouldBeTrue($"{type} event");
     }
 }

@@ -40,6 +40,7 @@ public sealed class ApiFactory(
         builder.UseSetting("Serilog:MinimumLevel:Default", "Warning");
         builder.UseSetting("RateLimiting:PermitLimit", "100000");
         builder.UseSetting("RateLimiting:AuthPermitLimit", "100000");
+        builder.UseSetting("Scheduling:SchedulerName", "test-" + Guid.CreateVersion7().ToString("N")); // Quartz names are per process
         foreach (var (key, value) in settings ?? new Dictionary<string, string?>())
         {
             builder.UseSetting(key, value);
@@ -52,7 +53,8 @@ public sealed class ApiFactory(
             if (!backgroundServices)
             {
                 foreach (var hosted in services.Where(d => d.ServiceType == typeof(Microsoft.Extensions.Hosting.IHostedService)
-                    && d.ImplementationType?.Assembly.GetName().Name?.StartsWith("Strategy.", StringComparison.Ordinal) == true).ToList())
+                    && d.ImplementationType?.Assembly.GetName().Name is { } name
+                    && (name.StartsWith("Strategy.", StringComparison.Ordinal) || name.StartsWith("Quartz", StringComparison.Ordinal))).ToList())
                 {
                     services.Remove(hosted);
                 }

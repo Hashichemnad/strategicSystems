@@ -21,6 +21,11 @@ public interface IRequestContext
     string? IpAddress { get; }
 
     string? UserAgent { get; }
+
+    /// <summary>The person the caller acts for (delegation, "on behalf of"); set by the approval engine.</summary>
+    Guid? OnBehalfOfId { get; }
+
+    string? OnBehalfOfName { get; }
 }
 
 /// <summary>Mutable implementation registered per scope; entry points call <see cref="Initialise"/>.</summary>
@@ -41,6 +46,10 @@ public sealed class RequestContext : IRequestContext
 
     public string? UserAgent { get; private set; }
 
+    public Guid? OnBehalfOfId { get; private set; }
+
+    public string? OnBehalfOfName { get; private set; }
+
     public void Initialise(
         string correlationId,
         string channel,
@@ -53,6 +62,13 @@ public sealed class RequestContext : IRequestContext
         User = user ?? Anonymous;
         IpAddress = ipAddress;
         UserAgent = userAgent;
+    }
+
+    /// <summary>Records that the caller acts on behalf of another person (delegation); stored on every audit entry.</summary>
+    public void SetOnBehalfOf(Guid? id, string? name)
+    {
+        OnBehalfOfId = id;
+        OnBehalfOfName = id is null ? null : name;
     }
 
     /// <summary>Sets the authenticated caller once authentication has run (after <see cref="Initialise"/>).</summary>

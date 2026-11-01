@@ -1,11 +1,14 @@
+using Strategy.Platform.Audit;
 using Strategy.Platform.Kernel.Domain;
 using Strategy.Platform.Kernel.Results;
 
 namespace Strategy.Modules.Sample.Domain;
 
 /// <summary>Template aggregate: bilingual text, a status lifecycle and optimistic concurrency.</summary>
+[Audited(SampleItem.EntityType)]
 public sealed class SampleItem : AuditableEntity
 {
+    public const string EntityType = "sample.item";
     public const int NameMaxLength = 200;
     public const int DescriptionMaxLength = 2000;
 

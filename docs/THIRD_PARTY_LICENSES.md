@@ -38,6 +38,8 @@ Update this file in the same commit that adds a dependency.
 | Microsoft.IdentityModel.Tokens.Saml | MIT | current release in place of Sustainsys.Saml2's 5.2.4 minimum, whose netstandard1.x chain (NETStandard.Library 1.6.1, Microsoft.NETCore.Platforms 1.1.0) carries the non-OSI .NET Library licence |
 | System.Configuration.ConfigurationManager | MIT | current release in place of Sustainsys.Saml2's 4.4.1 minimum (no SPDX metadata) |
 | ClosedXML | MIT | Excel import templates and reports |
+| Quartz.Extensions.Hosting | Apache-2.0 | scheduled jobs (Quartz.NET with the PostgreSQL job store; the embedded table script is Quartz's own, Apache-2.0) |
+| Quartz.Serialization.SystemTextJson | Apache-2.0 | Quartz job data serialisation |
 | Microsoft.AspNetCore.OpenApi | MIT | OpenAPI document |
 | Microsoft.Extensions.ApiDescription.Server | MIT | build-time OpenAPI generation |
 | Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore | MIT | readiness checks |
@@ -73,7 +75,7 @@ Tools: `dotnet-ef` (MIT), local tool in `dotnet-tools.json`.
 | react-day-picker | MIT | date picker |
 | date-fns | MIT | calendar locales for the date picker |
 | openapi-fetch | MIT | typed HTTP client |
-| @fontsource/ibm-plex-sans-arabic, @fontsource/ibm-plex-sans | OFL-1.1 (fonts) | self-hosted fonts (offline installs) |
+| @fontsource/ibm-plex-sans-arabic, @fontsource/ibm-plex-sans | OFL-1.1 (fonts) | self-hosted fonts (offline installs); the Arabic and Latin WOFF2 files of IBM Plex Sans Arabic are also embedded in `Strategy.Platform.Reporting` for PDFs |
 
 ### Development and build only (not shipped)
 

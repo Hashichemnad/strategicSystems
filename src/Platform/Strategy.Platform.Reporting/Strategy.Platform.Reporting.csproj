@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- PDF rendering through the Gotenberg sidecar (headless Chromium, correct Arabic shaping) and Excel export helpers. -->
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Strategy.Platform.Kernel\Strategy.Platform.Kernel.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="ClosedXML" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- IBM Plex Sans Arabic (SIL OFL 1.1, Pdf/Fonts/OFL.txt): Arabic and Latin subsets, regular and bold. -->
+    <EmbeddedResource Include="Pdf\Fonts\*.woff2" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Strategy.UnitTests" />
+    <InternalsVisibleTo Include="Strategy.IntegrationTests" />
+  </ItemGroup>
+</Project>

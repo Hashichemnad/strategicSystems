@@ -380,14 +380,14 @@ internal sealed class SignInService(
     // ---- Password reset and invitation ----
 
     /// <summary>Always succeeds from the caller's point of view (no account enumeration); sends the email when the account exists.</summary>
-    public async Task RequestPasswordResetAsync(string login, Uri? requestOrigin, CancellationToken cancellationToken)
+    public async Task<Result> RequestPasswordResetAsync(string login, Uri? requestOrigin, CancellationToken cancellationToken)
     {
         var user = await FindUserAsync(login).ConfigureAwait(false);
         if (user is null || !user.Active || user.Email is null)
         {
             await events.WriteAsync(AuthEventTypes.PasswordResetRequested, false, user?.Id, login, detail: "noAccount", cancellationToken: cancellationToken)
                 .ConfigureAwait(false);
-            return;
+            return Error.Rule("identity.email.failed", "identity.errors.smtpFailed");
         }
 
         var link = await ResetLinkAsync(user, requestOrigin).ConfigureAwait(false);
@@ -396,6 +396,7 @@ internal sealed class SignInService(
             : await TrySendAsync(new IdentityEmail(user.Email, "passwordReset", Values(user), link), cancellationToken).ConfigureAwait(false);
         await events.WriteAsync(AuthEventTypes.PasswordResetRequested, sent.IsSuccess, user.Id, user.UserName,
             detail: sent.IsSuccess ? null : sent.Error!.MessageKey, cancellationToken: cancellationToken).ConfigureAwait(false);
+        return sent;
     }
 
     public async Task<Result> SendInvitationAsync(StrategyUser user, Uri? requestOrigin, CancellationToken cancellationToken)

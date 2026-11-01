@@ -114,26 +114,8 @@ internal static class AdminEndpoints
     }
 
     private static async Task<Ok<PagedResult<AuthEventDto>>> AuthEventsAsync(
-        int? page, int? pageSize, Guid? userId, string? type, IdentityStoreDbContext db, CancellationToken ct)
-    {
-        var paging = new PageRequest(Math.Max(1, page ?? 1), Math.Clamp(pageSize ?? 50, 1, PageRequest.MaxPageSize), null);
-        var query = db.AuthEvents.AsNoTracking();
-        if (userId is not null)
-        {
-            query = query.Where(e => e.UserId == userId);
-        }
-
-        if (!string.IsNullOrWhiteSpace(type))
-        {
-            query = query.Where(e => e.Type == type);
-        }
-
-        var total = await query.CountAsync(ct);
-        var items = await query.OrderByDescending(e => e.At).ThenByDescending(e => e.Id).Skip(paging.Skip).Take(paging.PageSize)
-            .Select(e => new AuthEventDto(e.Id, e.Type, e.Success, e.UserId, e.UserName, e.ActorUserId, e.Provider, e.Detail, e.IpAddress, e.At))
-            .ToListAsync(ct);
-        return TypedResults.Ok(new PagedResult<AuthEventDto>(items, paging.Page, paging.PageSize, total));
-    }
+        int? page, int? pageSize, Guid? userId, string? type, AuthEventLog events, CancellationToken ct) =>
+        TypedResults.Ok(await events.ListAsync(new PageRequest(page ?? 1, pageSize ?? 50), userId, type, ct));
 
     // ---- Security settings ----
 

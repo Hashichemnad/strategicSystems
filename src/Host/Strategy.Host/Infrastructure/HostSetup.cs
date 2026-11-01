@@ -5,6 +5,7 @@ using Strategy.Platform.Http.Context;
 using Strategy.Platform.Http.Modules;
 using Strategy.Platform.Kernel;
 using Strategy.Platform.Persistence;
+using Strategy.Platform.Reporting.Pdf;
 
 namespace Strategy.Host.Infrastructure;
 
@@ -28,6 +29,7 @@ internal static class HostSetup
         services.AddPlatformKernel();
         services.AddPlatformPersistence(configuration);
         services.AddStrategyDataProtection(configuration);
+        services.AddPlatformReporting(configuration);
 
         // Numbers are numbers: no quoted numbers on input, so the OpenAPI schema stays exact.
         services.ConfigureHttpJsonOptions(json => json.SerializerOptions.NumberHandling = JsonNumberHandling.Strict);

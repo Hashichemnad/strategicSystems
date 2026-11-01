@@ -1,3 +1,4 @@
+using Strategy.Platform.Audit;
 namespace Strategy.Platform.Identity.Domain;
 
 /// <summary>Server-side session (cookie ticket store): lets users see and end their sessions, and admins revoke them.</summary>
@@ -44,6 +45,7 @@ public static class TokenScopes
 }
 
 /// <summary>A personal access token: only the SHA-256 of the secret is stored; the value is shown once.</summary>
+[Audited("identity.token")]
 public sealed class PersonalAccessToken
 {
     public const int NameMaxLength = 100;
@@ -57,6 +59,7 @@ public sealed class PersonalAccessToken
     /// <summary>Public lookup part of the token (<c>sst_&lt;prefix&gt;_&lt;secret&gt;</c>).</summary>
     public string Prefix { get; set; } = string.Empty;
 
+    [AuditMasked]
     public byte[] SecretHash { get; set; } = [];
 
     public List<string> Scopes { get; set; } = [];
@@ -65,8 +68,10 @@ public sealed class PersonalAccessToken
 
     public DateTimeOffset ExpiresAt { get; set; }
 
+    [NotAudited]
     public DateTimeOffset? LastUsedAt { get; set; }
 
+    [NotAudited]
     public string? LastUsedIp { get; set; }
 
     public DateTimeOffset? RevokedAt { get; set; }
@@ -100,32 +105,4 @@ public static class AuthEventTypes
     public const string UserChanged = "user.changed";
     public const string ProviderChanged = "provider.changed";
     public const string SettingsChanged = "settings.changed";
-}
-
-/// <summary>Append-only sign-in and account event (interim home until the audit trail, ADR 0014).</summary>
-public sealed class AuthEvent
-{
-    public Guid Id { get; set; } = Guid.CreateVersion7();
-
-    public string Type { get; set; } = string.Empty;
-
-    public Guid? UserId { get; set; }
-
-    public string? UserName { get; set; }
-
-    public Guid? ActorUserId { get; set; }
-
-    public string? Provider { get; set; }
-
-    public bool Success { get; set; }
-
-    public string? Detail { get; set; }
-
-    public string? IpAddress { get; set; }
-
-    public string? UserAgent { get; set; }
-
-    public string? CorrelationId { get; set; }
-
-    public DateTimeOffset At { get; set; }
 }
