@@ -18,7 +18,11 @@ Write an ADR for every choice the SPEC or CLAUDE.md leaves open (CLAUDE.md §2 r
 | [0011](0011-runtime-identity-providers.md) | Runtime-configured identity providers and account linking | Accepted |
 | [0012](0012-data-protection-and-secrets.md) | Data Protection key storage and secret encryption | Accepted |
 | [0013](0013-org-history-model.md) | Organisation history: effective-dated versions and a materialised path | Accepted |
-| [0014](0014-interim-placements-phase-1.md) | Interim placements until later platform services exist | Accepted (temporary; grade and settings screens closed in Phase 2) |
+| [0014](0014-interim-placements-phase-1.md) | Interim placements until later platform services exist | Closed (grade and settings screens in Phase 2; photo, auth events, e-mail and directory sync in Phase 3) |
 | [0015](0015-data-scope-semantics.md) | Data scope semantics and how scopes reach the database | Accepted |
 | [0016](0016-roles-replace-interim-admin.md) | Roles replace the interim system-administrator flag | Accepted |
-| [0017](0017-settings-storage-and-numbering.md) | Settings storage, numbering counters and interim branding assets | Accepted |
+| [0017](0017-settings-storage-and-numbering.md) | Settings storage, numbering counters and interim branding assets | Accepted (interim logo table closed in Phase 3, ADR 0019) |
+| [0018](0018-audit-trail-hash-chain.md) | Audit trail: storage, hash chain, append-only database role | Accepted |
+| [0019](0019-files-service.md) | Files service: purposes, storage, checks and owner access | Accepted |
+| [0020](0020-notifications-outbox-and-jobs.md) | Notifications, outbox and scheduled jobs | Accepted |
+| [0021](0021-pdf-rendering.md) | PDF rendering through Gotenberg with embedded Arabic fonts | Accepted |

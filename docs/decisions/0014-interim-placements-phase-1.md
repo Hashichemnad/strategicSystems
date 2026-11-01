@@ -1,6 +1,6 @@
 # 0014 — Interim placements until later platform services exist
 
-- **Status:** Accepted (Phase 1, each item temporary)
+- **Status:** Closed — every item has reached its permanent home (Phase 2: grade, settings screens; Phase 3: photo → Files, auth events → audit trail, e-mail → Notifications + outbox, directory sync → Quartz job; ADRs 0018–0020)
 - **Context:** Phase 1 needs a few things whose permanent home is built in a later phase. Waiting would block the acceptance checks, so each one gets an interim home behind an interface that the later phase replaces.
 
 ## Decision

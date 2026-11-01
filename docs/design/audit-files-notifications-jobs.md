@@ -115,7 +115,7 @@ re-serialised from the parsed JSON with sorted keys so PostgreSQL's `jsonb` norm
 | `template` | `key`, `subject_ar/en`, `body_ar/en` (plain text lines with `{{placeholders}}`, `{{button}}`), `customised`, audit columns. Defaults declared in code (`NotificationTemplateDefinition`), seeded when missing, "reset to default" restores them |
 | `notification` | in-app items: `id`, `user_id`, `template_key`, `params` (jsonb), `link`, `created_at`, `read_at` |
 | `preference` | `user_id`, `event_key` (or `*`), `email`, `in_app`, `digest` |
-| `delivery` | e-mail delivery log: `outbox_id`, `to`, `template_key`, `status`, `attempts`, `last_error`, `sent_at` (for the admin delivery screen) |
+| `delivery` | e-mail delivery log: `to`, `template_key`, `status`, `error`, `at`, `correlation_id` (one row per attempt, for the admin delivery screen) |
 
 - `INotificationService.SendAsync(NotificationRequest)` (template key, recipients = user ids or addresses with language, params, link, channels, `mandatory` for security mails that ignore preferences) writes **one outbox message per recipient and channel in the caller's transaction**.
 - **Email layout** (`EmailRenderer`, replaces `IdentityEmailRenderer`): one HTML table, Arabic column on the right (`dir="rtl"`, Arabic font stack), English column on the left, subject `AR | EN`, branding header / footer / organisation names / primary colour from Settings, link button; text/plain alternative. Placeholders are HTML-encoded.
@@ -125,13 +125,13 @@ re-serialised from the parsed JSON with sorted keys so PostgreSQL's `jsonb` norm
 
 ## 5. Outbox and jobs (`Platform.Scheduling`, schema `scheduling`)
 - `scheduling.outbox_message`: `id`, `type` (`email`, `in-app`, integration event names later), `payload` jsonb, `created_at`, `available_at`, `attempts`, `last_error`, `processed_at`, `dead_at`, `expires_at`, `correlation_id`. `IOutbox.EnqueueAsync(DbContext, message)` inserts on the **caller's DbContext connection and transaction** (infrastructure table, like the numbering counter).
-- **Dispatcher:** Quartz job `outbox.dispatch` (every 15 s, `[DisallowConcurrentExecution]`) + an in-process nudge after commit so a message is normally handled within a second. Rows are claimed with `FOR UPDATE SKIP LOCKED` (safe with several app instances). Handlers per type (`IOutboxHandler`); retry with exponential back-off (30 s, 2 min, 10 min, 30 min, 2 h, then every 6 h) up to 10 attempts → dead; dead messages listed and re-queueable by admins.
+- **Dispatcher:** a hosted worker, woken on enqueue and polling every 5 s (sub-second delivery; the job dashboard shows the queue state instead of a run every few seconds, ADR 0020). Rows are claimed with `FOR UPDATE SKIP LOCKED` (safe with several app instances). Handlers per type (`IOutboxHandler`); retry with exponential back-off (30 s, 2 min, 10 min, 30 min, 2 h, then every 6 h) up to 10 attempts → dead; dead messages listed and re-queueable by admins.
 - **Quartz.NET** (Apache-2.0): persistent ADO store on PostgreSQL (tables `scheduling.qrtz_*`, created by migration from the official script), clustered, System.Text.Json serializer. `IJobDefinition` (key, AR/EN name, cron, job type) registered by components; a listener writes `scheduling.job_run` (job, fired at, finished at, status, message, `triggered_by`).
-- Jobs in Phase 3: `outbox.dispatch`, `audit.verify-chain`, `notifications.digest`, `files.rescan-pending`, `scheduling.cleanup` (old runs / processed outbox rows after 30 days), `org.directory-sync` (calls the existing `IDirectorySyncSource`, closes the last ADR 0014 item).
+- Jobs in Phase 3: `audit.verify-chain`, `notifications.digest`, `files.rescan-pending`, `scheduling.cleanup` (old runs / processed outbox rows after 30 days), `org.directory-sync` (calls the existing `IDirectorySyncSource`, closes the last ADR 0014 item).
 - **Job dashboard** (Settings → Jobs): job, schedule, next run, last run (status, duration, message), recent runs, "Run now", pause / resume. Permissions `settings.job.view`, `settings.job.manage`.
 
 ## 6. PDF and Excel (`Platform.Reporting`)
-- `IPdfRenderer.RenderAsync(HtmlDocument)` → `POST {Gotenberg:Url}/forms/chromium/convert/html` (multipart: `index.html`, font files, `preferCssPageSize`, `printBackground`). Fonts **IBM Plex Sans Arabic** and **IBM Plex Sans** (OFL, already used by the SPA) are embedded resources, referenced with `@font-face` so Chromium shapes Arabic correctly.
+- `IPdfRenderer.RenderAsync(html)` → `POST {Gotenberg:Url}/forms/chromium/convert/html` (multipart: `index.html`, font files, `preferCssPageSize`, `printBackground`). Fonts **IBM Plex Sans Arabic** and **IBM Plex Sans** (OFL, already used by the SPA) are embedded resources, referenced with `@font-face` so Chromium shapes Arabic correctly.
 - `BilingualDocument` builder: title AR/EN, header / footer branding, tables rendered with `dir` per language.
 - `ExcelExport.Sheet(rows, columns, language)`: right-to-left sheet for Arabic (the access review already does this).
 - Health: `gotenberg` readiness check (tagged `optional`, does not fail `/health/ready` when PDFs are not configured).
@@ -149,7 +149,9 @@ re-serialised from the parsed JSON with sorted keys so PostgreSQL's `jsonb` norm
 | Files settings | Settings → Files | `settings.file.manage` |
 | Job dashboard | Settings → Jobs | `settings.job.view` / `manage` |
 
-The sample module gets a **record page** (`/sample/items/{id}`) with Overview, Documents and History tabs, as the worked example for modules.
+The sample module gets a **record page** (`/sample/items/{id}`) with Overview, Documents and History tabs, as the worked example for modules,
+and a notification (`sample.editorAdded`: "you can now edit this item") when an item is shared. The employee page has a History tab; units and
+roles expose the audit endpoints (UI in later phases).
 
 ## 8. Events in / out
 - Out: e-mail and in-app messages (outbox). Integration events use the same outbox from Phase 4.
@@ -160,3 +162,7 @@ The sample module gets a **record page** (`/sample/items/{id}`) with Overview, D
 - **Integration (real PostgreSQL):** an update writes exactly the changed fields with old → new, user, channel, correlation id; create / delete snapshots; rollback leaves no audit rows; `UPDATE audit.entry` refused (trigger; and permission denied for a runtime role); tampering detected by the verification job (altered value, deleted row, truncated tail); upload of a disallowed / disguised type rejected; download by an unauthorised user → 404 + `file.download.denied`; notification delivered **to Mailpit** with AR and EN parts; outbox retry after an SMTP failure; Phase 2 database upgrade keeps photos, logos, auth events and history; job dashboard lists jobs and runs; every new endpoint in the generated authorization matrix.
 - **PDF:** Gotenberg container renders a bilingual document; PdfPig (Apache-2.0, tests only) checks embedded Arabic font, Arabic text extracted in logical order, and a **layout snapshot** (words, fonts, rounded positions) committed under `tests/…/Snapshots/`.
 - **E2E (ar + en):** History tab after an edit, Audit Log search + export, verification screen, Documents tab upload / preview, notification bell, templates, job dashboard; screenshots in `docs/screenshots/phase-3/`.
+
+## 10. Decisions
+ADR 0018 (audit trail), 0019 (files), 0020 (notifications, outbox, jobs), 0021 (PDF rendering). ADR 0014 is closed; ADR 0017's interim logo
+table is gone.

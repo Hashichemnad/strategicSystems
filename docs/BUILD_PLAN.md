@@ -134,12 +134,12 @@ Finish with the phase summary.
 ```
 
 **Acceptance checks**
-- [ ] Editing a record shows old → new values in its History tab with user, time and channel.
-- [ ] Manually altering an audit row in the DB is flagged by the verification screen.
-- [ ] Audit Log screen searches across systems and exports.
-- [ ] Upload of a disallowed type is rejected; allowed file downloads only for authorised users.
-- [ ] Bilingual email and bilingual PDF render correctly (Arabic shaping, RTL).
-- [ ] Job dashboard shows scheduled jobs and their runs.
+- [x] Editing a record shows old → new values in its History tab with user, time and channel.
+- [x] Manually altering an audit row in the DB is flagged by the verification screen.
+- [x] Audit Log screen searches across systems and exports.
+- [x] Upload of a disallowed type is rejected; allowed file downloads only for authorised users.
+- [x] Bilingual email and bilingual PDF render correctly (Arabic shaping, RTL).
+- [x] Job dashboard shows scheduled jobs and their runs.
 
 ---
 
