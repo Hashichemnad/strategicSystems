@@ -56,10 +56,14 @@ public sealed class OutboxSignal : IDisposable
     public void Dispose() => _signal.Dispose();
 }
 
+/// <summary>JSON options of outbox payloads (web defaults), shared by writers and handlers.</summary>
+public static class OutboxJson
+{
+    public static readonly JsonSerializerOptions Options = new(JsonSerializerDefaults.Web);
+}
+
 internal sealed class Outbox(NpgsqlDataSource dataSource, IClock clock, IRequestContext context, OutboxSignal signal) : IOutbox
 {
-    public static readonly JsonSerializerOptions PayloadOptions = new(JsonSerializerDefaults.Web);
-
     public async Task EnqueueAsync(DbContext dbContext, OutboxEnvelope message, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(dbContext);
@@ -91,7 +95,7 @@ internal sealed class Outbox(NpgsqlDataSource dataSource, IClock clock, IRequest
             """, (NpgsqlConnection)connection, (NpgsqlTransaction?)transaction);
         command.Parameters.Add(new NpgsqlParameter("id", NpgsqlDbType.Uuid) { Value = Guid.CreateVersion7() });
         command.Parameters.Add(new NpgsqlParameter("type", NpgsqlDbType.Text) { Value = message.Type });
-        command.Parameters.Add(new NpgsqlParameter("payload", NpgsqlDbType.Jsonb) { Value = JsonSerializer.Serialize(message.Payload, PayloadOptions) });
+        command.Parameters.Add(new NpgsqlParameter("payload", NpgsqlDbType.Jsonb) { Value = JsonSerializer.Serialize(message.Payload, OutboxJson.Options) });
         command.Parameters.Add(new NpgsqlParameter("now", NpgsqlDbType.TimestampTz) { Value = now });
         command.Parameters.Add(new NpgsqlParameter("available", NpgsqlDbType.TimestampTz) { Value = message.AvailableAt ?? now });
         command.Parameters.Add(new NpgsqlParameter("expires", NpgsqlDbType.TimestampTz) { Value = (object?)message.ExpiresAt ?? DBNull.Value });

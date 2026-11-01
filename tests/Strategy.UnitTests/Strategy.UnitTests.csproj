@@ -10,5 +10,9 @@
     <ProjectReference Include="..\..\src\Platform\Strategy.Platform.Settings\Strategy.Platform.Settings.csproj" />
     <ProjectReference Include="..\..\src\Platform\Strategy.Platform.Organisation\Strategy.Platform.Organisation.csproj" />
     <ProjectReference Include="..\..\src\Platform\Strategy.Platform.Identity\Strategy.Platform.Identity.csproj" />
+    <ProjectReference Include="..\..\src\Platform\Strategy.Platform.Audit\Strategy.Platform.Audit.csproj" />
+    <ProjectReference Include="..\..\src\Platform\Strategy.Platform.Notifications\Strategy.Platform.Notifications.csproj" />
+    <ProjectReference Include="..\..\src\Platform\Strategy.Platform.Scheduling\Strategy.Platform.Scheduling.csproj" />
+    <ProjectReference Include="..\..\src\Platform\Strategy.Platform.Reporting\Strategy.Platform.Reporting.csproj" />
   </ItemGroup>
 </Project>

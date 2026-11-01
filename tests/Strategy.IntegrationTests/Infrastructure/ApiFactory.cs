@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Strategy.Host.Infrastructure;
-using Strategy.Platform.Identity.Email;
+using Strategy.Platform.Notifications;
 
 namespace Strategy.IntegrationTests.Infrastructure;
 
@@ -15,7 +15,8 @@ namespace Strategy.IntegrationTests.Infrastructure;
 /// pass <c>environment: "Production"</c> to test fail-closed behaviour. Email goes to <see cref="Emails"/>.
 /// </summary>
 public sealed class ApiFactory(
-    string connectionString, string environment = "Testing", IDictionary<string, string?>? settings = null, bool backgroundServices = true)
+    string connectionString, string environment = "Testing", IDictionary<string, string?>? settings = null, bool backgroundServices = true,
+    bool realEmail = false)
     : WebApplicationFactory<Program>
 {
     public static async Task<ApiFactory> CreateAsync(
@@ -28,7 +29,7 @@ public sealed class ApiFactory(
 
     public string ConnectionString => connectionString;
 
-    public CapturingEmailSender Emails { get; } = new();
+    public CapturingEmailTransport Emails { get; } = new();
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -48,8 +49,11 @@ public sealed class ApiFactory(
 
         builder.ConfigureTestServices(services =>
         {
-            services.RemoveAll<IIdentityEmailSender>();
-            services.AddSingleton<IIdentityEmailSender>(Emails);
+            if (!realEmail)
+            {
+                services.RemoveAll<IEmailTransport>();
+                services.AddSingleton<IEmailTransport>(Emails);
+            }
             if (!backgroundServices)
             {
                 foreach (var hosted in services.Where(d => d.ServiceType == typeof(Microsoft.Extensions.Hosting.IHostedService)

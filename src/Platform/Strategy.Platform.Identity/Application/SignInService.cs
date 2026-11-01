@@ -10,6 +10,7 @@ using Strategy.Platform.Access;
 using Strategy.Platform.Identity.Authentication;
 using Strategy.Platform.Identity.Domain;
 using Strategy.Platform.Identity.Email;
+using Strategy.Platform.Notifications;
 using Strategy.Platform.Identity.Infrastructure;
 using Strategy.Platform.Kernel.Results;
 
@@ -62,7 +63,8 @@ internal sealed class SignInService(
     StrategySignInManager signIn,
     IdentitySettingsCache settings,
     AuthEventLog events,
-    IIdentityEmailSender email,
+    INotificationService notifications,
+    Strategy.Platform.Kernel.Time.IClock clock,
     IEnumerable<IDirectoryPasswordSignIn> directories,
     IdentityStoreDbContext db,
     IUserRoleQuery roles,
@@ -242,7 +244,8 @@ internal sealed class SignInService(
     public async Task<Result> SendCodeAsync(StrategyUser user, CancellationToken cancellationToken)
     {
         var code = await users.GenerateTwoFactorTokenAsync(user, TokenOptions.DefaultEmailProvider).ConfigureAwait(false);
-        return await TrySendAsync(new IdentityEmail(user.Email!, "emailCode", Values(user, ("code", code))), cancellationToken).ConfigureAwait(false);
+        return await TrySendAsync(IdentityEmails.EmailCode, user, Values(user, ("code", code)), null, cancellationToken, expiresIn: TimeSpan.FromMinutes(10))
+            .ConfigureAwait(false);
     }
 
     // ---- Enrolment (policy requires MFA and the user has none yet) ----
@@ -393,7 +396,7 @@ internal sealed class SignInService(
         var link = await ResetLinkAsync(user, requestOrigin).ConfigureAwait(false);
         var sent = link is null
             ? Error.Rule("identity.email.publicUrlMissing", "identity.errors.publicUrlMissing")
-            : await TrySendAsync(new IdentityEmail(user.Email, "passwordReset", Values(user), link), cancellationToken).ConfigureAwait(false);
+            : await TrySendAsync(IdentityEmails.PasswordReset, user, Values(user), link, cancellationToken).ConfigureAwait(false);
         await events.WriteAsync(AuthEventTypes.PasswordResetRequested, sent.IsSuccess, user.Id, user.UserName,
             detail: sent.IsSuccess ? null : sent.Error!.MessageKey, cancellationToken: cancellationToken).ConfigureAwait(false);
         return sent;
@@ -405,7 +408,7 @@ internal sealed class SignInService(
         var link = PublicLink(requestOrigin, "reset-password", user, token, invitation: true);
         return link is null
             ? Error.Rule("identity.email.publicUrlMissing", "identity.errors.publicUrlMissing")
-            : await TrySendAsync(new IdentityEmail(user.Email!, "invitation", Values(user, ("userName", user.UserName!)), link), cancellationToken)
+            : await TrySendAsync(IdentityEmails.Invitation, user, Values(user, ("userName", user.UserName!)), link, cancellationToken)
                 .ConfigureAwait(false);
     }
 
@@ -544,18 +547,20 @@ internal sealed class SignInService(
         return $"{baseUrl}/{path}?user={user.Id:D}&token={encoded}{(invitation ? "&invite=1" : string.Empty)}";
     }
 
-    private async Task<Result> TrySendAsync(IdentityEmail message, CancellationToken cancellationToken)
-    {
-        try
-        {
-            await email.SendAsync(message, cancellationToken).ConfigureAwait(false);
-            return Result.Success();
-        }
-        catch (EmailDeliveryException exception)
-        {
-            return Error.Rule("identity.email.failed", exception.MessageKey);
-        }
-    }
+    /// <summary>Queues a mandatory, sensitive identity e-mail (outbox with retry); fails only when e-mail is not set up at all.</summary>
+    private Task<Result> TrySendAsync(
+        NotificationTemplateDefinition template, StrategyUser user, Dictionary<string, string> values, string? link, CancellationToken cancellationToken,
+        TimeSpan? expiresIn = null) =>
+        notifications.SendAsync(
+            new NotificationRequest(
+                template.Key,
+                [NotificationRecipient.Address(user.Email!, user.UserName, user.Language)],
+                values,
+                link,
+                NotificationChannels.Email,
+                expiresIn is { } ttl ? clock.UtcNow + ttl : null,
+                Sensitive: true),
+            cancellationToken: cancellationToken);
 
     private static Dictionary<string, string> Values(StrategyUser user, params (string Key, string Value)[] extra)
     {

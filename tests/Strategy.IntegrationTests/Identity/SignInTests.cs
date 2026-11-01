@@ -201,15 +201,17 @@ public class SignInTests(ApiFixture api) : IClassFixture<ApiFixture>
         var user = await api.Factory.CreateUserAsync();
         var client = await api.Factory.SignInAsync(user);
 
+        var before = api.Factory.Emails.Sent.Count;
         (await client.PostAsync("/api/v1/identity/me/mfa/email", null)).StatusCode.ShouldBe(HttpStatusCode.NoContent);
-        var enableCode = api.Factory.Emails.Last(user.UserName, "emailCode").Values["code"];
+        var enableCode = (await api.Factory.Emails.LastAsync(user.UserName, "emailCode", before)).Values["code"];
         var enabled = await client.PostAsJsonAsync("/api/v1/identity/me/mfa/confirm", new { method = "email", code = enableCode });
         enabled.StatusCode.ShouldBe(HttpStatusCode.OK, await enabled.Content.ReadAsStringAsync());
 
         var next = await api.Factory.CreateSpaClientAsync();
         (await next.LoginAsync(user.UserName, user.Password)).ShouldBe(SignInStatuses.MfaRequired);
+        before = api.Factory.Emails.Sent.Count;
         (await next.PostAsync($"{Auth}/mfa/email-code", null)).StatusCode.ShouldBe(HttpStatusCode.NoContent);
-        var code = api.Factory.Emails.Last(user.UserName, "emailCode").Values["code"];
+        var code = (await api.Factory.Emails.LastAsync(user.UserName, "emailCode", before)).Values["code"];
         var verified = await next.PostAsJsonAsync($"{Auth}/mfa/verify", new { method = "email", code });
         (await verified.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("status").GetString().ShouldBe(SignInStatuses.SignedIn);
     }
@@ -222,8 +224,8 @@ public class SignInTests(ApiFixture api) : IClassFixture<ApiFixture>
 
         (await client.PostAsJsonAsync($"{Auth}/password/forgot", new { login = user.UserName })).StatusCode.ShouldBe(HttpStatusCode.Accepted);
         (await client.PostAsJsonAsync($"{Auth}/password/forgot", new { login = "ghost@example.test" })).StatusCode.ShouldBe(HttpStatusCode.Accepted);
-        var email = api.Factory.Emails.Last(user.UserName, "passwordReset");
-        var (userId, token) = CapturingEmailSender.ParseLink(email.Link!);
+        var email = await api.Factory.Emails.LastAsync(user.UserName, "passwordReset");
+        var (userId, token) = CapturingEmailTransport.ParseLink(email.Link!);
 
         var weak = await client.PostAsJsonAsync($"{Auth}/password/reset", new { userId, token, newPassword = "short" });
         var problem = await weak.ShouldBeProblemAsync(HttpStatusCode.BadRequest, "validation.failed");
@@ -268,8 +270,8 @@ public class SignInTests(ApiFixture api) : IClassFixture<ApiFixture>
         await (await admin.PostAsJsonAsync("/api/v1/identity/admin/users", new { employeeId }))
             .ShouldBeProblemAsync(HttpStatusCode.Conflict, "identity.user.employeeHasUser");
 
-        var invitation = api.Factory.Emails.Last($"{number.ToLowerInvariant()}@example.test", "invitation");
-        var (userId, token) = CapturingEmailSender.ParseLink(invitation.Link!);
+        var invitation = await api.Factory.Emails.LastAsync($"{number.ToLowerInvariant()}@example.test", "invitation");
+        var (userId, token) = CapturingEmailTransport.ParseLink(invitation.Link!);
         invitation.Link!.ShouldContain("invite=1");
         var client = await api.Factory.CreateSpaClientAsync();
         const string password = "Invited#Pass2026";

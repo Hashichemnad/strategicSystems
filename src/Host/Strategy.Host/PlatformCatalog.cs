@@ -2,6 +2,7 @@ using Strategy.Platform.Access;
 using Strategy.Platform.Audit;
 using Strategy.Platform.Http.Modules;
 using Strategy.Platform.Identity;
+using Strategy.Platform.Notifications;
 using Strategy.Platform.Organisation;
 using Strategy.Platform.Scheduling;
 using Strategy.Platform.Settings;
@@ -15,5 +16,5 @@ namespace Strategy.Host;
 internal static class PlatformCatalog
 {
     public static readonly IReadOnlyList<IPlatformComponent> All =
-        [new AuditComponent(), new SchedulingComponent(), new SettingsComponent(), new AccessComponent(), new OrganisationComponent(), new IdentityComponent()];
+        [new AuditComponent(), new SchedulingComponent(), new SettingsComponent(), new NotificationsComponent(), new AccessComponent(), new OrganisationComponent(), new IdentityComponent()];
 }

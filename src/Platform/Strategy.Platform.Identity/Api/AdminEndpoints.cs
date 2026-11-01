@@ -8,10 +8,10 @@ using Strategy.Platform.Http.Problems;
 using Strategy.Platform.Identity.Application;
 using Strategy.Platform.Identity.Domain;
 using Strategy.Platform.Identity.Email;
+using Strategy.Platform.Notifications;
 using Strategy.Platform.Identity.Infrastructure;
 using Strategy.Platform.Kernel.Paging;
 using Strategy.Platform.Kernel.Results;
-using Strategy.Platform.Settings;
 
 namespace Strategy.Platform.Identity.Api;
 
@@ -198,7 +198,7 @@ internal static class AdminEndpoints
 
     /// <summary>Sends a test message with the saved settings, or with unsaved ones from the form (blank password = saved one).</summary>
     private static async Task<Results<NoContent, ProblemHttpResult>> TestSmtpAsync(
-        SmtpTestInput body, IdentitySettingsCache cache, ISecretProtector protector, AuthEventLog events, ISettingsStore store, CancellationToken ct)
+        SmtpTestInput body, IdentitySettingsCache cache, ISecretProtector protector, AuthEventLog events, ITestEmailSender sender, CancellationToken ct)
     {
         if (string.IsNullOrWhiteSpace(body.To) || !System.Net.Mail.MailAddress.TryCreate(body.To, out _))
         {
@@ -219,19 +219,9 @@ internal static class AdminEndpoints
             password = string.IsNullOrEmpty(draft.Password) ? password : draft.Password;
         }
 
-        try
-        {
-            await SmtpIdentityEmailSender.SendWithAsync(
-                settings, password, new IdentityEmail(body.To, "test", new Dictionary<string, string>()), ct, await store.GetAsync<BrandingSettings>(ct));
-        }
-        catch (EmailDeliveryException exception)
-        {
-            await events.WriteAsync(AuthEventTypes.SettingsChanged, false, detail: "smtp.test", cancellationToken: ct);
-            return Error.Rule("identity.smtp.testFailed", exception.MessageKey).ToProblem();
-        }
-
-        await events.WriteAsync(AuthEventTypes.SettingsChanged, true, detail: "smtp.test", cancellationToken: ct);
-        return TypedResults.NoContent();
+        var sent = await sender.SendTestAsync(body.To, SmtpSettingsSource.From(settings, protector, password), ct);
+        await events.WriteAsync(AuthEventTypes.SettingsChanged, sent.IsSuccess, detail: "smtp.test", cancellationToken: ct);
+        return sent.IsSuccess ? TypedResults.NoContent() : sent.Error!.ToProblem();
     }
 
     private static List<FieldError> ValidateSmtp(SmtpSettingsInput body)
