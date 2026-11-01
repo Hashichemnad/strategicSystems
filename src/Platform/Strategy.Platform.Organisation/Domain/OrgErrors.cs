@@ -64,7 +64,7 @@ public static class OrgErrors
     public static Error PhotoInvalid => Error.Rule("org.photo.invalid", "org.errors.photoInvalid");
 
     public static Error PhotoTooLarge => Error.Rule("org.photo.tooLarge", "org.errors.photoTooLarge",
-        new Dictionary<string, object?> { ["maxKb"] = EmployeePhoto.MaxBytes / 1024 });
+        new Dictionary<string, object?> { ["maxKb"] = EmployeePhotos.MaxBytes / 1024 });
 
     public static Error NoEmployeeLinked => Error.Rule("org.delegation.noEmployee", "org.errors.noEmployeeLinked");
 }

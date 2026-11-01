@@ -24,8 +24,6 @@ public sealed class SettingsDbContext(DbContextOptions<SettingsDbContext> option
 
     public DbSet<FeatureFlag> FeatureFlags => Set<FeatureFlag>();
 
-    public DbSet<BrandingAsset> BrandingAssets => Set<BrandingAsset>();
-
     public DbSet<TranslationOverride> TranslationOverrides => Set<TranslationOverride>();
 }
 
@@ -114,16 +112,6 @@ internal sealed class FeatureFlagConfiguration : IEntityTypeConfiguration<Featur
     }
 }
 
-internal sealed class BrandingAssetConfiguration : IEntityTypeConfiguration<BrandingAsset>
-{
-    public void Configure(EntityTypeBuilder<BrandingAsset> builder)
-    {
-        builder.ToTable("branding_asset");
-        builder.HasKey(x => x.Kind);
-        builder.Property(x => x.Kind).HasMaxLength(32);
-        builder.Property(x => x.ContentType).HasMaxLength(64);
-    }
-}
 
 internal sealed class TranslationOverrideConfiguration : IEntityTypeConfiguration<TranslationOverride>
 {

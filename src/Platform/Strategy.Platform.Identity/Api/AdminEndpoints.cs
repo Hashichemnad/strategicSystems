@@ -8,10 +8,10 @@ using Strategy.Platform.Http.Problems;
 using Strategy.Platform.Identity.Application;
 using Strategy.Platform.Identity.Domain;
 using Strategy.Platform.Identity.Email;
-using Strategy.Platform.Notifications;
 using Strategy.Platform.Identity.Infrastructure;
 using Strategy.Platform.Kernel.Paging;
 using Strategy.Platform.Kernel.Results;
+using Strategy.Platform.Notifications;
 
 namespace Strategy.Platform.Identity.Api;
 

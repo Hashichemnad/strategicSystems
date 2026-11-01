@@ -40,6 +40,7 @@ Update this file in the same commit that adds a dependency.
 | ClosedXML | MIT | Excel import templates and reports |
 | Quartz.Extensions.Hosting | Apache-2.0 | scheduled jobs (Quartz.NET with the PostgreSQL job store; the embedded table script is Quartz's own, Apache-2.0) |
 | Quartz.Serialization.SystemTextJson | Apache-2.0 | Quartz job data serialisation |
+| AWSSDK.S3 | Apache-2.0 | optional S3-compatible file storage (MinIO, AWS S3) |
 | Microsoft.AspNetCore.OpenApi | MIT | OpenAPI document |
 | Microsoft.Extensions.ApiDescription.Server | MIT | build-time OpenAPI generation |
 | Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore | MIT | readiness checks |

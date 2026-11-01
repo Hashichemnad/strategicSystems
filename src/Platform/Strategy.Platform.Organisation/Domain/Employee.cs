@@ -1,3 +1,4 @@
+using Strategy.Platform.Files;
 using Strategy.Platform.Kernel.Domain;
 using Strategy.Platform.Kernel.Results;
 using Strategy.Platform.Kernel.Text;
@@ -176,63 +177,11 @@ public sealed class EmployeeAssignment : AuditableEntity
     }
 }
 
-/// <summary>Employee photo (interim bytea storage until the Files service, ADR 0014).</summary>
-public sealed class EmployeePhoto
+/// <summary>Employee photos are files (Files service, purpose <c>org.employee-photo</c>): PNG / JPEG / WebP by magic number, at most 1 MB.</summary>
+public static class EmployeePhotos
 {
     public const int MaxBytes = 1024 * 1024;
 
-    private EmployeePhoto()
-    {
-    }
-
-    public Guid EmployeeId { get; private set; }
-
-    public string ContentType { get; private set; } = string.Empty;
-
-    public byte[] Content { get; private set; } = [];
-
-    public DateTimeOffset UpdatedAt { get; private set; }
-
-    public static Result<EmployeePhoto> Create(Guid employeeId, byte[] content, DateTimeOffset at)
-    {
-        ArgumentNullException.ThrowIfNull(content);
-        if (content.Length > MaxBytes)
-        {
-            return OrgErrors.PhotoTooLarge;
-        }
-
-        var contentType = DetectImageType(content);
-        return contentType is null
-            ? OrgErrors.PhotoInvalid
-            : new EmployeePhoto { EmployeeId = employeeId, Content = content, ContentType = contentType, UpdatedAt = at };
-    }
-
-    public void Replace(EmployeePhoto other)
-    {
-        ArgumentNullException.ThrowIfNull(other);
-        Content = other.Content;
-        ContentType = other.ContentType;
-        UpdatedAt = other.UpdatedAt;
-    }
-
-    /// <summary>Magic-number check: PNG, JPEG, WebP only. The declared content type is never trusted.</summary>
-    public static string? DetectImageType(ReadOnlySpan<byte> content)
-    {
-        if (content.Length >= 8 && content[..8].SequenceEqual(new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A }))
-        {
-            return "image/png";
-        }
-
-        if (content.Length >= 3 && content[0] == 0xFF && content[1] == 0xD8 && content[2] == 0xFF)
-        {
-            return "image/jpeg";
-        }
-
-        if (content.Length >= 12 && content[..4].SequenceEqual("RIFF"u8) && content[8..12].SequenceEqual("WEBP"u8))
-        {
-            return "image/webp";
-        }
-
-        return null;
-    }
+    public static readonly FilePurpose Purpose = new(
+        "org.employee-photo", "org.employee", "org", FileKinds.Images, MaxBytes, SingleFile: true);
 }

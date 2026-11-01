@@ -290,33 +290,6 @@ namespace Strategy.Platform.Organisation.Infrastructure.Migrations
                     b.ToTable("employee_assignment", "core");
                 });
 
-            modelBuilder.Entity("Strategy.Platform.Organisation.Domain.EmployeePhoto", b =>
-                {
-                    b.Property<Guid>("EmployeeId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("employee_id");
-
-                    b.Property<byte[]>("Content")
-                        .IsRequired()
-                        .HasColumnType("bytea")
-                        .HasColumnName("content");
-
-                    b.Property<string>("ContentType")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)")
-                        .HasColumnName("content_type");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.HasKey("EmployeeId")
-                        .HasName("pk_employee_photo");
-
-                    b.ToTable("employee_photo", "core");
-                });
-
             modelBuilder.Entity("Strategy.Platform.Organisation.Domain.OrgLevel", b =>
                 {
                     b.Property<Guid>("Id")
@@ -731,16 +704,6 @@ namespace Strategy.Platform.Organisation.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("fk_employee_assignment_employees_employee_id");
-                });
-
-            modelBuilder.Entity("Strategy.Platform.Organisation.Domain.EmployeePhoto", b =>
-                {
-                    b.HasOne("Strategy.Platform.Organisation.Domain.Employee", null)
-                        .WithOne()
-                        .HasForeignKey("Strategy.Platform.Organisation.Domain.EmployeePhoto", "EmployeeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("fk_employee_photo_employee_employee_id");
                 });
 
             modelBuilder.Entity("Strategy.Platform.Organisation.Domain.OrgUnit", b =>

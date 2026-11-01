@@ -72,15 +72,15 @@ internal static class SettingsEndpoints
     private static async Task<Ok<IReadOnlyList<string>>> EnabledFeaturesAsync(SettingsAdministration a, CancellationToken ct) =>
         TypedResults.Ok<IReadOnlyList<string>>((await a.ListFeaturesAsync(ct)).Where(f => f.Enabled).Select(f => f.Code).ToList());
 
-    private static async Task<Results<FileContentHttpResult, NotFound>> GetLogoAsync(string kind, SettingsAdministration a, HttpContext context, CancellationToken ct)
+    private static async Task<Results<FileStreamHttpResult, NotFound>> GetLogoAsync(string kind, SettingsAdministration a, HttpContext context, CancellationToken ct)
     {
-        if (await a.GetLogoAsync(kind, ct) is not { } asset)
+        if (await a.GetLogoAsync(kind, ct) is not { } logo)
         {
             return TypedResults.NotFound();
         }
 
         context.Response.Headers.CacheControl = "public, max-age=300";
-        return TypedResults.File(asset.Content, asset.ContentType, lastModified: asset.UpdatedAt);
+        return TypedResults.Stream(logo.Stream, logo.ContentType, lastModified: logo.LastModified);
     }
 
     private static async Task<Results<NoContent, ProblemHttpResult>> PutLogoAsync(string kind, IFormFile file, SettingsAdministration a, CancellationToken ct)

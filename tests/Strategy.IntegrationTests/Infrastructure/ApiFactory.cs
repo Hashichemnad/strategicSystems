@@ -29,6 +29,9 @@ public sealed class ApiFactory(
 
     public string ConnectionString => connectionString;
 
+    /// <summary>This host's file store (local provider) in a temporary folder.</summary>
+    public string FilesPath { get; } = Path.Combine(Path.GetTempPath(), "strategy-files-" + Guid.CreateVersion7().ToString("N"));
+
     public CapturingEmailTransport Emails { get; } = new();
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
@@ -41,6 +44,7 @@ public sealed class ApiFactory(
         builder.UseSetting("Serilog:MinimumLevel:Default", "Warning");
         builder.UseSetting("RateLimiting:PermitLimit", "100000");
         builder.UseSetting("RateLimiting:AuthPermitLimit", "100000");
+        builder.UseSetting("Files:LocalPath", FilesPath);
         builder.UseSetting("Scheduling:SchedulerName", "test-" + Guid.CreateVersion7().ToString("N")); // Quartz names are per process
         foreach (var (key, value) in settings ?? new Dictionary<string, string?>())
         {

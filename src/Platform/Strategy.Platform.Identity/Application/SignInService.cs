@@ -10,9 +10,9 @@ using Strategy.Platform.Access;
 using Strategy.Platform.Identity.Authentication;
 using Strategy.Platform.Identity.Domain;
 using Strategy.Platform.Identity.Email;
-using Strategy.Platform.Notifications;
 using Strategy.Platform.Identity.Infrastructure;
 using Strategy.Platform.Kernel.Results;
+using Strategy.Platform.Notifications;
 
 namespace Strategy.Platform.Identity.Application;
 

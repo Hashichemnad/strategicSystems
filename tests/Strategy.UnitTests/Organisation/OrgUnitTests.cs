@@ -190,25 +190,4 @@ public class EmployeeTests
         employee.IsActive.ShouldBeFalse();
     }
 
-    [Theory]
-    [InlineData(new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A, 0 }, "image/png")]
-    [InlineData(new byte[] { 0xFF, 0xD8, 0xFF, 0xE0 }, "image/jpeg")]
-    [InlineData(new byte[] { 0x52, 0x49, 0x46, 0x46, 1, 2, 3, 4, 0x57, 0x45, 0x42, 0x50 }, "image/webp")]
-    [InlineData(new byte[] { 0x3C, 0x73, 0x76, 0x67 }, null)] // "<svg": scripts possible, refused
-    [InlineData(new byte[] { 0x25, 0x50, 0x44, 0x46 }, null)] // PDF
-    public void Photo_type_comes_from_the_magic_number(byte[] content, string? expected)
-    {
-        EmployeePhoto.DetectImageType(content).ShouldBe(expected);
-    }
-
-    [Fact]
-    public void Photo_over_the_limit_is_refused()
-    {
-        var content = new byte[EmployeePhoto.MaxBytes + 1];
-        content[0] = 0xFF;
-        content[1] = 0xD8;
-        content[2] = 0xFF;
-
-        EmployeePhoto.Create(Guid.NewGuid(), content, DateTimeOffset.UtcNow).Error!.Code.ShouldBe("org.photo.tooLarge");
-    }
 }

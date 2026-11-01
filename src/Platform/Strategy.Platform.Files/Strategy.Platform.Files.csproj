@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Files (CLAUDE.md §14): storage abstraction (local volume, S3-compatible), allow-list and magic-number checks, optional ClamAV,
+       versions, authorised and audited downloads. -->
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Strategy.Platform.Kernel\Strategy.Platform.Kernel.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Files.Contracts\Strategy.Platform.Files.Contracts.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Access.Contracts\Strategy.Platform.Access.Contracts.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Audit.Contracts\Strategy.Platform.Audit.Contracts.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Persistence\Strategy.Platform.Persistence.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Http\Strategy.Platform.Http.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Settings\Strategy.Platform.Settings.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Scheduling\Strategy.Platform.Scheduling.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AWSSDK.S3" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Strategy.UnitTests" />
+    <InternalsVisibleTo Include="Strategy.IntegrationTests" />
+  </ItemGroup>
+</Project>

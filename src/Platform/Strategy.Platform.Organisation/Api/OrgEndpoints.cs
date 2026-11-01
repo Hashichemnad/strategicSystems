@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Strategy.Platform.Access;
+using Strategy.Platform.Files;
 using Strategy.Platform.Http.Access;
 using Strategy.Platform.Http.Audit;
 using Strategy.Platform.Http.Problems;
@@ -12,7 +13,6 @@ using Strategy.Platform.Kernel.Context;
 using Strategy.Platform.Kernel.Messaging;
 using Strategy.Platform.Kernel.Paging;
 using Strategy.Platform.Kernel.Results;
-using Strategy.Platform.Kernel.Time;
 using Strategy.Platform.Organisation.Application;
 using Strategy.Platform.Organisation.Domain;
 using Strategy.Platform.Organisation.Import;
@@ -175,21 +175,25 @@ internal static class OrgEndpoints
         (await dispatcher.SendAsync(new ChangeEmployeeStatus(id, body.Status, body.Version), ct)).ToOk();
 
     private static async Task<IResult> GetPhotoAsync(
-        Guid id, OrgDbContext db, IAccessService access, IRequestContext context, CancellationToken ct)
+        Guid id, OrgDbContext db, IAccessService access, IRequestContext context, IFileService files, CancellationToken ct)
     {
         var visible = await (await access.ApplyScopeAsync(db.Employees.AsNoTracking(), context.User, OrgPermissions.EmployeeRead, OrgScopes.Employees, ct))
             .AnyAsync(e => e.Id == id, ct);
-        var photo = visible ? await db.Photos.AsNoTracking().FirstOrDefaultAsync(p => p.EmployeeId == id, ct) : null;
+        var photo = visible ? await files.FindSingleAsync(EmployeePhotos.Purpose.Key, id.ToString("D"), ct) : null;
         if (photo is null)
         {
             return Error.NotFound().ToProblem();
         }
 
-        return TypedResults.File(photo.Content, photo.ContentType, lastModified: photo.UpdatedAt);
+        // Photos are shown everywhere (lists, pickers); their reads are not written to the audit trail, uploads are.
+        var opened = await files.OpenAsync(photo.Id, auditDownload: false, cancellationToken: ct);
+        return opened.IsSuccess
+            ? TypedResults.Stream(opened.Value.Stream, opened.Value.ContentType, lastModified: opened.Value.LastModified)
+            : opened.Error!.ToProblem();
     }
 
     private static async Task<Results<NoContent, ProblemHttpResult>> PutPhotoAsync(
-        Guid id, IFormFile file, OrgDbContext db, IAccessService access, IRequestContext context, IClock clock, CancellationToken ct)
+        Guid id, IFormFile file, OrgDbContext db, IAccessService access, IRequestContext context, IFileService files, CancellationToken ct)
     {
         var exists = await (await access.ApplyScopeAsync(db.Employees.AsNoTracking(), context.User, OrgPermissions.EmployeeManage, OrgScopes.Employees, ct))
             .AnyAsync(e => e.Id == id, ct);
@@ -198,30 +202,20 @@ internal static class OrgEndpoints
             return Error.NotFound().ToProblem();
         }
 
-        if (file.Length > EmployeePhoto.MaxBytes)
+        if (file.Length > EmployeePhotos.MaxBytes)
         {
             return OrgErrors.PhotoTooLarge.ToProblem();
         }
 
-        using var buffer = new MemoryStream();
-        await file.CopyToAsync(buffer, ct);
-        var created = EmployeePhoto.Create(id, buffer.ToArray(), clock.UtcNow);
-        if (created.IsFailure)
+        await using var stream = file.OpenReadStream();
+        var uploaded = await files.UploadAsync(new FileUpload(EmployeePhotos.Purpose.Key, id.ToString("D"), file.FileName, stream), ct);
+        if (uploaded.IsFailure)
         {
-            return created.Error.ToProblem();
+            // Keep the organisation's own error codes for the photo screen.
+            var code = uploaded.Error!.Fields is { Count: > 0 } fields ? fields[0].Code : null;
+            return (code == "files.errors.tooLarge" ? OrgErrors.PhotoTooLarge : code is not null ? OrgErrors.PhotoInvalid : uploaded.Error).ToProblem();
         }
 
-        var existing = await db.Photos.FirstOrDefaultAsync(p => p.EmployeeId == id, ct);
-        if (existing is null)
-        {
-            db.Photos.Add(created.Value);
-        }
-        else
-        {
-            existing.Replace(created.Value);
-        }
-
-        await db.SaveChangesAsync(ct);
         return TypedResults.NoContent();
     }
 
