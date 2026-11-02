@@ -144,7 +144,10 @@ export function HomePage() {
 
   return (
     <div className="flex flex-col gap-6">
-      <PageHeader title={t('myWork.greeting', { name: displayName })} description={t('myWork.description')} />
+      <PageHeader
+        title={t('myWork.title')}
+        description={`${t('myWork.greeting', { name: displayName })} — ${t('myWork.description')}`}
+      />
       {work.isError && <StatusBanner tone="danger" title={errorMessage(tc, work.error)} />}
       {work.isPending ? (
         <Skeleton className="h-24 rounded-lg" />
