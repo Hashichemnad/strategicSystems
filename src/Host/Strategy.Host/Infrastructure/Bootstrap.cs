@@ -61,6 +61,31 @@ internal static partial class Bootstrap
         return 0;
     }
 
+    /// <summary>
+    /// <c>--setup-db-roles</c>: moves an installation that runs as the database owner to the two-role setup (ADR 0018). Idempotent:
+    /// a second run updates the password and re-applies the grants.
+    /// </summary>
+    public static async Task<int> SetupDatabaseRolesAsync(IServiceProvider services, TextWriter output)
+    {
+        var outcome = await services.GetRequiredService<RuntimeRoleSetup>().EnsureRoleAsync();
+        switch (outcome)
+        {
+            case RuntimeRoleOutcome.NotConfigured:
+                await output.WriteLineAsync(
+                    "Set ConnectionStrings__StrategyMigrations (the owner) and ConnectionStrings__Strategy (the runtime role, with user name and password).");
+                return 2;
+            case RuntimeRoleOutcome.SameAsOwner:
+                await output.WriteLineAsync("ConnectionStrings__Strategy uses the owner role; give it a separate runtime role first.");
+                return 2;
+        }
+
+        await services.GetRequiredService<ModuleMigrator>().MigrateAllAsync();
+        await output.WriteLineAsync(outcome == RuntimeRoleOutcome.Created
+            ? "Runtime database role created and granted; audit.entry is SELECT + INSERT only for it. Restart the application with ConnectionStrings__Strategy."
+            : "Runtime database role updated and grants re-applied; audit.entry is SELECT + INSERT only for it.");
+        return 0;
+    }
+
     /// <summary>Development only: demo structure (4 levels), employees, an administrator and a regular user. Idempotent.</summary>
     public static async Task SeedDevelopmentAsync(IServiceProvider services, IConfiguration configuration, ILogger logger)
     {

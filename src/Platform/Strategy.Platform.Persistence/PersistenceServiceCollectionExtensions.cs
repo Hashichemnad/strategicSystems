@@ -29,6 +29,7 @@ public static class PersistenceServiceCollectionExtensions
             return new NpgsqlDataSourceBuilder(connectionString).Build();
         });
         services.AddScoped<IDatabaseSeeder, RuntimeRoleGrants>();
+        services.TryAddSingleton<RuntimeRoleSetup>();
         services.TryAddScoped<AuditFieldsInterceptor>();
         services.TryAddScoped<AuditTrailInterceptor>();
         services.TryAddScoped<IAuditReason, AuditReason>();

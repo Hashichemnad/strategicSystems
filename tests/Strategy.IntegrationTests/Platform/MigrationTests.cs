@@ -1,3 +1,5 @@
+using System.Net;
+using System.Net.Http.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
@@ -113,29 +115,7 @@ public class MigrationTests(PostgresFixture postgres)
     {
         await using var factory = new ApiFactory(
             await postgres.CreateDatabaseAsync(), settings: new Dictionary<string, string?> { ["Database:MigrateOnStartup"] = "false" }, backgroundServices: false);
-        var phase2 = new Dictionary<string, string>
-        {
-            ["identity"] = "DropSystemAdminFlag",
-            ["settings"] = "20261031130718_InitialCreate",
-            ["access"] = "20261031130714_InitialCreate",
-            ["core"] = "20261022170513_InitialCreate",
-            ["sample"] = "NumberOwnerAndUnit",
-        };
-        await using (var scope = factory.Services.CreateAsyncScope())
-        {
-            foreach (var database in scope.ServiceProvider.GetServices<ModuleDatabase>())
-            {
-                var context = (DbContext)scope.ServiceProvider.GetRequiredService(database.ContextType);
-                if (context is Strategy.Platform.Persistence.DataProtectionKeysDbContext)
-                {
-                    await context.Database.MigrateAsync();
-                }
-                else if (phase2.TryGetValue(database.Schema, out var target))
-                {
-                    await context.GetService<IMigrator>().MigrateAsync(target);
-                }
-            }
-        }
+        await MigrateToPhase2Async(factory);
 
         var userId = Guid.CreateVersion7();
         var unitId = Guid.CreateVersion7();
@@ -208,6 +188,108 @@ public class MigrationTests(PostgresFixture postgres)
         (await ScalarAsync(check, $"select count(*) from core.employee_assignment where employee_id = '{employeeId}'")).ShouldBe(1);
         (await ScalarAsync(check, "select count(*) from information_schema.tables where table_name in ('employee_photo', 'branding_asset', 'auth_event')")).ShouldBe(0);
         (await ScalarAsync(check, $"select count(*) from audit.entry where action = 'auth.login' and record_id = '{userId}' and channel = 'import'")).ShouldBe(1);
+    }
+
+    /// <summary>Brings every Phase 1–2 schema to its last Phase 2 migration; the Phase 3 schemas do not exist yet.</summary>
+    private static async Task MigrateToPhase2Async(ApiFactory factory)
+    {
+        var phase2 = new Dictionary<string, string>
+        {
+            ["identity"] = "DropSystemAdminFlag",
+            ["settings"] = "20261031130718_InitialCreate",
+            ["access"] = "20261031130714_InitialCreate",
+            ["core"] = "20261022170513_InitialCreate",
+            ["sample"] = "NumberOwnerAndUnit",
+        };
+        await using var scope = factory.Services.CreateAsyncScope();
+        foreach (var database in scope.ServiceProvider.GetServices<ModuleDatabase>())
+        {
+            var context = (DbContext)scope.ServiceProvider.GetRequiredService(database.ContextType);
+            if (context is Strategy.Platform.Persistence.DataProtectionKeysDbContext)
+            {
+                await context.Database.MigrateAsync();
+            }
+            else if (phase2.TryGetValue(database.Schema, out var target))
+            {
+                await context.GetService<IMigrator>().MigrateAsync(target);
+            }
+        }
+    }
+
+    /// <summary>
+    /// ADR 0018 upgrade step on an installation that ran as the owner role: <c>--setup-db-roles</c> creates the runtime role, upgrades the
+    /// database and grants it; the application then runs as that role, keeps its data, and cannot alter the audit trail. A second run is
+    /// harmless (password updated, grants re-applied).
+    /// </summary>
+    [Fact]
+    public async Task Setup_db_roles_moves_a_phase_2_installation_to_a_runtime_role_that_cannot_alter_the_audit_trail()
+    {
+        var owner = await postgres.CreateDatabaseAsync();
+        await using (var phase2 = new ApiFactory(owner, settings: new Dictionary<string, string?> { ["Database:MigrateOnStartup"] = "false" }, backgroundServices: false))
+        {
+            await MigrateToPhase2Async(phase2);
+        }
+
+        var itemId = Guid.CreateVersion7();
+        await using (var connection = new NpgsqlConnection(owner))
+        {
+            await connection.OpenAsync();
+            await using var insert = new NpgsqlCommand(
+                $"insert into sample.sample_items (id, name_en, status, created_at, updated_at) values ('{itemId}', 'Phase 2 item', 'active', now(), now())",
+                connection);
+            await insert.ExecuteNonQueryAsync();
+        }
+
+        var role = "strategy_rt_" + Guid.CreateVersion7().ToString("N")[^8..];
+        var runtime = new NpgsqlConnectionStringBuilder(owner) { Username = role, Password = "First#Pass1" }.ConnectionString;
+        var setupSettings = new Dictionary<string, string?>
+        {
+            ["Database:MigrateOnStartup"] = "false",
+            ["Database:UseMigrationsConnection"] = "true", // what Program sets for --setup-db-roles
+            ["ConnectionStrings:StrategyMigrations"] = owner,
+        };
+        await using (var setup = new ApiFactory(runtime, settings: setupSettings, backgroundServices: false))
+        {
+            var output = new StringWriter();
+            (await Strategy.Host.Infrastructure.Bootstrap.SetupDatabaseRolesAsync(setup.Services, output)).ShouldBe(0, output.ToString());
+            output.ToString().ShouldContain("created");
+        }
+
+        // Run it again with a new password: the role is updated, not duplicated.
+        runtime = new NpgsqlConnectionStringBuilder(runtime) { Password = "Second#Pass2" }.ConnectionString;
+        await using (var again = new ApiFactory(runtime, settings: setupSettings, backgroundServices: false))
+        {
+            var output = new StringWriter();
+            (await Strategy.Host.Infrastructure.Bootstrap.SetupDatabaseRolesAsync(again.Services, output)).ShouldBe(0, output.ToString());
+            output.ToString().ShouldContain("updated");
+        }
+
+        await using var app = new ApiFactory(runtime, settings: new Dictionary<string, string?> { ["Database:MigrateOnStartup"] = "false" });
+        var editor = await app.CreateSignedInClientAsync(roles: TestIdentity.SampleEditor);
+        (await editor.PostAsJsonAsync("/api/v1/sample/items", new { nameEn = "Runtime role item" })).StatusCode.ShouldBe(HttpStatusCode.Created);
+
+        await using var asRuntime = new NpgsqlConnection(runtime);
+        await asRuntime.OpenAsync();
+        (await ScalarAsync(asRuntime, $"select count(*) from sample.sample_items where id = '{itemId}'")).ShouldBe(1); // Phase 2 data kept
+        (await ScalarAsync(asRuntime, "select count(*) from audit.entry")).ShouldBeGreaterThan(0);
+        await using (var who = new NpgsqlCommand("select current_user", asRuntime))
+        {
+            ((string)(await who.ExecuteScalarAsync())!).ShouldBe(role);
+        }
+
+        foreach (var sql in new[] { "update audit.entry set reason = 'x'", "delete from audit.entry", "truncate audit.entry",
+            "alter table audit.entry disable trigger entry_append_only" })
+        {
+            await using var command = new NpgsqlCommand(sql, asRuntime);
+            (await Should.ThrowAsync<PostgresException>(() => command.ExecuteNonQueryAsync())).SqlState.ShouldBe("42501", sql);
+        }
+
+        // Without a separate owner connection the command explains what is missing and changes nothing.
+        await using var unconfigured = new ApiFactory(owner, settings: new Dictionary<string, string?> { ["Database:MigrateOnStartup"] = "false" },
+            backgroundServices: false);
+        var message = new StringWriter();
+        (await Strategy.Host.Infrastructure.Bootstrap.SetupDatabaseRolesAsync(unconfigured.Services, message)).ShouldBe(2);
+        message.ToString().ShouldContain("ConnectionStrings__StrategyMigrations");
     }
 
     private static async Task<byte[]> ReadAllAsync(IFileService files, Guid fileId)

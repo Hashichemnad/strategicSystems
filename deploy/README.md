@@ -43,4 +43,36 @@ services:
 
 Keep a copy of that certificate with the backups: without it the key ring cannot be decrypted.
 
+## Database roles (ADR 0018)
+
+The application runs as a **runtime role** that may read and write the module schemas but can only **read and append** to the audit trail
+(`audit.entry`); migrations run as the **owner** role. New installs get this automatically: `postgres/init-roles.sh` creates the runtime role
+(`STRATEGY_APP_USER` / `STRATEGY_APP_PASSWORD` in `.env`) on the first start of an empty volume, `migrate` connects as the owner
+(`ConnectionStrings__StrategyMigrations`) and grants the runtime role after every upgrade, and `app` connects as the runtime role.
+
+### Upgrade step: installations created before Phase 3
+
+Older installations ran the application as the owner (`POSTGRES_USER`). Move them to the runtime role once, after taking a backup:
+
+```bash
+# 1. In deploy/.env choose the runtime role's name and a strong password (they must differ from POSTGRES_USER):
+#      STRATEGY_APP_USER=strategy_app
+#      STRATEGY_APP_PASSWORD=<a long random password>
+# 2. Pull / build the new version, then create the role, upgrade the database and grant the role (idempotent; run it again after a
+#    password change):
+docker compose -f deploy/docker-compose.yml --profile app build
+docker compose -f deploy/docker-compose.yml --profile app run --rm migrate --setup-db-roles
+# 3. Start the application; it now connects as the runtime role:
+docker compose -f deploy/docker-compose.yml --profile app up -d
+```
+
+`--setup-db-roles` connects as the owner (`ConnectionStrings__StrategyMigrations`, which needs the `CREATEROLE` privilege — the container's
+`POSTGRES_USER` has it), creates the role named in `ConnectionStrings__Strategy` or updates its password, applies pending migrations and
+grants: read / write on the module schemas, `SELECT, INSERT` only on `audit.entry`. It exits with code 2 and changes nothing when the two
+connection strings are missing or name the same role. Outside Docker, run `dotnet Strategy.Host.dll --setup-db-roles` with both connection
+strings set as environment variables.
+
+Until this step is done, the audit trail is still protected by its triggers (no UPDATE, DELETE or TRUNCATE for any role), but the
+application role, as owner, could switch them off.
+
 Install, backup and upgrade scripts arrive in Phase 18.

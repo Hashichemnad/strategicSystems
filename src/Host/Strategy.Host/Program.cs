@@ -9,7 +9,7 @@ if (args.Contains("--health-check", StringComparer.Ordinal))
 }
 
 var builder = WebApplication.CreateBuilder(args);
-if (args.Contains("--migrate", StringComparer.Ordinal))
+if (args.Contains("--migrate", StringComparer.Ordinal) || args.Contains("--setup-db-roles", StringComparer.Ordinal))
 {
     // Migrations run as the owner role when ConnectionStrings:StrategyMigrations is set (ADR 0018).
     builder.Configuration["Database:UseMigrationsConnection"] = "true";
@@ -26,6 +26,13 @@ if (args.Contains("--migrate", StringComparer.Ordinal))
 {
     await app.Services.GetRequiredService<ModuleMigrator>().MigrateAllAsync();
     return 0;
+}
+
+// `--setup-db-roles` (upgrade step, ADR 0018): creates / updates the runtime role of ConnectionStrings:Strategy as the owner of
+// ConnectionStrings:StrategyMigrations, then migrates and grants it read / write on module schemas and only SELECT + INSERT on audit.entry.
+if (args.Contains("--setup-db-roles", StringComparer.Ordinal))
+{
+    return await Bootstrap.SetupDatabaseRolesAsync(app.Services, Console.Out);
 }
 
 // `--create-admin --email <e> --password-file <f>` creates the first system administrator and exits (install step).

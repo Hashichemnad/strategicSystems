@@ -126,6 +126,7 @@ public sealed class Employee : AuditableEntity
 }
 
 /// <summary>Where an employee sat, under whom, with which title, on <c>[ValidFrom, ValidTo)</c>.</summary>
+[Strategy.Platform.Audit.AuditParent("org.employee", nameof(EmployeeId))]
 public sealed class EmployeeAssignment : AuditableEntity
 {
     private EmployeeAssignment()

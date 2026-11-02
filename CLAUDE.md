@@ -225,6 +225,7 @@ docker compose -f deploy/docker-compose.yml up -d postgres gotenberg mailpit
 dotnet tool restore
 dotnet run --project src/Host/Strategy.Host
 dotnet run --project src/Host/Strategy.Host -- --migrate                      # apply migrations and exit (as ConnectionStrings:StrategyMigrations when set, ADR 0018)
+dotnet run --project src/Host/Strategy.Host -- --setup-db-roles                # create / update the runtime role and its grants (upgrade step, deploy/README.md)
 dotnet run --project src/Host/Strategy.Host -- --create-admin --email <e> --password-file <f>   # first administrator
 # Development seed (empty DB): mariam@strategy.local (platform administrator roles, must use MFA) / ahmed@strategy.local (sample editor), password Strategy#Demo2026.
 # Seed__AdminTotpKey=<base32> gives the admin a known authenticator key (E2E uses JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP).

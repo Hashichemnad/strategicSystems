@@ -146,6 +146,7 @@ public sealed class OrgUnit : AuditableEntity
 }
 
 /// <summary>One effective-dated state of a unit: valid on <c>[ValidFrom, ValidTo)</c>; <c>ValidTo = null</c> is current.</summary>
+[Strategy.Platform.Audit.AuditParent("org.org_unit", nameof(UnitId))]
 public sealed class OrgUnitVersion : AuditableEntity
 {
     private OrgUnitVersion()
