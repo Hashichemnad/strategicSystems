@@ -25,6 +25,8 @@
     <Project Path="src/Platform/Strategy.Platform.Persistence/Strategy.Platform.Persistence.csproj" />
     <Project Path="src/Platform/Strategy.Platform.Scheduling/Strategy.Platform.Scheduling.csproj" />
     <Project Path="src/Platform/Strategy.Platform.Settings/Strategy.Platform.Settings.csproj" />
+    <Project Path="src/Platform/Strategy.Platform.Workflow.Contracts/Strategy.Platform.Workflow.Contracts.csproj" />
+    <Project Path="src/Platform/Strategy.Platform.Workflow/Strategy.Platform.Workflow.csproj" />
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Strategy.ArchitectureTests/Strategy.ArchitectureTests.csproj" />

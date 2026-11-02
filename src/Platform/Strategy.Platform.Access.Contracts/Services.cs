@@ -4,7 +4,28 @@ namespace Strategy.Platform.Access;
 public interface ISystemState
 {
     Task<bool> IsEnabledAsync(string systemCode, CancellationToken cancellationToken = default);
+
+    /// <summary>The system's owning unit (Settings → Systems), for "owning unit of this system" approvers (SPEC §0.2).</summary>
+    Task<Guid?> GetOwningUnitAsync(string systemCode, CancellationToken cancellationToken = default);
 }
+
+/// <summary>Who holds a role today (approver resolution). Reads the access tables of the current scope (and its open transaction).</summary>
+public interface IRoleHolderQuery
+{
+    /// <summary>Holders of <c>&lt;system&gt;.&lt;code&gt;</c>: users assigned directly, units assigned (their employees and those below hold it).</summary>
+    Task<RoleHolders> GetHoldersAsync(string roleKey, CancellationToken cancellationToken = default);
+
+    /// <summary>Every role with its AR / EN name (approval rule editors).</summary>
+    Task<IReadOnlyList<RoleOption>> ListRolesAsync(CancellationToken cancellationToken = default);
+}
+
+/// <param name="Exists">False when no active role has this key.</param>
+/// <param name="UserIds">Users assigned directly.</param>
+/// <param name="UnitIds">Units assigned (holders are the employees of the unit and every unit below).</param>
+/// <param name="Everyone">An "everyone" assignment exists (never used for approvals, ADR 0025).</param>
+public sealed record RoleHolders(bool Exists, IReadOnlyList<Guid> UserIds, IReadOnlyList<Guid> UnitIds, bool Everyone);
+
+public sealed record RoleOption(string Key, string SystemCode, string NameAr, string NameEn, bool Active);
 
 /// <summary>Who holds a record role: an employee (internal people, also before they have an account) or a user.</summary>
 public static class RecordPrincipalKinds
@@ -25,6 +46,19 @@ public interface IRecordRoleService
         string resourceType, Guid resourceId, string principalKind, Guid principalId, string roleCode, CancellationToken cancellationToken = default);
 
     Task<IReadOnlyList<RecordRoleHolder>> GetHoldersAsync(string resourceType, Guid resourceId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// <see cref="GrantAsync"/> inside the caller's open transaction (<paramref name="transactionContext"/> is its DbContext, ADR 0023): the
+    /// approval engine grants approver rights together with the task.
+    /// </summary>
+    Task GrantInTransactionAsync(
+        object transactionContext, string resourceType, Guid resourceId, string principalKind, Guid principalId, string roleCode,
+        CancellationToken cancellationToken = default);
+
+    /// <summary><see cref="RevokeAsync"/> inside the caller's open transaction.</summary>
+    Task RevokeInTransactionAsync(
+        object transactionContext, string resourceType, Guid resourceId, string principalKind, Guid principalId, string roleCode,
+        CancellationToken cancellationToken = default);
 }
 
 public sealed record RecordRoleHolder(string RoleCode, string PrincipalKind, Guid PrincipalId, DateTimeOffset ValidFrom, DateTimeOffset? ValidTo);
@@ -66,13 +100,23 @@ public interface IUserRoleQuery
     Task<IReadOnlyList<Guid>> UsersWithPermissionAsync(string permission, CancellationToken cancellationToken = default);
 }
 
-/// <summary>Called during a bulk role transfer so pending approvals and open tasks move too (approval engine, Phase 4).</summary>
+/// <summary>
+/// Called during a bulk role transfer, before it commits, so pending approvals and open tasks move too (SPEC §0.2).
+/// The transaction context is the transfer's DbContext: join its transaction so both commit together (ADR 0023).
+/// </summary>
 public interface IRoleTransferHook
 {
-    Task OnRoleTransferredAsync(RoleTransfer transfer, CancellationToken cancellationToken);
+    Task OnRoleTransferredAsync(RoleTransfer transfer, object? transactionContext, CancellationToken cancellationToken);
 }
 
-public sealed record RoleTransfer(Guid TransferId, IReadOnlyList<string> RoleKeys, IReadOnlyList<Guid> FromUserIds, IReadOnlyList<Guid> ToUserIds);
+public sealed record RoleTransfer(
+    Guid TransferId,
+    IReadOnlyList<string> RoleKeys,
+    IReadOnlyList<Guid> FromUserIds,
+    IReadOnlyList<Guid> ToUserIds,
+    Guid? FromUnitId = null,
+    Guid? ToUnitId = null,
+    string? Reason = null);
 
 /// <summary>
 /// Raised by platform services whose data feeds access decisions (organisation structure, employee placement, manager), so

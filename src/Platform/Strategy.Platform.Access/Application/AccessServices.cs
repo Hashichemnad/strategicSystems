@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Strategy.Platform.Access.Domain;
 using Strategy.Platform.Access.Infrastructure;
 using Strategy.Platform.Kernel.Time;
+using Strategy.Platform.Persistence;
 
 namespace Strategy.Platform.Access.Application;
 
@@ -12,6 +13,53 @@ internal sealed class SystemState(AccessModelCache models) : ISystemState
         var model = await models.GetAsync(cancellationToken).ConfigureAwait(false);
         return model.Systems.TryGetValue(systemCode, out var system) && system.Enabled;
     }
+
+    public async Task<Guid?> GetOwningUnitAsync(string systemCode, CancellationToken cancellationToken = default)
+    {
+        var model = await models.GetAsync(cancellationToken).ConfigureAwait(false);
+        return model.Systems.TryGetValue(systemCode, out var system) ? system.OwningUnitId : null;
+    }
+}
+
+/// <summary>
+/// Role holders read straight from the tables (not the cached model) on the scope's <see cref="AccessDbContext"/>, so a bulk transfer's
+/// uncommitted assignments are visible to the approval engine re-routing in the same transaction (ADR 0023).
+/// </summary>
+internal sealed class RoleHolderQuery(AccessDbContext db, IClock clock) : IRoleHolderQuery
+{
+    public async Task<RoleHolders> GetHoldersAsync(string roleKey, CancellationToken cancellationToken = default)
+    {
+        var dot = roleKey.IndexOf('.', StringComparison.Ordinal);
+        if (dot <= 0)
+        {
+            return new RoleHolders(false, [], [], false);
+        }
+
+        var system = roleKey[..dot];
+        var code = roleKey[(dot + 1)..];
+        var role = await db.Roles.AsNoTracking().FirstOrDefaultAsync(r => r.SystemCode == system && r.Code == code && r.Active, cancellationToken)
+            .ConfigureAwait(false);
+        if (role is null)
+        {
+            return new RoleHolders(false, [], [], false);
+        }
+
+        var today = clock.Today;
+        var assignments = await db.Assignments.AsNoTracking()
+            .Where(a => a.RoleId == role.Id && a.ValidFrom <= today && (a.ValidTo == null || a.ValidTo >= today))
+            .Select(a => new { a.PrincipalKind, a.PrincipalId })
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
+        return new RoleHolders(
+            true,
+            assignments.Where(a => a.PrincipalKind == PrincipalKinds.User).Select(a => a.PrincipalId!.Value).Distinct().ToList(),
+            assignments.Where(a => a.PrincipalKind == PrincipalKinds.Unit).Select(a => a.PrincipalId!.Value).Distinct().ToList(),
+            assignments.Any(a => a.PrincipalKind == PrincipalKinds.Everyone));
+    }
+
+    public async Task<IReadOnlyList<RoleOption>> ListRolesAsync(CancellationToken cancellationToken = default) =>
+        await db.Roles.AsNoTracking().OrderBy(r => r.SystemCode).ThenBy(r => r.Code)
+            .Select(r => new RoleOption(r.SystemCode + "." + r.Code, r.SystemCode, r.NameAr ?? r.NameEn ?? r.Code, r.NameEn ?? r.NameAr ?? r.Code, r.Active))
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
 }
 
 internal sealed class RecordRoleService(AccessDbContext db, AccessModelCache models, IClock clock) : IRecordRoleService
@@ -57,6 +105,22 @@ internal sealed class RecordRoleService(AccessDbContext db, AccessModelCache mod
 
         await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         models.Invalidate();
+    }
+
+    public async Task GrantInTransactionAsync(
+        object transactionContext, string resourceType, Guid resourceId, string principalKind, Guid principalId, string roleCode,
+        CancellationToken cancellationToken = default)
+    {
+        await db.JoinTransactionAsync(transactionContext, cancellationToken).ConfigureAwait(false);
+        await GrantAsync(resourceType, resourceId, principalKind, principalId, roleCode, cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
+
+    public async Task RevokeInTransactionAsync(
+        object transactionContext, string resourceType, Guid resourceId, string principalKind, Guid principalId, string roleCode,
+        CancellationToken cancellationToken = default)
+    {
+        await db.JoinTransactionAsync(transactionContext, cancellationToken).ConfigureAwait(false);
+        await RevokeAsync(resourceType, resourceId, principalKind, principalId, roleCode, cancellationToken).ConfigureAwait(false);
     }
 
     public async Task<IReadOnlyList<RecordRoleHolder>> GetHoldersAsync(string resourceType, Guid resourceId, CancellationToken cancellationToken = default)

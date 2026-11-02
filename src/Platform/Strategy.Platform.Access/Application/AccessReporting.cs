@@ -107,10 +107,11 @@ internal sealed partial class AccessReporting(
         db.Transfers.Add(RoleTransferLog.Create(transferId, string.Join(",", roleKeys), from, to, moving.Count, input.Reason!.Trim()));
         await db.SaveChangesAsync(ct).ConfigureAwait(false);
 
-        var transfer = new RoleTransfer(transferId, roleKeys, fromUsers, input.ToUserId is { } toUser ? [toUser] : []);
+        var transfer = new RoleTransfer(
+            transferId, roleKeys, fromUsers, input.ToUserId is { } toUser ? [toUser] : [], input.FromUnitId, input.ToUnitId, input.Reason.Trim());
         foreach (var hook in hooks)
         {
-            await hook.OnRoleTransferredAsync(transfer, ct).ConfigureAwait(false);
+            await hook.OnRoleTransferredAsync(transfer, db, ct).ConfigureAwait(false);
         }
 
         await transaction.CommitAsync(ct).ConfigureAwait(false);

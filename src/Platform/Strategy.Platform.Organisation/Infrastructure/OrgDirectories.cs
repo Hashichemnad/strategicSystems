@@ -98,6 +98,12 @@ internal sealed class EmployeeDirectory(OrgDbContext db, IClock clock) : IEmploy
             .FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
     }
 
+    public async Task<IReadOnlyList<Guid>> GetEmployeeIdsInUnitsAsync(IReadOnlyCollection<Guid> unitIds, CancellationToken cancellationToken = default) =>
+        unitIds.Count == 0
+            ? []
+            : await db.Employees.AsNoTracking().Where(e => unitIds.Contains(e.UnitId) && e.Status != EmployeeStatus.Left).Select(e => e.Id)
+                .ToListAsync(cancellationToken).ConfigureAwait(false);
+
     private static async Task<EmployeeReference?> FirstAsync(IQueryable<Employee> query, CancellationToken cancellationToken) =>
         await query.AsNoTracking()
             .Select(e => new EmployeeReference(e.Id, e.EmployeeNo, e.NameAr, e.NameEn, e.Email, e.UnitId, e.ManagerEmployeeId, e.Status))
@@ -113,6 +119,14 @@ internal sealed class DelegationQuery(OrgDbContext db) : IDelegationQuery
             .Where(d => d.DelegatorEmployeeId == employeeId && d.Status == DelegationStatus.Active && d.FromDate <= date && d.ToDate >= date)
             .ToListAsync(cancellationToken).ConfigureAwait(false);
         return candidates.Where(d => d.Covers(date, scopeKey)).Select(d => d.DelegateEmployeeId).Distinct().ToList();
+    }
+
+    public async Task<IReadOnlyList<ActiveDelegation>> GetDelegationsToAsync(Guid delegateEmployeeId, DateOnly date, CancellationToken cancellationToken = default)
+    {
+        var rows = await db.Delegations.AsNoTracking()
+            .Where(d => d.DelegateEmployeeId == delegateEmployeeId && d.Status == DelegationStatus.Active && d.FromDate <= date && d.ToDate >= date)
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
+        return rows.Select(d => new ActiveDelegation(d.Id, d.DelegatorEmployeeId, d.DelegateEmployeeId, d.Scope)).ToList();
     }
 }
 
