@@ -35,7 +35,23 @@
     "system": "النظام",
     "onBehalfOf": "نيابةً عن {{name}}",
     "reason": "السبب: {{reason}}",
-    "changedTo": "تغيّر إلى"
+    "changedTo": "تغيّر إلى",
+    "changeLog": "سجل التغييرات",
+    "role": "الدور",
+    "roleFields": {
+      "NameAr": "الاسم (عربي)",
+      "NameEn": "الاسم (إنجليزي)",
+      "DescriptionAr": "الوصف (عربي)",
+      "DescriptionEn": "الوصف (إنجليزي)",
+      "RequiresMfa": "يتطلب التحقق المتعدد",
+      "Active": "نشط",
+      "PermissionCode": "الصلاحية",
+      "Scope": "نطاق البيانات",
+      "PrincipalKind": "مسند إلى",
+      "PrincipalId": "حامل الدور",
+      "ValidFrom": "من",
+      "ValidTo": "إلى"
+    }
   },
   "actions": {
     "create": "إنشاء",

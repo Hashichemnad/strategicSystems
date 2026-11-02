@@ -8,6 +8,7 @@ import {
   seed,
   test,
   tr,
+  unitIdByCode,
   useMailpit,
 } from './fixtures';
 
@@ -147,6 +148,30 @@ test.describe('as an administrator', () => {
     await expect(page.getByText(tr(language, 'audit:verification.intact'), { exact: true })).toBeVisible();
     await expect(page.getByText(tr(language, 'audit:verification.ok')).first()).toBeVisible();
     await shot('audit-verification');
+  });
+
+  test('units and roles show their change log through the shared History component', async ({
+    page,
+    language,
+    shot,
+    adminApi,
+  }) => {
+    const unitId = await unitIdByCode(adminApi, 'DEP-STR');
+    await page.goto(`/org/units?unit=${unitId}`);
+    await page.getByRole('tab', { name: tr(language, 'audit:history.changeLog') }).click();
+    const unitTimeline = page.getByRole('list', { name: tr(language, 'audit:history.timeline') });
+    await expect(unitTimeline.getByText(tr(language, 'audit:actions.create')).first()).toBeVisible();
+    await expect(unitTimeline.getByText('DEP-STR').first()).toBeVisible();
+    await shot('unit-change-log', { fullPage: true });
+
+    await page.goto('/settings/access/roles?system=sample');
+    await page.getByRole('tab', { name: tr(language, 'audit:history.tab') }).click();
+    const roleTimeline = page.getByRole('list', { name: tr(language, 'audit:history.timeline') });
+    await expect(
+      roleTimeline.getByText(tr(language, 'audit:history.roleFields.PermissionCode')).first(),
+    ).toBeVisible();
+    await expect(roleTimeline.getByText('sample.item.read').first()).toBeVisible();
+    await shot('role-history', { fullPage: true });
   });
 
   test('notification templates, file settings and the job dashboard', async ({ page, language, shot }) => {

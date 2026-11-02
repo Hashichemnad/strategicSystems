@@ -145,7 +145,7 @@ export function EmployeePage() {
         <TabsList>
           <TabsTrigger value="details">{t('employees.tabs.details')}</TabsTrigger>
           <TabsTrigger value="history">{t('employees.tabs.history')}</TabsTrigger>
-          <TabsTrigger value="audit">{ta('history.tab')}</TabsTrigger>
+          <TabsTrigger value="audit">{ta('history.changeLog')}</TabsTrigger>
         </TabsList>
         <TabsContent value="details" className="grid gap-6 pt-4 lg:grid-cols-[2fr_1fr]">
           <dl className="grid gap-x-6 gap-y-3 rounded-lg border bg-card p-5 text-sm sm:grid-cols-2">

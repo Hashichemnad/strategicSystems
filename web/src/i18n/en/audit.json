@@ -35,7 +35,23 @@
     "system": "System",
     "onBehalfOf": "on behalf of {{name}}",
     "reason": "Reason: {{reason}}",
-    "changedTo": "changed to"
+    "changedTo": "changed to",
+    "changeLog": "Change log",
+    "role": "Role",
+    "roleFields": {
+      "NameAr": "Name (Arabic)",
+      "NameEn": "Name (English)",
+      "DescriptionAr": "Description (Arabic)",
+      "DescriptionEn": "Description (English)",
+      "RequiresMfa": "Requires MFA",
+      "Active": "Active",
+      "PermissionCode": "Permission",
+      "Scope": "Data scope",
+      "PrincipalKind": "Assigned to",
+      "PrincipalId": "Holder",
+      "ValidFrom": "From",
+      "ValidTo": "To"
+    }
   },
   "actions": {
     "create": "Created",
