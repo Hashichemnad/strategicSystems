@@ -1,6 +1,6 @@
 # Phase 3 — Audit trail, Files, Notifications, Jobs: summary
 
-**Status:** built and verified in the build session · awaiting owner acceptance
+**Status:** built and verified · the owner accepted the five decisions (two database roles, SMTP settings in `identity`, outbox worker, Quartz 3.22, sample share notification) and asked for two additions, done in the follow-up below
 **Branch:** `claude/dreamy-allen-e6e1jg`
 **Planning:** the plan is the design note [`docs/design/audit-files-notifications-jobs.md`](../design/audit-files-notifications-jobs.md),
 written before the code. This session ran without an interactive approval step, so the plan was written first and then implemented as it
@@ -16,7 +16,7 @@ stands; its open choices are recorded as ADRs 0018–0021.
 | Outbox and jobs (`Strategy.Platform.Scheduling`, schema `scheduling`) | Transactional outbox (`FOR UPDATE SKIP LOCKED`, safe with several instances); **Quartz.NET** clustered PostgreSQL store; run log; **job dashboard** (Settings → Jobs: schedule, next / last run, recent runs, run now, pause / resume, queue status, re-queue). Jobs: audit chain verification, digest, file re-scan, directory comparison, clean-up. |
 | PDF and Excel (`Strategy.Platform.Reporting`) | `IPdfRenderer` through **Gotenberg** with embedded IBM Plex Sans Arabic (OFL); bilingual `ReportDocument`; `ExcelExport` (right-to-left sheet for Arabic). |
 | Interim placements closed (ADR 0014, 0017) | **Employee photos** and **branding logos** → Files (endpoints unchanged, bytes carried over by migration + seeder). **`identity.auth_event`** → audit trail (rows carried into the chain with their time, user and IP; `/identity/admin/auth-events` reads the trail). **Access / role / permission / settings changes** now show old → new (role permission rows appear in the role's history). **Identity e-mails** (invitation, reset, e-mail code, test) → editable templates + outbox with retry. **Directory sync** → nightly comparison job. |
-| Web | Shared **History tab** (timeline grouped per save, field / user filters, "view as of date") on the sample item and employee pages; **Audit Log** (`/audit`: search, system, object, action, channel, dates, Excel / PDF export); **Audit verification** (`/audit/verification`); **Documents tab** (upload with comment, versions, pdf.js / image preview, download, delete with reason, the server's refusal reason shown in the dialog); sample **record page**; **notification bell** (live) and centre; profile **notification preferences**; Settings → **Notifications**, **Files**, **Jobs**. AR + EN, RTL / LTR throughout. |
+| Web | Shared **History tab** (timeline grouped per save, field / user filters, "view as of date") on the sample item, employee and **unit** pages ("Change log", next to the effective-dated history) and on the **roles** screen (History tab with a role selector: names, switches, permissions with old → new scope, assignments); **Audit Log** (`/audit`: search, system, object, action, channel, dates, Excel / PDF export); **Audit verification** (`/audit/verification`); **Documents tab** (upload with comment, versions, pdf.js / image preview, download, delete with reason, the server's refusal reason shown in the dialog); sample **record page**; **notification bell** (live) and centre; profile **notification preferences**; Settings → **Notifications**, **Files**, **Jobs**. AR + EN, RTL / LTR throughout. |
 
 ## Acceptance checks (BUILD_PLAN Phase 3)
 
@@ -43,12 +43,12 @@ stands; its open choices are recorded as ADRs 0018–0021.
 |---|---|
 | `dotnet build Strategy.slnx -c Release` | 0 warnings, 0 errors |
 | `dotnet format --verify-no-changes` | clean |
-| `dotnet test --solution Strategy.slnx` | **832 / 832** passed: unit 281 · architecture 30 · integration 521 on real PostgreSQL, plus Mailpit and Gotenberg containers, and the Phase 1 Keycloak / OpenLDAP tests. The generated authorization matrix covers every new endpoint |
+| `dotnet test --solution Strategy.slnx` | **833 / 833** passed: unit 281 · architecture 30 · integration 522 on real PostgreSQL, plus Mailpit and Gotenberg containers, and the Phase 1 Keycloak / OpenLDAP tests. The generated authorization matrix covers every new endpoint |
 | `tools/check-vulnerable.sh` · `tools/check-api-client.sh` | no High / Critical · OpenAPI document and TS client up to date |
 | `npm run lint` · `format:check` · `typecheck` | clean |
 | `npm test` (Vitest) | **72 / 72** (new: History tab in both languages; every server message key has AR + EN text) |
 | `npm run build` · `npm audit --audit-level=high` · `npm run lint:licenses` | OK · no High / Critical (the same 14 moderate dev-tool advisories as Phase 2) · 610 packages allowed |
-| `npx playwright test` | **48 / 48** (24 scenarios × ar + en; 4 new Phase 3 scenarios) |
+| `npx playwright test` | **50 / 50** (25 scenarios × ar + en; 5 new Phase 3 scenarios) |
 | `--migrate` on an empty database and on a Phase 2 database | all schemas applied (`audit`, `scheduling`, `files`, `settings`, `notify`, `access`, `core`, `identity`, `sample`), then the seeders |
 
 **New dependencies** (all in `THIRD_PARTY_LICENSES.md`): Quartz.Extensions.Hosting + Quartz.Serialization.SystemTextJson (Apache-2.0),
@@ -70,7 +70,6 @@ WOFF2 files (OFL) are embedded for PDFs.
 - **From the plan:**
   - the outbox dispatcher is a hosted worker (signalled, 5 s poll), not a Quartz job (sub-second delivery; the dashboard shows the queue);
   - the SMTP connection settings stay in `identity.smtp_settings` (screen unchanged) and Notifications read them through a contract;
-  - History UI is on the sample item and employee pages; units and roles have the audit endpoints, their UI comes with later screens.
 - **CLAUDE.md:** the platform schema list now includes `scheduling`; the commands section mentions the migrations connection and the
   sidecar containers of the integration tests.
 
@@ -86,6 +85,12 @@ WOFF2 files (OFL) are embedded for PDFs.
 - **OpenAPI schema name clash** (`PreferencesInput` in Identity and Notifications) silently replaced the identity type in the TS client;
   the notification types are now `NotificationPreferences*`.
 
+## Follow-up after the owner's review
+| Request | Result |
+|---|---|
+| A host command that sets up the separate runtime database role on an existing installation, documented as an upgrade step | **`--setup-db-roles`** (`RuntimeRoleSetup` + `Bootstrap.SetupDatabaseRolesAsync`): connects as the owner (`ConnectionStrings:StrategyMigrations`), creates the role named in `ConnectionStrings:Strategy` or updates its password (name and password quoted by PostgreSQL's `format(%I, %L)`), grants `CONNECT, TEMPORARY`, applies pending migrations and the grants (module schemas read / write, `audit.entry` `SELECT, INSERT` only). Exit code 2 and no change when the connection strings are missing or name the same role. Upgrade step in [`deploy/README.md`](../../deploy/README.md#upgrade-step-installations-created-before-phase-3) (`docker compose … run --rm migrate --setup-db-roles`). **Test** `MigrationTests.Setup_db_roles_moves_a_phase_2_installation_to_a_runtime_role_that_cannot_alter_the_audit_trail`: a Phase 2 database run by the owner, with data → the command creates the role and upgrades; a second run with a new password updates it; the app then runs as that role (`current_user`), creates records, keeps the Phase 2 data, writes audit entries, and the role is refused (42501) UPDATE / DELETE / TRUNCATE on `audit.entry` and disabling its trigger; without the owner connection the command explains and exits 2 |
+| History tab on the unit and role screens with the shared component | Units: "Change log" tab (the existing "History" tab keeps the effective-dated versions); unit versions and employee placements now carry their parent (`[AuditParent]`), so renames and moves recorded from now on appear on the unit / employee. Roles: "History" tab beside the two matrices, with a role selector. Field names labelled in AR / EN. **E2E** (ar + en): `units and roles show their change log…` (`*-unit-change-log.png`, `*-role-history.png`). The employee page's tab is renamed "Change log" too, so it no longer shares the "History" label with the placement history |
+
 ## Known gaps (by design: later phases, or environment)
 - **Retention purge** of the audit trail is not offered (default "keep forever"; an owner-run archive procedure later). External anchoring
   of the chain head is a possible hardening step.
@@ -94,7 +99,6 @@ WOFF2 files (OFL) are embedded for PDFs.
 - **Approval / workflow notifications** and integration events arrive with the approval engine (Phase 4), using the same outbox.
 - **Directory sync** compares the configured source with the employees and reports; applying changes is the customer connector's job.
 - **On-behalf-of** is stored on every entry; it is filled once delegation is used by the approval engine (Phase 4).
-- History UI for units and roles (endpoints exist).
 
 ## How to demo
 ```bash
@@ -121,4 +125,4 @@ cd web && npm ci && npm run dev                       # http://localhost:5173 ; 
 - Screenshots (generated by the E2E suite) are in [`docs/screenshots/phase-3/`](../screenshots/phase-3/), as `ar-*` and `en-*` pairs.
   **New in Phase 3:** `record-history`, `audit-log`, `audit-verification`, `record-documents`, `document-preview`, `notification-bell`,
   `notification-centre`, `notification-preferences`, `notification-templates`, `notification-template-editor`, `files-settings`,
-  `job-dashboard`. **Earlier phases, retaken** with the new top bar and sidebar.
+  `job-dashboard`, `unit-change-log`, `role-history`. **Earlier phases, retaken** with the new top bar and sidebar.

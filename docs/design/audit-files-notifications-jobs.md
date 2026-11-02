@@ -81,7 +81,7 @@ re-serialised from the parsed JSON with sorted keys so PostgreSQL's `jsonb` norm
 - Quartz job `audit.verify-chain` (daily 02:10, incremental) + "Verify now" (full) on the verification screen. A failure notifies the holders of `audit.chain.verify` (in-app + email, template `audit.chainBroken`).
 
 ### 2.5 Read side
-- `IAuditQuery.HistoryAsync(entityType, recordId)` — the record and its child rows. Modules expose `GET …/{id}/history` **after their own record check** (404 outside scope). Done for sample items, employees, units, roles.
+- `IAuditQuery.HistoryAsync(entityType, recordId)` — the record and its child rows. Modules expose `GET …/{id}/audit` (and `…/audit/as-of`) **after their own record check** (404 outside scope). Done for sample items, employees, units, roles.
 - `IAuditQuery.AsOfAsync(entityType, recordId, at)` — rebuilds the field values at a date from the create snapshot plus later field updates. `GET …/{id}/history/as-of?at=`.
 - Global Audit Log: `GET /api/v1/audit/entries` (filters: text, user, system, entity type, record id, action, channel, kind, date range; paged), `GET /api/v1/audit/entries/export?format=xlsx|pdf` (bilingual; logged as an `export` event).
 - Retention: setting `audit.retentionDays` (default **0 = keep forever**, SPEC). Purge is not offered in the UI (an append-only table cannot be pruned by the application role); recorded as a known gap.
@@ -151,7 +151,7 @@ re-serialised from the parsed JSON with sorted keys so PostgreSQL's `jsonb` norm
 
 The sample module gets a **record page** (`/sample/items/{id}`) with Overview, Documents and History tabs, as the worked example for modules,
 and a notification (`sample.editorAdded`: "you can now edit this item") when an item is shared. The employee page has a History tab; units and
-roles expose the audit endpoints (UI in later phases).
+roles have a History tab too (units: "Change log"; roles: tab with a role selector).
 
 ## 8. Events in / out
 - Out: e-mail and in-app messages (outbox). Integration events use the same outbox from Phase 4.

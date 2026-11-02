@@ -27,7 +27,7 @@
   - **two roles** for installs: migrations run as the owner (`ConnectionStrings:StrategyMigrations`, used by `--migrate`), the app as a runtime
     role (`ConnectionStrings:Strategy`); after every migration the `RuntimeRoleGrants` seeder gives the runtime role read / write on the
     module schemas and only `SELECT, INSERT` on append-only tables. `deploy/postgres/init-roles.sh` creates the runtime role on a new volume.
-    The runtime role cannot disable the trigger (not the owner) nor change rows (no privilege) — tested. Single-role installs (development,
+    Existing installations move to the two roles with `--setup-db-roles` (deploy/README.md). The runtime role cannot disable the trigger (not the owner) nor change rows (no privilege) — tested. Single-role installs (development,
     older installs) are still protected by the trigger; only a superuser switching it off could change rows, and verification detects that.
 - **Older records carried over:** Phase 1 `identity.auth_event` rows are staged by the identity migration in `audit.legacy_import` (the
   audit schema migrates first) and chained by the audit seeder, oldest first, with channel `import` and their original time, user and IP.
