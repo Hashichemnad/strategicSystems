@@ -1,6 +1,7 @@
 import {
   Bell,
   Building,
+  ClipboardCheck,
   FileSpreadsheet,
   Flag,
   Hash,
@@ -33,6 +34,7 @@ export type SettingsPageKey =
   | 'notifications'
   | 'files'
   | 'jobs'
+  | 'approvals'
   | 'roles'
   | 'assignments'
   | 'systemAccess'
@@ -56,6 +58,7 @@ export type SettingsPath =
   | '/settings/notifications'
   | '/settings/files'
   | '/settings/jobs'
+  | '/settings/approvals'
   | '/settings/access/roles'
   | '/settings/access/assignments'
   | '/settings/access/system-access'
@@ -121,6 +124,12 @@ export const settingsGroups: readonly SettingsGroup[] = [
       },
       { key: 'files', to: '/settings/files', icon: Paperclip, permissions: ['settings.file.manage'] },
       { key: 'jobs', to: '/settings/jobs', icon: Timer, permissions: ['settings.job.view'] },
+      {
+        key: 'approvals',
+        to: '/settings/approvals',
+        icon: ClipboardCheck,
+        permissions: ['workflow.process.read'],
+      },
     ],
   },
   {

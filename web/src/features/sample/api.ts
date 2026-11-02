@@ -73,3 +73,32 @@ export function useChangeSampleItemStatus() {
     onSuccess,
   });
 }
+
+/** Submit (or resubmit) for approval, with an idempotency key per dialog opening (CLAUDE.md §11). */
+export function useSubmitSampleItem() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      item,
+      comment,
+      idempotencyKey,
+    }: {
+      item: SampleItem;
+      comment: string | null;
+      idempotencyKey: string;
+    }) =>
+      unwrap(
+        await api.POST('/api/v1/sample/items/{id}/submit', {
+          params: { path: { id: item.id } },
+          headers: { 'Idempotency-Key': idempotencyKey },
+          body: { version: item.version, comment },
+        }),
+      ),
+    onSuccess: () =>
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: sampleKeys.all }),
+        queryClient.invalidateQueries({ queryKey: ['workflow'] }),
+        queryClient.invalidateQueries({ queryKey: ['audit'] }),
+      ]),
+  });
+}

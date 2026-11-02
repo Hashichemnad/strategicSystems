@@ -83,6 +83,10 @@
     "jobs": {
       "title": "Scheduled jobs",
       "description": "Background jobs, their runs and the message queue."
+    },
+    "approvals": {
+      "title": "Approvals",
+      "description": "Approval chains of every system: steps, approvers, conditions, deadlines."
     }
   },
   "title": "Settings",

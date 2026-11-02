@@ -15,6 +15,12 @@ const schema = z
     nameEn: z.string().trim().max(200, maxLength(200)),
     descriptionAr: z.string().trim().max(2000, maxLength(2000)),
     descriptionEn: z.string().trim().max(2000, maxLength(2000)),
+    amount: z
+      .string()
+      .trim()
+      .refine((value) => value === '' || (/^\d{1,16}(\.\d{1,2})?$/u.test(value) && Number(value) >= 0), {
+        message: 'validation.precisionScale',
+      }),
   })
   .refine((value) => value.nameAr !== '' || value.nameEn !== '', {
     path: ['nameAr'],
@@ -22,7 +28,7 @@ const schema = z
   });
 
 type FormValues = z.infer<typeof schema>;
-const fields = ['nameAr', 'nameEn', 'descriptionAr', 'descriptionEn'] as const;
+const fields = ['nameAr', 'nameEn', 'descriptionAr', 'descriptionEn', 'amount'] as const;
 
 interface SampleItemDialogProps {
   open: boolean;
@@ -45,16 +51,21 @@ export function SampleItemDialog({ open, onOpenChange, item }: SampleItemDialogP
       nameEn: item?.nameEn ?? '',
       descriptionAr: item?.descriptionAr ?? '',
       descriptionEn: item?.descriptionEn ?? '',
+      amount: item?.amount === null || item?.amount === undefined ? '' : String(item.amount),
     },
   });
   const { errors } = form.formState;
   const error = (name: (typeof fields)[number]) => translateFieldMessage(tc, errors[name]?.message);
 
   const submit = form.handleSubmit(async (values) => {
-    const body = Object.fromEntries(
-      Object.entries(values).map(([key, value]) => [key, value === '' ? null : value]),
-    ) as {
-      [K in keyof FormValues]: string | null;
+    const { amount, ...text } = values;
+    const body = {
+      ...(Object.fromEntries(
+        Object.entries(text).map(([key, value]) => [key, value === '' ? null : value]),
+      ) as {
+        [K in Exclude<keyof FormValues, 'amount'>]: string | null;
+      }),
+      amount: amount === '' ? null : Number(amount),
     };
     try {
       if (item) {
@@ -105,6 +116,9 @@ export function SampleItemDialog({ open, onOpenChange, item }: SampleItemDialogP
           </FormField>
           <FormField label={t('fields.descriptionEn')} error={error('descriptionEn')}>
             <Textarea dir="ltr" lang="en" {...form.register('descriptionEn')} />
+          </FormField>
+          <FormField label={t('fields.amount')} error={error('amount')}>
+            <Input dir="ltr" inputMode="decimal" autoComplete="off" {...form.register('amount')} />
           </FormField>
         </form>
       </DialogContent>
