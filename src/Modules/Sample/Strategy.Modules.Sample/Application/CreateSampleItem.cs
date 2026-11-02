@@ -11,7 +11,7 @@ using Strategy.Platform.Settings;
 
 namespace Strategy.Modules.Sample.Application;
 
-public sealed record CreateSampleItem(string? NameAr, string? NameEn, string? DescriptionAr, string? DescriptionEn)
+public sealed record CreateSampleItem(string? NameAr, string? NameEn, string? DescriptionAr, string? DescriptionEn, decimal? Amount = null)
     : ICommand<SampleItemDto>, ISampleItemText;
 
 public sealed class CreateSampleItemValidator : AbstractValidator<CreateSampleItem>
@@ -36,7 +36,7 @@ internal sealed class CreateSampleItemHandler(
         await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
         var number = await numbering.NextAsync(db, SamplePermissions.NumberingFormat, new NumberingContext(clock.Today), cancellationToken)
             .ConfigureAwait(false);
-        var item = SampleItem.Create(command.NameAr, command.NameEn, command.DescriptionAr, command.DescriptionEn, number, owner?.Id, owner?.UnitId);
+        var item = SampleItem.Create(command.NameAr, command.NameEn, command.DescriptionAr, command.DescriptionEn, number, owner?.Id, owner?.UnitId, command.Amount);
         db.Items.Add(item);
         await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);

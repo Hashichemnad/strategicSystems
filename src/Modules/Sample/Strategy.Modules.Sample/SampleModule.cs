@@ -12,6 +12,7 @@ using Strategy.Platform.Kernel;
 using Strategy.Platform.Notifications;
 using Strategy.Platform.Persistence;
 using Strategy.Platform.Settings;
+using Strategy.Platform.Workflow;
 
 namespace Strategy.Modules.Sample;
 
@@ -30,6 +31,10 @@ public sealed class SampleModule : IModule
         services.AddFilePurpose(SampleAttachments.Purpose);
         services.AddFileOwnerAccess<SampleAttachments>();
         services.AddNotificationTemplate(SampleNotifications.EditorAdded);
+        services.AddApprovalProcess(SampleApprovalProcess.Definition);
+        services.AddApprovalHook<SampleApprovalHook>();
+        services.AddCurrentStatusProvider<SampleCurrentStatus>();
+        services.AddMyWorkSource<SampleMyWork>();
     }
 
     public void MapEndpoints(IEndpointRouteBuilder endpoints) => SampleEndpoints.Map(endpoints.MapModuleGroup(this));

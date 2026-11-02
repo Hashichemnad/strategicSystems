@@ -12,6 +12,8 @@ public sealed record SampleItemDto(
     string Status,
     Guid? OwnerEmployeeId,
     Guid? UnitId,
+    decimal? Amount,
+    string ApprovalStatus,
     DateTimeOffset CreatedAt,
     DateTimeOffset UpdatedAt,
     uint Version)
@@ -26,6 +28,8 @@ public sealed record SampleItemDto(
         item.Status,
         item.OwnerEmployeeId,
         item.UnitId,
+        item.Amount,
+        item.ApprovalStatus,
         item.CreatedAt,
         item.UpdatedAt,
         item.Version);

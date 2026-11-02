@@ -13,6 +13,8 @@ public interface ISampleItemText
     string? DescriptionAr { get; }
 
     string? DescriptionEn { get; }
+
+    decimal? Amount { get; }
 }
 
 internal static class SampleItemTextRules
@@ -29,5 +31,6 @@ internal static class SampleItemTextRules
         validator.RuleFor(x => x.NameEn).MaximumLength(SampleItem.NameMaxLength);
         validator.RuleFor(x => x.DescriptionAr).MaximumLength(SampleItem.DescriptionMaxLength);
         validator.RuleFor(x => x.DescriptionEn).MaximumLength(SampleItem.DescriptionMaxLength);
+        validator.RuleFor(x => x.Amount).InclusiveBetween(0m, 9_999_999_999_999_999.99m).PrecisionScale(18, 2, true);
     }
 }

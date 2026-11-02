@@ -11,9 +11,13 @@ public static class SamplePermissions
     public const string Read = "sample.item.read";
     public const string Create = "sample.item.create";
     public const string Update = "sample.item.update";
+    public const string Submit = "sample.item.submit";
 
     /// <summary>Record role: may read and edit one item (granted by an editor of the item).</summary>
     public const string EditorRole = "editor";
+
+    /// <summary>Record role the approval engine grants to approvers while their task is open (read the item).</summary>
+    public const string ApproverRole = "approver";
 
     public const string NumberingFormat = "sample.item";
 }
@@ -35,18 +39,22 @@ internal sealed class SampleAccessCatalogue : IAccessCatalogueSource
         new(SamplePermissions.Read, "عرض البنود", "View items"),
         new(SamplePermissions.Create, "إنشاء البنود", "Create items", Scopable: false),
         new(SamplePermissions.Update, "تعديل البنود", "Edit items"),
+        new(SamplePermissions.Submit, "تقديم البنود للموافقة", "Submit items for approval"),
     ];
 
     public IEnumerable<RoleSeed> DefaultRoles =>
     [
         new("viewer", "مستعرض", "Viewer", [new(SamplePermissions.Read, DataScope.All)]),
         new("editor", "محرر", "Editor",
-            [new(SamplePermissions.Read, DataScope.All), new(SamplePermissions.Create), new(SamplePermissions.Update, DataScope.Own)]),
+            [new(SamplePermissions.Read, DataScope.All), new(SamplePermissions.Create), new(SamplePermissions.Update, DataScope.Own),
+                new(SamplePermissions.Submit, DataScope.Own)]),
+        new("approver", "معتمد البنود", "Item approver", [new(SamplePermissions.Read, DataScope.All)]),
     ];
 
     public IEnumerable<RecordRoleDefinition> RecordRoles =>
     [
         new(SamplePermissions.ResourceType, SamplePermissions.EditorRole, "محرر البند", "Item editor", [SamplePermissions.Read, SamplePermissions.Update]),
+        new(SamplePermissions.ResourceType, SamplePermissions.ApproverRole, "معتمد البند", "Item approver", [SamplePermissions.Read]),
     ];
 
     public static readonly NumberingDefinition Numbering = new(
