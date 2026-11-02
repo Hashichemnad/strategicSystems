@@ -86,13 +86,18 @@ internal sealed partial class ApprovalQueries(
             if (delegators.Count > 0)
             {
                 var candidates = await PendingTasksAsync(a => a.EmployeeId != null && delegators.Contains(a.EmployeeId.Value), ct).ConfigureAwait(false);
-                var instanceKeys = await db.Instances.AsNoTracking().Where(i => candidates.Select(c => c.InstanceId).Contains(i.Id))
-                    .ToDictionaryAsync(i => i.Id, i => i.ProcessKey, ct).ConfigureAwait(false);
+                var candidateInstances = await db.Instances.AsNoTracking().Where(i => candidates.Select(c => c.InstanceId).Contains(i.Id))
+                    .ToDictionaryAsync(i => i.Id, i => new { i.ProcessKey, i.SubmitterUserId }, ct).ConfigureAwait(false);
                 foreach (var task in candidates.Where(t => mine.All(m => m.Id != t.Id)))
                 {
-                    var key = instanceKeys.GetValueOrDefault(task.InstanceId);
+                    // Never the delegate's own request (no self-approval through a delegation).
+                    if (!candidateInstances.TryGetValue(task.InstanceId, out var facts) || facts.SubmitterUserId == userId)
+                    {
+                        continue;
+                    }
+
                     var forWhom = task.ActiveAssignees.FirstOrDefault(a => a.UserId != userId && a.EmployeeId is { } e
-                        && grants.Any(g => g.DelegatorEmployeeId == e && g.Covers(key)));
+                        && grants.Any(g => g.DelegatorEmployeeId == e && g.Covers(facts.ProcessKey)));
                     if (forWhom is not null)
                     {
                         delegated.Add((task, forWhom));

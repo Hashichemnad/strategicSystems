@@ -236,6 +236,25 @@ public sealed class ApprovalFlowTests(ApiFixture api) : IClassFixture<ApiFixture
     }
 
     [Fact]
+    public async Task A_submitter_cannot_approve_their_own_request_as_a_delegate()
+    {
+        var world = await ApprovalWorld.CreateAsync(api.Factory, withSection: false);
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        (await world.DirectorClient.PostAsJsonAsync("/api/v1/org/delegations",
+            new { delegateEmployeeId = world.Submitter.EmployeeId, fromDate = today, toDate = today.AddDays(2), reason = "leave" }))
+            .IsSuccessStatusCode.ShouldBeTrue();
+        var item = await world.CreateItemAsync();
+        await world.SubmitOkAsync(item);
+
+        var task = await ApprovalWorld.MyTaskAsync(world.DirectorClient, item.Id);
+        (await ApprovalWorld.PanelAsync(world.SubmitterClient, item.Id)).Instances[0].MyTask.ShouldBeNull();
+        await (await ApprovalWorld.ActAsync(world.SubmitterClient, task.TaskId, "approve", onBehalfOf: world.Director.Id))
+            .ShouldBeProblemAsync(HttpStatusCode.Forbidden, "workflow.notAnApprover");
+        var work = (await world.SubmitterClient.GetFromJsonAsync<MyWorkDto>("/api/v1/workflow/my-work"))!;
+        work.Approvals.ShouldNotContain(a => a.ResourceId == item.Id);
+    }
+
+    [Fact]
     public async Task Every_action_is_audited()
     {
         var world = await ApprovalWorld.CreateAsync(api.Factory, withSection: false);

@@ -118,6 +118,11 @@ internal static partial class Bootstrap
         var analyst = await Employee("E0002", "أحمد السويدي", "Ahmed Al Suwaidi", "ahmed@strategy.local", "محلل استراتيجي", "Strategy Analyst", strategy, director);
         await Employee("E0003", "فاطمة الكتبي", "Fatima Al Ketbi", "fatima@strategy.local", "محاسبة", "Accountant", finance, null);
 
+        // Mariam heads the Strategy & Performance Department: the department director of the sample approval chain (Phase 4).
+        var department = (await dispatcher.SendAsync(new GetUnit(strategy))).Value;
+        await dispatcher.SendAsync(new UpdateUnit(
+            strategy, department.Code, department.NameAr, department.NameEn, department.LevelCode, director, null, null, null, department.Version));
+
         var users = provider.GetRequiredService<StrategyUserManager>();
         var password = configuration["Seed:Password"] ?? "Strategy#Demo2026";
         var (admin, adminUser) = await CreateUserAsync(users, "mariam@strategy.local", password, director);

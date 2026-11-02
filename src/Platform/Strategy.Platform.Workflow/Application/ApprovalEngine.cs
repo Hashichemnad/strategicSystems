@@ -359,7 +359,8 @@ internal sealed class ApprovalEngine(
             return new ActingAs(self, false);
         }
 
-        if (user.EmployeeIdOf() is not { } employeeId)
+        // A delegation never lets the submitter decide on their own request (ADR 0025, self-approval).
+        if (user.EmployeeIdOf() is not { } employeeId || instance.SubmitterUserId == userId)
         {
             return null;
         }
