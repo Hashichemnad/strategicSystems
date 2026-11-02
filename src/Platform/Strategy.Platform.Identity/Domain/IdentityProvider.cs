@@ -1,4 +1,5 @@
 using System.Text.Json.Nodes;
+using Strategy.Platform.Audit;
 
 namespace Strategy.Platform.Identity.Domain;
 
@@ -27,6 +28,7 @@ public static class LinkMatchFields
 /// An external identity provider configured at runtime (ADR 0011). Disabled by default. <see cref="Settings"/> holds the
 /// type-specific, non-secret settings; <see cref="SecretProtected"/> the client secret / bind password.
 /// </summary>
+[Audited("identity.provider")]
 public sealed class IdentityProvider
 {
     public const int CodeMaxLength = 40;

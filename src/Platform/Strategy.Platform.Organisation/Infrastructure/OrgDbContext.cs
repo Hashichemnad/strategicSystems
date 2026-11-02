@@ -13,6 +13,8 @@ public sealed class OrgDbContext(DbContextOptions<OrgDbContext> options) : Modul
 
     public override string Schema => SchemaName;
 
+    public override string AuditSystemCode => "org";
+
     public DbSet<OrgLevel> Levels => Set<OrgLevel>();
 
     public DbSet<OrgSettings> Settings => Set<OrgSettings>();
@@ -24,8 +26,6 @@ public sealed class OrgDbContext(DbContextOptions<OrgDbContext> options) : Modul
     public DbSet<Employee> Employees => Set<Employee>();
 
     public DbSet<EmployeeAssignment> Assignments => Set<EmployeeAssignment>();
-
-    public DbSet<EmployeePhoto> Photos => Set<EmployeePhoto>();
 
     public DbSet<Delegation> Delegations => Set<Delegation>();
 
@@ -170,17 +170,6 @@ internal sealed class EmployeeAssignmentConfiguration : IEntityTypeConfiguration
         builder.Property(x => x.JobTitleEn).HasMaxLength(Employee.NameMaxLength);
         builder.HasIndex(x => new { x.EmployeeId, x.ValidFrom }).IsUnique();
         builder.HasOne<Employee>().WithMany().HasForeignKey(x => x.EmployeeId).OnDelete(DeleteBehavior.Restrict);
-    }
-}
-
-internal sealed class EmployeePhotoConfiguration : IEntityTypeConfiguration<EmployeePhoto>
-{
-    public void Configure(EntityTypeBuilder<EmployeePhoto> builder)
-    {
-        builder.ToTable("employee_photo");
-        builder.HasKey(x => x.EmployeeId);
-        builder.Property(x => x.ContentType).HasMaxLength(50);
-        builder.HasOne<Employee>().WithOne().HasForeignKey<EmployeePhoto>(x => x.EmployeeId).OnDelete(DeleteBehavior.Restrict);
     }
 }
 

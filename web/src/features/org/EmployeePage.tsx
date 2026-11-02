@@ -1,9 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { getRouteApi, Link } from '@tanstack/react-router';
 import { ArrowLeft } from 'lucide-react';
+import type { TFunction } from 'i18next';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCan } from '@/features/access/session';
+import { HistoryTab } from '@/features/audit/HistoryTab';
 import { api, ApiError, unwrap } from '@/api/client';
 import { errorMessage, translateMessageKey } from '@/api/problem';
 import { formatDate, pickText } from '@/lib/format';
@@ -31,6 +33,7 @@ const routeApi = getRouteApi('/app/org/employees/$employeeId');
 export function EmployeePage() {
   const { t } = useTranslation('org');
   const { t: tc, i18n } = useTranslation();
+  const { t: ta } = useTranslation('audit');
   const { employeeId } = routeApi.useParams();
   const admin = useCan('org.employee.manage');
   const employee = useEmployee(employeeId);
@@ -142,6 +145,7 @@ export function EmployeePage() {
         <TabsList>
           <TabsTrigger value="details">{t('employees.tabs.details')}</TabsTrigger>
           <TabsTrigger value="history">{t('employees.tabs.history')}</TabsTrigger>
+          <TabsTrigger value="audit">{ta('history.changeLog')}</TabsTrigger>
         </TabsList>
         <TabsContent value="details" className="grid gap-6 pt-4 lg:grid-cols-[2fr_1fr]">
           <dl className="grid gap-x-6 gap-y-3 rounded-lg border bg-card p-5 text-sm sm:grid-cols-2">
@@ -223,6 +227,9 @@ export function EmployeePage() {
             ))}
           </ol>
         </TabsContent>
+        <TabsContent value="audit">
+          <HistoryTab record="employee" id={employeeId} fieldLabels={auditFieldLabels(t)} />
+        </TabsContent>
       </Tabs>
       {editing && <EmployeeDialog open onOpenChange={setEditing} employee={data} />}
     </div>
@@ -236,4 +243,22 @@ function Item({ label, value }: { label: string; value: React.ReactNode }) {
       <dd>{value}</dd>
     </div>
   );
+}
+
+/** Readable names of the employee fields in the audit trail. */
+function auditFieldLabels(t: TFunction<'org'>): Record<string, string> {
+  return {
+    EmployeeNo: t('fields.employeeNo'),
+    NameAr: t('fields.nameAr'),
+    JoinDate: t('fields.joinDate'),
+    NameEn: t('fields.nameEn'),
+    Email: t('fields.email'),
+    Mobile: t('fields.mobile'),
+    JobTitleAr: t('fields.jobTitleAr'),
+    JobTitleEn: t('fields.jobTitleEn'),
+    Grade: t('fields.grade'),
+    UnitId: t('fields.unit'),
+    ManagerEmployeeId: t('fields.manager'),
+    Status: t('fields.status'),
+  };
 }

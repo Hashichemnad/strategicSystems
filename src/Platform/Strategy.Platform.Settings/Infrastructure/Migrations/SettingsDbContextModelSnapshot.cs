@@ -23,34 +23,6 @@ namespace Strategy.Platform.Settings.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Strategy.Platform.Settings.Domain.BrandingAsset", b =>
-                {
-                    b.Property<string>("Kind")
-                        .HasMaxLength(32)
-                        .HasColumnType("character varying(32)")
-                        .HasColumnName("kind");
-
-                    b.Property<byte[]>("Content")
-                        .IsRequired()
-                        .HasColumnType("bytea")
-                        .HasColumnName("content");
-
-                    b.Property<string>("ContentType")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("character varying(64)")
-                        .HasColumnName("content_type");
-
-                    b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
-
-                    b.HasKey("Kind")
-                        .HasName("pk_branding_asset");
-
-                    b.ToTable("branding_asset", "settings");
-                });
-
             modelBuilder.Entity("Strategy.Platform.Settings.Domain.FeatureFlag", b =>
                 {
                     b.Property<Guid>("Id")

@@ -25,14 +25,15 @@ internal sealed class AccessSeeder : IDatabaseSeeder
         var sources = services.GetServices<IAccessCatalogueSource>().ToList();
 
         await SyncSystemsAsync(db, configuration, sources, cancellationToken).ConfigureAwait(false);
-        await SyncPermissionsAsync(db, sources, cancellationToken).ConfigureAwait(false);
+        var added = await SyncPermissionsAsync(db, sources, cancellationToken).ConfigureAwait(false);
         await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
-        await SeedRolesAsync(db, sources, clock.Today, cancellationToken).ConfigureAwait(false);
+        var newRoles = await SeedRolesAsync(db, sources, added, clock.Today, cancellationToken).ConfigureAwait(false);
         await SeedRecordRolesAsync(db, sources, cancellationToken).ConfigureAwait(false);
         await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
         await MigrateAdministratorsAsync(db, clock.Today, cancellationToken).ConfigureAwait(false);
+        await ExtendAdministratorsAsync(db, newRoles, clock.Today, cancellationToken).ConfigureAwait(false);
         services.GetRequiredService<AccessModelCache>().Invalidate();
     }
 
@@ -54,7 +55,8 @@ internal sealed class AccessSeeder : IDatabaseSeeder
         }
     }
 
-    private static async Task SyncPermissionsAsync(AccessDbContext db, List<IAccessCatalogueSource> sources, CancellationToken ct)
+    /// <returns>Codes of permissions that did not exist before (new in this version).</returns>
+    private static async Task<HashSet<string>> SyncPermissionsAsync(AccessDbContext db, List<IAccessCatalogueSource> sources, CancellationToken ct)
     {
         var declared = new Dictionary<string, (string System, PermissionDefinition Definition, int Sort)>(StringComparer.Ordinal);
         foreach (var source in sources)
@@ -73,12 +75,14 @@ internal sealed class AccessSeeder : IDatabaseSeeder
         }
 
         var existing = await db.Permissions.ToDictionaryAsync(p => p.Code, StringComparer.Ordinal, ct).ConfigureAwait(false);
+        var added = new HashSet<string>(StringComparer.Ordinal);
         foreach (var (code, (system, definition, sort)) in declared)
         {
             if (!existing.TryGetValue(code, out var permission))
             {
                 permission = new Permission { Code = code };
                 db.Permissions.Add(permission);
+                added.Add(code);
             }
 
             var parts = code.Split('.');
@@ -93,11 +97,19 @@ internal sealed class AccessSeeder : IDatabaseSeeder
 
         // Permissions removed from code disappear with their role links (cascade); they can no longer be checked anyway.
         db.Permissions.RemoveRange(existing.Values.Where(p => !declared.ContainsKey(p.Code)));
+        return added;
     }
 
-    private static async Task SeedRolesAsync(AccessDbContext db, List<IAccessCatalogueSource> sources, DateOnly today, CancellationToken ct)
+    /// <summary>
+    /// Inserts missing default roles. A permission that is new in this version joins the existing default roles that declare it
+    /// (administrators' earlier edits stay; only new permissions are added once).
+    /// </summary>
+    /// <returns>The roles created now.</returns>
+    private static async Task<List<Role>> SeedRolesAsync(
+        AccessDbContext db, List<IAccessCatalogueSource> sources, HashSet<string> newPermissions, DateOnly today, CancellationToken ct)
     {
         var roles = await db.Roles.Include(r => r.Permissions).ToListAsync(ct).ConfigureAwait(false);
+        var created = new List<Role>();
         foreach (var source in sources)
         {
             foreach (var seed in source.DefaultRoles)
@@ -109,20 +121,47 @@ internal sealed class AccessSeeder : IDatabaseSeeder
                     role.SetPermissions(seed.Permissions.Select(p => (p.Permission, p.Scope.ToCode())).ToList());
                     db.Roles.Add(role);
                     roles.Add(role);
+                    created.Add(role);
                     if (seed.AssignToEveryone)
                     {
                         db.Assignments.Add(RoleAssignment.Create(role.Id, PrincipalKinds.Everyone, null, today, null, null));
                     }
                 }
-                else if (role.Locked)
+                else
                 {
-                    foreach (var grant in seed.Permissions)
+                    foreach (var grant in seed.Permissions.Where(g => role.Locked || (role.Builtin && newPermissions.Contains(g.Permission))))
                     {
                         role.EnsurePermission(grant.Permission, grant.Scope.ToCode());
                     }
                 }
             }
         }
+
+        return created;
+    }
+
+    /// <summary>A platform administrator role created by this version (e.g. Audit administrator) goes to the current administrators.</summary>
+    private static async Task ExtendAdministratorsAsync(AccessDbContext db, List<Role> created, DateOnly today, CancellationToken ct)
+    {
+        var newAdminRoles = created.Where(r => AdministratorRoles.All.Contains((r.SystemCode, r.Code))).ToList();
+        var accessAdmin = await db.Roles.AsNoTracking().FirstOrDefaultAsync(r => r.SystemCode == "access" && r.Code == "administrator", ct).ConfigureAwait(false);
+        if (newAdminRoles.Count == 0 || accessAdmin is null || newAdminRoles.Any(r => r.Id == accessAdmin.Id))
+        {
+            return;
+        }
+
+        var holders = await db.Assignments.AsNoTracking()
+            .Where(a => a.RoleId == accessAdmin.Id && a.PrincipalKind == PrincipalKinds.User && (a.ValidTo == null || a.ValidTo >= today))
+            .Select(a => a.PrincipalId!.Value).Distinct().ToListAsync(ct).ConfigureAwait(false);
+        foreach (var role in newAdminRoles)
+        {
+            foreach (var userId in holders)
+            {
+                db.Assignments.Add(RoleAssignment.Create(role.Id, PrincipalKinds.User, userId, today, null, null));
+            }
+        }
+
+        await db.SaveChangesAsync(ct).ConfigureAwait(false);
     }
 
     private static async Task SeedRecordRolesAsync(AccessDbContext db, List<IAccessCatalogueSource> sources, CancellationToken ct)
@@ -170,6 +209,7 @@ internal static class AdministratorRoles
     public static readonly IReadOnlyList<(string System, string Code)> All =
     [
         ("org", "administrator"), ("identity", "administrator"), ("access", "administrator"), ("settings", "administrator"),
+        ("audit", "administrator"),
     ];
 
     public static async Task GrantAsync(AccessDbContext db, Guid userId, DateOnly today, CancellationToken ct)

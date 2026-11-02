@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Identity;
 using Strategy.Platform.Access;
+using Strategy.Platform.Audit;
 
 namespace Strategy.Platform.Identity.Domain;
 
 /// <summary>A login account. Internal users are linked to an employee (SPEC §0.1); vendors arrive in Phase 11.</summary>
+[Audited("identity.user")]
 public sealed class StrategyUser : IdentityUser<Guid>
 {
     public StrategyUser()
@@ -33,6 +35,7 @@ public sealed class StrategyUser : IdentityUser<Guid>
     /// RFC 6238 time step of the last accepted authenticator code. A code is accepted only for a later step, so a seen code
     /// cannot be replayed within the validity window. Cleared when a new authenticator key is set.
     /// </summary>
+    [NotAudited]
     public long? TotpLastStep { get; set; }
 
     /// <summary>The user has chosen email one-time codes as a second factor.</summary>
@@ -40,6 +43,7 @@ public sealed class StrategyUser : IdentityUser<Guid>
 
     public DateTimeOffset CreatedAt { get; set; }
 
+    [NotAudited]
     public DateTimeOffset? LastSignInAt { get; set; }
 
     public DateTimeOffset? PasswordChangedAt { get; set; }

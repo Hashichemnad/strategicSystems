@@ -11,7 +11,7 @@ using Strategy.Platform.Identity.Email;
 using Strategy.Platform.Identity.Infrastructure;
 using Strategy.Platform.Kernel.Paging;
 using Strategy.Platform.Kernel.Results;
-using Strategy.Platform.Settings;
+using Strategy.Platform.Notifications;
 
 namespace Strategy.Platform.Identity.Api;
 
@@ -114,26 +114,8 @@ internal static class AdminEndpoints
     }
 
     private static async Task<Ok<PagedResult<AuthEventDto>>> AuthEventsAsync(
-        int? page, int? pageSize, Guid? userId, string? type, IdentityStoreDbContext db, CancellationToken ct)
-    {
-        var paging = new PageRequest(Math.Max(1, page ?? 1), Math.Clamp(pageSize ?? 50, 1, PageRequest.MaxPageSize), null);
-        var query = db.AuthEvents.AsNoTracking();
-        if (userId is not null)
-        {
-            query = query.Where(e => e.UserId == userId);
-        }
-
-        if (!string.IsNullOrWhiteSpace(type))
-        {
-            query = query.Where(e => e.Type == type);
-        }
-
-        var total = await query.CountAsync(ct);
-        var items = await query.OrderByDescending(e => e.At).ThenByDescending(e => e.Id).Skip(paging.Skip).Take(paging.PageSize)
-            .Select(e => new AuthEventDto(e.Id, e.Type, e.Success, e.UserId, e.UserName, e.ActorUserId, e.Provider, e.Detail, e.IpAddress, e.At))
-            .ToListAsync(ct);
-        return TypedResults.Ok(new PagedResult<AuthEventDto>(items, paging.Page, paging.PageSize, total));
-    }
+        int? page, int? pageSize, Guid? userId, string? type, AuthEventLog events, CancellationToken ct) =>
+        TypedResults.Ok(await events.ListAsync(new PageRequest(page ?? 1, pageSize ?? 50), userId, type, ct));
 
     // ---- Security settings ----
 
@@ -216,7 +198,7 @@ internal static class AdminEndpoints
 
     /// <summary>Sends a test message with the saved settings, or with unsaved ones from the form (blank password = saved one).</summary>
     private static async Task<Results<NoContent, ProblemHttpResult>> TestSmtpAsync(
-        SmtpTestInput body, IdentitySettingsCache cache, ISecretProtector protector, AuthEventLog events, ISettingsStore store, CancellationToken ct)
+        SmtpTestInput body, IdentitySettingsCache cache, ISecretProtector protector, AuthEventLog events, ITestEmailSender sender, CancellationToken ct)
     {
         if (string.IsNullOrWhiteSpace(body.To) || !System.Net.Mail.MailAddress.TryCreate(body.To, out _))
         {
@@ -237,19 +219,9 @@ internal static class AdminEndpoints
             password = string.IsNullOrEmpty(draft.Password) ? password : draft.Password;
         }
 
-        try
-        {
-            await SmtpIdentityEmailSender.SendWithAsync(
-                settings, password, new IdentityEmail(body.To, "test", new Dictionary<string, string>()), ct, await store.GetAsync<BrandingSettings>(ct));
-        }
-        catch (EmailDeliveryException exception)
-        {
-            await events.WriteAsync(AuthEventTypes.SettingsChanged, false, detail: "smtp.test", cancellationToken: ct);
-            return Error.Rule("identity.smtp.testFailed", exception.MessageKey).ToProblem();
-        }
-
-        await events.WriteAsync(AuthEventTypes.SettingsChanged, true, detail: "smtp.test", cancellationToken: ct);
-        return TypedResults.NoContent();
+        var sent = await sender.SendTestAsync(body.To, SmtpSettingsSource.From(settings, protector, password), ct);
+        await events.WriteAsync(AuthEventTypes.SettingsChanged, sent.IsSuccess, detail: "smtp.test", cancellationToken: ct);
+        return sent.IsSuccess ? TypedResults.NoContent() : sent.Error!.ToProblem();
     }
 
     private static List<FieldError> ValidateSmtp(SmtpSettingsInput body)

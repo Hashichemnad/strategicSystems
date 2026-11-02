@@ -1,3 +1,4 @@
+using Strategy.Platform.Audit;
 using Strategy.Platform.Kernel.Domain;
 
 namespace Strategy.Platform.Access.Domain;
@@ -80,6 +81,7 @@ public static class SystemKinds
 }
 
 /// <summary>A permission of the catalogue, synchronised from code at start-up (labels follow the code).</summary>
+[Audited("access.permission")]
 public sealed class Permission
 {
     public string Code { get; set; } = string.Empty;
@@ -205,6 +207,8 @@ public sealed class Role : AuditableEntity
     private static string? Clean(string? value) => string.IsNullOrWhiteSpace(value) ? null : value.Trim();
 }
 
+[Audited("access.role_permission")]
+[AuditParent("access.role", nameof(RoleId))]
 public sealed class RolePermission
 {
     public Guid RoleId { get; set; }
@@ -216,6 +220,7 @@ public sealed class RolePermission
 }
 
 /// <summary>Who holds a role, from when to when (dates inclusive). Ended, never deleted.</summary>
+[AuditParent("access.role", nameof(RoleId))]
 public sealed class RoleAssignment : AuditableEntity
 {
     private RoleAssignment()
@@ -333,6 +338,8 @@ public sealed class RecordRoleType : AuditableEntity
     }
 }
 
+[Audited("access.record_role_permission")]
+[AuditParent("access.record_role_definition", nameof(TypeId))]
 public sealed class RecordRolePermission
 {
     public Guid TypeId { get; set; }
@@ -341,6 +348,7 @@ public sealed class RecordRolePermission
 }
 
 /// <summary>A person's role on one record (CLAUDE.md §7 <c>access.record_role</c>). Ended, never deleted.</summary>
+[AuditParent("resource", nameof(ResourceId), TypeProperty = nameof(ResourceType))]
 public sealed class RecordRoleGrant : AuditableEntity
 {
     private RecordRoleGrant()

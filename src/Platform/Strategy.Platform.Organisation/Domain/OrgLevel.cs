@@ -1,3 +1,4 @@
+using Strategy.Platform.Audit;
 using Strategy.Platform.Kernel.Domain;
 
 namespace Strategy.Platform.Organisation.Domain;
@@ -35,6 +36,7 @@ public sealed class OrgLevel : AuditableEntity
 }
 
 /// <summary>Singleton organisation settings (moves into the Settings centre UI in Phase 2).</summary>
+[Audited("org.org_settings")]
 public sealed class OrgSettings
 {
     public static readonly Guid SingletonId = new("00000000-0000-0000-0000-000000000001");

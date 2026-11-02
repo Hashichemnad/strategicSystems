@@ -1,22 +1,53 @@
 using System.Collections.Concurrent;
 using System.Text.RegularExpressions;
-using Strategy.Platform.Identity.Email;
+using Strategy.Platform.Notifications;
 
 namespace Strategy.IntegrationTests.Infrastructure;
 
-/// <summary>Replaces SMTP in integration tests; the E2E suite uses Mailpit instead.</summary>
-public sealed partial class CapturingEmailSender : IIdentityEmailSender
+/// <summary>
+/// Replaces SMTP in integration tests (the Mailpit test and the E2E suite use real SMTP). Messages still go through the templates and the
+/// outbox, so a test waits for delivery with <see cref="LastAsync"/>.
+/// </summary>
+public sealed partial class CapturingEmailTransport : IEmailTransport
 {
-    public ConcurrentQueue<IdentityEmail> Sent { get; } = new();
+    public ConcurrentQueue<EmailMessage> Sent { get; } = new();
 
-    public Task SendAsync(IdentityEmail email, CancellationToken cancellationToken)
+    /// <summary>When set, sending throws this many times before succeeding (retry tests).</summary>
+    public int FailNext { get; set; }
+
+    public Task<bool> IsConfiguredAsync(CancellationToken cancellationToken = default) => Task.FromResult(true);
+
+    public Task SendAsync(EmailMessage message, SmtpConnection? settings = null, CancellationToken cancellationToken = default)
     {
-        Sent.Enqueue(email);
+        if (FailNext > 0)
+        {
+            FailNext--;
+            throw new EmailDeliveryException("identity.errors.smtpFailed");
+        }
+
+        Sent.Enqueue(message);
         return Task.CompletedTask;
     }
 
-    public IdentityEmail Last(string to, string template) =>
-        Sent.Last(e => string.Equals(e.To, to, StringComparison.OrdinalIgnoreCase) && e.Template == template);
+    /// <summary>The newest message to <paramref name="to"/> from <paramref name="template"/> (short identity names accepted), waiting up to 15 s.</summary>
+    public async Task<EmailMessage> LastAsync(string to, string template, int? afterCount = null)
+    {
+        var key = template.Contains('.', StringComparison.Ordinal) ? template : "identity." + template;
+        for (var i = 0; i < 150; i++)
+        {
+            var match = Sent.Skip(afterCount ?? 0).LastOrDefault(e => string.Equals(e.To, to, StringComparison.OrdinalIgnoreCase) && e.TemplateKey == key);
+            if (match is not null)
+            {
+                return match;
+            }
+
+            await Task.Delay(100);
+        }
+
+        throw new ShouldAssertException($"No '{key}' e-mail to {to} was delivered.");
+    }
+
+    public int CountTo(string to) => Sent.Count(e => string.Equals(e.To, to, StringComparison.OrdinalIgnoreCase));
 
     /// <summary>The user id and token from a reset / invitation link.</summary>
     public static (Guid UserId, string Token) ParseLink(string link)

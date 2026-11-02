@@ -2,14 +2,17 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Strategy.Platform.Access;
+using Strategy.Platform.Files;
 using Strategy.Platform.Http.Modules;
 using Strategy.Platform.Kernel;
 using Strategy.Platform.Organisation.Api;
 using Strategy.Platform.Organisation.Application;
 using Strategy.Platform.Organisation.Contracts;
+using Strategy.Platform.Organisation.Domain;
 using Strategy.Platform.Organisation.Import;
 using Strategy.Platform.Organisation.Infrastructure;
 using Strategy.Platform.Persistence;
+using Strategy.Platform.Scheduling;
 using Strategy.Platform.Settings;
 
 namespace Strategy.Platform.Organisation;
@@ -35,6 +38,8 @@ public sealed class OrganisationComponent : IPlatformComponent
         services.AddScoped<IEmployeeDirectory, EmployeeDirectory>();
         services.AddScoped<IDelegationQuery, DelegationQuery>();
         services.AddSingleton<IDirectorySyncSource, NoDirectorySyncSource>();
+        services.AddFilePurpose(EmployeePhotos.Purpose);
+        services.AddScheduledJob(DirectorySyncJob.Definition);
         services.AddAccessCatalogue(new OrgAccessCatalogue());
         services.AddLookupType(OrgLookupDefinitions.Grade);
         services.AddScoped<ILookupBackfillSource, GradeBackfill>();

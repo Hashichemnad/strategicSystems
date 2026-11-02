@@ -1,3 +1,4 @@
+using Strategy.Platform.Audit;
 namespace Strategy.Platform.Identity.Domain;
 
 public static class MfaPolicies
@@ -10,6 +11,7 @@ public static class MfaPolicies
 }
 
 /// <summary>Installation-wide sign-in rules (singleton row, Administration → Security). Defaults per docs/design/identity.md.</summary>
+[Audited("identity.security_settings")]
 public sealed class SecuritySettings
 {
     public static readonly Guid SingletonId = new("00000000-0000-0000-0000-000000000001");
@@ -66,6 +68,7 @@ public static class SmtpSecurityModes
 }
 
 /// <summary>Outgoing mail server (singleton row, Administration → Email server). Reused by Notifications in Phase 3.</summary>
+[Audited("identity.smtp_settings")]
 public sealed class SmtpSettings
 {
     public static readonly Guid SingletonId = new("00000000-0000-0000-0000-000000000001");

@@ -4,7 +4,6 @@ using Strategy.Platform.Access;
 using Strategy.Platform.Identity.Application;
 using Strategy.Platform.Identity.Authentication;
 using Strategy.Platform.Identity.Domain;
-using Strategy.Platform.Identity.Email;
 using Strategy.Platform.Identity.External;
 
 namespace Strategy.UnitTests.Identity;
@@ -153,33 +152,6 @@ public class ExternalSignInTests
 
         identity.ShouldBe(new ExternalIdentity("abc-123", "a@b.c", "E7", "ab"));
         ExternalEndpoints.MapIdentity(provider, new ClaimsPrincipal(new ClaimsIdentity())).ShouldBeNull();
-    }
-}
-
-public class IdentityEmailRendererTests
-{
-    [Fact]
-    public void Renders_arabic_right_and_english_left_and_encodes_values()
-    {
-        var (subject, html, text) = IdentityEmailRenderer.Render(new IdentityEmail(
-            "a@b.c", "passwordReset", new Dictionary<string, string> { ["name"] = "<b>Sara</b>" }, "https://app.example/reset?x=1&y=2"));
-
-        subject.ShouldBe("إعادة تعيين كلمة المرور | Reset your password");
-        html.ShouldContain("dir=\"rtl\" lang=\"ar\"");
-        html.ShouldContain("dir=\"ltr\" lang=\"en\"");
-        html.ShouldContain("&lt;b&gt;Sara&lt;/b&gt;");
-        html.ShouldNotContain("<b>Sara</b>");
-        html.ShouldContain("href=\"https://app.example/reset?x=1&amp;y=2\"");
-        text.ShouldContain("https://app.example/reset?x=1&y=2");
-    }
-
-    [Fact]
-    public void Email_code_template_shows_the_code()
-    {
-        var (_, html, _) = IdentityEmailRenderer.Render(new IdentityEmail("a@b.c", "emailCode",
-            new Dictionary<string, string> { ["name"] = "Sara", ["code"] = "123456" }));
-
-        html.ShouldContain(">123456</p>");
     }
 }
 

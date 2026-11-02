@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Audit trail contracts (CLAUDE.md §8): explicit events, the sink used by the persistence interceptor, history queries
+       and the attributes that steer field-level auditing. No EF Core / ASP.NET Core. -->
+  <ItemGroup>
+    <ProjectReference Include="..\Strategy.Platform.Kernel\Strategy.Platform.Kernel.csproj" />
+  </ItemGroup>
+</Project>

@@ -9,6 +9,10 @@ public static class SettingsPermissions
     public const string NumberingManage = "settings.numbering.manage";
     public const string FeatureManage = "settings.feature.manage";
     public const string TranslationManage = "settings.translation.manage";
+    public const string NotificationManage = "settings.notification.manage";
+    public const string FileManage = "settings.file.manage";
+    public const string JobView = "settings.job.view";
+    public const string JobManage = "settings.job.manage";
 }
 
 internal sealed class SettingsCatalogue : IAccessCatalogueSource
@@ -22,13 +26,18 @@ internal sealed class SettingsCatalogue : IAccessCatalogueSource
         new(SettingsPermissions.NumberingManage, "إدارة صيغ الترقيم", "Manage numbering formats", Scopable: false),
         new(SettingsPermissions.FeatureManage, "تفعيل الخصائص", "Switch features", Scopable: false),
         new(SettingsPermissions.TranslationManage, "تعديل الترجمات", "Edit translations", Scopable: false),
+        new(SettingsPermissions.NotificationManage, "إدارة قوالب الإشعارات والبريد", "Manage notification templates and e-mail delivery", Scopable: false),
+        new(SettingsPermissions.FileManage, "إعدادات الملفات والمرفقات", "File and attachment settings", Scopable: false),
+        new(SettingsPermissions.JobView, "عرض المهام المجدولة", "View scheduled jobs", Scopable: false),
+        new(SettingsPermissions.JobManage, "تشغيل المهام المجدولة وإيقافها", "Run and pause scheduled jobs", Scopable: false),
     ];
 
     public IEnumerable<RoleSeed> DefaultRoles =>
     [
         new("administrator", "مسؤول الإعدادات", "Settings administrator",
             [new(SettingsPermissions.GeneralManage), new(SettingsPermissions.LookupManage), new(SettingsPermissions.NumberingManage),
-             new(SettingsPermissions.FeatureManage), new(SettingsPermissions.TranslationManage)],
+             new(SettingsPermissions.FeatureManage), new(SettingsPermissions.TranslationManage), new(SettingsPermissions.NotificationManage),
+             new(SettingsPermissions.FileManage), new(SettingsPermissions.JobView), new(SettingsPermissions.JobManage)],
             RequiresMfa: true),
     ];
 }

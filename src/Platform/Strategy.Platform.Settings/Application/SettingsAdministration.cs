@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
+using Strategy.Platform.Files;
 using Strategy.Platform.Kernel.Results;
 using Strategy.Platform.Kernel.Time;
 using Strategy.Platform.Settings.Domain;
@@ -9,12 +10,16 @@ using Strategy.Platform.Settings.Infrastructure;
 namespace Strategy.Platform.Settings.Application;
 
 /// <summary>Settings centre use cases (docs/design/settings.md). Every change invalidates the settings cache.</summary>
-internal sealed partial class SettingsAdministration(SettingsDbContext db, SettingsCache cache, ISettingsStore store, IClock clock)
+internal sealed partial class SettingsAdministration(SettingsDbContext db, SettingsCache cache, ISettingsStore store, IClock clock, IFileService files)
+    : ISettingsEditor
 {
     public const int MaxLogoBytes = 512 * 1024;
     private const int EmailTextMax = 500;
 
     // ---- Typed areas ----
+
+    public Task<SettingsDocument<T>> GetDocumentAsync<T>(CancellationToken cancellationToken = default)
+        where T : class, ISettingsArea => GetAsync<T>(cancellationToken);
 
     public async Task<SettingsDocument<T>> GetAsync<T>(CancellationToken ct)
         where T : class, ISettingsArea
@@ -24,7 +29,7 @@ internal sealed partial class SettingsAdministration(SettingsDbContext db, Setti
         return new SettingsDocument<T>(SettingsStore.Deserialize<T>(entry?.Value), entry?.Version ?? 0);
     }
 
-    public async Task<Result<SettingsDocument<T>>> SaveAsync<T>(T value, uint version, Func<T, List<FieldError>> validate, CancellationToken ct)
+    public async Task<Result<SettingsDocument<T>>> SaveAsync<T>(T value, uint version, Func<T, List<FieldError>> validate, CancellationToken ct = default)
         where T : class, ISettingsArea
     {
         var errors = validate(value);
@@ -105,8 +110,8 @@ internal sealed partial class SettingsAdministration(SettingsDbContext db, Setti
     {
         var branding = await store.GetAsync<BrandingSettings>(ct).ConfigureAwait(false);
         var regional = await store.GetAsync<RegionalSettings>(ct).ConfigureAwait(false);
-        var logos = await cache.GetAsync("logos", async () => (IReadOnlyList<string>)await db.BrandingAssets.AsNoTracking().Select(a => a.Kind).ToListAsync(ct)
-            .ConfigureAwait(false)).ConfigureAwait(false);
+        var logos = await cache.GetAsync("logos", async () => (IReadOnlyList<string>)(await files.OwnersWithFilesAsync(BrandingLogos.Purpose.Key, BrandingAssetKinds.All, ct)
+            .ConfigureAwait(false)).ToList()).ConfigureAwait(false);
         var translations = await TranslationsVersionAsync(ct).ConfigureAwait(false);
         return new PublicSettingsDto(
             branding.OrganisationNameAr, branding.OrganisationNameEn, branding.PrimaryColor,
@@ -115,9 +120,18 @@ internal sealed partial class SettingsAdministration(SettingsDbContext db, Setti
 
     // ---- Branding assets ----
 
-    public Task<BrandingAsset?> GetLogoAsync(string kind, CancellationToken ct) =>
-        db.BrandingAssets.AsNoTracking().FirstOrDefaultAsync(a => a.Kind == kind, ct);
+    public async Task<FileContent?> GetLogoAsync(string kind, CancellationToken ct)
+    {
+        if (!BrandingAssetKinds.All.Contains(kind) || await files.FindSingleAsync(BrandingLogos.Purpose.Key, kind, ct).ConfigureAwait(false) is not { } file)
+        {
+            return null;
+        }
 
+        var opened = await files.OpenAsync(file.Id, auditDownload: false, cancellationToken: ct).ConfigureAwait(false);
+        return opened.IsSuccess ? opened.Value : null;
+    }
+
+    /// <summary>Stores the logo as a file (purpose <c>settings.branding-logo</c>, one per kind, versioned); the upload is audited.</summary>
     public async Task<Result> SetLogoAsync(string kind, byte[] content, CancellationToken ct)
     {
         if (!BrandingAssetKinds.All.Contains(kind))
@@ -136,31 +150,24 @@ internal sealed partial class SettingsAdministration(SettingsDbContext db, Setti
             return Error.Validation([new FieldError("file", "settings.errors.logoType", "settings.errors.logoType")]);
         }
 
-        var asset = await db.BrandingAssets.FirstOrDefaultAsync(a => a.Kind == kind, ct).ConfigureAwait(false);
-        if (asset is null)
-        {
-            asset = new BrandingAsset { Kind = kind };
-            db.BrandingAssets.Add(asset);
-        }
-
-        asset.ContentType = contentType;
-        asset.Content = content;
-        asset.UpdatedAt = clock.UtcNow;
-        await SaveChangesAsync(ct).ConfigureAwait(false);
-        return Result.Success();
+        var name = $"{kind}.{contentType["image/".Length..]}";
+        var uploaded = await files.UploadAsync(new FileUpload(BrandingLogos.Purpose.Key, kind, name, new MemoryStream(content, writable: false)), ct)
+            .ConfigureAwait(false);
+        cache.Invalidate();
+        return uploaded.IsSuccess ? Result.Success() : uploaded.Error!;
     }
 
     public async Task<Result> RemoveLogoAsync(string kind, CancellationToken ct)
     {
-        var asset = await db.BrandingAssets.FirstOrDefaultAsync(a => a.Kind == kind, ct).ConfigureAwait(false);
-        if (asset is null)
+        var file = BrandingAssetKinds.All.Contains(kind) ? await files.FindSingleAsync(BrandingLogos.Purpose.Key, kind, ct).ConfigureAwait(false) : null;
+        if (file is null)
         {
             return Error.NotFound();
         }
 
-        db.BrandingAssets.Remove(asset);
-        await SaveChangesAsync(ct).ConfigureAwait(false);
-        return Result.Success();
+        var removed = await files.DeleteAsync(file.Id, "removed in Settings → Branding", ct).ConfigureAwait(false);
+        cache.Invalidate();
+        return removed;
     }
 
     /// <summary>PNG, JPEG or WebP by magic number; SVG and everything else refused (ADR 0017).</summary>

@@ -196,10 +196,8 @@ internal sealed class UserAdministration(
 
     private async Task<Result> SendResetAsync(StrategyUser user, Uri? requestOrigin, CancellationToken cancellationToken)
     {
-        await signIn.RequestPasswordResetAsync(user.UserName!, requestOrigin, cancellationToken).ConfigureAwait(false);
-        var last = await db.AuthEvents.AsNoTracking().Where(e => e.UserId == user.Id && e.Type == AuthEventTypes.PasswordResetRequested)
-            .OrderByDescending(e => e.At).FirstAsync(cancellationToken).ConfigureAwait(false);
-        return last.Success ? Result.Success() : Error.Rule("identity.email.failed", last.Detail ?? "identity.errors.smtpFailed");
+        var sent = await signIn.RequestPasswordResetAsync(user.UserName!, requestOrigin, cancellationToken).ConfigureAwait(false);
+        return sent.IsSuccess ? Result.Success() : Error.Rule("identity.email.failed", sent.Error!.MessageKey);
     }
 
     private async Task<Result<UserDto>> ChangeAsync(

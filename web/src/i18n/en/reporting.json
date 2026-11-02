@@ -1,0 +1,6 @@
+{
+  "errors": {
+    "pdfNotConfigured": "PDF output is not set up on this installation (Gotenberg).",
+    "pdfFailed": "The PDF could not be produced. Try again later."
+  }
+}

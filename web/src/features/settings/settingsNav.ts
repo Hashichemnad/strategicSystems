@@ -1,4 +1,5 @@
 import {
+  Bell,
   Building,
   FileSpreadsheet,
   Flag,
@@ -10,10 +11,12 @@ import {
   Mail,
   MapPinned,
   Palette,
+  Paperclip,
   Repeat,
   ShieldCheck,
   ShieldHalf,
   SquareStack,
+  Timer,
   UserCheck,
   Users,
   type LucideIcon,
@@ -27,6 +30,9 @@ export type SettingsPageKey =
   | 'lookups'
   | 'numbering'
   | 'translations'
+  | 'notifications'
+  | 'files'
+  | 'jobs'
   | 'roles'
   | 'assignments'
   | 'systemAccess'
@@ -47,6 +53,9 @@ export type SettingsPath =
   | '/settings/lookups'
   | '/settings/numbering'
   | '/settings/translations'
+  | '/settings/notifications'
+  | '/settings/files'
+  | '/settings/jobs'
   | '/settings/access/roles'
   | '/settings/access/assignments'
   | '/settings/access/system-access'
@@ -68,7 +77,7 @@ export interface SettingsPageLink {
 }
 
 export interface SettingsGroup {
-  key: 'general' | 'data' | 'access' | 'identity' | 'organisation';
+  key: 'general' | 'data' | 'platform' | 'access' | 'identity' | 'organisation';
   pages: readonly SettingsPageLink[];
 }
 
@@ -99,6 +108,19 @@ export const settingsGroups: readonly SettingsGroup[] = [
         icon: Languages,
         permissions: ['settings.translation.manage'],
       },
+    ],
+  },
+  {
+    key: 'platform',
+    pages: [
+      {
+        key: 'notifications',
+        to: '/settings/notifications',
+        icon: Bell,
+        permissions: ['settings.notification.manage'],
+      },
+      { key: 'files', to: '/settings/files', icon: Paperclip, permissions: ['settings.file.manage'] },
+      { key: 'jobs', to: '/settings/jobs', icon: Timer, permissions: ['settings.job.view'] },
     ],
   },
   {

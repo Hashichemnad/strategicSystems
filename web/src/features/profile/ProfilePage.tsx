@@ -40,9 +40,10 @@ import {
   TabsTrigger,
   useToast,
 } from '@/ui';
+import { PreferencesPanel as NotificationPreferencesPanel } from '@/features/notifications/PreferencesPanel';
 import { DelegationsPanel } from './DelegationsPanel';
 
-type Tab = 'preferences' | 'security' | 'sessions' | 'tokens' | 'delegations';
+type Tab = 'preferences' | 'notifications' | 'security' | 'sessions' | 'tokens' | 'delegations';
 
 export function ProfilePage() {
   const { t } = useTranslation('profile');
@@ -69,6 +70,7 @@ export function ProfilePage() {
       >
         <TabsList className="flex-wrap">
           <TabsTrigger value="preferences">{t('tabs.preferences')}</TabsTrigger>
+          <TabsTrigger value="notifications">{t('tabs.notifications')}</TabsTrigger>
           <TabsTrigger value="security">{t('tabs.security')}</TabsTrigger>
           <TabsTrigger value="sessions">{t('tabs.sessions')}</TabsTrigger>
           <TabsTrigger value="tokens">{t('tabs.tokens')}</TabsTrigger>
@@ -76,6 +78,9 @@ export function ProfilePage() {
         </TabsList>
         <TabsContent value="preferences" className="pt-6">
           <PreferencesPanel />
+        </TabsContent>
+        <TabsContent value="notifications" className="pt-6">
+          <NotificationPreferencesPanel />
         </TabsContent>
         <TabsContent value="security" className="flex flex-col gap-8 pt-6">
           {me?.hasPassword && <PasswordPanel />}

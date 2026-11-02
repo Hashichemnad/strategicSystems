@@ -3,12 +3,14 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Npgsql;
+using Strategy.Platform.Audit;
 
 namespace Strategy.Platform.Persistence;
 
 public static class PersistenceServiceCollectionExtensions
 {
     public const string ConnectionStringName = "Strategy";
+    public const string MigrationsConnectionStringName = "StrategyMigrations";
     public const string MigrationsHistoryTable = "__ef_migrations_history";
     public const string ReadyTag = "ready";
 
@@ -17,11 +19,20 @@ public static class PersistenceServiceCollectionExtensions
     {
         services.TryAddSingleton(_ =>
         {
-            var connectionString = configuration.GetConnectionString(ConnectionStringName)
+            // `--migrate` (Database:UseMigrationsConnection) connects as the owner role when a separate one is configured (ADR 0018).
+            var migrations = string.Equals(configuration["Database:UseMigrationsConnection"], "true", StringComparison.OrdinalIgnoreCase)
+                ? configuration.GetConnectionString(MigrationsConnectionStringName)
+                : null;
+            var connectionString = (string.IsNullOrWhiteSpace(migrations) ? null : migrations)
+                ?? configuration.GetConnectionString(ConnectionStringName)
                 ?? throw new InvalidOperationException($"Connection string '{ConnectionStringName}' is not configured.");
             return new NpgsqlDataSourceBuilder(connectionString).Build();
         });
+        services.AddScoped<IDatabaseSeeder, RuntimeRoleGrants>();
+        services.TryAddSingleton<RuntimeRoleSetup>();
         services.TryAddScoped<AuditFieldsInterceptor>();
+        services.TryAddScoped<AuditTrailInterceptor>();
+        services.TryAddScoped<IAuditReason, AuditReason>();
         services.TryAddSingleton<ModuleMigrator>();
         return services;
     }
@@ -41,11 +52,17 @@ public static class PersistenceServiceCollectionExtensions
                     .MigrationsHistoryTable(historyTable, schema)
                     .MigrationsAssembly(typeof(TContext).Assembly.GetName().Name))
             .UseSnakeCaseNamingConvention()
-            .AddInterceptors(sp.GetRequiredService<AuditFieldsInterceptor>()));
+            .AddInterceptors(sp.GetRequiredService<AuditFieldsInterceptor>(), sp.GetRequiredService<AuditTrailInterceptor>()));
 
         services.AddSingleton(new ModuleDatabase(typeof(TContext), schema));
         var checkName = historyTable == MigrationsHistoryTable ? $"db:{schema}" : $"db:{schema}:{typeof(TContext).Name}";
         services.AddHealthChecks().AddDbContextCheck<TContext>(checkName, tags: [ReadyTag]);
         return services;
     }
+}
+
+/// <summary>Per-scope reason applied to the audit rows of the changes saved in this scope.</summary>
+internal sealed class AuditReason : IAuditReason
+{
+    public string? Reason { get; set; }
 }

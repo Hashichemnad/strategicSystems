@@ -13,7 +13,8 @@
     "descriptionEn": "Description (English)",
     "status": "Status",
     "updatedAt": "Last updated",
-    "actions": "Actions"
+    "actions": "Actions",
+    "number": "Number"
   },
   "status": {
     "all": "All statuses",
@@ -44,5 +45,8 @@
     "inactive": "Inactive items cannot be edited. Activate it first.",
     "alreadyActive": "This item is already active.",
     "alreadyInactive": "This item is already inactive."
+  },
+  "tabs": {
+    "overview": "Overview"
   }
 }

@@ -2,10 +2,12 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Strategy.Platform.Access;
+using Strategy.Platform.Files;
 using Strategy.Platform.Http.Modules;
 using Strategy.Platform.Persistence;
 using Strategy.Platform.Settings.Api;
 using Strategy.Platform.Settings.Application;
+using Strategy.Platform.Settings.Domain;
 using Strategy.Platform.Settings.Infrastructure;
 
 namespace Strategy.Platform.Settings;
@@ -26,7 +28,9 @@ public sealed class SettingsComponent : IPlatformComponent
         services.AddScoped<NumberingService>();
         services.AddScoped<INumberingService>(sp => sp.GetRequiredService<NumberingService>());
         services.AddScoped<SettingsAdministration>();
+        services.AddScoped<ISettingsEditor>(sp => sp.GetRequiredService<SettingsAdministration>());
         services.AddScoped<IDatabaseSeeder, SettingsSeeder>();
+        services.AddFilePurpose(BrandingLogos.Purpose);
         services.AddAccessCatalogue(new SettingsCatalogue());
     }
 

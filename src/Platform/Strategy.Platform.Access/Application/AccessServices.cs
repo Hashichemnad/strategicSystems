@@ -82,6 +82,18 @@ internal sealed class UserRoleQuery(
         return holders is not null && holders.Contains(userId) && holders.Count == 1;
     }
 
+    public async Task<IReadOnlyList<Guid>> UsersWithPermissionAsync(string permission, CancellationToken cancellationToken = default)
+    {
+        var today = clock.Today;
+        var roleIds = await db.Roles.AsNoTracking().Where(r => r.Active && r.Permissions.Any(p => p.PermissionCode == permission)).Select(r => r.Id)
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
+        var ids = await db.Assignments.AsNoTracking()
+            .Where(a => roleIds.Contains(a.RoleId) && a.PrincipalKind == PrincipalKinds.User && a.ValidFrom <= today && (a.ValidTo == null || a.ValidTo >= today))
+            .Select(a => a.PrincipalId!.Value).Distinct().ToListAsync(cancellationToken).ConfigureAwait(false);
+        var found = await users.GetManyAsync(ids, cancellationToken).ConfigureAwait(false);
+        return ids.Where(id => found.TryGetValue(id, out var user) && user.Active).ToList();
+    }
+
     /// <summary>Active users directly holding the access administrator role; null when a unit / everyone assignment also grants it.</summary>
     internal async Task<IReadOnlyList<Guid>?> AccessAdministratorHoldersAsync(CancellationToken cancellationToken)
     {

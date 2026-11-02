@@ -4,6 +4,7 @@ using Strategy.Platform.Access;
 using Strategy.Platform.Kernel.Context;
 using Strategy.Platform.Kernel.Messaging;
 using Strategy.Platform.Kernel.Results;
+using Strategy.Platform.Notifications;
 using Strategy.Platform.Organisation.Contracts;
 
 namespace Strategy.Modules.Sample.Application;
@@ -18,7 +19,9 @@ public sealed record AddSampleEditor(Guid ItemId, Guid? EmployeeId) : ICommand<I
 
 public sealed record RemoveSampleEditor(Guid ItemId, Guid EmployeeId) : ICommand<IReadOnlyList<SampleEditorDto>>;
 
-internal sealed class SampleEditors(SampleDbContext db, IAccessService access, IRecordRoleService recordRoles, IEmployeeDirectory employees, IRequestContext context)
+internal sealed class SampleEditors(
+    SampleDbContext db, IAccessService access, IRecordRoleService recordRoles, IEmployeeDirectory employees, IRequestContext context,
+    IUserDirectory users, INotificationService notifications)
     : IQueryHandler<ListSampleEditors, IReadOnlyList<SampleEditorDto>>,
       ICommandHandler<AddSampleEditor, IReadOnlyList<SampleEditorDto>>,
       ICommandHandler<RemoveSampleEditor, IReadOnlyList<SampleEditorDto>>
@@ -44,6 +47,7 @@ internal sealed class SampleEditors(SampleDbContext db, IAccessService access, I
 
         await recordRoles.GrantAsync(SamplePermissions.ResourceType, command.ItemId, RecordPrincipalKinds.Employee, employeeId, SamplePermissions.EditorRole,
             cancellationToken: cancellationToken).ConfigureAwait(false);
+        await NotifyAsync(command.ItemId, employeeId, cancellationToken).ConfigureAwait(false);
         return Result<IReadOnlyList<SampleEditorDto>>.Success(await ListAsync(command.ItemId, cancellationToken).ConfigureAwait(false));
     }
 
@@ -58,6 +62,28 @@ internal sealed class SampleEditors(SampleDbContext db, IAccessService access, I
         await recordRoles.RevokeAsync(SamplePermissions.ResourceType, command.ItemId, RecordPrincipalKinds.Employee, command.EmployeeId,
             SamplePermissions.EditorRole, cancellationToken).ConfigureAwait(false);
         return Result<IReadOnlyList<SampleEditorDto>>.Success(await ListAsync(command.ItemId, cancellationToken).ConfigureAwait(false));
+    }
+
+    /// <summary>The new editor hears about it (in-app and e-mail, per their preferences), with a link to the item.</summary>
+    private async Task NotifyAsync(Guid itemId, Guid employeeId, CancellationToken ct)
+    {
+        var item = await db.Items.AsNoTracking().FirstAsync(x => x.Id == itemId, ct).ConfigureAwait(false);
+        var recipients = (await users.GetByEmployeesAsync([employeeId], ct).ConfigureAwait(false)).Where(u => u.Active).ToList();
+        if (recipients.Count == 0)
+        {
+            return;
+        }
+
+        await notifications.SendAsync(new NotificationRequest(
+            SampleNotifications.EditorAdded.Key,
+            recipients.Select(u => NotificationRecipient.User(u.Id)).ToList(),
+            new Dictionary<string, string>
+            {
+                ["itemAr"] = item.NameAr ?? item.NameEn ?? string.Empty,
+                ["itemEn"] = item.NameEn ?? item.NameAr ?? string.Empty,
+                ["number"] = item.Number ?? string.Empty,
+            },
+            $"/sample/items/{itemId:D}"), cancellationToken: ct).ConfigureAwait(false);
     }
 
     private async Task<Result> CheckAsync(Guid itemId, string permission, CancellationToken cancellationToken)
@@ -83,4 +109,15 @@ internal sealed class SampleEditors(SampleDbContext db, IAccessService access, I
         return holders.Select(h => new SampleEditorDto(
             h.PrincipalId, people.GetValueOrDefault(h.PrincipalId)?.NameAr, people.GetValueOrDefault(h.PrincipalId)?.NameEn, h.ValidFrom)).ToList();
     }
+}
+
+/// <summary>The template module's notification (docs/design/sample.md): editable in Settings → Notifications.</summary>
+public static class SampleNotifications
+{
+    public static readonly NotificationTemplateDefinition EditorAdded = new(
+        "sample.editorAdded", "sample", "مشاركة بند للتعديل", "Item shared for editing",
+        "يمكنك الآن تعديل البند «{{itemAr}}»", "You can now edit “{{itemEn}}”",
+        "مرحباً {{name}}،\nأصبحت محرراً للبند «{{itemAr}}» ({{number}}).\n{{button}}",
+        "Hello {{name}},\nYou are now an editor of “{{itemEn}}” ({{number}}).\n{{button}}",
+        "فتح البند", "Open the item", ["name", "itemAr", "itemEn", "number"]);
 }

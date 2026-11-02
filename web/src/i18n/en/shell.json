@@ -23,7 +23,9 @@
       "development": "Development",
       "systems": "Systems"
     },
-    "settings": "Settings"
+    "settings": "Settings",
+    "auditLog": "Audit log",
+    "auditVerification": "Audit verification"
   },
   "language": {
     "label": "Language",

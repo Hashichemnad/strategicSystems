@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Strategy.Host.Infrastructure;
-using Strategy.Platform.Identity.Email;
+using Strategy.Platform.Notifications;
 
 namespace Strategy.IntegrationTests.Infrastructure;
 
@@ -15,7 +15,8 @@ namespace Strategy.IntegrationTests.Infrastructure;
 /// pass <c>environment: "Production"</c> to test fail-closed behaviour. Email goes to <see cref="Emails"/>.
 /// </summary>
 public sealed class ApiFactory(
-    string connectionString, string environment = "Testing", IDictionary<string, string?>? settings = null, bool backgroundServices = true)
+    string connectionString, string environment = "Testing", IDictionary<string, string?>? settings = null, bool backgroundServices = true,
+    bool realEmail = false)
     : WebApplicationFactory<Program>
 {
     public static async Task<ApiFactory> CreateAsync(
@@ -28,7 +29,15 @@ public sealed class ApiFactory(
 
     public string ConnectionString => connectionString;
 
-    public CapturingEmailSender Emails { get; } = new();
+    /// <summary>This host's file store (local provider) in a temporary folder.</summary>
+    public string FilesPath { get; } = Path.Combine(Path.GetTempPath(), "strategy-files-" + Guid.CreateVersion7().ToString("N"));
+
+    public CapturingEmailTransport Emails { get; } = new();
+
+    /// <summary>An ordinary (not mandatory) event, so tests can exercise preferences and the digest.</summary>
+    public static readonly NotificationTemplateDefinition TestEventTemplate = new(
+        "tests.event", "sample", "حدث تجريبي", "Test event", "حدث: {{subject}}", "Event: {{subject}}", "تفاصيل {{subject}}\n{{button}}",
+        "Details of {{subject}}\n{{button}}", "فتح", "Open", ["subject"]);
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -40,6 +49,8 @@ public sealed class ApiFactory(
         builder.UseSetting("Serilog:MinimumLevel:Default", "Warning");
         builder.UseSetting("RateLimiting:PermitLimit", "100000");
         builder.UseSetting("RateLimiting:AuthPermitLimit", "100000");
+        builder.UseSetting("Files:LocalPath", FilesPath);
+        builder.UseSetting("Scheduling:SchedulerName", "test-" + Guid.CreateVersion7().ToString("N")); // Quartz names are per process
         foreach (var (key, value) in settings ?? new Dictionary<string, string?>())
         {
             builder.UseSetting(key, value);
@@ -47,12 +58,17 @@ public sealed class ApiFactory(
 
         builder.ConfigureTestServices(services =>
         {
-            services.RemoveAll<IIdentityEmailSender>();
-            services.AddSingleton<IIdentityEmailSender>(Emails);
+            services.AddNotificationTemplate(TestEventTemplate);
+            if (!realEmail)
+            {
+                services.RemoveAll<IEmailTransport>();
+                services.AddSingleton<IEmailTransport>(Emails);
+            }
             if (!backgroundServices)
             {
                 foreach (var hosted in services.Where(d => d.ServiceType == typeof(Microsoft.Extensions.Hosting.IHostedService)
-                    && d.ImplementationType?.Assembly.GetName().Name?.StartsWith("Strategy.", StringComparison.Ordinal) == true).ToList())
+                    && d.ImplementationType?.Assembly.GetName().Name is { } name
+                    && (name.StartsWith("Strategy.", StringComparison.Ordinal) || name.StartsWith("Quartz", StringComparison.Ordinal))).ToList())
                 {
                     services.Remove(hosted);
                 }

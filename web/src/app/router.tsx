@@ -113,6 +113,57 @@ export const sampleRoute = createRoute({
   component: lazyRouteComponent(() => import('@/features/sample/SampleListPage'), 'SampleListPage'),
 });
 
+export const sampleItemRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/sample/items/$itemId',
+  validateSearch: z.object({ tab: z.enum(['overview', 'documents', 'history']).catch('overview') }),
+  component: lazyRouteComponent(() => import('@/features/sample/SampleItemPage'), 'SampleItemPage'),
+});
+
+// Audit trail (CLAUDE.md §8): global log for administrators and auditors, and the chain verification screen.
+export const auditSearchSchema = z.object({
+  page: z.coerce.number().int().min(1).catch(1),
+  text: z.string().max(200).optional().catch(undefined),
+  system: z.string().max(50).optional().catch(undefined),
+  entityType: z.string().max(150).optional().catch(undefined),
+  recordId: z.string().max(200).optional().catch(undefined),
+  action: z.string().max(100).optional().catch(undefined),
+  channel: z.string().max(20).optional().catch(undefined),
+  from: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/u)
+    .optional()
+    .catch(undefined),
+  to: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/u)
+    .optional()
+    .catch(undefined),
+});
+
+const auditRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/audit',
+  validateSearch: (search: Record<string, unknown>) => auditSearchSchema.parse({ page: 1, ...search }),
+  component: lazyRouteComponent(() => import('@/features/audit/AuditLogPage'), 'AuditLogPage'),
+});
+
+const auditVerificationRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/audit/verification',
+  component: lazyRouteComponent(() => import('@/features/audit/VerificationPage'), 'VerificationPage'),
+});
+
+export const notificationsRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/notifications',
+  validateSearch: z.object({ page: z.coerce.number().int().min(1).catch(1) }),
+  component: lazyRouteComponent(
+    () => import('@/features/notifications/NotificationsPage'),
+    'NotificationsPage',
+  ),
+});
+
 const uiKitRoute = createRoute({
   getParentRoute: () => appLayout,
   path: '/ui-kit',
@@ -123,7 +174,9 @@ export const profileRoute = createRoute({
   getParentRoute: () => appLayout,
   path: '/profile',
   validateSearch: z.object({
-    tab: z.enum(['preferences', 'security', 'sessions', 'tokens', 'delegations']).catch('preferences'),
+    tab: z
+      .enum(['preferences', 'notifications', 'security', 'sessions', 'tokens', 'delegations'])
+      .catch('preferences'),
   }),
   component: lazyRouteComponent(() => import('@/features/profile/ProfilePage'), 'ProfilePage'),
 });
@@ -268,6 +321,24 @@ const translationsRoute = createRoute({
   component: lazyRouteComponent(() => import('@/features/settings/DataPages'), 'TranslationsPage'),
 });
 
+const notificationTemplatesRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/notifications',
+  component: lazyRouteComponent(() => import('@/features/notifications/TemplatesPage'), 'TemplatesPage'),
+});
+
+const filesSettingsRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/files',
+  component: lazyRouteComponent(() => import('@/features/files/FilesSettingsPage'), 'FilesSettingsPage'),
+});
+
+const jobsRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/jobs',
+  component: lazyRouteComponent(() => import('@/features/jobs/JobsPage'), 'JobsPage'),
+});
+
 const systemAccessRoute = createRoute({
   getParentRoute: () => settingsLayout,
   path: '/access/system-access',
@@ -309,6 +380,10 @@ const routeTree = rootRoute.addChildren([
   appLayout.addChildren([
     homeRoute,
     sampleRoute,
+    sampleItemRoute,
+    auditRoute,
+    auditVerificationRoute,
+    notificationsRoute,
     uiKitRoute,
     profileRoute,
     unitsRoute,
@@ -330,6 +405,9 @@ const routeTree = rootRoute.addChildren([
       lookupsRoute,
       numberingRoute,
       translationsRoute,
+      notificationTemplatesRoute,
+      filesSettingsRoute,
+      jobsRoute,
       rolesRoute,
       assignmentsRoute,
       systemAccessRoute,

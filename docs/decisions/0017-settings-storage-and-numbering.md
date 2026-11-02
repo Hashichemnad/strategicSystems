@@ -20,4 +20,4 @@
 - **Module enable / disable:** in `access.system.enabled`, because `IAccessService` must refuse a disabled system's permissions. The configuration key `Modules:<Name>:Enabled` only seeds the first value.
 
 ## Consequences
-Branding logos and the employee photo both move to Files in Phase 3.
+Branding logos and the employee photo both move to Files in Phase 3 — done (ADR 0019): `settings.branding_asset` is dropped after its rows are carried into the file store.

@@ -20,6 +20,7 @@ using Strategy.Platform.Identity.Infrastructure;
 using Strategy.Platform.Kernel;
 using Strategy.Platform.Kernel.Context;
 using Strategy.Platform.Kernel.Results;
+using Strategy.Platform.Notifications;
 using Strategy.Platform.Organisation.Contracts;
 using Strategy.Platform.Organisation.Import;
 using Strategy.Platform.Persistence;
@@ -49,7 +50,13 @@ public sealed class IdentityComponent : IPlatformComponent
         services.AddScoped<SignInService>();
         services.AddScoped<AccessTokenService>();
         services.AddScoped<UserAdministration>();
-        services.AddScoped<IIdentityEmailSender, SmtpIdentityEmailSender>();
+        services.AddScoped<ISmtpSettingsSource, SmtpSettingsSource>();
+        services.AddScoped<INotificationRecipientDirectory, NotificationRecipientDirectory>();
+        foreach (var template in IdentityEmails.All)
+        {
+            services.AddNotificationTemplate(template);
+        }
+
         services.AddScoped<IEmployeeLifecycleHook, DeactivateUserWhenEmployeeLeaves>();
         services.AddScoped<IUserProvisioning, ImportedUserProvisioning>();
         services.AddScoped<IUserDirectory, UserDirectory>();

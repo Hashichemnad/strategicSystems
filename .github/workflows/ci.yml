@@ -92,6 +92,10 @@ jobs:
       mailpit:
         image: axllent/mailpit:v1.29
         ports: ["1025:1025", "8025:8025"]
+      # The History tab's PDF export is rendered by Gotenberg (appsettings.Development.json: http://localhost:3000).
+      gotenberg:
+        image: gotenberg/gotenberg:8
+        ports: ["3000:3000"]
     env:
       CI: "true"
       ConnectionStrings__Strategy: Host=localhost;Port=5432;Database=strategy;Username=strategy;Password=strategy

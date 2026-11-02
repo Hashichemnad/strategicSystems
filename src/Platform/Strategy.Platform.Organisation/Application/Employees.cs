@@ -1,6 +1,7 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Strategy.Platform.Access;
+using Strategy.Platform.Files;
 using Strategy.Platform.Kernel.Context;
 using Strategy.Platform.Kernel.Messaging;
 using Strategy.Platform.Kernel.Paging;
@@ -333,7 +334,7 @@ public sealed class ListEmployeesValidator : AbstractValidator<ListEmployees>
     }
 }
 
-internal sealed class ListEmployeesHandler(OrgDbContext db, IAccessService access, IRequestContext context)
+internal sealed class ListEmployeesHandler(OrgDbContext db, IAccessService access, IRequestContext context, IFileService files)
     : IQueryHandler<ListEmployees, PagedResult<EmployeeListItemDto>>
 {
     public static readonly IReadOnlySet<string> SortableFields =
@@ -377,12 +378,12 @@ internal sealed class ListEmployeesHandler(OrgDbContext db, IAccessService acces
         var units = await db.Units.AsNoTracking().Where(u => unitIds.Contains(u.Id)).ToDictionaryAsync(u => u.Id, cancellationToken)
             .ConfigureAwait(false);
         var employeeIds = page.Select(e => e.Id).ToList();
-        var withPhoto = (await db.Photos.AsNoTracking().Where(p => employeeIds.Contains(p.EmployeeId)).Select(p => p.EmployeeId)
-            .ToListAsync(cancellationToken).ConfigureAwait(false)).ToHashSet();
+        var withPhoto = await files.OwnersWithFilesAsync(EmployeePhotos.Purpose.Key, employeeIds.Select(i => i.ToString("D")).ToList(), cancellationToken)
+            .ConfigureAwait(false);
 
         var items = page.Select(e => new EmployeeListItemDto(
             e.Id, e.EmployeeNo, e.NameAr, e.NameEn, e.Email, e.JobTitleAr, e.JobTitleEn, e.UnitId, units[e.UnitId].Code,
-            units[e.UnitId].NameAr, units[e.UnitId].NameEn, e.Status, withPhoto.Contains(e.Id))).ToList();
+            units[e.UnitId].NameAr, units[e.UnitId].NameEn, e.Status, withPhoto.Contains(e.Id.ToString("D")))).ToList();
         return new PagedResult<EmployeeListItemDto>(items, query.Paging.Page, query.Paging.PageSize, total);
     }
 
@@ -437,7 +438,7 @@ internal sealed class GetEmployeeHistoryHandler(OrgDbContext db, IAccessService 
     }
 }
 
-internal sealed class EmployeeReader(OrgDbContext db, IAccessService access, IRequestContext context, OrgReader orgReader)
+internal sealed class EmployeeReader(OrgDbContext db, IAccessService access, IRequestContext context, OrgReader orgReader, IFileService files)
 {
     public async Task<Result<EmployeeDto>> GetAsync(Guid id, CancellationToken cancellationToken)
     {
@@ -452,7 +453,7 @@ internal sealed class EmployeeReader(OrgDbContext db, IAccessService access, IRe
 
         var unit = await db.Units.AsNoTracking().FirstAsync(u => u.Id == employee.UnitId, cancellationToken).ConfigureAwait(false);
         var managers = await orgReader.EmployeeRefsAsync([employee.ManagerEmployeeId], cancellationToken).ConfigureAwait(false);
-        var hasPhoto = await db.Photos.AnyAsync(p => p.EmployeeId == id, cancellationToken).ConfigureAwait(false);
+        var hasPhoto = await files.FindSingleAsync(EmployeePhotos.Purpose.Key, id.ToString("D"), cancellationToken).ConfigureAwait(false) is not null;
         return new EmployeeDto(
             employee.Id, employee.EmployeeNo, employee.NameAr, employee.NameEn, employee.Email, employee.Mobile, employee.JobTitleAr,
             employee.JobTitleEn, employee.Grade, employee.UnitId, OrgMapping.PathItem(unit), OrgReader.Lookup(managers, employee.ManagerEmployeeId),

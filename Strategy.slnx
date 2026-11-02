@@ -11,11 +11,19 @@
   <Folder Name="/src/Platform/">
     <Project Path="src/Platform/Strategy.Platform.Access/Strategy.Platform.Access.csproj" />
     <Project Path="src/Platform/Strategy.Platform.Access.Contracts/Strategy.Platform.Access.Contracts.csproj" />
+    <Project Path="src/Platform/Strategy.Platform.Audit/Strategy.Platform.Audit.csproj" />
+    <Project Path="src/Platform/Strategy.Platform.Audit.Contracts/Strategy.Platform.Audit.Contracts.csproj" />
+    <Project Path="src/Platform/Strategy.Platform.Reporting/Strategy.Platform.Reporting.csproj" />
+    <Project Path="src/Platform/Strategy.Platform.Files/Strategy.Platform.Files.csproj" />
+    <Project Path="src/Platform/Strategy.Platform.Files.Contracts/Strategy.Platform.Files.Contracts.csproj" />
     <Project Path="src/Platform/Strategy.Platform.Http/Strategy.Platform.Http.csproj" />
     <Project Path="src/Platform/Strategy.Platform.Identity/Strategy.Platform.Identity.csproj" />
     <Project Path="src/Platform/Strategy.Platform.Kernel/Strategy.Platform.Kernel.csproj" />
+    <Project Path="src/Platform/Strategy.Platform.Notifications/Strategy.Platform.Notifications.csproj" />
+    <Project Path="src/Platform/Strategy.Platform.Notifications.Contracts/Strategy.Platform.Notifications.Contracts.csproj" />
     <Project Path="src/Platform/Strategy.Platform.Organisation/Strategy.Platform.Organisation.csproj" />
     <Project Path="src/Platform/Strategy.Platform.Persistence/Strategy.Platform.Persistence.csproj" />
+    <Project Path="src/Platform/Strategy.Platform.Scheduling/Strategy.Platform.Scheduling.csproj" />
     <Project Path="src/Platform/Strategy.Platform.Settings/Strategy.Platform.Settings.csproj" />
   </Folder>
   <Folder Name="/tests/">

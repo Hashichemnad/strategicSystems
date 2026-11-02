@@ -1,3 +1,4 @@
+using Strategy.Platform.Files;
 using Strategy.Platform.Kernel.Domain;
 
 namespace Strategy.Platform.Settings.Domain;
@@ -191,16 +192,11 @@ public sealed class FeatureFlag : AuditableEntity
     public void Set(bool enabled) => Enabled = enabled;
 }
 
-/// <summary>Logo bytes until the Files service (ADR 0017).</summary>
-public sealed class BrandingAsset
+/// <summary>Logos are files (Files service, purpose <c>settings.branding-logo</c>, owner id = kind); ADR 0017's interim table is gone.</summary>
+public static class BrandingLogos
 {
-    public string Kind { get; set; } = string.Empty;
-
-    public string ContentType { get; set; } = string.Empty;
-
-    public byte[] Content { get; set; } = [];
-
-    public DateTimeOffset UpdatedAt { get; set; }
+    public static readonly FilePurpose Purpose = new(
+        "settings.branding-logo", "settings.branding", "settings", FileKinds.Images, 512 * 1024, SingleFile: true);
 }
 
 public static class BrandingAssetKinds

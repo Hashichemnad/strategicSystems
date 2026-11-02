@@ -1,4 +1,4 @@
-import { getRouteApi } from '@tanstack/react-router';
+import { getRouteApi, Link } from '@tanstack/react-router';
 import { Boxes, Pencil, Plus, Power, PowerOff, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -184,7 +184,14 @@ export function SampleListPage() {
                 return (
                   <TableRow key={item.id} data-testid="sample-row">
                     <TableCell>
-                      <div className="font-medium">{name}</div>
+                      <Link
+                        to="/sample/items/$itemId"
+                        params={{ itemId: item.id }}
+                        search={{ tab: 'overview' }}
+                        className="font-medium text-primary hover:underline"
+                      >
+                        {name}
+                      </Link>
                       {other && other !== name && (
                         <div
                           className="text-xs text-muted-foreground"

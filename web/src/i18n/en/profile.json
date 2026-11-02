@@ -6,7 +6,8 @@
     "security": "Security",
     "sessions": "Sessions",
     "tokens": "Access tokens",
-    "delegations": "Delegations"
+    "delegations": "Delegations",
+    "notifications": "Notifications"
   },
   "preferences": {
     "title": "Preferences",

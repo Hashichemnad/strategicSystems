@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { X } from 'lucide-react';
-import { useEffect, useId, useMemo, useState } from 'react';
+import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api, unwrap } from '@/api/client';
 import type { components } from '@/api/schema';
@@ -75,10 +75,21 @@ export function UserPicker({
   const [text, setText] = useState('');
   const [debounced, setDebounced] = useState('');
   const [open, setOpen] = useState(false);
+  const container = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const timer = window.setTimeout(() => setDebounced(text.trim()), 250);
     return () => window.clearTimeout(timer);
   }, [text]);
+  // Closes on a pointer press outside the picker (not on blur: a dropdown that just closed may take the focus back for a moment,
+  // which used to close the list right after the user started typing).
+  useEffect(() => {
+    if (!open) return;
+    const onPointerDown = (event: PointerEvent) => {
+      if (!container.current?.contains(event.target as Node)) setOpen(false);
+    };
+    document.addEventListener('pointerdown', onPointerDown);
+    return () => document.removeEventListener('pointerdown', onPointerDown);
+  }, [open]);
   const results = useQuery({
     queryKey: ['access', 'users', debounced],
     queryFn: async ({ signal }) =>
@@ -102,7 +113,7 @@ export function UserPicker({
       </div>
     );
   return (
-    <div className="relative">
+    <div className="relative" ref={container}>
       <Input
         id={id}
         role="combobox"
@@ -115,7 +126,9 @@ export function UserPicker({
           setText(e.target.value);
           setOpen(true);
         }}
-        onBlur={() => window.setTimeout(() => setOpen(false), 150)}
+        onKeyDown={(e) => {
+          if (e.key === 'Escape' || e.key === 'Tab') setOpen(false);
+        }}
         {...aria}
       />
       {open && !!results.data?.length && (

@@ -4,6 +4,7 @@ import { Building2, Plus } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCan } from '@/features/access/session';
+import { HistoryTab } from '@/features/audit/HistoryTab';
 import { api, unwrap } from '@/api/client';
 import { errorMessage } from '@/api/problem';
 import { unitsRoute } from '@/app/router';
@@ -156,6 +157,7 @@ function UnitDetails({
   const { t: tc, i18n } = useTranslation();
   const unit = useUnit(id);
   const history = useUnitHistory(id);
+  const { t: ta } = useTranslation('audit');
   const invalidate = useInvalidateOrg();
   const toast = useToast();
   const [editing, setEditing] = useState(false);
@@ -229,6 +231,7 @@ function UnitDetails({
         <TabsList>
           <TabsTrigger value="overview">{t('units.tabs.overview')}</TabsTrigger>
           <TabsTrigger value="history">{t('units.tabs.history')}</TabsTrigger>
+          <TabsTrigger value="audit">{ta('history.changeLog')}</TabsTrigger>
         </TabsList>
         <TabsContent value="overview" className="pt-4">
           <dl className="grid gap-x-6 gap-y-3 text-sm sm:grid-cols-2">
@@ -295,6 +298,22 @@ function UnitDetails({
               </li>
             ))}
           </ol>
+        </TabsContent>
+        <TabsContent value="audit" className="pt-4">
+          <HistoryTab
+            record="unit"
+            id={id}
+            fieldLabels={{
+              Code: t('fields.code'),
+              NameAr: t('fields.nameAr'),
+              NameEn: t('fields.nameEn'),
+              LevelCode: t('fields.level'),
+              HeadEmployeeId: t('fields.head'),
+              DeputyEmployeeId: t('fields.deputy'),
+              CostCentre: t('fields.costCentre'),
+              EffectiveFrom: t('fields.effectiveFrom'),
+            }}
+          />
         </TabsContent>
       </Tabs>
       {editing && <UnitDialog open onOpenChange={setEditing} unit={data} onSaved={() => setEditing(false)} />}

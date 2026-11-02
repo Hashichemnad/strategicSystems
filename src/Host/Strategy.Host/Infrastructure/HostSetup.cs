@@ -5,6 +5,7 @@ using Strategy.Platform.Http.Context;
 using Strategy.Platform.Http.Modules;
 using Strategy.Platform.Kernel;
 using Strategy.Platform.Persistence;
+using Strategy.Platform.Reporting.Pdf;
 
 namespace Strategy.Host.Infrastructure;
 
@@ -28,6 +29,7 @@ internal static class HostSetup
         services.AddPlatformKernel();
         services.AddPlatformPersistence(configuration);
         services.AddStrategyDataProtection(configuration);
+        services.AddPlatformReporting(configuration);
 
         // Numbers are numbers: no quoted numbers on input, so the OpenAPI schema stays exact.
         services.ConfigureHttpJsonOptions(json => json.SerializerOptions.NumberHandling = JsonNumberHandling.Strict);
@@ -41,6 +43,7 @@ internal static class HostSetup
             options.IncludeSubDomains = true;
         });
         services.AddHealthChecks();
+        services.AddAuthorization();
 
         foreach (var component in components)
         {
@@ -82,6 +85,7 @@ internal static class HostSetup
         app.UseRateLimiter(); // before authentication: anonymous and refused calls count too
         app.UseAuthentication();
         app.UseMiddleware<AuthenticationRequirementMiddleware>();
+        app.UseAuthorization(); // [Authorize] on the SignalR hub; API endpoints use RequirePermission filters (CLAUDE.md §7)
         foreach (var component in components)
         {
             component.UseMiddleware(app);

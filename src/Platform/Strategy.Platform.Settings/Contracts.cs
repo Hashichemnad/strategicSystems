@@ -41,6 +41,17 @@ public interface ISettingsStore
         where T : class, ISettingsArea;
 }
 
+/// <summary>Reads and saves a typed area with its version (409 on conflict) for components that own a settings screen.</summary>
+public interface ISettingsEditor
+{
+    Task<Application.SettingsDocument<T>> GetDocumentAsync<T>(CancellationToken cancellationToken = default)
+        where T : class, ISettingsArea;
+
+    Task<Kernel.Results.Result<Application.SettingsDocument<T>>> SaveAsync<T>(
+        T value, uint version, Func<T, List<Kernel.Results.FieldError>> validate, CancellationToken cancellationToken = default)
+        where T : class, ISettingsArea;
+}
+
 /// <summary>A picklist declared by its owning component or module, with seed values (inserted once, then editable).</summary>
 public sealed record LookupTypeDefinition(
     string Code, string SystemCode, string NameAr, string NameEn, IReadOnlyList<LookupSeed> Values, string? ParentTypeCode = null);

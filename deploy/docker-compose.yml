@@ -16,10 +16,14 @@ services:
       POSTGRES_DB: ${POSTGRES_DB:-strategy}
       POSTGRES_USER: ${POSTGRES_USER:-strategy}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-strategy}
+      # Runtime role (ADR 0018): the app connects as it; it may only SELECT / INSERT the audit trail. Created on first start.
+      STRATEGY_APP_USER: ${STRATEGY_APP_USER:-strategy_app}
+      STRATEGY_APP_PASSWORD: ${STRATEGY_APP_PASSWORD:-strategy_app}
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
+      - ./postgres/init-roles.sh:/docker-entrypoint-initdb.d/10-init-roles.sh:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
@@ -54,7 +58,9 @@ services:
         - build_ca
     command: ["dotnet", "Strategy.Host.dll", "--migrate"]
     environment:
-      ConnectionStrings__Strategy: Host=postgres;Port=5432;Database=${POSTGRES_DB:-strategy};Username=${POSTGRES_USER:-strategy};Password=${POSTGRES_PASSWORD:-strategy}
+      # Migrations run as the owner; the seeder then grants the runtime role (append-only on audit.entry).
+      ConnectionStrings__StrategyMigrations: Host=postgres;Port=5432;Database=${POSTGRES_DB:-strategy};Username=${POSTGRES_USER:-strategy};Password=${POSTGRES_PASSWORD:-strategy}
+      ConnectionStrings__Strategy: Host=postgres;Port=5432;Database=${POSTGRES_DB:-strategy};Username=${STRATEGY_APP_USER:-strategy_app};Password=${STRATEGY_APP_PASSWORD:-strategy_app}
     depends_on:
       postgres:
         condition: service_healthy
@@ -66,13 +72,22 @@ services:
     restart: unless-stopped
     environment:
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Production}
-      ConnectionStrings__Strategy: Host=postgres;Port=5432;Database=${POSTGRES_DB:-strategy};Username=${POSTGRES_USER:-strategy};Password=${POSTGRES_PASSWORD:-strategy}
+      ConnectionStrings__Strategy: Host=postgres;Port=5432;Database=${POSTGRES_DB:-strategy};Username=${STRATEGY_APP_USER:-strategy_app};Password=${STRATEGY_APP_PASSWORD:-strategy_app}
+      Gotenberg__Url: ${GOTENBERG_URL:-http://gotenberg:3000}
+      Scheduling__TimeZone: ${SCHEDULING_TIME_ZONE:-Asia/Dubai}
+      Files__Provider: ${FILES_PROVIDER:-local}
+      Files__S3ServiceUrl: ${FILES_S3_SERVICE_URL:-}
+      Files__S3Bucket: ${FILES_S3_BUCKET:-}
+      Files__S3AccessKey: ${FILES_S3_ACCESS_KEY:-}
+      Files__S3SecretKey: ${FILES_S3_SECRET_KEY:-}
       Modules__Sample__Enabled: ${MODULE_SAMPLE_ENABLED:-false}
       DataProtection__CertificatePath: ${DATAPROTECTION_CERTIFICATE_PATH:-}
       DataProtection__CertificatePassword: ${DATAPROTECTION_CERTIFICATE_PASSWORD:-}
       OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-}
     ports:
       - "${APP_PORT:-8080}:8080"
+    volumes:
+      - app-files:/var/lib/strategy/files
     depends_on:
       migrate:
         condition: service_completed_successfully
@@ -106,6 +121,7 @@ secrets:
 
 volumes:
   postgres-data:
+  app-files:
   meili-data:
   clamav-data:
   ollama-data:

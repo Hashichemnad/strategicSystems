@@ -6,7 +6,9 @@ import {
   LayoutDashboard,
   Network,
   Palette,
+  ScrollText,
   Settings2,
+  ShieldCheck,
   UsersRound,
   type LucideIcon,
 } from 'lucide-react';
@@ -26,7 +28,9 @@ export interface NavItem {
     | '/admin/providers'
     | '/admin/security'
     | '/admin/email'
-    | '/settings';
+    | '/settings'
+    | '/audit'
+    | '/audit/verification';
   labelKey:
     | 'nav.home'
     | 'nav.sample'
@@ -40,7 +44,9 @@ export interface NavItem {
     | 'nav.providers'
     | 'nav.security'
     | 'nav.email'
-    | 'nav.settings';
+    | 'nav.settings'
+    | 'nav.auditLog'
+    | 'nav.auditVerification';
   icon: LucideIcon;
   /** Shown when the user holds at least one of these permissions (any scope). */
   permissions?: readonly string[];
@@ -66,6 +72,9 @@ export const settingsPermissions = [
   'settings.numbering.manage',
   'settings.feature.manage',
   'settings.translation.manage',
+  'settings.notification.manage',
+  'settings.file.manage',
+  'settings.job.view',
   'access.system.read',
   'access.role.read',
   'access.assignment.read',
@@ -120,6 +129,13 @@ export const navigation: readonly NavSection[] = [
     items: [
       // One entry: users, identity providers, security and e-mail are pages of the Settings centre.
       { to: '/settings', labelKey: 'nav.settings', icon: Settings2, permissions: settingsPermissions },
+      { to: '/audit', labelKey: 'nav.auditLog', icon: ScrollText, permissions: ['audit.log.view'] },
+      {
+        to: '/audit/verification',
+        labelKey: 'nav.auditVerification',
+        icon: ShieldCheck,
+        permissions: ['audit.chain.verify'],
+      },
     ],
   },
   {

@@ -68,3 +68,12 @@ internal sealed class IdentityAccessCatalogue : IAccessCatalogueSource
             RequiresMfa: true),
     ];
 }
+
+/// <summary>E-mail address, language and name of users for Platform.Notifications.</summary>
+internal sealed class NotificationRecipientDirectory(IdentityStoreDbContext db) : Notifications.INotificationRecipientDirectory
+{
+    public async Task<IReadOnlyList<Notifications.ResolvedRecipient>> ResolveAsync(IReadOnlyCollection<Guid> userIds, CancellationToken cancellationToken = default) =>
+        await db.Users.AsNoTracking().Where(u => userIds.Contains(u.Id))
+            .Select(u => new Notifications.ResolvedRecipient(u.Id, u.Email, u.UserName, u.Language ?? "ar", u.Active))
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
+}

@@ -37,7 +37,6 @@ public sealed class IdentityStoreDbContext(DbContextOptions<IdentityStoreDbConte
 
     public DbSet<PersonalAccessToken> Tokens => Set<PersonalAccessToken>();
 
-    public DbSet<AuthEvent> AuthEvents => Set<AuthEvent>();
 }
 
 internal sealed class StrategyUserConfiguration : IEntityTypeConfiguration<StrategyUser>
@@ -189,23 +188,5 @@ internal sealed class PersonalAccessTokenConfiguration : IEntityTypeConfiguratio
         builder.HasIndex(t => t.Prefix).IsUnique();
         builder.HasIndex(t => t.UserId);
         builder.HasOne<StrategyUser>().WithMany().HasForeignKey(t => t.UserId).OnDelete(DeleteBehavior.Cascade);
-    }
-}
-
-internal sealed class AuthEventConfiguration : IEntityTypeConfiguration<AuthEvent>
-{
-    public void Configure(EntityTypeBuilder<AuthEvent> builder)
-    {
-        builder.ToTable("auth_event");
-        builder.Property(e => e.Id).ValueGeneratedNever();
-        builder.Property(e => e.Type).HasMaxLength(50);
-        builder.Property(e => e.UserName).HasMaxLength(256);
-        builder.Property(e => e.Provider).HasMaxLength(IdentityProvider.CodeMaxLength);
-        builder.Property(e => e.Detail).HasMaxLength(200);
-        builder.Property(e => e.IpAddress).HasMaxLength(64);
-        builder.Property(e => e.UserAgent).HasMaxLength(512);
-        builder.Property(e => e.CorrelationId).HasMaxLength(64);
-        builder.HasIndex(e => e.At);
-        builder.HasIndex(e => new { e.UserId, e.At });
     }
 }

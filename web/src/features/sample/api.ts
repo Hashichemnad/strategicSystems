@@ -9,7 +9,16 @@ export type SampleListQuery = NonNullable<operations['ListSampleItems']['paramet
 export const sampleKeys = {
   all: ['sample', 'items'] as const,
   list: (query: SampleListQuery) => [...sampleKeys.all, 'list', query] as const,
+  item: (id: string) => [...sampleKeys.all, 'item', id] as const,
 };
+
+export function useSampleItem(id: string) {
+  return useQuery({
+    queryKey: sampleKeys.item(id),
+    queryFn: async ({ signal }) =>
+      unwrap(await api.GET('/api/v1/sample/items/{id}', { params: { path: { id } }, signal })),
+  });
+}
 
 export function useSampleItems(query: SampleListQuery) {
   return useQuery({
@@ -22,7 +31,11 @@ export function useSampleItems(query: SampleListQuery) {
 
 function useInvalidateOnSuccess() {
   const queryClient = useQueryClient();
-  return () => queryClient.invalidateQueries({ queryKey: sampleKeys.all });
+  return () =>
+    Promise.all([
+      queryClient.invalidateQueries({ queryKey: sampleKeys.all }),
+      queryClient.invalidateQueries({ queryKey: ['audit'] }),
+    ]);
 }
 
 export function useCreateSampleItem() {

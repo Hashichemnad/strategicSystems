@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { api, unwrap } from '@/api/client';
 import { errorMessage } from '@/api/problem';
 import type { components } from '@/api/schema';
+import { HistoryTab } from '@/features/audit/HistoryTab';
 import { useServerErrors } from '@/features/settings/common';
 import { pickText } from '@/lib/format';
 import {
@@ -40,6 +41,7 @@ const routeApi = getRouteApi('/app/settings/access/roles');
 export function RolesPage() {
   const { t } = useTranslation('access');
   const { t: tc, i18n } = useTranslation();
+  const { t: ta } = useTranslation('audit');
   const search = routeApi.useSearch();
   const navigate = routeApi.useNavigate();
   const systems = useSystems();
@@ -90,6 +92,7 @@ export function RolesPage() {
           <TabsList>
             <TabsTrigger value="roles">{t('roles.systemRoles')}</TabsTrigger>
             <TabsTrigger value="record">{t('roles.recordRoles')}</TabsTrigger>
+            <TabsTrigger value="history">{ta('history.tab')}</TabsTrigger>
           </TabsList>
           <TabsContent value="roles">
             <RoleMatrix matrix={matrix.data} canManage={canManage} />
@@ -97,9 +100,36 @@ export function RolesPage() {
           <TabsContent value="record">
             <RecordRoleMatrix matrix={matrix.data} canManage={canManage} />
           </TabsContent>
+          <TabsContent value="history">
+            <RoleHistory matrix={matrix.data} />
+          </TabsContent>
         </Tabs>
       )}
       {creating && system && <CreateRoleDialog system={system} onClose={() => setCreating(false)} />}
+    </div>
+  );
+}
+
+/** A role's change log: its names and switches, its permissions (old → new scope) and its assignments, from the audit trail. */
+function RoleHistory({ matrix }: { matrix: Matrix }) {
+  const { t, i18n } = useTranslation('audit');
+  const [roleId, setRoleId] = useState<string | undefined>(matrix.roles[0]?.id);
+  const selected = matrix.roles.some((role) => role.id === roleId) ? roleId : matrix.roles[0]?.id;
+  const labels = t('history.roleFields', { returnObjects: true }) as Record<string, string>;
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="max-w-sm">
+        <Select
+          aria-label={t('history.role')}
+          value={selected}
+          onValueChange={setRoleId}
+          options={matrix.roles.map((role) => ({
+            value: role.id,
+            label: pickText(i18n.language, role.nameAr, role.nameEn) || role.code,
+          }))}
+        />
+      </div>
+      {selected && <HistoryTab key={selected} record="role" id={selected} fieldLabels={labels} />}
     </div>
   );
 }

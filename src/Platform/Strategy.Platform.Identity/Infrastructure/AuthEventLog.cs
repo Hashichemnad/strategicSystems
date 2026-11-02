@@ -1,49 +1,65 @@
-using Microsoft.Extensions.Logging;
-using Strategy.Platform.Identity.Domain;
-using Strategy.Platform.Kernel.Context;
-using Strategy.Platform.Kernel.Time;
+using System.Text.Json;
+using Strategy.Platform.Audit;
+using Strategy.Platform.Identity.Api;
+using Strategy.Platform.Kernel.Paging;
 
 namespace Strategy.Platform.Identity.Infrastructure;
 
 /// <summary>
-/// Records sign-in and account events in <c>identity.auth_event</c> and as structured log events (acceptance check:
-/// "all auth events visible in logs"). Never logs passwords, codes or tokens.
+/// Sign-in and account events, written into the hash-chained audit trail as <c>auth.&lt;type&gt;</c> events about the user
+/// (entity <c>identity.user</c>), so they appear in the Audit Log and the user's history (ADR 0018 closes ADR 0014's interim table).
+/// Never records passwords, codes or tokens.
 /// </summary>
-public sealed partial class AuthEventLog(IdentityStoreDbContext db, IRequestContext context, IClock clock, ILogger<AuthEventLog> logger)
+public sealed class AuthEventLog(IAuditLog audit, IAuditQuery query)
 {
-    public async Task WriteAsync(
+    public const string ActionPrefix = "auth.";
+    public const string UserEntity = "identity.user";
+
+    public Task WriteAsync(
         string type,
         bool success,
         Guid? userId = null,
         string? userName = null,
         string? provider = null,
         string? detail = null,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default) =>
+        audit.WriteAsync(
+            new AuditEvent(ActionPrefix + type, success, IdentityComponentInfo.SystemCode, UserEntity, userId?.ToString("D"),
+                new AuthEventData(Truncate(userName, 256), provider, Truncate(detail, 200)))
+            {
+                ActorId = userId,
+                ActorName = Truncate(userName, 256),
+            },
+            cancellationToken);
+
+    /// <summary>Sign-in events from the audit trail, newest first (Settings → Users, tests).</summary>
+    public async Task<PagedResult<AuthEventDto>> ListAsync(PageRequest page, Guid? userId, string? type, CancellationToken cancellationToken)
     {
-        var entry = new AuthEvent
-        {
-            Type = type,
-            Success = success,
-            UserId = userId,
-            UserName = Truncate(userName, 256),
-            ActorUserId = context.UserId,
-            Provider = provider,
-            Detail = Truncate(detail, 200),
-            IpAddress = context.IpAddress,
-            UserAgent = Truncate(context.UserAgent, 512),
-            CorrelationId = context.CorrelationId,
-            At = clock.UtcNow,
-        };
-        db.AuthEvents.Add(entry);
-        await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-        LogAuthEvent(logger, type, success, userId, userName, provider, detail, context.IpAddress);
+        var filter = new AuditFilter(
+            EntityType: UserEntity,
+            RecordId: userId?.ToString("D"),
+            Action: string.IsNullOrWhiteSpace(type) ? "auth" : ActionPrefix + type.Trim(),
+            ExactAction: !string.IsNullOrWhiteSpace(type));
+        var result = await query.SearchAsync(filter, page, cancellationToken).ConfigureAwait(false);
+        return new PagedResult<AuthEventDto>(result.Items.Select(ToDto).ToList(), result.Page, result.PageSize, result.TotalCount);
     }
 
-    [LoggerMessage(EventId = 4100, Level = LogLevel.Information,
-        Message = "Auth event {AuthEventType} success={AuthSuccess} user={AuthUserId} name={AuthUserName} provider={AuthProvider} detail={AuthDetail} ip={ClientIp}")]
-    private static partial void LogAuthEvent(
-        ILogger logger, string authEventType, bool authSuccess, Guid? authUserId, string? authUserName, string? authProvider, string? authDetail, string? clientIp);
+    private static AuthEventDto ToDto(AuditEntryDto e)
+    {
+        var data = e.Data is null ? null : JsonSerializer.Deserialize<AuthEventData>(e.Data, JsonOptions);
+        return new AuthEventDto(e.Id, e.Action[ActionPrefix.Length..], e.Success ?? true, Guid.TryParse(e.RecordId, out var id) ? id : null,
+            data?.UserName, e.UserId, data?.Provider, data?.Detail, e.IpAddress, e.OccurredAt);
+    }
+
+    private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
 
     private static string? Truncate(string? value, int max) =>
         string.IsNullOrEmpty(value) ? value : value.Length <= max ? value : value[..max];
+
+    private sealed record AuthEventData(string? UserName, string? Provider, string? Detail);
+}
+
+internal static class IdentityComponentInfo
+{
+    public const string SystemCode = "identity";
 }
