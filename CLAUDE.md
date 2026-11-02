@@ -246,7 +246,7 @@ dotnet test --solution Strategy.slnx                                          # 
 tools/check-vulnerable.sh && tools/check-api-client.sh
 cd web && npm run lint && npm run format:check && npm run typecheck && npm test
 npm run build && npm audit --audit-level=high && npm run lint:licenses
-npx playwright test                                                           # E2E, projects "ar" and "en" (needs postgres + mailpit; starts the host)
+npx playwright test                                                           # E2E, projects "ar" and "en" (needs postgres + mailpit + gotenberg; starts the host)
 # E2E screenshots go to docs/screenshots/$E2E_SCREENSHOTS (default phase-3). A sandbox Chromium of another revision: E2E_CHROMIUM_PATH=/opt/pw-browsers/chromium
 
 # Containerised install (http://localhost:8080)
