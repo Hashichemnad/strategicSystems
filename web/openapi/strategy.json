@@ -6773,6 +6773,523 @@
         }
       }
     },
+    "/api/v1/workflow/processes": {
+      "get": {
+        "tags": [
+          "workflow"
+        ],
+        "operationId": "ListApprovalProcesses",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProcessSummaryDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/workflow/processes/{key}": {
+      "get": {
+        "tags": [
+          "workflow"
+        ],
+        "operationId": "GetApprovalProcess",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProcessDetailDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "workflow"
+        ],
+        "operationId": "SaveApprovalProcess",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveProcessInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProcessDetailDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/workflow/processes/{key}/versions/{versionNo}": {
+      "get": {
+        "tags": [
+          "workflow"
+        ],
+        "operationId": "GetApprovalProcessVersion",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "versionNo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProcessDetailDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/workflow/processes/{key}/validate-condition": {
+      "post": {
+        "tags": [
+          "workflow"
+        ],
+        "operationId": "ValidateApprovalCondition",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConditionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConditionCheckDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/workflow/processes/{key}/preview": {
+      "post": {
+        "tags": [
+          "workflow"
+        ],
+        "operationId": "PreviewApprovalProcess",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PreviewInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PreviewDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/workflow/settings": {
+      "get": {
+        "tags": [
+          "workflow"
+        ],
+        "operationId": "GetApprovalSettings",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApprovalSettingsDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "workflow"
+        ],
+        "operationId": "SaveApprovalSettings",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApprovalSettingsInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApprovalSettingsDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/workflow/my-work": {
+      "get": {
+        "tags": [
+          "workflow"
+        ],
+        "operationId": "GetMyWork",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MyWorkDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/workflow/subjects/{resourceType}/{resourceId}": {
+      "get": {
+        "tags": [
+          "workflow"
+        ],
+        "operationId": "GetSubjectApprovals",
+        "parameters": [
+          {
+            "name": "resourceType",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "resourceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubjectApprovalsDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/workflow/status/{resourceType}/{resourceId}": {
+      "get": {
+        "tags": [
+          "workflow"
+        ],
+        "operationId": "GetCurrentStatus",
+        "parameters": [
+          {
+            "name": "resourceType",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "resourceId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CurrentStatus"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/workflow/tasks/{taskId}/act": {
+      "post": {
+        "tags": [
+          "workflow"
+        ],
+        "operationId": "ActOnApprovalTask",
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActResult"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/sample/items": {
       "get": {
         "tags": [
@@ -7043,6 +7560,57 @@
             "application/json": {
               "schema": {
                 "$ref": "#/components/schemas/VersionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SampleItemDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/sample/items/{id}/submit": {
+      "post": {
+        "tags": [
+          "sample"
+        ],
+        "operationId": "SubmitSampleItem",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitInput"
               }
             }
           },
@@ -7523,6 +8091,84 @@
           }
         }
       },
+      "ActInput": {
+        "required": [
+          "action",
+          "comment",
+          "onBehalfOfUserId",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "comment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "onBehalfOfUserId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "version": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          }
+        },
+        "description": "A decision on a task (API body)."
+      },
+      "ActResult": {
+        "required": [
+          "instanceId",
+          "instanceStatus",
+          "taskId",
+          "outcome",
+          "nextStepNameAr",
+          "nextStepNameEn"
+        ],
+        "type": "object",
+        "properties": {
+          "instanceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "instanceStatus": {
+            "type": "string"
+          },
+          "taskId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "outcome": {
+            "type": "string"
+          },
+          "nextStepNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nextStepNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "description": "Outcome of a decision."
+      },
       "AntiforgeryToken": {
         "required": [
           "token",
@@ -7538,6 +8184,249 @@
           }
         },
         "description": "The token the SPA sends back in string AntiforgerySetup.HeaderName on every state-changing call."
+      },
+      "ApprovalActionOptionDto": {
+        "required": [
+          "code",
+          "outcome",
+          "labelAr",
+          "labelEn",
+          "commentRequired"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "outcome": {
+            "type": "string"
+          },
+          "labelAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "labelEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "commentRequired": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ApprovalSettings": {
+        "type": "object",
+        "properties": {
+          "sectionLevelCode": {
+            "type": "string",
+            "default": "section"
+          },
+          "departmentLevelCode": {
+            "type": "string",
+            "default": "department"
+          }
+        },
+        "description": "Settings → Approvals: which organisation levels the \"section manager\" and \"department director\" rules look for (ADR 0025)."
+      },
+      "ApprovalSettingsDto": {
+        "required": [
+          "value",
+          "version",
+          "levels"
+        ],
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "#/components/schemas/ApprovalSettings"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "levels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OptionDto"
+            }
+          }
+        }
+      },
+      "ApprovalSettingsInput": {
+        "required": [
+          "sectionLevelCode",
+          "departmentLevelCode",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "sectionLevelCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "departmentLevelCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "ApprovalStepDefinition": {
+        "required": [
+          "code",
+          "nameAr",
+          "nameEn",
+          "rule"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "rule": {
+            "$ref": "#/components/schemas/ApproverRule"
+          },
+          "condition": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "actions": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "customActions": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/CustomApprovalAction"
+            }
+          },
+          "commentOnApprove": {
+            "type": "boolean",
+            "default": false
+          },
+          "commentOnReject": {
+            "type": "boolean",
+            "default": true
+          },
+          "commentOnReturn": {
+            "type": "boolean",
+            "default": true
+          },
+          "slaHours": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "escalation": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/ApproverRule"
+              }
+            ]
+          },
+          "onNoApprover": {
+            "type": "string",
+            "default": "block"
+          },
+          "excludeSubmitter": {
+            "type": "boolean",
+            "default": true
+          },
+          "notificationTemplate": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "description": "One step of a chain, as configured in the Approval Settings centre."
+      },
+      "ApproverRule": {
+        "required": [
+          "kind"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "roleKey": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "of": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "unitId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "employeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "roleCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "systemCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "description": "Who approves a step. Only the parameters of string ApproverRule.Kind are used: `role` → string? ApproverRule.RoleKey; `sectionManager`,\n`departmentDirector` → string? ApproverRule.Of; `headOfUnit` → Guid? ApproverRule.UnitId or string? ApproverRule.Of; `owningUnit` →\nstring? ApproverRule.SystemCode (default: the process's system); `employee` → Guid? ApproverRule.EmployeeId; `recordRole` / `teamRole`\n→ string? ApproverRule.RoleCode."
       },
       "AssignmentDto": {
         "required": [
@@ -7904,6 +8793,28 @@
           }
         }
       },
+      "BilingualText": {
+        "required": [
+          "ar",
+          "en"
+        ],
+        "type": "object",
+        "properties": {
+          "ar": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "en": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "description": "A value in both languages (status message parameters)."
+      },
       "BrandingSettings": {
         "type": "object",
         "properties": {
@@ -8009,6 +8920,45 @@
           }
         }
       },
+      "ConditionCheckDto": {
+        "required": [
+          "valid",
+          "errors",
+          "variables"
+        ],
+        "type": "object",
+        "properties": {
+          "valid": {
+            "type": "boolean"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FieldError"
+            }
+          },
+          "variables": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ConditionInput": {
+        "required": [
+          "condition"
+        ],
+        "type": "object",
+        "properties": {
+          "condition": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "CreatedAccessTokenDto": {
         "required": [
           "details",
@@ -8107,6 +9057,107 @@
             ]
           }
         }
+      },
+      "CurrentStatus": {
+        "required": [
+          "messageKey",
+          "params",
+          "tone",
+          "actorKey",
+          "actors",
+          "nextActions"
+        ],
+        "type": "object",
+        "properties": {
+          "messageKey": {
+            "type": "string"
+          },
+          "params": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/BilingualText"
+            }
+          },
+          "tone": {
+            "type": "string"
+          },
+          "actorKey": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "actors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PersonName"
+            }
+          },
+          "nextActions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CurrentStatusAction"
+            }
+          },
+          "stage": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "description": "\"Next action required + who\" (SPEC §0.2) for one record: a translatable message with parameters, who acts, and the actions the\ncurrent user may take now."
+      },
+      "CurrentStatusAction": {
+        "required": [
+          "code",
+          "labelKey"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "labelKey": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "default": "primary"
+          },
+          "taskId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          }
+        },
+        "description": "A next action offered on the current-status banner (code handled by the record page)."
+      },
+      "CustomApprovalAction": {
+        "required": [
+          "code",
+          "labelAr",
+          "labelEn",
+          "outcome"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "labelAr": {
+            "type": "string"
+          },
+          "labelEn": {
+            "type": "string"
+          },
+          "outcome": {
+            "type": "string"
+          }
+        },
+        "description": "A labelled extra button, e.g. \"Approve with conditions\" (outcome approve)."
       },
       "DelegationDto": {
         "required": [
@@ -8855,6 +9906,32 @@
           }
         }
       },
+      "FieldError": {
+        "required": [
+          "field",
+          "code",
+          "messageKey"
+        ],
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "messageKey": {
+            "type": "string"
+          },
+          "params": {
+            "type": [
+              "null",
+              "object"
+            ]
+          }
+        },
+        "description": "A validation failure on one field."
+      },
       "FileDto": {
         "required": [
           "id",
@@ -9032,6 +10109,81 @@
           }
         }
       },
+      "HistoryDto": {
+        "required": [
+          "id",
+          "occurredAt",
+          "event",
+          "stepNameAr",
+          "stepNameEn",
+          "actor",
+          "onBehalfOf",
+          "comment",
+          "data"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "occurredAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "event": {
+            "type": "string"
+          },
+          "stepNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "stepNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "actor": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/PersonName"
+              }
+            ]
+          },
+          "onBehalfOf": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/PersonName"
+              }
+            ]
+          },
+          "comment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "data": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/JsonElement"
+              }
+            ]
+          }
+        }
+      },
       "IFormFile": {
         "type": "string",
         "format": "binary"
@@ -9104,6 +10256,95 @@
             "items": {
               "$ref": "#/components/schemas/ImportIssue"
             }
+          }
+        }
+      },
+      "InstanceDto": {
+        "required": [
+          "id",
+          "processKey",
+          "processNameAr",
+          "processNameEn",
+          "status",
+          "attempt",
+          "submittedAt",
+          "completedAt",
+          "submitter",
+          "comment",
+          "steps",
+          "history",
+          "myTask"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "processKey": {
+            "type": "string"
+          },
+          "processNameAr": {
+            "type": "string"
+          },
+          "processNameEn": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "attempt": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "submittedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "completedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "submitter": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/PersonName"
+              }
+            ]
+          },
+          "comment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "steps": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StepStateDto"
+            }
+          },
+          "history": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HistoryDto"
+            }
+          },
+          "myTask": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/MyTaskDto"
+              }
+            ]
           }
         }
       },
@@ -9239,6 +10480,7 @@
           }
         }
       },
+      "JsonElement": { },
       "JsonObject": {
         "type": "object"
       },
@@ -9781,6 +11023,389 @@
           }
         }
       },
+      "MySubmissionDto": {
+        "required": [
+          "instanceId",
+          "processKey",
+          "processNameAr",
+          "processNameEn",
+          "systemCode",
+          "number",
+          "titleAr",
+          "titleEn",
+          "link",
+          "status",
+          "stepNameAr",
+          "stepNameEn",
+          "submittedAt",
+          "completedAt",
+          "attempt"
+        ],
+        "type": "object",
+        "properties": {
+          "instanceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "processKey": {
+            "type": "string"
+          },
+          "processNameAr": {
+            "type": "string"
+          },
+          "processNameEn": {
+            "type": "string"
+          },
+          "systemCode": {
+            "type": "string"
+          },
+          "number": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "link": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "stepNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "stepNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "submittedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "completedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "attempt": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "MyTaskDto": {
+        "required": [
+          "taskId",
+          "version",
+          "actions",
+          "onBehalfOf",
+          "selfAssigned"
+        ],
+        "type": "object",
+        "properties": {
+          "taskId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApprovalActionOptionDto"
+            }
+          },
+          "onBehalfOf": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PersonName"
+            }
+          },
+          "selfAssigned": {
+            "type": "boolean"
+          }
+        }
+      },
+      "MyWorkCountsDto": {
+        "required": [
+          "pendingApprovals",
+          "overdue",
+          "delegated",
+          "actionItems",
+          "inProgressSubmissions"
+        ],
+        "type": "object",
+        "properties": {
+          "pendingApprovals": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "overdue": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "delegated": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "actionItems": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "inProgressSubmissions": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "MyWorkDto": {
+        "required": [
+          "counts",
+          "approvals",
+          "actionItems",
+          "submissions"
+        ],
+        "type": "object",
+        "properties": {
+          "counts": {
+            "$ref": "#/components/schemas/MyWorkCountsDto"
+          },
+          "approvals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MyWorkTaskDto"
+            }
+          },
+          "actionItems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MyWorkItem"
+            }
+          },
+          "submissions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MySubmissionDto"
+            }
+          }
+        }
+      },
+      "MyWorkItem": {
+        "required": [
+          "systemCode",
+          "resourceType",
+          "resourceId",
+          "number",
+          "titleAr",
+          "titleEn",
+          "messageKey",
+          "link"
+        ],
+        "type": "object",
+        "properties": {
+          "systemCode": {
+            "type": "string"
+          },
+          "resourceType": {
+            "type": "string"
+          },
+          "resourceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "messageKey": {
+            "type": "string"
+          },
+          "link": {
+            "type": "string"
+          },
+          "since": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "dueDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          }
+        },
+        "description": "An item that needs the user's action, shown on My Work."
+      },
+      "MyWorkTaskDto": {
+        "required": [
+          "taskId",
+          "taskVersion",
+          "instanceId",
+          "processKey",
+          "processNameAr",
+          "processNameEn",
+          "systemCode",
+          "resourceType",
+          "resourceId",
+          "number",
+          "titleAr",
+          "titleEn",
+          "link",
+          "stepNameAr",
+          "stepNameEn",
+          "submitterName",
+          "submittedAt",
+          "openedAt",
+          "dueAt",
+          "overdue",
+          "onBehalfOf",
+          "attempt"
+        ],
+        "type": "object",
+        "properties": {
+          "taskId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "taskVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "instanceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "processKey": {
+            "type": "string"
+          },
+          "processNameAr": {
+            "type": "string"
+          },
+          "processNameEn": {
+            "type": "string"
+          },
+          "systemCode": {
+            "type": "string"
+          },
+          "resourceType": {
+            "type": "string"
+          },
+          "resourceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "link": {
+            "type": "string"
+          },
+          "stepNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "stepNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "submitterName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "submittedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "openedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "dueAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "overdue": {
+            "type": "boolean"
+          },
+          "onBehalfOf": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/PersonName"
+              }
+            ]
+          },
+          "attempt": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
       "NotificationDto": {
         "required": [
           "id",
@@ -10005,6 +11630,31 @@
           },
           "preview": {
             "type": "string"
+          }
+        }
+      },
+      "OptionDto": {
+        "required": [
+          "code",
+          "labelAr",
+          "labelEn"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "labelAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "labelEn": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
@@ -10765,6 +12415,35 @@
           }
         }
       },
+      "PersonName": {
+        "required": [
+          "userId",
+          "nameAr",
+          "nameEn"
+        ],
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "PreferencesInput": {
         "required": [
           "language",
@@ -10786,6 +12465,89 @@
           }
         }
       },
+      "PreviewApproverDto": {
+        "required": [
+          "userId",
+          "nameAr",
+          "nameEn"
+        ],
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "PreviewDto": {
+        "required": [
+          "steps",
+          "facts",
+          "result"
+        ],
+        "type": "object",
+        "properties": {
+          "steps": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PreviewStepDto"
+            }
+          },
+          "facts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PreviewFactDto"
+            }
+          },
+          "result": {
+            "type": "string"
+          }
+        }
+      },
+      "PreviewFactDto": {
+        "required": [
+          "name",
+          "value",
+          "displayAr",
+          "displayEn"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "value": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "displayAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "displayEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "PreviewInput": {
         "required": [
           "pattern"
@@ -10797,6 +12559,68 @@
               "null",
               "string"
             ]
+          }
+        }
+      },
+      "PreviewStepDto": {
+        "required": [
+          "index",
+          "code",
+          "nameAr",
+          "nameEn",
+          "outcome",
+          "conditionResult",
+          "conditionError",
+          "approvers",
+          "notes"
+        ],
+        "type": "object",
+        "properties": {
+          "index": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "code": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "outcome": {
+            "type": "string"
+          },
+          "conditionResult": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          },
+          "conditionError": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "approvers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PreviewApproverDto"
+            }
+          },
+          "notes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       },
@@ -10905,6 +12729,179 @@
                 }
               }
             }
+          }
+        }
+      },
+      "ProcessDetailDto": {
+        "required": [
+          "key",
+          "systemCode",
+          "systemNameAr",
+          "systemNameEn",
+          "nameAr",
+          "nameEn",
+          "descriptionAr",
+          "descriptionEn",
+          "resourceType",
+          "versionNo",
+          "steps",
+          "versions",
+          "variables",
+          "roles",
+          "recordRoles",
+          "templates",
+          "functions"
+        ],
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "systemCode": {
+            "type": "string"
+          },
+          "systemNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "systemNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameAr": {
+            "type": "string"
+          },
+          "nameEn": {
+            "type": "string"
+          },
+          "descriptionAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "descriptionEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "resourceType": {
+            "type": "string"
+          },
+          "versionNo": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "steps": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApprovalStepDefinition"
+            }
+          },
+          "versions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VersionSummaryDto"
+            }
+          },
+          "variables": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VariableDto"
+            }
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OptionDto"
+            }
+          },
+          "recordRoles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OptionDto"
+            }
+          },
+          "templates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OptionDto"
+            }
+          },
+          "functions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ProcessSummaryDto": {
+        "required": [
+          "key",
+          "systemCode",
+          "systemNameAr",
+          "systemNameEn",
+          "nameAr",
+          "nameEn",
+          "resourceType",
+          "stepCount",
+          "versionNo",
+          "changedAt",
+          "inProgress"
+        ],
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "systemCode": {
+            "type": "string"
+          },
+          "systemNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "systemNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameAr": {
+            "type": "string"
+          },
+          "nameEn": {
+            "type": "string"
+          },
+          "resourceType": {
+            "type": "string"
+          },
+          "stepCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "versionNo": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "changedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "inProgress": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
@@ -11634,6 +13631,8 @@
           "status",
           "ownerEmployeeId",
           "unitId",
+          "amount",
+          "approvalStatus",
           "createdAt",
           "updatedAt",
           "version"
@@ -11691,6 +13690,16 @@
             ],
             "format": "uuid"
           },
+          "amount": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "approvalStatus": {
+            "type": "string"
+          },
           "createdAt": {
             "type": "string",
             "format": "date-time"
@@ -11737,6 +13746,45 @@
               "null",
               "string"
             ]
+          },
+          "amount": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          }
+        }
+      },
+      "SaveProcessInput": {
+        "required": [
+          "steps",
+          "note",
+          "baseVersionNo"
+        ],
+        "type": "object",
+        "properties": {
+          "steps": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/ApprovalStepDefinition"
+            }
+          },
+          "note": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "baseVersionNo": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
           }
         }
       },
@@ -12167,6 +14215,145 @@
               {
                 "$ref": "#/components/schemas/SmtpSettingsInput"
               }
+            ]
+          }
+        }
+      },
+      "StepStateDto": {
+        "required": [
+          "sort",
+          "code",
+          "nameAr",
+          "nameEn",
+          "state",
+          "approvers",
+          "outcome",
+          "actedBy",
+          "onBehalfOf",
+          "comment",
+          "completedAt",
+          "dueAt",
+          "overdue"
+        ],
+        "type": "object",
+        "properties": {
+          "sort": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "code": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "state": {
+            "type": "string"
+          },
+          "approvers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PersonName"
+            }
+          },
+          "outcome": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "actedBy": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/PersonName"
+              }
+            ]
+          },
+          "onBehalfOf": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/PersonName"
+              }
+            ]
+          },
+          "comment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "completedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "dueAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "overdue": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SubjectApprovalsDto": {
+        "required": [
+          "resourceType",
+          "resourceId",
+          "instances"
+        ],
+        "type": "object",
+        "properties": {
+          "resourceType": {
+            "type": "string"
+          },
+          "resourceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "instances": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InstanceDto"
+            }
+          }
+        }
+      },
+      "SubmitInput": {
+        "required": [
+          "version",
+          "comment"
+        ],
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "comment": {
+            "type": [
+              "null",
+              "string"
             ]
           }
         }
@@ -12986,6 +15173,13 @@
           "version": {
             "type": "integer",
             "format": "uint32"
+          },
+          "amount": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
           }
         }
       },
@@ -13182,6 +15376,39 @@
           }
         }
       },
+      "VariableDto": {
+        "required": [
+          "name",
+          "type",
+          "labelAr",
+          "labelEn",
+          "builtIn"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "labelAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "labelEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "builtIn": {
+            "type": "boolean"
+          }
+        }
+      },
       "VerificationRunDto": {
         "required": [
           "id",
@@ -13364,6 +15591,50 @@
             "format": "uint32"
           }
         }
+      },
+      "VersionSummaryDto": {
+        "required": [
+          "versionNo",
+          "note",
+          "createdAt",
+          "createdBy",
+          "createdByName",
+          "stepCount"
+        ],
+        "type": "object",
+        "properties": {
+          "versionNo": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "note": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdBy": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "createdByName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "stepCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
       }
     }
   },
@@ -13394,6 +15665,9 @@
     },
     {
       "name": "identity"
+    },
+    {
+      "name": "workflow"
     },
     {
       "name": "sample"

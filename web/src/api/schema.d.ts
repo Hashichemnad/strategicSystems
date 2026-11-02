@@ -2100,6 +2100,166 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/workflow/processes': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListApprovalProcesses'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/workflow/processes/{key}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetApprovalProcess'];
+    put: operations['SaveApprovalProcess'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/workflow/processes/{key}/versions/{versionNo}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetApprovalProcessVersion'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/workflow/processes/{key}/validate-condition': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ValidateApprovalCondition'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/workflow/processes/{key}/preview': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['PreviewApprovalProcess'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/workflow/settings': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetApprovalSettings'];
+    put: operations['SaveApprovalSettings'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/workflow/my-work': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetMyWork'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/workflow/subjects/{resourceType}/{resourceId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetSubjectApprovals'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/workflow/status/{resourceType}/{resourceId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetCurrentStatus'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/workflow/tasks/{taskId}/act': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ActOnApprovalTask'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/sample/items': {
     parameters: {
       query?: never;
@@ -2158,6 +2318,22 @@ export interface paths {
     get?: never;
     put?: never;
     post: operations['DeactivateSampleItem'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/sample/items/{id}/submit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SubmitSampleItem'];
     delete?: never;
     options?: never;
     head?: never;
@@ -2274,10 +2450,97 @@ export interface components {
       revokedAt: null | string;
       state: string;
     };
+    /** @description A decision on a task (API body). */
+    ActInput: {
+      action: null | string;
+      comment: null | string;
+      /** Format: uuid */
+      onBehalfOfUserId: null | string;
+      /** Format: uint32 */
+      version: null | number;
+    };
+    /** @description Outcome of a decision. */
+    ActResult: {
+      /** Format: uuid */
+      instanceId: string;
+      instanceStatus: string;
+      /** Format: uuid */
+      taskId: string;
+      outcome: string;
+      nextStepNameAr: null | string;
+      nextStepNameEn: null | string;
+    };
     /** @description The token the SPA sends back in string AntiforgerySetup.HeaderName on every state-changing call. */
     AntiforgeryToken: {
       token: string;
       headerName: string;
+    };
+    ApprovalActionOptionDto: {
+      code: string;
+      outcome: string;
+      labelAr: null | string;
+      labelEn: null | string;
+      commentRequired: boolean;
+    };
+    /** @description Settings → Approvals: which organisation levels the "section manager" and "department director" rules look for (ADR 0025). */
+    ApprovalSettings: {
+      /** @default section */
+      sectionLevelCode: string;
+      /** @default department */
+      departmentLevelCode: string;
+    };
+    ApprovalSettingsDto: {
+      value: components['schemas']['ApprovalSettings'];
+      /** Format: uint32 */
+      version: number;
+      levels: components['schemas']['OptionDto'][];
+    };
+    ApprovalSettingsInput: {
+      sectionLevelCode: null | string;
+      departmentLevelCode: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
+    /** @description One step of a chain, as configured in the Approval Settings centre. */
+    ApprovalStepDefinition: {
+      code: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      rule: components['schemas']['ApproverRule'];
+      condition?: null | string;
+      actions?: null | string[];
+      customActions?: null | components['schemas']['CustomApprovalAction'][];
+      /** @default false */
+      commentOnApprove: boolean;
+      /** @default true */
+      commentOnReject: boolean;
+      /** @default true */
+      commentOnReturn: boolean;
+      /** Format: int32 */
+      slaHours?: null | number;
+      escalation?: null | components['schemas']['ApproverRule'];
+      /** @default block */
+      onNoApprover: string;
+      /** @default true */
+      excludeSubmitter: boolean;
+      notificationTemplate?: null | string;
+    };
+    /**
+     * @description Who approves a step. Only the parameters of string ApproverRule.Kind are used: `role` → string? ApproverRule.RoleKey; `sectionManager`,
+     *     `departmentDirector` → string? ApproverRule.Of; `headOfUnit` → Guid? ApproverRule.UnitId or string? ApproverRule.Of; `owningUnit` →
+     *     string? ApproverRule.SystemCode (default: the process's system); `employee` → Guid? ApproverRule.EmployeeId; `recordRole` / `teamRole`
+     *     → string? ApproverRule.RoleCode.
+     */
+    ApproverRule: {
+      kind: string;
+      roleKey?: null | string;
+      of?: null | string;
+      /** Format: uuid */
+      unitId?: null | string;
+      /** Format: uuid */
+      employeeId?: null | string;
+      roleCode?: null | string;
+      systemCode?: null | string;
     };
     AssignmentDto: {
       /** Format: uuid */
@@ -2360,6 +2623,11 @@ export interface components {
       /** Format: date-time */
       at: string;
     };
+    /** @description A value in both languages (status message parameters). */
+    BilingualText: {
+      ar: null | string;
+      en: null | string;
+    };
     /** @description Branding per installation (SPEC §0.2): names, colour, email header / footer. Logos are separate assets. */
     BrandingSettings: {
       organisationNameAr?: null | string;
@@ -2385,6 +2653,14 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    ConditionCheckDto: {
+      valid: boolean;
+      errors: components['schemas']['FieldError'][];
+      variables: string[];
+    };
+    ConditionInput: {
+      condition: null | string;
+    };
     /** @description The new token: string CreatedAccessTokenDto.Token is shown once and never stored. */
     CreatedAccessTokenDto: {
       details: components['schemas']['AccessTokenDto'];
@@ -2406,6 +2682,37 @@ export interface components {
       employeeId: null | string;
       userName: null | string;
       sendInvitation: null | boolean;
+    };
+    /**
+     * @description "Next action required + who" (SPEC §0.2) for one record: a translatable message with parameters, who acts, and the actions the
+     *     current user may take now.
+     */
+    CurrentStatus: {
+      messageKey: string;
+      params: {
+        [key: string]: components['schemas']['BilingualText'];
+      };
+      tone: string;
+      actorKey: null | string;
+      actors: components['schemas']['PersonName'][];
+      nextActions: components['schemas']['CurrentStatusAction'][];
+      stage?: null | string;
+    };
+    /** @description A next action offered on the current-status banner (code handled by the record page). */
+    CurrentStatusAction: {
+      code: string;
+      labelKey: string;
+      /** @default primary */
+      kind: string;
+      /** Format: uuid */
+      taskId?: null | string;
+    };
+    /** @description A labelled extra button, e.g. "Approve with conditions" (outcome approve). */
+    CustomApprovalAction: {
+      code: string;
+      labelAr: string;
+      labelEn: string;
+      outcome: string;
     };
     DelegationDto: {
       /** Format: uuid */
@@ -2585,6 +2892,13 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    /** @description A validation failure on one field. */
+    FieldError: {
+      field: string;
+      code: string;
+      messageKey: string;
+      params?: null | Record<string, never>;
+    };
     FileDto: {
       /** Format: uuid */
       id: string;
@@ -2649,6 +2963,19 @@ export interface components {
     ForgotPasswordInput: {
       login: null | string;
     };
+    HistoryDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: date-time */
+      occurredAt: string;
+      event: string;
+      stepNameAr: null | string;
+      stepNameEn: null | string;
+      actor: null | components['schemas']['PersonName'];
+      onBehalfOf: null | components['schemas']['PersonName'];
+      comment: null | string;
+      data: null | components['schemas']['JsonElement'];
+    };
     /** Format: binary */
     IFormFile: string;
     /** @description One problem found in an uploaded file. int ImportIssue.Row is the sheet row number; string? ImportIssue.Column a column key. */
@@ -2670,6 +2997,25 @@ export interface components {
       /** Format: int32 */
       updated: number;
       issues: components['schemas']['ImportIssue'][];
+    };
+    InstanceDto: {
+      /** Format: uuid */
+      id: string;
+      processKey: string;
+      processNameAr: string;
+      processNameEn: string;
+      status: string;
+      /** Format: int32 */
+      attempt: number;
+      /** Format: date-time */
+      submittedAt: string;
+      /** Format: date-time */
+      completedAt: null | string;
+      submitter: null | components['schemas']['PersonName'];
+      comment: null | string;
+      steps: components['schemas']['StepStateDto'][];
+      history: components['schemas']['HistoryDto'][];
+      myTask: null | components['schemas']['MyTaskDto'];
     };
     JobDto: {
       key: string;
@@ -2702,6 +3048,7 @@ export interface components {
       triggeredBy: null | string;
       instance: null | string;
     };
+    JsonElement: unknown;
     JsonObject: Record<string, never>;
     LevelInput: {
       code: null | string;
@@ -2826,6 +3173,102 @@ export interface components {
       /** Format: int32 */
       pageSize: number;
     };
+    MySubmissionDto: {
+      /** Format: uuid */
+      instanceId: string;
+      processKey: string;
+      processNameAr: string;
+      processNameEn: string;
+      systemCode: string;
+      number: null | string;
+      titleAr: null | string;
+      titleEn: null | string;
+      link: string;
+      status: string;
+      stepNameAr: null | string;
+      stepNameEn: null | string;
+      /** Format: date-time */
+      submittedAt: string;
+      /** Format: date-time */
+      completedAt: null | string;
+      /** Format: int32 */
+      attempt: number;
+    };
+    MyTaskDto: {
+      /** Format: uuid */
+      taskId: string;
+      /** Format: uint32 */
+      version: number;
+      actions: components['schemas']['ApprovalActionOptionDto'][];
+      onBehalfOf: components['schemas']['PersonName'][];
+      selfAssigned: boolean;
+    };
+    MyWorkCountsDto: {
+      /** Format: int32 */
+      pendingApprovals: number;
+      /** Format: int32 */
+      overdue: number;
+      /** Format: int32 */
+      delegated: number;
+      /** Format: int32 */
+      actionItems: number;
+      /** Format: int32 */
+      inProgressSubmissions: number;
+    };
+    MyWorkDto: {
+      counts: components['schemas']['MyWorkCountsDto'];
+      approvals: components['schemas']['MyWorkTaskDto'][];
+      actionItems: components['schemas']['MyWorkItem'][];
+      submissions: components['schemas']['MySubmissionDto'][];
+    };
+    /** @description An item that needs the user's action, shown on My Work. */
+    MyWorkItem: {
+      systemCode: string;
+      resourceType: string;
+      /** Format: uuid */
+      resourceId: string;
+      number: null | string;
+      titleAr: null | string;
+      titleEn: null | string;
+      messageKey: string;
+      link: string;
+      /** Format: date-time */
+      since?: null | string;
+      /** Format: date */
+      dueDate?: null | string;
+    };
+    MyWorkTaskDto: {
+      /** Format: uuid */
+      taskId: string;
+      /** Format: uint32 */
+      taskVersion: number;
+      /** Format: uuid */
+      instanceId: string;
+      processKey: string;
+      processNameAr: string;
+      processNameEn: string;
+      systemCode: string;
+      resourceType: string;
+      /** Format: uuid */
+      resourceId: string;
+      number: null | string;
+      titleAr: null | string;
+      titleEn: null | string;
+      link: string;
+      stepNameAr: null | string;
+      stepNameEn: null | string;
+      submitterName: null | string;
+      /** Format: date-time */
+      submittedAt: string;
+      /** Format: date-time */
+      openedAt: string;
+      /** Format: date-time */
+      dueAt: null | string;
+      overdue: boolean;
+      onBehalfOf: null | components['schemas']['PersonName'];
+      /** Format: int32 */
+      attempt: number;
+    };
     NotificationDto: {
       /** Format: uuid */
       id: string;
@@ -2883,6 +3326,11 @@ export interface components {
     NumberingPreviewDto: {
       pattern: string;
       preview: string;
+    };
+    OptionDto: {
+      code: string;
+      labelAr: null | string;
+      labelEn: null | string;
     };
     OrgLevelDto: {
       /** Format: uuid */
@@ -3093,12 +3541,47 @@ export interface components {
       roles: components['schemas']['RoleDto'][];
       recordRoles: components['schemas']['RecordRoleTypeDto'][];
     };
+    PersonName: {
+      /** Format: uuid */
+      userId: null | string;
+      nameAr: null | string;
+      nameEn: null | string;
+    };
     PreferencesInput: {
       language: null | string;
       theme: null | string;
     };
+    PreviewApproverDto: {
+      /** Format: uuid */
+      userId: string;
+      nameAr: null | string;
+      nameEn: null | string;
+    };
+    PreviewDto: {
+      steps: components['schemas']['PreviewStepDto'][];
+      facts: components['schemas']['PreviewFactDto'][];
+      result: string;
+    };
+    PreviewFactDto: {
+      name: string;
+      value: null | string;
+      displayAr: null | string;
+      displayEn: null | string;
+    };
     PreviewInput: {
       pattern: null | string;
+    };
+    PreviewStepDto: {
+      /** Format: int32 */
+      index: number;
+      code: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      outcome: string;
+      conditionResult: null | boolean;
+      conditionError: null | string;
+      approvers: components['schemas']['PreviewApproverDto'][];
+      notes: string[];
     };
     PrincipalDto: {
       kind: string;
@@ -3130,6 +3613,43 @@ export interface components {
           [key: string]: unknown;
         };
       }[];
+    };
+    ProcessDetailDto: {
+      key: string;
+      systemCode: string;
+      systemNameAr: null | string;
+      systemNameEn: null | string;
+      nameAr: string;
+      nameEn: string;
+      descriptionAr: null | string;
+      descriptionEn: null | string;
+      resourceType: string;
+      /** Format: int32 */
+      versionNo: number;
+      steps: components['schemas']['ApprovalStepDefinition'][];
+      versions: components['schemas']['VersionSummaryDto'][];
+      variables: components['schemas']['VariableDto'][];
+      roles: components['schemas']['OptionDto'][];
+      recordRoles: components['schemas']['OptionDto'][];
+      templates: components['schemas']['OptionDto'][];
+      functions: string[];
+    };
+    ProcessSummaryDto: {
+      key: string;
+      systemCode: string;
+      systemNameAr: null | string;
+      systemNameEn: null | string;
+      nameAr: string;
+      nameEn: string;
+      resourceType: string;
+      /** Format: int32 */
+      stepCount: number;
+      /** Format: int32 */
+      versionNo: number;
+      /** Format: date-time */
+      changedAt: null | string;
+      /** Format: int32 */
+      inProgress: number;
     };
     ProviderDto: {
       /** Format: uuid */
@@ -3320,6 +3840,9 @@ export interface components {
       ownerEmployeeId: null | string;
       /** Format: uuid */
       unitId: null | string;
+      /** Format: double */
+      amount: null | number;
+      approvalStatus: string;
       /** Format: date-time */
       createdAt: string;
       /** Format: date-time */
@@ -3332,6 +3855,14 @@ export interface components {
       nameEn: null | string;
       descriptionAr: null | string;
       descriptionEn: null | string;
+      /** Format: double */
+      amount?: null | number;
+    };
+    SaveProcessInput: {
+      steps: null | components['schemas']['ApprovalStepDefinition'][];
+      note: null | string;
+      /** Format: int32 */
+      baseVersionNo: null | number;
     };
     SecuritySettingsDto: {
       /** Format: int32 */
@@ -3436,6 +3967,35 @@ export interface components {
     SmtpTestInput: {
       to: null | string;
       settings: null | components['schemas']['SmtpSettingsInput'];
+    };
+    StepStateDto: {
+      /** Format: int32 */
+      sort: number;
+      code: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      state: string;
+      approvers: components['schemas']['PersonName'][];
+      outcome: null | string;
+      actedBy: null | components['schemas']['PersonName'];
+      onBehalfOf: null | components['schemas']['PersonName'];
+      comment: null | string;
+      /** Format: date-time */
+      completedAt: null | string;
+      /** Format: date-time */
+      dueAt: null | string;
+      overdue: boolean;
+    };
+    SubjectApprovalsDto: {
+      resourceType: string;
+      /** Format: uuid */
+      resourceId: string;
+      instances: components['schemas']['InstanceDto'][];
+    };
+    SubmitInput: {
+      /** Format: uint32 */
+      version: number;
+      comment: null | string;
     };
     SystemAccessDto: {
       /** Format: uuid */
@@ -3622,6 +4182,8 @@ export interface components {
       descriptionEn: null | string;
       /** Format: uint32 */
       version: number;
+      /** Format: double */
+      amount?: null | number;
     };
     UpdateUnitInput: {
       code: null | string;
@@ -3667,6 +4229,13 @@ export interface components {
       nameAr: null | string;
       nameEn: null | string;
       status: string;
+    };
+    VariableDto: {
+      name: string;
+      type: string;
+      labelAr: null | string;
+      labelEn: null | string;
+      builtIn: boolean;
     };
     VerificationRunDto: {
       /** Format: uuid */
@@ -3717,6 +4286,18 @@ export interface components {
     VersionInput: {
       /** Format: uint32 */
       version: number;
+    };
+    VersionSummaryDto: {
+      /** Format: int32 */
+      versionNo: number;
+      note: null | string;
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: uuid */
+      createdBy: null | string;
+      createdByName: null | string;
+      /** Format: int32 */
+      stepCount: number;
     };
   };
   responses: never;
@@ -8826,6 +9407,393 @@ export interface operations {
       };
     };
   };
+  ListApprovalProcesses: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProcessSummaryDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetApprovalProcess: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        key: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProcessDetailDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SaveApprovalProcess: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        key: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SaveProcessInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProcessDetailDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetApprovalProcessVersion: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        key: string;
+        versionNo: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProcessDetailDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ValidateApprovalCondition: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        key: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ConditionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ConditionCheckDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  PreviewApprovalProcess: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        key: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['PreviewInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PreviewDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetApprovalSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApprovalSettingsDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SaveApprovalSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ApprovalSettingsInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApprovalSettingsDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetMyWork: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MyWorkDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetSubjectApprovals: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        resourceType: string;
+        resourceId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SubjectApprovalsDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetCurrentStatus: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        resourceType: string;
+        resourceId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CurrentStatus'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ActOnApprovalTask: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        taskId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ActInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ActResult'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
   ListSampleItems: {
     parameters: {
       query?: {
@@ -9007,6 +9975,41 @@ export interface operations {
     requestBody: {
       content: {
         'application/json': components['schemas']['VersionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SampleItemDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SubmitSampleItem: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SubmitInput'];
       };
     };
     responses: {
