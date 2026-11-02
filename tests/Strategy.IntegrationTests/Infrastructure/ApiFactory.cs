@@ -16,13 +16,14 @@ namespace Strategy.IntegrationTests.Infrastructure;
 /// </summary>
 public sealed class ApiFactory(
     string connectionString, string environment = "Testing", IDictionary<string, string?>? settings = null, bool backgroundServices = true,
-    bool realEmail = false)
+    bool realEmail = false, Action<IServiceCollection>? configureServices = null)
     : WebApplicationFactory<Program>
 {
     public static async Task<ApiFactory> CreateAsync(
-        PostgresFixture postgres, string environment = "Testing", IDictionary<string, string?>? settings = null)
+        PostgresFixture postgres, string environment = "Testing", IDictionary<string, string?>? settings = null,
+        Action<IServiceCollection>? configureServices = null)
     {
-        var factory = new ApiFactory(await postgres.CreateDatabaseAsync(), environment, settings);
+        var factory = new ApiFactory(await postgres.CreateDatabaseAsync(), environment, settings, configureServices: configureServices);
         _ = factory.Server; // start now: runs the migrations
         return factory;
     }
@@ -59,6 +60,7 @@ public sealed class ApiFactory(
         builder.ConfigureTestServices(services =>
         {
             services.AddNotificationTemplate(TestEventTemplate);
+            configureServices?.Invoke(services);
             if (!realEmail)
             {
                 services.RemoveAll<IEmailTransport>();
