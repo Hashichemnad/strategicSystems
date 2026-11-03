@@ -10,7 +10,7 @@ namespace Strategy.Platform.AI.Providers;
 /// <summary>
 /// An offline provider for development and demonstrations, registered only when <c>AI:EnableDemoProvider=true</c> (never in production
 /// configuration). Deterministic: answers the connection test, fills form fields from "Label: value" lines of the document, writes a short
-/// brief, marks translations, and answers questions with one search.
+/// brief, marks translations, answers questions with one search, and drafts tasks from list lines (Phase 6).
 /// </summary>
 internal sealed class DemoAdapter : IAiProviderAdapter
 {
@@ -50,6 +50,20 @@ internal sealed partial class DemoChatClient(string model) : IChatClient
                     : $"Demo brief: the record “{title}” is waiting for approval. Check its values and attachments before you decide.",
                 changes = changed == 0 ? Array.Empty<string>() : [arabic ? "تم تعديل بعض الحقول منذ التقديم السابق." : "Some fields changed since the previous submission."],
                 attentionPoints = new[] { arabic ? "تحقق من المبلغ المطلوب." : "Check the requested amount." },
+            });
+        }
+        else if (system.Contains("You turn meeting minutes", StringComparison.Ordinal))
+        {
+            text = DraftTasks(user);
+        }
+        else if (system.Contains("You help people working on a task", StringComparison.Ordinal))
+        {
+            var arabic = system.Contains("Write in Arabic", StringComparison.Ordinal);
+            text = JsonSerializer.Serialize(new
+            {
+                text = arabic
+                    ? "ملخص تجريبي: تقدم العمل على المهمة وفق التعليقات. النقاط المفتوحة: مراجعة المرفقات قبل التسليم."
+                    : "Demo summary: work on the task is progressing as the comments describe. Open point: check the attachments before submitting.",
             });
         }
         else if (system.Contains("You translate", StringComparison.Ordinal))
@@ -119,6 +133,42 @@ internal sealed partial class DemoChatClient(string model) : IChatClient
         return new JsonObject { ["language"] = arabic > document.Length / 4 ? "ar" : "en", ["fields"] = fields }.ToJsonString();
     }
 
+    /// <summary>Each line starting with "-", "*", "•" or "1." becomes a task; "@Name" names the assignee and "by YYYY-MM-DD" the due date.</summary>
+    private static string DraftTasks(string user)
+    {
+        var document = Document().Match(user) is { Success: true } d ? d.Groups[1].Value : string.Empty;
+        var tasks = new JsonArray();
+        foreach (var raw in document.Split('\n').Select(l => l.Trim()))
+        {
+            var item = ListItem().Match(raw);
+            if (!item.Success || tasks.Count >= 20)
+            {
+                continue;
+            }
+
+            var line = item.Groups[1].Value.Trim();
+            var assignee = Mention().Match(line) is { Success: true } m ? m.Groups[1].Value.Replace('_', ' ') : null;
+            var due = DueDate().Match(line) is { Success: true } date ? date.Groups[1].Value : null;
+            var title = DueDate().Replace(Mention().Replace(line, string.Empty), string.Empty).Trim(' ', '.', ',', '،', '-');
+            if (title.Length == 0)
+            {
+                continue;
+            }
+
+            tasks.Add(new JsonObject
+            {
+                ["title"] = title.Length > 120 ? title[..120] : title,
+                ["description"] = null,
+                ["assigneeName"] = assignee,
+                ["dueDate"] = due,
+                ["priority"] = line.Contains("urgent", StringComparison.OrdinalIgnoreCase) || line.Contains("عاجل", StringComparison.Ordinal) ? "high" : "medium",
+                ["source"] = raw.Length > 300 ? raw[..300] : raw,
+            });
+        }
+
+        return new JsonObject { ["tasks"] = tasks }.ToJsonString();
+    }
+
     private static string LastWord(string text) =>
         text.Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(w => w.Trim('?', '؟', '.', '!')).LastOrDefault(w => w.Length > 2) ?? text;
 
@@ -133,4 +183,13 @@ internal sealed partial class DemoChatClient(string model) : IChatClient
 
     [GeneratedRegex(@"Record [^:]*: (.+)")]
     private static partial Regex TitleLine();
+
+    [GeneratedRegex(@"^(?:[-*•]|\d+[.)])\s+(.+)$")]
+    private static partial Regex ListItem();
+
+    [GeneratedRegex(@"@([\p{L}_]+)")]
+    private static partial Regex Mention();
+
+    [GeneratedRegex(@"(?:by|قبل)\s+(\d{4}-\d{2}-\d{2})")]
+    private static partial Regex DueDate();
 }
