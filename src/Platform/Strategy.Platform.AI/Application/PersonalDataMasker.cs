@@ -54,33 +54,52 @@ public sealed partial class PersonalDataMasker
         }
 
         var node = JsonNode.Parse(value.GetRawText());
-        node = Walk(node);
+        if (node is JsonValue root && root.TryGetValue<string>(out var text))
+        {
+            node = JsonValue.Create(Unmask(text));
+        }
+        else
+        {
+            Walk(node);
+        }
+
         using var document = JsonDocument.Parse(node?.ToJsonString() ?? "null");
         return document.RootElement.Clone();
     }
 
-    private JsonNode? Walk(JsonNode? node)
+    /// <summary>Replaces string values in place, at any depth.</summary>
+    private void Walk(JsonNode? node)
     {
         switch (node)
         {
             case JsonObject obj:
                 foreach (var key in obj.Select(p => p.Key).ToList())
                 {
-                    obj[key] = Walk(obj[key]);
+                    if (obj[key] is JsonValue v && v.TryGetValue<string>(out var s))
+                    {
+                        obj[key] = JsonValue.Create(Unmask(s));
+                    }
+                    else
+                    {
+                        Walk(obj[key]);
+                    }
                 }
 
-                return obj;
+                break;
             case JsonArray array:
                 for (var i = 0; i < array.Count; i++)
                 {
-                    array[i] = Walk(array[i]);
+                    if (array[i] is JsonValue v && v.TryGetValue<string>(out var s))
+                    {
+                        array[i] = JsonValue.Create(Unmask(s));
+                    }
+                    else
+                    {
+                        Walk(array[i]);
+                    }
                 }
 
-                return array;
-            case JsonValue v when v.TryGetValue<string>(out var s):
-                return JsonValue.Create(Unmask(s));
-            default:
-                return node;
+                break;
         }
     }
 

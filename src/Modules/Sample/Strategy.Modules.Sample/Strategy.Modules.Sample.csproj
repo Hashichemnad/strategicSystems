@@ -4,6 +4,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Strategy.Modules.Sample.Contracts\Strategy.Modules.Sample.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\Platform\Strategy.Platform.AI.Contracts\Strategy.Platform.AI.Contracts.csproj" />
     <ProjectReference Include="..\..\..\Platform\Strategy.Platform.Kernel\Strategy.Platform.Kernel.csproj" />
     <ProjectReference Include="..\..\..\Platform\Strategy.Platform.Persistence\Strategy.Platform.Persistence.csproj" />
     <ProjectReference Include="..\..\..\Platform\Strategy.Platform.Access.Contracts\Strategy.Platform.Access.Contracts.csproj" />
