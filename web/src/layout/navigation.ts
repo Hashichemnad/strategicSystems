@@ -1,5 +1,6 @@
 import {
   Boxes,
+  ListTodo,
   Building2,
   FileSpreadsheet,
   Layers,
@@ -17,6 +18,7 @@ import type { MyAccess } from '@/features/access/session';
 export interface NavItem {
   to:
     | '/'
+    | '/tasks'
     | '/sample'
     | '/ui-kit'
     | '/org/units'
@@ -33,6 +35,7 @@ export interface NavItem {
     | '/audit/verification';
   labelKey:
     | 'nav.home'
+    | 'nav.tasks'
     | 'nav.sample'
     | 'nav.uiKit'
     | 'nav.units'
@@ -85,6 +88,8 @@ export const settingsPermissions = [
   'identity.smtp.manage',
   'org.unit.manage',
   'org.import.manage',
+  'tasks.settings.manage',
+  'tasks.reassignment.manage',
 ] as const;
 
 /**
@@ -95,7 +100,10 @@ export const navigation: readonly NavSection[] = [
   {
     key: 'main',
     labelKey: 'nav.sections.main',
-    items: [{ to: '/', labelKey: 'nav.home', icon: LayoutDashboard }],
+    items: [
+      { to: '/', labelKey: 'nav.home', icon: LayoutDashboard },
+      { to: '/tasks', labelKey: 'nav.tasks', icon: ListTodo, permissions: ['tasks.task.read'] },
+    ],
   },
   {
     key: 'organisation',

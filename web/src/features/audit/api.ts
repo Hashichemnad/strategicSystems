@@ -10,7 +10,7 @@ export type VerificationRun = components['schemas']['VerificationRunDto'];
 export type AuditSearch = NonNullable<operations['SearchAuditEntries']['parameters']['query']>;
 
 /** Records that have a History tab. Each maps to its owner's audit endpoint, which checks access to the record first. */
-export type AuditedRecord = 'sample' | 'employee' | 'unit' | 'role';
+export type AuditedRecord = 'sample' | 'employee' | 'unit' | 'role' | 'task';
 
 interface HistoryQuery {
   page?: number;
@@ -30,6 +30,8 @@ async function fetchHistory(record: AuditedRecord, id: string, query: HistoryQue
       return unwrap(await api.GET('/api/v1/org/units/{id}/audit', { params, signal }));
     case 'role':
       return unwrap(await api.GET('/api/v1/access/roles/{id}/audit', { params, signal }));
+    case 'task':
+      return unwrap(await api.GET('/api/v1/tasks/{id}/audit', { params, signal }));
   }
 }
 
@@ -44,6 +46,8 @@ async function fetchAsOf(record: AuditedRecord, id: string, at: string, signal: 
       return unwrap(await api.GET('/api/v1/org/units/{id}/audit/as-of', { params, signal }));
     case 'role':
       return unwrap(await api.GET('/api/v1/access/roles/{id}/audit/as-of', { params, signal }));
+    case 'task':
+      return unwrap(await api.GET('/api/v1/tasks/{id}/audit/as-of', { params, signal }));
   }
 }
 

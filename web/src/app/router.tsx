@@ -143,9 +143,66 @@ export const sampleItemRoute = createRoute({
   getParentRoute: () => appLayout,
   path: '/sample/items/$itemId',
   validateSearch: z.object({
-    tab: z.enum(['overview', 'approvals', 'documents', 'history']).catch('overview'),
+    tab: z.enum(['overview', 'approvals', 'tasks', 'documents', 'history']).catch('overview'),
   }),
   component: lazyRouteComponent(() => import('@/features/sample/SampleItemPage'), 'SampleItemPage'),
+});
+
+// Task Management (Phase 6, docs/design/tasks.md): My Tasks (list / Kanban / calendar), task page, assignment group, dashboard.
+export const tasksSearchSchema = z.object({
+  tab: z.enum(['assigned', 'created', 'follow-up', 'team']).catch('assigned'),
+  view: z.enum(['list', 'kanban', 'calendar']).catch('list'),
+  page: z.coerce.number().int().min(1).catch(1),
+  sort: z.string().max(50).catch('dueDate'),
+  search: z.string().max(200).optional().catch(undefined),
+  status: z.string().max(50).optional().catch(undefined),
+  priority: z.enum(['high', 'medium', 'low']).optional().catch(undefined),
+  indicator: z.enum(['on_time', 'due_soon', 'overdue', 'on_hold']).optional().catch(undefined),
+  openOnly: z.boolean().catch(true),
+  month: z
+    .string()
+    .regex(/^\d{4}-\d{2}$/u)
+    .optional()
+    .catch(undefined),
+  new: z.boolean().optional().catch(undefined),
+});
+
+export type TasksSearch = z.infer<typeof tasksSearchSchema>;
+
+export const tasksRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/tasks',
+  validateSearch: (search: Record<string, unknown>): TasksSearch =>
+    tasksSearchSchema.parse({
+      tab: 'assigned',
+      view: 'list',
+      page: 1,
+      sort: 'dueDate',
+      openOnly: true,
+      ...search,
+    }),
+  component: lazyRouteComponent(() => import('@/features/tasks/TasksPage'), 'TasksPage'),
+});
+
+export const taskRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/tasks/$taskId',
+  validateSearch: z.object({
+    tab: z.enum(['overview', 'timeline', 'comments', 'documents', 'followUps', 'history']).catch('overview'),
+  }),
+  component: lazyRouteComponent(() => import('@/features/tasks/TaskPage'), 'TaskPage'),
+});
+
+export const taskGroupRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/tasks/groups/$groupId',
+  component: lazyRouteComponent(() => import('@/features/tasks/TaskGroupPage'), 'TaskGroupPage'),
+});
+
+export const taskDashboardRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/tasks/dashboard',
+  component: lazyRouteComponent(() => import('@/features/tasks/TaskDashboardPage'), 'TaskDashboardPage'),
 });
 
 // Audit trail (CLAUDE.md §8): global log for administrators and auditors, and the chain verification screen.
@@ -404,6 +461,19 @@ const aiSettingsRoute = createRoute({
   component: lazyRouteComponent(() => import('@/features/ai/AiSettingsPage'), 'AiSettingsPage'),
 });
 
+const taskSettingsRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/tasks',
+  component: lazyRouteComponent(() => import('@/features/tasks/TaskSettingsPage'), 'TaskSettingsPage'),
+});
+
+export const taskReassignRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/tasks/reassign',
+  validateSearch: z.object({ employee: z.uuid().optional().catch(undefined) }),
+  component: lazyRouteComponent(() => import('@/features/tasks/ReassignTasksPage'), 'ReassignTasksPage'),
+});
+
 const mcpSettingsRoute = createRoute({
   getParentRoute: () => settingsLayout,
   path: '/mcp',
@@ -453,6 +523,10 @@ const routeTree = rootRoute.addChildren([
     homeRoute,
     sampleRoute,
     sampleItemRoute,
+    tasksRoute,
+    taskRoute,
+    taskGroupRoute,
+    taskDashboardRoute,
     auditRoute,
     auditVerificationRoute,
     notificationsRoute,
@@ -486,6 +560,8 @@ const routeTree = rootRoute.addChildren([
       processEditorRoute,
       aiSettingsRoute,
       mcpSettingsRoute,
+      taskSettingsRoute,
+      taskReassignRoute,
       rolesRoute,
       assignmentsRoute,
       systemAccessRoute,

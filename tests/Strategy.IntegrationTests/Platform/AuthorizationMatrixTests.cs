@@ -30,6 +30,8 @@ public partial class AuthorizationMatrixTests(ApiFixture api) : IClassFixture<Ap
         "org.unit.read", "org.employee.read",
         // Phase 5: the seeded "AI user" role (assigned to everyone) holds the AI feature permissions; administrators narrow it per role.
         "ai.extract.use", "ai.brief.use", "ai.translate.use", "ai.similar.use", "ai.ask.use",
+        // Phase 6: the seeded task roles "Employee" and "Manager" (assigned to everyone): own / team tasks, create, dashboard, AI drafts.
+        "tasks.task.read", "tasks.task.create", "tasks.dashboard.read", "tasks.performance.read",
     ];
 
     public static TheoryData<string, string> NonPublicEndpoints() => Endpoints(e => e.Metadata.GetMetadata<PublicEndpoint>() is null);

@@ -2788,6 +2788,54 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/links/types': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListLinkableTypes'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/links/resolve': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ResolveLink'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/links/to/{type}/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListLinksTo'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/sample/items': {
     parameters: {
       query?: never;
@@ -2926,6 +2974,630 @@ export interface paths {
     get?: never;
     put?: never;
     post: operations['RemoveSampleItemEditor'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tasks': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListTasks'];
+    put?: never;
+    post: operations['CreateTask'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tasks/counts': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetTaskCounts'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tasks/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetTask'];
+    put: operations['UpdateTask'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tasks/{id}/assign': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['AssignTask'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tasks/{id}/accept': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['AcceptTask'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tasks/{id}/reject': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RejectTask'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tasks/{id}/pause': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['PauseTask'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tasks/{id}/start': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['StartTask'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tasks/{id}/submit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SubmitTask'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tasks/{id}/complete': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CompleteTask'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tasks/{id}/approve': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ApproveTask'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tasks/{id}/return': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ReturnTask'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tasks/{id}/reassign': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ReassignTask'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tasks/{id}/cancel': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CancelTask'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tasks/{id}/subtasks': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CreateSubtask'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tasks/{id}/timeline': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetTaskTimeline'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tasks/{id}/comments': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListTaskComments'];
+    put?: never;
+    post: operations['AddTaskComment'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tasks/{id}/follow-ups': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['AddTaskFollowUp'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tasks/{id}/follow-ups/{employeeId}/remove': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RemoveTaskFollowUp'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tasks/{id}/checklist': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['AddTaskChecklistItem'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tasks/{id}/checklist/{itemId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateTaskChecklistItem'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tasks/{id}/checklist/{itemId}/remove': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RemoveTaskChecklistItem'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tasks/{id}/dependencies': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['AddTaskDependency'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tasks/{id}/dependencies/{dependsOnId}/remove': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RemoveTaskDependency'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tasks/{id}/audit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetTaskAuditTrail'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tasks/{id}/audit/as-of': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetTaskAsOf'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tasks/dashboard': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetTaskDashboard'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tasks/performance/{employeeId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetEmployeeTaskPerformance'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tasks/settings': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetTaskSettings'];
+    put: operations['SaveTaskSettings'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tasks/reassignment/{employeeId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['PreviewTaskReassignment'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tasks/reassignment': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ReassignEmployeeTasks'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tasks/{id}/ai/summary': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SummariseTask'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tasks/groups/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetAssignmentGroup'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tasks/groups/{id}/message': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['MessageAssignmentGroup'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tasks/groups/{id}/extend-due': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ExtendAssignmentGroupDue'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tasks/groups/{id}/cancel': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CancelAssignmentGroup'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tasks/ai/from-text': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['DraftTasksFromText'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tasks/ai/suggest-assignees': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SuggestTaskAssignees'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tasks/ai/workload': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetTaskWorkloadInsights'];
+    put?: never;
+    post?: never;
     delete?: never;
     options?: never;
     head?: never;
@@ -3336,6 +4008,16 @@ export interface components {
       role: null | string;
       text: null | string;
     };
+    AssigneeSuggestionDto: {
+      employee: components['schemas']['PersonDto'];
+      /** Format: double */
+      score: number;
+      /** Format: int32 */
+      openTasks: number;
+      /** Format: int32 */
+      similarDone: number;
+      reasons: string[];
+    };
     AssignmentDto: {
       /** Format: uuid */
       id: string;
@@ -3416,6 +4098,10 @@ export interface components {
       ipAddress: null | string;
       /** Format: date-time */
       at: string;
+    };
+    BilingualName: {
+      ar: null | string;
+      en: null | string;
     };
     /** @description A value in both languages (status message parameters). */
     BilingualText: {
@@ -3504,6 +4190,39 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    ChecklistInput: {
+      text: null | string;
+    };
+    ChecklistItemDto: {
+      /** Format: uuid */
+      id: string;
+      text: string;
+      /** Format: int32 */
+      sort: number;
+      done: boolean;
+      /** Format: date-time */
+      doneAt: null | string;
+    };
+    ChecklistUpdateInput: {
+      text: null | string;
+      done: null | boolean;
+    };
+    CommentDto: {
+      /** Format: uuid */
+      id: string;
+      text: string;
+      kind: string;
+      author: null | components['schemas']['PersonDto'];
+      mentions: components['schemas']['PersonDto'][];
+      fileIds: string[];
+      /** Format: date-time */
+      createdAt: string;
+    };
+    CommentInput: {
+      text: null | string;
+      mentions: null | string[];
+      fileIds: null | string[];
+    };
     ConditionCheckDto: {
       valid: boolean;
       errors: components['schemas']['FieldError'][];
@@ -3512,15 +4231,61 @@ export interface components {
     ConditionInput: {
       condition: null | string;
     };
+    CountByDto: {
+      key: string;
+      /** Format: int32 */
+      open: number;
+      /** Format: int32 */
+      overdue: number;
+    };
     /** @description The new token: string CreatedAccessTokenDto.Token is shown once and never stored. */
     CreatedAccessTokenDto: {
       details: components['schemas']['AccessTokenDto'];
       token: string;
     };
+    CreatedTasksDto: {
+      tasks: components['schemas']['TaskListItemDto'][];
+      /** Format: uuid */
+      groupId: null | string;
+    };
     CreatedUserDto: {
       user: components['schemas']['UserDto'];
       invitationSent: boolean;
       invitationMessageKey: null | string;
+    };
+    /**
+     * @description New Task (SPEC §11.7): one or many assignees (and / or every employee of a unit) → one task per assignee, tied by an assignment group
+     *     when there are several (SPEC §11.4).
+     */
+    CreateTask: {
+      titleAr: null | string;
+      titleEn: null | string;
+      description: null | string;
+      typeCode: null | string;
+      sourceCode: null | string;
+      categoryCode: null | string;
+      priority: null | string;
+      confidential: null | boolean;
+      /** Format: date */
+      plannedStart: null | string;
+      /** Format: date */
+      dueDate: null | string;
+      /** Format: double */
+      estimatedHours: null | number;
+      assigneeEmployeeIds: null | string[];
+      /** Format: uuid */
+      assigneeUnitId?: null | string;
+      completionRule?: null | string;
+      /** @default false */
+      draft: boolean;
+      /** Format: uuid */
+      onBehalfOfEmployeeId?: null | string;
+      linkedType?: null | string;
+      /** Format: uuid */
+      linkedId?: null | string;
+      checklist?: null | string[];
+      recurrence?: null | components['schemas']['RecurrenceInput'];
+      dependsOn?: null | string[];
     };
     CreateTokenInput: {
       name: null | string;
@@ -3614,6 +4379,10 @@ export interface components {
       error: null | string;
       /** Format: date-time */
       at: string;
+    };
+    DependencyInput: {
+      /** Format: uuid */
+      dependsOnTaskId: null | string;
     };
     EditorInput: {
       /** Format: uuid */
@@ -3858,8 +4627,71 @@ export interface components {
       uploadedBy: null | string;
       comment: null | string;
     };
+    FollowUpDto: {
+      /** Format: uuid */
+      employeeId: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      canUpload: boolean;
+      /** Format: date-time */
+      since: string;
+    };
+    FollowUpInput: {
+      /** Format: uuid */
+      employeeId: null | string;
+      canUpload: null | boolean;
+    };
     ForgotPasswordInput: {
       login: null | string;
+    };
+    FromTextInput: {
+      text: null | string;
+    };
+    GroupCancelInput: {
+      reason: null | string;
+    };
+    GroupDto: {
+      /** Format: uuid */
+      id: string;
+      titleAr: null | string;
+      titleEn: null | string;
+      creator: components['schemas']['PersonDto'];
+      completionRule: string;
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: int32 */
+      total: number;
+      /** Format: int32 */
+      finished: number;
+      /** Format: int32 */
+      cancelled: number;
+      complete: boolean;
+      members: components['schemas']['GroupMemberDto'][];
+      canManage: boolean;
+      /** Format: int32 */
+      hidden: number;
+    };
+    GroupDueInput: {
+      /** Format: date */
+      dueDate: null | string;
+    };
+    GroupMemberDto: {
+      task: components['schemas']['TaskListItemDto'];
+      finished: boolean;
+    };
+    GroupMessageInput: {
+      text: null | string;
+    };
+    GroupSummaryDto: {
+      /** Format: uuid */
+      id: string;
+      titleAr: null | string;
+      titleEn: null | string;
+      /** Format: int32 */
+      total: number;
+      /** Format: int32 */
+      finished: number;
+      complete: boolean;
     };
     HistoryDto: {
       /** Format: uuid */
@@ -4011,6 +4843,42 @@ export interface components {
       nameEn: null | string;
       /** Format: int32 */
       sort: number;
+    };
+    LinkableTypeDto: {
+      resourceType: string;
+      systemCode: string;
+      nameAr: string;
+      nameEn: string;
+      capabilities: string[];
+    };
+    /** @description Links pointing at a record: the visible ones resolved, the others only counted. */
+    LinksToDto: {
+      links: components['schemas']['LinkToDto'][];
+      /** Format: int32 */
+      restricted: number;
+    };
+    LinkToDto: {
+      kind: string;
+      from: components['schemas']['LinkView'];
+    };
+    /** @description A resolved link as the UI shows it. Only string LinkVisibility.Visible views carry content. */
+    LinkView: {
+      type: string;
+      /** Format: uuid */
+      id: string;
+      visibility: string;
+      systemCode: null | string;
+      typeNameAr: null | string;
+      typeNameEn: null | string;
+      number: null | string;
+      titleAr: null | string;
+      titleEn: null | string;
+      statusCode: null | string;
+      statusLabelAr: null | string;
+      statusLabelEn: null | string;
+      tone: null | string;
+      isClosed: boolean;
+      link: null | string;
     };
     LoginInput: {
       login: null | string;
@@ -4555,6 +5423,18 @@ export interface components {
       totalPages?: number;
     };
     /** @description One page of items plus the total count across all pages. */
+    PagedResultOfTaskListItemDto: {
+      items: components['schemas']['TaskListItemDto'][];
+      /** Format: int32 */
+      page: number;
+      /** Format: int32 */
+      pageSize: number;
+      /** Format: int32 */
+      totalCount: number;
+      /** Format: int32 */
+      totalPages?: number;
+    };
+    /** @description One page of items plus the total count across all pages. */
     PagedResultOfUserDto: {
       items: components['schemas']['UserDto'][];
       /** Format: int32 */
@@ -4576,6 +5456,21 @@ export interface components {
       /** Format: int32 */
       history: number;
     };
+    PerformanceDto: {
+      employee: components['schemas']['PersonDto'];
+      /** Format: int32 */
+      completed: number;
+      /** Format: int32 */
+      completedOnTime: number;
+      /** Format: double */
+      onTimeRate: null | number;
+      /** Format: double */
+      averageHoursToAccept: null | number;
+      /** Format: double */
+      averageFeedback: null | number;
+      /** Format: int32 */
+      feedbackCount: number;
+    };
     PermissionDto: {
       code: string;
       systemCode: string;
@@ -4590,6 +5485,12 @@ export interface components {
       permissions: components['schemas']['PermissionDto'][];
       roles: components['schemas']['RoleDto'][];
       recordRoles: components['schemas']['RecordRoleTypeDto'][];
+    };
+    PersonDto: {
+      /** Format: uuid */
+      employeeId: string;
+      nameAr: null | string;
+      nameEn: null | string;
     };
     PersonName: {
       /** Format: uuid */
@@ -4780,6 +5681,51 @@ export interface components {
       /** Format: int64 */
       translationsVersion: number;
     };
+    /**
+     * @description "Reassign open tasks of an employee" (ADR 0040). `TaskIds` narrows the preview (null = all open tasks). In `to-creators` mode the
+     *     tasks the leaver created themself need `FallbackEmployeeId`, who receives them.
+     */
+    ReassignEmployeeTasks: {
+      /** Format: uuid */
+      fromEmployeeId: string;
+      mode: null | string;
+      /** Format: uuid */
+      toEmployeeId: null | string;
+      /** Format: uuid */
+      fallbackEmployeeId: null | string;
+      reason: null | string;
+      taskIds: null | string[];
+    };
+    ReassignmentPreviewDto: {
+      employee: components['schemas']['PersonDto'];
+      employeeStatus: string;
+      tasks: components['schemas']['ReassignmentTaskDto'][];
+    };
+    ReassignmentResultDto: {
+      /** Format: int32 */
+      reassigned: number;
+      /** Format: int32 */
+      returnedToCreators: number;
+      /** Format: int32 */
+      skipped: number;
+      taskIds: string[];
+    };
+    /** @description One open task of the leaving employee. Titles are left out for tasks the administrator may not read (confidential). */
+    ReassignmentTaskDto: {
+      /** Format: uuid */
+      id: string;
+      number: null | string;
+      titleAr: null | string;
+      titleEn: null | string;
+      status: string;
+      template: string;
+      confidential: boolean;
+      readable: boolean;
+      creator: components['schemas']['PersonDto'];
+      createdByLeaver: boolean;
+      /** Format: date */
+      dueDate: null | string;
+    };
     RecordRolePermissionsInput: {
       permissions: null | string[];
       /** Format: uint32 */
@@ -4824,6 +5770,28 @@ export interface components {
     };
     RecoveryCodesDto: {
       codes: string[];
+    };
+    RecurrenceDto: {
+      frequency: string;
+      /** Format: int32 */
+      interval: number;
+      /** Format: date */
+      until: null | string;
+      /** Format: int32 */
+      count: null | number;
+      /** Format: date */
+      nextOccurrenceOn: null | string;
+      /** Format: int32 */
+      occurrenceCount: number;
+    };
+    RecurrenceInput: {
+      frequency: null | string;
+      /** Format: int32 */
+      interval: null | number;
+      /** Format: date */
+      until: null | string;
+      /** Format: int32 */
+      count: null | number;
     };
     /** @description Regional settings (SPEC §0, §0.2 localisation). Hijri display is off by default. */
     RegionalSettings: {
@@ -4928,6 +5896,11 @@ export interface components {
       note: null | string;
       /** Format: int32 */
       baseVersionNo: null | number;
+    };
+    SaveTaskSettings: {
+      value: components['schemas']['TaskSettings'];
+      /** Format: uint32 */
+      version: number;
     };
     SecuritySettingsDto: {
       /** Format: int32 */
@@ -5070,6 +6043,26 @@ export interface components {
       version: number;
       comment: null | string;
     };
+    SubtaskInput: {
+      titleAr: null | string;
+      titleEn: null | string;
+      description: null | string;
+      /** Format: uuid */
+      assigneeEmployeeId: null | string;
+      priority: null | string;
+      /** Format: date */
+      plannedStart: null | string;
+      /** Format: date */
+      dueDate: null | string;
+    };
+    SuggestInput: {
+      title: null | string;
+      /** Format: uuid */
+      unitId: null | string;
+    };
+    SummaryInput: {
+      mode: null | string;
+    };
     SystemAccessDto: {
       /** Format: uuid */
       id: string;
@@ -5105,6 +6098,278 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    TaskActionInput: {
+      /** Format: uint32 */
+      version: number;
+      reason?: null | string;
+      comment?: null | string;
+      /** Format: int32 */
+      feedbackPoint?: null | number;
+      /** Format: uuid */
+      assigneeEmployeeId?: null | string;
+    };
+    /** @description What the current user may do on the task besides the transitions in IReadOnlyList&lt;string&gt; TaskDto.Actions. */
+    TaskCapabilitiesDto: {
+      canEdit: boolean;
+      canComment: boolean;
+      canUpload: boolean;
+      canManageFollowUps: boolean;
+      canManageChecklist: boolean;
+      canManageDependencies: boolean;
+      canCreateSubtask: boolean;
+    };
+    TaskCountsDto: {
+      /** Format: int32 */
+      assignedOpen: number;
+      /** Format: int32 */
+      assignedOverdue: number;
+      /** Format: int32 */
+      awaitingMyApproval: number;
+      /** Format: int32 */
+      createdOpen: number;
+      /** Format: int32 */
+      followUp: number;
+      /** Format: int32 */
+      team: number;
+      /** Format: int32 */
+      teamOverdue: number;
+    };
+    TaskDashboardDto: {
+      /** Format: int32 */
+      open: number;
+      /** Format: int32 */
+      overdue: number;
+      /** Format: int32 */
+      dueSoon: number;
+      /** Format: int32 */
+      closedLast90Days: number;
+      /** Format: double */
+      averageHoursToAccept: null | number;
+      /** Format: double */
+      averageHoursToComplete: null | number;
+      /** Format: double */
+      onTimeRate: null | number;
+      /** Format: double */
+      averageFeedback: null | number;
+      byUnit: components['schemas']['CountByDto'][];
+      bySource: components['schemas']['CountByDto'][];
+      byStatus: components['schemas']['CountByDto'][];
+      byPriority: components['schemas']['CountByDto'][];
+      workload: components['schemas']['WorkloadDto'][];
+      unitNames: {
+        [key: string]: components['schemas']['BilingualName'];
+      };
+    };
+    TaskDraftDto: {
+      titleAr: null | string;
+      titleEn: null | string;
+      description: null | string;
+      assigneeName: null | string;
+      assignee: null | components['schemas']['PersonDto'];
+      assigneeCandidates: components['schemas']['PersonDto'][];
+      /** Format: date */
+      dueDate: null | string;
+      priority: string;
+      source: null | string;
+    };
+    TaskDraftsDto: {
+      drafts: components['schemas']['TaskDraftDto'][];
+      /** Format: uuid */
+      usageId: string;
+    };
+    TaskDto: {
+      /** Format: uuid */
+      id: string;
+      number: null | string;
+      titleAr: null | string;
+      titleEn: null | string;
+      description: null | string;
+      template: string;
+      status: string;
+      priority: string;
+      indicator: null | string;
+      typeCode: string;
+      sourceCode: string;
+      categoryCode: null | string;
+      confidential: boolean;
+      assignee: components['schemas']['PersonDto'];
+      creator: components['schemas']['PersonDto'];
+      enteredBy: null | components['schemas']['PersonDto'];
+      /** Format: date */
+      plannedStart: null | string;
+      /** Format: date */
+      dueDate: null | string;
+      /** Format: date-time */
+      dueAt: null | string;
+      /** Format: date-time */
+      dueSoonAt: null | string;
+      /** Format: date-time */
+      assignedAt: null | string;
+      /** Format: date-time */
+      acceptedAt: null | string;
+      /** Format: date-time */
+      completedAt: null | string;
+      /** Format: date-time */
+      approvedAt: null | string;
+      /** Format: date-time */
+      closedAt: null | string;
+      rejectionReason: null | string;
+      cancelReason: null | string;
+      completionComment: null | string;
+      /** Format: int32 */
+      feedbackPoint: null | number;
+      feedbackComment: null | string;
+      /** Format: int32 */
+      percentComplete: null | number;
+      /** Format: double */
+      estimatedHours: null | number;
+      /** Format: int64 */
+      actualSeconds: number;
+      /** Format: int64 */
+      timeToAcceptSeconds: null | number;
+      /** Format: int64 */
+      timeToCompleteSeconds: null | number;
+      completedOnTime: null | boolean;
+      recurrence: null | components['schemas']['RecurrenceDto'];
+      /** Format: uuid */
+      recurrenceSourceId: null | string;
+      link: null | components['schemas']['LinkView'];
+      parent: null | components['schemas']['TaskRefDto'];
+      group: null | components['schemas']['GroupSummaryDto'];
+      checklist: components['schemas']['ChecklistItemDto'][];
+      subtasks: components['schemas']['TaskListItemDto'][];
+      dependencies: components['schemas']['TaskRefDto'][];
+      followUps: components['schemas']['FollowUpDto'][];
+      actions: string[];
+      capabilities: components['schemas']['TaskCapabilitiesDto'];
+      /** Format: int32 */
+      feedbackScaleMax: number;
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: date-time */
+      updatedAt: string;
+      /** Format: uint32 */
+      version: number;
+    };
+    TaskEventDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: date-time */
+      occurredAt: string;
+      event: string;
+      fromStatus: null | string;
+      toStatus: null | string;
+      actor: null | components['schemas']['PersonDto'];
+      comment: null | string;
+      data: null | string;
+      /** Format: int64 */
+      secondsSincePrevious: null | number;
+    };
+    TaskListItemDto: {
+      /** Format: uuid */
+      id: string;
+      number: null | string;
+      titleAr: null | string;
+      titleEn: null | string;
+      template: string;
+      status: string;
+      priority: string;
+      indicator: null | string;
+      typeCode: string;
+      sourceCode: string;
+      categoryCode: null | string;
+      confidential: boolean;
+      assignee: components['schemas']['PersonDto'];
+      creator: components['schemas']['PersonDto'];
+      /** Format: date */
+      plannedStart: null | string;
+      /** Format: date */
+      dueDate: null | string;
+      /** Format: date-time */
+      dueAt: null | string;
+      /** Format: uuid */
+      groupId: null | string;
+      /** Format: uuid */
+      parentTaskId: null | string;
+      linkedType: null | string;
+      /** Format: uuid */
+      linkedId: null | string;
+      /** Format: int32 */
+      percentComplete: null | number;
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: date-time */
+      updatedAt: string;
+      /** Format: uint32 */
+      version: number;
+      actions: string[];
+    };
+    TaskRefDto: {
+      /** Format: uuid */
+      id: string;
+      number: null | string;
+      titleAr: null | string;
+      titleEn: null | string;
+      status: string;
+      template: string;
+      closed: boolean;
+    };
+    /** @description Settings → Tasks (docs/design/tasks.md §2). Defaults are the SPEC / Appendix A build defaults; nothing organisation-specific in code. */
+    TaskSettings: {
+      typeTemplates?: null | {
+        [key: string]: string;
+      };
+      confidentialCategories?: null | string[];
+      /** @default anyone */
+      assignScope: string;
+      /** @default true */
+      secretaryMayCreateOnBehalf: boolean;
+      /**
+       * Format: int32
+       * @default 5
+       */
+      feedbackScaleMax: number;
+      /**
+       * Format: int32
+       * @default 2
+       */
+      reminderDaysBeforeDue: number;
+      /** @default true */
+      overdueNotice: boolean;
+      /**
+       * Format: int32
+       * @default 3
+       */
+      escalateAfterOverdueDays: number;
+      /**
+       * Format: int32
+       * @default 8
+       */
+      acceptReminderHours: number;
+      /** @default off */
+      digest: string;
+      /**
+       * Format: int32
+       * @default 1
+       */
+      digestWeekday: number;
+      /**
+       * Format: int32
+       * @default 10
+       */
+      workloadThreshold: number;
+    };
+    TaskSettingsDto: {
+      value: components['schemas']['TaskSettings'];
+      /** Format: uint32 */
+      version: number;
+    };
+    TaskSummaryDto: {
+      mode: string;
+      text: string;
+      /** Format: uuid */
+      usageId: string;
+    };
     TemplateDto: {
       key: string;
       systemCode: string;
@@ -5135,6 +6400,29 @@ export interface components {
     TemplatePreviewDto: {
       subject: string;
       html: string;
+    };
+    TimelineDto: {
+      events: components['schemas']['TaskEventDto'][];
+      timesheet: components['schemas']['TimesheetDto'];
+    };
+    TimesheetDto: {
+      periods: components['schemas']['TimesheetPeriodDto'][];
+      /** Format: int64 */
+      totalSeconds: number;
+      running: boolean;
+    };
+    TimesheetPeriodDto: {
+      /** Format: uuid */
+      id: string;
+      number: null | string;
+      /** Format: date-time */
+      startedAt: string;
+      /** Format: date-time */
+      endedAt: null | string;
+      /** Format: int64 */
+      durationSeconds: number;
+      holdReason: null | string;
+      endEvent: null | string;
     };
     TotpSetupDto: {
       sharedKey: string;
@@ -5286,6 +6574,25 @@ export interface components {
       /** Format: double */
       amount?: null | number;
     };
+    UpdateTaskInput: {
+      titleAr: null | string;
+      titleEn: null | string;
+      description: null | string;
+      sourceCode: null | string;
+      categoryCode: null | string;
+      priority: null | string;
+      confidential: boolean;
+      /** Format: date */
+      plannedStart: null | string;
+      /** Format: date */
+      dueDate: null | string;
+      /** Format: double */
+      estimatedHours: null | number;
+      /** Format: int32 */
+      percentComplete: null | number;
+      /** Format: uint32 */
+      version: number;
+    };
     UpdateUnitInput: {
       code: null | string;
       nameAr: null | string;
@@ -5399,6 +6706,29 @@ export interface components {
       createdByName: null | string;
       /** Format: int32 */
       stepCount: number;
+    };
+    WorkloadDto: {
+      employee: components['schemas']['PersonDto'];
+      /** Format: int32 */
+      open: number;
+      /** Format: int32 */
+      overdue: number;
+      /** Format: int32 */
+      onHold: number;
+    };
+    WorkloadInsightDto: {
+      employee: components['schemas']['PersonDto'];
+      kind: string;
+      /** Format: int32 */
+      open: number;
+      /** Format: int32 */
+      overdue: number;
+      /** Format: int32 */
+      closedRecently: number;
+      /** Format: int32 */
+      late: number;
+      /** Format: double */
+      lateRate: null | number;
     };
   };
   responses: never;
@@ -12203,6 +13533,103 @@ export interface operations {
       };
     };
   };
+  ListLinkableTypes: {
+    parameters: {
+      query?: {
+        capability?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['LinkableTypeDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ResolveLink: {
+    parameters: {
+      query: {
+        type: string;
+        id: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['LinkView'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListLinksTo: {
+    parameters: {
+      query?: {
+        kind?: string;
+      };
+      header?: never;
+      path: {
+        type: string;
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['LinksToDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
   ListSampleItems: {
     parameters: {
       query?: {
@@ -12596,6 +14023,1454 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['SampleEditorDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListTasks: {
+    parameters: {
+      query?: {
+        page?: number;
+        pageSize?: number;
+        sort?: string;
+        view?: string;
+        status?: string;
+        priority?: string;
+        indicator?: string;
+        search?: string;
+        linkedType?: string;
+        linkedId?: string;
+        groupId?: string;
+        parentId?: string;
+        dueFrom?: string;
+        dueTo?: string;
+        openOnly?: boolean;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PagedResultOfTaskListItemDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateTask: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CreateTask'];
+      };
+    };
+    responses: {
+      /** @description Created */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CreatedTasksDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetTaskCounts: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TaskCountsDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetTask: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TaskDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateTask: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateTaskInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TaskDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  AssignTask: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['TaskActionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TaskDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  AcceptTask: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['TaskActionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TaskDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RejectTask: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['TaskActionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TaskDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  PauseTask: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['TaskActionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TaskDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  StartTask: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['TaskActionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TaskDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SubmitTask: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['TaskActionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TaskDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CompleteTask: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['TaskActionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TaskDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ApproveTask: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['TaskActionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TaskDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ReturnTask: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['TaskActionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TaskDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ReassignTask: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['TaskActionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TaskDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CancelTask: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['TaskActionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TaskDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateSubtask: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SubtaskInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TaskDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetTaskTimeline: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TimelineDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListTaskComments: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CommentDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  AddTaskComment: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CommentInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CommentDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  AddTaskFollowUp: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['FollowUpInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TaskDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RemoveTaskFollowUp: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        employeeId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TaskDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  AddTaskChecklistItem: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ChecklistInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TaskDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateTaskChecklistItem: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        itemId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ChecklistUpdateInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TaskDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RemoveTaskChecklistItem: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        itemId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TaskDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  AddTaskDependency: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['DependencyInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TaskDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RemoveTaskDependency: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        dependsOnId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TaskDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetTaskAuditTrail: {
+    parameters: {
+      query?: {
+        page?: number;
+        pageSize?: number;
+        field?: string;
+        userId?: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PagedResultOfAuditEntryDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetTaskAsOf: {
+    parameters: {
+      query: {
+        at: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RecordSnapshotDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetTaskDashboard: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TaskDashboardDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetEmployeeTaskPerformance: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        employeeId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PerformanceDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetTaskSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TaskSettingsDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SaveTaskSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SaveTaskSettings'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TaskSettingsDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  PreviewTaskReassignment: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        employeeId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReassignmentPreviewDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ReassignEmployeeTasks: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ReassignEmployeeTasks'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReassignmentResultDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SummariseTask: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SummaryInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TaskSummaryDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetAssignmentGroup: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['GroupDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  MessageAssignmentGroup: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['GroupMessageInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['GroupDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ExtendAssignmentGroupDue: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['GroupDueInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['GroupDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CancelAssignmentGroup: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['GroupCancelInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['GroupDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  DraftTasksFromText: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['FromTextInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TaskDraftsDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SuggestTaskAssignees: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SuggestInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AssigneeSuggestionDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetTaskWorkloadInsights: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['WorkloadInsightDto'][];
         };
       };
       /** @description Problem Details (RFC 9457) */

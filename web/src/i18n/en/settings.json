@@ -103,6 +103,14 @@
     "mcp": {
       "title": "MCP server",
       "description": "Connect Claude and other MCP clients; tools, sign-in and limits."
+    },
+    "tasks": {
+      "title": "Tasks",
+      "description": "Workflow per task type, who can be assigned, reminders, escalation and digest."
+    },
+    "tasksReassign": {
+      "title": "Reassign open tasks of an employee",
+      "description": "When someone leaves or moves: preview their open tasks, then give them to another employee or hand them back to their creators. Everyone involved is notified and the action is audited."
     }
   },
   "title": "Settings",

@@ -11,6 +11,7 @@ using Strategy.Platform.AI;
 using Strategy.Platform.Files;
 using Strategy.Platform.Http.Modules;
 using Strategy.Platform.Kernel;
+using Strategy.Platform.Links;
 using Strategy.Platform.Notifications;
 using Strategy.Platform.Persistence;
 using Strategy.Platform.Settings;
@@ -42,6 +43,10 @@ public sealed class SampleModule : IModule
         services.AddAiForm(SampleAiForm.Definition);
         services.AddAiRecordSource<SampleRecordSource>();
         services.AddRecordSearchSource<SampleSearchSource>();
+
+        // Phase 6: sample items are task-able (links registry, ADR 0034).
+        services.AddLinkableType(SampleLinks.Definition);
+        services.AddLinkTargetSource<SampleLinkTargets>();
     }
 
     public void MapEndpoints(IEndpointRouteBuilder endpoints) => SampleEndpoints.Map(endpoints.MapModuleGroup(this));

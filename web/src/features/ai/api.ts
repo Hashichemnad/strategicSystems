@@ -14,7 +14,16 @@ export type ApproverBrief = components['schemas']['ApproverBriefDto'];
 export type AskAnswer = components['schemas']['AskAnswerDto'];
 export type AskTurn = components['schemas']['AskTurn'];
 export type RecordSearchHit = components['schemas']['RecordSearchHit'];
-export type AiFeatureKey = 'extract' | 'brief' | 'translate' | 'similar' | 'ask';
+export type AiFeatureKey =
+  | 'extract'
+  | 'brief'
+  | 'translate'
+  | 'similar'
+  | 'ask'
+  | 'tasks-from-text'
+  | 'task-summary'
+  | 'task-assignee'
+  | 'task-workload';
 
 export const aiKeys = {
   all: ['ai'] as const,

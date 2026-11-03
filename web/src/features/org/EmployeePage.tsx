@@ -26,6 +26,7 @@ import {
 } from '@/ui';
 import { orgKeys, useEmployee, useEmployeeHistory, useInvalidateOrg } from './api';
 import { EmployeeDialog } from './EmployeeDialog';
+import { OpenTasksOffer } from '@/features/tasks/OpenTasksOffer';
 import { statusTone } from './EmployeesPage';
 
 const routeApi = getRouteApi('/app/org/employees/$employeeId');
@@ -141,6 +142,7 @@ export function EmployeePage() {
           )
         }
       />
+      <OpenTasksOffer employeeId={data.id} name={name} status={data.status} />
       <Tabs defaultValue="details">
         <TabsList>
           <TabsTrigger value="details">{t('employees.tabs.details')}</TabsTrigger>

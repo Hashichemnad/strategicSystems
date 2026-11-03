@@ -25,7 +25,8 @@
     },
     "settings": "الإعدادات",
     "auditLog": "سجل التدقيق",
-    "auditVerification": "التحقق من سجل التدقيق"
+    "auditVerification": "التحقق من سجل التدقيق",
+    "tasks": "مهامي"
   },
   "language": {
     "label": "اللغة",

@@ -226,10 +226,10 @@ Finish with the phase summary.
 ```
 
 **Acceptance checks**
-- [ ] Manager assigns one task to 3 employees; each accepts / rejects independently; group view shows "1 of 3 approved".
-- [ ] Assignee pauses and restarts; timesheet shows periods and hold reasons; creator approves with feedback point.
-- [ ] Kanban and calendar views work in AR and EN.
-- [ ] AI turns pasted meeting notes into draft tasks that the creator confirms.
+- [x] Manager assigns one task to 3 employees; each accepts / rejects independently; group view shows "1 of 3 approved".
+- [x] Assignee pauses and restarts; timesheet shows periods and hold reasons; creator approves with feedback point.
+- [x] Kanban and calendar views work in AR and EN.
+- [x] AI turns pasted meeting notes into draft tasks that the creator confirms.
 
 ---
 
@@ -515,7 +515,7 @@ Implement, then run the full hardening review and fix findings, run performance 
 | 3 | Audit, Files, Notifications, Jobs | ☐ | |
 | 4 | Approval engine & My Work | ☑ built — awaiting owner acceptance | |
 | 5 | AI platform & MCP | ☑ built — awaiting owner acceptance | |
-| 6 | Links & Task Management | ☐ | |
+| 6 | Links & Task Management | ☑ built — awaiting owner acceptance | |
 | 7 | Teams Management | ☐ | |
 | 8 | Portfolio A — Requests | ☐ | |
 | 9 | Portfolio B — Lifecycle & change | ☐ | |

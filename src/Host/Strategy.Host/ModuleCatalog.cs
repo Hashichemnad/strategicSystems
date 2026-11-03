@@ -1,4 +1,5 @@
 using Strategy.Modules.Sample;
+using Strategy.Modules.Tasks;
 using Strategy.Platform.Http.Modules;
 
 namespace Strategy.Host;
@@ -9,5 +10,6 @@ internal static class ModuleCatalog
     public static IReadOnlyList<IModule> All { get; } =
     [
         new SampleModule(),
+        new TasksModule(),
     ];
 }

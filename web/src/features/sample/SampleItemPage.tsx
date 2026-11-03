@@ -8,6 +8,7 @@ import { errorMessage } from '@/api/problem';
 import { useCan } from '@/features/access/session';
 import { HistoryTab } from '@/features/audit/HistoryTab';
 import { DocumentsPanel } from '@/features/files/DocumentsPanel';
+import { LinkedTasksPanel } from '@/features/tasks/LinkedTasksPanel';
 import { formatDateTime, formatNumber, pickText } from '@/lib/format';
 import {
   Button,
@@ -39,6 +40,7 @@ export function SampleItemPage() {
   const { t: tc } = useTranslation();
   const { t: ta } = useTranslation('audit');
   const { t: tf } = useTranslation('files');
+  const { t: tk } = useTranslation('tasks');
   const { itemId } = route.useParams();
   const { tab } = route.useSearch();
   const navigate = route.useNavigate();
@@ -127,6 +129,7 @@ export function SampleItemPage() {
         <TabsList>
           <TabsTrigger value="overview">{t('tabs.overview')}</TabsTrigger>
           <TabsTrigger value="approvals">{t('tabs.approvals')}</TabsTrigger>
+          <TabsTrigger value="tasks">{tk('linked.title')}</TabsTrigger>
           <TabsTrigger value="documents">{tf('tab')}</TabsTrigger>
           <TabsTrigger value="history">{ta('history.tab')}</TabsTrigger>
         </TabsList>
@@ -161,6 +164,9 @@ export function SampleItemPage() {
         </TabsContent>
         <TabsContent value="approvals">
           <ApprovalPanel resourceType="sample.item" resourceId={data.id} />
+        </TabsContent>
+        <TabsContent value="tasks">
+          <LinkedTasksPanel type="sample.item" id={data.id} />
         </TabsContent>
         <TabsContent value="documents">
           <DocumentsPanel
