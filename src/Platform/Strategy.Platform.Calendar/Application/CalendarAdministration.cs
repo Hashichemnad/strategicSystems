@@ -233,7 +233,7 @@ internal sealed class CalendarAdministration(CalendarDbContext db, BusinessHours
 
         if (given.Count > 0 && given.All(d => d.Mode == DayModes.Closed))
         {
-            errors.Add(Field("days", "calendar.errors.noWorkingDay"));
+            errors.Add(Field("week", "calendar.errors.noWorkingDay"));
         }
 
         return errors.Count > 0 ? Error.Validation(errors) : (zone, days);
