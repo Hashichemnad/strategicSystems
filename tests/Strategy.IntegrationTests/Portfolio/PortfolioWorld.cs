@@ -36,7 +36,7 @@ public sealed class PortfolioFixture(PostgresFixture postgres) : IAsyncLifetime
 /// <summary>
 /// An organisation (head: General Manager) with a department (head: Director) and its section (head: Section manager); a second department.
 /// Requesters in the department (no section step, Q-P4) and in the section (section step); the PM Office, DG Office, Budget Section and
-/// Administration role holders; a department viewer; a requester of the other department; an outsider without Portfolio access.
+/// Administration role holders; a department viewer; a requester of the other department; an outsider in no unit (requester role only).
 /// </summary>
 internal sealed class PortfolioWorld
 {

@@ -27,7 +27,9 @@
     "auditLog": "Audit log",
     "auditVerification": "Audit verification",
     "tasks": "My tasks",
-    "teams": "Teams & committees"
+    "teams": "Teams & committees",
+    "portfolioRequests": "Program requests",
+    "portfolioProjects": "Projects & initiatives"
   },
   "language": {
     "label": "Language",

@@ -27,7 +27,8 @@ export type AiFeatureKey =
   | 'teams-formation'
   | 'teams-members'
   | 'teams-evaluation'
-  | 'teams-minutes';
+  | 'teams-minutes'
+  | 'portfolio-assessment';
 
 export const aiKeys = {
   all: ['ai'] as const,

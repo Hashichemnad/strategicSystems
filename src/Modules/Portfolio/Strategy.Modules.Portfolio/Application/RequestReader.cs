@@ -10,9 +10,9 @@ using Strategy.Platform.Workflow;
 
 namespace Strategy.Modules.Portfolio.Application;
 
-public sealed record PersonDto(Guid Id, string? NameAr, string? NameEn);
+public sealed record PortfolioPersonDto(Guid Id, string? NameAr, string? NameEn);
 
-public sealed record UnitDto(Guid Id, string Code, string? NameAr, string? NameEn);
+public sealed record PortfolioUnitDto(Guid Id, string Code, string? NameAr, string? NameEn);
 
 /// <summary>
 /// Loads requests and projects within the caller's read scope (ApplyScope in the database query; 404 otherwise) and what is around them:
@@ -61,7 +61,7 @@ internal sealed class RequestReader(
             request?.CostEstimationUploaded ?? false, request?.ProcurementStatus == ProcurementStatuses.QuotationsUploaded);
     }
 
-    public async Task<Dictionary<Guid, PersonDto>> PeopleAsync(IEnumerable<Guid?> ids, CancellationToken ct)
+    public async Task<Dictionary<Guid, PortfolioPersonDto>> PeopleAsync(IEnumerable<Guid?> ids, CancellationToken ct)
     {
         var list = ids.Where(i => i is not null).Select(i => i!.Value).Distinct().ToList();
         if (list.Count == 0)
@@ -70,17 +70,17 @@ internal sealed class RequestReader(
         }
 
         var people = await employees.GetManyAsync(list, ct).ConfigureAwait(false);
-        return people.Values.ToDictionary(e => e.Id, e => new PersonDto(e.Id, e.NameAr ?? e.NameEn, e.NameEn ?? e.NameAr));
+        return people.Values.ToDictionary(e => e.Id, e => new PortfolioPersonDto(e.Id, e.NameAr ?? e.NameEn, e.NameEn ?? e.NameAr));
     }
 
-    public async Task<Dictionary<Guid, UnitDto>> UnitsAsync(IEnumerable<Guid?> ids, CancellationToken ct)
+    public async Task<Dictionary<Guid, PortfolioUnitDto>> UnitsAsync(IEnumerable<Guid?> ids, CancellationToken ct)
     {
-        var result = new Dictionary<Guid, UnitDto>();
+        var result = new Dictionary<Guid, PortfolioUnitDto>();
         foreach (var id in ids.Where(i => i is not null).Select(i => i!.Value).Distinct())
         {
             if (await org.GetUnitAsync(id, ct).ConfigureAwait(false) is { } unit)
             {
-                result[id] = new UnitDto(unit.Id, unit.Code, unit.NameAr ?? unit.NameEn, unit.NameEn ?? unit.NameAr);
+                result[id] = new PortfolioUnitDto(unit.Id, unit.Code, unit.NameAr ?? unit.NameEn, unit.NameEn ?? unit.NameAr);
             }
         }
 

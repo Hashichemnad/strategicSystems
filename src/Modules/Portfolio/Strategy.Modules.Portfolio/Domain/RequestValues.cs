@@ -128,9 +128,11 @@ public sealed record RequestValues
     public bool? CostProposalsRequested { get; init; }
 
     /// <summary>The six screening answers in SPEC order.</summary>
+    [System.Text.Json.Serialization.JsonIgnore]
     public IReadOnlyList<bool?> ScreeningAnswers =>
         [ScreenCoreWork, ScreenOneTime, ScreenTimeBound, ScreenUniqueOutput, ScreenMinCost, ScreenOperationalCosts];
 
+    [System.Text.Json.Serialization.JsonIgnore]
     public decimal? YearCostsTotal =>
         Year1Cost is null && Year2Cost is null && Year3Cost is null && Year4Cost is null
             ? null

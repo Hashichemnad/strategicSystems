@@ -149,7 +149,7 @@ public sealed record AssessmentContent(
     IReadOnlyList<string> Recommendations);
 
 public sealed record AssessmentDto(
-    Guid Id, int VersionNo, AssessmentContent Content, string? Language, IReadOnlyList<string> Documents, PersonDto? GeneratedBy, DateTimeOffset GeneratedAt);
+    Guid Id, int VersionNo, AssessmentContent Content, string? Language, IReadOnlyList<string> Documents, PortfolioPersonDto? GeneratedBy, DateTimeOffset GeneratedAt);
 
 /// <summary>Generates and reads Proposal Assessment versions (ADR 0050). Every call goes through the gateway (switches, permission, limits, audit).</summary>
 internal sealed class AssessmentService(
@@ -435,11 +435,11 @@ internal sealed class AssessmentService(
         return text.ToString();
     }
 
-    private static AssessmentDto ToDto(ProposalAssessment row, PersonDto? by) => new(
+    private static AssessmentDto ToDto(ProposalAssessment row, PortfolioPersonDto? by) => new(
         row.Id, row.VersionNo, JsonSerializer.Deserialize<AssessmentContent>(row.Content, Json)!, row.Language,
         JsonSerializer.Deserialize<List<string>>(row.Documents, Json) ?? [], by, row.GeneratedAt);
 
-    private async Task<Dictionary<Guid, PersonDto>> PeopleOfUsersAsync(IEnumerable<Guid?> userIds, CancellationToken ct)
+    private async Task<Dictionary<Guid, PortfolioPersonDto>> PeopleOfUsersAsync(IEnumerable<Guid?> userIds, CancellationToken ct)
     {
         var ids = userIds.Where(i => i is not null).Select(i => i!.Value).Distinct().ToList();
         if (ids.Count == 0)

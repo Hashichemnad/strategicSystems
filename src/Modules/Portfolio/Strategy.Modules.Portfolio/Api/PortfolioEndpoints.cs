@@ -2,10 +2,12 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.DependencyInjection;
 using Strategy.Modules.Portfolio.Ai;
 using Strategy.Modules.Portfolio.Application;
 using Strategy.Modules.Portfolio.Domain;
 using Strategy.Platform.Http.Access;
+using Strategy.Platform.Http.Audit;
 using Strategy.Platform.Http.Problems;
 using Strategy.Platform.Kernel.Messaging;
 using Strategy.Platform.Kernel.Paging;
@@ -18,7 +20,7 @@ public sealed record RequestUpdateInput(RequestValues Values, uint Version);
 
 public sealed record RequestVersionInput(uint Version, string? Comment = null);
 
-public sealed record CancelInput(string? Reason, uint Version);
+public sealed record CancelRequestInput(string? Reason, uint Version);
 
 public sealed record ClassificationInput(string? Value, string? Reason, uint Version);
 
@@ -57,7 +59,7 @@ internal static class PortfolioEndpoints
         requests.MapPost("/{id:guid}/submit", async (Guid id, RequestVersionInput b, IDispatcher d, CancellationToken ct) =>
                 (await d.SendAsync(new SubmitRequest(id, b.Version, b.Comment), ct)).ToOk())
             .WithName("SubmitProgramRequest").RequirePermission(PortfolioPermissions.RequestRead).WithIdempotency();
-        requests.MapPost("/{id:guid}/cancel", async (Guid id, CancelInput b, IDispatcher d, CancellationToken ct) =>
+        requests.MapPost("/{id:guid}/cancel", async (Guid id, CancelRequestInput b, IDispatcher d, CancellationToken ct) =>
                 (await d.SendAsync(new CancelRequest(id, b.Reason, b.Version), ct)).ToOk())
             .WithName("CancelProgramRequest").RequirePermission(PortfolioPermissions.RequestRead);
         requests.MapPost("/{id:guid}/classification", async (Guid id, ClassificationInput b, IDispatcher d, CancellationToken ct) =>
@@ -85,6 +87,9 @@ internal static class PortfolioEndpoints
             .WithName("ListProposalAssessments").RequirePermission(PortfolioPermissions.RequestRead);
         requests.MapPost("/{id:guid}/assessments", async (Guid id, AssessmentService ai, CancellationToken ct) => (await ai.GenerateAsync(id, ct)).ToOk())
             .WithName("GenerateProposalAssessment").RequirePermission(PortfolioPermissions.RequestRead);
+
+        requests.MapRecordHistory(ProgramRequest.EntityType, PortfolioPermissions.RequestRead, "GetProgramRequest", async (id, context) =>
+            (await context.RequestServices.GetRequiredService<IDispatcher>().SendAsync(new GetRequest(id), context.RequestAborted)).IsSuccess);
 
         var projects = group.MapGroup("/projects");
         projects.MapGet("/", async (int? page, int? pageSize, string? sort, string? classification, string? stage, Guid? unitId, string? search, IDispatcher d,

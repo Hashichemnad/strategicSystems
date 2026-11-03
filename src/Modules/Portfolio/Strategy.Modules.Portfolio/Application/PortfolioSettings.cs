@@ -41,6 +41,7 @@ public sealed record PortfolioSettings : ISettingsArea
         new("high", "عالية", "High", 0.80m),
     ];
 
+    [System.Text.Json.Serialization.JsonIgnore]
     public IReadOnlyList<PriorityCriterion> ActiveCriteria => PriorityCriteria.Where(c => c.Active).ToList();
 
     public static List<FieldError> Validate(PortfolioSettings value)

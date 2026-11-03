@@ -18,11 +18,21 @@ interface WizardProps {
   onSaveDraft?: () => void | Promise<void>;
   finishLabel?: string;
   busy?: boolean;
+  /** Blocks finishing and saving a draft (e.g. AI-filled values still to review) while steps stay navigable. */
+  finishDisabled?: boolean;
   className?: string;
 }
 
 /** Multi-step form with per-step validation, save-as-draft and a progress stepper (SPEC §0.3). */
-export function Wizard({ steps, onFinish, onSaveDraft, finishLabel, busy, className }: WizardProps) {
+export function Wizard({
+  steps,
+  onFinish,
+  onSaveDraft,
+  finishLabel,
+  busy,
+  finishDisabled,
+  className,
+}: WizardProps) {
   const { t } = useTranslation();
   const [index, setIndex] = useState(0);
   const step = steps[index];
@@ -52,7 +62,7 @@ export function Wizard({ steps, onFinish, onSaveDraft, finishLabel, busy, classN
       <div className="flex flex-wrap items-center justify-between gap-2 border-t pt-4">
         <div>
           {onSaveDraft && (
-            <Button variant="ghost" onClick={() => void onSaveDraft()} disabled={busy}>
+            <Button variant="ghost" onClick={() => void onSaveDraft()} disabled={busy || finishDisabled}>
               {t('actions.saveDraft')}
             </Button>
           )}
@@ -61,7 +71,7 @@ export function Wizard({ steps, onFinish, onSaveDraft, finishLabel, busy, classN
           <Button variant="outline" onClick={() => setIndex((i) => i - 1)} disabled={index === 0 || busy}>
             {t('actions.back')}
           </Button>
-          <Button onClick={() => void next()} loading={busy}>
+          <Button onClick={() => void next()} loading={busy} disabled={last && finishDisabled}>
             {last ? (finishLabel ?? t('actions.finish')) : t('actions.next')}
           </Button>
         </div>

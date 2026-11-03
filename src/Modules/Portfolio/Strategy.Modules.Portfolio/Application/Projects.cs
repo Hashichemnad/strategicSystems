@@ -22,8 +22,8 @@ public sealed record ProjectDto(
     string? ScopeOfWork,
     string Stage,
     string Status,
-    UnitDto? Unit,
-    UnitDto? SectionUnit,
+    PortfolioUnitDto? Unit,
+    PortfolioUnitDto? SectionUnit,
     string? StrategicObjectiveCode,
     string? ProgramTypeCode,
     decimal? Budget,
@@ -33,8 +33,8 @@ public sealed record ProjectDto(
     decimal? Year4PlannedCost,
     DateOnly? PlannedStart,
     DateOnly? PlannedEnd,
-    PersonDto? Owner,
-    PersonDto? Requester,
+    PortfolioPersonDto? Owner,
+    PortfolioPersonDto? Requester,
     Guid RequestId,
     string? RequestNumber,
     IReadOnlyList<string> StagePath,
@@ -42,7 +42,7 @@ public sealed record ProjectDto(
     uint Version);
 
 public sealed record ProjectListItemDto(
-    Guid Id, string Number, string Classification, string? NameAr, string? NameEn, string Stage, string Status, UnitDto? Unit, decimal? Budget, DateOnly? PlannedStart,
+    Guid Id, string Number, string Classification, string? NameAr, string? NameEn, string Stage, string Status, PortfolioUnitDto? Unit, decimal? Budget, DateOnly? PlannedStart,
     DateOnly? PlannedEnd, DateTimeOffset CreatedAt);
 
 public sealed record GetProject(Guid Id) : IQuery<ProjectDto>;
@@ -50,14 +50,14 @@ public sealed record GetProject(Guid Id) : IQuery<ProjectDto>;
 public sealed record ListProjects(PageRequest Page, string? Classification = null, string? Stage = null, Guid? UnitId = null, string? Search = null)
     : IQuery<PagedResult<ProjectListItemDto>>;
 
-public sealed record OptionDto(string Code, string? LabelAr, string? LabelEn);
+public sealed record PortfolioOptionDto(string Code, string? LabelAr, string? LabelEn);
 
 /// <summary>Everything the request screens need to render choices and live calculations (labels are configuration).</summary>
 public sealed record PortfolioOptionsDto(
-    IReadOnlyList<OptionDto> Objectives,
-    IReadOnlyList<OptionDto> Sources,
-    IReadOnlyList<OptionDto> ProgramTypes,
-    IReadOnlyList<OptionDto> DeliveryOptions,
+    IReadOnlyList<PortfolioOptionDto> Objectives,
+    IReadOnlyList<PortfolioOptionDto> Sources,
+    IReadOnlyList<PortfolioOptionDto> ProgramTypes,
+    IReadOnlyList<PortfolioOptionDto> DeliveryOptions,
     IReadOnlyList<PriorityCriterion> Criteria,
     IReadOnlyList<PriorityBand> Bands,
     decimal ThresholdAmount,
@@ -156,9 +156,9 @@ internal sealed class PortfolioSettingsHandlers(
     public async Task<Result<PortfolioOptionsDto>> HandleAsync(GetPortfolioOptions query, CancellationToken cancellationToken)
     {
         var settings = await reader.SettingsAsync(cancellationToken).ConfigureAwait(false);
-        async Task<IReadOnlyList<OptionDto>> Values(string type) =>
+        async Task<IReadOnlyList<PortfolioOptionDto>> Values(string type) =>
             (await lookups.GetValuesAsync(type, cancellationToken: cancellationToken).ConfigureAwait(false))
-            .Where(v => v.Active).OrderBy(v => v.Sort).Select(v => new OptionDto(v.Code, v.LabelAr, v.LabelEn)).ToList();
+            .Where(v => v.Active).OrderBy(v => v.Sort).Select(v => new PortfolioOptionDto(v.Code, v.LabelAr, v.LabelEn)).ToList();
 
         return new PortfolioOptionsDto(
             await Values(PortfolioPermissions.ObjectiveLookup).ConfigureAwait(false), await Values(PortfolioPermissions.SourceLookup).ConfigureAwait(false),
