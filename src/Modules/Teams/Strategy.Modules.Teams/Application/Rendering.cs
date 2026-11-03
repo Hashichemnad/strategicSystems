@@ -48,25 +48,14 @@ public static class TeamDocuments
         var html = Start(d.Color, d.NameAr ?? d.NameEn);
         Band(html, d.OrganisationAr, d.OrganisationEn, "قرار تشكيل", "Formation decision");
         html.Append("<table class=\"meta\" dir=\"ltr\"><tr><td class=\"en\">Decision no. <b>").Append(E(d.MemoNumber)).Append("</b> · Date <b>").Append(E(D(d.MemoDate)))
-            .Append("</b></td><td class=\"ar\">رقم القرار <b>").Append(E(d.MemoNumber)).Append("</b> · التاريخ <b>").Append(E(D(d.MemoDate))).Append("</b></td></tr></table>");
+            .Append("</b></td><td class=\"ar\">رقم القرار <b><bdi dir=\"ltr\">").Append(E(d.MemoNumber)).Append("</bdi></b> · التاريخ <b><bdi dir=\"ltr\">").Append(E(D(d.MemoDate))).Append("</bdi></b></td></tr></table>");
         Pair(html, $"تشكيل {d.TypeAr ?? d.TypeEn}: {d.NameAr ?? d.NameEn} ({d.TeamNumber})", $"Formation of the {d.TypeEn ?? d.TypeAr}: {d.NameEn ?? d.NameAr} ({d.TeamNumber})", true);
-        if (!string.IsNullOrWhiteSpace(d.Subject))
-        {
-            Pair(html, "الموضوع: " + d.Subject, "Subject: " + d.Subject);
-        }
-
-        if (!string.IsNullOrWhiteSpace(d.Objectives))
-        {
-            Pair(html, "الأهداف: " + d.Objectives, "Objectives: " + d.Objectives);
-        }
-
-        if (!string.IsNullOrWhiteSpace(d.Mandate))
-        {
-            Pair(html, "المهام والصلاحيات: " + d.Mandate, "Mandate: " + d.Mandate);
-        }
-
-        Pair(html, $"المدة: من {D(d.StartDate)} {(d.EndDate is null ? "(دائم)" : "إلى " + D(d.EndDate))}",
-            $"Term: from {D(d.StartDate)} {(d.EndDate is null ? "(permanent)" : "to " + D(d.EndDate))}");
+        Labelled(html, "الموضوع", "Subject", d.Subject);
+        Labelled(html, "الأهداف", "Objectives", d.Objectives);
+        Labelled(html, "المهام والصلاحيات", "Mandate", d.Mandate);
+        html.Append("<div class=\"pair\" dir=\"ltr\"><div class=\"en\"><p>Term: from <bdi>").Append(E(D(d.StartDate))).Append("</bdi> ")
+            .Append(d.EndDate is null ? "(permanent)" : "to <bdi>" + E(D(d.EndDate)) + "</bdi>").Append("</p></div><div class=\"ar\"><p>المدة: من <bdi dir=\"ltr\">")
+            .Append(E(D(d.StartDate))).Append("</bdi> ").Append(d.EndDate is null ? "(دائم)" : "إلى <bdi dir=\"ltr\">" + E(D(d.EndDate)) + "</bdi>").Append("</p></div></div>");
         html.Append("<table class=\"grid\"><thead><tr><th>#</th><th>الاسم / Name</th><th>الدور / Role</th><th>المسؤوليات / Responsibilities</th></tr></thead><tbody>");
         for (var i = 0; i < d.Members.Count; i++)
         {
@@ -106,8 +95,8 @@ public static class TeamDocuments
             .Append(" (").Append(E(d.GradeEn)).Append(").</p></div><div class=\"ar\"><p>تُمنح هذه الشهادة إلى</p><h2>").Append(E(d.PersonAr ?? d.PersonEn)).Append("</h2><p>")
             .Append(E(d.RoleAr)).Append(" في <b>").Append(E(d.TeamAr ?? d.TeamEn)).Append("</b>، تقديراً للمساهمة في دورة التقييم ").Append(E(d.Cycle)).Append(" (")
             .Append(E(d.GradeAr)).Append(").</p></div></div>");
-        html.Append("<table class=\"meta\" dir=\"ltr\"><tr><td class=\"en\">No. <b>").Append(E(d.Number)).Append("</b> · ").Append(E(D(d.Date))).Append("</td><td class=\"ar\">رقم <b>")
-            .Append(E(d.Number)).Append("</b> · ").Append(E(D(d.Date))).Append("</td></tr></table>");
+        html.Append("<table class=\"meta\" dir=\"ltr\"><tr><td class=\"en\">No. <b>").Append(E(d.Number)).Append("</b> · ").Append(E(D(d.Date))).Append("</td><td class=\"ar\">رقم <b><bdi dir=\"ltr\">")
+            .Append(E(d.Number)).Append("</bdi></b> · <bdi dir=\"ltr\">").Append(E(D(d.Date))).Append("</bdi></td></tr></table>");
         return html.Append("</body></html>").ToString();
     }
 
@@ -130,6 +119,18 @@ public static class TeamDocuments
     private static void Band(StringBuilder html, string? orgAr, string? orgEn, string titleAr, string titleEn) =>
         html.Append("<div class=\"band\" dir=\"ltr\"><div class=\"en\"><h1>").Append(E(titleEn)).Append("</h1><div class=\"org\">").Append(E(orgEn)).Append("</div></div><div class=\"ar\"><h1>")
             .Append(E(titleAr)).Append("</h1><div class=\"org\">").Append(E(orgAr)).Append("</div></div></div>");
+
+    /// <summary>A label in each language with the (single-language) value isolated, so mixed scripts keep their order.</summary>
+    private static void Labelled(StringBuilder html, string labelAr, string labelEn, string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return;
+        }
+
+        html.Append("<div class=\"pair\" dir=\"ltr\"><div class=\"en\"><p>").Append(E(labelEn)).Append(": <bdi dir=\"auto\" style=\"white-space:pre-line\">").Append(E(value))
+            .Append("</bdi></p></div><div class=\"ar\"><p>").Append(E(labelAr)).Append(": <bdi dir=\"auto\" style=\"white-space:pre-line\">").Append(E(value)).Append("</bdi></p></div></div>");
+    }
 
     private static void Pair(StringBuilder html, string? ar, string? en, bool lead = false) =>
         html.Append("<div class=\"pair\" dir=\"ltr\"><div class=\"en\"><p").Append(lead ? " class=\"lead\"" : string.Empty).Append('>').Append(E(en)).Append("</p></div><div class=\"ar\"><p")

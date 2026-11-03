@@ -389,7 +389,7 @@ public static class RewardCalculator
 
         if (matrix.AnnualBudget < 0)
         {
-            errors.Add(new("annualBudget", "validation.greaterThanOrEqual", "validation.greaterThanOrEqual", new Dictionary<string, object?> { ["value"] = 0 }));
+            errors.Add(new("annualBudget", "validation.greaterThanOrEqual", "validation.greaterThanOrEqual", new Dictionary<string, object?> { ["comparisonValue"] = 0 }));
         }
 
         if (string.IsNullOrWhiteSpace(matrix.Currency) || matrix.Currency.Length != 3)

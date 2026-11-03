@@ -113,7 +113,11 @@ export function TeamPage() {
       </Link>
       <PageHeader
         title={name}
-        description={`${data.number ?? ''} · ${pickText(i18n.language, data.typeNameAr, data.typeNameEn)}`}
+        description={
+          <>
+            <bdi>{data.number}</bdi> · {pickText(i18n.language, data.typeNameAr, data.typeNameEn)}
+          </>
+        }
         meta={
           <>
             <StatusChip tone={statusTone[data.status] ?? 'neutral'}>

@@ -77,7 +77,15 @@ export function EvaluationPage() {
       </Link>
       <PageHeader
         title={t('evaluation.title', { cycle })}
-        description={`${e.summary.number ?? ''} · ${formatDate(e.summary.periodStart, i18n.language)} – ${formatDate(e.summary.periodEnd, i18n.language)}`}
+        description={
+          <>
+            <bdi>{e.summary.number}</bdi> ·{' '}
+            <bdi>
+              {formatDate(e.summary.periodStart, i18n.language)} –{' '}
+              {formatDate(e.summary.periodEnd, i18n.language)}
+            </bdi>
+          </>
+        }
         meta={
           <>
             <StatusChip tone={e.summary.status === 'approved' ? 'success' : 'info'}>
@@ -461,8 +469,14 @@ function EvaluationWizard({ evaluation: e }: { evaluation: Evaluation }) {
 }
 
 function Flags({ evaluation: e }: { evaluation: Evaluation }) {
-  const { t } = useTranslation('teams');
+  const { t, i18n } = useTranslation('teams');
   if (e.flags.length === 0) return null;
+  const who = (id: string | null | undefined) => {
+    const m = e.members.find((x) => x.id === id);
+    return m
+      ? ` — ${m.employee ? pickText(i18n.language, m.employee.nameAr, m.employee.nameEn) : (m.externalName ?? '')}`
+      : '';
+  };
   return (
     <section
       className="rounded-md border border-warning/50 bg-warning/10 p-3 text-sm"
@@ -474,7 +488,10 @@ function Flags({ evaluation: e }: { evaluation: Evaluation }) {
       </p>
       <ul className="list-disc ps-5">
         {e.flags.map((f, i) => (
-          <li key={i}>{t(`evaluation.flags.${f.code as 'all-equal'}`)}</li>
+          <li key={i}>
+            {t(`evaluation.flags.${f.code as 'all-equal'}`)}
+            {who(f.memberEvaluationId)}
+          </li>
         ))}
       </ul>
     </section>

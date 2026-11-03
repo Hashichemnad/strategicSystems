@@ -1,8 +1,8 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using Strategy.Platform.Access;
 using Strategy.Modules.Teams.Domain;
 using Strategy.Modules.Teams.Infrastructure;
+using Strategy.Platform.Access;
 using Strategy.Platform.Kernel.Context;
 using Strategy.Platform.Kernel.Messaging;
 using Strategy.Platform.Kernel.Results;

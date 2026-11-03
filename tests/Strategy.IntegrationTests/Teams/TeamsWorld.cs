@@ -177,30 +177,30 @@ internal sealed class TeamsWorld
 
     public object Request(string name, string type = "standing-committee", bool permanent = true, DateOnly? start = null, DateOnly? end = null, string memoMode = "generate",
         string? linkedType = null, Guid? linkedId = null, bool withExternal = true) => new
-    {
-        typeCode = type,
-        nameAr = "لجنة " + name,
-        nameEn = name,
-        permanent,
-        subject = "Governance of " + name,
-        objectives = "Improve the process",
-        mandate = "Review and recommend",
-        owningUnitId = DepartmentId,
-        sponsorEmployeeId = Director.EmployeeId,
-        memoMode,
-        startDate = start ?? DateOnly.FromDateTime(DateTime.UtcNow),
-        endDate = end,
-        workload = "high",
-        linkedType,
-        linkedId,
-        members = new List<object?>
+        {
+            typeCode = type,
+            nameAr = "لجنة " + name,
+            nameEn = name,
+            permanent,
+            subject = "Governance of " + name,
+            objectives = "Improve the process",
+            mandate = "Review and recommend",
+            owningUnitId = DepartmentId,
+            sponsorEmployeeId = Director.EmployeeId,
+            memoMode,
+            startDate = start ?? DateOnly.FromDateTime(DateTime.UtcNow),
+            endDate = end,
+            workload = "high",
+            linkedType,
+            linkedId,
+            members = new List<object?>
         {
             new { employeeId = President.EmployeeId, roleCode = "president", responsibilities = "Chairs the committee" },
             new { employeeId = MemberA.EmployeeId, roleCode = "member", responsibilities = "Analysis", requiredSkills = "finance budgeting" },
             new { employeeId = Secretary.EmployeeId, roleCode = "secretary", responsibilities = "Minutes" },
             withExternal ? new { externalName = "Dr. Lina Haddad", externalOrganisation = "University", externalEmail = "lina@uni.example", roleCode = "member" } : null,
         }.Where(m => m is not null).ToList(),
-    };
+        };
 
     public async Task<TeamDto> CreateAsync(object request, HttpClient? client = null)
     {

@@ -44,7 +44,12 @@ public sealed class TeamsAiTests(AiFixture ai) : IClassFixture<AiFixture>
 
         ai.Model.Reset((_, _) => FakeChatClient.Json(new
         {
-            objectiveAr = "هدف", objectiveEn = "Objective", mandateAr = "مهام", mandateEn = "Mandate", memoAr = "قرار", memoEn = "Decision",
+            objectiveAr = "هدف",
+            objectiveEn = "Objective",
+            mandateAr = "مهام",
+            mandateEn = "Mandate",
+            memoAr = "قرار",
+            memoEn = "Decision",
         }));
         var formation = await TeamsWorld.OkAsync<FormationDraftDto>(w.C(w.Requester).PostAsJsonAsync($"{Base}/ai/formation",
             new { typeCode = "temporary-committee", name = "Procurement review", description = "Review the procurement policy within three months." }));

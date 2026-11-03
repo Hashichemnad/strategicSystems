@@ -1,9 +1,9 @@
 using System.Globalization;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
-using Strategy.Platform.Access;
 using Strategy.Modules.Teams.Domain;
 using Strategy.Modules.Teams.Infrastructure;
+using Strategy.Platform.Access;
 using Strategy.Platform.Calendar;
 using Strategy.Platform.Kernel.Context;
 using Strategy.Platform.Kernel.Messaging;

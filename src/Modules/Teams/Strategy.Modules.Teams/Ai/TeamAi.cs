@@ -2,10 +2,10 @@ using System.Globalization;
 using System.Text;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
-using Strategy.Platform.Access;
 using Strategy.Modules.Teams.Application;
 using Strategy.Modules.Teams.Domain;
 using Strategy.Modules.Teams.Infrastructure;
+using Strategy.Platform.Access;
 using Strategy.Platform.AI;
 using Strategy.Platform.AI.Application;
 using Strategy.Platform.AI.Tools;
@@ -120,7 +120,11 @@ internal sealed class TeamAiService(
         var words = Words(skills);
         var history = await db.Members.AsNoTracking().Where(m => m.EmployeeId != null).Select(m => new
         {
-            Employee = m.EmployeeId!.Value, m.TeamId, m.Status, m.RequiredSkills, m.Responsibilities,
+            Employee = m.EmployeeId!.Value,
+            m.TeamId,
+            m.Status,
+            m.RequiredSkills,
+            m.Responsibilities,
         }).ToListAsync(ct).ConfigureAwait(false);
         if (words.Count > 0)
         {

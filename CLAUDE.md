@@ -248,6 +248,7 @@ cd web && npm run lint && npm run format:check && npm run typecheck && npm test
 npm run build && npm audit --audit-level=high && npm run lint:licenses
 npx playwright test                                                           # E2E, projects "ar" and "en" (needs postgres + mailpit + gotenberg; starts the host)
 # E2E screenshots go to docs/screenshots/$E2E_SCREENSHOTS (default phase-4). A sandbox Chromium of another revision: E2E_CHROMIUM_PATH=/opt/pw-browsers/chromium
+# The Teams E2E renders the generated memo / certificate PDFs to PNG with pdftoppm (poppler-utils, test machine only)
 
 # Containerised install (http://localhost:8080)
 docker compose -f deploy/docker-compose.yml --profile app up -d --build
@@ -258,4 +259,5 @@ OCR tests (unit + integration, ADR 0033) need Tesseract with Arabic and English 
 `sudo apt-get install tesseract-ocr tesseract-ocr-ara tesseract-ocr-eng` (CI installs it; the app image includes it).
 Integration tests also start Mailpit and Gotenberg containers (Mailpit delivery, PDF snapshot); `UPDATE_SNAPSHOTS=1` rewrites the PDF layout snapshot.
 Integration tests: `TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX=mirror.gcr.io/` behind a Docker Hub limit, or
-`STRATEGY_TEST_POSTGRES=<admin connection string>` to reuse a running server. Keep this section accurate.
+`STRATEGY_TEST_POSTGRES=<admin connection string>` to reuse a running server (raise its `max_connections`, e.g. 600: the parallel suite
+opens one host per test class). Keep this section accurate.

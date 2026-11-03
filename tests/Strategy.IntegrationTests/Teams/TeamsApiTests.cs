@@ -113,8 +113,16 @@ public sealed class TeamsApiTests(TeamsFixture fx) : IClassFixture<TeamsFixture>
         (await w.GetAsync(again.Id, w.Requester)).Status.ShouldBe(TeamStatuses.Cancelled);
 
         // Validation: a leader is required to submit; the type fixes permanence.
-        var noLeader = await w.CreateAsync(new { typeCode = "work-team", nameEn = "No leader", permanent = false, owningUnitId = w.DepartmentId,
-            startDate = "2026-11-01", endDate = "2027-01-31", members = new[] { new { employeeId = w.MemberA.EmployeeId, roleCode = "member" } } });
+        var noLeader = await w.CreateAsync(new
+        {
+            typeCode = "work-team",
+            nameEn = "No leader",
+            permanent = false,
+            owningUnitId = w.DepartmentId,
+            startDate = "2026-11-01",
+            endDate = "2027-01-31",
+            members = new[] { new { employeeId = w.MemberA.EmployeeId, roleCode = "member" } }
+        });
         var refused = await w.C(w.Requester).PostAsJsonAsync($"{Base}/{noLeader.Id}/submit", new { version = noLeader.Version });
         refused.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         (await refused.Content.ReadAsStringAsync()).ShouldContain("teams.errors.leaderRequired");
@@ -196,7 +204,10 @@ public sealed class TeamsApiTests(TeamsFixture fx) : IClassFixture<TeamsFixture>
         meeting.Attendance.Count.ShouldBe(4);
         meeting = await TeamsWorld.OkAsync<MeetingDto>(w.C(w.Secretary).PutAsJsonAsync($"{Base}/meetings/{meeting.Id}/minutes", new
         {
-            minutes = "Discussed the plan.", decisions = "Approve the plan.", aiDrafted = false, version = meeting.Version,
+            minutes = "Discussed the plan.",
+            decisions = "Approve the plan.",
+            aiDrafted = false,
+            version = meeting.Version,
             attendance = meeting.Attendance.Select(a => new { memberId = a.MemberId, status = a.ExternalName is null ? "present" : "absent" }).ToList(),
         }));
         meeting = await TeamsWorld.OkAsync<MeetingDto>(w.C(w.Secretary).PostAsJsonAsync($"{Base}/meetings/{meeting.Id}/submit-minutes", new { version = meeting.Version }));
@@ -306,7 +317,8 @@ public sealed class TeamsApiTests(TeamsFixture fx) : IClassFixture<TeamsFixture>
         var memberA = evaluation.Members.Single(m => m.Employee?.Id == w.MemberA.EmployeeId);
         (await w.C(w.Hr).PutAsJsonAsync($"{Base}/evaluations/{summary.Id}/rewards", new
         {
-            rewards = new[] { new { id = memberA.Id, approvedReward = 2500, certificate = true, financialReward = true } }, version = evaluation.Version,
+            rewards = new[] { new { id = memberA.Id, approvedReward = 2500, certificate = true, financialReward = true } },
+            version = evaluation.Version,
         })).StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         evaluation = await TeamsWorld.OkAsync<EvaluationDto>(w.C(w.Hr).PutAsJsonAsync($"{Base}/evaluations/{summary.Id}/rewards", new
         {
@@ -495,15 +507,22 @@ public sealed class TeamsApiTests(TeamsFixture fx) : IClassFixture<TeamsFixture>
         var formed = await w.FormAsync(w.Request("Task Team", withExternal: true));
         var createdTasks = await w.C(w.President).PostAsJsonAsync("/api/v1/tasks", new
         {
-            titleEn = "Prepare the committee pack", typeCode = "meeting-decision", sourceCode = "committee-decision", assigneeTeamId = formed.Id,
-            linkedType = TeamPermissions.ResourceType, linkedId = formed.Id,
+            titleEn = "Prepare the committee pack",
+            typeCode = "meeting-decision",
+            sourceCode = "committee-decision",
+            assigneeTeamId = formed.Id,
+            linkedType = TeamPermissions.ResourceType,
+            linkedId = formed.Id,
         });
         createdTasks.StatusCode.ShouldBe(HttpStatusCode.Created, await createdTasks.Content.ReadAsStringAsync());
         var tasks = await createdTasks.Content.ReadFromJsonAsync<JsonElement>();
         tasks.GetProperty("tasks").GetArrayLength().ShouldBe(3); // president, member A, secretary — not the external member
         var outsiderTask = await w.C(w.Outsider).PostAsJsonAsync("/api/v1/tasks", new
         {
-            titleEn = "x", typeCode = "meeting-decision", sourceCode = "committee-decision", assigneeTeamId = formed.Id,
+            titleEn = "x",
+            typeCode = "meeting-decision",
+            sourceCode = "committee-decision",
+            assigneeTeamId = formed.Id,
         });
         outsiderTask.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         (await outsiderTask.Content.ReadAsStringAsync()).ShouldContain("assigneeTeamId");

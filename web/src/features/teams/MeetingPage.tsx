@@ -103,7 +103,20 @@ export function MeetingPage() {
       </Link>
       <PageHeader
         title={m.title}
-        description={`${m.number ?? ''} · ${formatDateTime(m.scheduledAt, i18n.language)} – ${formatDateTime(m.endsAt, i18n.language)}${m.location ? ` · ${m.location}` : ''}`}
+        description={
+          <>
+            <bdi>{m.number}</bdi> ·{' '}
+            <bdi>
+              {formatDateTime(m.scheduledAt, i18n.language)} – {formatDateTime(m.endsAt, i18n.language)}
+            </bdi>
+            {m.location && (
+              <>
+                {' '}
+                · <bdi>{m.location}</bdi>
+              </>
+            )}
+          </>
+        }
         meta={
           <StatusChip tone={m.status === 'held' ? 'success' : m.status === 'cancelled' ? 'danger' : 'info'}>
             {t(`meetings.statuses.${m.status as 'held'}`)}
