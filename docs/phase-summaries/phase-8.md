@@ -49,9 +49,19 @@ interactive approval step, so the plan was committed first and implemented as wr
 
 ## Quality gates run
 
-See the table filled at the end of the session below.
+| Gate | Result |
+|---|---|
+| `dotnet build Strategy.slnx -c Release` · `dotnet format --verify-no-changes` | 0 warnings, 0 errors · clean |
+| `dotnet test --solution Strategy.slnx` | **2 141 / 2 141** (unit, architecture, integration on real PostgreSQL). New: **55** Portfolio unit tests, **12** Portfolio integration tests (9 API + 3 AI) |
+| `tools/check-api-client.sh` · `tools/check-vulnerable.sh` | OpenAPI document and TS client up to date · no High / Critical |
+| `npm run lint` · `format:check` · `typecheck` · `npm test` | clean · **108 / 108** Vitest (13 new: Portfolio message keys in AR / EN, wizard calculations, document merge, finish blocked while AI values wait) |
+| `npm run build` · `npm audit --audit-level=high` · `npm run lint:licenses` | OK · no High / Critical (the same 14 moderate dev-tool advisories as earlier phases) · 613 packages allowed |
+| `npx playwright test` | **82 / 82**, the whole suite in Arabic and English on a fresh database (Phase 8: 2 scenarios × ar + en, screenshots with `E2E_SCREENSHOTS=phase-8`) |
 
-QUALITY_GATES_PLACEHOLDER
+Existing tests updated for Phase 8 facts: the effective roles of a new user include `portfolio.requester` (the everyone role); the
+authorization matrix sends a multipart body to the two Portfolio upload routes (as it already did for photo / import / logo uploads); the
+MCP administration test now switches MCP on itself instead of relying on the order of the class's tests (it failed when the order
+changed). The E2E caught one real defect, fixed: editing a draft through the API without a unit cleared the requesting unit.
 
 **Dependencies added:** none (NuGet or npm).
 
