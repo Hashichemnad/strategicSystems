@@ -24,3 +24,20 @@ public sealed record AiFormField(
 /// (e.g. <c>sample.item.create</c>): extraction never gives more than the form would.
 /// </summary>
 public sealed record AiFormDefinition(string Key, string SystemCode, string NameAr, string NameEn, string Permission, IReadOnlyList<AiFormField> Fields);
+
+/// <summary>Choices of one field supplied at run time: allowed codes and a hint naming them for the prompt (e.g. "OBJ-1 = Digital services").</summary>
+public sealed record AiFieldChoices(IReadOnlyList<string> Codes, string? Hint = null);
+
+/// <summary>
+/// Supplies the choices (and extra fields) of AI forms that are configuration (lookups, criteria), not code (ADR 0050). The extraction service merges them into the
+/// form before the prompt and before coercing values, so only active codes are accepted.
+/// </summary>
+public interface IAiFormChoiceSource
+{
+    string FormKey { get; }
+
+    Task<IReadOnlyDictionary<string, AiFieldChoices>> GetChoicesAsync(CancellationToken cancellationToken);
+
+    /// <summary>Fields that exist only by configuration (e.g. one score per configured criterion), appended to the form.</summary>
+    Task<IReadOnlyList<AiFormField>> GetExtraFieldsAsync(CancellationToken cancellationToken) => Task.FromResult<IReadOnlyList<AiFormField>>([]);
+}

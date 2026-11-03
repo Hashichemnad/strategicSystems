@@ -30,7 +30,8 @@ public sealed record AiFormDto(string Key, string SystemCode, string NameAr, str
 
 /// <summary>Document-to-form extraction: text extraction → prompt → validated JSON → post-processing against the form (ADR 0029, 0030).</summary>
 public sealed class ExtractionService(
-    IEnumerable<AiFormDefinition> forms, AiGateway gateway, IAccessService access, ISystemState systems, IRequestContext context, IOcrEngine ocr)
+    IEnumerable<AiFormDefinition> forms, AiGateway gateway, IAccessService access, ISystemState systems, IRequestContext context, IOcrEngine ocr,
+    IEnumerable<IAiFormChoiceSource> choiceSources)
 {
     public const double UnverifiedConfidenceCap = 0.3;
 
@@ -118,7 +119,42 @@ public sealed class ExtractionService(
             return Error.NotFound("ai.form.notFound");
         }
 
-        return await access.CanAsync(context.User, form.Permission, cancellationToken: ct).ConfigureAwait(false) ? form : Error.Forbidden();
+        if (!await access.CanAsync(context.User, form.Permission, cancellationToken: ct).ConfigureAwait(false))
+        {
+            return Error.Forbidden();
+        }
+
+        return await WithChoicesAsync(form, choiceSources.Where(s => s.FormKey == form.Key), ct).ConfigureAwait(false);
+    }
+
+    /// <summary>Merges run-time choices (lookups) into the form's fields (ADR 0050).</summary>
+    public static async Task<AiFormDefinition> WithChoicesAsync(AiFormDefinition form, IEnumerable<IAiFormChoiceSource> sources, CancellationToken ct)
+    {
+        ArgumentNullException.ThrowIfNull(form);
+        ArgumentNullException.ThrowIfNull(sources);
+        var merged = new Dictionary<string, AiFieldChoices>(StringComparer.Ordinal);
+        var extra = new List<AiFormField>();
+        foreach (var source in sources)
+        {
+            foreach (var (name, choices) in await source.GetChoicesAsync(ct).ConfigureAwait(false))
+            {
+                merged[name] = choices;
+            }
+
+            extra.AddRange((await source.GetExtraFieldsAsync(ct).ConfigureAwait(false)).Where(f => form.Fields.All(x => x.Name != f.Name)));
+        }
+
+        if (merged.Count == 0 && extra.Count == 0)
+        {
+            return form;
+        }
+
+        return form with
+        {
+            Fields = form.Fields.Select(f => merged.TryGetValue(f.Name, out var c) && f.Type == AiFieldTypes.Choice
+                ? f with { Choices = c.Codes, Hint = string.IsNullOrWhiteSpace(c.Hint) ? f.Hint : $"{f.Hint} {c.Hint}".Trim() }
+                : f).Concat(extra.DistinctBy(f => f.Name)).ToList(),
+        };
     }
 
     /// <summary>The output schema: one entry per proposed field, names limited to the form's fields.</summary>
