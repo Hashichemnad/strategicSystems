@@ -38,3 +38,9 @@ Write an ADR for every choice the SPEC or CLAUDE.md leaves open (CLAUDE.md §2 r
 | [0031](0031-tool-registry.md) | Tool registry shared by the MCP server and "Ask the system" | Accepted |
 | [0032](0032-mcp-server-and-oauth.md) | MCP server, OAuth 2.1 with OpenIddict, dynamic client registration and consent | Accepted |
 | [0033](0033-ocr-for-scanned-documents.md) | Text recognition (OCR) for scanned PDFs and images with Tesseract | Accepted (one licence point for owner confirmation) |
+| [0034](0034-links-registry.md) | Links registry: linkable types, permission-aware resolution and link storage | Accepted |
+| [0035](0035-task-approval-by-creator.md) | Task approval by the creator is a task-level decision, not an approval-engine process | Accepted |
+| [0036](0036-task-workflow-templates.md) | Task workflow templates, status codes, and Tasks as an always-on core system | Accepted |
+| [0037](0037-task-deadlines-and-reminders.md) | Task due dates, reminders and escalation in working time | Accepted |
+| [0038](0038-task-dependencies-and-recurrence.md) | Task dependencies and recurrence | Accepted |
+| [0039](0039-confidential-tasks.md) | Confidential tasks and one visibility rule for every read path | Accepted |
