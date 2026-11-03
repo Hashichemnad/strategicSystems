@@ -15,7 +15,8 @@ public sealed record UpdateSampleItem(
     string? NameEn,
     string? DescriptionAr,
     string? DescriptionEn,
-    uint Version) : ICommand<SampleItemDto>, ISampleItemText;
+    uint Version,
+    decimal? Amount = null) : ICommand<SampleItemDto>, ISampleItemText;
 
 public sealed class UpdateSampleItemValidator : AbstractValidator<UpdateSampleItem>
 {
@@ -32,7 +33,7 @@ internal sealed class UpdateSampleItemHandler(SampleDbContext db, IAccessService
             context,
             command.Id,
             command.Version,
-            item => item.Update(command.NameAr, command.NameEn, command.DescriptionAr, command.DescriptionEn),
+            item => item.Update(command.NameAr, command.NameEn, command.DescriptionAr, command.DescriptionEn, command.Amount),
             cancellationToken);
 }
 

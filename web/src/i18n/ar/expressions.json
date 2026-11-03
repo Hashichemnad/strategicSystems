@@ -1,0 +1,21 @@
+{
+  "errors": {
+    "empty": "أدخل تعبيراً.",
+    "tooLong": "التعبير طويل جداً (بحد أقصى {{max}} حرفاً).",
+    "tooComplex": "التعبير معقد جداً.",
+    "invalidNumber": "«{{text}}» ليس رقماً صحيحاً.",
+    "unterminatedText": "قيمة نصية تنقصها علامة الاقتباس الختامية.",
+    "unexpectedCharacter": "حرف غير متوقع «{{text}}» في الموضع {{position}}.",
+    "unexpectedEnd": "ينتهي التعبير قبل اكتماله.",
+    "syntax": "«{{text}}» غير متوقع في الموضع {{position}}.",
+    "unknownVariable": "متغير غير معروف «{{name}}».",
+    "unknownFunction": "دالة غير معروفة «{{name}}».",
+    "argumentCount": "تأخذ {{name}} من {{min}} إلى {{max}} قيم.",
+    "typeMismatch": "قيم من نوع غير مناسب لـ «{{operator}}» ({{actual}}).",
+    "notBoolean": "يجب أن ينتج الشرط صحيحاً أو خطأً.",
+    "resultType": "يجب أن تكون النتيجة من النوع {{expected}}.",
+    "divisionByZero": "قسمة على صفر.",
+    "invalidDate": "«{{text}}» ليس تاريخاً (استخدم الصيغة yyyy-MM-dd).",
+    "overflow": "الرقم كبير جداً."
+  }
+}

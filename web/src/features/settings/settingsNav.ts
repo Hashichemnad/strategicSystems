@@ -1,6 +1,9 @@
 import {
   Bell,
   Building,
+  CalendarClock,
+  CalendarOff,
+  ClipboardCheck,
   FileSpreadsheet,
   Flag,
   Hash,
@@ -33,6 +36,9 @@ export type SettingsPageKey =
   | 'notifications'
   | 'files'
   | 'jobs'
+  | 'approvals'
+  | 'businessHours'
+  | 'holidays'
   | 'roles'
   | 'assignments'
   | 'systemAccess'
@@ -56,6 +62,9 @@ export type SettingsPath =
   | '/settings/notifications'
   | '/settings/files'
   | '/settings/jobs'
+  | '/settings/approvals'
+  | '/settings/business-hours'
+  | '/settings/holidays'
   | '/settings/access/roles'
   | '/settings/access/assignments'
   | '/settings/access/system-access'
@@ -95,6 +104,18 @@ export const settingsGroups: readonly SettingsGroup[] = [
       { key: 'branding', to: '/settings/branding', icon: Palette, permissions: ['settings.general.manage'] },
       { key: 'systems', to: '/settings/systems', icon: SquareStack, permissions: ['access.system.read'] },
       { key: 'features', to: '/settings/features', icon: Flag, permissions: ['settings.feature.manage'] },
+      {
+        key: 'businessHours',
+        to: '/settings/business-hours',
+        icon: CalendarClock,
+        permissions: ['calendar.business-hours.read'],
+      },
+      {
+        key: 'holidays',
+        to: '/settings/holidays',
+        icon: CalendarOff,
+        permissions: ['calendar.business-hours.read'],
+      },
     ],
   },
   {
@@ -121,6 +142,12 @@ export const settingsGroups: readonly SettingsGroup[] = [
       },
       { key: 'files', to: '/settings/files', icon: Paperclip, permissions: ['settings.file.manage'] },
       { key: 'jobs', to: '/settings/jobs', icon: Timer, permissions: ['settings.job.view'] },
+      {
+        key: 'approvals',
+        to: '/settings/approvals',
+        icon: ClipboardCheck,
+        permissions: ['workflow.process.read'],
+      },
     ],
   },
   {

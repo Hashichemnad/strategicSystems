@@ -1,0 +1,304 @@
+{
+  "title": "Approvals",
+  "kinds": {
+    "role": "Holders of a role",
+    "sectionManager": "Section manager",
+    "departmentDirector": "Department director",
+    "headOfUnit": "Head of a unit",
+    "owningUnit": "Head of the system's owning unit",
+    "employee": "A specific employee",
+    "recordRole": "A role on the record",
+    "teamRole": "A team role",
+    "submitterManager": "The submitter's manager"
+  },
+  "of": {
+    "record": "of the record's unit",
+    "submitter": "of the submitter's unit"
+  },
+  "actions": {
+    "approve": "Approve",
+    "reject": "Reject",
+    "return": "Return for correction"
+  },
+  "settings": {
+    "title": "Approval settings",
+    "description": "Every approval process of every system in one place. Change steps, approvers, conditions and deadlines without code.",
+    "levels": {
+      "title": "Organisation levels used by approvers",
+      "description": "Which level is a “section” and which is a “department” for the section manager and department director rules.",
+      "section": "Section level",
+      "department": "Department level",
+      "saved": "Approval settings saved"
+    },
+    "processes": {
+      "title": "Approval processes",
+      "process": "Process",
+      "key": "Key",
+      "steps": "Steps",
+      "version": "Version",
+      "changed": "Last changed",
+      "inProgress": "In progress",
+      "edit": "Edit steps",
+      "none": "No approval process is registered yet."
+    }
+  },
+  "editor": {
+    "back": "Approval settings",
+    "version": "Version {{version}}",
+    "noVersion": "Not saved yet",
+    "save": "Save as new version",
+    "saved": "Version {{version}} saved",
+    "note": "Note for this version",
+    "notePlaceholder": "What changed and why",
+    "addStep": "Add step",
+    "removeStep": "Remove step",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "step": "Step {{number}}",
+    "code": "Code",
+    "codeHint": "Lowercase letters, digits and dashes; unique in the chain.",
+    "nameAr": "Name (Arabic)",
+    "nameEn": "Name (English)",
+    "approver": "Who approves",
+    "kind": "Approver rule",
+    "of": "Starting from",
+    "roleKey": "Role",
+    "unit": "Unit",
+    "unitFromRecord": "The record's own unit",
+    "employee": "Employee",
+    "recordRole": "Record role",
+    "teamRole": "Team role code",
+    "systemCode": "System",
+    "systemDefault": "This process's system",
+    "condition": "Entry condition",
+    "conditionHint": "Leave empty to always include the step. The step is skipped when the condition is false.",
+    "conditionPlaceholder": "e.g. amount > 50000",
+    "conditionValid": "The condition is valid.",
+    "variables": "Variables",
+    "functions": "Functions",
+    "builtIn": "built-in",
+    "decisions": "Decisions",
+    "commentOn": {
+      "approve": "Comment required to approve",
+      "reject": "Comment required to reject",
+      "return": "Comment required to return"
+    },
+    "customActions": "Extra buttons",
+    "customActionsHint": "Labelled buttons that count as one of the decisions, e.g. “Approve with conditions”.",
+    "addCustomAction": "Add button",
+    "removeCustomAction": "Remove button",
+    "customCode": "Code",
+    "customLabelAr": "Label (Arabic)",
+    "customLabelEn": "Label (English)",
+    "outcome": "Counts as",
+    "deadline": "Deadline and escalation",
+    "sla": "Deadline (hours)",
+    "slaHint": "Empty: no deadline. When it passes, the approvers are reminded and the escalation target is added.",
+    "escalation": "Escalate to",
+    "escalationNone": "Nobody (reminder only)",
+    "onNoApprover": "When nobody can approve",
+    "noApprover": {
+      "block": "Stop the submission (safest)",
+      "skip": "Skip the step"
+    },
+    "excludeSubmitter": "The submitter never approves their own request",
+    "template": "Notification to approvers",
+    "templateDefault": "Default (new approval request)",
+    "tabs": {
+      "steps": "Steps",
+      "versions": "Versions"
+    },
+    "unsaved": "You have unsaved changes.",
+    "reset": "Discard changes",
+    "versions": {
+      "version": "Version",
+      "note": "Note",
+      "by": "Saved by",
+      "at": "Saved on",
+      "steps": "Steps",
+      "view": "View",
+      "current": "In use",
+      "viewing": "You are viewing version {{version}}. Saving creates a new version from these steps.",
+      "backToCurrent": "Back to the version in use"
+    },
+    "inFlight": "Approvals already in progress keep the version they started with.",
+    "slaMode": "Count the deadline in",
+    "slaModeHint": "Working hours skip closed days, weekends and holidays.",
+    "slaModes": {
+      "working": "Working hours",
+      "calendar": "Calendar hours"
+    },
+    "businessHoursSource": "Business hours",
+    "businessHoursSources": {
+      "default": "The default business hours",
+      "unit": "The record's unit (inherited from parent units)",
+      "specific": "A specific record"
+    },
+    "businessHours": "Business hours record"
+  },
+  "preview": {
+    "title": "Who would approve this sample record?",
+    "description": "Try the steps above (saved or not) for a sample submitter and values. Nothing is stored.",
+    "submitter": "Sample submitter",
+    "unit": "Record's unit",
+    "unitDefault": "The submitter's unit",
+    "values": "Values",
+    "run": "Preview",
+    "result": {
+      "included": "This record would need approval from the people below.",
+      "blocked": "This record could not be submitted: a step has nobody to approve it.",
+      "autoApproved": "No step applies: the record would be approved at once."
+    },
+    "outcomes": {
+      "included": "Included",
+      "skipped": "Skipped by its condition",
+      "noApprover": "Skipped: nobody can approve",
+      "blocked": "Blocks the submission: nobody can approve"
+    },
+    "conditionTrue": "Condition is true",
+    "conditionError": "The condition could not be evaluated; the step would be included.",
+    "nobody": "Nobody",
+    "facts": "Organisation facts for this record",
+    "factNames": {
+      "submitter": "Submitter",
+      "submitterManager": "Submitter's manager",
+      "sectionManager": "Section manager",
+      "departmentDirector": "Department director",
+      "unitHead": "Head of the record's unit",
+      "unitLevel": "Level of the record's unit",
+      "submitterIsUnitHead": "Submitter heads the unit"
+    },
+    "yes": "Yes",
+    "no": "No",
+    "none": "—",
+    "noUnitAtLevel": "No unit at that level above the record's unit.",
+    "noHead": "The unit has no head.",
+    "noUnit": "No unit to start from.",
+    "noOwningUnit": "The system has no owning unit (Settings → Systems).",
+    "noManager": "The submitter has no manager.",
+    "noAccount": "Someone resolved has no active user account.",
+    "unknownRole": "The role does not exist or is inactive.",
+    "everyoneIgnored": "The role is also given to everyone; that assignment is not used for approvals.",
+    "teamRoleUnavailable": "Team roles resolve once the Teams system is installed.",
+    "submitterExcluded": "The submitter was removed from the approvers.",
+    "unknownRule": "Unknown approver rule."
+  },
+  "errors": {
+    "noSteps": "Add at least one step.",
+    "duplicateStepCode": "Another step already uses this code.",
+    "approveRequired": "A step must allow approval.",
+    "escalationNeedsSla": "Set a deadline to escalate.",
+    "versionConflict": "Someone saved this process meanwhile. Reload to see their version.",
+    "unknownProcess": "This approval process is not available.",
+    "alreadyInProgress": "An approval is already in progress for this record.",
+    "noApprover": "Nobody can approve the step “{{stepEn}}”. Check the approval settings or the organisation (heads of units, role holders).",
+    "commentRequired": "Add a comment for this decision.",
+    "actionNotAllowed": "This decision is not offered at this step.",
+    "taskClosed": "This step has already been decided.",
+    "instanceClosed": "This approval is already closed.",
+    "unknownAction": "Unknown decision.",
+    "variableInvalid": "The value of “{{name}}” is not valid for this process."
+  },
+  "currentStatus": {
+    "waitingStep": "Waiting for the “{{step}}” approval",
+    "approvers": "Approvers"
+  },
+  "status": {
+    "in_progress": "In progress",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "returned": "Returned for correction",
+    "cancelled": "Cancelled"
+  },
+  "stepStates": {
+    "done": "Approved",
+    "current": "Waiting",
+    "skipped": "Skipped",
+    "upcoming": "Upcoming",
+    "rejected": "Rejected",
+    "returned": "Returned",
+    "cancelled": "Cancelled",
+    "notReached": "Not reached"
+  },
+  "panel": {
+    "title": "Approvals",
+    "empty": "This record has not been submitted for approval yet.",
+    "attempt": "Submission {{number}}",
+    "submittedBy": "Submitted by {{name}} on {{date}}",
+    "due": "Due {{date}}",
+    "overdue": "Overdue",
+    "history": "History",
+    "yourDecision": "Your decision",
+    "onBehalfOf": "On behalf of {{name}}",
+    "actedOnBehalf": "{{actor}} on behalf of {{name}}",
+    "decide": "Decide",
+    "comment": "Comment",
+    "commentRequired": "A comment is required for this decision.",
+    "commentOptional": "Optional comment",
+    "confirm": "Confirm",
+    "decided": "Decision recorded",
+    "actingAs": "Act as",
+    "self": "Myself",
+    "previous": "Earlier submissions",
+    "events": {
+      "submitted": "Submitted",
+      "resubmitted": "Resubmitted after correction",
+      "step-entered": "Waiting for {{step}}",
+      "step-skipped": "{{step}} skipped",
+      "approved": "Approved at {{step}}",
+      "rejected": "Rejected at {{step}}",
+      "returned": "Returned for correction at {{step}}",
+      "escalated": "{{step}} escalated (overdue)",
+      "reminded": "{{step}} overdue: approvers reminded",
+      "rerouted": "{{step}} re-routed after a role transfer",
+      "cancelled": "Cancelled",
+      "completed": "Approval completed",
+      "condition-error": "The condition of {{step}} could not be evaluated; the step was included"
+    },
+    "skipReasons": {
+      "condition": "its condition was false",
+      "noApprover": "nobody could approve it"
+    },
+    "dueWith": "Due {{date}} · {{hours}}",
+    "calendarHours": "calendar hours"
+  },
+  "myWork": {
+    "title": "My Work",
+    "greeting": "Hello {{name}}",
+    "description": "What needs your attention across every system you use.",
+    "counts": {
+      "pending": "Pending approvals",
+      "overdue": "Overdue",
+      "actionItems": "Need your action",
+      "submissions": "Your requests in progress",
+      "unread": "Unread notifications"
+    },
+    "approvals": {
+      "title": "Pending approvals",
+      "empty": "No approval is waiting for you.",
+      "record": "Record",
+      "step": "Step",
+      "submittedBy": "Submitted by",
+      "waiting": "Waiting since",
+      "due": "Due",
+      "noDue": "No deadline",
+      "open": "Open",
+      "onBehalfOf": "for {{name}}",
+      "attempt": "Resubmission {{number}}"
+    },
+    "actionItems": {
+      "title": "Needs your action",
+      "empty": "Nothing needs your action."
+    },
+    "submissions": {
+      "title": "Your requests",
+      "empty": "You have no recent requests.",
+      "at": "at {{step}}"
+    },
+    "notifications": {
+      "title": "Latest notifications",
+      "empty": "No notifications.",
+      "all": "All notifications"
+    }
+  }
+}

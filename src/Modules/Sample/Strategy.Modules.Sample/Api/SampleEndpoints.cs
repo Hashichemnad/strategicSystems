@@ -26,6 +26,11 @@ internal static class SampleEndpoints
         items.MapPost("/{id:guid}/activate", ActivateAsync).WithName("ActivateSampleItem").RequirePermission(SamplePermissions.Update);
         items.MapPost("/{id:guid}/deactivate", DeactivateAsync).WithName("DeactivateSampleItem").RequirePermission(SamplePermissions.Update);
 
+        // Phase 4: submit for approval (the approval engine runs the chain configured in Settings → Approvals).
+        items.MapPost("/{id:guid}/submit", async (Guid id, SubmitInput body, IDispatcher dispatcher, CancellationToken ct) =>
+                (await dispatcher.SendAsync(new SubmitSampleItem(id, body.Version, body.Comment), ct)).ToOk())
+            .WithName("SubmitSampleItem").RequirePermission(SamplePermissions.Submit).WithIdempotency();
+
         // History tab: the item's audit trail, for anyone who may read the item (404 otherwise).
         items.MapRecordHistory(SampleItem.EntityType, SamplePermissions.Read, "GetSampleItem", async (id, context) =>
             (await context.RequestServices.GetRequiredService<IDispatcher>().SendAsync(new GetSampleItem(id), context.RequestAborted)).IsSuccess);
@@ -58,7 +63,7 @@ internal static class SampleEndpoints
         SampleItemInput body, IDispatcher dispatcher, CancellationToken cancellationToken)
     {
         var result = await dispatcher.SendAsync(
-            new CreateSampleItem(body.NameAr, body.NameEn, body.DescriptionAr, body.DescriptionEn), cancellationToken);
+            new CreateSampleItem(body.NameAr, body.NameEn, body.DescriptionAr, body.DescriptionEn, body.Amount), cancellationToken);
         return result.IsSuccess
             ? TypedResults.Created($"/api/v1/sample/items/{result.Value.Id}", result.Value)
             : result.Error.ToProblem();
@@ -67,7 +72,7 @@ internal static class SampleEndpoints
     private static async Task<Results<Ok<SampleItemDto>, ProblemHttpResult>> UpdateAsync(
         Guid id, UpdateSampleItemInput body, IDispatcher dispatcher, CancellationToken cancellationToken) =>
         (await dispatcher.SendAsync(
-            new UpdateSampleItem(id, body.NameAr, body.NameEn, body.DescriptionAr, body.DescriptionEn, body.Version),
+            new UpdateSampleItem(id, body.NameAr, body.NameEn, body.DescriptionAr, body.DescriptionEn, body.Version, body.Amount),
             cancellationToken)).ToOk();
 
     private static async Task<Results<Ok<SampleItemDto>, ProblemHttpResult>> ActivateAsync(
@@ -79,9 +84,11 @@ internal static class SampleEndpoints
         (await dispatcher.SendAsync(new DeactivateSampleItem(id, body.Version), cancellationToken)).ToOk();
 }
 
-internal sealed record SampleItemInput(string? NameAr, string? NameEn, string? DescriptionAr, string? DescriptionEn);
+internal sealed record SampleItemInput(string? NameAr, string? NameEn, string? DescriptionAr, string? DescriptionEn, decimal? Amount = null);
 
-internal sealed record UpdateSampleItemInput(string? NameAr, string? NameEn, string? DescriptionAr, string? DescriptionEn, uint Version);
+internal sealed record UpdateSampleItemInput(string? NameAr, string? NameEn, string? DescriptionAr, string? DescriptionEn, uint Version, decimal? Amount = null);
+
+internal sealed record SubmitInput(uint Version, string? Comment);
 
 internal sealed record VersionInput(uint Version);
 

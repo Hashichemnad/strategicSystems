@@ -116,7 +116,9 @@ export const sampleRoute = createRoute({
 export const sampleItemRoute = createRoute({
   getParentRoute: () => appLayout,
   path: '/sample/items/$itemId',
-  validateSearch: z.object({ tab: z.enum(['overview', 'documents', 'history']).catch('overview') }),
+  validateSearch: z.object({
+    tab: z.enum(['overview', 'approvals', 'documents', 'history']).catch('overview'),
+  }),
   component: lazyRouteComponent(() => import('@/features/sample/SampleItemPage'), 'SampleItemPage'),
 });
 
@@ -339,6 +341,36 @@ const jobsRoute = createRoute({
   component: lazyRouteComponent(() => import('@/features/jobs/JobsPage'), 'JobsPage'),
 });
 
+// Business hours and holidays (ADR 0027).
+const businessHoursRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/business-hours',
+  component: lazyRouteComponent(() => import('@/features/calendar/BusinessHoursPage'), 'BusinessHoursPage'),
+});
+
+const holidaysRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/holidays',
+  component: lazyRouteComponent(() => import('@/features/calendar/HolidaysPage'), 'HolidaysPage'),
+});
+
+// Approval Settings centre (SPEC §0.2): every approval process of every system, its steps, preview and versions.
+const approvalSettingsRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/approvals',
+  component: lazyRouteComponent(
+    () => import('@/features/workflow/ApprovalSettingsPage'),
+    'ApprovalSettingsPage',
+  ),
+});
+
+export const processEditorRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/approvals/$processKey',
+  validateSearch: z.object({ version: z.coerce.number().int().min(1).optional().catch(undefined) }),
+  component: lazyRouteComponent(() => import('@/features/workflow/ProcessEditorPage'), 'ProcessEditorPage'),
+});
+
 const systemAccessRoute = createRoute({
   getParentRoute: () => settingsLayout,
   path: '/access/system-access',
@@ -408,6 +440,10 @@ const routeTree = rootRoute.addChildren([
       notificationTemplatesRoute,
       filesSettingsRoute,
       jobsRoute,
+      businessHoursRoute,
+      holidaysRoute,
+      approvalSettingsRoute,
+      processEditorRoute,
       rolesRoute,
       assignmentsRoute,
       systemAccessRoute,

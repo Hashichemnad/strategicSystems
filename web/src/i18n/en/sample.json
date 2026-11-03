@@ -14,7 +14,9 @@
     "status": "Status",
     "updatedAt": "Last updated",
     "actions": "Actions",
-    "number": "Number"
+    "number": "Number",
+    "amount": "Amount (AED)",
+    "approvalStatus": "Approval"
   },
   "status": {
     "all": "All statuses",
@@ -23,7 +25,9 @@
   },
   "actions": {
     "activate": "Activate",
-    "deactivate": "Deactivate"
+    "deactivate": "Deactivate",
+    "submit": "Submit for approval",
+    "resubmit": "Resubmit for approval"
   },
   "confirmDeactivate": {
     "title": "Deactivate this item?",
@@ -33,7 +37,8 @@
     "created": "Item created",
     "updated": "Item updated",
     "activated": "Item activated",
-    "deactivated": "Item deactivated"
+    "deactivated": "Item deactivated",
+    "submitted": "Submitted for approval"
   },
   "empty": {
     "title": "No items yet",
@@ -44,9 +49,43 @@
   "errors": {
     "inactive": "Inactive items cannot be edited. Activate it first.",
     "alreadyActive": "This item is already active.",
-    "alreadyInactive": "This item is already inactive."
+    "alreadyInactive": "This item is already inactive.",
+    "pendingApproval": "The item is waiting for approval and cannot be edited.",
+    "notSubmittable": "Only draft or returned items can be submitted.",
+    "notPending": "The item is not waiting for approval."
   },
   "tabs": {
-    "overview": "Overview"
+    "overview": "Overview",
+    "approvals": "Approvals"
+  },
+  "approvalStatus": {
+    "all": "All approval statuses",
+    "draft": "Draft",
+    "pending": "Pending approval",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "returned": "Returned for correction"
+  },
+  "stages": {
+    "draft": "Draft",
+    "pending": "Approval",
+    "approved": "Approved"
+  },
+  "currentStatus": {
+    "draft": "Waiting for the owner to submit it for approval",
+    "returned": "Returned for correction: waiting for the owner to correct and resubmit",
+    "approved": "Approved",
+    "rejected": "Rejected — the approval is closed",
+    "inactive": "Inactive",
+    "owner": "Owner"
+  },
+  "submitDialog": {
+    "title": "Submit for approval?",
+    "description": "The item goes through the approval chain set in Settings → Approvals. You cannot edit it while it waits.",
+    "comment": "Comment for the approvers (optional)",
+    "confirm": "Submit"
+  },
+  "myWork": {
+    "returned": "Returned for correction — correct it and resubmit"
   }
 }

@@ -56,3 +56,20 @@ Unit: domain transitions, validator. Integration (Testcontainers): every endpoin
 - **Catalogue:** `SampleAccessCatalogue` declares the permissions with AR/EN labels, the default roles (`sample.viewer`: read all; `sample.editor`: read all, create, update own) and the record role `sample.item / editor` (read + update one item).
 - **Record roles through the module:** `GET/POST /items/{id}/editors` and `POST /items/{id}/editors/{employeeId}/remove` grant and revoke the editor record role through `IRecordRoleService`, guarded by the update permission on that item.
 - **Numbering:** `number` comes from the Numbering service (`sample.item`, default `SMP-{YYYY}-{SEQ:4}`) inside the insert's transaction; unique index on `number`.
+
+## Phase 4: the worked example of the approval engine
+- **Fields:** `amount` (`numeric(18,2)`, AED) and `approval_status` (`draft` → `pending` → `approved` / `rejected` / `returned`). Editing is
+  refused while an item waits for approval (`sample.item.pendingApproval`).
+- **Process** `sample.item-approval` (registered in code, chain configured in Settings → Approvals, ADR 0024). Default chain:
+  1. *Section manager* (head of the nearest section above the item's unit), **Q-P4 condition**
+     `sectionManager != null and sectionManager != departmentDirector and sectionManager != submitter`, SLA 72 h;
+  2. *Department director*, SLA 72 h;
+  3. *Item approver* (holders of role `sample.approver`), condition `amount > 100000`, SLA 120 h.
+- **Submit:** `POST /items/{id}/submit` (`sample.item.submit`, own scope for editors; `Idempotency-Key` honoured). Draft or returned items
+  only; the item and the approval instance are saved in one transaction (ADR 0023).
+- **Hook:** approved / rejected / returned move `approval_status`; a rejected item is final (as a rejected program request, SPEC §1.5 W1);
+  a returned one is corrected and resubmitted (new attempt linked to the previous one).
+- **Current status:** draft / returned → "waiting for the owner" (+ submit / resubmit for whoever may submit); pending → "waiting for the
+  ⟨step⟩ approval" with the approvers and, for an approver, the decisions; approved; rejected.
+- **My Work:** items returned for correction to their owner. **Record role** `approver` (read) is granted to approvers while their task is open.
+- **Screens:** stage stepper, current-status banner, *Approvals* tab (shared approval panel), amount in the dialog and overview.

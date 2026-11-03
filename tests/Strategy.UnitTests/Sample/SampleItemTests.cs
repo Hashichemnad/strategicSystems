@@ -26,7 +26,7 @@ public class SampleItemTests
         {
             "activate" => item.Activate(),
             "deactivate" => item.Deactivate(),
-            _ => item.Update("أ", "A", null, null),
+            _ => item.Update("أ", "A", null, null, null),
         };
 
         if (expectedError is null)

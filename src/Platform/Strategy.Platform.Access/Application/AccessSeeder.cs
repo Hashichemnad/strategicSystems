@@ -209,7 +209,8 @@ internal static class AdministratorRoles
     public static readonly IReadOnlyList<(string System, string Code)> All =
     [
         ("org", "administrator"), ("identity", "administrator"), ("access", "administrator"), ("settings", "administrator"),
-        ("audit", "administrator"),
+        ("audit", "administrator"), ("workflow", "administrator"),
+        ("calendar", "administrator"),
     ];
 
     public static async Task GrantAsync(AccessDbContext db, Guid userId, DateOnly today, CancellationToken ct)

@@ -510,7 +510,7 @@ Implement, then run the full hardening review and fix findings, run performance 
 | 1 | Identity, Organisation, Employees | ☑ built — awaiting owner acceptance | |
 | 2 | Access control & Settings | ☐ | |
 | 3 | Audit, Files, Notifications, Jobs | ☐ | |
-| 4 | Approval engine & My Work | ☐ | |
+| 4 | Approval engine & My Work | ☑ built — awaiting owner acceptance | |
 | 5 | AI platform & MCP | ☐ | |
 | 6 | Links & Task Management | ☐ | |
 | 7 | Teams Management | ☐ | |

@@ -27,7 +27,8 @@ public sealed class PostgresFixture : IAsyncLifetime
             return;
         }
 
-        _container = new PostgreSqlBuilder(Image).Build();
+        // Test classes run in parallel, each with its own host and connection pool: room for all of them (the default of 100 runs out).
+        _container = new PostgreSqlBuilder(Image).WithCommand("-c", "max_connections=400").Build();
         await _container.StartAsync();
         _adminConnectionString = _container.GetConnectionString();
     }

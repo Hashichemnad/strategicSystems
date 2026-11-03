@@ -49,12 +49,26 @@ public interface IEmployeeDirectory
 
     /// <summary>The employee's manager as of a date, from the placement history.</summary>
     Task<Guid?> GetManagerAsync(Guid employeeId, DateOnly? asOf = null, CancellationToken cancellationToken = default);
+
+    /// <summary>Employees (not left) placed in any of <paramref name="unitIds"/> (role holders through a unit assignment).</summary>
+    Task<IReadOnlyList<Guid>> GetEmployeeIdsInUnitsAsync(IReadOnlyCollection<Guid> unitIds, CancellationToken cancellationToken = default);
 }
 
 /// <summary>Who may act for an employee on a date (consumed by the approval engine, Phase 4).</summary>
 public interface IDelegationQuery
 {
     Task<IReadOnlyList<Guid>> GetActiveDelegatesAsync(Guid employeeId, DateOnly date, string? scopeKey, CancellationToken cancellationToken = default);
+
+    /// <summary>Active delegations on <paramref name="date"/> where <paramref name="delegateEmployeeId"/> is the delegate (My Work, acting on behalf).</summary>
+    Task<IReadOnlyList<ActiveDelegation>> GetDelegationsToAsync(Guid delegateEmployeeId, DateOnly date, CancellationToken cancellationToken = default);
+}
+
+/// <summary>A delegation in force: the delegate may act for the delegator on processes covered by <see cref="Scope"/> (empty = all).</summary>
+public sealed record ActiveDelegation(Guid Id, Guid DelegatorEmployeeId, Guid DelegateEmployeeId, IReadOnlyList<string> Scope)
+{
+    /// <summary>Same rule as the delegation itself: a scope item is a system code or a process key, matched on whole dot-separated prefixes.</summary>
+    public bool Covers(string? scopeKey) =>
+        Scope.Count == 0 || scopeKey is null || Scope.Any(s => scopeKey == s || scopeKey.StartsWith(s + ".", StringComparison.Ordinal));
 }
 
 /// <summary>Implemented by other platform services that react to employee lifecycle changes (Identity deactivates the user).</summary>

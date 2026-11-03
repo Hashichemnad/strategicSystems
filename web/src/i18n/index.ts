@@ -38,6 +38,12 @@ import arJobs from './ar/jobs.json';
 import enJobs from './en/jobs.json';
 import arReporting from './ar/reporting.json';
 import enReporting from './en/reporting.json';
+import arWorkflow from './ar/workflow.json';
+import enWorkflow from './en/workflow.json';
+import arExpressions from './ar/expressions.json';
+import arCalendar from './ar/calendar.json';
+import enCalendar from './en/calendar.json';
+import enExpressions from './en/expressions.json';
 import { readPreference } from '@/lib/preferences';
 
 export const languages = ['ar', 'en'] as const;
@@ -64,6 +70,9 @@ export const resources = {
     notifications: arNotifications,
     jobs: arJobs,
     reporting: arReporting,
+    workflow: arWorkflow,
+    expressions: arExpressions,
+    calendar: arCalendar,
   },
   en: {
     common: enCommon,
@@ -85,6 +94,9 @@ export const resources = {
     notifications: enNotifications,
     jobs: enJobs,
     reporting: enReporting,
+    workflow: enWorkflow,
+    expressions: enExpressions,
+    calendar: enCalendar,
   },
 } as const;
 

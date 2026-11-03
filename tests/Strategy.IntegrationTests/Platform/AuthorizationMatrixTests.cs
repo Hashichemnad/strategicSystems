@@ -106,6 +106,7 @@ public partial class AuthorizationMatrixTests(ApiFixture api) : IClassFixture<Ap
         {
             "kind" => route.Contains("logo", StringComparison.Ordinal) ? "logo-light" : "units",
             "code" or "key" or "type" => "unknown",
+            "versionNo" => "1",
             _ => Guid.CreateVersion7().ToString(),
         });
         var request = new HttpRequestMessage(new HttpMethod(method), path);

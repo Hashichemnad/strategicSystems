@@ -24,6 +24,7 @@ public sealed class AccessComponent : IPlatformComponent
         services.AddScoped<IAccessService>(sp => sp.GetRequiredService<AccessService>());
         services.AddScoped<ISystemState, SystemState>();
         services.AddScoped<IRecordRoleService, RecordRoleService>();
+        services.AddScoped<IRoleHolderQuery, RoleHolderQuery>();
         services.AddScoped<UserRoleQuery>();
         services.AddScoped<IUserRoleQuery>(sp => sp.GetRequiredService<UserRoleQuery>());
         services.AddScoped<PrincipalNames>();

@@ -101,7 +101,7 @@ public class MigrationTests(PostgresFixture postgres)
         await using var check = new NpgsqlConnection(factory.ConnectionString);
         await check.OpenAsync();
         (await ScalarAsync(check, "select count(*) from access.pending_admin_grant")).ShouldBe(0);
-        (await ScalarAsync(check, $"select count(*) from access.role_assignment where principal_id = '{adminId}'")).ShouldBe(5); // org, identity, access, settings, audit administrators
+        (await ScalarAsync(check, $"select count(*) from access.role_assignment where principal_id = '{adminId}'")).ShouldBe(7); // org, identity, access, settings, audit, workflow, calendar administrators
         (await ScalarAsync(check, "select count(*) from information_schema.columns where table_name = 'users' and column_name = 'is_system_admin'")).ShouldBe(0);
         (await ScalarAsync(check, $"select count(*) from settings.lookup_value where type_code = 'employee.grade' and code = 'LEGACY-{suffix}'")).ShouldBe(1);
     }

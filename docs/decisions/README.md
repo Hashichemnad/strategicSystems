@@ -26,3 +26,9 @@ Write an ADR for every choice the SPEC or CLAUDE.md leaves open (CLAUDE.md §2 r
 | [0019](0019-files-service.md) | Files service: purposes, storage, checks and owner access | Accepted |
 | [0020](0020-notifications-outbox-and-jobs.md) | Notifications, outbox and scheduled jobs | Accepted |
 | [0021](0021-pdf-rendering.md) | PDF rendering through Gotenberg with embedded Arabic fonts | Accepted |
+| [0022](0022-expression-sandbox.md) | Shared sandboxed expression service (in-house) | Accepted |
+| [0023](0023-shared-transaction-across-contexts.md) | One transaction across a module's DbContext and the approval engine | Accepted |
+| [0024](0024-approval-process-versions.md) | Approval processes: code-registered keys, database-versioned steps | Accepted |
+| [0025](0025-approver-rules-and-no-approver.md) | Approver rule semantics, self-approval and steps without an approver | Accepted |
+| [0026](0026-idempotency-keys.md) | Idempotency keys on submit and approval endpoints | Accepted |
+| [0027](0027-business-hours-and-holidays.md) | Business hours, holidays and working-time SLAs | Accepted |

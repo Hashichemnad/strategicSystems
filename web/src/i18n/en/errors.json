@@ -11,5 +11,8 @@
   "badRequest": "The request could not be understood.",
   "unexpected": "An unexpected error occurred. If it keeps happening, contact support with reference {{reference}}.",
   "network": "The server could not be reached. Check your connection and try again.",
-  "featureDisabled": "This feature is switched off in Settings."
+  "featureDisabled": "This feature is switched off in Settings.",
+  "idempotencyInvalidKey": "The request key is not valid.",
+  "idempotencyInProgress": "This request is still being processed. Wait a moment.",
+  "idempotencyKeyReused": "This request key was already used for a different request."
 }

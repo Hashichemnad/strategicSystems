@@ -29,6 +29,19 @@ namespace Strategy.Modules.Sample.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<decimal?>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("amount");
+
+                    b.Property<string>("ApprovalStatus")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasDefaultValue("draft")
+                        .HasColumnName("approval_status");
+
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
@@ -92,6 +105,9 @@ namespace Strategy.Modules.Sample.Infrastructure.Migrations
 
                     b.HasKey("Id")
                         .HasName("pk_sample_items");
+
+                    b.HasIndex("ApprovalStatus")
+                        .HasDatabaseName("ix_sample_items_approval_status");
 
                     b.HasIndex("CreatedAt")
                         .HasDatabaseName("ix_sample_items_created_at");

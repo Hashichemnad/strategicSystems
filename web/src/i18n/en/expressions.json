@@ -1,0 +1,21 @@
+{
+  "errors": {
+    "empty": "Enter an expression.",
+    "tooLong": "The expression is too long (at most {{max}} characters).",
+    "tooComplex": "The expression is too complex.",
+    "invalidNumber": "“{{text}}” is not a valid number.",
+    "unterminatedText": "A text value is missing its closing quote.",
+    "unexpectedCharacter": "Unexpected character “{{text}}” at position {{position}}.",
+    "unexpectedEnd": "The expression ends too early.",
+    "syntax": "Unexpected “{{text}}” at position {{position}}.",
+    "unknownVariable": "Unknown variable “{{name}}”.",
+    "unknownFunction": "Unknown function “{{name}}”.",
+    "argumentCount": "{{name}} takes {{min}} to {{max}} values.",
+    "typeMismatch": "Values of the wrong type for “{{operator}}” ({{actual}}).",
+    "notBoolean": "A condition must be true or false.",
+    "resultType": "The result must be {{expected}}.",
+    "divisionByZero": "Division by zero.",
+    "invalidDate": "“{{text}}” is not a date (use yyyy-MM-dd).",
+    "overflow": "The number is too large."
+  }
+}
