@@ -2100,6 +2100,246 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/calendar/business-hours': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListBusinessHours'];
+    put?: never;
+    post: operations['CreateBusinessHours'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/calendar/business-hours/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetBusinessHours'];
+    put: operations['UpdateBusinessHours'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/calendar/business-hours/{id}/make-default': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['MakeBusinessHoursDefault'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/calendar/business-hours/{id}/activate': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ActivateBusinessHours'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/calendar/business-hours/{id}/deactivate': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['DeactivateBusinessHours'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/calendar/business-hours/{id}/calculate': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CalculateWorkingTime'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/calendar/units': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListUnitBusinessHours'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/calendar/units/{unitId}/effective': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetEffectiveBusinessHours'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/calendar/units/{unitId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['SetUnitBusinessHours'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/calendar/holidays': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListHolidays'];
+    put?: never;
+    post: operations['CreateHoliday'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/calendar/holidays/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateHoliday'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/calendar/holidays/{id}/remove': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RemoveHoliday'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/calendar/holidays/import/template': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetHolidayImportTemplate'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/calendar/holidays/import': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ImportHolidays'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/calendar/holidays/import/report': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['GetHolidayImportReport'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/workflow/processes': {
     parameters: {
       query?: never;
@@ -2524,6 +2764,12 @@ export interface components {
       /** @default true */
       excludeSubmitter: boolean;
       notificationTemplate?: null | string;
+      /** @default working */
+      slaMode: string;
+      /** @default default */
+      businessHoursSource: string;
+      /** Format: uuid */
+      businessHoursId?: null | string;
     };
     /**
      * @description Who approves a step. Only the parameters of string ApproverRule.Kind are used: `role` → string? ApproverRule.RoleKey; `sectionManager`,
@@ -2639,6 +2885,56 @@ export interface components {
       emailFooterAr?: null | string;
       emailFooterEn?: null | string;
     };
+    BusinessHoursDto: {
+      /** Format: uuid */
+      id: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      timeZone: string;
+      active: boolean;
+      isDefault: boolean;
+      days: components['schemas']['DayDto'][];
+      /** Format: int32 */
+      unitCount: number;
+      /** Format: uint32 */
+      version: number;
+    };
+    BusinessHoursInput: {
+      nameAr: null | string;
+      nameEn: null | string;
+      timeZone: null | string;
+      days: null | components['schemas']['DayDto'][];
+      /**
+       * Format: uint32
+       * @default 0
+       */
+      version: number;
+    };
+    /** @description A business-hours record as other components see it. */
+    BusinessHoursReference: {
+      /** Format: uuid */
+      id: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      timeZone: string;
+      isDefault: boolean;
+      active: boolean;
+    };
+    CalculateDto: {
+      /** Format: date-time */
+      start: string;
+      /** Format: double */
+      hours: number;
+      /** Format: date-time */
+      due: string;
+      timeZone: string;
+    };
+    CalculateInput: {
+      /** Format: date-time */
+      start: null | string;
+      /** Format: double */
+      hours: null | number;
+    };
     CancelInput: {
       reason: null | string;
       /** Format: uint32 */
@@ -2714,6 +3010,13 @@ export interface components {
       labelEn: string;
       outcome: string;
     };
+    DayDto: {
+      /** Format: int32 */
+      day: number;
+      mode: string;
+      start: null | string;
+      end: null | string;
+    };
     DelegationDto: {
       /** Format: uuid */
       id: string;
@@ -2769,6 +3072,14 @@ export interface components {
       permissions: components['schemas']['EffectivePermissionDto'][];
       recordRoles: components['schemas']['EffectiveRecordRoleDto'][];
       requiresMfa: boolean;
+    };
+    EffectiveBusinessHoursDto: {
+      businessHours: components['schemas']['BusinessHoursReference'];
+      /** Format: uuid */
+      fromUnitId: null | string;
+      fromUnitNameAr: null | string;
+      fromUnitNameEn: null | string;
+      inherited: boolean;
     };
     EffectiveChangeInput: {
       /** Format: date */
@@ -2975,6 +3286,63 @@ export interface components {
       onBehalfOf: null | components['schemas']['PersonName'];
       comment: null | string;
       data: null | components['schemas']['JsonElement'];
+    };
+    HolidayDto: {
+      /** Format: uuid */
+      id: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      /** Format: date */
+      startDate: string;
+      /** Format: date */
+      endDate: string;
+      allDay: boolean;
+      startTime: null | string;
+      endTime: null | string;
+      recurring: boolean;
+      appliesToAll: boolean;
+      businessHoursIds: string[];
+      active: boolean;
+      /** Format: date */
+      occursOn: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
+    HolidayImportDto: {
+      /** Format: int32 */
+      year: number;
+      committed: boolean;
+      /** Format: int32 */
+      totalRows: number;
+      /** Format: int32 */
+      created: number;
+      issues: components['schemas']['HolidayImportIssue'][];
+    };
+    HolidayImportIssue: {
+      /** Format: int32 */
+      row: number;
+      column: null | string;
+      code: string;
+      params: null | Record<string, never>;
+    };
+    HolidayInput: {
+      nameAr: null | string;
+      nameEn: null | string;
+      /** Format: date */
+      startDate: null | string;
+      /** Format: date */
+      endDate: null | string;
+      allDay: boolean;
+      startTime: null | string;
+      endTime: null | string;
+      recurring: boolean;
+      appliesToAll: boolean;
+      businessHoursIds: null | string[];
+      /**
+       * Format: uint32
+       * @default 0
+       */
+      version: number;
     };
     /** Format: binary */
     IFormFile: string;
@@ -3268,6 +3636,9 @@ export interface components {
       onBehalfOf: null | components['schemas']['PersonName'];
       /** Format: int32 */
       attempt: number;
+      slaMode: null | string;
+      businessHoursNameAr: null | string;
+      businessHoursNameEn: null | string;
     };
     NotificationDto: {
       /** Format: uuid */
@@ -3633,6 +4004,7 @@ export interface components {
       recordRoles: components['schemas']['OptionDto'][];
       templates: components['schemas']['OptionDto'][];
       functions: string[];
+      businessHours: components['schemas']['OptionDto'][];
     };
     ProcessSummaryDto: {
       key: string;
@@ -3985,6 +4357,9 @@ export interface components {
       /** Format: date-time */
       dueAt: null | string;
       overdue: boolean;
+      slaMode: null | string;
+      businessHoursNameAr: null | string;
+      businessHoursNameEn: null | string;
     };
     SubjectApprovalsDto: {
       resourceType: string;
@@ -4108,6 +4483,21 @@ export interface components {
       };
       /** Format: int64 */
       version: number;
+    };
+    UnitAssignmentDto: {
+      /** Format: uuid */
+      unitId: string;
+      unitCode: null | string;
+      unitNameAr: null | string;
+      unitNameEn: null | string;
+      /** Format: uuid */
+      businessHoursId: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
+    UnitAssignmentInput: {
+      /** Format: uuid */
+      businessHoursId: null | string;
     };
     UnitInput: {
       code: null | string;
@@ -9395,6 +9785,606 @@ export interface operations {
         content: {
           'application/json': components['schemas']['ProviderTestResultDto'];
         };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListBusinessHours: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BusinessHoursDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateBusinessHours: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['BusinessHoursInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BusinessHoursDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetBusinessHours: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BusinessHoursDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateBusinessHours: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['BusinessHoursInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BusinessHoursDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  MakeBusinessHoursDefault: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['VersionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BusinessHoursDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ActivateBusinessHours: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['VersionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BusinessHoursDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  DeactivateBusinessHours: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['VersionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BusinessHoursDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CalculateWorkingTime: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CalculateInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CalculateDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListUnitBusinessHours: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['UnitAssignmentDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetEffectiveBusinessHours: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        unitId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['EffectiveBusinessHoursDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SetUnitBusinessHours: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        unitId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UnitAssignmentInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['UnitAssignmentDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListHolidays: {
+    parameters: {
+      query?: {
+        year?: number;
+        includeRemoved?: boolean;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HolidayDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateHoliday: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['HolidayInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HolidayDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateHoliday: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['HolidayInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HolidayDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RemoveHoliday: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['VersionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HolidayDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetHolidayImportTemplate: {
+    parameters: {
+      query: {
+        year: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ImportHolidays: {
+    parameters: {
+      query: {
+        year: number;
+        mode?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'multipart/form-data': {
+          file: components['schemas']['IFormFile'];
+        };
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HolidayImportDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetHolidayImportReport: {
+    parameters: {
+      query: {
+        year: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'multipart/form-data': {
+          file: components['schemas']['IFormFile'];
+        };
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
       };
       /** @description Problem Details (RFC 9457) */
       default: {
