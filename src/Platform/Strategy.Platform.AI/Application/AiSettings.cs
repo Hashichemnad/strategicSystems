@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Strategy.Platform.Settings;
 
 namespace Strategy.Platform.AI.Application;
@@ -14,8 +15,10 @@ public sealed record AiSettings(
 
     public AiFeatureSettings Feature(string key) => Features?.GetValueOrDefault(key) ?? new AiFeatureSettings();
 
+    [JsonIgnore]
     public AiDataSharing Sharing => DataSharing ?? new AiDataSharing();
 
+    [JsonIgnore]
     public AiLimits Quota => Limits ?? new AiLimits();
 }
 

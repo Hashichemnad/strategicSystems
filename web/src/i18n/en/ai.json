@@ -1,0 +1,191 @@
+{
+  "badge": "AI draft",
+  "generated": "AI-generated",
+  "confidence": "Confidence {{value}}%",
+  "source": "Source",
+  "sourceAt": "Source ({{location}})",
+  "sourceNotVerified": "Not found in the document: check this value carefully.",
+  "accept": "Accept",
+  "acceptAll": "Accept all",
+  "accepted": "Accepted",
+  "reviewPending_one": "Review the AI-suggested value before saving.",
+  "reviewPending_other": "Review the {{count}} AI-suggested values before saving.",
+  "fill": {
+    "button": "Fill from a document",
+    "title": "Fill the form from a document",
+    "description": "Upload a PDF, Word or PowerPoint document in Arabic or English. The AI proposes values for the form; nothing is saved until you review them and save.",
+    "dropLabel": "Choose or drop a document",
+    "dropHint": "PDF, DOCX, PPTX or TXT, up to 10 MB",
+    "run": "Read the document",
+    "filled_one": "One field was filled from {{file}}. Review it before saving.",
+    "filled_other": "{{count}} fields were filled from {{file}}. Review them before saving.",
+    "none": "The AI found no value for this form in the document.",
+    "truncated": "The document is long: only its beginning was read."
+  },
+  "translate": {
+    "fromEn": "Translate from English",
+    "fromAr": "Translate from Arabic",
+    "empty": "Write the text in the other language first."
+  },
+  "similar": {
+    "title": "Similar items",
+    "description": "Check that you are not creating a duplicate.",
+    "score": "{{value}}% similar"
+  },
+  "brief": {
+    "title": "Approver brief",
+    "generate": "Generate brief",
+    "regenerate": "Regenerate",
+    "changes": "What changed since the last submission",
+    "attention": "Points to check",
+    "changedFields": "Changed fields (from the record history)",
+    "field": "Field",
+    "before": "Before",
+    "after": "After",
+    "noChanges": "First submission: nothing to compare yet.",
+    "disclaimer": "Written by AI from the record and its history. It does not decide: check the record before you act.",
+    "meta": "{{model}} · {{time}}"
+  },
+  "ask": {
+    "button": "Ask",
+    "title": "Ask the system",
+    "description": "Ask about the data you are allowed to see. The AI can only read: it never changes, submits or approves anything.",
+    "placeholder": "e.g. Which of my items are waiting for approval?",
+    "send": "Ask",
+    "thinking": "Looking it up…",
+    "references": "Records mentioned",
+    "tools": "Looked up: {{tools}}",
+    "empty": "Ask a question to start.",
+    "you": "You",
+    "assistant": "Assistant",
+    "clear": "New conversation"
+  },
+  "errors": {
+    "featureDisabled": "This AI feature is switched off.",
+    "notConfigured": "No AI provider is configured for this feature.",
+    "dataNotAllowed": "Data of this system may not be sent to the AI.",
+    "documentsNotAllowed": "Sending documents to the AI is switched off.",
+    "providerError": "The AI provider did not answer. Try again later.",
+    "timeout": "The AI provider took too long to answer.",
+    "invalidOutput": "The AI answer could not be used. Try again.",
+    "limitReached": "The monthly AI limit has been reached.",
+    "extractSize": "The document must be at most {{maxMb}} MB.",
+    "extractUnsupported": "Only PDF, Word, PowerPoint and text documents can be read.",
+    "extractNoText": "No text was found in the document (a scanned PDF needs text recognition first).",
+    "extractUnreadable": "The document could not be read.",
+    "briefNoApproval": "The record has not been submitted for approval yet.",
+    "modelsUnavailable": "The model list could not be fetched: type the model name.",
+    "emptyReply": "The provider answered with nothing."
+  },
+  "provider": {
+    "testPassed": "The connection works."
+  },
+  "validation": {
+    "endpoint": "Use an http or https address."
+  },
+  "settings": {
+    "title": "Artificial intelligence",
+    "description": "AI providers, the features people may use, what data may be sent, limits and usage. AI only drafts: people decide.",
+    "master": "Use AI in this installation",
+    "masterHint": "When off, no AI action appears anywhere and nothing is sent to a provider. Everything else keeps working.",
+    "tabs": {
+      "providers": "Providers",
+      "features": "Features",
+      "data": "Data sharing and limits",
+      "usage": "Usage"
+    },
+    "providers": {
+      "add": "Add provider",
+      "empty": "No provider yet",
+      "emptyHint": "Add Anthropic Claude, OpenAI, Azure OpenAI or a self-hosted model to start.",
+      "default": "Default provider",
+      "none": "None",
+      "test": "Test connection",
+      "testOk": "The connection works ({{ms}} ms, model {{model}}).",
+      "testFailed": "Test failed: {{reason}}",
+      "fetchModels": "Fetch models",
+      "modelsFetched": "{{count}} models fetched.",
+      "active": "Active",
+      "inactive": "Inactive",
+      "keyStored": "Key stored (encrypted)",
+      "noKey": "No key",
+      "edit": "Edit",
+      "createTitle": "New AI provider",
+      "editTitle": "Edit AI provider",
+      "keyKept": "Leave empty to keep the stored key. The key is stored encrypted and never shown again.",
+      "clearKey": "Remove the stored key",
+      "saved": "Provider saved"
+    },
+    "fields": {
+      "name": "Name",
+      "type": "Provider",
+      "endpoint": "Endpoint",
+      "endpointHint": "Azure: https://<resource>.openai.azure.com/openai/v1/ · Ollama: http://ollama:11434/v1/",
+      "apiKey": "API key",
+      "defaultModel": "Default model",
+      "models": "Models",
+      "modelsHint": "One per line; fetched from the provider or typed.",
+      "temperature": "Temperature",
+      "maxOutputTokens": "Maximum answer tokens",
+      "timeoutSeconds": "Time-out (seconds)",
+      "active": "Active"
+    },
+    "types": {
+      "anthropic": "Anthropic Claude",
+      "openai": "OpenAI",
+      "azure-openai": "Azure OpenAI",
+      "openai-compatible": "OpenAI-compatible (Ollama, vLLM)",
+      "demo": "Demo (offline)"
+    },
+    "features": {
+      "feature": "Feature",
+      "enabled": "On",
+      "provider": "Provider",
+      "model": "Model",
+      "access": "Who may use it",
+      "accessHint": "Permission {{permission}}: held by the role “AI user” (everyone) unless you change it in Roles.",
+      "useDefault": "Default",
+      "noProvider": "No model needed"
+    },
+    "data": {
+      "mask": "Mask personal data",
+      "maskHint": "E-mail addresses, phone numbers, Emirates ID numbers and people's names are replaced before sending and restored in the answer.",
+      "documents": "Allow sending uploaded documents",
+      "documentsHint": "Needed to fill forms from documents.",
+      "system": "System",
+      "allowed": "May be sent",
+      "excluded": "Fields never sent",
+      "excludedHint": "Field names separated by commas, e.g. Amount",
+      "limits": "Monthly limits",
+      "monthlyTokens": "Tokens per month (installation)",
+      "monthlyRequests": "Requests per user per month",
+      "noLimit": "No limit"
+    },
+    "usage": {
+      "thisMonth": "This month (since {{date}})",
+      "requests": "Requests",
+      "tokens": "Tokens",
+      "failures": "Failures",
+      "limit": "Limit {{value}}",
+      "log": "Usage log",
+      "when": "When",
+      "user": "User",
+      "feature": "Feature",
+      "model": "Model",
+      "tokensCol": "Tokens in / out",
+      "latency": "Time",
+      "outcome": "Outcome",
+      "ok": "Done",
+      "failed": "Failed",
+      "empty": "No AI call yet."
+    },
+    "saved": "AI settings saved"
+  },
+  "features": {
+    "extract": "Fill forms from documents",
+    "brief": "Approver brief",
+    "translate": "Arabic ⇄ English translation",
+    "similar": "Similar records",
+    "ask": "Ask the system"
+  }
+}

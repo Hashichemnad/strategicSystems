@@ -6,7 +6,7 @@ import { errorMessage, translateMessageKey } from '@/api/problem';
 import { enrolRoute } from '@/app/router';
 import { Button, StatusBanner, useToast } from '@/ui';
 import { MfaSetup, RecoveryCodes, type MfaSetupApi } from './MfaSetup';
-import { safeRedirect, useCompleteSignIn } from './session';
+import { goAfterSignIn, useCompleteSignIn } from './session';
 
 /** The security policy requires a second factor and the user has none yet: set one up, then continue. */
 export function EnrolPage() {
@@ -65,9 +65,7 @@ export function EnrolPage() {
       {codes ? (
         <div className="flex flex-col gap-4">
           <RecoveryCodes codes={codes} />
-          <Button onClick={() => void navigate({ href: safeRedirect(redirect) })}>
-            {t('enrol.continue')}
-          </Button>
+          <Button onClick={() => void goAfterSignIn(navigate, redirect)}>{t('enrol.continue')}</Button>
         </div>
       ) : (
         <MfaSetup api={setupApi} />

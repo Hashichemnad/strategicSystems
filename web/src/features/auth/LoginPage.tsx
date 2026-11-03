@@ -10,7 +10,7 @@ import { errorMessage, translateFieldMessage, translateMessageKey } from '@/api/
 import { loginRoute } from '@/app/router';
 import { pickText } from '@/lib/format';
 import { Button, FormField, Input, StatusBanner } from '@/ui';
-import { safeRedirect, useCompleteSignIn } from './session';
+import { goAfterSignIn, safeRedirect, useCompleteSignIn } from './session';
 
 const schema = z.object({
   login: z.string().trim().min(1, 'validation.notEmpty').max(256),
@@ -45,7 +45,7 @@ export function LoginPage() {
         await navigate({ to: '/login/enrol', search: { redirect, methods } });
       } else {
         await completeSignIn();
-        await navigate({ href: safeRedirect(redirect) });
+        await goAfterSignIn(navigate, redirect);
       }
     } catch (failure) {
       resetAntiforgeryToken();

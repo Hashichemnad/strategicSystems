@@ -10403,12 +10403,6 @@
                 "$ref": "#/components/schemas/AiLimits"
               }
             ]
-          },
-          "sharing": {
-            "$ref": "#/components/schemas/AiDataSharing"
-          },
-          "quota": {
-            "$ref": "#/components/schemas/AiLimits"
           }
         },
         "description": "Settings → AI (docs/design/ai.md §3). Master switch off on a new installation: everything works without AI."
@@ -14222,15 +14216,6 @@
             ],
             "additionalProperties": {
               "$ref": "#/components/schemas/McpToolSettings"
-            }
-          },
-          "redirectHosts": {
-            "type": [
-              "null",
-              "array"
-            ],
-            "items": {
-              "type": "string"
             }
           }
         },

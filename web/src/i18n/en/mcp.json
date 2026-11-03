@@ -1,0 +1,63 @@
+{
+  "settings": {
+    "title": "MCP server",
+    "description": "Lets Claude and other MCP clients work with this installation as the signed-in user, with that user's permissions only.",
+    "enabled": "Turn on the MCP server",
+    "enabledHint": "Off: /mcp answers “not found” and no client can connect.",
+    "endpoint": "Server address",
+    "issuer": "Authorization server",
+    "oauth": "Sign-in for MCP clients (OAuth 2.1)",
+    "dcr": "Let clients register themselves",
+    "dcrHint": "Claude and other clients register automatically; only the redirect hosts below are accepted.",
+    "hosts": "Allowed redirect hosts",
+    "hostsHint": "One per line. Loopback addresses always need to be listed (localhost, 127.0.0.1). * allows any host.",
+    "accessMinutes": "Access token lifetime (minutes)",
+    "refreshDays": "Stay connected for (days)",
+    "rateLimit": "Tool calls per user per minute",
+    "tools": "Tools",
+    "tool": "Tool",
+    "kind": "Kind",
+    "kinds": {
+      "read": "Read",
+      "write": "Write",
+      "approve": "Approve"
+    },
+    "system": "System",
+    "toolEnabled": "On",
+    "toolLimit": "Calls per minute",
+    "default": "Default",
+    "approveWarning": "Approve tools let a client record the user's own approval decisions. They are off by default; turn them on only if your policy allows it.",
+    "clients": "Connected clients",
+    "clientsEmpty": "No client has connected yet.",
+    "client": "Client",
+    "redirects": "Redirect addresses",
+    "registered": "Registered",
+    "revoke": "Disconnect",
+    "revokeTitle": "Disconnect this client?",
+    "revokeDescription": "“{{client}}” loses access at once for every user. It can register again later.",
+    "revoked": "Client disconnected",
+    "saved": "MCP settings saved",
+    "guide": "How to connect",
+    "guideText": "In Claude (Settings → Connectors) or Claude Code (claude mcp add --transport http strategy <address>), add this address. The first time, the user signs in here and allows the connection. A personal access token with the “MCP” scope works too."
+  },
+  "consent": {
+    "title": "Allow {{client}} to use your account?",
+    "description": "The application “{{client}}” asks to connect to this system as you.",
+    "can": "It will be able to",
+    "canRead": "read the records, approvals and notifications you can see",
+    "canAct": "use only the tools your administrator has turned on",
+    "cannot": "It will not be able to see more than you can, and every call is recorded in the audit log.",
+    "redirect": "After you choose, you return to {{host}}.",
+    "allow": "Allow",
+    "deny": "Deny",
+    "notFound": "This connection request is not valid. Start again from your AI client.",
+    "disabled": "The MCP server is switched off."
+  },
+  "errors": {
+    "disabled": "The MCP server is switched off.",
+    "consentRefused": "The connection could not be allowed."
+  },
+  "validation": {
+    "host": "Enter host names only, e.g. claude.ai."
+  }
+}

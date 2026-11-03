@@ -95,6 +95,14 @@
     "holidays": {
       "title": "Holidays",
       "description": "Public holidays and closures, by year, with Excel import."
+    },
+    "ai": {
+      "title": "Artificial intelligence",
+      "description": "AI providers, features, data sharing, limits and usage."
+    },
+    "mcp": {
+      "title": "MCP server",
+      "description": "Connect Claude and other MCP clients; tools, sign-in and limits."
     }
   },
   "title": "Settings",
@@ -109,7 +117,8 @@
     "access": "Access",
     "identity": "Users and sign-in",
     "organisation": "Organisation",
-    "platform": "Notifications, files and jobs"
+    "platform": "Notifications, files and jobs",
+    "integrations": "AI and integrations"
   },
   "regional": {
     "timeZone": "Time zone",

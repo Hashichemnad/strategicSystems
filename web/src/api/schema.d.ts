@@ -3125,8 +3125,6 @@ export interface components {
       };
       dataSharing?: null | components['schemas']['AiDataSharing'];
       limits?: null | components['schemas']['AiLimits'];
-      sharing?: components['schemas']['AiDataSharing'];
-      quota?: components['schemas']['AiLimits'];
     };
     AiSettingsDto: {
       settings: components['schemas']['AiSettings'];
@@ -4084,7 +4082,6 @@ export interface components {
       tools?: null | {
         [key: string]: components['schemas']['McpToolSettings'];
       };
-      redirectHosts?: null | string[];
     };
     McpSettingsDto: {
       settings: components['schemas']['McpSettings'];

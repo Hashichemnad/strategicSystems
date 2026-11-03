@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Strategy.Platform.Settings;
 
 namespace Strategy.Platform.Mcp.Application;
@@ -16,6 +17,7 @@ public sealed record McpSettings(
 
     public static readonly IReadOnlyList<string> DefaultRedirectHosts = ["localhost", "127.0.0.1", "claude.ai", "claude.com"];
 
+    [JsonIgnore]
     public IReadOnlyList<string> RedirectHosts => AllowedRedirectHosts ?? DefaultRedirectHosts;
 
     public McpToolSettings Tool(string name) => Tools?.GetValueOrDefault(name) ?? new McpToolSettings();
