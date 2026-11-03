@@ -28,6 +28,8 @@ internal sealed class DemoAdapter : IAiProviderAdapter
 
 internal sealed partial class DemoChatClient(string model) : IChatClient
 {
+    private static readonly string[] KpiSuggestions = ["Name the data source.", "Set a baseline and a target for each year of the strategy cycle."];
+
     public Task<ChatResponse> GetResponseAsync(IEnumerable<ChatMessage> messages, ChatOptions? options = null, CancellationToken cancellationToken = default)
     {
         var list = messages.ToList();
@@ -100,6 +102,70 @@ internal sealed partial class DemoChatClient(string model) : IChatClient
                 text = arabic
                     ? "ملخص تجريبي: تقدم العمل على المهمة وفق التعليقات. النقاط المفتوحة: مراجعة المرفقات قبل التسليم."
                     : "Demo summary: work on the task is progressing as the comments describe. Open point: check the attachments before submitting.",
+            });
+        }
+        else if (system.Contains("You check the evidence of a KPI result", StringComparison.Ordinal))
+        {
+            var arabic = system.Contains("Write in Arabic", StringComparison.Ordinal);
+            var value = KpiValue().Match(system) is { Success: true } v ? v.Groups[1].Value.Trim() : string.Empty;
+            var found = value.Length > 0 && user.Contains(value, StringComparison.Ordinal);
+            text = JsonSerializer.Serialize(new
+            {
+                valueFound = found ? (bool?)true : null,
+                periodMatches = (bool?)null,
+                missing = found ? Array.Empty<string>() : [arabic ? "مصدر يبين القيمة المدخلة صراحة" : "A source that states the reported value explicitly"],
+                summary = arabic
+                    ? (found ? $"فحص تجريبي: القيمة {value} واردة في الدليل. تحقق من الفترة." : "فحص تجريبي: لم تظهر القيمة المدخلة في الدليل.")
+                    : (found ? $"Demo check: the value {value} appears in the evidence. Check the period." : "Demo check: the reported value does not appear in the evidence."),
+            });
+        }
+        else if (system.Contains("You help the owner of a KPI that missed its target", StringComparison.Ordinal))
+        {
+            var arabic = system.Contains("Write in Arabic", StringComparison.Ordinal);
+            var document = Document().Match(user) is { Success: true } d ? d.Groups[1].Value.Trim() : string.Empty;
+            text = JsonSerializer.Serialize(new
+            {
+                causality = arabic ? $"(مسودة) الأسباب وفق ملاحظات المسؤول: {document}" : $"(Draft) Reasons from the owner's notes: {document}",
+                correctiveActions = arabic
+                    ? "مراجعة خطة العمل مع الإدارة خلال أسبوعين\nمتابعة شهرية للمؤشر حتى العودة إلى المستهدف"
+                    : "Review the work plan with the department within two weeks\nMonthly follow-up of the KPI until it is back on target",
+                weak = document.Length < 40,
+                weakReasons = document.Length < 40 ? new[] { arabic ? "التبرير عام ولا يفسر الفجوة" : "The justification is generic and does not explain the gap" } : Array.Empty<string>(),
+            });
+        }
+        else if (system.Contains("You draft a KPI card", StringComparison.Ordinal))
+        {
+            var document = Document().Match(user) is { Success: true } d ? d.Groups[1].Value.Trim() : string.Empty;
+            var title = document.Split('\n', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault()?.Trim() ?? "KPI";
+            if (title.Length > 120)
+            {
+                title = title[..120];
+            }
+
+            var percent = document.Contains('%', StringComparison.Ordinal) || document.Contains("percent", StringComparison.OrdinalIgnoreCase)
+                || document.Contains("نسبة", StringComparison.Ordinal);
+            text = JsonSerializer.Serialize(new
+            {
+                nameAr = $"مؤشر: {title}",
+                nameEn = title,
+                descriptionAr = $"يقيس هذا المؤشر: {title}",
+                descriptionEn = $"This KPI measures: {title}",
+                measuringEquation = percent ? "(achieved ÷ planned) × 100" : "count of completed items",
+                unitCode = percent ? "percentage" : "number",
+                measuringPeriod = "quarterly",
+                direction = "increase",
+                targetType = "single",
+                target = (decimal?)null,
+                suggestions = KpiSuggestions,
+            });
+        }
+        else if (system.Contains("You write the quarterly performance report", StringComparison.Ordinal))
+        {
+            var score = ScoreLine().Match(user) is { Success: true } m ? m.Groups[1].Value.Trim() : "-";
+            text = JsonSerializer.Serialize(new
+            {
+                reportAr = $"تقرير تجريبي: بلغ الأداء العام {score}. تُعرض أبرز الأهداف والمؤشرات المتأخرة مع أسبابها والإجراءات التصحيحية.",
+                reportEn = $"Demo report: overall performance reached {score}. The highlights and the KPIs below target are listed with their reasons and corrective actions.",
             });
         }
         else if (system.Contains("You translate", StringComparison.Ordinal))
@@ -310,4 +376,10 @@ internal sealed partial class DemoChatClient(string model) : IChatClient
 
     [GeneratedRegex(@"(?:by|قبل)\s+(\d{4}-\d{2}-\d{2})")]
     private static partial Regex DueDate();
+
+    [GeneratedRegex(@"Reported value: ([^ \n]+)", RegexOptions.None, 1000)]
+    private static partial Regex KpiValue();
+
+    [GeneratedRegex(@"organisation: [^|]*\| score ([^|]+)\|", RegexOptions.None, 1000)]
+    private static partial Regex ScoreLine();
 }
