@@ -60,7 +60,7 @@ interactive approval step, so the plan was written first and then implemented as
 |---|---|
 | `dotnet build Strategy.slnx -c Release` | 0 warnings, 0 errors |
 | `dotnet format --verify-no-changes` | clean |
-| `dotnet test` | FINAL_DOTNET |
+| `dotnet test` | **1 159 / 1 159** passed: unit 409 (59 new: schema validator, masking, prompts and injection, extraction post-processing, text extraction with Arabic reading order, month boundaries, redirect rules, rate limiter) · architecture 30 (licences of every new package) · integration 720 on real PostgreSQL (19 new AI / MCP tests; the generated authorization matrix covers every new endpoint) |
 | `tools/check-vulnerable.sh` · `tools/check-api-client.sh` | no High / Critical · OpenAPI document and TS client up to date |
 | `npm run lint` · `format:check` · `typecheck` | clean |
 | `npm test` (Vitest) | **81 / 81** (new: AI-filled form review in English, AI off in Arabic, Arabic translation draft; AI / MCP message keys in both languages) |
