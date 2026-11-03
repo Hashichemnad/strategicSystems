@@ -154,7 +154,8 @@ public sealed class AiPlatformTests(AiFixture ai) : IClassFixture<AiFixture>
     {
         var scan = File.ReadAllBytes(Path.Combine(AppContext.BaseDirectory, "AI", "Samples", "scan-ar.jpg"));
         var builder = new UglyToad.PdfPig.Writer.PdfDocumentBuilder();
-        builder.AddPage(595, 842).AddJpeg(scan, new UglyToad.PdfPig.Core.PdfRectangle(0, 0, 595, 842));
+        // A page with the scan's proportions (1240 × 900 px at 150 dpi), as a scanner produces it.
+        builder.AddPage(595, 432).AddJpeg(scan, new UglyToad.PdfPig.Core.PdfRectangle(0, 0, 595, 432));
         var pdf = builder.Build();
         var editor = await ai.Factory.CreateSignedInClientAsync(roles: TestIdentity.SampleEditor);
 
