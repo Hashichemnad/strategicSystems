@@ -132,8 +132,20 @@ internal sealed class GetProjectTool(IDispatcher dispatcher) : IAppTool
         var result = await dispatcher.SendAsync(new GetProject(id), cancellationToken).ConfigureAwait(false);
         return PortfolioToolResults.From(result, p => new
         {
-            p.Id, p.Number, p.Classification, p.NameAr, p.NameEn, p.Stage, p.Status, p.Budget, p.PlannedStart, p.PlannedEnd,
-            owner = p.Owner?.NameEn ?? p.Owner?.NameAr, unit = p.Unit?.NameEn ?? p.Unit?.NameAr, p.RequestNumber, link = $"/portfolio/projects/{p.Id:D}",
+            p.Id,
+            p.Number,
+            p.Classification,
+            p.NameAr,
+            p.NameEn,
+            p.Stage,
+            p.Status,
+            p.Budget,
+            p.PlannedStart,
+            p.PlannedEnd,
+            owner = p.Owner?.NameEn ?? p.Owner?.NameAr,
+            unit = p.Unit?.NameEn ?? p.Unit?.NameAr,
+            p.RequestNumber,
+            link = $"/portfolio/projects/{p.Id:D}",
         });
     }
 }

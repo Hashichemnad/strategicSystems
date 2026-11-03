@@ -152,7 +152,13 @@ public sealed class ProposalAssessment : AuditableEntity
     public static ProposalAssessment Create(Guid requestId, int versionNo, string content, string? language, string documents, Guid? usageId, Guid? by, DateTimeOffset at) =>
         new()
         {
-            RequestId = requestId, VersionNo = versionNo, Content = content, Language = language, Documents = documents, UsageId = usageId,
-            GeneratedByUserId = by, GeneratedAt = at,
+            RequestId = requestId,
+            VersionNo = versionNo,
+            Content = content,
+            Language = language,
+            Documents = documents,
+            UsageId = usageId,
+            GeneratedByUserId = by,
+            GeneratedAt = at,
         };
 }
