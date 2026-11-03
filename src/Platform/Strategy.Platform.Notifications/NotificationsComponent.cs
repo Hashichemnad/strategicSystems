@@ -1,3 +1,4 @@
+using Strategy.Platform.AI.Tools;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
@@ -27,6 +28,7 @@ public sealed class NotificationsComponent : IPlatformComponent
         services.AddScoped<IEmailTransport, SmtpEmailTransport>();
         services.AddScoped<ITestEmailSender, TestEmailSender>();
         services.AddScoped<NotificationAdministration>();
+        services.AddAppTool<Mcp.MyNotificationsTool>();
         services.AddScoped<IDatabaseSeeder, NotificationSeeder>();
         services.AddOutboxHandler<EmailOutboxHandler>();
         services.AddOutboxHandler<InAppOutboxHandler>();

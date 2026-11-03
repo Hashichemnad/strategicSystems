@@ -23,6 +23,7 @@ public static class AuthMethods
     public const string Ldap = "ldap";
     public const string External = "ext";
     public const string Token = "pat";
+    public const string OAuth = "oauth";
 }
 
 /// <summary>Authentication scheme names.</summary>
@@ -32,4 +33,7 @@ public static class AuthSchemes
     public const string Default = "strategy";
 
     public const string PersonalAccessToken = "pat";
+
+    /// <summary>OAuth 2.1 access tokens issued by the built-in authorization server (MCP clients, ADR 0032). Registered by Platform.Mcp.</summary>
+    public const string OAuth = "oauth";
 }

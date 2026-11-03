@@ -1,3 +1,4 @@
+using Strategy.Platform.AI.Tools;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
@@ -20,6 +21,9 @@ public sealed class WorkflowComponent : IPlatformComponent
 
     public void AddServices(IServiceCollection services, IConfiguration configuration)
     {
+        services.AddAppTool<Mcp.MyPendingApprovalsTool>();
+        services.AddAppTool<Mcp.RecordStatusTool>();
+        services.AddAppTool<Mcp.ApprovalDecideTool>();
         services.AddModuleDbContext<WorkflowDbContext>(WorkflowDbContext.SchemaName);
         services.AddSingleton<ProcessRegistry>();
         services.AddScoped<OrgRelations>();

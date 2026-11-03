@@ -20,7 +20,7 @@ internal static class RateLimiting
     /// <summary>Must match the policy name the Identity endpoints use.</summary>
     public const string AuthPolicy = "auth";
 
-    /// <summary>Fixed window per client IP on <c>/api</c> and <c>/mcp</c>; static files and health checks are not limited.</summary>
+    /// <summary>Fixed window per client IP on <c>/api</c>, <c>/mcp</c> and <c>/connect</c> (OAuth); static files and health checks are not limited.</summary>
     public static IServiceCollection AddStrategyRateLimiting(this IServiceCollection services, IConfiguration configuration)
     {
         var options = configuration.GetSection("RateLimiting").Get<RateLimitingOptions>() ?? new RateLimitingOptions();
@@ -29,7 +29,7 @@ internal static class RateLimiting
             limiter.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
             {
                 var path = context.Request.Path;
-                if (!path.StartsWithSegments("/api") && !path.StartsWithSegments("/mcp"))
+                if (!path.StartsWithSegments("/api") && !path.StartsWithSegments("/mcp") && !path.StartsWithSegments("/connect"))
                 {
                     return RateLimitPartition.GetNoLimiter("unlimited");
                 }
