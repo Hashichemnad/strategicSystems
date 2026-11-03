@@ -1,6 +1,6 @@
 # 0045 — Suggested criterion levels and minutes delay
 
-- **Status:** Accepted (Phase 7)
+- **Status:** Accepted by the owner (Phase 7, before the pull request)
 - **Context:** SPEC §4.1 / §4.5: the "recommendations closure" and "governance / minutes timeliness" criteria are suggested from data; the
   leader confirms or overrides with justification. Policy text: minutes within 24 h = 10 · 48–72 h = 5 · poor = 0 (24–48 h undefined).
 

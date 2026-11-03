@@ -1,6 +1,6 @@
 # 0044 — Formation memo, certificates and the "head of the organisation" approver
 
-- **Status:** Accepted (Phase 7)
+- **Status:** Accepted by the owner (Phase 7, before the pull request)
 - **Context:** SPEC §4.5 T1.3: on formation approval the system generates a numbered bilingual memo PDF from a template, or the user uploads
   an external memo. T4: certificates of appreciation as bilingual PDFs. Q-T5: formation chain Department Director of the owning unit →
   **General Manager**. The approver rules (ADR 0025) had no way to say "the head of the organisation" without a hard-coded unit id.

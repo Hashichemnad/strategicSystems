@@ -1,6 +1,6 @@
 # 0043 — Integration events through the outbox; linked-record closure
 
-- **Status:** Accepted (Phase 7)
+- **Status:** Accepted by the owner (Phase 7, before the pull request)
 - **Context:** CLAUDE.md §5: cross-module reactions use integration events via the outbox (e.g. `ProjectClosureApproved` → Teams opens the
   project-team evaluation). ADR 0020 built the outbox (one handler per message type) but no publish / subscribe layer. Portfolio (which owns
   project closure) arrives in Phase 9; SPEC §4.3 also asks that closing "the linked record in another system" opens the evaluation.

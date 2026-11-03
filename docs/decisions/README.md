@@ -45,9 +45,9 @@ Write an ADR for every choice the SPEC or CLAUDE.md leaves open (CLAUDE.md §2 r
 | [0038](0038-task-dependencies-and-recurrence.md) | Task dependencies and recurrence | Accepted |
 | [0039](0039-confidential-tasks.md) | Confidential tasks and one visibility rule for every read path | Accepted |
 | [0040](0040-reassign-open-tasks-of-an-employee.md) | Reassigning the open tasks of an employee who leaves or moves | Accepted |
-| [0041](0041-teams-configuration-and-versioning.md) | Teams configuration: module-owned tables, versioned templates and reward matrices | Accepted |
-| [0042](0042-evaluation-results-visibility.md) | Who sees team evaluation results | Accepted |
-| [0043](0043-integration-events-outbox.md) | Integration events through the outbox; linked-record closure | Accepted |
-| [0044](0044-formation-memo-certificates-org-head.md) | Formation memo, certificates and the "head of the organisation" approver | Accepted |
-| [0045](0045-suggested-levels-and-minutes-delay.md) | Suggested criterion levels and minutes delay | Accepted |
-| [0046](0046-team-lifecycle.md) | Team lifecycle | Accepted |
+| [0041](0041-teams-configuration-and-versioning.md) | Teams configuration: module-owned tables, versioned templates and reward matrices | Accepted by the owner |
+| [0042](0042-evaluation-results-visibility.md) | Who sees team evaluation results | Accepted by the owner |
+| [0043](0043-integration-events-outbox.md) | Integration events through the outbox; linked-record closure | Accepted by the owner |
+| [0044](0044-formation-memo-certificates-org-head.md) | Formation memo, certificates and the "head of the organisation" approver | Accepted by the owner |
+| [0045](0045-suggested-levels-and-minutes-delay.md) | Suggested criterion levels and minutes delay | Accepted by the owner |
+| [0046](0046-team-lifecycle.md) | Team lifecycle | Accepted by the owner |

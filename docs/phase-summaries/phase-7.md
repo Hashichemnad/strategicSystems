@@ -75,6 +75,9 @@ The architecture rule "modules do not use other modules' internals" now compares
 only.
 
 ## Decisions (ADRs)
+All six were **accepted by the owner** as proposed before the pull request, including the *Cancelled* status, department managers
+without evaluation results by default (ADR 0042) and the 24–48 h minutes delay scored at the middle level (ADR 0045).
+
 - [0041](../decisions/0041-teams-configuration-and-versioning.md) Module-owned configuration tables; immutable published template /
   matrix versions; validation rules; Q-T5 empty matrix.
 - [0042](../decisions/0042-evaluation-results-visibility.md) One results permission and its record roles; every read path; the department

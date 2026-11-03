@@ -1,6 +1,6 @@
 # 0046 — Team lifecycle
 
-- **Status:** Accepted (Phase 7)
+- **Status:** Accepted by the owner (Phase 7, before the pull request)
 - **Context:** SPEC §4.4 A lists statuses Draft · Pending Approval · Active · Inactive · Pending Evaluation · Evaluation Waiting Approval ·
   Closed · Replaced, and §4.5 the formation, evaluation, close / replace flows.
 

@@ -1,6 +1,6 @@
 # 0041 — Teams configuration: module-owned tables, versioned templates and reward matrices
 
-- **Status:** Accepted (Phase 7)
+- **Status:** Accepted by the owner (Phase 7, before the pull request)
 - **Context:** SPEC §4.3 asks for configurable team types (with permanence, approval, memo, linkable types, cadence, evaluation trigger,
   evaluator), member roles (leader, can view results, quorum), evaluation templates **versioned per year** (criteria with weights and levels,
   member questions, grade bands, evidence threshold) and a reward matrix (grade × workload × role) versioned per year with a budget. Picklists

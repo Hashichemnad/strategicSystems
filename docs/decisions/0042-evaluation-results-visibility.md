@@ -1,6 +1,6 @@
 # 0042 — Who sees team evaluation results
 
-- **Status:** Accepted (Phase 7)
+- **Status:** Accepted by the owner (Phase 7, before the pull request)
 - **Context:** SPEC §4.2 / §4.9: "Members do **not** see evaluation results"; "evaluation results visible only to leader roles and HR".
   §4.7 also lists the Department Manager as viewing "teams and memberships / evaluations of their staff".
 
