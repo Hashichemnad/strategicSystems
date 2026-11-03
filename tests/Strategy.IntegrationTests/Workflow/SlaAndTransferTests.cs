@@ -18,7 +18,10 @@ public sealed class TravellingClock : IClock
 {
     public TimeSpan Offset { get; set; }
 
-    public DateTimeOffset UtcNow => DateTimeOffset.UtcNow + Offset;
+    /// <summary>When set, time stands still at this moment (business-hours tests need exact instants).</summary>
+    public DateTimeOffset? Frozen { get; set; }
+
+    public DateTimeOffset UtcNow => Frozen?.ToUniversalTime() ?? DateTimeOffset.UtcNow + Offset;
 }
 
 /// <summary>SLA escalation with a fake clock (design note §6).</summary>
@@ -49,7 +52,7 @@ public sealed class SlaEscalationTests(PostgresFixture postgres) : IAsyncLifetim
         var admin = await _factory.CreateSignedInClientAsync(admin: true);
         await ApprovalWorld.SaveChainAsync(admin,
             new ApprovalStepDefinition("review", "مراجعة", "Review", new ApproverRule(ApproverRuleKinds.SubmitterManager), SlaHours: 24,
-                Escalation: new ApproverRule(ApproverRuleKinds.Employee, EmployeeId: escalationTarget.EmployeeId)));
+                SlaMode: SlaModes.Calendar, Escalation: new ApproverRule(ApproverRuleKinds.Employee, EmployeeId: escalationTarget.EmployeeId)));
         var item = await world.CreateItemAsync();
         await world.SubmitOkAsync(item);
         var task = (await ApprovalWorld.PanelAsync(world.SubmitterClient, item.Id)).Instances[0].Steps.Single();

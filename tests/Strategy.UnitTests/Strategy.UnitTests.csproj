@@ -13,6 +13,7 @@
     <ProjectReference Include="..\..\src\Platform\Strategy.Platform.Audit\Strategy.Platform.Audit.csproj" />
     <ProjectReference Include="..\..\src\Platform\Strategy.Platform.Notifications\Strategy.Platform.Notifications.csproj" />
     <ProjectReference Include="..\..\src\Platform\Strategy.Platform.Scheduling\Strategy.Platform.Scheduling.csproj" />
+    <ProjectReference Include="..\..\src\Platform\Strategy.Platform.Calendar\Strategy.Platform.Calendar.csproj" />
     <ProjectReference Include="..\..\src\Platform\Strategy.Platform.Reporting\Strategy.Platform.Reporting.csproj" />
     <ProjectReference Include="..\..\src\Platform\Strategy.Platform.Files\Strategy.Platform.Files.csproj" />
   </ItemGroup>
