@@ -236,7 +236,7 @@ public sealed class AiAdministration(
 
             if (value.Quota.MonthlyTokens is <= 0 || value.Quota.MonthlyRequestsPerUser is <= 0)
             {
-                errors.Add(new FieldError("limits", "validation.greaterThan", "validation.greaterThan", new Dictionary<string, object?> { ["value"] = 0 }));
+                errors.Add(new FieldError("limits", "validation.greaterThanOrEqual", "validation.greaterThanOrEqual", new Dictionary<string, object?> { ["comparisonValue"] = 1 }));
             }
 
             return errors;
@@ -288,7 +288,7 @@ public sealed class AiAdministration(
         var errors = new List<FieldError>();
         if (string.IsNullOrWhiteSpace(input.Name) || input.Name.Trim().Length > 200)
         {
-            errors.Add(new FieldError("name", "validation.required", "validation.required"));
+            errors.Add(new FieldError("name", "validation.notEmpty", "validation.notEmpty"));
         }
 
         var adapter = adapters.FirstOrDefault(a => a.Type == input.Type);
@@ -304,7 +304,7 @@ public sealed class AiAdministration(
         }
         else if (adapter is { RequiresEndpoint: true } && string.IsNullOrWhiteSpace(input.Endpoint))
         {
-            errors.Add(new FieldError("endpoint", "validation.required", "validation.required"));
+            errors.Add(new FieldError("endpoint", "validation.notEmpty", "validation.notEmpty"));
         }
 
         if (input.Temperature is < 0 or > 2)
@@ -327,7 +327,7 @@ public sealed class AiAdministration(
 
         if (input.ApiKey is { Length: > 500 })
         {
-            errors.Add(new FieldError("apiKey", "validation.length", "validation.length", new Dictionary<string, object?> { ["max"] = 500 }));
+            errors.Add(new FieldError("apiKey", "validation.maximumLength", "validation.maximumLength", new Dictionary<string, object?> { ["maxLength"] = 500 }));
         }
 
         return errors;

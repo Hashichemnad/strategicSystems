@@ -34,8 +34,7 @@ public sealed class AskService(AiGateway gateway, ToolCatalog catalog, ToolExecu
         ArgumentNullException.ThrowIfNull(input);
         if (string.IsNullOrWhiteSpace(input.Question) || input.Question.Length > MaxQuestion)
         {
-            return Error.Validation([new FieldError("question", "validation.length", "validation.length",
-                new Dictionary<string, object?> { ["max"] = MaxQuestion })]);
+            return Error.Validation([new FieldError("question", "validation.maximumLength", "validation.maximumLength", new Dictionary<string, object?> { ["maxLength"] = MaxQuestion })]);
         }
 
         var prepared = await gateway.PrepareAsync(AiFeatures.Ask, createClient: true, ct).ConfigureAwait(false);

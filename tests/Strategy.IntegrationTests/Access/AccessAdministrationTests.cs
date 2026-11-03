@@ -68,7 +68,7 @@ public class AccessAdministrationTests(ApiFixture api) : IClassFixture<ApiFixtur
             .ShouldBeProblemAsync(HttpStatusCode.Conflict, "access.assignment.overlap");
 
         var effective = await admin.GetFromJsonAsync<JsonElement>($"{Access}/users/{user.Id}/effective");
-        effective.GetProperty("roles").EnumerateArray().Select(r => r.GetString()).ShouldBe(["org.viewer", $"org.{code}"], ignoreOrder: true);
+        effective.GetProperty("roles").EnumerateArray().Select(r => r.GetString()).ShouldBe(["org.viewer", "ai.user", $"org.{code}"], ignoreOrder: true); // org.viewer and ai.user are assigned to everyone
 
         // Ending the assignment (last day yesterday) removes the access at once.
         var a = await assignment.Content.ReadFromJsonAsync<JsonElement>();

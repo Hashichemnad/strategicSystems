@@ -143,7 +143,7 @@ public sealed class TranslationService(AiGateway gateway)
         var errors = new List<FieldError>();
         if (string.IsNullOrWhiteSpace(input.Text) || input.Text.Length > MaxLength)
         {
-            errors.Add(new FieldError("text", "validation.length", "validation.length", new Dictionary<string, object?> { ["max"] = MaxLength }));
+            errors.Add(new FieldError("text", "validation.maximumLength", "validation.maximumLength", new Dictionary<string, object?> { ["maxLength"] = MaxLength }));
         }
 
         if (input.From is not ("ar" or "en") || input.To is not ("ar" or "en") || input.From == input.To)
