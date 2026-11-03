@@ -44,8 +44,13 @@ public sealed class KpiAiTests(AiFixture ai) : IClassFixture<AiFixture>
         (await w.C(w.Outsider).PostAsJsonAsync($"{Base}/ai/results/{resultId}/evidence-check", new { })).StatusCode.ShouldBe(HttpStatusCode.NotFound);
 
         // Causality assistant: a draft the owner may accept; the result is unchanged.
-        ai.Model.Reset((_, _) => FakeChatClient.Json(new { causality = "Applications fell after the fee change.", correctiveActions = "Review the fee.", weak = true,
-            weakReasons = new[] { "Generic" } }));
+        ai.Model.Reset((_, _) => FakeChatClient.Json(new
+        {
+            causality = "Applications fell after the fee change.",
+            correctiveActions = "Review the fee.",
+            weak = true,
+            weakReasons = new[] { "Generic" }
+        }));
         var causality = await KpiWorld.OkAsync<KpiCausalityDraftDto>(w.C(w.OwnerA).PostAsJsonAsync($"{Base}/ai/results/{resultId}/causality",
             new { notes = "Fee change in March reduced applications." }));
         (causality.Causality, causality.Weak).ShouldBe(("Applications fell after the fee change.", true));
@@ -54,9 +59,17 @@ public sealed class KpiAiTests(AiFixture ai) : IClassFixture<AiFixture>
         // Card builder: draft fields validated against the allowed values, SMART check computed by the system.
         ai.Model.Reset((_, _) => FakeChatClient.Json(new
         {
-            nameAr = "نسبة إنجاز المعاملات في الوقت", nameEn = "Transactions completed on time", descriptionAr = (string?)null, descriptionEn = (string?)null,
-            measuringEquation = "on-time transactions ÷ all transactions × 100", unitCode = "percentage", measuringPeriod = "quarterly", direction = "increase",
-            targetType = "single", target = 95, suggestions = new[] { "Name the data source." },
+            nameAr = "نسبة إنجاز المعاملات في الوقت",
+            nameEn = "Transactions completed on time",
+            descriptionAr = (string?)null,
+            descriptionEn = (string?)null,
+            measuringEquation = "on-time transactions ÷ all transactions × 100",
+            unitCode = "percentage",
+            measuringPeriod = "quarterly",
+            direction = "increase",
+            targetType = "single",
+            target = 95,
+            suggestions = new[] { "Name the data source." },
         }));
         var draft = await KpiWorld.OkAsync<KpiCardDraftDto>(w.C(w.Pmo).PostAsJsonAsync($"{Base}/ai/card-builder",
             new { description = "We want to measure the share of transactions completed on time, target 95%." }));

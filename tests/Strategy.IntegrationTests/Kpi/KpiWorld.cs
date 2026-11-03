@@ -274,7 +274,11 @@ internal sealed class KpiWorld
 
     public static readonly IReadOnlyDictionary<string, bool> FullChecklist = new Dictionary<string, bool>
     {
-        ["evidence-readable"] = true, ["evidence-supports"] = true, ["equation-followed"] = true, ["correct-period"] = true, ["justification-adequate"] = true,
+        ["evidence-readable"] = true,
+        ["evidence-supports"] = true,
+        ["equation-followed"] = true,
+        ["correct-period"] = true,
+        ["justification-adequate"] = true,
     };
 
     public async Task<KpiResultDto> DecideAsync(Guid resultId, string action = "approve", string? comment = null, IReadOnlyDictionary<string, bool>? checklist = null) =>
