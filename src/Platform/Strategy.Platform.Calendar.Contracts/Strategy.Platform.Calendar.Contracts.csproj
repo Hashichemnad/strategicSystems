@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Business hours and holidays (ADR 0027): the shared working-time calculator used by every deadline. -->
+  <ItemGroup>
+    <ProjectReference Include="..\Strategy.Platform.Kernel\Strategy.Platform.Kernel.csproj" />
+  </ItemGroup>
+</Project>
