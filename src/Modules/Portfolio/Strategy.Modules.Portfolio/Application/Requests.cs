@@ -276,6 +276,12 @@ internal sealed class RequestHandlers(
         }
 
         var values = command.Values ?? new RequestValues();
+        if (values.UnitId is null)
+        {
+            // The requesting unit is not a wizard field: an edit keeps it (or falls back to the requester's unit).
+            values = values with { UnitId = request.UnitId ?? await reader.UnitOfAsync(request.RequesterEmployeeId, cancellationToken).ConfigureAwait(false) };
+        }
+
         var errors = RequestRules.ValidateFormat(values, await reader.RuleContextAsync(request, cancellationToken).ConfigureAwait(false));
         errors.AddRange(await evaluator.LookupErrorsAsync(values, cancellationToken).ConfigureAwait(false));
         if (errors.Count > 0)

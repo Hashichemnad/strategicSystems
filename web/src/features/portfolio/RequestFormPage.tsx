@@ -180,7 +180,7 @@ function NewRequest() {
           <p className="text-sm text-muted-foreground">{t('start.documentHint')}</p>
           {!extractOn && <StatusBanner tone="warning" title={t('start.noAi')} />}
           <FileDrop
-            label={t('start.add')}
+            label={t('start.choose')}
             accept=".pdf,.docx,.pptx,.png,.jpg,.jpeg,.tif,.tiff"
             file={file}
             onFile={setFile}

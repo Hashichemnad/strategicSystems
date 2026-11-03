@@ -20,7 +20,8 @@
     "filled": "{{count}} values proposed from {{files}} document(s). Review each one before saving.",
     "missingTitle": "Not found in the documents",
     "missingHint": "Fill these yourself:",
-    "assessing": "Writing the Proposal Assessment…"
+    "assessing": "Writing the Proposal Assessment…",
+    "choose": "Choose a document"
   },
   "views": {
     "all": "All",
@@ -166,7 +167,8 @@
     "plannedStart": "Planned start",
     "plannedEnd": "Planned end",
     "request": "Program request",
-    "source": "Created from"
+    "source": "Created from",
+    "unitId": "Requesting unit"
   },
   "values": {
     "yes": "Yes",

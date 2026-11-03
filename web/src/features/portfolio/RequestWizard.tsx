@@ -243,27 +243,24 @@ export function RequestWizard({
         break;
       case 'date':
         input = (
-          <div className={cn('rounded-md', highlight)}>
-            <DatePicker
-              value={value || undefined}
-              aria-invalid={invalid}
-              onChange={(next) => set(name, next ?? '')}
-            />
-          </div>
+          <DatePicker
+            value={value || undefined}
+            aria-invalid={invalid}
+            onChange={(next) => set(name, next ?? '')}
+          />
         );
         break;
       case 'yesno':
       case 'choice':
         input = (
-          <div className={cn('rounded-md', highlight)}>
-            <Select
-              value={value || undefined}
-              aria-invalid={invalid}
-              placeholder={t('values.choose')}
-              onValueChange={(next) => set(name, next)}
-              options={spec.kind === 'yesno' ? yesNo : (spec.choices?.(options) ?? [])}
-            />
-          </div>
+          <Select
+            value={value || undefined}
+            aria-invalid={invalid}
+            className={cn(highlight)}
+            placeholder={t('values.choose')}
+            onValueChange={(next) => set(name, next)}
+            options={spec.kind === 'yesno' ? yesNo : (spec.choices?.(options) ?? [])}
+          />
         );
         break;
       default:
@@ -280,7 +277,13 @@ export function RequestWizard({
         );
     }
     return (
-      <div className="flex flex-col gap-1" data-field={name}>
+      <div
+        className={cn(
+          'flex flex-col gap-1 rounded-md',
+          spec.kind === 'date' && highlight ? `${highlight} p-1` : undefined,
+        )}
+        data-field={name}
+      >
         <FormField
           label={label ?? t(`fields.${name}` as 'fields.nameAr')}
           error={translateFieldMessage(tc, errors[name])}

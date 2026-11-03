@@ -166,6 +166,7 @@ public sealed class PortfolioApiTests(PortfolioFixture fx) : IClassFixture<Portf
         codes["screening"].ShouldBe("portfolio.errors.screeningRequired");
         codes["returnValue"].ShouldBe("validation.notEmpty");
         codes["returnYear"].ShouldBe("validation.notEmpty");
+        codes.ShouldNotContainKey("unitId"); // an edit without a unit keeps the requesting unit
 
         // Format rules apply on every save: 4-digit years, two decimals, "other" needs its text, unknown lookup codes.
         var save = await w.C(w.Requester).PutAsJsonAsync($"{Base}/requests/{created.Id}", new

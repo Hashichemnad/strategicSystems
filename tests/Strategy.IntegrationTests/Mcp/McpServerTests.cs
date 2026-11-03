@@ -132,6 +132,7 @@ public sealed class McpServerTests(ApiFixture api) : IClassFixture<ApiFixture>
     [Fact]
     public async Task Administrators_switch_tools_and_limits_and_approve_tools_still_check_the_approver()
     {
+        await SetSettingsAsync(s => s with { Enabled = true }); // independent of the order the class's tests run in
         var user = await api.Factory.CreateUserAsync();
         await using var client = await McpAsync(await TokenAsync(user.Id, TokenScopes.Mcp));
         try

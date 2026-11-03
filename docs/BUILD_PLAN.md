@@ -517,7 +517,7 @@ Implement, then run the full hardening review and fix findings, run performance 
 | 5 | AI platform & MCP | ☑ built — awaiting owner acceptance | |
 | 6 | Links & Task Management | ☑ built — awaiting owner acceptance | |
 | 7 | Teams Management | ☑ built — awaiting owner acceptance | |
-| 8 | Portfolio A — Requests | ☐ | |
+| 8 | Portfolio A — Requests | ☑ built — awaiting owner acceptance | |
 | 9 | Portfolio B — Lifecycle & change | ☐ | |
 | 10 | Portfolio C — Agile, standards, Gantt | ☐ | |
 | 11 | Wasel vendor portal | ☐ | |
