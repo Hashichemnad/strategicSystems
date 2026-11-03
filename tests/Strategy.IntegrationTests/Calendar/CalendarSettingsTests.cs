@@ -173,11 +173,16 @@ public sealed class CalendarSettingsTests(ApiFixture api) : IClassFixture<ApiFix
         var thursday = new DateTimeOffset(year, 5, 1, 9, 0, 0, TimeSpan.FromHours(4));
         (await calculator.IsWorkingTimeAsync(other.Id, thursday)).ShouldBeFalse();
 
-        var listed = (await admin.GetFromJsonAsync<List<HolidayDto>>($"{Holidays}?year={year}"))!;
-        listed.Select(h => h.NameEn).ShouldBe(["Branch day", "Head office day"], ignoreOrder: true);
-        var removed = await admin.PostAsJsonAsync($"{Holidays}/{listed[0].Id}/remove", new VersionInput(listed[0].Version));
+        // Only this test's one-time holidays are checked: yearly holidays created by other tests of the class also show in this year.
+        string[] mine = ["Branch day", "Head office day"];
+        var listed = (await admin.GetFromJsonAsync<List<HolidayDto>>($"{Holidays}?year={year}"))!.Where(h => mine.Contains(h.NameEn)).ToList();
+        listed.Select(h => h.NameEn).ShouldBe(mine, ignoreOrder: true);
+        listed.ShouldNotContain(h => h.NameEn == "Public holiday"); // the refused one was not saved
+        var branch = listed.Single(h => h.NameEn == "Branch day");
+        var removed = await admin.PostAsJsonAsync($"{Holidays}/{branch.Id}/remove", new VersionInput(branch.Version));
         removed.StatusCode.ShouldBe(HttpStatusCode.OK);
-        (await admin.GetFromJsonAsync<List<HolidayDto>>($"{Holidays}?year={year}"))!.Count.ShouldBe(1);
+        (await admin.GetFromJsonAsync<List<HolidayDto>>($"{Holidays}?year={year}"))!.Select(h => h.NameEn)
+            .ShouldNotContain("Branch day");
     }
 
     [Fact]
@@ -215,7 +220,9 @@ public sealed class CalendarSettingsTests(ApiFixture api) : IClassFixture<ApiFix
         report.Committed.ShouldBeFalse();
         report.Issues.Select(i => (i.Row, i.Code)).ShouldBe(
             [(4, "calendar.errors.importOtherYear"), (5, "calendar.errors.endBeforeStart"), (6, "calendar.errors.holidayOverlap")], ignoreOrder: true);
-        (await admin.GetFromJsonAsync<List<HolidayDto>>($"{Holidays}?year=2032"))!.ShouldBeEmpty();
+        // Nothing from the refused file was saved (yearly holidays of other tests may also show in 2032).
+        string[] fromFile = ["Eid", "Wrong year", "Half day", "Overlaps Eid"];
+        (await admin.GetFromJsonAsync<List<HolidayDto>>($"{Holidays}?year=2032"))!.Where(h => fromFile.Contains(h.NameEn)).ShouldBeEmpty();
 
         var valid = Workbook(
             ["عيد", "Eid", "2032-03-10", "2032-03-12", "Y", "", "", "N", ""],
