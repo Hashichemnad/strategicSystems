@@ -16,13 +16,15 @@ written first and then implemented as it stands; its open choices are recorded a
 | Built-in condition facts | `submitter`, `submitterManager`, `sectionManager`, `departmentDirector`, `unitHead`, `unitLevel`, `submitterIsUnitHead` + the module's variables (Sample: `amount`). **Q-P4** default: section-manager step only when the section has a manager distinct from the director and the submitter |
 | Decisions | Approve / reject / return (+ custom), comments per configuration, **403 for someone who can see the record but is not an approver, 404 for someone who cannot see it**. Approvers get a temporary **approver record role** on the record while their task is open (CLAUDE.md §7) |
 | Delegation (closes Phase 1) | A delegate of an assignee (delegation in force, scope covering the process or its system) may act; the task, the history, **every audit row of the save** (`on_behalf_of`) and the explicit event carry both people; the delegator is notified. A submitter can never decide on their own request, not even as a delegate |
-| SLA (Quartz `workflow.sla`, every 15 min) | Overdue task → one reminder to its approvers; the escalation target is added as an approver and notified; history + audit event; runs once per task |
+| SLA (Quartz `workflow.sla`, every 15 min) | Due time counted in **working hours** (default) of the default business hours, the record's unit or a specific record — or in calendar hours — through the shared calculator, snapshotted on the task with the business-hours name. Overdue task → one reminder to its approvers; the escalation target is added as an approver and notified; history + audit event; runs once per task |
+| Business hours and holidays (`Strategy.Platform.Calendar` + `.Contracts`, schema `calendar`, ADR 0027 — added before the pull request at the owner's request, modelled on Salesforce) | **Business hours:** several records (names AR/EN, time zone, active, exactly one **default** that cannot be deactivated; no deletes); per weekday *closed*, *24 hours* or a start–end time. Seeded default: Monday–Friday 07:30–15:30, Saturday–Sunday closed, the installation's time zone (Asia/Dubai). **Units** may use their own record; child units inherit it, else the default. **Holidays:** names AR/EN, a date or range, all day or specific hours, one-time or every year on a fixed date (Hijri-based ones entered per year), for all records or chosen ones; two holidays sharing a record may not overlap (the message names the other holiday and the date); **Excel import per year** (template, check, report, all-or-nothing). **`IBusinessHoursCalculator`** (add working time, working time between two moments, is-working-time, resolve for a unit) with a pure, tested core, for every later deadline. Permissions `calendar.business-hours.read` / `.manage` (roles *Business hours administrator* — one of the platform administrator roles — and *viewer*) |
 | Bulk role transfer (closes Phase 2) | `IRoleTransferHook` now receives the transfer's DbContext: pending tasks whose step rule is a transferred role are re-resolved inside the same transaction; old approvers removed (with reason), new ones added (`source = transfer`), approver rights moved, history `rerouted`, audit event `workflow.task.rerouted`, new approvers notified |
 | Notifications (closes Phase 3) | Seven bilingual templates (`workflow.taskAssigned`, `taskOverdue`, `taskEscalated`, `approved`, `rejected`, `returned`, `actedOnBehalf`), editable in Settings → Notifications, sent through the outbox in the action's transaction, deep link to the record |
 | Idempotency (CLAUDE.md §11, ADR 0026) | `.WithIdempotency()` on `POST …/submit` and `POST /workflow/tasks/{id}/act`: same key + same request → stored response replayed (`Idempotent-Replayed: true`), handler not run again; same key + other request → 422; concurrent → 409; failures are not remembered. Records kept 24 h (`workflow.idempotency-cleanup` job) |
 | Current status + My Work | `ICurrentStatusProvider` per record type (`GET /workflow/status/{type}/{id}`): message key + bilingual params, who acts, the actions valid for the caller now. `GET /workflow/my-work`: pending approvals (own and delegated, overdue first), items needing my action from every `IMyWorkSource` of an enabled system, my requests, counters |
 | Approval Settings centre API | List of every registered process (grouped by system), detail with variables, role / record-role / template options and functions, versions, **save with field-indexed validation**, **live condition check**, **"who would approve" preview** of unsaved steps for a sample submitter / unit / values, approval level settings |
 | Sample module (worked example) | `amount`, `approval_status`, `POST /items/{id}/submit` (permission `sample.item.submit`, idempotent), process `sample.item-approval` (Q-P4 section manager → department director → item approver when `amount > 100000`), hook, current-status provider, My Work card (items returned for correction), approver record role |
+| Web — business hours | **Settings → Business hours** (each record's week at a glance, editor with the weekly grid and time-zone list, make default / deactivate, units with their own hours, "try a deadline" calculator) and **Settings → Holidays** (year view, editor with dates, hours, yearly repeat and records, removal with confirmation, Excel import with row errors and report). Step editor: SLA in working / calendar hours and which business hours. Approval panel and My Work: "due ⟨date⟩ · ⟨business hours⟩" |
 | Web | **My Work** home page (counters, pending approvals with step / due / overdue / on-behalf chips and deep links, needs-my-action, my requests, latest notifications). **Settings → Approvals** (processes by system, level settings) and the **process editor** (ordered step cards with move / add / remove, rule editor with role / unit / employee / record-role pickers, condition editor with live validation and the variable list, decisions + custom buttons, SLA + escalation, versions tab, **live preview panel**). Shared **approval panel** (steps with states, approvers, due / overdue, decision buttons, decision dialog with comment rules and "act as" for delegates, history timeline, earlier submissions) and **current-status banner**; sample record page with stage stepper, banner, submit dialog and *Approvals* tab. AR + EN, RTL / LTR |
 
 ## Acceptance checks (BUILD_PLAN Phase 4)
@@ -31,7 +33,7 @@ written first and then implemented as it stands; its open choices are recorded a
 |---|---|
 | Admin creates a 3-step process with a conditional step in the UI; a demo record follows it, including return for correction and resubmission | **Integration** `ApprovalSettingsTests.Admin_builds_a_three_step_chain_with_a_conditional_step_and_a_record_follows_it`: line manager → director (condition `amount >= 1000`, custom "approve with conditions") → finance; a small amount skips step 2; a large one is returned at step 2, resubmitted (attempt 2) and approved through, the custom decision recorded. `ApprovalFlowTests.Return_for_correction_and_resubmission_link_the_attempts`. **E2E** (ar + en) `approvals.spec`: the admin adds a conditional step in the editor, sees an invalid condition explained and then accepted, previews who approves, saves a version; Ahmed submits, Mariam returns (comment required), Ahmed resubmits, Mariam approves |
 | Delegated approver approves "on behalf of"; history shows both names | `ApprovalFlowTests.Delegate_acts_on_behalf_and_both_names_are_recorded`: My Work lists the task "for" the director; the delegate approves; the step and the history show actor + on-behalf-of; the audit entries of the task change, the item's own change and the `workflow.task.approve` event carry `on_behalf_of`; the director is notified. `A_submitter_cannot_approve_their_own_request_as_a_delegate`. Vitest: the decision dialog sends `onBehalfOfUserId` |
-| Overdue step escalates per SLA (time-travel test with fake clock) | `SlaEscalationTests` with a travelling `IClock`: not due → nothing; +25 h → reminder + escalation target added and notified, history `reminded` / `escalated`, My Work flags it overdue, a second run does nothing, the escalation target approves, the audit event has channel `job` |
+| Overdue step escalates per SLA (time-travel test with fake clock) | `WorkingHoursSlaTests` with a frozen `IClock`: Friday 13:00 + 4 working hours → Monday 09:00 (Dubai); Sunday night not due, Monday 09:01 escalates. `SlaEscalationTests` (calendar hours) with a travelling `IClock`: not due → nothing; +25 h → reminder + escalation target added and notified, history `reminded` / `escalated`, My Work flags it overdue, a second run does nothing, the escalation target approves, the audit event has channel `job` |
 | My Work lists pending approvals across modules with deep links; current-status banner shows next actions | `ApprovalFlowTests.Approvers_are_notified_and_my_work_lists_the_pending_approval_with_a_deep_link`, `Approver_gets_read_rights…` (banner actions for the approver), `Return_for_correction…` (banner "resubmit" for the owner). **E2E**: My Work → deep link → banner decision buttons; screenshots `my-work`, `record-status-draft`, `record-approved` |
 
 **Also asked for in this phase:**
@@ -43,6 +45,7 @@ written first and then implemented as it stands; its open choices are recorded a
 | An approver outside the chain cannot act (403) | `Someone_outside_the_chain_cannot_act`: reader → 403 `workflow.notAnApprover`, outsider → 404 (task, panel, status), submitter → 403 |
 | Every action audited | `Every_action_is_audited`: explicit events `workflow.instance.submit / resubmit`, `workflow.task.return / approve` per instance with user, reason, channel; field-level instance / task changes; transfer and escalation events in their own tests |
 | Bulk role transfer moves pending tasks | `RoleTransferReroutingTests` through `POST /access/transfers`: approvers swapped, history `rerouted` with the reason, audit event with the new approver, assignee rows ended, old holder 403, new holder notified and approves |
+| Business hours (owner request) | **Unit** `WorkingCalendarTests` (15): within a day, end exactly at closing, before / after hours, **across the weekend**, **all-day and partial holidays**, yearly holidays and 29 February, **a time zone other than UTC** (Dubai vs UTC inputs and records), daylight-saving change (London), **24-hour record** with and without a holiday, no working time at all, the holiday overlap table. **Integration** `WorkingHoursSlaTests` (frozen clock): weekend; **holiday** moves the due date while **a holiday of another record does not**; **a unit's own 24-hour record applies to a team two levels below it**, while a default-source step ignores it; **calendar hours**; **a specific record in UTC**; the business-hours name on the panel and in My Work. `CalendarSettingsTests`: seeded default, validation messages, exactly one default that cannot be deactivated, calculator endpoint, unit inheritance and "inherit" again, holidays for one record vs all with the overlap message, yearly holidays shown in later years, Excel import all-or-nothing with row errors, permissions |
 | Same idempotency key does not double-approve | `Repeating_a_decision_with_the_same_idempotency_key_does_not_approve_twice`: replayed submit and approve (same body, header), one `submitted` and one `approved` history row, other request with the key → 422, a failed request (409) not remembered |
 
 ## Quality gates run
@@ -51,12 +54,12 @@ written first and then implemented as it stands; its open choices are recorded a
 |---|---|
 | `dotnet build Strategy.slnx -c Release` | 0 warnings, 0 errors |
 | `dotnet format --verify-no-changes` | clean |
-| `dotnet test` | **946 / 946** passed: unit 335 (54 new expression cases) · architecture 30 · integration 581 on real PostgreSQL (28 new workflow tests; the generated authorization matrix covers every new endpoint) |
+| `dotnet test` | **1 028 / 1 028** passed: unit 350 (54 expression cases, 15 working-time cases) · architecture 30 · integration 648 on real PostgreSQL (28 workflow tests, 13 business-hours tests; the generated authorization matrix covers every new endpoint). In the full parallel run the Gotenberg PDF snapshot test failed once at container start-up; it passes when re-run, before and after this change |
 | `tools/check-vulnerable.sh` · `tools/check-api-client.sh` | no High / Critical · OpenAPI document and TS client up to date |
 | `npm run lint` · `format:check` · `typecheck` | clean |
 | `npm test` (Vitest) | **75 / 75** (new: the shared approval panel in English and Arabic — steps, overdue, history, comment rule, decision on behalf with an idempotency key; every server message key has AR + EN text) |
 | `npm run build` · `npm audit --audit-level=high` · `npm run lint:licenses` | OK · no High / Critical (the same 14 moderate dev-tool advisories as Phase 3) · 610 packages allowed |
-| `npx playwright test` | **54 / 54** (27 scenarios × ar + en; 2 new Phase 4 scenarios) |
+| `npx playwright test` | **58 / 58** (29 scenarios × ar + en; 4 new Phase 4 scenarios: Approval Settings centre with preview, the approval flow, Settings → Business hours, Settings → Holidays). Two locators in the new specs were made stricter after the full run; those 8 tests were then re-run and pass |
 | `--migrate` on an empty database | schema `workflow` added; seeder creates version 1 of each registered process |
 
 **No dependency was added** (the expression evaluator is in-house, ADR 0022); `THIRD_PARTY_LICENSES.md` is unchanged.
@@ -67,6 +70,9 @@ written first and then implemented as it stands; its open choices are recorded a
 - [0024](../decisions/0024-approval-process-versions.md) Process keys in code, steps versioned in the database; no draft state; in-flight instances keep their version.
 - [0025](../decisions/0025-approver-rules-and-no-approver.md) Rule semantics (levels from settings, role holders, owning unit, team placeholder), self-approval excluded by default, "nobody can approve" blocks by default, any one approver decides.
 - [0026](../decisions/0026-idempotency-keys.md) Idempotency keys: table in `workflow`, successful responses replayed for 24 h.
+- [0027](../decisions/0027-business-hours-and-holidays.md) Business hours, holidays and working-time SLAs: new platform component `Calendar` (schema
+  `calendar`), exactly one default, one interval per weekday, the holiday overlap rule, unit inheritance, steps choose working / calendar hours
+  and which business hours, due times snapshotted; Sample defaults become 16 / 16 / 40 working hours.
 
 ## Deviations
 - **From the SPEC:** none.
@@ -74,15 +80,17 @@ written first and then implemented as it stands; its open choices are recorded a
   - Step escalation is **one level** (reminder + escalation target when overdue). Repeated reminders and multi-level escalation can be added as
     step options later.
   - "Any one of the approvers decides" per step; unanimous / quorum steps are not offered (ADR 0025).
-  - SLA hours are calendar hours (no business calendar yet).
+  - Business hours allow **one interval per day** and no overnight shifts (a "24 hours" day covers round-the-clock work); a holiday's
+    hours apply to every day of its range (ADR 0027).
   - An approver still needs **system access** to open the record page (CLAUDE.md §7 effective access); the decision itself is checked on being
     the approver, so My Work and the approval endpoints work without it.
 - **Contracts changed:** `RoleTransfer` (units, reason) and `IRoleTransferHook` (transaction context); `ISystemState.GetOwningUnitAsync`; new
   `IRoleHolderQuery`; `IRecordRoleService.Grant/RevokeInTransactionAsync`; `IEmployeeDirectory.GetEmployeeIdsInUnitsAsync`;
   `IDelegationQuery.GetDelegationsToAsync`.
-- **Platform administrators** now also receive the `workflow.administrator` role when granted (first administrator, dev seed). Existing
+- **Platform administrators** now also receive the `workflow.administrator` and `calendar.administrator` roles when granted (first administrator, dev seed). Existing
   installations assign it in Settings → Assignments. The seeded *Sample editor* role gains `sample.item.submit` only on new installations
   (roles are seeded once).
+- **CLAUDE.md:** the platform project list and schemas include `Calendar` / `calendar`.
 - **Development seed:** Mariam is now head of the Strategy & Performance Department, so the demo chain has a department director.
 
 ## Fixes found along the way
@@ -114,7 +122,12 @@ cd web && npm ci && npm run dev                       # http://localhost:5173
 3. **Mariam**: **My Work** lists it; open it → the banner offers *Approve / Reject / Return*; **Return** with a comment.
 4. **Ahmed**: My Work → *Needs your action* → the item → **Resubmit**.
 5. **Mariam**: *Approvals* tab → **Approve**; the panel shows both submissions and the history; Ahmed's item shows *Approved*.
-6. Delegation: Profile → Delegations (Mariam → another employee, scope `sample`); that employee sees Mariam's approvals "for Mariam" and
+6. **Business hours:** Settings → **Business hours** shows *Standard business hours* (Mon–Fri 07:30–15:30, Asia/Dubai). Create a 24-hour record,
+   assign it to a department under *Units with their own business hours*, try a deadline in the calculator. Settings → **Holidays**: add a
+   one-day holiday next Monday for all records; import a year from the Excel template. In Settings → Approvals the steps count their SLA in
+   working hours of the default record; a new submission's due date (approval panel, My Work) now skips the weekend and the holiday and names
+   the business hours.
+7. Delegation: Profile → Delegations (Mariam → another employee, scope `sample`); that employee sees Mariam's approvals "for Mariam" and
    decides on her behalf; the History tab and the Audit Log show both names.
 
 ## Cloud environment notes
@@ -122,4 +135,4 @@ cd web && npm ci && npm run dev                       # http://localhost:5173
 - The sandbox Chromium differs from `@playwright/test` 1.56.1: `E2E_CHROMIUM_PATH=/opt/pw-browsers/chromium`.
 - Screenshots (generated by the E2E suite) are in [`docs/screenshots/phase-4/`](../screenshots/phase-4/) as `ar-*` / `en-*` pairs. **New in
   Phase 4:** `approval-settings`, `approval-step-editor-preview`, `approval-versions`, `my-work`, `record-status-draft`, `approval-panel`,
-  `record-approved`. **Earlier phases, retaken** with the new home page.
+  `record-approved`, `settings-business-hours`, `business-hours-editor`, `settings-holidays`, `holiday-editor`. **Earlier phases, retaken** with the new home page.

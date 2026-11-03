@@ -79,7 +79,7 @@ test.describe('approval settings', () => {
     await page.getByLabel(wf('editor.note')).fill(`E2E ${tag}`);
     await page.getByRole('button', { name: wf('editor.save') }).click();
     await expect(
-      page.getByText(new RegExp(wf('editor.saved', { version: 'XX' }).replace('XX', '\\d+'), 'u')),
+      page.getByText(new RegExp(wf('editor.saved', { version: 'XX' }).replace('XX', '\\d+'), 'u')).first(),
     ).toBeVisible();
     await added.getByRole('button', { name: wf('editor.removeStep') }).click();
     await page.getByRole('button', { name: wf('editor.save') }).click();

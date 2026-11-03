@@ -31,3 +31,4 @@ Write an ADR for every choice the SPEC or CLAUDE.md leaves open (CLAUDE.md §2 r
 | [0024](0024-approval-process-versions.md) | Approval processes: code-registered keys, database-versioned steps | Accepted |
 | [0025](0025-approver-rules-and-no-approver.md) | Approver rule semantics, self-approval and steps without an approver | Accepted |
 | [0026](0026-idempotency-keys.md) | Idempotency keys on submit and approval endpoints | Accepted |
+| [0027](0027-business-hours-and-holidays.md) | Business hours, holidays and working-time SLAs | Accepted |

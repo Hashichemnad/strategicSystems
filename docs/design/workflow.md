@@ -192,3 +192,38 @@ bulk transfer re-routes pending tasks with history + audit; repeated idempotency
 in-flight instances keep their version; Approval Settings validation and preview; authorization matrix covers the new endpoints.
 E2E (ar + en): admin edits a 3-step process with a conditional step and previews it; Ahmed submits, Mariam returns, Ahmed resubmits,
 Mariam approves; My Work; screenshots in `docs/screenshots/phase-4/`.
+
+## 14. Business hours and holidays (added before the Phase 4 pull request, ADR 0027)
+
+**Component.** `Strategy.Platform.Calendar` (schema `calendar`) + `Strategy.Platform.Calendar.Contracts` (`IBusinessHoursCalculator`), modelled on
+Salesforce Business Hours and Holidays. Used by the approval engine now, and by later deadlines (KPI windows, CAP due dates, task due dates).
+
+| Table | Columns | Notes |
+|---|---|---|
+| `business_hours` | `name_ar`, `name_en`, `time_zone` (IANA), `active`, `is_default`, `days` (jsonb: 7 × `{day, mode: closed / allDay / hours, start, end}`) | Exactly one default (partial unique index); the default cannot be deactivated; no deletes (deactivate) |
+| `holiday` | `name_ar`, `name_en`, `start_date`, `end_date`, `all_day`, `start_time`, `end_time`, `recurring` (yearly, fixed date), `applies_to_all`, `business_hours_ids` (uuid[]), `active` | Hijri holidays are entered per year as one-time dates. Removing = inactive |
+| `unit_business_hours` | `unit_id` (unique), `business_hours_id` (null = inherit) | A unit uses its own record, else its parent's (nearest ancestor), else the default |
+
+Seed: *Standard business hours* (الساعات الرسمية), Monday–Friday 07:30–15:30, Saturday and Sunday closed, time zone = the installation's
+(Settings → Regional, default Asia/Dubai), default.
+
+**Validation** (message keys `calendar.errors.*`): at least one name; a known time zone; seven days; a "hours" day needs start and end with
+end after start (no overnight shifts); at least one working day; a holiday ends on or after its start, lasts at most 366 days, a recurring one
+stays within one calendar year, partial-day hours end after they start, it applies to all records or to at least one active record; **two active
+holidays that share a business-hours record may not overlap** (same dates, and for partial-day ones overlapping hours) — the message names the
+other holiday and the date.
+
+**Calculator** (`IBusinessHoursCalculator`): `GetDefault`, `Get`, `ListActive`, `ResolveForUnit` (inheritance), `AddWorkingTime(record, start,
+duration)`, `WorkingTimeBetween(record, from, to)`, `IsWorkingTime`. Pure core `WorkingCalendar`: per local date, the day's interval (closed /
+00:00–24:00 / start–end) minus holidays (all-day removes the date; partial removes its hours), converted to UTC with the record's time zone
+(DST gaps move to the first valid moment). Results are cached per record and dropped on every calendar change.
+
+**Approval SLA.** Each step: `slaHours`, `slaMode` = `working` (default) / `calendar`, `businessHoursSource` = `default` / `unit` (the record's
+unit, with inheritance) / `specific` (+ `businessHoursId`; an inactive record falls back to the default). The due time is computed when the step
+opens and snapshotted on the task with the business-hours name; reminders and escalations fire at that due time (SLA job). The approval panel
+and My Work show "due ⟨date⟩ · ⟨business hours name⟩" (or "calendar hours").
+
+**API** (`/api/v1/calendar`, permissions `calendar.business-hours.read` / `.manage`): business hours list / get / create / update / make default /
+activate / deactivate / calculate (try "start + N working hours"); unit assignments list / set / effective; holidays by year / create / update /
+remove; holiday import for a year (template, validate, commit, report). **Screens:** Settings → Business hours (records with the weekly
+grid, unit assignments, calculator) and Settings → Holidays (year view, editor, Excel import).

@@ -141,7 +141,7 @@ function BusinessHoursDialog({ record, onClose }: { record?: BusinessHours; onCl
         </div>
         <fieldset className="flex flex-col gap-2">
           <legend className="mb-2 text-sm font-semibold">{t('businessHours.week')}</legend>
-          {errors.errorFor('days') && <p className="text-sm text-danger">{errors.errorFor('days')}</p>}
+          {errors.errorFor('week') && <p className="text-sm text-danger">{errors.errorFor('week')}</p>}
           {days.map((day, index) => (
             <div key={day.day} className="grid items-start gap-2 sm:grid-cols-[8rem_10rem_1fr_1fr]">
               <span className="pt-2 text-sm font-medium">{weekdayName(day.day, i18n.language)}</span>
@@ -259,12 +259,12 @@ function RecordCard({ record, onEdit }: { record: BusinessHours; onEdit: () => v
           </div>
         )}
       </header>
-      <dl className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm sm:grid-cols-4 lg:grid-cols-7">
+      <dl className="grid grid-cols-2 gap-x-4 gap-y-1 text-sm sm:grid-cols-4 2xl:grid-cols-7">
         {record.days.map((day) => (
           <div key={day.day} className="flex flex-col rounded-md bg-muted/50 px-3 py-2">
             <dt className="text-muted-foreground">{weekdayName(day.day, i18n.language)}</dt>
             <dd
-              className={day.mode === 'closed' ? 'text-muted-foreground' : 'font-medium'}
+              className={day.mode === 'closed' ? 'text-muted-foreground' : 'font-medium whitespace-nowrap'}
               dir={day.mode === 'hours' ? 'ltr' : undefined}
             >
               {dayText(day)}
@@ -385,7 +385,11 @@ function Calculator({ records }: { records: readonly BusinessHours[] }) {
   const { t: tc } = useTranslation();
   const calculate = useCalculate();
   const [recordId, setRecordId] = useState(records.find((r) => r.isDefault)?.id);
-  const [start, setStart] = useState(() => new Date().toISOString().slice(0, 16));
+  // datetime-local takes the browser's local time.
+  const [start, setStart] = useState(() => {
+    const now = new Date();
+    return new Date(now.getTime() - now.getTimezoneOffset() * 60_000).toISOString().slice(0, 16);
+  });
   const [hours, setHours] = useState('8');
   const record = records.find((r) => r.id === recordId);
   return (
