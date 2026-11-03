@@ -54,6 +54,13 @@ internal sealed class ActOnTaskHandler(
             return Error.Forbidden();
         }
 
+        // The action exists here for the other party only (e.g. an assignee approving): visible but not theirs to take → 403 (ADR 0035).
+        if (TaskWorkflow.Find(task.Template, task.Status, command.Action, isCreator, isAssignee) is null
+            && TaskWorkflow.Find(task.Template, task.Status, command.Action, true, true) is not null)
+        {
+            return Error.Forbidden();
+        }
+
         var settings = await settingsStore.GetAsync<TaskSettings>(cancellationToken).ConfigureAwait(false);
         var guards = new TaskGuards(
             await db.Tasks.CountAsync(s => s.ParentTaskId == task.Id && !TaskStatuses.Closed.Contains(s.Status), cancellationToken).ConfigureAwait(false),
@@ -123,9 +130,11 @@ internal sealed class ActOnTaskHandler(
         }
 
         await NotifyAsync(task, command, actorEmployee, cancellationToken).ConfigureAwait(false);
+        await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+
+        // The workflow event in the audit trail (its own connection: after the commit, the chain lock is free).
         await audit.WriteAsync(new AuditEvent($"tasks.task.{command.Action}", true, TaskPermissions.SystemCode, TaskItem.EntityType, task.Id.ToString(),
             new { from, to = task.Status, feedbackPoint = command.FeedbackPoint }, command.Reason ?? command.Comment), cancellationToken).ConfigureAwait(false);
-        await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
         await db.Entry(task).ReloadAsync(cancellationToken).ConfigureAwait(false);
         return await reader.DetailAsync(task, user, cancellationToken).ConfigureAwait(false);
     }
