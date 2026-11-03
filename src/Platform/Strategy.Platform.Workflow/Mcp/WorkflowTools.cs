@@ -22,8 +22,23 @@ internal sealed class MyPendingApprovalsTool(ApprovalQueries queries) : IAppTool
             work.Counts.Overdue,
             approvals = work.Approvals.Select(a => new
             {
-                a.TaskId, a.ProcessNameEn, a.ProcessNameAr, a.ResourceType, id = a.ResourceId, a.Number, a.TitleAr, a.TitleEn, a.StepNameEn, a.StepNameAr,
-                a.SubmitterName, a.SubmittedAt, a.DueAt, a.Overdue, onBehalfOf = a.OnBehalfOf?.NameEn, a.Attempt, link = a.Link,
+                a.TaskId,
+                a.ProcessNameEn,
+                a.ProcessNameAr,
+                a.ResourceType,
+                id = a.ResourceId,
+                a.Number,
+                a.TitleAr,
+                a.TitleEn,
+                a.StepNameEn,
+                a.StepNameAr,
+                a.SubmitterName,
+                a.SubmittedAt,
+                a.DueAt,
+                a.Overdue,
+                onBehalfOf = a.OnBehalfOf?.NameEn,
+                a.Attempt,
+                link = a.Link,
             }),
         });
     }

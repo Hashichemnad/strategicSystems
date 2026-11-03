@@ -4,8 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Strategy.Modules.Sample.Application;
 using Strategy.Modules.Sample.Domain;
 using Strategy.Modules.Sample.Infrastructure;
-using Strategy.Platform.AI;
 using Strategy.Platform.Access;
+using Strategy.Platform.AI;
 using Strategy.Platform.Kernel.Text;
 using Strategy.Platform.Organisation.Contracts;
 

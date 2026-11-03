@@ -84,6 +84,10 @@ services:
       DataProtection__CertificatePath: ${DATAPROTECTION_CERTIFICATE_PATH:-}
       DataProtection__CertificatePassword: ${DATAPROTECTION_CERTIFICATE_PASSWORD:-}
       OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-}
+      # Behind a TLS reverse proxy (needed for the MCP server's OAuth sign-in, docs/mcp-guide.md): trust its X-Forwarded-* headers.
+      ForwardedHeaders__Enabled: ${FORWARDED_HEADERS_ENABLED:-false}
+      ForwardedHeaders__KnownProxies__0: ${FORWARDED_HEADERS_PROXY:-}
+      Mcp__RequireHttps: ${MCP_REQUIRE_HTTPS:-true}
     ports:
       - "${APP_PORT:-8080}:8080"
     volumes:

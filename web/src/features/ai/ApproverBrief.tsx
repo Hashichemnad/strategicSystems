@@ -100,8 +100,8 @@ export function ApproverBrief({ resourceType, resourceId }: { resourceType: stri
             )}
           </div>
           <p className="text-xs text-muted-foreground">
-            {t('brief.disclaimer')} ·{' '}
-            {t('brief.meta', { model: data.model, time: formatDateTime(data.generatedAt, i18n.language) })}
+            {t('brief.disclaimer')} · <bdi dir="ltr">{data.model}</bdi> ·{' '}
+            {formatDateTime(data.generatedAt, i18n.language)}
           </p>
         </div>
       )}

@@ -1,6 +1,6 @@
 using System.Text.Json;
-using Strategy.Platform.AI.Application;
 using Strategy.Platform.Access;
+using Strategy.Platform.AI.Application;
 using Strategy.Platform.Settings;
 
 namespace Strategy.Platform.AI.Tools;

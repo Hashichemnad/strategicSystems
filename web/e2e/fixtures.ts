@@ -20,6 +20,10 @@ const here = dirname(fileURLToPath(import.meta.url));
 const screenshotDir = join(here, '..', '..', 'docs', 'screenshots', process.env.E2E_SCREENSHOTS ?? 'phase-4');
 mkdirSync(screenshotDir, { recursive: true });
 
+/** Path of a committed screenshot, for pages other than the test's own (a second user's session). */
+export const screenshotPath = (language: Language, name: string) =>
+  join(screenshotDir, `${language}-${name}.png`);
+
 /** The demo seed (Development): password and the administrator's authenticator key (Seed__AdminTotpKey). */
 export const seed = {
   password: process.env.E2E_SEED_PASSWORD ?? 'Strategy#Demo2026',

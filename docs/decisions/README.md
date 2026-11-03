@@ -32,3 +32,8 @@ Write an ADR for every choice the SPEC or CLAUDE.md leaves open (CLAUDE.md §2 r
 | [0025](0025-approver-rules-and-no-approver.md) | Approver rule semantics, self-approval and steps without an approver | Accepted |
 | [0026](0026-idempotency-keys.md) | Idempotency keys on submit and approval endpoints | Accepted |
 | [0027](0027-business-hours-and-holidays.md) | Business hours, holidays and working-time SLAs | Accepted |
+| [0028](0028-ai-provider-registry-and-settings.md) | AI provider registry, feature routing, per-role access and limits | Accepted |
+| [0029](0029-prompts-output-validation-and-injection-defences.md) | Prompt templates, output validation, prompt-injection defences and masking | Accepted |
+| [0030](0030-document-text-extraction-and-similar-records.md) | Document text extraction and similar records without embeddings | Accepted |
+| [0031](0031-tool-registry.md) | Tool registry shared by the MCP server and "Ask the system" | Accepted |
+| [0032](0032-mcp-server-and-oauth.md) | MCP server, OAuth 2.1 with OpenIddict, dynamic client registration and consent | Accepted |

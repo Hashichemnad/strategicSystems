@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Strategy.Platform.AI.Application;
-using Strategy.Platform.AI.Domain;
 using Strategy.Platform.Access;
 using Strategy.Platform.Access.Application;
+using Strategy.Platform.AI.Application;
+using Strategy.Platform.AI.Domain;
 using Strategy.Platform.Identity.Application;
 using Strategy.Platform.Identity.Domain;
 using Strategy.Platform.Identity.Infrastructure;

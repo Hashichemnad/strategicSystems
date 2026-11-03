@@ -1,6 +1,6 @@
 # Design note — AI platform (`Strategy.Platform.AI`, schema `ai`)
 
-**Phase 5 · SPEC §0.5 · CLAUDE.md §2 rule 6, §12.** Written before the code; open choices are ADRs 0028–0033.
+**Phase 5 · SPEC §0.5 · CLAUDE.md §2 rule 6, §12.** Written before the code; open choices are ADRs 0028–0032.
 
 ## 1. Principles
 - **AI drafts, people decide.** No AI endpoint creates, saves, submits, approves or rejects anything. Every AI result is returned to the

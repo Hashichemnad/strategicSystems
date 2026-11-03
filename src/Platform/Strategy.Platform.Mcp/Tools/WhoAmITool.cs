@@ -1,6 +1,6 @@
 using System.Text.Json;
-using Strategy.Platform.AI.Tools;
 using Strategy.Platform.Access;
+using Strategy.Platform.AI.Tools;
 using Strategy.Platform.Organisation.Contracts;
 
 namespace Strategy.Platform.Mcp.Tools;

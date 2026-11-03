@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
+using Strategy.Platform.Access;
 using Strategy.Platform.AI.Application;
 using Strategy.Platform.AI.Tools;
-using Strategy.Platform.Access;
 using Strategy.Platform.Kernel.Context;
 using Strategy.Platform.Settings;
 

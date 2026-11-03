@@ -23,7 +23,9 @@
      protected consent ticket bound to user, client, redirect URI and PKCE challenge → the browser continues to `/connect/authorize` with it.
      A remembered consent (permanent OpenIddict authorization) skips the page.
    - Tokens are **ASP.NET Core Data Protection** tokens (keys in PostgreSQL, ADR 0012): they survive restarts and need no extra certificate.
-     Lifetimes from settings (access 60 min, refresh 30 days).
+     Lifetimes from settings (access 60 min, refresh 30 days); `offline_access` is granted with `mcp`, so clients get a refresh token.
+     Validation checks the token and authorization entries, so revoking a client stops its tokens at once.
+   - Resource indicators (RFC 8707): only `<this host>/mcp` is accepted and stamped on the token (the URL depends on the installation).
    - Validation: scheme `oauth` re-loads the user on every call (inactive / locked → refused) and builds the same principal as a session,
      plus `amr=oauth`, the scopes and the client id. OAuth tokens only reach `/mcp` (never the REST API).
 3. Either way the call **runs as the token owner** through the same `IAccessService` (CLAUDE.md §7).

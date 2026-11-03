@@ -43,8 +43,7 @@
     "before": "Before",
     "after": "After",
     "noChanges": "First submission: nothing to compare yet.",
-    "disclaimer": "Written by AI from the record and its history. It does not decide: check the record before you act.",
-    "meta": "{{model}} · {{time}}"
+    "disclaimer": "Written by AI from the record and its history. It does not decide: check the record before you act."
   },
   "ask": {
     "button": "Ask",

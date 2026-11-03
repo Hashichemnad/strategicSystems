@@ -73,3 +73,13 @@ Unit: domain transitions, validator. Integration (Testcontainers): every endpoin
   ⟨step⟩ approval" with the approvers and, for an approver, the decisions; approved; rejected.
 - **My Work:** items returned for correction to their owner. **Record role** `approver` (read) is granted to approvers while their task is open.
 - **Screens:** stage stepper, current-status banner, *Approvals* tab (shared approval panel), amount in the dialog and overview.
+
+## Phase 5: the worked example of the AI platform (docs/design/ai.md)
+- **AI form** `sample.item` (`Ai/SampleAi.cs`): name AR / EN, description AR / EN, amount; needs `sample.item.create`. The create dialog
+  offers *Fill from a document*: proposed values appear as highlighted drafts with confidence and the source quote; **Create stays disabled
+  until each AI value is accepted or edited**, and the item is saved by the normal create endpoint (channel `ui`).
+- **Translate** buttons under each bilingual field (draft in the other language) and **similar items** under the names while creating.
+- **Record source** (`IAiRecordSource`): the item's fields for a reader of the item (approver brief, `get_record`); the owner's name is
+  masked before sending. **Search source** (`IRecordSearchSource`): number / name search and trigram similarity within the read scope
+  (`search_records`, similar records).
+- The **approver brief** appears on the shared approval panel while an approval is in progress; the changed fields come from the audit trail.

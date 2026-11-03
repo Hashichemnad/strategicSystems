@@ -2,8 +2,8 @@ using System.Diagnostics;
 using System.Security.Claims;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
-using Strategy.Platform.AI.Tools;
 using Strategy.Platform.Access;
+using Strategy.Platform.AI.Tools;
 using Strategy.Platform.Audit;
 
 namespace Strategy.Platform.AI.Application;
@@ -98,7 +98,8 @@ public sealed partial class ToolExecutor(IAuditLog audit, ILogger<ToolExecutor> 
         }
 
         return audit.WriteAsync(new AuditEvent($"{channel}.tool.call", success, system ?? channel, "tool", tool,
-            new { tool, client, arguments = args, status, durationMs = ms }) { Channel = channel }, CancellationToken.None);
+            new { tool, client, arguments = args, status, durationMs = ms })
+        { Channel = channel }, CancellationToken.None);
     }
 
     [LoggerMessage(Level = LogLevel.Warning, Message = "Tool {Tool} failed")]

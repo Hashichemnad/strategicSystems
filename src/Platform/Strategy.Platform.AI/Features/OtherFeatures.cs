@@ -1,7 +1,7 @@
 using System.Text;
 using System.Text.Json;
-using Strategy.Platform.AI.Application;
 using Strategy.Platform.Access;
+using Strategy.Platform.AI.Application;
 using Strategy.Platform.Audit;
 using Strategy.Platform.Kernel.Context;
 using Strategy.Platform.Kernel.Results;
