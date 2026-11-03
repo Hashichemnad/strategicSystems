@@ -194,10 +194,13 @@ Finish with the phase summary and a short guide for connecting Claude to /mcp.
 ```
 
 **Acceptance checks**
-- [ ] Admin configures a provider and passes **Test connection**; switching provider needs no code change.
-- [ ] Uploading a sample business case fills a demo form as highlighted drafts with sources; nothing saved until confirmed.
-- [ ] With AI switched off, no AI buttons appear and the app works normally.
+- [x] Admin configures a provider and passes **Test connection**; switching provider needs no code change.
+- [x] Uploading a sample business case fills a demo form as highlighted drafts with sources; nothing saved until confirmed.
+- [x] With AI switched off, no AI buttons appear and the app works normally.
 - [ ] Claude (desktop or Claude Code) connects to `/mcp` via OAuth, lists tools, and only sees the user's permitted data; calls appear in the audit log with channel `mcp`.
+  *(Verified with the official MCP C# SDK client through the full OAuth flow — registration, PKCE, consent, token, refresh — and with
+  personal access tokens; a live connection from Claude itself needs a reachable HTTPS installation and is left for the owner's
+  acceptance, see docs/mcp-guide.md and docs/phase-summaries/phase-5.md.)*
 
 ---
 
@@ -511,7 +514,7 @@ Implement, then run the full hardening review and fix findings, run performance 
 | 2 | Access control & Settings | ☐ | |
 | 3 | Audit, Files, Notifications, Jobs | ☐ | |
 | 4 | Approval engine & My Work | ☑ built — awaiting owner acceptance | |
-| 5 | AI platform & MCP | ☐ | |
+| 5 | AI platform & MCP | ☑ built — awaiting owner acceptance | |
 | 6 | Links & Task Management | ☐ | |
 | 7 | Teams Management | ☐ | |
 | 8 | Portfolio A — Requests | ☐ | |
