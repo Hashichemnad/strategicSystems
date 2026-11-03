@@ -17,6 +17,10 @@ export default defineConfig({
       '/api': { target: apiTarget, changeOrigin: false },
       '/openapi': { target: apiTarget, changeOrigin: false },
       '/health': { target: apiTarget, changeOrigin: false },
+      // OAuth for MCP clients and the MCP server itself (Phase 5).
+      '/connect': { target: apiTarget, changeOrigin: false },
+      '/.well-known': { target: apiTarget, changeOrigin: false },
+      '/mcp': { target: apiTarget, changeOrigin: false },
     },
   },
   build: {

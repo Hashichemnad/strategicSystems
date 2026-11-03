@@ -24,6 +24,7 @@ internal sealed class PatAuthenticationHandler(
     IUserClaimsPrincipalFactory<StrategyUser> claimsFactory,
     AuthEventLog events)
     : AuthenticationHandler<AuthenticationSchemeOptions>(options, logger, encoder)
+
 {
     public static string? BearerValue(Microsoft.AspNetCore.Http.HttpRequest request)
     {
@@ -53,6 +54,7 @@ internal sealed class PatAuthenticationHandler(
         var identity = new ClaimsIdentity(principal.Claims, Scheme.Name, ClaimTypes.Name, ClaimTypes.Role);
         identity.AddClaim(new Claim(StrategyClaims.AuthMethod, AuthMethods.Token));
         identity.AddClaim(new Claim(StrategyClaims.TokenScopes, string.Join(' ', token.Scopes)));
+        identity.AddClaim(new Claim(StrategyClaims.Client, "pat:" + token.Prefix));
         return AuthenticateResult.Success(new AuthenticationTicket(new ClaimsPrincipal(identity), Scheme.Name));
     }
 
@@ -64,11 +66,16 @@ internal sealed class PatAuthenticationHandler(
     }
 }
 
-/// <summary>Scopes of a token-authenticated request: <c>api.read</c> allows only GET / HEAD on the REST API.</summary>
+/// <summary>
+/// Scopes of a token-authenticated request: <c>mcp</c> opens <c>/mcp</c> only; <c>api.read</c> allows only GET / HEAD on the REST API. OAuth
+/// tokens carry only <c>mcp</c>, so they never reach the REST API.
+/// </summary>
 public static class TokenScopeRules
 {
+    /// <summary>A personal access token or an OAuth access token (never a browser session).</summary>
     public static bool IsToken(this ClaimsPrincipal principal) =>
-        principal.FindFirst(StrategyClaims.AuthMethod)?.Value == AuthMethods.Token && principal.Identity?.AuthenticationType == AuthSchemes.PersonalAccessToken;
+        (principal.FindFirst(StrategyClaims.AuthMethod)?.Value == AuthMethods.Token && principal.Identity?.AuthenticationType == AuthSchemes.PersonalAccessToken)
+        || (principal.FindFirst(StrategyClaims.AuthMethod)?.Value == AuthMethods.OAuth && principal.Identity?.AuthenticationType == AuthSchemes.OAuth);
 
     public static bool Allows(ClaimsPrincipal principal, string method, string path)
     {

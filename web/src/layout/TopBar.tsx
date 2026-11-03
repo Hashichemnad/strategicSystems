@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { api } from '@/api/client';
 import { useTheme, type ThemePreference } from '@/app/theme';
 import { useMe, useSignOut } from '@/features/auth/session';
+import { AskButton } from '@/features/ai/AskDialog';
 import { NotificationBell } from '@/features/notifications/NotificationBell';
 import { isLanguage } from '@/i18n';
 import { pickText } from '@/lib/format';
@@ -34,6 +35,7 @@ export function TopBar({ onOpenMenu }: { onOpenMenu: () => void }) {
         <Menu aria-hidden />
       </Button>
       <div className="flex-1" />
+      <AskButton />
       <NotificationBell />
       <LanguageToggle saveToProfile />
       <ThemeMenu />

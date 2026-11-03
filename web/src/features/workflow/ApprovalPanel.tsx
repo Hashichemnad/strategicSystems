@@ -14,6 +14,7 @@ import {
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { errorMessage, translateMessageKey } from '@/api/problem';
+import { ApproverBrief } from '@/features/ai/ApproverBrief';
 import { cn } from '@/lib/cn';
 import { formatDateTime, pickText } from '@/lib/format';
 import {
@@ -396,6 +397,9 @@ export function ApprovalPanel({ resourceType, resourceId }: { resourceType: stri
     return <p className="rounded-lg border bg-card p-6 text-sm text-muted-foreground">{t('panel.empty')}</p>;
   return (
     <div className="flex flex-col gap-4">
+      {latest.status === 'in_progress' && (
+        <ApproverBrief resourceType={resourceType} resourceId={resourceId} />
+      )}
       <InstanceCard instance={latest} current />
       {earlier.length > 0 && (
         <details className="flex flex-col gap-3">

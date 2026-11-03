@@ -5,7 +5,7 @@ import { api, ApiError, unwrap } from '@/api/client';
 import { errorMessage, translateMessageKey } from '@/api/problem';
 import { mfaRoute } from '@/app/router';
 import { Button, FormField, Input, OtpInput, StatusBanner, useToast } from '@/ui';
-import { safeRedirect, useCompleteSignIn } from './session';
+import { goAfterSignIn, useCompleteSignIn } from './session';
 
 type Method = 'totp' | 'email' | 'recovery';
 
@@ -32,7 +32,7 @@ export function MfaPage() {
     try {
       unwrap(await api.POST('/api/v1/identity/auth/mfa/verify', { body: { method, code } }));
       await completeSignIn();
-      await navigate({ href: safeRedirect(redirect) });
+      await goAfterSignIn(navigate, redirect);
     } catch (failure) {
       if (failure instanceof ApiError && failure.problem.code === 'auth.mfaExpired') {
         await navigate({ to: '/login', search: { redirect, error: failure.problem.messageKey } });

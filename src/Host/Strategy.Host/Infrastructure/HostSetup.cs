@@ -44,6 +44,7 @@ internal static class HostSetup
         });
         services.AddHealthChecks();
         services.AddAuthorization();
+        services.AddStrategyForwardedHeaders(configuration);
 
         foreach (var component in components)
         {
@@ -70,6 +71,12 @@ internal static class HostSetup
     public static WebApplication UseStrategyPipeline(
         this WebApplication app, IReadOnlyList<IPlatformComponent> components, IReadOnlyList<IModule> modules)
     {
+        if (app.Configuration.GetValue("ForwardedHeaders:Enabled", defaultValue: false))
+        {
+            // Behind a TLS-terminating reverse proxy: the original scheme and host (OAuth issuer and redirects, ADR 0032) and client IP.
+            app.UseForwardedHeaders();
+        }
+
         app.UseMiddleware<RequestContextMiddleware>();
         app.UseSerilogRequestLogging();
         app.UseExceptionHandler();

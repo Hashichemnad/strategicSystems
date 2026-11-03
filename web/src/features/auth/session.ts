@@ -26,6 +26,22 @@ export function safeRedirect(target: string | undefined): string {
     : '/';
 }
 
+/**
+ * Where to go after signing in: a page of the application, or back to the server for an OAuth authorization request (an MCP client
+ * waiting for the user, docs/design/mcp.md §2), which is not a page of the single-page application.
+ */
+export function goAfterSignIn(
+  navigate: (options: { href: string }) => Promise<void>,
+  target: string | undefined,
+): Promise<void> {
+  const href = safeRedirect(target);
+  if (href.startsWith('/connect/')) {
+    window.location.assign(href);
+    return Promise.resolve();
+  }
+  return navigate({ href });
+}
+
 /** After any sign-in step completes: new antiforgery token, fresh user data. */
 export function useCompleteSignIn() {
   const queryClient = useQueryClient();

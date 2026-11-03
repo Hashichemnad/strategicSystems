@@ -49,6 +49,7 @@ public sealed class IdentityComponent : IPlatformComponent
         services.AddScoped<AuthEventLog>();
         services.AddScoped<SignInService>();
         services.AddScoped<AccessTokenService>();
+        services.AddScoped<TokenPrincipalFactory>();
         services.AddScoped<UserAdministration>();
         services.AddScoped<ISmtpSettingsSource, SmtpSettingsSource>();
         services.AddScoped<INotificationRecipientDirectory, NotificationRecipientDirectory>();
@@ -95,8 +96,8 @@ public sealed class IdentityComponent : IPlatformComponent
                 options.DefaultSignInScheme = IdentityConstants.ApplicationScheme;
             })
             .AddPolicyScheme(AuthSchemes.Default, null, options => options.ForwardDefaultSelector = context =>
-                AccessTokenService.LooksLikeToken(PatAuthenticationHandler.BearerValue(context.Request))
-                    ? AuthSchemes.PersonalAccessToken
+                PatAuthenticationHandler.BearerValue(context.Request) is { Length: > 0 } bearer
+                    ? AccessTokenService.LooksLikeToken(bearer) ? AuthSchemes.PersonalAccessToken : AuthSchemes.OAuth
                     : IdentityConstants.ApplicationScheme)
             .AddScheme<AuthenticationSchemeOptions, PatAuthenticationHandler>(AuthSchemes.PersonalAccessToken, null)
             .AddIdentityCookies();

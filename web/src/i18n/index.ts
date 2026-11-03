@@ -41,9 +41,13 @@ import enReporting from './en/reporting.json';
 import arWorkflow from './ar/workflow.json';
 import enWorkflow from './en/workflow.json';
 import arExpressions from './ar/expressions.json';
+import arAi from './ar/ai.json';
+import arMcp from './ar/mcp.json';
 import arCalendar from './ar/calendar.json';
 import enCalendar from './en/calendar.json';
 import enExpressions from './en/expressions.json';
+import enAi from './en/ai.json';
+import enMcp from './en/mcp.json';
 import { readPreference } from '@/lib/preferences';
 
 export const languages = ['ar', 'en'] as const;
@@ -72,6 +76,8 @@ export const resources = {
     reporting: arReporting,
     workflow: arWorkflow,
     expressions: arExpressions,
+    ai: arAi,
+    mcp: arMcp,
     calendar: arCalendar,
   },
   en: {
@@ -96,6 +102,8 @@ export const resources = {
     reporting: enReporting,
     workflow: enWorkflow,
     expressions: enExpressions,
+    ai: enAi,
+    mcp: enMcp,
     calendar: enCalendar,
   },
 } as const;

@@ -52,6 +52,9 @@ public sealed record AuditRecord(
     /// <summary>Overrides of the request context, used when carrying older records into the chain.</summary>
     public string? Channel { get; init; }
 
+    /// <summary>Channel of an explicit event that differs from the request's (an AI call made from a UI request), actor unchanged.</summary>
+    public string? EventChannel { get; init; }
+
     public string? CorrelationId { get; init; }
 
     public string? IpAddress { get; init; }
@@ -86,6 +89,9 @@ public sealed record AuditEvent(
     public Guid? ActorId { get; init; }
 
     public string? ActorName { get; init; }
+
+    /// <summary>Overrides the request's channel, e.g. <c>ai</c> for an AI call made from a UI request (CLAUDE.md §12).</summary>
+    public string? Channel { get; init; }
 }
 
 /// <summary>Writes explicit events into the chain (own transaction). Callers in a DbContext transaction can pass it to join.</summary>

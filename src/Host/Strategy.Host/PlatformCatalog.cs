@@ -1,9 +1,11 @@
 using Strategy.Platform.Access;
+using Strategy.Platform.AI;
 using Strategy.Platform.Audit;
 using Strategy.Platform.Calendar;
 using Strategy.Platform.Files;
 using Strategy.Platform.Http.Modules;
 using Strategy.Platform.Identity;
+using Strategy.Platform.Mcp;
 using Strategy.Platform.Notifications;
 using Strategy.Platform.Organisation;
 using Strategy.Platform.Scheduling;
@@ -19,5 +21,5 @@ namespace Strategy.Host;
 internal static class PlatformCatalog
 {
     public static readonly IReadOnlyList<IPlatformComponent> All =
-        [new AuditComponent(), new SchedulingComponent(), new FilesComponent(), new SettingsComponent(), new NotificationsComponent(), new AccessComponent(), new OrganisationComponent(), new IdentityComponent(), new CalendarComponent(), new WorkflowComponent()];
+        [new AuditComponent(), new SchedulingComponent(), new FilesComponent(), new SettingsComponent(), new NotificationsComponent(), new AccessComponent(), new OrganisationComponent(), new IdentityComponent(), new CalendarComponent(), new WorkflowComponent(), new AiComponent(), new McpComponent()];
 }

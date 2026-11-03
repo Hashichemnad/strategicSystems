@@ -2,14 +2,18 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Strategy.Platform.Access;
 using Strategy.Platform.Access.Application;
+using Strategy.Platform.AI.Application;
+using Strategy.Platform.AI.Domain;
 using Strategy.Platform.Identity.Application;
 using Strategy.Platform.Identity.Domain;
 using Strategy.Platform.Identity.Infrastructure;
 using Strategy.Platform.Kernel.Context;
 using Strategy.Platform.Kernel.Messaging;
+using Strategy.Platform.Mcp.Application;
 using Strategy.Platform.Organisation.Application;
 using Strategy.Platform.Organisation.Infrastructure;
 using Strategy.Platform.Persistence;
+using Strategy.Platform.Settings;
 
 namespace Strategy.Host.Infrastructure;
 
@@ -150,6 +154,23 @@ internal static partial class Bootstrap
             seededAdmin.TwoFactorEnabled = true;
             await users.UpdateAsync(seededAdmin);
         }
+
+        // Phase 5 demo: the offline demo AI provider (Development only, AI:EnableDemoProvider) switched on, and the MCP server on.
+        if (configuration.GetValue("AI:EnableDemoProvider", defaultValue: false))
+        {
+            var ai = provider.GetRequiredService<AiAdministration>();
+            var demo = await ai.SaveProviderAsync(null, new AiProviderInput("Demo provider (offline)", AiProviderTypes.Demo, null, null, false, "demo-small",
+                ["demo-small", "demo-large"], null, 2000, 30, true), CancellationToken.None);
+            if (demo.IsSuccess)
+            {
+                var editor = provider.GetRequiredService<ISettingsEditor>();
+                var aiSettings = await editor.GetDocumentAsync<AiSettings>();
+                await editor.SaveAsync(aiSettings.Value with { Enabled = true, DefaultProviderId = demo.Value.Id }, aiSettings.Version, _ => []);
+            }
+        }
+
+        var mcp = await provider.GetRequiredService<ISettingsEditor>().GetDocumentAsync<McpSettings>();
+        await provider.GetRequiredService<ISettingsEditor>().SaveAsync(mcp.Value with { Enabled = true }, mcp.Version, _ => []);
 
         LogSeeded(logger, admin.Succeeded && user.Succeeded);
     }

@@ -14,8 +14,11 @@ public static class StrategyClaims
     /// <summary>How the session was authenticated: <c>pwd</c>, <c>mfa</c>, <c>ext</c>, <c>ldap</c>, <c>pat</c>.</summary>
     public const string AuthMethod = "amr";
 
-    /// <summary>Space-separated scopes of a personal access token.</summary>
+    /// <summary>Space-separated scopes of a personal access token or OAuth access token.</summary>
     public const string TokenScopes = "strategy:scopes";
+
+    /// <summary>The client behind a token call: <c>pat:&lt;prefix&gt;</c> or the OAuth client id (MCP audit trail).</summary>
+    public const string Client = "strategy:client";
 
     public const string InternalPrincipal = "internal";
     public const string VendorPrincipal = "vendor";

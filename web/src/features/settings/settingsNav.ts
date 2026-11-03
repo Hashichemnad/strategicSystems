@@ -1,5 +1,7 @@
 import {
   Bell,
+  Bot,
+  Cable,
   Building,
   CalendarClock,
   CalendarOff,
@@ -37,6 +39,8 @@ export type SettingsPageKey =
   | 'files'
   | 'jobs'
   | 'approvals'
+  | 'ai'
+  | 'mcp'
   | 'businessHours'
   | 'holidays'
   | 'roles'
@@ -63,6 +67,8 @@ export type SettingsPath =
   | '/settings/files'
   | '/settings/jobs'
   | '/settings/approvals'
+  | '/settings/ai'
+  | '/settings/mcp'
   | '/settings/business-hours'
   | '/settings/holidays'
   | '/settings/access/roles'
@@ -86,7 +92,7 @@ export interface SettingsPageLink {
 }
 
 export interface SettingsGroup {
-  key: 'general' | 'data' | 'platform' | 'access' | 'identity' | 'organisation';
+  key: 'general' | 'data' | 'platform' | 'integrations' | 'access' | 'identity' | 'organisation';
   pages: readonly SettingsPageLink[];
 }
 
@@ -148,6 +154,13 @@ export const settingsGroups: readonly SettingsGroup[] = [
         icon: ClipboardCheck,
         permissions: ['workflow.process.read'],
       },
+    ],
+  },
+  {
+    key: 'integrations',
+    pages: [
+      { key: 'ai', to: '/settings/ai', icon: Bot, permissions: ['ai.settings.manage'] },
+      { key: 'mcp', to: '/settings/mcp', icon: Cable, permissions: ['mcp.settings.manage'] },
     ],
   },
   {

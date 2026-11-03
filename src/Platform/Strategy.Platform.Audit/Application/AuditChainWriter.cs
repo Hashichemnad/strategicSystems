@@ -95,7 +95,7 @@ internal sealed class AuditChainWriter(IRequestContext context, IClock clock) : 
             UserName = Cut(userName, 256),
             OnBehalfOfId = legacy ? null : context.OnBehalfOfId,
             OnBehalfOfName = legacy ? null : Cut(context.OnBehalfOfName, 256),
-            Channel = r.Channel ?? context.Channel,
+            Channel = r.Channel ?? r.EventChannel ?? context.Channel,
             CorrelationId = Cut(r.CorrelationId ?? context.CorrelationId, 64),
             IpAddress = Cut(r.IpAddress ?? context.IpAddress, 64),
             UserAgent = Cut(r.UserAgent ?? context.UserAgent, 512),

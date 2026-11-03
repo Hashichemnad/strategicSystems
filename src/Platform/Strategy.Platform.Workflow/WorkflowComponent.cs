@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Strategy.Platform.Access;
+using Strategy.Platform.AI.Tools;
 using Strategy.Platform.Http.Modules;
 using Strategy.Platform.Notifications;
 using Strategy.Platform.Persistence;
@@ -20,6 +21,9 @@ public sealed class WorkflowComponent : IPlatformComponent
 
     public void AddServices(IServiceCollection services, IConfiguration configuration)
     {
+        services.AddAppTool<Mcp.MyPendingApprovalsTool>();
+        services.AddAppTool<Mcp.RecordStatusTool>();
+        services.AddAppTool<Mcp.ApprovalDecideTool>();
         services.AddModuleDbContext<WorkflowDbContext>(WorkflowDbContext.SchemaName);
         services.AddSingleton<ProcessRegistry>();
         services.AddScoped<OrgRelations>();

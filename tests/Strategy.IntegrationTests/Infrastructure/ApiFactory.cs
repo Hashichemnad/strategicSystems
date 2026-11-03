@@ -46,6 +46,7 @@ public sealed class ApiFactory(
         builder.UseSetting("ConnectionStrings:Strategy", connectionString);
         builder.UseSetting("Database:MigrateOnStartup", "true");
         builder.UseSetting("Modules:Sample:Enabled", "true");
+        builder.UseSetting("Mcp:RequireHttps", "false");
         builder.UseSetting("Spa:RootPath", "does-not-exist");
         builder.UseSetting("Serilog:MinimumLevel:Default", "Warning");
         builder.UseSetting("RateLimiting:PermitLimit", "100000");

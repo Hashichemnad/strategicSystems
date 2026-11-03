@@ -2500,6 +2500,294 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/ai/capabilities': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetAiCapabilities'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/ai/forms/{formKey}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetAiForm'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/ai/forms/{formKey}/extract': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ExtractAiForm'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/ai/brief/{resourceType}/{resourceId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['GetApproverBrief'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/ai/translate': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['TranslateText'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/ai/similar/{resourceType}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['FindSimilarRecords'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/ai/ask': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['AskTheSystem'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/ai/settings': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetAiSettings'];
+    put: operations['SaveAiSettings'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/ai/providers': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListAiProviders'];
+    put?: never;
+    post: operations['CreateAiProvider'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/ai/providers/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateAiProvider'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/ai/providers/{id}/test': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['TestAiProvider'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/ai/providers/{id}/models': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ListAiProviderModels'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/ai/usage': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListAiUsage'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/ai/usage/summary': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetAiUsageSummary'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/mcp/settings': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetMcpSettings'];
+    put: operations['SaveMcpSettings'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/mcp/clients': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListMcpClients'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/mcp/clients/{clientId}/revoke': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RevokeMcpClient'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/mcp/consent': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetMcpConsent'];
+    put?: never;
+    post: operations['GrantMcpConsent'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/sample/items': {
     parameters: {
       query?: never;
@@ -2710,6 +2998,220 @@ export interface components {
       nextStepNameAr: null | string;
       nextStepNameEn: null | string;
     };
+    AiCapabilitiesDto: {
+      enabled: boolean;
+      features: {
+        [key: string]: boolean;
+      };
+    };
+    /** @description What may be sent to the provider: per system and fields, documents, and masking of personal data. */
+    AiDataSharing: {
+      /** @default true */
+      maskPersonalData: boolean;
+      /** @default true */
+      allowDocuments: boolean;
+      systems?: null | {
+        [key: string]: components['schemas']['AiSystemSharing'];
+      };
+    };
+    AiFeatureDto: {
+      key: string;
+      nameAr: string;
+      nameEn: string;
+      permission: string;
+      needsProvider: boolean;
+    };
+    /** @description Per feature: switch, provider and model (else the default provider and its default model). */
+    AiFeatureSettings: {
+      /** @default true */
+      enabled: boolean;
+      /** Format: uuid */
+      providerId?: null | string;
+      model?: null | string;
+    };
+    AiFormDto: {
+      key: string;
+      systemCode: string;
+      nameAr: string;
+      nameEn: string;
+      fields: components['schemas']['AiFormField'][];
+    };
+    /** @description A form field the AI may propose a value for. */
+    AiFormField: {
+      name: string;
+      type: string;
+      labelAr: string;
+      labelEn: string;
+      hint?: null | string;
+      /** Format: int32 */
+      maxLength?: null | number;
+      choices?: null | string[];
+    };
+    /** @description Monthly limits (null = none), counted in the installation's time zone. */
+    AiLimits: {
+      /** Format: int64 */
+      monthlyTokens?: null | number;
+      /** Format: int32 */
+      monthlyRequestsPerUser?: null | number;
+    };
+    /**
+     * @description Text recognition (OCR) for scanned PDF pages and images (ADR 0033): off by default; Tesseract language codes joined by `+`; at most
+     *     `MaxPages` scanned pages per document.
+     */
+    AiOcrSettings: {
+      /** @default false */
+      enabled: boolean;
+      /** @default ara+eng */
+      languages: string;
+      /**
+       * Format: int32
+       * @default 20
+       */
+      maxPages: number;
+    };
+    AiProviderDto: {
+      /** Format: uuid */
+      id: string;
+      name: string;
+      type: string;
+      endpoint: null | string;
+      hasApiKey: boolean;
+      defaultModel: null | string;
+      models: string[];
+      /** Format: double */
+      temperature: null | number;
+      /** Format: int32 */
+      maxOutputTokens: number;
+      /** Format: int32 */
+      timeoutSeconds: number;
+      active: boolean;
+      /** Format: uint32 */
+      version: number;
+    };
+    /** @description A provider to save. `ApiKey` null keeps the stored key; `ClearApiKey` removes it. */
+    AiProviderInput: {
+      name: null | string;
+      type: null | string;
+      endpoint: null | string;
+      apiKey: null | string;
+      clearApiKey: boolean;
+      defaultModel: null | string;
+      models: null | string[];
+      /** Format: double */
+      temperature: null | number;
+      /** Format: int32 */
+      maxOutputTokens: null | number;
+      /** Format: int32 */
+      timeoutSeconds: null | number;
+      active: null | boolean;
+      /**
+       * Format: uint32
+       * @default 0
+       */
+      version: number;
+    };
+    /** @description Values to try before saving (all optional: the stored ones are used). */
+    AiProviderProbeInput: {
+      apiKey: null | string;
+      endpoint: null | string;
+      model: null | string;
+    };
+    AiProviderTestDto: {
+      success: boolean;
+      /** Format: int32 */
+      latencyMs: number;
+      model: null | string;
+      messageKey: null | string;
+      reply: null | string;
+    };
+    AiProviderTypeDto: {
+      type: string;
+      requiresEndpoint: boolean;
+      requiresApiKey: boolean;
+    };
+    /** @description Settings → AI (docs/design/ai.md §3). Master switch off on a new installation: everything works without AI. */
+    AiSettings: {
+      /** @default false */
+      enabled: boolean;
+      /** Format: uuid */
+      defaultProviderId?: null | string;
+      features?: null | {
+        [key: string]: components['schemas']['AiFeatureSettings'];
+      };
+      dataSharing?: null | components['schemas']['AiDataSharing'];
+      limits?: null | components['schemas']['AiLimits'];
+      ocr?: null | components['schemas']['AiOcrSettings'];
+    };
+    /** @description Settings → AI. `OcrAvailable`: Tesseract and the configured languages are installed on the server (ADR 0033). */
+    AiSettingsDto: {
+      settings: components['schemas']['AiSettings'];
+      /** Format: uint32 */
+      version: number;
+      features: components['schemas']['AiFeatureDto'][];
+      providerTypes: components['schemas']['AiProviderTypeDto'][];
+      systems: components['schemas']['AiSystemDto'][];
+      ocrAvailable: boolean;
+    };
+    AiSettingsInput: {
+      settings: components['schemas']['AiSettings'];
+      /** Format: uint32 */
+      version: number;
+    };
+    AiSystemDto: {
+      code: string;
+      nameAr: string;
+      nameEn: string;
+    };
+    AiSystemSharing: {
+      /** @default true */
+      allowed: boolean;
+      excludedFields?: null | string[];
+    };
+    AiUsageFeatureTotalDto: {
+      feature: string;
+      /** Format: int32 */
+      requests: number;
+      /** Format: int64 */
+      tokens: number;
+      /** Format: int32 */
+      failures: number;
+    };
+    AiUsageRowDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: date-time */
+      occurredAt: string;
+      /** Format: uuid */
+      userId: null | string;
+      userName: null | string;
+      feature: string;
+      providerType: null | string;
+      model: null | string;
+      /** Format: int64 */
+      inputTokens: number;
+      /** Format: int64 */
+      outputTokens: number;
+      /** Format: int32 */
+      latencyMs: number;
+      success: boolean;
+      errorCode: null | string;
+      resourceType: null | string;
+      resourceId: null | string;
+      channel: string;
+    };
+    AiUsageSummaryDto: {
+      /** Format: date-time */
+      monthStart: string;
+      /** Format: int32 */
+      requests: number;
+      /** Format: int64 */
+      tokens: number;
+      /** Format: int64 */
+      monthlyTokenLimit: null | number;
+      /** Format: int32 */
+      monthlyRequestsPerUser: null | number;
+      byFeature: components['schemas']['AiUsageFeatureTotalDto'][];
+    };
     /** @description The token the SPA sends back in string AntiforgerySetup.HeaderName on every state-changing call. */
     AntiforgeryToken: {
       token: string;
@@ -2771,6 +3273,23 @@ export interface components {
       /** Format: uuid */
       businessHoursId?: null | string;
     };
+    /** @description An approver brief: the AI paragraph and points (drafts), plus the changes computed from the audit trail (facts). */
+    ApproverBriefDto: {
+      resourceType: string;
+      /** Format: uuid */
+      resourceId: string;
+      /** Format: int32 */
+      attempt: number;
+      summary: string;
+      changes: string[];
+      attentionPoints: string[];
+      changedFields: components['schemas']['ChangedFieldDto'][];
+      model: string;
+      /** Format: date-time */
+      generatedAt: string;
+      /** Format: uuid */
+      usageId: string;
+    };
     /**
      * @description Who approves a step. Only the parameters of string ApproverRule.Kind are used: `role` → string? ApproverRule.RoleKey; `sectionManager`,
      *     `departmentDirector` → string? ApproverRule.Of; `headOfUnit` → Guid? ApproverRule.UnitId or string? ApproverRule.Of; `owningUnit` →
@@ -2787,6 +3306,35 @@ export interface components {
       employeeId?: null | string;
       roleCode?: null | string;
       systemCode?: null | string;
+    };
+    AskAnswerDto: {
+      answer: string;
+      references: components['schemas']['AskReferenceDto'][];
+      toolCalls: components['schemas']['AskToolCallDto'][];
+      model: string;
+      /** Format: uuid */
+      usageId: string;
+    };
+    AskInput: {
+      question: null | string;
+      history: null | components['schemas']['AskTurn'][];
+    };
+    AskReferenceDto: {
+      resourceType: string;
+      /** Format: uuid */
+      id: string;
+      number: null | string;
+      titleAr: null | string;
+      titleEn: null | string;
+      link: string;
+    };
+    AskToolCallDto: {
+      tool: string;
+      success: boolean;
+    };
+    AskTurn: {
+      role: null | string;
+      text: null | string;
     };
     AssignmentDto: {
       /** Format: uuid */
@@ -2939,6 +3487,13 @@ export interface components {
       reason: null | string;
       /** Format: uint32 */
       version: number;
+    };
+    ChangedFieldDto: {
+      field: string;
+      labelAr: string;
+      labelEn: string;
+      before: null | string;
+      after: null | string;
     };
     ChangePasswordInput: {
       currentPassword: null | string;
@@ -3188,6 +3743,38 @@ export interface components {
     EnrolmentResultDto: {
       status: string;
       recoveryCodes: string[];
+    };
+    /**
+     * @description One proposed value: never saved by the server; the review UI shows it as a draft (docs/design/ai.md §4.1). Where the source was found:
+     *     `LocationKind``page` / `slide` / `image` with its number, and `FromScan` when the text came from OCR (ADR 0033).
+     */
+    ExtractedFieldDto: {
+      name: string;
+      value: null | string;
+      /** Format: double */
+      confidence: number;
+      source: null | string;
+      sourceVerified: boolean;
+      locationKind: null | string;
+      /** Format: int32 */
+      locationNumber: null | number;
+      fromScan: boolean;
+    };
+    ExtractionResultDto: {
+      formKey: string;
+      fileName: string;
+      documentKind: string;
+      truncated: boolean;
+      language: null | string;
+      fields: components['schemas']['ExtractedFieldDto'][];
+      warnings: string[];
+      /** Format: uuid */
+      usageId: string;
+      /**
+       * Format: int32
+       * @default 0
+       */
+      scannedPages: number;
     };
     FeatureFlagDto: {
       code: string;
@@ -3476,6 +4063,86 @@ export interface components {
       /** Format: uuid */
       parentValueId: null | string;
       metadata: null | string;
+    };
+    McpClientDto: {
+      clientId: string;
+      name: null | string;
+      redirectUris: string[];
+      /** Format: date-time */
+      registeredAt: null | string;
+    };
+    McpConsentInfoDto: {
+      clientId: string;
+      clientName: null | string;
+      redirectHost: null | string;
+      scopes: string[];
+      enabled: boolean;
+    };
+    McpConsentInput: {
+      clientId: null | string;
+      redirectUri: null | string;
+      codeChallenge: null | string;
+    };
+    McpConsentTicketDto: {
+      ticket: string;
+    };
+    /** @description Settings → MCP (docs/design/mcp.md §4). The server is off on a new installation. */
+    McpSettings: {
+      /** @default false */
+      enabled: boolean;
+      /** @default true */
+      allowDynamicRegistration: boolean;
+      allowedRedirectHosts?: null | string[];
+      /**
+       * Format: int32
+       * @default 60
+       */
+      accessTokenMinutes: number;
+      /**
+       * Format: int32
+       * @default 30
+       */
+      refreshTokenDays: number;
+      /**
+       * Format: int32
+       * @default 60
+       */
+      rateLimitPerMinute: number;
+      tools?: null | {
+        [key: string]: components['schemas']['McpToolSettings'];
+      };
+    };
+    McpSettingsDto: {
+      settings: components['schemas']['McpSettings'];
+      /** Format: uint32 */
+      version: number;
+      endpoint: string;
+      issuer: string;
+      tools: components['schemas']['McpToolDto'][];
+    };
+    McpSettingsInput: {
+      settings: components['schemas']['McpSettings'];
+      /** Format: uint32 */
+      version: number;
+    };
+    McpToolDto: {
+      name: string;
+      systemCode: string;
+      kind: string;
+      titleAr: string;
+      titleEn: string;
+      description: string;
+      permission: null | string;
+      defaultEnabled: boolean;
+      enabled: boolean;
+      /** Format: int32 */
+      rateLimitPerMinute: null | number;
+    };
+    /** @description Per tool: null keeps the tool's default (read on, write and approve off). */
+    McpToolSettings: {
+      enabled?: null | boolean;
+      /** Format: int32 */
+      rateLimitPerMinute?: null | number;
     };
     MeDto: {
       /** Format: uuid */
@@ -3816,6 +4483,18 @@ export interface components {
       deadMessages: components['schemas']['OutboxMessageDto'][];
     };
     /** @description One page of items plus the total count across all pages. */
+    PagedResultOfAiUsageRowDto: {
+      items: components['schemas']['AiUsageRowDto'][];
+      /** Format: int32 */
+      page: number;
+      /** Format: int32 */
+      pageSize: number;
+      /** Format: int32 */
+      totalCount: number;
+      /** Format: int32 */
+      totalPages?: number;
+    };
+    /** @description One page of items plus the total count across all pages. */
     PagedResultOfAuditEntryDto: {
       items: components['schemas']['AuditEntryDto'][];
       /** Format: int32 */
@@ -4118,6 +4797,20 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    /** @description A record found by search or similarity, already filtered to what the user may read. */
+    RecordSearchHit: {
+      resourceType: string;
+      /** Format: uuid */
+      id: string;
+      systemCode: string;
+      number: null | string;
+      titleAr: null | string;
+      titleEn: null | string;
+      status: null | string;
+      link: string;
+      /** Format: double */
+      score: number;
+    };
     /** @description Field values of a record at a point in time, rebuilt from its create snapshot and later field updates. */
     RecordSnapshotDto: {
       entityType: string;
@@ -4304,6 +4997,11 @@ export interface components {
       displayNameEn: null | string;
       challengeUrl: string;
     };
+    SimilarInput: {
+      text: null | string;
+      /** Format: uuid */
+      excludeId: null | string;
+    };
     SmtpSettingsDto: {
       enabled: boolean;
       host: null | string;
@@ -4466,6 +5164,19 @@ export interface components {
       /** Format: date */
       effectiveDate: null | string;
       reason: null | string;
+    };
+    TranslateInput: {
+      text: null | string;
+      from: null | string;
+      to: null | string;
+      systemCode: null | string;
+    };
+    TranslationDto: {
+      translation: string;
+      from: string;
+      to: string;
+      /** Format: uuid */
+      usageId: string;
     };
     TranslationInput: {
       language: null | string;
@@ -10771,6 +11482,714 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['ActResult'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetAiCapabilities: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AiCapabilitiesDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetAiForm: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        formKey: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AiFormDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ExtractAiForm: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        formKey: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'multipart/form-data': {
+          file: components['schemas']['IFormFile'];
+        };
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ExtractionResultDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetApproverBrief: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        resourceType: string;
+        resourceId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApproverBriefDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  TranslateText: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['TranslateInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TranslationDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  FindSimilarRecords: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        resourceType: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SimilarInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RecordSearchHit'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  AskTheSystem: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AskInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AskAnswerDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetAiSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AiSettingsDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SaveAiSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AiSettingsInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AiSettingsDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListAiProviders: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AiProviderDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateAiProvider: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AiProviderInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AiProviderDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateAiProvider: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AiProviderInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AiProviderDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  TestAiProvider: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AiProviderProbeInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AiProviderTestDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListAiProviderModels: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AiProviderProbeInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': string[];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListAiUsage: {
+    parameters: {
+      query?: {
+        page?: number;
+        pageSize?: number;
+        feature?: string;
+        userId?: string;
+        success?: boolean;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PagedResultOfAiUsageRowDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetAiUsageSummary: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AiUsageSummaryDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetMcpSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['McpSettingsDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SaveMcpSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['McpSettingsInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['McpSettingsDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListMcpClients: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['McpClientDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RevokeMcpClient: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        clientId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetMcpConsent: {
+    parameters: {
+      query?: {
+        clientId?: string;
+        redirectUri?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['McpConsentInfoDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GrantMcpConsent: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['McpConsentInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['McpConsentTicketDto'];
         };
       };
       /** @description Problem Details (RFC 9457) */

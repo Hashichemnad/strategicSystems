@@ -5,6 +5,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Strategy.Platform.Kernel\Strategy.Platform.Kernel.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.AI.Contracts\Strategy.Platform.AI.Contracts.csproj" />
     <ProjectReference Include="..\Strategy.Platform.Workflow.Contracts\Strategy.Platform.Workflow.Contracts.csproj" />
     <ProjectReference Include="..\Strategy.Platform.Calendar.Contracts\Strategy.Platform.Calendar.Contracts.csproj" />
     <ProjectReference Include="..\Strategy.Platform.Access.Contracts\Strategy.Platform.Access.Contracts.csproj" />

@@ -94,6 +94,32 @@ const appLayout = createRoute({
 
 const homeRoute = createRoute({ getParentRoute: () => appLayout, path: '/', component: HomePage });
 
+/** OAuth consent for MCP clients (docs/design/mcp.md §2): a signed-in page in the sign-in layout. */
+const consentLayout = createRoute({
+  getParentRoute: () => rootRoute,
+  id: 'oauth',
+  component: AuthLayout,
+  beforeLoad: appLayout.options.beforeLoad,
+});
+
+const oauthParam = z.string().max(2000).optional().catch(undefined);
+
+export const consentRoute = createRoute({
+  getParentRoute: () => consentLayout,
+  path: '/oauth/consent',
+  validateSearch: z.object({
+    client_id: oauthParam,
+    redirect_uri: oauthParam,
+    response_type: oauthParam,
+    scope: oauthParam,
+    state: oauthParam,
+    code_challenge: oauthParam,
+    code_challenge_method: oauthParam,
+    resource: oauthParam,
+  }),
+  component: lazyRouteComponent(() => import('@/features/mcp/ConsentPage'), 'ConsentPage'),
+});
+
 /** List state lives in typed search params, so views are shareable links (and saved views later). */
 export const sampleSearchSchema = z.object({
   page: z.coerce.number().int().min(1).catch(1),
@@ -371,6 +397,19 @@ export const processEditorRoute = createRoute({
   component: lazyRouteComponent(() => import('@/features/workflow/ProcessEditorPage'), 'ProcessEditorPage'),
 });
 
+// AI platform and MCP server (Phase 5, docs/design/ai.md, docs/design/mcp.md).
+const aiSettingsRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/ai',
+  component: lazyRouteComponent(() => import('@/features/ai/AiSettingsPage'), 'AiSettingsPage'),
+});
+
+const mcpSettingsRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/mcp',
+  component: lazyRouteComponent(() => import('@/features/mcp/McpSettingsPage'), 'McpSettingsPage'),
+});
+
 const systemAccessRoute = createRoute({
   getParentRoute: () => settingsLayout,
   path: '/access/system-access',
@@ -409,6 +448,7 @@ export const assignmentsRoute = createRoute({
 
 const routeTree = rootRoute.addChildren([
   publicLayout.addChildren([loginRoute, mfaRoute, enrolRoute, forgotRoute, resetRoute]),
+  consentLayout.addChildren([consentRoute]),
   appLayout.addChildren([
     homeRoute,
     sampleRoute,
@@ -444,6 +484,8 @@ const routeTree = rootRoute.addChildren([
       holidaysRoute,
       approvalSettingsRoute,
       processEditorRoute,
+      aiSettingsRoute,
+      mcpSettingsRoute,
       rolesRoute,
       assignmentsRoute,
       systemAccessRoute,

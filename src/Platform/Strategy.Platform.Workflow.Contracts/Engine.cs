@@ -38,6 +38,12 @@ public sealed record ApprovalInstanceSummary(
     DateTimeOffset SubmittedAt,
     DateTimeOffset? CompletedAt);
 
+/// <summary>One submission of a record and the decisions taken in it (oldest decision first).</summary>
+public sealed record ApprovalAttempt(ApprovalInstanceSummary Instance, string? SubmitComment, IReadOnlyList<ApprovalDecision> Decisions);
+
+/// <summary>A decision on a step: outcome code (approve / reject / return / custom), comment and when.</summary>
+public sealed record ApprovalDecision(string? StepNameAr, string? StepNameEn, string Outcome, string? Comment, DateTimeOffset At);
+
 public sealed record PersonName(Guid? UserId, string? NameAr, string? NameEn);
 
 /// <summary>The pending step of a record as the current user sees it (for current-status providers).</summary>
@@ -64,6 +70,12 @@ public interface IApprovalEngine
 
     /// <summary>The newest instance for the record, or null.</summary>
     Task<ApprovalInstanceSummary?> GetLatestAsync(string processKey, Guid resourceId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Every submission of the record, newest first, with the submitter's comment and the decisions taken (approver brief: "what changed since
+    /// the last submission"). The caller checks the user may read the record first.
+    /// </summary>
+    Task<IReadOnlyList<ApprovalAttempt>> ListAttemptsAsync(string resourceType, Guid resourceId, CancellationToken cancellationToken = default);
 
     /// <summary>The step in progress for the record with its approvers and the current user's actions; null when nothing is in progress.</summary>
     Task<ApprovalStatusView?> GetStatusViewAsync(string processKey, Guid resourceId, ClaimsPrincipal user, CancellationToken cancellationToken = default);

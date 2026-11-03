@@ -14,6 +14,7 @@ internal sealed partial class AuditLog(NpgsqlDataSource dataSource, IAuditSink s
         {
             ActorId = auditEvent.ActorId,
             ActorName = auditEvent.ActorName,
+            EventChannel = auditEvent.Channel,
         };
 
         await using var connection = await dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
