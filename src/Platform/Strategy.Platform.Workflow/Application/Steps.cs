@@ -169,7 +169,7 @@ internal sealed partial class StepValidator(
             return;
         }
 
-        if (rule.Of is not null && rule.Of is not (ApproverRuleSubjects.Record or ApproverRuleSubjects.Submitter))
+        if (rule.Of is not null && rule.Of is not (ApproverRuleSubjects.Record or ApproverRuleSubjects.Submitter or ApproverRuleSubjects.Organisation))
         {
             errors.Add(Field($"{at}.of", "validation.unknownReference"));
         }

@@ -11926,6 +11926,2834 @@
           }
         }
       }
+    },
+    "/api/v1/teams": {
+      "get": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "ListTeams",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "view",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "typeCode",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "unitId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResultOfTeamListItemDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "CreateTeam",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TeamInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/counts": {
+      "get": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "GetTeamCounts",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamCountsDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/options": {
+      "get": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "GetTeamOptions",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamOptionsDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/{id}": {
+      "get": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "GetTeam",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "UpdateTeam",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTeamBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/{id}/submit": {
+      "post": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "SubmitTeam",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VersionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/{id}/cancel": {
+      "post": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "CancelTeam",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VersionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/{id}/deactivate": {
+      "post": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "DeactivateTeam",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VersionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/{id}/reactivate": {
+      "post": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "ReactivateTeam",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VersionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/{id}/close": {
+      "post": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "CloseTeam",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VersionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/{id}/memo": {
+      "post": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "SetExternalMemo",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MemoInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/{id}/memo/regenerate": {
+      "post": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "RegenerateMemo",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/{id}/links": {
+      "post": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "LinkTeamRecord",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LinkInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/{id}/links/remove": {
+      "post": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "UnlinkTeamRecord",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LinkInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/linked": {
+      "get": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "ListLinkedTeams",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinkedTeamsDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/{id}/members": {
+      "get": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "ListTeamMembers",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "history",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MemberDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "AddTeamMember",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MemberInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MemberDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/{id}/members/{memberId}": {
+      "put": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "UpdateTeamMember",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "memberId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MemberUpdateInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MemberDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/{id}/members/{memberId}/end": {
+      "post": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "EndTeamMembership",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "memberId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EndMembershipInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MemberDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/{id}/meetings": {
+      "get": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "ListTeamMeetings",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MeetingDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "CreateTeamMeeting",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MeetingInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/{id}/recommendations": {
+      "get": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "ListTeamRecommendations",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RecommendationDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "CreateTeamRecommendation",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecommendationInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecommendationDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/{id}/reports": {
+      "get": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "ListTeamReports",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReportDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/reports/{id}/submit": {
+      "post": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "SubmitTeamReport",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/{id}/evaluations": {
+      "get": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "ListTeamEvaluations",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EvaluationSummaryDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "OpenTeamEvaluation",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OpenEvaluationInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvaluationSummaryDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/employees/{employeeId}/memberships": {
+      "get": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "ListEmployeeTeamMemberships",
+        "parameters": [
+          {
+            "name": "employeeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MembershipDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/dashboard": {
+      "get": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "GetTeamDashboard",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamDashboardDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/export": {
+      "get": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "ExportTeams",
+        "parameters": [
+          {
+            "name": "kind",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/{id}/audit": {
+      "get": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "GetTeamAuditTrail",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "field",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResultOfAuditEntryDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/{id}/audit/as-of": {
+      "get": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "GetTeamAsOf",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "at",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecordSnapshotDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/meetings/{id}": {
+      "get": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "GetTeamMeeting",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "UpdateTeamMeeting",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MeetingInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/meetings/{id}/minutes": {
+      "put": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "SaveMeetingMinutes",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MinutesInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/meetings/{id}/submit-minutes": {
+      "post": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "SubmitMeetingMinutes",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VersionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/meetings/{id}/cancel": {
+      "post": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "CancelTeamMeeting",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VersionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeetingDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/meetings/{id}/ai/minutes": {
+      "post": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "DraftMeetingMinutesWithAi",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MinutesAiInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MinutesDraftDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/recommendations/{id}": {
+      "get": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "GetTeamRecommendation",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecommendationDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "UpdateTeamRecommendation",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecommendationInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecommendationDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/recommendations/{id}/status": {
+      "post": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "SetTeamRecommendationStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecommendationStatusInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecommendationDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/evaluations/{id}": {
+      "get": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "GetTeamEvaluation",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvaluationDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "SaveTeamEvaluation",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EvaluationInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvaluationDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/evaluations/{id}/status": {
+      "get": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "GetTeamEvaluationStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvaluationStatusDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/evaluations/{id}/submit": {
+      "post": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "SubmitTeamEvaluation",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VersionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvaluationDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/evaluations/{id}/cancel": {
+      "post": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "CancelTeamEvaluation",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VersionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvaluationDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/evaluations/{id}/rewards": {
+      "put": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "UpdateTeamRewards",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RewardsInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvaluationDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/evaluations/{id}/rewards/submit": {
+      "post": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "SubmitTeamRewards",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VersionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvaluationDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/evaluations/{id}/ai/summary": {
+      "post": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "SummariseTeamEvaluationWithAi",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvaluationAssistantDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/ai/formation": {
+      "post": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "DraftTeamFormationWithAi",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FormationAiInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FormationDraftDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/ai/members": {
+      "post": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "SuggestTeamMembers",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MembersAiInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MemberSuggestionDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/settings": {
+      "get": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "GetTeamConfiguration",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamConfigurationDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "SaveTeamSettings",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SettingsInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamConfigurationDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/settings/types": {
+      "post": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "SaveTeamType",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TeamTypeInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamConfigurationDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/settings/roles": {
+      "post": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "SaveTeamMemberRole",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MemberRoleInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamConfigurationDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/settings/templates": {
+      "post": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "SaveTeamEvaluationTemplate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TemplateInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplateDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/settings/templates/{id}/publish": {
+      "post": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "PublishTeamEvaluationTemplate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TemplateDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/settings/reward-matrices": {
+      "post": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "SaveTeamRewardMatrix",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RewardMatrixInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RewardMatrixDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams/settings/reward-matrices/{id}/publish": {
+      "post": {
+        "tags": [
+          "teams"
+        ],
+        "operationId": "PublishTeamRewardMatrix",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RewardMatrixDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -12957,6 +15785,22 @@
           }
         }
       },
+      "AmountDto": {
+        "required": [
+          "code",
+          "amount"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
       "AntiforgeryToken": {
         "required": [
           "token",
@@ -13576,6 +16420,73 @@
               "string"
             ],
             "format": "date"
+          },
+          "note": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "AttendanceDto": {
+        "required": [
+          "memberId",
+          "employee",
+          "externalName",
+          "status",
+          "note"
+        ],
+        "type": "object",
+        "properties": {
+          "memberId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "employee": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/PersonDto"
+              }
+            ]
+          },
+          "externalName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "note": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "AttendanceInput": {
+        "required": [
+          "memberId",
+          "status",
+          "note"
+        ],
+        "type": "object",
+        "properties": {
+          "memberId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string"
           },
           "note": {
             "type": [
@@ -14407,6 +17318,22 @@
           }
         }
       },
+      "CountDto": {
+        "required": [
+          "code",
+          "count"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
       "CreatedAccessTokenDto": {
         "required": [
           "details",
@@ -14628,6 +17555,13 @@
               "type": "string",
               "format": "uuid"
             }
+          },
+          "assigneeTeamId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
           }
         },
         "description": "New Task (SPEC §11.7): one or many assignees (and / or every employee of a unit) → one task per assignee, tied by an assignment group\nwhen there are several (SPEC §11.4)."
@@ -14692,6 +17626,136 @@
             ]
           }
         }
+      },
+      "CriterionInput": {
+        "required": [
+          "code",
+          "level",
+          "comment",
+          "overrideJustification"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "level": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "comment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "overrideJustification": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "CriterionLevel": {
+        "required": [
+          "code",
+          "nameAr",
+          "nameEn",
+          "score"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": "string"
+          },
+          "nameEn": {
+            "type": "string"
+          },
+          "score": {
+            "type": "number",
+            "format": "double"
+          },
+          "min": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "max": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          }
+        },
+        "description": "One level of a team criterion. `Min` / `Max`: data range for a data-backed criterion (Min inclusive, Max inclusive; null = open)."
+      },
+      "CriterionResult": {
+        "required": [
+          "code",
+          "level",
+          "score",
+          "comment",
+          "suggestedLevel",
+          "basis",
+          "overrideJustification"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "level": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "score": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "comment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "suggestedLevel": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "basis": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/SuggestionBasis"
+              }
+            ]
+          },
+          "overrideJustification": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "description": "The evaluator's choice for one criterion, with the system's suggestion and its basis."
       },
       "CurrentStatus": {
         "required": [
@@ -15556,6 +18620,41 @@
           }
         }
       },
+      "EndMembershipInput": {
+        "required": [
+          "on",
+          "reason",
+          "successor",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "on": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "successor": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/MemberInput"
+              }
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
       "EnrolmentResultDto": {
         "required": [
           "status",
@@ -15574,6 +18673,406 @@
           }
         },
         "description": "Result of a completed MFA enrolment: signed in, plus the recovery codes to show once."
+      },
+      "EvaluationAssistantDto": {
+        "required": [
+          "summary",
+          "points",
+          "flags",
+          "usageId"
+        ],
+        "type": "object",
+        "properties": {
+          "summary": {
+            "type": "string"
+          },
+          "points": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "flags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvaluationFlag"
+            }
+          },
+          "usageId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "EvaluationDto": {
+        "required": [
+          "summary",
+          "teamNumber",
+          "teamNameAr",
+          "teamNameEn",
+          "template",
+          "templateYear",
+          "templateVersion",
+          "criteria",
+          "workload",
+          "evidenceFileIds",
+          "flags",
+          "members",
+          "leaderEvaluator",
+          "returnComment",
+          "budget",
+          "previousCycles",
+          "permissions",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "summary": {
+            "$ref": "#/components/schemas/EvaluationSummaryDto"
+          },
+          "teamNumber": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "teamNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "teamNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "template": {
+            "$ref": "#/components/schemas/TemplateContent"
+          },
+          "templateYear": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "templateVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "criteria": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CriterionResult"
+            }
+          },
+          "workload": {
+            "type": "string"
+          },
+          "evidenceFileIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "flags": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvaluationFlag"
+            }
+          },
+          "members": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MemberEvaluationDto"
+            }
+          },
+          "leaderEvaluator": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/PersonDto"
+              }
+            ]
+          },
+          "returnComment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "budget": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/RewardBudgetDto"
+              }
+            ]
+          },
+          "previousCycles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EvaluationSummaryDto"
+            }
+          },
+          "permissions": {
+            "$ref": "#/components/schemas/EvaluationPermissionsDto"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "EvaluationFlag": {
+        "required": [
+          "code"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "memberEvaluationId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          }
+        }
+      },
+      "EvaluationInput": {
+        "required": [
+          "criteria",
+          "workload",
+          "evidenceFileIds",
+          "members",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "criteria": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/CriterionInput"
+            }
+          },
+          "workload": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "evidenceFileIds": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "members": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/MemberAnswersInput"
+            }
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "EvaluationPermissionsDto": {
+        "required": [
+          "canEvaluate",
+          "canSubmit",
+          "canCancel",
+          "canManageRewards",
+          "canSubmitRewards",
+          "evidenceRequired"
+        ],
+        "type": "object",
+        "properties": {
+          "canEvaluate": {
+            "type": "boolean"
+          },
+          "canSubmit": {
+            "type": "boolean"
+          },
+          "canCancel": {
+            "type": "boolean"
+          },
+          "canManageRewards": {
+            "type": "boolean"
+          },
+          "canSubmitRewards": {
+            "type": "boolean"
+          },
+          "evidenceRequired": {
+            "type": "boolean"
+          }
+        }
+      },
+      "EvaluationStatusDto": {
+        "required": [
+          "id",
+          "teamId",
+          "number",
+          "cycle",
+          "status",
+          "openedAt",
+          "approvedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "teamId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "cycle": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "openedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "approvedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          }
+        },
+        "description": "An evaluation as a person without the results permission sees it: status only."
+      },
+      "EvaluationSummaryDto": {
+        "required": [
+          "id",
+          "teamId",
+          "number",
+          "cycle",
+          "periodStart",
+          "periodEnd",
+          "trigger",
+          "status",
+          "openedAt",
+          "submittedAt",
+          "approvedAt",
+          "evaluator",
+          "score",
+          "rewardStatus",
+          "rewardTotal"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "teamId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "cycle": {
+            "type": "string"
+          },
+          "periodStart": {
+            "type": "string",
+            "format": "date"
+          },
+          "periodEnd": {
+            "type": "string",
+            "format": "date"
+          },
+          "trigger": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "openedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "submittedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "approvedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "evaluator": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/PersonDto"
+              }
+            ]
+          },
+          "score": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rewardStatus": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "rewardTotal": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          }
+        }
       },
       "ExtractedFieldDto": {
         "required": [
@@ -15991,6 +19490,103 @@
           }
         }
       },
+      "FormationAiInput": {
+        "required": [
+          "typeCode",
+          "name",
+          "description",
+          "linkedType",
+          "linkedId"
+        ],
+        "type": "object",
+        "properties": {
+          "typeCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "name": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "linkedType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "linkedId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          }
+        }
+      },
+      "FormationDraftDto": {
+        "required": [
+          "objectiveAr",
+          "objectiveEn",
+          "mandateAr",
+          "mandateEn",
+          "memoAr",
+          "memoEn",
+          "usageId"
+        ],
+        "type": "object",
+        "properties": {
+          "objectiveAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "objectiveEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "mandateAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "mandateEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "memoAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "memoEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "usageId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
       "FromTextInput": {
         "required": [
           "text"
@@ -16002,6 +19598,35 @@
               "null",
               "string"
             ]
+          }
+        }
+      },
+      "GradeBand": {
+        "required": [
+          "code",
+          "nameAr",
+          "nameEn",
+          "min",
+          "max"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": "string"
+          },
+          "nameEn": {
+            "type": "string"
+          },
+          "min": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "max": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
@@ -16844,6 +20469,69 @@
           }
         }
       },
+      "LinkedTeamDto": {
+        "required": [
+          "team",
+          "members"
+        ],
+        "type": "object",
+        "properties": {
+          "team": {
+            "$ref": "#/components/schemas/TeamListItemDto"
+          },
+          "members": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MemberDto"
+            }
+          }
+        }
+      },
+      "LinkedTeamsDto": {
+        "required": [
+          "teams",
+          "restricted",
+          "canLink"
+        ],
+        "type": "object",
+        "properties": {
+          "teams": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LinkedTeamDto"
+            }
+          },
+          "restricted": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "canLink": {
+            "type": "boolean"
+          }
+        }
+      },
+      "LinkInput": {
+        "required": [
+          "type",
+          "recordId"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "recordId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "LinksToDto": {
         "required": [
           "links",
@@ -17608,6 +21296,1006 @@
           }
         }
       },
+      "MeetingDto": {
+        "required": [
+          "id",
+          "teamId",
+          "number",
+          "title",
+          "scheduledAt",
+          "endsAt",
+          "location",
+          "agenda",
+          "minutes",
+          "decisions",
+          "status",
+          "minutesSubmittedAt",
+          "minutesDelayHours",
+          "minutesBy",
+          "aiDrafted",
+          "attendance",
+          "canMinute",
+          "canManage",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "teamId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "scheduledAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endsAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "location": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "agenda": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "minutes": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "decisions": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "minutesSubmittedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "minutesDelayHours": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "minutesBy": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/PersonDto"
+              }
+            ]
+          },
+          "aiDrafted": {
+            "type": "boolean"
+          },
+          "attendance": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AttendanceDto"
+            }
+          },
+          "canMinute": {
+            "type": "boolean"
+          },
+          "canManage": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "MeetingInput": {
+        "required": [
+          "title",
+          "scheduledAt",
+          "endsAt",
+          "location",
+          "agenda"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "scheduledAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endsAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "location": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "agenda": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32",
+            "default": 0
+          }
+        }
+      },
+      "MemberAnswersInput": {
+        "required": [
+          "id",
+          "answers",
+          "comment"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "answers": {
+            "type": [
+              "null",
+              "object"
+            ],
+            "additionalProperties": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "comment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "MemberDto": {
+        "required": [
+          "id",
+          "employee",
+          "externalName",
+          "externalOrganisation",
+          "externalEmail",
+          "externalPhone",
+          "roleCode",
+          "roleNameAr",
+          "roleNameEn",
+          "isLeader",
+          "responsibilities",
+          "requiredSkills",
+          "allocationPercent",
+          "position",
+          "fromDate",
+          "toDate",
+          "status",
+          "replacedByMemberId",
+          "leaveReason",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "employee": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/PersonDto"
+              }
+            ]
+          },
+          "externalName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "externalOrganisation": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "externalEmail": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "externalPhone": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "roleCode": {
+            "type": "string"
+          },
+          "roleNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "roleNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "isLeader": {
+            "type": "boolean"
+          },
+          "responsibilities": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "requiredSkills": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "allocationPercent": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "position": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fromDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "toDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "status": {
+            "type": "string"
+          },
+          "replacedByMemberId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "leaveReason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "MemberEvaluationDto": {
+        "required": [
+          "id",
+          "memberId",
+          "employee",
+          "externalName",
+          "roleCode",
+          "roleNameAr",
+          "roleNameEn",
+          "isLeader",
+          "answers",
+          "comment",
+          "points",
+          "grade",
+          "attendanceRate",
+          "evaluatedBy",
+          "canEvaluate",
+          "calculatedReward",
+          "approvedReward",
+          "adjustmentReason",
+          "certificate",
+          "certificateNumber",
+          "certificateFileId",
+          "financialReward",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "memberId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "employee": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/PersonDto"
+              }
+            ]
+          },
+          "externalName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "roleCode": {
+            "type": "string"
+          },
+          "roleNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "roleNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "isLeader": {
+            "type": "boolean"
+          },
+          "answers": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "comment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "points": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "grade": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "attendanceRate": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "evaluatedBy": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/PersonDto"
+              }
+            ]
+          },
+          "canEvaluate": {
+            "type": "boolean"
+          },
+          "calculatedReward": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "approvedReward": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "adjustmentReason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "certificate": {
+            "type": "boolean"
+          },
+          "certificateNumber": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "certificateFileId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "financialReward": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "MemberInput": {
+        "required": [
+          "id",
+          "employeeId",
+          "externalName",
+          "externalOrganisation",
+          "externalEmail",
+          "externalPhone",
+          "roleCode",
+          "responsibilities",
+          "requiredSkills",
+          "allocationPercent",
+          "fromDate"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "employeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "externalName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "externalOrganisation": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "externalEmail": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "externalPhone": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "roleCode": {
+            "type": "string"
+          },
+          "responsibilities": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "requiredSkills": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "allocationPercent": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "fromDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          }
+        }
+      },
+      "MemberQuestion": {
+        "required": [
+          "code",
+          "textAr",
+          "textEn"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "textAr": {
+            "type": "string"
+          },
+          "textEn": {
+            "type": "string"
+          }
+        }
+      },
+      "MemberRoleDto": {
+        "required": [
+          "id",
+          "code",
+          "nameAr",
+          "nameEn",
+          "sort",
+          "isLeader",
+          "canViewResults",
+          "countsTowardQuorum",
+          "isSecretary",
+          "active",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": "string"
+          },
+          "nameEn": {
+            "type": "string"
+          },
+          "sort": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isLeader": {
+            "type": "boolean"
+          },
+          "canViewResults": {
+            "type": "boolean"
+          },
+          "countsTowardQuorum": {
+            "type": "boolean"
+          },
+          "isSecretary": {
+            "type": "boolean"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "MemberRoleInput": {
+        "required": [
+          "id",
+          "code",
+          "nameAr",
+          "nameEn",
+          "sort",
+          "isLeader",
+          "canViewResults",
+          "countsTowardQuorum",
+          "isSecretary",
+          "active",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": "string"
+          },
+          "nameEn": {
+            "type": "string"
+          },
+          "sort": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isLeader": {
+            "type": "boolean"
+          },
+          "canViewResults": {
+            "type": "boolean"
+          },
+          "countsTowardQuorum": {
+            "type": "boolean"
+          },
+          "isSecretary": {
+            "type": "boolean"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          }
+        }
+      },
+      "MembersAiInput": {
+        "required": [
+          "unitId",
+          "skills",
+          "exclude"
+        ],
+        "type": "object",
+        "properties": {
+          "unitId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "skills": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "exclude": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        }
+      },
+      "MembershipDto": {
+        "required": [
+          "teamId",
+          "teamNumber",
+          "teamNameAr",
+          "teamNameEn",
+          "teamStatus",
+          "typeCode",
+          "memberId",
+          "roleCode",
+          "roleNameAr",
+          "roleNameEn",
+          "fromDate",
+          "toDate",
+          "status",
+          "results"
+        ],
+        "type": "object",
+        "properties": {
+          "teamId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "teamNumber": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "teamNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "teamNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "teamStatus": {
+            "type": "string"
+          },
+          "typeCode": {
+            "type": "string"
+          },
+          "memberId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "roleCode": {
+            "type": "string"
+          },
+          "roleNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "roleNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "fromDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "toDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "status": {
+            "type": "string"
+          },
+          "results": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/MembershipResultDto"
+            }
+          }
+        }
+      },
+      "MembershipResultDto": {
+        "required": [
+          "evaluationId",
+          "cycle",
+          "status",
+          "teamScore",
+          "points",
+          "grade",
+          "approvedReward",
+          "certificate"
+        ],
+        "type": "object",
+        "properties": {
+          "evaluationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "cycle": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "teamScore": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "points": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "grade": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "approvedReward": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "certificate": {
+            "type": "boolean"
+          }
+        }
+      },
+      "MemberSuggestionDto": {
+        "required": [
+          "employee",
+          "score",
+          "activeMemberships",
+          "overAssigned",
+          "pastTeams",
+          "lastGrade",
+          "reasons"
+        ],
+        "type": "object",
+        "properties": {
+          "employee": {
+            "$ref": "#/components/schemas/PersonDto"
+          },
+          "score": {
+            "type": "number",
+            "format": "double"
+          },
+          "activeMemberships": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "overAssigned": {
+            "type": "boolean"
+          },
+          "pastTeams": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lastGrade": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "MemberUpdateInput": {
+        "required": [
+          "roleCode",
+          "responsibilities",
+          "requiredSkills",
+          "allocationPercent",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "roleCode": {
+            "type": "string"
+          },
+          "responsibilities": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "requiredSkills": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "allocationPercent": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "MemoInput": {
+        "required": [
+          "number",
+          "date",
+          "fileId",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "number": {
+            "type": "string"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "fileId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
       "MfaCodeInput": {
         "required": [
           "method",
@@ -17661,6 +22349,127 @@
               "null",
               "string"
             ]
+          }
+        }
+      },
+      "MinutesAiInput": {
+        "required": [
+          "notes"
+        ],
+        "type": "object",
+        "properties": {
+          "notes": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "MinutesDraftDto": {
+        "required": [
+          "minutes",
+          "decisions",
+          "recommendations",
+          "usageId"
+        ],
+        "type": "object",
+        "properties": {
+          "minutes": {
+            "type": "string"
+          },
+          "decisions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "recommendations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MinutesRecommendationDraft"
+            }
+          },
+          "usageId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "MinutesInput": {
+        "required": [
+          "minutes",
+          "decisions",
+          "attendance",
+          "aiDrafted",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "minutes": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "decisions": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "attendance": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/AttendanceInput"
+            }
+          },
+          "aiDrafted": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "MinutesRecommendationDraft": {
+        "required": [
+          "text",
+          "ownerName",
+          "owner",
+          "dueDate"
+        ],
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "ownerName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "owner": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/PersonDto"
+              }
+            ]
+          },
+          "dueDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
           }
         }
       },
@@ -18393,6 +23202,21 @@
           }
         }
       },
+      "OpenEvaluationInput": {
+        "required": [
+          "year"
+        ],
+        "type": "object",
+        "properties": {
+          "year": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          }
+        }
+      },
       "OptionDto": {
         "required": [
           "code",
@@ -19088,6 +23912,40 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/TaskListItemDto"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "description": "One page of items plus the total count across all pages."
+      },
+      "PagedResultOfTeamListItemDto": {
+        "required": [
+          "items",
+          "page",
+          "pageSize",
+          "totalCount"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TeamListItemDto"
             }
           },
           "page": {
@@ -20322,6 +25180,190 @@
         },
         "description": "One open task of the leaving employee. Titles are left out for tasks the administrator may not read (confidential)."
       },
+      "RecommendationDto": {
+        "required": [
+          "id",
+          "teamId",
+          "number",
+          "meetingId",
+          "kind",
+          "text",
+          "owner",
+          "dueDate",
+          "status",
+          "overdue",
+          "closedOn",
+          "closureNote",
+          "evidenceFileIds",
+          "canEdit",
+          "canUpdateStatus",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "teamId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "meetingId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "owner": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/PersonDto"
+              }
+            ]
+          },
+          "dueDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "status": {
+            "type": "string"
+          },
+          "overdue": {
+            "type": "boolean"
+          },
+          "closedOn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "closureNote": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "evidenceFileIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "canEdit": {
+            "type": "boolean"
+          },
+          "canUpdateStatus": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "RecommendationInput": {
+        "required": [
+          "meetingId",
+          "kind",
+          "text",
+          "ownerEmployeeId",
+          "dueDate"
+        ],
+        "type": "object",
+        "properties": {
+          "meetingId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "kind": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "text": {
+            "type": "string"
+          },
+          "ownerEmployeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "dueDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32",
+            "default": 0
+          }
+        }
+      },
+      "RecommendationStatusInput": {
+        "required": [
+          "status",
+          "note",
+          "evidenceFileIds",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string"
+          },
+          "note": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "evidenceFileIds": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
       "RecordRolePermissionsInput": {
         "required": [
           "permissions",
@@ -20601,6 +25643,102 @@
         },
         "description": "Regional settings (SPEC §0, §0.2 localisation). Hijri display is off by default."
       },
+      "ReportDto": {
+        "required": [
+          "id",
+          "teamId",
+          "periodStart",
+          "periodEnd",
+          "dueDate",
+          "dueAt",
+          "status",
+          "overdue",
+          "summary",
+          "submittedAt",
+          "submittedBy",
+          "canSubmit",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "teamId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "periodStart": {
+            "type": "string",
+            "format": "date"
+          },
+          "periodEnd": {
+            "type": "string",
+            "format": "date"
+          },
+          "dueDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "dueAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "status": {
+            "type": "string"
+          },
+          "overdue": {
+            "type": "boolean"
+          },
+          "summary": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "submittedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "submittedBy": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/PersonDto"
+              }
+            ]
+          },
+          "canSubmit": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "ReportInput": {
+        "required": [
+          "summary",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "summary": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
       "ResetPasswordInput": {
         "required": [
           "userId",
@@ -20631,6 +25769,241 @@
           },
           "invitation": {
             "type": "boolean"
+          }
+        }
+      },
+      "RewardBudgetDto": {
+        "required": [
+          "year",
+          "annualBudget",
+          "used",
+          "remaining",
+          "currency",
+          "matrixId",
+          "matrixVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "annualBudget": {
+            "type": "number",
+            "format": "double"
+          },
+          "used": {
+            "type": "number",
+            "format": "double"
+          },
+          "remaining": {
+            "type": "number",
+            "format": "double"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "matrixId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "matrixVersion": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          }
+        }
+      },
+      "RewardCell": {
+        "required": [
+          "grade",
+          "workload",
+          "role",
+          "amount"
+        ],
+        "type": "object",
+        "properties": {
+          "grade": {
+            "type": "string"
+          },
+          "workload": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "description": "One cell of the reward matrix: grade × workload × member role → amount."
+      },
+      "RewardInput": {
+        "required": [
+          "id",
+          "approvedReward",
+          "adjustmentReason",
+          "certificate",
+          "financialReward"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "approvedReward": {
+            "type": "number",
+            "format": "double"
+          },
+          "adjustmentReason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "certificate": {
+            "type": "boolean"
+          },
+          "financialReward": {
+            "type": "boolean"
+          }
+        }
+      },
+      "RewardMatrixContent": {
+        "required": [
+          "cells",
+          "certificateGrades",
+          "annualBudget",
+          "currency"
+        ],
+        "type": "object",
+        "properties": {
+          "cells": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RewardCell"
+            }
+          },
+          "certificateGrades": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "annualBudget": {
+            "type": "number",
+            "format": "double"
+          },
+          "currency": {
+            "type": "string"
+          }
+        }
+      },
+      "RewardMatrixDto": {
+        "required": [
+          "id",
+          "year",
+          "versionNo",
+          "status",
+          "content",
+          "publishedAt",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "versionNo": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "type": "string"
+          },
+          "content": {
+            "$ref": "#/components/schemas/RewardMatrixContent"
+          },
+          "publishedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "RewardMatrixInput": {
+        "required": [
+          "id",
+          "year",
+          "content",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/RewardMatrixContent"
+              }
+            ]
+          },
+          "version": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          }
+        }
+      },
+      "RewardsInput": {
+        "required": [
+          "rewards",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "rewards": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RewardInput"
+            }
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
           }
         }
       },
@@ -21232,6 +26605,22 @@
           }
         }
       },
+      "SettingsInput": {
+        "required": [
+          "settings",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "settings": {
+            "$ref": "#/components/schemas/TeamSettings"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
       "SignInOutcome": {
         "required": [
           "status",
@@ -21721,6 +27110,33 @@
             "format": "uuid"
           }
         }
+      },
+      "SuggestionBasis": {
+        "required": [
+          "source",
+          "value",
+          "count",
+          "total"
+        ],
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "string"
+          },
+          "value": {
+            "type": "number",
+            "format": "double"
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "total": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "description": "The data behind a suggested level: e.g. 12 of 13 closed = 92.31 %, or 30 h average over 6 meetings."
       },
       "SummaryInput": {
         "required": [
@@ -22923,6 +28339,1221 @@
           }
         }
       },
+      "TeamConfigurationDto": {
+        "required": [
+          "settings",
+          "settingsVersion",
+          "types",
+          "roles",
+          "templates",
+          "rewardMatrices",
+          "teamAbleTypes"
+        ],
+        "type": "object",
+        "properties": {
+          "settings": {
+            "$ref": "#/components/schemas/TeamSettings"
+          },
+          "settingsVersion": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "types": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TeamTypeDto"
+            }
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MemberRoleDto"
+            }
+          },
+          "templates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TemplateDto"
+            }
+          },
+          "rewardMatrices": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RewardMatrixDto"
+            }
+          },
+          "teamAbleTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "TeamCountsDto": {
+        "required": [
+          "mine",
+          "leading",
+          "pendingEvaluation",
+          "myEvaluations",
+          "reportsDue"
+        ],
+        "type": "object",
+        "properties": {
+          "mine": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "leading": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pendingEvaluation": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "myEvaluations": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "reportsDue": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "TeamCriterion": {
+        "required": [
+          "code",
+          "nameAr",
+          "nameEn",
+          "weight",
+          "levels"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": "string"
+          },
+          "nameEn": {
+            "type": "string"
+          },
+          "weight": {
+            "type": "number",
+            "format": "double"
+          },
+          "levels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CriterionLevel"
+            }
+          },
+          "dataSource": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "TeamDashboardDto": {
+        "required": [
+          "teams",
+          "activeCommittees",
+          "byType",
+          "byStatus",
+          "workload",
+          "evaluationProgress",
+          "scoreDistribution",
+          "gradeDistribution",
+          "rewardsByYear",
+          "rewardsByUnit"
+        ],
+        "type": "object",
+        "properties": {
+          "teams": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "activeCommittees": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "byType": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CountDto"
+            }
+          },
+          "byStatus": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CountDto"
+            }
+          },
+          "workload": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WorkloadDto"
+            }
+          },
+          "evaluationProgress": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CountDto"
+            }
+          },
+          "scoreDistribution": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/CountDto"
+            }
+          },
+          "gradeDistribution": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/CountDto"
+            }
+          },
+          "rewardsByYear": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/AmountDto"
+            }
+          },
+          "rewardsByUnit": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/AmountDto"
+            }
+          }
+        }
+      },
+      "TeamDto": {
+        "required": [
+          "id",
+          "number",
+          "nameAr",
+          "nameEn",
+          "typeCode",
+          "typeNameAr",
+          "typeNameEn",
+          "permanent",
+          "subject",
+          "objectives",
+          "mandate",
+          "owningUnit",
+          "sponsor",
+          "requestedBy",
+          "leader",
+          "approvedByCode",
+          "memoMode",
+          "memoNumber",
+          "memoDate",
+          "memoFileId",
+          "memoDraft",
+          "startDate",
+          "endDate",
+          "cadence",
+          "reportTo",
+          "workload",
+          "status",
+          "statusReason",
+          "replacesTeamId",
+          "replacedByTeamId",
+          "evaluatorRule",
+          "evaluator",
+          "activatedAt",
+          "closedAt",
+          "members",
+          "linkedRecords",
+          "stats",
+          "lastScore",
+          "permissions",
+          "actions",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "typeCode": {
+            "type": "string"
+          },
+          "typeNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "typeNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "permanent": {
+            "type": "boolean"
+          },
+          "subject": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "objectives": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "mandate": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "owningUnit": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/UnitDto"
+              }
+            ]
+          },
+          "sponsor": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/PersonDto"
+              }
+            ]
+          },
+          "requestedBy": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/PersonDto"
+              }
+            ]
+          },
+          "leader": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/PersonDto"
+              }
+            ]
+          },
+          "approvedByCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "memoMode": {
+            "type": "string"
+          },
+          "memoNumber": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "memoDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "memoFileId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "memoDraft": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "startDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "endDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "cadence": {
+            "type": "string"
+          },
+          "reportTo": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "workload": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "statusReason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "replacesTeamId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "replacedByTeamId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "evaluatorRule": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "evaluator": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/PersonDto"
+              }
+            ]
+          },
+          "activatedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "closedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "members": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MemberDto"
+            }
+          },
+          "linkedRecords": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LinkView"
+            }
+          },
+          "stats": {
+            "$ref": "#/components/schemas/TeamStatsDto"
+          },
+          "lastScore": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "permissions": {
+            "$ref": "#/components/schemas/TeamPermissionsDto"
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "TeamInput": {
+        "required": [
+          "typeCode",
+          "nameAr",
+          "nameEn",
+          "permanent",
+          "subject",
+          "objectives",
+          "mandate",
+          "owningUnitId",
+          "sponsorEmployeeId",
+          "approvedByCode",
+          "memoMode",
+          "memoDraft",
+          "startDate",
+          "endDate",
+          "cadence",
+          "reportTo",
+          "workload",
+          "replacesTeamId",
+          "evaluatorRule",
+          "evaluatorEmployeeId",
+          "members"
+        ],
+        "type": "object",
+        "properties": {
+          "typeCode": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "permanent": {
+            "type": "boolean"
+          },
+          "subject": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "objectives": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "mandate": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "owningUnitId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "sponsorEmployeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "approvedByCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "memoMode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "memoDraft": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "startDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "endDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "cadence": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "reportTo": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "workload": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "replacesTeamId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "evaluatorRule": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "evaluatorEmployeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "members": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/MemberInput"
+            }
+          },
+          "linkedType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "linkedId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          }
+        }
+      },
+      "TeamListItemDto": {
+        "required": [
+          "id",
+          "number",
+          "nameAr",
+          "nameEn",
+          "typeCode",
+          "typeNameAr",
+          "typeNameEn",
+          "permanent",
+          "status",
+          "owningUnit",
+          "leader",
+          "startDate",
+          "endDate",
+          "activeMembers",
+          "lastScore",
+          "myMembership"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "typeCode": {
+            "type": "string"
+          },
+          "typeNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "typeNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "permanent": {
+            "type": "boolean"
+          },
+          "status": {
+            "type": "string"
+          },
+          "owningUnit": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/UnitDto"
+              }
+            ]
+          },
+          "leader": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/PersonDto"
+              }
+            ]
+          },
+          "startDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "endDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "activeMembers": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lastScore": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "myMembership": {
+            "type": "boolean"
+          }
+        }
+      },
+      "TeamOptionsDto": {
+        "required": [
+          "types",
+          "roles",
+          "grades"
+        ],
+        "type": "object",
+        "properties": {
+          "types": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TeamTypeDto"
+            }
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MemberRoleDto"
+            }
+          },
+          "grades": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GradeBand"
+            }
+          }
+        },
+        "description": "What the formation wizard and team pages need (any signed-in user): active types and roles, the published template's grades."
+      },
+      "TeamPermissionsDto": {
+        "required": [
+          "canEdit",
+          "canSubmit",
+          "canManage",
+          "canOperate",
+          "canMinute",
+          "canOpenEvaluation",
+          "canViewResults",
+          "canManageRewards"
+        ],
+        "type": "object",
+        "properties": {
+          "canEdit": {
+            "type": "boolean"
+          },
+          "canSubmit": {
+            "type": "boolean"
+          },
+          "canManage": {
+            "type": "boolean"
+          },
+          "canOperate": {
+            "type": "boolean"
+          },
+          "canMinute": {
+            "type": "boolean"
+          },
+          "canOpenEvaluation": {
+            "type": "boolean"
+          },
+          "canViewResults": {
+            "type": "boolean"
+          },
+          "canManageRewards": {
+            "type": "boolean"
+          }
+        }
+      },
+      "TeamSettings": {
+        "type": "object",
+        "properties": {
+          "overAssignedThreshold": {
+            "type": "integer",
+            "format": "int32",
+            "default": 4
+          },
+          "reportReminderDays": {
+            "type": "integer",
+            "format": "int32",
+            "default": 3
+          },
+          "evaluationReminderDays": {
+            "type": "integer",
+            "format": "int32",
+            "default": 5
+          },
+          "recommendationDefaultDueDays": {
+            "type": "integer",
+            "format": "int32",
+            "default": 30
+          },
+          "memberSuggestionLimit": {
+            "type": "integer",
+            "format": "int32",
+            "default": 10
+          },
+          "allowMemberCertificateDownload": {
+            "type": "boolean",
+            "default": false
+          }
+        },
+        "description": "Settings → Teams, general area (docs/design/teams.md §2). Types, roles, templates and matrices are tables (ADR 0041)."
+      },
+      "TeamStatsDto": {
+        "required": [
+          "activeMembers",
+          "meetingsHeld",
+          "recommendationsOpen",
+          "recommendationsClosed",
+          "closurePercent",
+          "averageMinutesDelay"
+        ],
+        "type": "object",
+        "properties": {
+          "activeMembers": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "meetingsHeld": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "recommendationsOpen": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "recommendationsClosed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "closurePercent": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "averageMinutesDelay": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          }
+        }
+      },
+      "TeamTypeDto": {
+        "required": [
+          "id",
+          "code",
+          "nameAr",
+          "nameEn",
+          "permanence",
+          "requiresApproval",
+          "requiresMemo",
+          "linkableTypes",
+          "defaultCadence",
+          "evaluationTrigger",
+          "annualMonth",
+          "annualDay",
+          "evaluatorRule",
+          "evaluatorEmployeeId",
+          "evaluatorMemberRole",
+          "leaderEvaluatorRule",
+          "leaderEvaluatorEmployeeId",
+          "leaderEvaluatorMemberRole",
+          "sort",
+          "active",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": "string"
+          },
+          "nameEn": {
+            "type": "string"
+          },
+          "permanence": {
+            "type": "string"
+          },
+          "requiresApproval": {
+            "type": "boolean"
+          },
+          "requiresMemo": {
+            "type": "boolean"
+          },
+          "linkableTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "defaultCadence": {
+            "type": "string"
+          },
+          "evaluationTrigger": {
+            "type": "string"
+          },
+          "annualMonth": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "annualDay": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "evaluatorRule": {
+            "type": "string"
+          },
+          "evaluatorEmployeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "evaluatorMemberRole": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "leaderEvaluatorRule": {
+            "type": "string"
+          },
+          "leaderEvaluatorEmployeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "leaderEvaluatorMemberRole": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sort": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "TeamTypeInput": {
+        "required": [
+          "id",
+          "code",
+          "values",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "values": {
+            "$ref": "#/components/schemas/TeamTypeValues"
+          },
+          "version": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          }
+        }
+      },
+      "TeamTypeValues": {
+        "required": [
+          "nameAr",
+          "nameEn",
+          "permanence",
+          "requiresApproval",
+          "requiresMemo",
+          "linkableTypes",
+          "defaultCadence",
+          "evaluationTrigger",
+          "annualMonth",
+          "annualDay",
+          "evaluatorRule",
+          "evaluatorEmployeeId",
+          "evaluatorMemberRole",
+          "leaderEvaluatorRule",
+          "leaderEvaluatorEmployeeId",
+          "leaderEvaluatorMemberRole",
+          "sort",
+          "active"
+        ],
+        "type": "object",
+        "properties": {
+          "nameAr": {
+            "type": "string"
+          },
+          "nameEn": {
+            "type": "string"
+          },
+          "permanence": {
+            "type": "string"
+          },
+          "requiresApproval": {
+            "type": "boolean"
+          },
+          "requiresMemo": {
+            "type": "boolean"
+          },
+          "linkableTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "defaultCadence": {
+            "type": "string"
+          },
+          "evaluationTrigger": {
+            "type": "string"
+          },
+          "annualMonth": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "annualDay": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "evaluatorRule": {
+            "type": "string"
+          },
+          "evaluatorEmployeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "evaluatorMemberRole": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "leaderEvaluatorRule": {
+            "type": "string"
+          },
+          "leaderEvaluatorEmployeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "leaderEvaluatorMemberRole": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sort": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "active": {
+            "type": "boolean"
+          }
+        }
+      },
+      "TemplateContent": {
+        "required": [
+          "criteria",
+          "questions",
+          "gradeBands",
+          "evidenceThreshold"
+        ],
+        "type": "object",
+        "properties": {
+          "criteria": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TeamCriterion"
+            }
+          },
+          "questions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MemberQuestion"
+            }
+          },
+          "gradeBands": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GradeBand"
+            }
+          },
+          "evidenceThreshold": {
+            "type": "number",
+            "format": "double"
+          },
+          "minPoints": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxPoints": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "description": "The content of an evaluation template version (stored as JSON)."
+      },
       "TemplateDto": {
         "required": [
           "key",
@@ -23461,6 +30092,32 @@
           }
         }
       },
+      "UnitDto": {
+        "required": [
+          "id",
+          "nameAr",
+          "nameEn"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "UnitInput": {
         "required": [
           "code",
@@ -23907,6 +30564,22 @@
               "integer"
             ],
             "format": "int32"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "UpdateTeamBody": {
+        "required": [
+          "team",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "team": {
+            "$ref": "#/components/schemas/TeamInput"
           },
           "version": {
             "type": "integer",
@@ -24486,6 +31159,9 @@
     },
     {
       "name": "tasks"
+    },
+    {
+      "name": "teams"
     }
   ]
 }

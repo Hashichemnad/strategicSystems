@@ -49,12 +49,15 @@ internal sealed class OrgRelations(IOrgDirectory org, IEmployeeDirectory employe
             return context.SubmitterEmployeeId is { } submitter ? (await employees.GetAsync(submitter, ct).ConfigureAwait(false))?.UnitId : null;
         }
 
-        if (context.Subject.UnitId is { } unit)
+        var start = context.Subject.UnitId
+            ?? (context.SubmitterEmployeeId is { } fallback ? (await employees.GetAsync(fallback, ct).ConfigureAwait(false))?.UnitId : null);
+        if (of == ApproverRuleSubjects.Organisation && start is { } leaf)
         {
-            return unit;
+            var path = await org.GetPathAsync(leaf, cancellationToken: ct).ConfigureAwait(false);
+            return path.Count > 0 ? path[0].Id : leaf;
         }
 
-        return context.SubmitterEmployeeId is { } fallback ? (await employees.GetAsync(fallback, ct).ConfigureAwait(false))?.UnitId : null;
+        return start;
     }
 
     /// <summary>The nearest unit at <paramref name="levelCode"/> on the unit's path (the unit itself first), or null.</summary>

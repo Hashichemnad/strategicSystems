@@ -14,7 +14,7 @@ namespace Strategy.Modules.Sample.Application;
 public static class SampleLinks
 {
     public static readonly LinkableTypeDefinition Definition = new(
-        SamplePermissions.ResourceType, "sample", "بند تجريبي", "Sample item", [LinkCapabilities.TaskAble], SamplePermissions.Read, "/sample/items/{id}",
+        SamplePermissions.ResourceType, "sample", "بند تجريبي", "Sample item", [LinkCapabilities.TaskAble, LinkCapabilities.TeamAble], SamplePermissions.Read, "/sample/items/{id}",
         FollowLinkedPermission: SamplePermissions.Update);
 }
 

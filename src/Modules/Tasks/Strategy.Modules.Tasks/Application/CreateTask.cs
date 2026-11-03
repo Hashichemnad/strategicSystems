@@ -39,7 +39,8 @@ public sealed record CreateTask(
     Guid? LinkedId = null,
     IReadOnlyList<string>? Checklist = null,
     RecurrenceInput? Recurrence = null,
-    IReadOnlyList<Guid>? DependsOn = null) : ICommand<CreatedTasksDto>, ITaskText;
+    IReadOnlyList<Guid>? DependsOn = null,
+    Guid? AssigneeTeamId = null) : ICommand<CreatedTasksDto>, ITaskText;
 
 /// <summary>Title in at least one language and the length limits shared by every task command.</summary>
 public interface ITaskText
@@ -77,7 +78,7 @@ public sealed class CreateTaskValidator : AbstractValidator<CreateTask>
         RuleFor(x => x.Priority).Must(p => p is null || TaskPriorities.All.Contains(p)).WithErrorCode("validation.unknownCode");
         RuleFor(x => x.CompletionRule).Must(r => r is null || GroupCompletionRules.Codes.Contains(r)).WithErrorCode("validation.unknownCode");
         RuleFor(x => x.AssigneeEmployeeIds)
-            .Must((x, ids) => (ids?.Count ?? 0) > 0 || x.AssigneeUnitId is not null)
+            .Must((x, ids) => (ids?.Count ?? 0) > 0 || x.AssigneeUnitId is not null || x.AssigneeTeamId is not null)
             .WithErrorCode("validation.notEmpty")
             .OverridePropertyName("assigneeEmployeeIds");
         RuleFor(x => x.AssigneeEmployeeIds).Must(ids => ids is null || ids.Count <= 50).WithErrorCode("validation.invalid");
@@ -94,12 +95,27 @@ public sealed class CreateTaskValidator : AbstractValidator<CreateTask>
 }
 
 /// <summary>Who may be assigned and on whose behalf a task is created (settings, SPEC §11.9).</summary>
-internal sealed class TaskAssignees(IEmployeeDirectory employees, IOrgDirectory org)
+internal sealed class TaskAssignees(
+    IEmployeeDirectory employees, IOrgDirectory org, Strategy.Modules.Teams.Contracts.ITeamsDirectory teams, Strategy.Platform.Kernel.Context.IRequestContext context)
 {
-    /// <summary>Active employees (not left) for the ids and the unit; unknown or departed employees are a validation error.</summary>
-    public async Task<Result<IReadOnlyList<EmployeeReference>>> ResolveAsync(IReadOnlyList<Guid>? ids, Guid? unitId, CancellationToken ct)
+    /// <summary>
+    /// Active employees (not left) for the ids, the unit and a team's active internal members (Phase 7, the caller must read the team);
+    /// unknown or departed employees are a validation error.
+    /// </summary>
+    public async Task<Result<IReadOnlyList<EmployeeReference>>> ResolveAsync(IReadOnlyList<Guid>? ids, Guid? unitId, Guid? teamId, CancellationToken ct)
     {
         var wanted = new List<Guid>(ids ?? []);
+        if (teamId is { } team)
+        {
+            if (await teams.GetTeamAsync(team, context.User, ct).ConfigureAwait(false) is not { } summary)
+            {
+                return Error.Validation([new FieldError("assigneeTeamId", "validation.unknownReference", "validation.unknownReference")]);
+            }
+
+            var members = await employees.GetManyAsync(summary.ActiveMemberEmployeeIds.ToList(), ct).ConfigureAwait(false);
+            wanted.AddRange(summary.ActiveMemberEmployeeIds.Where(id => members.TryGetValue(id, out var e) && e.Status != "left"));
+        }
+
         if (unitId is { } unit)
         {
             if (await org.GetUnitAsync(unit, ct).ConfigureAwait(false) is not { Active: true })
@@ -194,7 +210,7 @@ internal sealed class CreateTaskHandler(
             return checkedContent.Error;
         }
 
-        var people = await assignees.ResolveAsync(command.AssigneeEmployeeIds, command.AssigneeUnitId, cancellationToken).ConfigureAwait(false);
+        var people = await assignees.ResolveAsync(command.AssigneeEmployeeIds, command.AssigneeUnitId, command.AssigneeTeamId, cancellationToken).ConfigureAwait(false);
         if (people.IsFailure)
         {
             return people.Error;

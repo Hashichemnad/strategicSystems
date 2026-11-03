@@ -57,6 +57,9 @@ public static class ApproverRuleSubjects
 {
     public const string Record = "record";
     public const string Submitter = "submitter";
+
+    /// <summary>The top unit of the record's unit path (the organisation): <c>headOfUnit</c> of it is the General Manager (ADR 0044).</summary>
+    public const string Organisation = "organisation";
 }
 
 /// <summary>

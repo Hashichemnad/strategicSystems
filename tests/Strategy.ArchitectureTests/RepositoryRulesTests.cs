@@ -26,9 +26,12 @@ public class RepositoryRulesTests
         foreach (var assembly in moduleAssemblies.Where(a => !a.GetName().Name!.EndsWith(".Contracts", StringComparison.Ordinal)))
         {
             var own = assembly.GetName().Name!;
+            // Full type names, not assembly names: "Strategy.Modules.Teams" is a namespace prefix of "Strategy.Modules.Teams.Contracts".
             var otherInternals = moduleAssemblies
-                .Select(a => a.GetName().Name!)
-                .Where(n => n != own && n != own + ".Contracts" && !n.EndsWith(".Contracts", StringComparison.Ordinal))
+                .Where(a => a.GetName().Name is { } n && n != own && n != own + ".Contracts" && !n.EndsWith(".Contracts", StringComparison.Ordinal))
+                .SelectMany(a => a.GetTypes())
+                .Where(t => t.FullName is not null && !t.FullName.Contains('<', StringComparison.Ordinal))
+                .Select(t => t.FullName!)
                 .ToArray();
             if (otherInternals.Length == 0)
             {
