@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- What modules plug into the AI platform and the MCP server (ADR 0028, 0031): features, AI forms, record sources, tools. -->
+  <ItemGroup>
+    <ProjectReference Include="..\Strategy.Platform.Kernel\Strategy.Platform.Kernel.csproj" />
+  </ItemGroup>
+</Project>

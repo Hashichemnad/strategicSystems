@@ -170,6 +170,24 @@ internal sealed class ApprovalEngine(
         return instance is null ? null : await SummaryAsync(instance, cancellationToken).ConfigureAwait(false);
     }
 
+    public async Task<IReadOnlyList<ApprovalAttempt>> ListAttemptsAsync(string resourceType, Guid resourceId, CancellationToken cancellationToken = default)
+    {
+        var instances = await db.Instances.AsNoTracking().Where(i => i.ResourceType == resourceType && i.ResourceId == resourceId)
+            .OrderByDescending(i => i.SubmittedAt).Take(20).ToListAsync(cancellationToken).ConfigureAwait(false);
+        var ids = instances.Select(i => i.Id).ToList();
+        var decided = await db.Tasks.AsNoTracking().Where(t => ids.Contains(t.InstanceId) && t.Outcome != null && t.CompletedAt != null)
+            .OrderBy(t => t.CompletedAt).ToListAsync(cancellationToken).ConfigureAwait(false);
+        var attempts = new List<ApprovalAttempt>();
+        foreach (var instance in instances)
+        {
+            attempts.Add(new ApprovalAttempt(await SummaryAsync(instance, cancellationToken).ConfigureAwait(false), instance.Comment,
+                decided.Where(t => t.InstanceId == instance.Id)
+                    .Select(t => new ApprovalDecision(t.StepNameAr, t.StepNameEn, t.Outcome!, t.Comment, t.CompletedAt!.Value)).ToList()));
+        }
+
+        return attempts;
+    }
+
     public async Task<ApprovalStatusView?> GetStatusViewAsync(string processKey, Guid resourceId, ClaimsPrincipal user, CancellationToken cancellationToken = default)
     {
         var instance = await db.Instances.AsNoTracking()
