@@ -403,7 +403,8 @@ internal sealed class TeamRoleResolver(TeamsDbContext db, ILinkStore links) : IT
 }
 
 /// <summary>ADR 0043: a linked record closed (e.g. project closure approved) → open the completion evaluation of its project teams.</summary>
-internal sealed class OpenEvaluationOnLinkedRecordClosed(TeamsDbContext db, ILinkStore links, EvaluationOpener opener) : IIntegrationEventHandler<LinkedRecordClosed>
+internal sealed class OpenEvaluationOnLinkedRecordClosed(TeamsDbContext db, ILinkStore links, Microsoft.Extensions.DependencyInjection.IServiceScopeFactory scopes)
+    : IIntegrationEventHandler<LinkedRecordClosed>
 {
     public async Task HandleAsync(LinkedRecordClosed integrationEvent, CancellationToken cancellationToken)
     {
@@ -413,7 +414,9 @@ internal sealed class OpenEvaluationOnLinkedRecordClosed(TeamsDbContext db, ILin
         var types = await db.Types.AsNoTracking().ToDictionaryAsync(t => t.Code, cancellationToken).ConfigureAwait(false);
         foreach (var id in ids)
         {
-            var team = await db.Teams.FirstOrDefaultAsync(t => t.Id == id, cancellationToken).ConfigureAwait(false);
+            await using var scope = Jobs.JobScope.Create(scopes);
+            var teamDb = Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<TeamsDbContext>(scope.ServiceProvider);
+            var team = await teamDb.Teams.FirstOrDefaultAsync(t => t.Id == id, cancellationToken).ConfigureAwait(false);
             if (team is null || !types.TryGetValue(team.TypeCode, out var type)
                 || EvaluationTriggers.Effective(type.EvaluationTrigger, team.Permanent) != EvaluationTriggers.LinkedRecordClosed)
             {
@@ -425,14 +428,13 @@ internal sealed class OpenEvaluationOnLinkedRecordClosed(TeamsDbContext db, ILin
                 continue; // already evaluating or finished: idempotent
             }
 
-            await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
+            await using var transaction = await teamDb.Database.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
+            var opener = Microsoft.Extensions.DependencyInjection.ServiceProviderServiceExtensions.GetRequiredService<EvaluationOpener>(scope.ServiceProvider);
             var opened = await opener.OpenAsync(team, EvaluationTriggers.LinkedRecordClosed, null, closeAfter: true, cancellationToken).ConfigureAwait(false);
             if (opened.IsSuccess)
             {
                 await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
             }
-
-            db.ChangeTracker.Clear();
         }
     }
 }

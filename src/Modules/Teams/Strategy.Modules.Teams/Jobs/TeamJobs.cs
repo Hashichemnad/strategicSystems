@@ -1,5 +1,6 @@
 using System.Globalization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Quartz;
 using Strategy.Modules.Teams.Application;
 using Strategy.Modules.Teams.Domain;
@@ -15,7 +16,7 @@ namespace Strategy.Modules.Teams.Jobs;
 /// Evaluation triggers (SPEC §4.3): annual for permanent teams on the type's date (previous year), end date for temporary teams; plus the
 /// evaluator reminder. Idempotent: one cycle per team and cycle code (unique index), reminder stamped.
 /// </summary>
-internal sealed class EvaluationTriggerRunner(TeamsDbContext db, EvaluationOpener opener, TeamNotifier notifier, TeamDeadlines deadlines, ISettingsStore settings, IClock clock)
+internal sealed class EvaluationTriggerRunner(TeamsDbContext db, IServiceScopeFactory scopes, ISettingsStore settings, IClock clock)
 {
     public async Task<(int Annual, int EndDate, int Reminders)> RunAsync(CancellationToken ct)
     {
@@ -26,8 +27,7 @@ internal sealed class EvaluationTriggerRunner(TeamsDbContext db, EvaluationOpene
         int annual = 0, endDate = 0;
         foreach (var id in candidates)
         {
-            db.ChangeTracker.Clear();
-            var team = await db.Teams.FirstAsync(t => t.Id == id, ct).ConfigureAwait(false);
+            var team = await db.Teams.AsNoTracking().FirstAsync(t => t.Id == id, ct).ConfigureAwait(false);
             if (!types.TryGetValue(team.TypeCode, out var type))
             {
                 continue;
@@ -54,9 +54,13 @@ internal sealed class EvaluationTriggerRunner(TeamsDbContext db, EvaluationOpene
                 continue;
             }
 
-            await using var transaction = await db.Database.BeginTransactionAsync(ct).ConfigureAwait(false);
-            var opened = await opener.OpenAsync(team, year is null ? Domain.EvaluationTriggers.EndDate : Domain.EvaluationTriggers.Annual, year, closeAfter: year is null, ct)
-                .ConfigureAwait(false);
+            // One scope (DbContexts, transaction) per team: a failure on one team never leaks into the next.
+            await using var scope = JobScope.Create(scopes);
+            var teamDb = scope.ServiceProvider.GetRequiredService<TeamsDbContext>();
+            var tracked = await teamDb.Teams.FirstAsync(t => t.Id == id, ct).ConfigureAwait(false);
+            await using var transaction = await teamDb.Database.BeginTransactionAsync(ct).ConfigureAwait(false);
+            var opened = await scope.ServiceProvider.GetRequiredService<EvaluationOpener>()
+                .OpenAsync(tracked, year is null ? Domain.EvaluationTriggers.EndDate : Domain.EvaluationTriggers.Annual, year, closeAfter: year is null, ct).ConfigureAwait(false);
             if (opened.IsSuccess)
             {
                 await transaction.CommitAsync(ct).ConfigureAwait(false);
@@ -71,25 +75,28 @@ internal sealed class EvaluationTriggerRunner(TeamsDbContext db, EvaluationOpene
             }
         }
 
-        db.ChangeTracker.Clear();
         var configuration = await settings.GetAsync<TeamSettings>(ct).ConfigureAwait(false);
         var reminders = 0;
-        var waiting = await db.Evaluations.Where(e => (e.Status == EvaluationStatuses.Open || e.Status == EvaluationStatuses.Returned) && e.RemindedAt == null)
-            .ToListAsync(ct).ConfigureAwait(false);
-        foreach (var evaluation in waiting)
+        var waiting = await db.Evaluations.AsNoTracking().Where(e => (e.Status == EvaluationStatuses.Open || e.Status == EvaluationStatuses.Returned) && e.RemindedAt == null)
+            .Select(e => e.Id).ToListAsync(ct).ConfigureAwait(false);
+        foreach (var evaluationId in waiting)
         {
-            var team = await db.Teams.AsNoTracking().FirstAsync(t => t.Id == evaluation.TeamId, ct).ConfigureAwait(false);
-            var remindAt = await deadlines.AfterWorkingDaysAsync(team.OwningUnitId, evaluation.OpenedAt, configuration.EvaluationReminderDays, ct).ConfigureAwait(false);
+            await using var scope = JobScope.Create(scopes);
+            var teamDb = scope.ServiceProvider.GetRequiredService<TeamsDbContext>();
+            var evaluation = await teamDb.Evaluations.FirstAsync(e => e.Id == evaluationId, ct).ConfigureAwait(false);
+            var team = await teamDb.Teams.AsNoTracking().FirstAsync(t => t.Id == evaluation.TeamId, ct).ConfigureAwait(false);
+            var remindAt = await scope.ServiceProvider.GetRequiredService<TeamDeadlines>()
+                .AfterWorkingDaysAsync(team.OwningUnitId, evaluation.OpenedAt, configuration.EvaluationReminderDays, ct).ConfigureAwait(false);
             if (clock.UtcNow < remindAt)
             {
                 continue;
             }
 
-            await using var transaction = await db.Database.BeginTransactionAsync(ct).ConfigureAwait(false);
+            await using var transaction = await teamDb.Database.BeginTransactionAsync(ct).ConfigureAwait(false);
             evaluation.MarkReminded(clock.UtcNow);
-            await db.SaveChangesAsync(ct).ConfigureAwait(false);
-            await notifier.SendAsync(TeamNotifications.EvaluationReminder, team, [evaluation.EvaluatorEmployeeId, evaluation.LeaderEvaluatorEmployeeId], null, evaluation.Cycle,
-                evaluation.OpenedAt.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture), db, ct, $"/teams/evaluations/{evaluation.Id:D}").ConfigureAwait(false);
+            await teamDb.SaveChangesAsync(ct).ConfigureAwait(false);
+            await scope.ServiceProvider.GetRequiredService<TeamNotifier>().SendAsync(TeamNotifications.EvaluationReminder, team, [evaluation.EvaluatorEmployeeId, evaluation.LeaderEvaluatorEmployeeId], null, evaluation.Cycle,
+                evaluation.OpenedAt.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture), teamDb, ct, $"/teams/evaluations/{evaluation.Id:D}").ConfigureAwait(false);
             await transaction.CommitAsync(ct).ConfigureAwait(false);
             reminders++;
         }
@@ -99,7 +106,7 @@ internal sealed class EvaluationTriggerRunner(TeamsDbContext db, EvaluationOpene
 }
 
 /// <summary>Periodic reports per cadence (SPEC §4.4 C): creates the current period's report, reminds before due, notifies when overdue.</summary>
-internal sealed class ReportScheduler(TeamsDbContext db, TeamDeadlines deadlines, TeamNotifier notifier, ISettingsStore settings, IClock clock)
+internal sealed class ReportScheduler(TeamsDbContext db, TeamDeadlines deadlines, IServiceScopeFactory scopes, ISettingsStore settings, IClock clock)
 {
     public async Task<(int Created, int Reminded, int Overdue)> RunAsync(CancellationToken ct)
     {
@@ -128,27 +135,32 @@ internal sealed class ReportScheduler(TeamsDbContext db, TeamDeadlines deadlines
 
         var now = clock.UtcNow;
         int reminded = 0, overdue = 0;
-        var due = await db.Reports.Where(r => r.Status == ReportStatuses.Due && ((r.RemindedAt == null && r.RemindAt <= now) || (r.OverdueNotifiedAt == null && r.DueAt < now)))
-            .ToListAsync(ct).ConfigureAwait(false);
-        foreach (var report in due)
+        var due = await db.Reports.AsNoTracking()
+            .Where(r => r.Status == ReportStatuses.Due && ((r.RemindedAt == null && r.RemindAt <= now) || (r.OverdueNotifiedAt == null && r.DueAt < now)))
+            .Select(r => r.Id).ToListAsync(ct).ConfigureAwait(false);
+        foreach (var reportId in due)
         {
-            var team = teams.FirstOrDefault(t => t.Id == report.TeamId) ?? await db.Teams.AsNoTracking().FirstAsync(t => t.Id == report.TeamId, ct).ConfigureAwait(false);
+            await using var scope = JobScope.Create(scopes);
+            var reportDb = scope.ServiceProvider.GetRequiredService<TeamsDbContext>();
+            var notifier = scope.ServiceProvider.GetRequiredService<TeamNotifier>();
+            var report = await reportDb.Reports.FirstAsync(r => r.Id == reportId, ct).ConfigureAwait(false);
+            var team = await reportDb.Teams.AsNoTracking().FirstAsync(t => t.Id == report.TeamId, ct).ConfigureAwait(false);
             var period = $"{D(report.PeriodStart)} – {D(report.PeriodEnd)}";
-            await using var transaction = await db.Database.BeginTransactionAsync(ct).ConfigureAwait(false);
+            await using var transaction = await reportDb.Database.BeginTransactionAsync(ct).ConfigureAwait(false);
             if (report.DueAt < now && report.OverdueNotifiedAt is null)
             {
                 report.MarkOverdueNotified(now);
                 report.MarkReminded(report.RemindedAt ?? now);
-                await db.SaveChangesAsync(ct).ConfigureAwait(false);
-                await notifier.SendAsync(TeamNotifications.ReportOverdue, team, [team.LeaderEmployeeId, team.SponsorEmployeeId], null, period, D(report.DueDate), db, ct,
+                await reportDb.SaveChangesAsync(ct).ConfigureAwait(false);
+                await notifier.SendAsync(TeamNotifications.ReportOverdue, team, [team.LeaderEmployeeId, team.SponsorEmployeeId], null, period, D(report.DueDate), reportDb, ct,
                     $"/teams/{team.Id:D}?tab=reports").ConfigureAwait(false);
                 overdue++;
             }
             else if (report.RemindedAt is null)
             {
                 report.MarkReminded(now);
-                await db.SaveChangesAsync(ct).ConfigureAwait(false);
-                await notifier.SendAsync(TeamNotifications.ReportDue, team, [team.LeaderEmployeeId], null, period, D(report.DueDate), db, ct, $"/teams/{team.Id:D}?tab=reports")
+                await reportDb.SaveChangesAsync(ct).ConfigureAwait(false);
+                await notifier.SendAsync(TeamNotifications.ReportDue, team, [team.LeaderEmployeeId], null, period, D(report.DueDate), reportDb, ct, $"/teams/{team.Id:D}?tab=reports")
                     .ConfigureAwait(false);
                 reminded++;
             }
@@ -188,5 +200,17 @@ internal sealed class TeamReportsJob(RequestContext requestContext, ReportSchedu
     {
         var (created, reminded, overdue) = await scheduler.RunAsync(cancellationToken).ConfigureAwait(false);
         return $"created={created} reminded={reminded} overdue={overdue}";
+    }
+}
+
+/// <summary>A child scope that runs as the job (system principal, channel job), so each unit of work has its own DbContexts and transaction.</summary>
+internal static class JobScope
+{
+    public static AsyncServiceScope Create(IServiceScopeFactory scopes)
+    {
+        var scope = scopes.CreateAsyncScope();
+        scope.ServiceProvider.GetRequiredService<RequestContext>()
+            .Initialise(Guid.CreateVersion7().ToString("N"), Channels.Job, Platform.Access.StrategyClaims.CreateSystemPrincipal());
+        return scope;
     }
 }
