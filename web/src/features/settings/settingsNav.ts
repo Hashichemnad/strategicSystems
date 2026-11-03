@@ -20,6 +20,7 @@ import {
   Paperclip,
   Repeat,
   UserRoundX,
+  UsersRound,
   ShieldCheck,
   ShieldHalf,
   SquareStack,
@@ -30,6 +31,7 @@ import {
 } from 'lucide-react';
 
 export type SettingsPageKey =
+  | 'teams'
   | 'regional'
   | 'branding'
   | 'systems'
@@ -74,6 +76,7 @@ export type SettingsPath =
   | '/settings/ai'
   | '/settings/mcp'
   | '/settings/tasks'
+  | '/settings/teams'
   | '/settings/tasks/reassign'
   | '/settings/business-hours'
   | '/settings/holidays'
@@ -175,6 +178,7 @@ export const settingsGroups: readonly SettingsGroup[] = [
         icon: UserRoundX,
         permissions: ['tasks.reassignment.manage'],
       },
+      { key: 'teams', to: '/settings/teams', icon: UsersRound, permissions: ['teams.settings.manage'] },
     ],
   },
   {

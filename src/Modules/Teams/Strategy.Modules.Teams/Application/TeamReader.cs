@@ -40,7 +40,7 @@ internal sealed class TeamReader(TeamsDbContext db, IAccessService access, IEmpl
         return result;
     }
 
-    public async Task<Dictionary<Guid, PersonDto>> PeopleAsync(IEnumerable<Guid?> ids, CancellationToken ct)
+    public async Task<Dictionary<Guid, TeamPersonDto>> PeopleAsync(IEnumerable<Guid?> ids, CancellationToken ct)
     {
         var list = ids.Where(i => i is not null).Select(i => i!.Value).Distinct().ToList();
         if (list.Count == 0)
@@ -49,11 +49,11 @@ internal sealed class TeamReader(TeamsDbContext db, IAccessService access, IEmpl
         }
 
         var people = await employees.GetManyAsync(list, ct).ConfigureAwait(false);
-        return people.Values.ToDictionary(e => e.Id, e => new PersonDto(e.Id, e.NameAr ?? e.NameEn, e.NameEn ?? e.NameAr));
+        return people.Values.ToDictionary(e => e.Id, e => new TeamPersonDto(e.Id, e.NameAr ?? e.NameEn, e.NameEn ?? e.NameAr));
     }
 
-    public static PersonDto? Person(Guid? id, IReadOnlyDictionary<Guid, PersonDto> people) =>
-        id is { } i ? people.GetValueOrDefault(i) ?? new PersonDto(i, null, null) : null;
+    public static TeamPersonDto? Person(Guid? id, IReadOnlyDictionary<Guid, TeamPersonDto> people) =>
+        id is { } i ? people.GetValueOrDefault(i) ?? new TeamPersonDto(i, null, null) : null;
 
     public async Task<UnitDto?> UnitAsync(Guid? id, CancellationToken ct) =>
         id is { } u && await org.GetUnitAsync(u, ct).ConfigureAwait(false) is { } unit ? new UnitDto(unit.Id, unit.NameAr ?? unit.NameEn, unit.NameEn ?? unit.NameAr) : null;
@@ -65,7 +65,7 @@ internal sealed class TeamReader(TeamsDbContext db, IAccessService access, IEmpl
     public Task<List<TeamMember>> MembersAsync(Guid teamId, bool activeOnly, CancellationToken ct) =>
         db.Members.AsNoTracking().Where(m => m.TeamId == teamId && (!activeOnly || m.Status == MemberStatuses.Active)).OrderBy(m => m.Position).ToListAsync(ct);
 
-    public static MemberDto ToDto(TeamMember m, IReadOnlyDictionary<Guid, PersonDto> people, IReadOnlyList<MemberRole> roles)
+    public static MemberDto ToDto(TeamMember m, IReadOnlyDictionary<Guid, TeamPersonDto> people, IReadOnlyList<MemberRole> roles)
     {
         var role = roles.FirstOrDefault(r => r.Code == m.RoleCode);
         return new MemberDto(m.Id, Person(m.EmployeeId, people), m.ExternalName, m.ExternalOrganisation, m.ExternalEmail, m.ExternalPhone, m.RoleCode, role?.NameAr,

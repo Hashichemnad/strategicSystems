@@ -9,6 +9,7 @@ import { useCan } from '@/features/access/session';
 import { HistoryTab } from '@/features/audit/HistoryTab';
 import { DocumentsPanel } from '@/features/files/DocumentsPanel';
 import { LinkedTasksPanel } from '@/features/tasks/LinkedTasksPanel';
+import { LinkedTeamsPanel } from '@/features/teams/LinkedTeamsPanel';
 import { formatDateTime, formatNumber, pickText } from '@/lib/format';
 import {
   Button,
@@ -41,6 +42,7 @@ export function SampleItemPage() {
   const { t: ta } = useTranslation('audit');
   const { t: tf } = useTranslation('files');
   const { t: tk } = useTranslation('tasks');
+  const { t: tt } = useTranslation('teams');
   const { itemId } = route.useParams();
   const { tab } = route.useSearch();
   const navigate = route.useNavigate();
@@ -130,6 +132,7 @@ export function SampleItemPage() {
           <TabsTrigger value="overview">{t('tabs.overview')}</TabsTrigger>
           <TabsTrigger value="approvals">{t('tabs.approvals')}</TabsTrigger>
           <TabsTrigger value="tasks">{tk('linked.title')}</TabsTrigger>
+          <TabsTrigger value="teams">{tt('linked.title')}</TabsTrigger>
           <TabsTrigger value="documents">{tf('tab')}</TabsTrigger>
           <TabsTrigger value="history">{ta('history.tab')}</TabsTrigger>
         </TabsList>
@@ -167,6 +170,9 @@ export function SampleItemPage() {
         </TabsContent>
         <TabsContent value="tasks">
           <LinkedTasksPanel type="sample.item" id={data.id} />
+        </TabsContent>
+        <TabsContent value="teams">
+          <LinkedTeamsPanel type="sample.item" id={data.id} />
         </TabsContent>
         <TabsContent value="documents">
           <DocumentsPanel

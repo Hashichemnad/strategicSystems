@@ -49,7 +49,9 @@ import enExpressions from './en/expressions.json';
 import enAi from './en/ai.json';
 import enMcp from './en/mcp.json';
 import arTasks from './ar/tasks.json';
+import arTeams from './ar/teams.json';
 import enTasks from './en/tasks.json';
+import enTeams from './en/teams.json';
 import arLinks from './ar/links.json';
 import enLinks from './en/links.json';
 import { readPreference } from '@/lib/preferences';
@@ -84,6 +86,7 @@ export const resources = {
     mcp: arMcp,
     calendar: arCalendar,
     tasks: arTasks,
+    teams: arTeams,
     links: arLinks,
   },
   en: {
@@ -112,6 +115,7 @@ export const resources = {
     mcp: enMcp,
     calendar: enCalendar,
     tasks: enTasks,
+    teams: enTeams,
     links: enLinks,
   },
 } as const;

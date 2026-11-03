@@ -544,7 +544,7 @@ internal sealed class RecommendationHandlers(
         return ToDto(item, people, await reader.CanAsync(context.User, TeamPermissions.Operate, team, ct).ConfigureAwait(false));
     }
 
-    private RecommendationDto ToDto(Recommendation r, IReadOnlyDictionary<Guid, PersonDto> people, bool canOperate)
+    private RecommendationDto ToDto(Recommendation r, IReadOnlyDictionary<Guid, TeamPersonDto> people, bool canOperate)
     {
         var isOwner = r.OwnerEmployeeId is not null && r.OwnerEmployeeId == context.User.EmployeeIdOf();
         return new RecommendationDto(r.Id, r.TeamId, r.Number, r.MeetingId, r.Kind, r.Text, TeamReader.Person(r.OwnerEmployeeId, people), r.DueDate, r.Status,
@@ -613,7 +613,7 @@ internal sealed class ReportHandlers(TeamsDbContext db, TeamReader reader, IRequ
         return ToDto(report, people, true);
     }
 
-    private ReportDto ToDto(TeamReport r, IReadOnlyDictionary<Guid, PersonDto> people, bool canOperate) =>
+    private ReportDto ToDto(TeamReport r, IReadOnlyDictionary<Guid, TeamPersonDto> people, bool canOperate) =>
         new(r.Id, r.TeamId, r.PeriodStart, r.PeriodEnd, r.DueDate, r.DueAt, r.Status, r.Status == ReportStatuses.Due && clock.UtcNow > r.DueAt, r.Summary, r.SubmittedAt,
             TeamReader.Person(r.SubmittedByEmployeeId, people), canOperate && r.Status == ReportStatuses.Due, r.Version);
 }

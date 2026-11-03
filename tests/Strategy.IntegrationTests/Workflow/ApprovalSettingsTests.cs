@@ -164,7 +164,7 @@ public sealed class ApprovalSettingsTests(ApiFixture api) : IClassFixture<ApiFix
         preview.Steps[0].ConditionResult.ShouldBe(true);
         preview.Steps[0].Approvers.Single().UserId.ShouldBe(world.SectionManager.Id);
         preview.Steps[1].Approvers.Single().UserId.ShouldBe(world.Director.Id);
-        preview.Steps[3].Notes.ShouldContain("workflow.preview.teamRoleUnavailable");
+        preview.Steps[3].Approvers.ShouldBeEmpty(); // Phase 7: Teams resolves team roles; the sample item has no team with a "chair"
         preview.Facts.Single(f => f.Name == "sectionManager").Value.ShouldBe(world.SectionManager.EmployeeId!.Value.ToString("D"));
         preview.Facts.Single(f => f.Name == "sectionManager").DisplayEn.ShouldStartWith("Test employee");
         preview.Facts.Single(f => f.Name == "unitLevel").Value.ShouldBe("section");

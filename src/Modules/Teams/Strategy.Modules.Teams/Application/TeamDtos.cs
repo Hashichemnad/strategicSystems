@@ -3,7 +3,7 @@ using Strategy.Platform.Links;
 
 namespace Strategy.Modules.Teams.Application;
 
-public sealed record PersonDto(Guid Id, string? NameAr, string? NameEn);
+public sealed record TeamPersonDto(Guid Id, string? NameAr, string? NameEn);
 
 public sealed record UnitDto(Guid Id, string? NameAr, string? NameEn);
 
@@ -18,7 +18,7 @@ public sealed record TeamListItemDto(
     bool Permanent,
     string Status,
     UnitDto? OwningUnit,
-    PersonDto? Leader,
+    TeamPersonDto? Leader,
     DateOnly? StartDate,
     DateOnly? EndDate,
     int ActiveMembers,
@@ -27,7 +27,7 @@ public sealed record TeamListItemDto(
 
 public sealed record MemberDto(
     Guid Id,
-    PersonDto? Employee,
+    TeamPersonDto? Employee,
     string? ExternalName,
     string? ExternalOrganisation,
     string? ExternalEmail,
@@ -65,9 +65,9 @@ public sealed record TeamDto(
     string? Objectives,
     string? Mandate,
     UnitDto? OwningUnit,
-    PersonDto? Sponsor,
-    PersonDto? RequestedBy,
-    PersonDto? Leader,
+    TeamPersonDto? Sponsor,
+    TeamPersonDto? RequestedBy,
+    TeamPersonDto? Leader,
     string? ApprovedByCode,
     string MemoMode,
     string? MemoNumber,
@@ -84,7 +84,7 @@ public sealed record TeamDto(
     Guid? ReplacesTeamId,
     Guid? ReplacedByTeamId,
     string? EvaluatorRule,
-    PersonDto? Evaluator,
+    TeamPersonDto? Evaluator,
     DateTimeOffset? ActivatedAt,
     DateTimeOffset? ClosedAt,
     IReadOnlyList<MemberDto> Members,
@@ -95,7 +95,7 @@ public sealed record TeamDto(
     IReadOnlyList<string> Actions,
     uint Version);
 
-public sealed record AttendanceDto(Guid MemberId, PersonDto? Employee, string? ExternalName, string? Status, string? Note);
+public sealed record AttendanceDto(Guid MemberId, TeamPersonDto? Employee, string? ExternalName, string? Status, string? Note);
 
 public sealed record MeetingDto(
     Guid Id,
@@ -111,7 +111,7 @@ public sealed record MeetingDto(
     string Status,
     DateTimeOffset? MinutesSubmittedAt,
     decimal? MinutesDelayHours,
-    PersonDto? MinutesBy,
+    TeamPersonDto? MinutesBy,
     bool AiDrafted,
     IReadOnlyList<AttendanceDto> Attendance,
     bool CanMinute,
@@ -125,7 +125,7 @@ public sealed record RecommendationDto(
     Guid? MeetingId,
     string Kind,
     string Text,
-    PersonDto? Owner,
+    TeamPersonDto? Owner,
     DateOnly? DueDate,
     string Status,
     bool Overdue,
@@ -138,7 +138,7 @@ public sealed record RecommendationDto(
 
 public sealed record ReportDto(
     Guid Id, Guid TeamId, DateOnly PeriodStart, DateOnly PeriodEnd, DateOnly DueDate, DateTimeOffset DueAt, string Status, bool Overdue, string? Summary,
-    DateTimeOffset? SubmittedAt, PersonDto? SubmittedBy, bool CanSubmit, uint Version);
+    DateTimeOffset? SubmittedAt, TeamPersonDto? SubmittedBy, bool CanSubmit, uint Version);
 
 public sealed record EvaluationSummaryDto(
     Guid Id,
@@ -152,7 +152,7 @@ public sealed record EvaluationSummaryDto(
     DateTimeOffset OpenedAt,
     DateTimeOffset? SubmittedAt,
     DateTimeOffset? ApprovedAt,
-    PersonDto? Evaluator,
+    TeamPersonDto? Evaluator,
     decimal? Score,
     string? RewardStatus,
     decimal? RewardTotal);
@@ -160,7 +160,7 @@ public sealed record EvaluationSummaryDto(
 public sealed record MemberEvaluationDto(
     Guid Id,
     Guid MemberId,
-    PersonDto? Employee,
+    TeamPersonDto? Employee,
     string? ExternalName,
     string RoleCode,
     string? RoleNameAr,
@@ -171,7 +171,7 @@ public sealed record MemberEvaluationDto(
     int? Points,
     string? Grade,
     decimal? AttendanceRate,
-    PersonDto? EvaluatedBy,
+    TeamPersonDto? EvaluatedBy,
     bool CanEvaluate,
     decimal? CalculatedReward,
     decimal? ApprovedReward,
@@ -199,7 +199,7 @@ public sealed record EvaluationDto(
     IReadOnlyList<Guid> EvidenceFileIds,
     IReadOnlyList<EvaluationFlag> Flags,
     IReadOnlyList<MemberEvaluationDto> Members,
-    PersonDto? LeaderEvaluator,
+    TeamPersonDto? LeaderEvaluator,
     string? ReturnComment,
     RewardBudgetDto? Budget,
     IReadOnlyList<EvaluationSummaryDto> PreviousCycles,

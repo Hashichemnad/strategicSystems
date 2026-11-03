@@ -66,7 +66,13 @@ public sealed class TeamsFixture(PostgresFixture postgres) : IAsyncLifetime
             services.AddLinkTargetSource<FakeProjectLinkTargets>();
         });
 
-    public async ValueTask DisposeAsync() => await Factory.DisposeAsync();
+    public async ValueTask DisposeAsync()
+    {
+        if (Factory is not null)
+        {
+            await Factory.DisposeAsync();
+        }
+    }
 }
 
 /// <summary>

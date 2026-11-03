@@ -143,7 +143,7 @@ export const sampleItemRoute = createRoute({
   getParentRoute: () => appLayout,
   path: '/sample/items/$itemId',
   validateSearch: z.object({
-    tab: z.enum(['overview', 'approvals', 'tasks', 'documents', 'history']).catch('overview'),
+    tab: z.enum(['overview', 'approvals', 'tasks', 'teams', 'documents', 'history']).catch('overview'),
   }),
   component: lazyRouteComponent(() => import('@/features/sample/SampleItemPage'), 'SampleItemPage'),
 });
@@ -203,6 +203,86 @@ export const taskDashboardRoute = createRoute({
   getParentRoute: () => appLayout,
   path: '/tasks/dashboard',
   component: lazyRouteComponent(() => import('@/features/tasks/TaskDashboardPage'), 'TaskDashboardPage'),
+});
+
+// Teams Management (Phase 7, docs/design/teams.md): register, formation request, team page, meeting, evaluation, dashboard.
+export const teamsRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/teams',
+  validateSearch: z.object({
+    view: z.enum(['all', 'mine', 'leading', 'pending-evaluation']).catch('all'),
+    page: z.coerce.number().int().min(1).catch(1),
+    type: z.string().max(100).optional().catch(undefined),
+    status: z.string().max(50).optional().catch(undefined),
+    search: z.string().max(200).optional().catch(undefined),
+  }),
+  component: lazyRouteComponent(() => import('@/features/teams/TeamsPage'), 'TeamsPage'),
+});
+
+export const teamNewRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/teams/new',
+  validateSearch: z.object({
+    linkedType: z.string().max(100).optional().catch(undefined),
+    linkedId: z.uuid().optional().catch(undefined),
+    type: z.string().max(100).optional().catch(undefined),
+  }),
+  component: lazyRouteComponent(() => import('@/features/teams/TeamFormPage'), 'TeamFormPage'),
+});
+
+export const teamDashboardRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/teams/dashboard',
+  component: lazyRouteComponent(() => import('@/features/teams/TeamDashboardPage'), 'TeamDashboardPage'),
+});
+
+export const teamRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/teams/$teamId',
+  validateSearch: z.object({
+    tab: z
+      .enum([
+        'overview',
+        'members',
+        'meetings',
+        'recommendations',
+        'tasks',
+        'reports',
+        'documents',
+        'evaluations',
+        'approvals',
+        'history',
+      ])
+      .catch('overview'),
+  }),
+  component: lazyRouteComponent(() => import('@/features/teams/TeamPage'), 'TeamPage'),
+});
+
+export const teamEditRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/teams/$teamId/edit',
+  component: lazyRouteComponent(() => import('@/features/teams/TeamFormPage'), 'TeamFormPage'),
+});
+
+export const teamMeetingRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/teams/meetings/$meetingId',
+  component: lazyRouteComponent(() => import('@/features/teams/MeetingPage'), 'MeetingPage'),
+});
+
+export const teamEvaluationRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/teams/evaluations/$evaluationId',
+  component: lazyRouteComponent(() => import('@/features/teams/EvaluationPage'), 'EvaluationPage'),
+});
+
+export const teamRecommendationRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/teams/recommendations/$recommendationId',
+  component: lazyRouteComponent(
+    () => import('@/features/teams/RecommendationRedirect'),
+    'RecommendationRedirect',
+  ),
 });
 
 // Audit trail (CLAUDE.md §8): global log for administrators and auditors, and the chain verification screen.
@@ -461,6 +541,12 @@ const aiSettingsRoute = createRoute({
   component: lazyRouteComponent(() => import('@/features/ai/AiSettingsPage'), 'AiSettingsPage'),
 });
 
+const teamSettingsRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/teams',
+  component: lazyRouteComponent(() => import('@/features/teams/TeamSettingsPage'), 'TeamSettingsPage'),
+});
+
 const taskSettingsRoute = createRoute({
   getParentRoute: () => settingsLayout,
   path: '/tasks',
@@ -527,6 +613,14 @@ const routeTree = rootRoute.addChildren([
     taskRoute,
     taskGroupRoute,
     taskDashboardRoute,
+    teamsRoute,
+    teamNewRoute,
+    teamDashboardRoute,
+    teamRoute,
+    teamEditRoute,
+    teamMeetingRoute,
+    teamEvaluationRoute,
+    teamRecommendationRoute,
     auditRoute,
     auditVerificationRoute,
     notificationsRoute,
@@ -561,6 +655,7 @@ const routeTree = rootRoute.addChildren([
       aiSettingsRoute,
       mcpSettingsRoute,
       taskSettingsRoute,
+      teamSettingsRoute,
       taskReassignRoute,
       rolesRoute,
       assignmentsRoute,

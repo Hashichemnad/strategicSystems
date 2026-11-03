@@ -177,7 +177,9 @@
     "suggest": "Suggest assignees",
     "suggestions": "Suggested",
     "fromText": "Draft tasks from text",
-    "assignOptions": "More options"
+    "assignOptions": "More options",
+    "teamMembers": "Team’s members (one task each)",
+    "noTeam": "No team"
   },
   "fromText": {
     "title": "Draft tasks from text",

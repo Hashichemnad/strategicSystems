@@ -23,7 +23,11 @@ export type AiFeatureKey =
   | 'tasks-from-text'
   | 'task-summary'
   | 'task-assignee'
-  | 'task-workload';
+  | 'task-workload'
+  | 'teams-formation'
+  | 'teams-members'
+  | 'teams-evaluation'
+  | 'teams-minutes';
 
 export const aiKeys = {
   all: ['ai'] as const,

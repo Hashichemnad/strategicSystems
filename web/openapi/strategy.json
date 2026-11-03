@@ -12227,7 +12227,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/VersionInput"
+                "$ref": "#/components/schemas/TeamVersionInput"
               }
             }
           },
@@ -12278,7 +12278,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/VersionInput"
+                "$ref": "#/components/schemas/TeamVersionInput"
               }
             }
           },
@@ -12329,7 +12329,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/VersionInput"
+                "$ref": "#/components/schemas/TeamVersionInput"
               }
             }
           },
@@ -12380,7 +12380,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/VersionInput"
+                "$ref": "#/components/schemas/TeamVersionInput"
               }
             }
           },
@@ -12431,7 +12431,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/VersionInput"
+                "$ref": "#/components/schemas/TeamVersionInput"
               }
             }
           },
@@ -13713,7 +13713,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/VersionInput"
+                "$ref": "#/components/schemas/TeamVersionInput"
               }
             }
           },
@@ -13764,7 +13764,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/VersionInput"
+                "$ref": "#/components/schemas/TeamVersionInput"
               }
             }
           },
@@ -14138,7 +14138,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/VersionInput"
+                "$ref": "#/components/schemas/TeamVersionInput"
               }
             }
           },
@@ -14189,7 +14189,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/VersionInput"
+                "$ref": "#/components/schemas/TeamVersionInput"
               }
             }
           },
@@ -14291,7 +14291,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/VersionInput"
+                "$ref": "#/components/schemas/TeamVersionInput"
               }
             }
           },
@@ -14603,7 +14603,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/TemplateInput"
+                "$ref": "#/components/schemas/EvaluationTemplateInput"
               }
             }
           },
@@ -14615,7 +14615,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TemplateDto"
+                  "$ref": "#/components/schemas/EvaluationTemplateDto"
                 }
               }
             }
@@ -14656,7 +14656,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TemplateDto"
+                  "$ref": "#/components/schemas/EvaluationTemplateDto"
                 }
               }
             }
@@ -16449,7 +16449,7 @@
                 "type": "null"
               },
               {
-                "$ref": "#/components/schemas/PersonDto"
+                "$ref": "#/components/schemas/TeamPersonDto"
               }
             ]
           },
@@ -18793,7 +18793,7 @@
                 "type": "null"
               },
               {
-                "$ref": "#/components/schemas/PersonDto"
+                "$ref": "#/components/schemas/TeamPersonDto"
               }
             ]
           },
@@ -19048,7 +19048,7 @@
                 "type": "null"
               },
               {
-                "$ref": "#/components/schemas/PersonDto"
+                "$ref": "#/components/schemas/TeamPersonDto"
               }
             ]
           },
@@ -19071,6 +19071,102 @@
               "number"
             ],
             "format": "double"
+          }
+        }
+      },
+      "EvaluationTemplateDto": {
+        "required": [
+          "id",
+          "year",
+          "versionNo",
+          "status",
+          "content",
+          "notes",
+          "publishedAt",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "versionNo": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "type": "string"
+          },
+          "content": {
+            "$ref": "#/components/schemas/TemplateContent"
+          },
+          "notes": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "publishedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "EvaluationTemplateInput": {
+        "required": [
+          "id",
+          "year",
+          "content",
+          "notes",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/TemplateContent"
+              }
+            ]
+          },
+          "notes": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "version": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
           }
         }
       },
@@ -21392,7 +21488,7 @@
                 "type": "null"
               },
               {
-                "$ref": "#/components/schemas/PersonDto"
+                "$ref": "#/components/schemas/TeamPersonDto"
               }
             ]
           },
@@ -21522,7 +21618,7 @@
                 "type": "null"
               },
               {
-                "$ref": "#/components/schemas/PersonDto"
+                "$ref": "#/components/schemas/TeamPersonDto"
               }
             ]
           },
@@ -21669,7 +21765,7 @@
                 "type": "null"
               },
               {
-                "$ref": "#/components/schemas/PersonDto"
+                "$ref": "#/components/schemas/TeamPersonDto"
               }
             ]
           },
@@ -21736,7 +21832,7 @@
                 "type": "null"
               },
               {
-                "$ref": "#/components/schemas/PersonDto"
+                "$ref": "#/components/schemas/TeamPersonDto"
               }
             ]
           },
@@ -22201,7 +22297,7 @@
         "type": "object",
         "properties": {
           "employee": {
-            "$ref": "#/components/schemas/PersonDto"
+            "$ref": "#/components/schemas/TeamPersonDto"
           },
           "score": {
             "type": "number",
@@ -22460,7 +22556,7 @@
                 "type": "null"
               },
               {
-                "$ref": "#/components/schemas/PersonDto"
+                "$ref": "#/components/schemas/TeamPersonDto"
               }
             ]
           },
@@ -25234,7 +25330,7 @@
                 "type": "null"
               },
               {
-                "$ref": "#/components/schemas/PersonDto"
+                "$ref": "#/components/schemas/TeamPersonDto"
               }
             ]
           },
@@ -25710,7 +25806,7 @@
                 "type": "null"
               },
               {
-                "$ref": "#/components/schemas/PersonDto"
+                "$ref": "#/components/schemas/TeamPersonDto"
               }
             ]
           },
@@ -28373,7 +28469,7 @@
           "templates": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/TemplateDto"
+              "$ref": "#/components/schemas/EvaluationTemplateDto"
             }
           },
           "rewardMatrices": {
@@ -28497,7 +28593,7 @@
           "workload": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/WorkloadDto"
+              "$ref": "#/components/schemas/TeamWorkloadDto"
             }
           },
           "evaluationProgress": {
@@ -28664,7 +28760,7 @@
                 "type": "null"
               },
               {
-                "$ref": "#/components/schemas/PersonDto"
+                "$ref": "#/components/schemas/TeamPersonDto"
               }
             ]
           },
@@ -28674,7 +28770,7 @@
                 "type": "null"
               },
               {
-                "$ref": "#/components/schemas/PersonDto"
+                "$ref": "#/components/schemas/TeamPersonDto"
               }
             ]
           },
@@ -28684,7 +28780,7 @@
                 "type": "null"
               },
               {
-                "$ref": "#/components/schemas/PersonDto"
+                "$ref": "#/components/schemas/TeamPersonDto"
               }
             ]
           },
@@ -28784,7 +28880,7 @@
                 "type": "null"
               },
               {
-                "$ref": "#/components/schemas/PersonDto"
+                "$ref": "#/components/schemas/TeamPersonDto"
               }
             ]
           },
@@ -29089,7 +29185,7 @@
                 "type": "null"
               },
               {
-                "$ref": "#/components/schemas/PersonDto"
+                "$ref": "#/components/schemas/TeamPersonDto"
               }
             ]
           },
@@ -29188,6 +29284,32 @@
           },
           "canManageRewards": {
             "type": "boolean"
+          }
+        }
+      },
+      "TeamPersonDto": {
+        "required": [
+          "id",
+          "nameAr",
+          "nameEn"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
@@ -29508,6 +29630,50 @@
             "format": "int32"
           },
           "active": {
+            "type": "boolean"
+          }
+        }
+      },
+      "TeamVersionInput": {
+        "required": [
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "comment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "TeamWorkloadDto": {
+        "required": [
+          "employee",
+          "activeMemberships",
+          "overAssigned"
+        ],
+        "type": "object",
+        "properties": {
+          "employee": {
+            "$ref": "#/components/schemas/TeamPersonDto"
+          },
+          "activeMemberships": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "overAssigned": {
             "type": "boolean"
           }
         }

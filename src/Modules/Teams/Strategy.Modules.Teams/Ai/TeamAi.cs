@@ -37,11 +37,11 @@ public static class TeamAiFeatures
 
 public sealed record FormationDraftDto(string? ObjectiveAr, string? ObjectiveEn, string? MandateAr, string? MandateEn, string? MemoAr, string? MemoEn, Guid UsageId);
 
-public sealed record MemberSuggestionDto(PersonDto Employee, double Score, int ActiveMemberships, bool OverAssigned, int PastTeams, string? LastGrade, IReadOnlyList<string> Reasons);
+public sealed record MemberSuggestionDto(TeamPersonDto Employee, double Score, int ActiveMemberships, bool OverAssigned, int PastTeams, string? LastGrade, IReadOnlyList<string> Reasons);
 
 public sealed record EvaluationAssistantDto(string Summary, IReadOnlyList<string> Points, IReadOnlyList<EvaluationFlag> Flags, Guid UsageId);
 
-public sealed record MinutesRecommendationDraft(string Text, string? OwnerName, PersonDto? Owner, DateOnly? DueDate);
+public sealed record MinutesRecommendationDraft(string Text, string? OwnerName, TeamPersonDto? Owner, DateOnly? DueDate);
 
 public sealed record MinutesDraftDto(string Minutes, IReadOnlyList<string> Decisions, IReadOnlyList<MinutesRecommendationDraft> Recommendations, Guid UsageId);
 
@@ -160,7 +160,7 @@ internal sealed class TeamAiService(
             var score = Math.Round((2.0 * Math.Min(overlap, 5)) + (3.0 * Math.Max(0, configuration.OverAssignedThreshold - active) / configuration.OverAssignedThreshold)
                 + (grade == "very-active" ? 1 : 0), 2);
             var e = people[id];
-            result.Add(new MemberSuggestionDto(new PersonDto(id, e.NameAr ?? e.NameEn, e.NameEn ?? e.NameAr), score, active, over,
+            result.Add(new MemberSuggestionDto(new TeamPersonDto(id, e.NameAr ?? e.NameEn, e.NameEn ?? e.NameAr), score, active, over,
                 mine.Select(h => h.TeamId).Distinct().Count(), grade, reasons));
         }
 

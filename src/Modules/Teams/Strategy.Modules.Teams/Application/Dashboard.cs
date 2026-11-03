@@ -16,14 +16,14 @@ public sealed record CountDto(string Code, int Count);
 
 public sealed record AmountDto(string Code, decimal Amount);
 
-public sealed record WorkloadDto(PersonDto Employee, int ActiveMemberships, bool OverAssigned);
+public sealed record TeamWorkloadDto(TeamPersonDto Employee, int ActiveMemberships, bool OverAssigned);
 
 public sealed record TeamDashboardDto(
     int Teams,
     int ActiveCommittees,
     IReadOnlyList<CountDto> ByType,
     IReadOnlyList<CountDto> ByStatus,
-    IReadOnlyList<WorkloadDto> Workload,
+    IReadOnlyList<TeamWorkloadDto> Workload,
     IReadOnlyList<CountDto> EvaluationProgress,
     IReadOnlyList<CountDto>? ScoreDistribution,
     IReadOnlyList<CountDto>? GradeDistribution,
@@ -73,7 +73,7 @@ internal sealed class DashboardHandlers(
             teams.Count(t => TeamStatuses.IsOperating(t.Status) && t.TypeCode.Contains("committee", StringComparison.Ordinal)),
             teams.GroupBy(t => t.TypeCode).Select(g => new CountDto(g.Key, g.Count())).OrderByDescending(c => c.Count).ToList(),
             teams.GroupBy(t => t.Status).Select(g => new CountDto(g.Key, g.Count())).OrderByDescending(c => c.Count).ToList(),
-            memberships.Select(m => new WorkloadDto(TeamReader.Person(m.Employee, people)!, m.Count, m.Count >= configuration.OverAssignedThreshold)).ToList(),
+            memberships.Select(m => new TeamWorkloadDto(TeamReader.Person(m.Employee, people)!, m.Count, m.Count >= configuration.OverAssignedThreshold)).ToList(),
             evaluations.GroupBy(e => e.Status).Select(g => new CountDto(g.Key, g.Count())).ToList(),
             withResults.Count == 0 ? null : resultEvaluations.GroupBy(e => Band(e.Score)).Select(g => new CountDto(g.Key, g.Count())).OrderBy(c => c.Code).ToList(),
             grades,

@@ -3604,6 +3604,806 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/teams': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListTeams'];
+    put?: never;
+    post: operations['CreateTeam'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/counts': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetTeamCounts'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/options': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetTeamOptions'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetTeam'];
+    put: operations['UpdateTeam'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/{id}/submit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SubmitTeam'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/{id}/cancel': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CancelTeam'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/{id}/deactivate': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['DeactivateTeam'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/{id}/reactivate': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ReactivateTeam'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/{id}/close': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CloseTeam'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/{id}/memo': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SetExternalMemo'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/{id}/memo/regenerate': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RegenerateMemo'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/{id}/links': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['LinkTeamRecord'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/{id}/links/remove': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['UnlinkTeamRecord'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/linked': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListLinkedTeams'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/{id}/members': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListTeamMembers'];
+    put?: never;
+    post: operations['AddTeamMember'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/{id}/members/{memberId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateTeamMember'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/{id}/members/{memberId}/end': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['EndTeamMembership'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/{id}/meetings': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListTeamMeetings'];
+    put?: never;
+    post: operations['CreateTeamMeeting'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/{id}/recommendations': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListTeamRecommendations'];
+    put?: never;
+    post: operations['CreateTeamRecommendation'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/{id}/reports': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListTeamReports'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/reports/{id}/submit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SubmitTeamReport'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/{id}/evaluations': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListTeamEvaluations'];
+    put?: never;
+    post: operations['OpenTeamEvaluation'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/employees/{employeeId}/memberships': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListEmployeeTeamMemberships'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/dashboard': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetTeamDashboard'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/export': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ExportTeams'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/{id}/audit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetTeamAuditTrail'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/{id}/audit/as-of': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetTeamAsOf'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/meetings/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetTeamMeeting'];
+    put: operations['UpdateTeamMeeting'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/meetings/{id}/minutes': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['SaveMeetingMinutes'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/meetings/{id}/submit-minutes': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SubmitMeetingMinutes'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/meetings/{id}/cancel': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CancelTeamMeeting'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/meetings/{id}/ai/minutes': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['DraftMeetingMinutesWithAi'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/recommendations/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetTeamRecommendation'];
+    put: operations['UpdateTeamRecommendation'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/recommendations/{id}/status': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SetTeamRecommendationStatus'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/evaluations/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetTeamEvaluation'];
+    put: operations['SaveTeamEvaluation'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/evaluations/{id}/status': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetTeamEvaluationStatus'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/evaluations/{id}/submit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SubmitTeamEvaluation'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/evaluations/{id}/cancel': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CancelTeamEvaluation'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/evaluations/{id}/rewards': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateTeamRewards'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/evaluations/{id}/rewards/submit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SubmitTeamRewards'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/evaluations/{id}/ai/summary': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SummariseTeamEvaluationWithAi'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/ai/formation': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['DraftTeamFormationWithAi'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/ai/members': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SuggestTeamMembers'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/settings': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetTeamConfiguration'];
+    put: operations['SaveTeamSettings'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/settings/types': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SaveTeamType'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/settings/roles': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SaveTeamMemberRole'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/settings/templates': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SaveTeamEvaluationTemplate'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/settings/templates/{id}/publish': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['PublishTeamEvaluationTemplate'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/settings/reward-matrices': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SaveTeamRewardMatrix'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/settings/reward-matrices/{id}/publish': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['PublishTeamRewardMatrix'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -3884,6 +4684,11 @@ export interface components {
       monthlyRequestsPerUser: null | number;
       byFeature: components['schemas']['AiUsageFeatureTotalDto'][];
     };
+    AmountDto: {
+      code: string;
+      /** Format: double */
+      amount: number;
+    };
     /** @description The token the SPA sends back in string AntiforgerySetup.HeaderName on every state-changing call. */
     AntiforgeryToken: {
       token: string;
@@ -4047,6 +4852,20 @@ export interface components {
       validFrom: null | string;
       /** Format: date */
       validTo: null | string;
+      note: null | string;
+    };
+    AttendanceDto: {
+      /** Format: uuid */
+      memberId: string;
+      employee: null | components['schemas']['TeamPersonDto'];
+      externalName: null | string;
+      status: null | string;
+      note: null | string;
+    };
+    AttendanceInput: {
+      /** Format: uuid */
+      memberId: string;
+      status: string;
       note: null | string;
     };
     /** @description An entry as shown on History tabs and the Audit Log. */
@@ -4238,6 +5057,11 @@ export interface components {
       /** Format: int32 */
       overdue: number;
     };
+    CountDto: {
+      code: string;
+      /** Format: int32 */
+      count: number;
+    };
     /** @description The new token: string CreatedAccessTokenDto.Token is shown once and never stored. */
     CreatedAccessTokenDto: {
       details: components['schemas']['AccessTokenDto'];
@@ -4286,6 +5110,8 @@ export interface components {
       checklist?: null | string[];
       recurrence?: null | components['schemas']['RecurrenceInput'];
       dependsOn?: null | string[];
+      /** Format: uuid */
+      assigneeTeamId?: null | string;
     };
     CreateTokenInput: {
       name: null | string;
@@ -4298,6 +5124,35 @@ export interface components {
       employeeId: null | string;
       userName: null | string;
       sendInvitation: null | boolean;
+    };
+    CriterionInput: {
+      code: string;
+      level: null | string;
+      comment: null | string;
+      overrideJustification: null | string;
+    };
+    /** @description One level of a team criterion. `Min` / `Max`: data range for a data-backed criterion (Min inclusive, Max inclusive; null = open). */
+    CriterionLevel: {
+      code: string;
+      nameAr: string;
+      nameEn: string;
+      /** Format: double */
+      score: number;
+      /** Format: double */
+      min?: null | number;
+      /** Format: double */
+      max?: null | number;
+    };
+    /** @description The evaluator's choice for one criterion, with the system's suggestion and its basis. */
+    CriterionResult: {
+      code: string;
+      level: null | string;
+      /** Format: double */
+      score: null | number;
+      comment: null | string;
+      suggestedLevel: null | string;
+      basis: null | components['schemas']['SuggestionBasis'];
+      overrideJustification: null | string;
     };
     /**
      * @description "Next action required + who" (SPEC §0.2) for one record: a translatable message with parameters, who acts, and the actions the
@@ -4508,10 +5363,134 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    EndMembershipInput: {
+      /** Format: date */
+      on: null | string;
+      reason: string;
+      successor: null | components['schemas']['MemberInput'];
+      /** Format: uint32 */
+      version: number;
+    };
     /** @description Result of a completed MFA enrolment: signed in, plus the recovery codes to show once. */
     EnrolmentResultDto: {
       status: string;
       recoveryCodes: string[];
+    };
+    EvaluationAssistantDto: {
+      summary: string;
+      points: string[];
+      flags: components['schemas']['EvaluationFlag'][];
+      /** Format: uuid */
+      usageId: string;
+    };
+    EvaluationDto: {
+      summary: components['schemas']['EvaluationSummaryDto'];
+      teamNumber: null | string;
+      teamNameAr: null | string;
+      teamNameEn: null | string;
+      template: components['schemas']['TemplateContent'];
+      /** Format: int32 */
+      templateYear: number;
+      /** Format: int32 */
+      templateVersion: number;
+      criteria: components['schemas']['CriterionResult'][];
+      workload: string;
+      evidenceFileIds: string[];
+      flags: components['schemas']['EvaluationFlag'][];
+      members: components['schemas']['MemberEvaluationDto'][];
+      leaderEvaluator: null | components['schemas']['TeamPersonDto'];
+      returnComment: null | string;
+      budget: null | components['schemas']['RewardBudgetDto'];
+      previousCycles: components['schemas']['EvaluationSummaryDto'][];
+      permissions: components['schemas']['EvaluationPermissionsDto'];
+      /** Format: uint32 */
+      version: number;
+    };
+    EvaluationFlag: {
+      code: string;
+      /** Format: uuid */
+      memberEvaluationId?: null | string;
+    };
+    EvaluationInput: {
+      criteria: null | components['schemas']['CriterionInput'][];
+      workload: null | string;
+      evidenceFileIds: null | string[];
+      members: null | components['schemas']['MemberAnswersInput'][];
+      /** Format: uint32 */
+      version: number;
+    };
+    EvaluationPermissionsDto: {
+      canEvaluate: boolean;
+      canSubmit: boolean;
+      canCancel: boolean;
+      canManageRewards: boolean;
+      canSubmitRewards: boolean;
+      evidenceRequired: boolean;
+    };
+    /** @description An evaluation as a person without the results permission sees it: status only. */
+    EvaluationStatusDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      teamId: string;
+      number: null | string;
+      cycle: string;
+      status: string;
+      /** Format: date-time */
+      openedAt: string;
+      /** Format: date-time */
+      approvedAt: null | string;
+    };
+    EvaluationSummaryDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      teamId: string;
+      number: null | string;
+      cycle: string;
+      /** Format: date */
+      periodStart: string;
+      /** Format: date */
+      periodEnd: string;
+      trigger: string;
+      status: string;
+      /** Format: date-time */
+      openedAt: string;
+      /** Format: date-time */
+      submittedAt: null | string;
+      /** Format: date-time */
+      approvedAt: null | string;
+      evaluator: null | components['schemas']['TeamPersonDto'];
+      /** Format: double */
+      score: null | number;
+      rewardStatus: null | string;
+      /** Format: double */
+      rewardTotal: null | number;
+    };
+    EvaluationTemplateDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: int32 */
+      year: number;
+      /** Format: int32 */
+      versionNo: number;
+      status: string;
+      content: components['schemas']['TemplateContent'];
+      notes: null | string;
+      /** Format: date-time */
+      publishedAt: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
+    EvaluationTemplateInput: {
+      /** Format: uuid */
+      id: null | string;
+      /** Format: int32 */
+      year: number;
+      content: null | components['schemas']['TemplateContent'];
+      notes: null | string;
+      /** Format: uint32 */
+      version: null | number;
     };
     /**
      * @description One proposed value: never saved by the server; the review UI shows it as a draft (docs/design/ai.md §4.1). Where the source was found:
@@ -4644,8 +5623,35 @@ export interface components {
     ForgotPasswordInput: {
       login: null | string;
     };
+    FormationAiInput: {
+      typeCode: null | string;
+      name: null | string;
+      description: null | string;
+      linkedType: null | string;
+      /** Format: uuid */
+      linkedId: null | string;
+    };
+    FormationDraftDto: {
+      objectiveAr: null | string;
+      objectiveEn: null | string;
+      mandateAr: null | string;
+      mandateEn: null | string;
+      memoAr: null | string;
+      memoEn: null | string;
+      /** Format: uuid */
+      usageId: string;
+    };
     FromTextInput: {
       text: null | string;
+    };
+    GradeBand: {
+      code: string;
+      nameAr: string;
+      nameEn: string;
+      /** Format: int32 */
+      min: number;
+      /** Format: int32 */
+      max: number;
     };
     GroupCancelInput: {
       reason: null | string;
@@ -4851,6 +5857,22 @@ export interface components {
       nameEn: string;
       capabilities: string[];
     };
+    LinkedTeamDto: {
+      team: components['schemas']['TeamListItemDto'];
+      members: components['schemas']['MemberDto'][];
+    };
+    LinkedTeamsDto: {
+      teams: components['schemas']['LinkedTeamDto'][];
+      /** Format: int32 */
+      restricted: number;
+      canLink: boolean;
+    };
+    LinkInput: {
+      type: string;
+      /** Format: uuid */
+      recordId: string;
+      reason?: null | string;
+    };
     /** @description Links pointing at a record: the visible ones resolved, the others only counted. */
     LinksToDto: {
       links: components['schemas']['LinkToDto'][];
@@ -5036,6 +6058,244 @@ export interface components {
       unitNameAr: null | string;
       unitNameEn: null | string;
     };
+    MeetingDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      teamId: string;
+      number: null | string;
+      title: string;
+      /** Format: date-time */
+      scheduledAt: string;
+      /** Format: date-time */
+      endsAt: string;
+      location: null | string;
+      agenda: null | string;
+      minutes: null | string;
+      decisions: null | string;
+      status: string;
+      /** Format: date-time */
+      minutesSubmittedAt: null | string;
+      /** Format: double */
+      minutesDelayHours: null | number;
+      minutesBy: null | components['schemas']['TeamPersonDto'];
+      aiDrafted: boolean;
+      attendance: components['schemas']['AttendanceDto'][];
+      canMinute: boolean;
+      canManage: boolean;
+      /** Format: uint32 */
+      version: number;
+    };
+    MeetingInput: {
+      title: string;
+      /** Format: date-time */
+      scheduledAt: string;
+      /** Format: date-time */
+      endsAt: string;
+      location: null | string;
+      agenda: null | string;
+      /**
+       * Format: uint32
+       * @default 0
+       */
+      version: number;
+    };
+    MemberAnswersInput: {
+      /** Format: uuid */
+      id: string;
+      answers: null | {
+        [key: string]: number;
+      };
+      comment: null | string;
+    };
+    MemberDto: {
+      /** Format: uuid */
+      id: string;
+      employee: null | components['schemas']['TeamPersonDto'];
+      externalName: null | string;
+      externalOrganisation: null | string;
+      externalEmail: null | string;
+      externalPhone: null | string;
+      roleCode: string;
+      roleNameAr: null | string;
+      roleNameEn: null | string;
+      isLeader: boolean;
+      responsibilities: null | string;
+      requiredSkills: null | string;
+      /** Format: double */
+      allocationPercent: null | number;
+      /** Format: int32 */
+      position: number;
+      /** Format: date */
+      fromDate: null | string;
+      /** Format: date */
+      toDate: null | string;
+      status: string;
+      /** Format: uuid */
+      replacedByMemberId: null | string;
+      leaveReason: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
+    MemberEvaluationDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      memberId: string;
+      employee: null | components['schemas']['TeamPersonDto'];
+      externalName: null | string;
+      roleCode: string;
+      roleNameAr: null | string;
+      roleNameEn: null | string;
+      isLeader: boolean;
+      answers: {
+        [key: string]: number;
+      };
+      comment: null | string;
+      /** Format: int32 */
+      points: null | number;
+      grade: null | string;
+      /** Format: double */
+      attendanceRate: null | number;
+      evaluatedBy: null | components['schemas']['TeamPersonDto'];
+      canEvaluate: boolean;
+      /** Format: double */
+      calculatedReward: null | number;
+      /** Format: double */
+      approvedReward: null | number;
+      adjustmentReason: null | string;
+      certificate: boolean;
+      certificateNumber: null | string;
+      /** Format: uuid */
+      certificateFileId: null | string;
+      financialReward: boolean;
+      /** Format: uint32 */
+      version: number;
+    };
+    MemberInput: {
+      /** Format: uuid */
+      id: null | string;
+      /** Format: uuid */
+      employeeId: null | string;
+      externalName: null | string;
+      externalOrganisation: null | string;
+      externalEmail: null | string;
+      externalPhone: null | string;
+      roleCode: string;
+      responsibilities: null | string;
+      requiredSkills: null | string;
+      /** Format: double */
+      allocationPercent: null | number;
+      /** Format: date */
+      fromDate: null | string;
+    };
+    MemberQuestion: {
+      code: string;
+      textAr: string;
+      textEn: string;
+    };
+    MemberRoleDto: {
+      /** Format: uuid */
+      id: string;
+      code: string;
+      nameAr: string;
+      nameEn: string;
+      /** Format: int32 */
+      sort: number;
+      isLeader: boolean;
+      canViewResults: boolean;
+      countsTowardQuorum: boolean;
+      isSecretary: boolean;
+      active: boolean;
+      /** Format: uint32 */
+      version: number;
+    };
+    MemberRoleInput: {
+      /** Format: uuid */
+      id: null | string;
+      code: string;
+      nameAr: string;
+      nameEn: string;
+      /** Format: int32 */
+      sort: number;
+      isLeader: boolean;
+      canViewResults: boolean;
+      countsTowardQuorum: boolean;
+      isSecretary: boolean;
+      active: boolean;
+      /** Format: uint32 */
+      version: null | number;
+    };
+    MembersAiInput: {
+      /** Format: uuid */
+      unitId: null | string;
+      skills: null | string;
+      exclude: null | string[];
+    };
+    MembershipDto: {
+      /** Format: uuid */
+      teamId: string;
+      teamNumber: null | string;
+      teamNameAr: null | string;
+      teamNameEn: null | string;
+      teamStatus: string;
+      typeCode: string;
+      /** Format: uuid */
+      memberId: string;
+      roleCode: string;
+      roleNameAr: null | string;
+      roleNameEn: null | string;
+      /** Format: date */
+      fromDate: null | string;
+      /** Format: date */
+      toDate: null | string;
+      status: string;
+      results: null | components['schemas']['MembershipResultDto'][];
+    };
+    MembershipResultDto: {
+      /** Format: uuid */
+      evaluationId: string;
+      cycle: string;
+      status: string;
+      /** Format: double */
+      teamScore: null | number;
+      /** Format: int32 */
+      points: null | number;
+      grade: null | string;
+      /** Format: double */
+      approvedReward: null | number;
+      certificate: boolean;
+    };
+    MemberSuggestionDto: {
+      employee: components['schemas']['TeamPersonDto'];
+      /** Format: double */
+      score: number;
+      /** Format: int32 */
+      activeMemberships: number;
+      overAssigned: boolean;
+      /** Format: int32 */
+      pastTeams: number;
+      lastGrade: null | string;
+      reasons: string[];
+    };
+    MemberUpdateInput: {
+      roleCode: string;
+      responsibilities: null | string;
+      requiredSkills: null | string;
+      /** Format: double */
+      allocationPercent: null | number;
+      /** Format: uint32 */
+      version: number;
+    };
+    MemoInput: {
+      number: string;
+      /** Format: date */
+      date: string;
+      /** Format: uuid */
+      fileId: string;
+      /** Format: uint32 */
+      version: number;
+    };
     MfaCodeInput: {
       method: null | string;
       code: null | string;
@@ -5046,6 +6306,31 @@ export interface components {
     };
     MfaDisableInput: {
       method: null | string;
+    };
+    MinutesAiInput: {
+      notes: null | string;
+    };
+    MinutesDraftDto: {
+      minutes: string;
+      decisions: string[];
+      recommendations: components['schemas']['MinutesRecommendationDraft'][];
+      /** Format: uuid */
+      usageId: string;
+    };
+    MinutesInput: {
+      minutes: null | string;
+      decisions: null | string;
+      attendance: null | components['schemas']['AttendanceInput'][];
+      aiDrafted: boolean;
+      /** Format: uint32 */
+      version: number;
+    };
+    MinutesRecommendationDraft: {
+      text: string;
+      ownerName: null | string;
+      owner: null | components['schemas']['TeamPersonDto'];
+      /** Format: date */
+      dueDate: null | string;
     };
     MoveUnitInput: {
       /** Format: uuid */
@@ -5232,6 +6517,10 @@ export interface components {
     NumberingPreviewDto: {
       pattern: string;
       preview: string;
+    };
+    OpenEvaluationInput: {
+      /** Format: int32 */
+      year: null | number;
     };
     OptionDto: {
       code: string;
@@ -5425,6 +6714,18 @@ export interface components {
     /** @description One page of items plus the total count across all pages. */
     PagedResultOfTaskListItemDto: {
       items: components['schemas']['TaskListItemDto'][];
+      /** Format: int32 */
+      page: number;
+      /** Format: int32 */
+      pageSize: number;
+      /** Format: int32 */
+      totalCount: number;
+      /** Format: int32 */
+      totalPages?: number;
+    };
+    /** @description One page of items plus the total count across all pages. */
+    PagedResultOfTeamListItemDto: {
+      items: components['schemas']['TeamListItemDto'][];
       /** Format: int32 */
       page: number;
       /** Format: int32 */
@@ -5726,6 +7027,52 @@ export interface components {
       /** Format: date */
       dueDate: null | string;
     };
+    RecommendationDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      teamId: string;
+      number: null | string;
+      /** Format: uuid */
+      meetingId: null | string;
+      kind: string;
+      text: string;
+      owner: null | components['schemas']['TeamPersonDto'];
+      /** Format: date */
+      dueDate: null | string;
+      status: string;
+      overdue: boolean;
+      /** Format: date */
+      closedOn: null | string;
+      closureNote: null | string;
+      evidenceFileIds: string[];
+      canEdit: boolean;
+      canUpdateStatus: boolean;
+      /** Format: uint32 */
+      version: number;
+    };
+    RecommendationInput: {
+      /** Format: uuid */
+      meetingId: null | string;
+      kind: null | string;
+      text: string;
+      /** Format: uuid */
+      ownerEmployeeId: null | string;
+      /** Format: date */
+      dueDate: null | string;
+      /**
+       * Format: uint32
+       * @default 0
+       */
+      version: number;
+    };
+    RecommendationStatusInput: {
+      status: string;
+      note: null | string;
+      evidenceFileIds: null | string[];
+      /** Format: uint32 */
+      version: number;
+    };
     RecordRolePermissionsInput: {
       permissions: null | string[];
       /** Format: uint32 */
@@ -5806,12 +7153,107 @@ export interface components {
       /** @default dd/MM/yyyy */
       dateFormat: string;
     };
+    ReportDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      teamId: string;
+      /** Format: date */
+      periodStart: string;
+      /** Format: date */
+      periodEnd: string;
+      /** Format: date */
+      dueDate: string;
+      /** Format: date-time */
+      dueAt: string;
+      status: string;
+      overdue: boolean;
+      summary: null | string;
+      /** Format: date-time */
+      submittedAt: null | string;
+      submittedBy: null | components['schemas']['TeamPersonDto'];
+      canSubmit: boolean;
+      /** Format: uint32 */
+      version: number;
+    };
+    ReportInput: {
+      summary: string;
+      /** Format: uint32 */
+      version: number;
+    };
     ResetPasswordInput: {
       /** Format: uuid */
       userId: null | string;
       token: null | string;
       newPassword: null | string;
       invitation: boolean;
+    };
+    RewardBudgetDto: {
+      /** Format: int32 */
+      year: number;
+      /** Format: double */
+      annualBudget: number;
+      /** Format: double */
+      used: number;
+      /** Format: double */
+      remaining: number;
+      currency: string;
+      /** Format: uuid */
+      matrixId: null | string;
+      /** Format: int32 */
+      matrixVersion: null | number;
+    };
+    /** @description One cell of the reward matrix: grade × workload × member role → amount. */
+    RewardCell: {
+      grade: string;
+      workload: string;
+      role: string;
+      /** Format: double */
+      amount: number;
+    };
+    RewardInput: {
+      /** Format: uuid */
+      id: string;
+      /** Format: double */
+      approvedReward: number;
+      adjustmentReason: null | string;
+      certificate: boolean;
+      financialReward: boolean;
+    };
+    RewardMatrixContent: {
+      cells: components['schemas']['RewardCell'][];
+      certificateGrades: string[];
+      /** Format: double */
+      annualBudget: number;
+      currency: string;
+    };
+    RewardMatrixDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: int32 */
+      year: number;
+      /** Format: int32 */
+      versionNo: number;
+      status: string;
+      content: components['schemas']['RewardMatrixContent'];
+      /** Format: date-time */
+      publishedAt: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
+    RewardMatrixInput: {
+      /** Format: uuid */
+      id: null | string;
+      /** Format: int32 */
+      year: number;
+      content: null | components['schemas']['RewardMatrixContent'];
+      /** Format: uint32 */
+      version: null | number;
+    };
+    RewardsInput: {
+      rewards: components['schemas']['RewardInput'][];
+      /** Format: uint32 */
+      version: number;
     };
     RoleDto: {
       /** Format: uuid */
@@ -5958,6 +7400,11 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    SettingsInput: {
+      settings: components['schemas']['TeamSettings'];
+      /** Format: uint32 */
+      version: number;
+    };
     /** @description Outcome of a sign-in step. IReadOnlyList&lt;string&gt; SignInOutcome.Methods lists the second factors the user may use (or enrol). */
     SignInOutcome: {
       status: string;
@@ -6059,6 +7506,16 @@ export interface components {
       title: null | string;
       /** Format: uuid */
       unitId: null | string;
+    };
+    /** @description The data behind a suggested level: e.g. 12 of 13 closed = 92.31 %, or 30 h average over 6 meetings. */
+    SuggestionBasis: {
+      source: string;
+      /** Format: double */
+      value: number;
+      /** Format: int32 */
+      count: number;
+      /** Format: int32 */
+      total: number;
     };
     SummaryInput: {
       mode: null | string;
@@ -6370,6 +7827,313 @@ export interface components {
       /** Format: uuid */
       usageId: string;
     };
+    TeamConfigurationDto: {
+      settings: components['schemas']['TeamSettings'];
+      /** Format: uint32 */
+      settingsVersion: number;
+      types: components['schemas']['TeamTypeDto'][];
+      roles: components['schemas']['MemberRoleDto'][];
+      templates: components['schemas']['EvaluationTemplateDto'][];
+      rewardMatrices: components['schemas']['RewardMatrixDto'][];
+      teamAbleTypes: string[];
+    };
+    TeamCountsDto: {
+      /** Format: int32 */
+      mine: number;
+      /** Format: int32 */
+      leading: number;
+      /** Format: int32 */
+      pendingEvaluation: number;
+      /** Format: int32 */
+      myEvaluations: number;
+      /** Format: int32 */
+      reportsDue: number;
+    };
+    TeamCriterion: {
+      code: string;
+      nameAr: string;
+      nameEn: string;
+      /** Format: double */
+      weight: number;
+      levels: components['schemas']['CriterionLevel'][];
+      dataSource?: null | string;
+    };
+    TeamDashboardDto: {
+      /** Format: int32 */
+      teams: number;
+      /** Format: int32 */
+      activeCommittees: number;
+      byType: components['schemas']['CountDto'][];
+      byStatus: components['schemas']['CountDto'][];
+      workload: components['schemas']['TeamWorkloadDto'][];
+      evaluationProgress: components['schemas']['CountDto'][];
+      scoreDistribution: null | components['schemas']['CountDto'][];
+      gradeDistribution: null | components['schemas']['CountDto'][];
+      rewardsByYear: null | components['schemas']['AmountDto'][];
+      rewardsByUnit: null | components['schemas']['AmountDto'][];
+    };
+    TeamDto: {
+      /** Format: uuid */
+      id: string;
+      number: null | string;
+      nameAr: null | string;
+      nameEn: null | string;
+      typeCode: string;
+      typeNameAr: null | string;
+      typeNameEn: null | string;
+      permanent: boolean;
+      subject: null | string;
+      objectives: null | string;
+      mandate: null | string;
+      owningUnit: null | components['schemas']['UnitDto'];
+      sponsor: null | components['schemas']['TeamPersonDto'];
+      requestedBy: null | components['schemas']['TeamPersonDto'];
+      leader: null | components['schemas']['TeamPersonDto'];
+      approvedByCode: null | string;
+      memoMode: string;
+      memoNumber: null | string;
+      /** Format: date */
+      memoDate: null | string;
+      /** Format: uuid */
+      memoFileId: null | string;
+      memoDraft: null | string;
+      /** Format: date */
+      startDate: null | string;
+      /** Format: date */
+      endDate: null | string;
+      cadence: string;
+      reportTo: null | string;
+      workload: string;
+      status: string;
+      statusReason: null | string;
+      /** Format: uuid */
+      replacesTeamId: null | string;
+      /** Format: uuid */
+      replacedByTeamId: null | string;
+      evaluatorRule: null | string;
+      evaluator: null | components['schemas']['TeamPersonDto'];
+      /** Format: date-time */
+      activatedAt: null | string;
+      /** Format: date-time */
+      closedAt: null | string;
+      members: components['schemas']['MemberDto'][];
+      linkedRecords: components['schemas']['LinkView'][];
+      stats: components['schemas']['TeamStatsDto'];
+      /** Format: double */
+      lastScore: null | number;
+      permissions: components['schemas']['TeamPermissionsDto'];
+      actions: string[];
+      /** Format: uint32 */
+      version: number;
+    };
+    TeamInput: {
+      typeCode: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      permanent: boolean;
+      subject: null | string;
+      objectives: null | string;
+      mandate: null | string;
+      /** Format: uuid */
+      owningUnitId: null | string;
+      /** Format: uuid */
+      sponsorEmployeeId: null | string;
+      approvedByCode: null | string;
+      memoMode: null | string;
+      memoDraft: null | string;
+      /** Format: date */
+      startDate: null | string;
+      /** Format: date */
+      endDate: null | string;
+      cadence: null | string;
+      reportTo: null | string;
+      workload: null | string;
+      /** Format: uuid */
+      replacesTeamId: null | string;
+      evaluatorRule: null | string;
+      /** Format: uuid */
+      evaluatorEmployeeId: null | string;
+      members: null | components['schemas']['MemberInput'][];
+      linkedType?: null | string;
+      /** Format: uuid */
+      linkedId?: null | string;
+    };
+    TeamListItemDto: {
+      /** Format: uuid */
+      id: string;
+      number: null | string;
+      nameAr: null | string;
+      nameEn: null | string;
+      typeCode: string;
+      typeNameAr: null | string;
+      typeNameEn: null | string;
+      permanent: boolean;
+      status: string;
+      owningUnit: null | components['schemas']['UnitDto'];
+      leader: null | components['schemas']['TeamPersonDto'];
+      /** Format: date */
+      startDate: null | string;
+      /** Format: date */
+      endDate: null | string;
+      /** Format: int32 */
+      activeMembers: number;
+      /** Format: double */
+      lastScore: null | number;
+      myMembership: boolean;
+    };
+    /** @description What the formation wizard and team pages need (any signed-in user): active types and roles, the published template's grades. */
+    TeamOptionsDto: {
+      types: components['schemas']['TeamTypeDto'][];
+      roles: components['schemas']['MemberRoleDto'][];
+      grades: components['schemas']['GradeBand'][];
+    };
+    TeamPermissionsDto: {
+      canEdit: boolean;
+      canSubmit: boolean;
+      canManage: boolean;
+      canOperate: boolean;
+      canMinute: boolean;
+      canOpenEvaluation: boolean;
+      canViewResults: boolean;
+      canManageRewards: boolean;
+    };
+    TeamPersonDto: {
+      /** Format: uuid */
+      id: string;
+      nameAr: null | string;
+      nameEn: null | string;
+    };
+    /** @description Settings → Teams, general area (docs/design/teams.md §2). Types, roles, templates and matrices are tables (ADR 0041). */
+    TeamSettings: {
+      /**
+       * Format: int32
+       * @default 4
+       */
+      overAssignedThreshold: number;
+      /**
+       * Format: int32
+       * @default 3
+       */
+      reportReminderDays: number;
+      /**
+       * Format: int32
+       * @default 5
+       */
+      evaluationReminderDays: number;
+      /**
+       * Format: int32
+       * @default 30
+       */
+      recommendationDefaultDueDays: number;
+      /**
+       * Format: int32
+       * @default 10
+       */
+      memberSuggestionLimit: number;
+      /** @default false */
+      allowMemberCertificateDownload: boolean;
+    };
+    TeamStatsDto: {
+      /** Format: int32 */
+      activeMembers: number;
+      /** Format: int32 */
+      meetingsHeld: number;
+      /** Format: int32 */
+      recommendationsOpen: number;
+      /** Format: int32 */
+      recommendationsClosed: number;
+      /** Format: double */
+      closurePercent: null | number;
+      /** Format: double */
+      averageMinutesDelay: null | number;
+    };
+    TeamTypeDto: {
+      /** Format: uuid */
+      id: string;
+      code: string;
+      nameAr: string;
+      nameEn: string;
+      permanence: string;
+      requiresApproval: boolean;
+      requiresMemo: boolean;
+      linkableTypes: string[];
+      defaultCadence: string;
+      evaluationTrigger: string;
+      /** Format: int32 */
+      annualMonth: number;
+      /** Format: int32 */
+      annualDay: number;
+      evaluatorRule: string;
+      /** Format: uuid */
+      evaluatorEmployeeId: null | string;
+      evaluatorMemberRole: null | string;
+      leaderEvaluatorRule: string;
+      /** Format: uuid */
+      leaderEvaluatorEmployeeId: null | string;
+      leaderEvaluatorMemberRole: null | string;
+      /** Format: int32 */
+      sort: number;
+      active: boolean;
+      /** Format: uint32 */
+      version: number;
+    };
+    TeamTypeInput: {
+      /** Format: uuid */
+      id: null | string;
+      code: string;
+      values: components['schemas']['TeamTypeValues'];
+      /** Format: uint32 */
+      version: null | number;
+    };
+    TeamTypeValues: {
+      nameAr: string;
+      nameEn: string;
+      permanence: string;
+      requiresApproval: boolean;
+      requiresMemo: boolean;
+      linkableTypes: string[];
+      defaultCadence: string;
+      evaluationTrigger: string;
+      /** Format: int32 */
+      annualMonth: number;
+      /** Format: int32 */
+      annualDay: number;
+      evaluatorRule: string;
+      /** Format: uuid */
+      evaluatorEmployeeId: null | string;
+      evaluatorMemberRole: null | string;
+      leaderEvaluatorRule: string;
+      /** Format: uuid */
+      leaderEvaluatorEmployeeId: null | string;
+      leaderEvaluatorMemberRole: null | string;
+      /** Format: int32 */
+      sort: number;
+      active: boolean;
+    };
+    TeamVersionInput: {
+      /** Format: uint32 */
+      version: number;
+      comment?: null | string;
+      reason?: null | string;
+    };
+    TeamWorkloadDto: {
+      employee: components['schemas']['TeamPersonDto'];
+      /** Format: int32 */
+      activeMemberships: number;
+      overAssigned: boolean;
+    };
+    /** @description The content of an evaluation template version (stored as JSON). */
+    TemplateContent: {
+      criteria: components['schemas']['TeamCriterion'][];
+      questions: components['schemas']['MemberQuestion'][];
+      gradeBands: components['schemas']['GradeBand'][];
+      /** Format: double */
+      evidenceThreshold: number;
+      /** Format: int32 */
+      minPoints?: number;
+      /** Format: int32 */
+      maxPoints?: number;
+    };
     TemplateDto: {
       key: string;
       systemCode: string;
@@ -6498,6 +8262,12 @@ export interface components {
       /** Format: uuid */
       businessHoursId: null | string;
     };
+    UnitDto: {
+      /** Format: uuid */
+      id: string;
+      nameAr: null | string;
+      nameEn: null | string;
+    };
     UnitInput: {
       code: null | string;
       nameAr: null | string;
@@ -6590,6 +8360,11 @@ export interface components {
       estimatedHours: null | number;
       /** Format: int32 */
       percentComplete: null | number;
+      /** Format: uint32 */
+      version: number;
+    };
+    UpdateTeamBody: {
+      team: components['schemas']['TeamInput'];
       /** Format: uint32 */
       version: number;
     };
@@ -15471,6 +17246,2005 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['WorkloadInsightDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListTeams: {
+    parameters: {
+      query?: {
+        page?: number;
+        pageSize?: number;
+        sort?: string;
+        view?: string;
+        typeCode?: string;
+        status?: string;
+        unitId?: string;
+        search?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PagedResultOfTeamListItemDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateTeam: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['TeamInput'];
+      };
+    };
+    responses: {
+      /** @description Created */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TeamDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetTeamCounts: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TeamCountsDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetTeamOptions: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TeamOptionsDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetTeam: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TeamDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateTeam: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateTeamBody'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TeamDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SubmitTeam: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['TeamVersionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TeamDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CancelTeam: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['TeamVersionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TeamDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  DeactivateTeam: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['TeamVersionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TeamDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ReactivateTeam: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['TeamVersionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TeamDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CloseTeam: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['TeamVersionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TeamDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SetExternalMemo: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['MemoInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TeamDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RegenerateMemo: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TeamDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  LinkTeamRecord: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['LinkInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TeamDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UnlinkTeamRecord: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['LinkInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TeamDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListLinkedTeams: {
+    parameters: {
+      query: {
+        type: string;
+        id: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['LinkedTeamsDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListTeamMembers: {
+    parameters: {
+      query?: {
+        history?: boolean;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MemberDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  AddTeamMember: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['MemberInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MemberDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateTeamMember: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        memberId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['MemberUpdateInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MemberDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  EndTeamMembership: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        memberId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['EndMembershipInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MemberDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListTeamMeetings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MeetingDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateTeamMeeting: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['MeetingInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MeetingDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListTeamRecommendations: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RecommendationDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateTeamRecommendation: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RecommendationInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RecommendationDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListTeamReports: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReportDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SubmitTeamReport: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ReportInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReportDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListTeamEvaluations: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['EvaluationSummaryDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  OpenTeamEvaluation: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['OpenEvaluationInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['EvaluationSummaryDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListEmployeeTeamMemberships: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        employeeId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MembershipDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetTeamDashboard: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TeamDashboardDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ExportTeams: {
+    parameters: {
+      query: {
+        kind: string;
+        format: string;
+        language?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetTeamAuditTrail: {
+    parameters: {
+      query?: {
+        page?: number;
+        pageSize?: number;
+        field?: string;
+        userId?: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PagedResultOfAuditEntryDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetTeamAsOf: {
+    parameters: {
+      query: {
+        at: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RecordSnapshotDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetTeamMeeting: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MeetingDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateTeamMeeting: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['MeetingInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MeetingDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SaveMeetingMinutes: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['MinutesInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MeetingDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SubmitMeetingMinutes: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['TeamVersionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MeetingDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CancelTeamMeeting: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['TeamVersionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MeetingDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  DraftMeetingMinutesWithAi: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['MinutesAiInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MinutesDraftDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetTeamRecommendation: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RecommendationDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateTeamRecommendation: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RecommendationInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RecommendationDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SetTeamRecommendationStatus: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RecommendationStatusInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RecommendationDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetTeamEvaluation: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['EvaluationDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SaveTeamEvaluation: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['EvaluationInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['EvaluationDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetTeamEvaluationStatus: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['EvaluationStatusDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SubmitTeamEvaluation: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['TeamVersionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['EvaluationDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CancelTeamEvaluation: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['TeamVersionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['EvaluationDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateTeamRewards: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RewardsInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['EvaluationDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SubmitTeamRewards: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['TeamVersionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['EvaluationDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SummariseTeamEvaluationWithAi: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['EvaluationAssistantDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  DraftTeamFormationWithAi: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['FormationAiInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['FormationDraftDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SuggestTeamMembers: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['MembersAiInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MemberSuggestionDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetTeamConfiguration: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TeamConfigurationDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SaveTeamSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SettingsInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TeamConfigurationDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SaveTeamType: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['TeamTypeInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TeamConfigurationDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SaveTeamMemberRole: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['MemberRoleInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TeamConfigurationDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SaveTeamEvaluationTemplate: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['EvaluationTemplateInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['EvaluationTemplateDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  PublishTeamEvaluationTemplate: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['EvaluationTemplateDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SaveTeamRewardMatrix: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RewardMatrixInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RewardMatrixDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  PublishTeamRewardMatrix: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RewardMatrixDto'];
         };
       };
       /** @description Problem Details (RFC 9457) */

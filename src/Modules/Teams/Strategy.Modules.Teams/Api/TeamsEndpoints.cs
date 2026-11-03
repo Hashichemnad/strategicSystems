@@ -14,7 +14,7 @@ using Strategy.Platform.Kernel.Paging;
 
 namespace Strategy.Modules.Teams.Api;
 
-public sealed record VersionInput(uint Version, string? Comment = null, string? Reason = null);
+public sealed record TeamVersionInput(uint Version, string? Comment = null, string? Reason = null);
 
 public sealed record MemoInput(string Number, DateOnly Date, Guid FileId, uint Version);
 
@@ -48,7 +48,7 @@ public sealed record TeamTypeInput(Guid? Id, string Code, TeamTypeValues Values,
 public sealed record MemberRoleInput(
     Guid? Id, string Code, string NameAr, string NameEn, int Sort, bool IsLeader, bool CanViewResults, bool CountsTowardQuorum, bool IsSecretary, bool Active, uint? Version);
 
-public sealed record TemplateInput(Guid? Id, int Year, TemplateContent? Content, string? Notes, uint? Version);
+public sealed record EvaluationTemplateInput(Guid? Id, int Year, TemplateContent? Content, string? Notes, uint? Version);
 
 public sealed record RewardMatrixInput(Guid? Id, int Year, RewardMatrixContent? Content, uint? Version);
 
@@ -84,7 +84,7 @@ internal static class TeamsEndpoints
             .WithName("GetTeam").RequirePermission(TeamPermissions.Read);
         group.MapPut("/{id:guid}", async (Guid id, UpdateTeamBody b, IDispatcher d, CancellationToken ct) => (await d.SendAsync(new UpdateTeam(id, b.Team, b.Version), ct)).ToOk())
             .WithName("UpdateTeam").RequirePermission(TeamPermissions.Read);
-        group.MapPost("/{id:guid}/submit", async (Guid id, VersionInput b, IDispatcher d, CancellationToken ct) =>
+        group.MapPost("/{id:guid}/submit", async (Guid id, TeamVersionInput b, IDispatcher d, CancellationToken ct) =>
                 (await d.SendAsync(new SubmitTeam(id, b.Version, b.Comment), ct)).ToOk())
             .WithName("SubmitTeam").RequirePermission(TeamPermissions.Read).WithIdempotency();
         foreach (var (action, name) in new[]
@@ -92,7 +92,7 @@ internal static class TeamsEndpoints
                      (TeamActions.Cancel, "CancelTeam"), (TeamActions.Deactivate, "DeactivateTeam"), (TeamActions.Reactivate, "ReactivateTeam"), (TeamActions.Close, "CloseTeam"),
                  })
         {
-            group.MapPost($"/{{id:guid}}/{action}", async (Guid id, VersionInput b, IDispatcher d, CancellationToken ct) =>
+            group.MapPost($"/{{id:guid}}/{action}", async (Guid id, TeamVersionInput b, IDispatcher d, CancellationToken ct) =>
                     (await d.SendAsync(new ChangeTeamStatus(id, action, b.Version, b.Reason), ct)).ToOk())
                 .WithName(name).RequirePermission(TeamPermissions.Read);
         }
@@ -137,10 +137,10 @@ internal static class TeamsEndpoints
         meetings.MapPut("/{id:guid}/minutes", async (Guid id, MinutesInput b, IDispatcher d, CancellationToken ct) =>
                 (await d.SendAsync(new SaveMinutes(id, b.Minutes, b.Decisions, b.Attendance, b.AiDrafted, b.Version), ct)).ToOk())
             .WithName("SaveMeetingMinutes").RequirePermission(TeamPermissions.Read);
-        meetings.MapPost("/{id:guid}/submit-minutes", async (Guid id, VersionInput b, IDispatcher d, CancellationToken ct) =>
+        meetings.MapPost("/{id:guid}/submit-minutes", async (Guid id, TeamVersionInput b, IDispatcher d, CancellationToken ct) =>
                 (await d.SendAsync(new SubmitMinutes(id, b.Version), ct)).ToOk())
             .WithName("SubmitMeetingMinutes").RequirePermission(TeamPermissions.Read).WithIdempotency();
-        meetings.MapPost("/{id:guid}/cancel", async (Guid id, VersionInput b, IDispatcher d, CancellationToken ct) =>
+        meetings.MapPost("/{id:guid}/cancel", async (Guid id, TeamVersionInput b, IDispatcher d, CancellationToken ct) =>
                 (await d.SendAsync(new CancelMeeting(id, b.Reason ?? string.Empty, b.Version), ct)).ToOk())
             .WithName("CancelTeamMeeting").RequirePermission(TeamPermissions.Read);
         meetings.MapPost("/{id:guid}/ai/minutes", async (Guid id, MinutesAiInput b, TeamAiService ai, CancellationToken ct) =>
@@ -181,16 +181,16 @@ internal static class TeamsEndpoints
         evaluations.MapPut("/{id:guid}", async (Guid id, EvaluationInput b, IDispatcher d, CancellationToken ct) =>
                 (await d.SendAsync(new SaveEvaluation(id, b.Criteria, b.Workload, b.EvidenceFileIds, b.Members, b.Version), ct)).ToOk())
             .WithName("SaveTeamEvaluation").RequirePermission(TeamPermissions.Read);
-        evaluations.MapPost("/{id:guid}/submit", async (Guid id, VersionInput b, IDispatcher d, CancellationToken ct) =>
+        evaluations.MapPost("/{id:guid}/submit", async (Guid id, TeamVersionInput b, IDispatcher d, CancellationToken ct) =>
                 (await d.SendAsync(new SubmitEvaluation(id, b.Version, b.Comment), ct)).ToOk())
             .WithName("SubmitTeamEvaluation").RequirePermission(TeamPermissions.Read).WithIdempotency();
-        evaluations.MapPost("/{id:guid}/cancel", async (Guid id, VersionInput b, IDispatcher d, CancellationToken ct) =>
+        evaluations.MapPost("/{id:guid}/cancel", async (Guid id, TeamVersionInput b, IDispatcher d, CancellationToken ct) =>
                 (await d.SendAsync(new CancelEvaluation(id, b.Reason ?? string.Empty, b.Version), ct)).ToOk())
             .WithName("CancelTeamEvaluation").RequirePermission(TeamPermissions.Read);
         evaluations.MapPut("/{id:guid}/rewards", async (Guid id, RewardsInput b, IDispatcher d, CancellationToken ct) =>
                 (await d.SendAsync(new UpdateRewards(id, b.Rewards, b.Version), ct)).ToOk())
             .WithName("UpdateTeamRewards").RequirePermission(TeamPermissions.Read);
-        evaluations.MapPost("/{id:guid}/rewards/submit", async (Guid id, VersionInput b, IDispatcher d, CancellationToken ct) =>
+        evaluations.MapPost("/{id:guid}/rewards/submit", async (Guid id, TeamVersionInput b, IDispatcher d, CancellationToken ct) =>
                 (await d.SendAsync(new SubmitRewards(id, b.Version, b.Comment), ct)).ToOk())
             .WithName("SubmitTeamRewards").RequirePermission(TeamPermissions.Read).WithIdempotency();
         evaluations.MapPost("/{id:guid}/ai/summary", async (Guid id, TeamAiService ai, CancellationToken ct) => (await ai.SummariseEvaluationAsync(id, ct)).ToOk())
@@ -233,7 +233,7 @@ internal static class TeamsEndpoints
                 (await d.SendAsync(new SaveMemberRole(b.Id, b.Code, b.NameAr, b.NameEn, b.Sort, b.IsLeader, b.CanViewResults, b.CountsTowardQuorum, b.IsSecretary, b.Active,
                     b.Version), ct)).ToOk())
             .WithName("SaveTeamMemberRole").RequirePermission(TeamPermissions.SettingsManage);
-        settings.MapPost("/templates", async (TemplateInput b, IDispatcher d, CancellationToken ct) =>
+        settings.MapPost("/templates", async (EvaluationTemplateInput b, IDispatcher d, CancellationToken ct) =>
                 (await d.SendAsync(new SaveTemplate(b.Id, b.Year, b.Content, b.Notes, b.Version), ct)).ToOk())
             .WithName("SaveTeamEvaluationTemplate").RequirePermission(TeamPermissions.SettingsManage);
         settings.MapPost("/templates/{id:guid}/publish", async (Guid id, IDispatcher d, CancellationToken ct) => (await d.SendAsync(new PublishTemplate(id), ct)).ToOk())

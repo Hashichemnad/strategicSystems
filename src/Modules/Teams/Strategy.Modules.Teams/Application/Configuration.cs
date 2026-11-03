@@ -21,12 +21,12 @@ public sealed record TeamTypeDto(
 public sealed record MemberRoleDto(
     Guid Id, string Code, string NameAr, string NameEn, int Sort, bool IsLeader, bool CanViewResults, bool CountsTowardQuorum, bool IsSecretary, bool Active, uint Version);
 
-public sealed record TemplateDto(Guid Id, int Year, int VersionNo, string Status, TemplateContent Content, string? Notes, DateTimeOffset? PublishedAt, uint Version);
+public sealed record EvaluationTemplateDto(Guid Id, int Year, int VersionNo, string Status, TemplateContent Content, string? Notes, DateTimeOffset? PublishedAt, uint Version);
 
 public sealed record RewardMatrixDto(Guid Id, int Year, int VersionNo, string Status, RewardMatrixContent Content, DateTimeOffset? PublishedAt, uint Version);
 
 public sealed record TeamConfigurationDto(
-    TeamSettings Settings, uint SettingsVersion, IReadOnlyList<TeamTypeDto> Types, IReadOnlyList<MemberRoleDto> Roles, IReadOnlyList<TemplateDto> Templates,
+    TeamSettings Settings, uint SettingsVersion, IReadOnlyList<TeamTypeDto> Types, IReadOnlyList<MemberRoleDto> Roles, IReadOnlyList<EvaluationTemplateDto> Templates,
     IReadOnlyList<RewardMatrixDto> RewardMatrices, IReadOnlyList<string> TeamAbleTypes);
 
 /// <summary>What the formation wizard and team pages need (any signed-in user): active types and roles, the published template's grades.</summary>
@@ -45,9 +45,9 @@ public sealed record SaveMemberRole(
     : ICommand<TeamConfigurationDto>;
 
 /// <summary>Create (no id: a new draft version of the year, copied from the newest when no content) or edit a draft template.</summary>
-public sealed record SaveTemplate(Guid? Id, int Year, TemplateContent? Content, string? Notes, uint? Version) : ICommand<TemplateDto>;
+public sealed record SaveTemplate(Guid? Id, int Year, TemplateContent? Content, string? Notes, uint? Version) : ICommand<EvaluationTemplateDto>;
 
-public sealed record PublishTemplate(Guid Id) : ICommand<TemplateDto>;
+public sealed record PublishTemplate(Guid Id) : ICommand<EvaluationTemplateDto>;
 
 public sealed record SaveRewardMatrix(Guid? Id, int Year, RewardMatrixContent? Content, uint? Version) : ICommand<RewardMatrixDto>;
 
@@ -60,8 +60,8 @@ internal sealed class ConfigurationHandlers(TeamsDbContext db, ISettingsEditor e
         ICommandHandler<SaveTeamSettings, TeamConfigurationDto>,
         ICommandHandler<SaveTeamType, TeamConfigurationDto>,
         ICommandHandler<SaveMemberRole, TeamConfigurationDto>,
-        ICommandHandler<SaveTemplate, TemplateDto>,
-        ICommandHandler<PublishTemplate, TemplateDto>,
+        ICommandHandler<SaveTemplate, EvaluationTemplateDto>,
+        ICommandHandler<PublishTemplate, EvaluationTemplateDto>,
         ICommandHandler<SaveRewardMatrix, RewardMatrixDto>,
         ICommandHandler<PublishRewardMatrix, RewardMatrixDto>
 {
@@ -178,7 +178,7 @@ internal sealed class ConfigurationHandlers(TeamsDbContext db, ISettingsEditor e
         return await SaveAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task<Result<TemplateDto>> HandleAsync(SaveTemplate command, CancellationToken cancellationToken)
+    public async Task<Result<EvaluationTemplateDto>> HandleAsync(SaveTemplate command, CancellationToken cancellationToken)
     {
         if (command.Year is < 2000 or > 2100)
         {
@@ -223,7 +223,7 @@ internal sealed class ConfigurationHandlers(TeamsDbContext db, ISettingsEditor e
         return await SaveTemplateAsync(created, cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task<Result<TemplateDto>> HandleAsync(PublishTemplate command, CancellationToken cancellationToken)
+    public async Task<Result<EvaluationTemplateDto>> HandleAsync(PublishTemplate command, CancellationToken cancellationToken)
     {
         var template = await db.Templates.FirstOrDefaultAsync(t => t.Id == command.Id, cancellationToken).ConfigureAwait(false);
         if (template is null)
@@ -340,7 +340,7 @@ internal sealed class ConfigurationHandlers(TeamsDbContext db, ISettingsEditor e
         return await LoadAsync(ct).ConfigureAwait(false);
     }
 
-    private async Task<Result<TemplateDto>> SaveTemplateAsync(EvaluationTemplate template, CancellationToken ct)
+    private async Task<Result<EvaluationTemplateDto>> SaveTemplateAsync(EvaluationTemplate template, CancellationToken ct)
     {
         try
         {
@@ -387,7 +387,7 @@ internal sealed class ConfigurationHandlers(TeamsDbContext db, ISettingsEditor e
     public static MemberRoleDto ToDto(MemberRole r) =>
         new(r.Id, r.Code, r.NameAr, r.NameEn, r.Sort, r.IsLeader, r.CanViewResults, r.CountsTowardQuorum, r.IsSecretary, r.Active, r.Version);
 
-    public static TemplateDto ToDto(EvaluationTemplate t) => new(t.Id, t.Year, t.VersionNo, t.Status, t.Read(), t.Notes, t.PublishedAt, t.Version);
+    public static EvaluationTemplateDto ToDto(EvaluationTemplate t) => new(t.Id, t.Year, t.VersionNo, t.Status, t.Read(), t.Notes, t.PublishedAt, t.Version);
 
     public static RewardMatrixDto ToDto(RewardMatrix m) => new(m.Id, m.Year, m.VersionNo, m.Status, m.Read(), m.PublishedAt, m.Version);
 }
