@@ -28,6 +28,12 @@ describe('sidebar filtered by real access', () => {
     expect(editor).not.toContain('/admin/security');
   });
 
+  it('shows Performance only when the kpi system is open and KPI cards are readable', () => {
+    expect(routes({ systems: ['kpi'], permissions: ['kpi.card.read'], roles: [] })).toContain('/kpi');
+    expect(routes({ systems: [], permissions: ['kpi.card.read'], roles: [] })).not.toContain('/kpi');
+    expect(routes({ systems: ['kpi'], permissions: [], roles: [] })).not.toContain('/kpi');
+  });
+
   it('shows nothing guarded while access is still loading', () => {
     expect(routes(undefined)).toEqual(['/', '/ui-kit']);
   });

@@ -68,17 +68,17 @@ internal sealed class ChangeHandlers(KpiDbContext db, KpiReader reader, IRequest
 
         if (p.Direction is not null && !Directions.All.Contains(p.Direction))
         {
-            Add("direction", "validation.invalidValue");
+            Add("direction", "validation.invalid");
         }
 
         if (p.TargetType is not null && !TargetTypes.All.Contains(p.TargetType))
         {
-            Add("targetType", "validation.invalidValue");
+            Add("targetType", "validation.invalid");
         }
 
         if (p.UnitCode is not null && !await lookups.IsActiveCodeAsync(KpiPermissions.UnitLookup, p.UnitCode, cancellationToken).ConfigureAwait(false))
         {
-            Add("unitCode", "validation.invalidValue");
+            Add("unitCode", "validation.invalid");
         }
 
         if (p.Formula is not null && !CompositeFormula.Compile(p.Formula, card.Elements).Success)

@@ -28,7 +28,13 @@ export type AiFeatureKey =
   | 'teams-members'
   | 'teams-evaluation'
   | 'teams-minutes'
-  | 'portfolio-assessment';
+  | 'portfolio-assessment'
+  | 'kpi-evidence-check'
+  | 'kpi-anomalies'
+  | 'kpi-causality'
+  | 'kpi-card-builder'
+  | 'kpi-target-suggestion'
+  | 'kpi-narrative';
 
 export const aiKeys = {
   all: ['ai'] as const,

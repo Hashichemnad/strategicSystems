@@ -253,7 +253,7 @@ internal sealed class ReportQueries(
     {
         if (query.Kind is not ("cards" or "scorecard" or "results" or "excellence" or "data-quality") || query.Format is not ("xlsx" or "pdf"))
         {
-            return Error.Validation([new FieldError("kind", "validation.invalidValue", "validation.invalidValue")]);
+            return Error.Validation([new FieldError("kind", "validation.invalid", "validation.invalid")]);
         }
 
         var year = query.Year ?? clock.Today.Year;

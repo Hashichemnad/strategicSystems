@@ -56,6 +56,8 @@ import arPortfolio from './ar/portfolio.json';
 import enPortfolio from './en/portfolio.json';
 import arLinks from './ar/links.json';
 import enLinks from './en/links.json';
+import arKpi from './ar/kpi.json';
+import enKpi from './en/kpi.json';
 import { readPreference } from '@/lib/preferences';
 
 export const languages = ['ar', 'en'] as const;
@@ -91,6 +93,7 @@ export const resources = {
     teams: arTeams,
     portfolio: arPortfolio,
     links: arLinks,
+    kpi: arKpi,
   },
   en: {
     common: enCommon,
@@ -121,6 +124,7 @@ export const resources = {
     teams: enTeams,
     portfolio: enPortfolio,
     links: enLinks,
+    kpi: enKpi,
   },
 } as const;
 

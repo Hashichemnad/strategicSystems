@@ -43,7 +43,7 @@ internal sealed class StrategyElementHandlers(KpiDbContext db, KpiReader reader,
         void Add(string field, string key) => errors.Add(new FieldError(field, key, key));
         if (!ElementKinds.All.Contains(input.Kind))
         {
-            Add("kind", "validation.invalidValue");
+            Add("kind", "validation.invalid");
         }
 
         if (string.IsNullOrWhiteSpace(input.Code) || input.Code.Length > 100)
@@ -57,7 +57,7 @@ internal sealed class StrategyElementHandlers(KpiDbContext db, KpiReader reader,
 
         if (string.IsNullOrWhiteSpace(input.NameAr) && string.IsNullOrWhiteSpace(input.NameEn))
         {
-            Add("nameEn", "validation.oneLanguageRequired");
+            Add("nameEn", "validation.atLeastOneLanguage");
         }
 
         var parentKind = ElementKinds.ParentKindOf(input.Kind);
@@ -76,12 +76,12 @@ internal sealed class StrategyElementHandlers(KpiDbContext db, KpiReader reader,
 
         if (input.Weight is < 0 or > 1000)
         {
-            Add("weight", "validation.invalidValue");
+            Add("weight", "validation.invalid");
         }
 
         if (input.CycleStartYear is { } s && input.CycleEndYear is { } e && e < s)
         {
-            Add("cycleEndYear", "validation.invalidValue");
+            Add("cycleEndYear", "validation.invalid");
         }
 
         if (errors.Count > 0)

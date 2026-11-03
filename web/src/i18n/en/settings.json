@@ -119,6 +119,10 @@
     "portfolio": {
       "title": "Portfolio",
       "description": "Threshold, prioritisation criteria and bands, date windows, the budget step and the project scope template."
+    },
+    "kpi": {
+      "title": "Performance (KPI)",
+      "description": "Period windows, reminders, RAG bands, verification checklist, measuring methods, the strategy hierarchy and the windows of each year."
     }
   },
   "title": "Settings",

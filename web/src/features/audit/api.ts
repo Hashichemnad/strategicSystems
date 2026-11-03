@@ -10,7 +10,16 @@ export type VerificationRun = components['schemas']['VerificationRunDto'];
 export type AuditSearch = NonNullable<operations['SearchAuditEntries']['parameters']['query']>;
 
 /** Records that have a History tab. Each maps to its owner's audit endpoint, which checks access to the record first. */
-export type AuditedRecord = 'sample' | 'employee' | 'unit' | 'role' | 'task' | 'team' | 'request';
+export type AuditedRecord =
+  | 'sample'
+  | 'employee'
+  | 'unit'
+  | 'role'
+  | 'task'
+  | 'team'
+  | 'request'
+  | 'kpiCard'
+  | 'kpiResult';
 
 interface HistoryQuery {
   page?: number;
@@ -36,6 +45,10 @@ async function fetchHistory(record: AuditedRecord, id: string, query: HistoryQue
       return unwrap(await api.GET('/api/v1/teams/{id}/audit', { params, signal }));
     case 'request':
       return unwrap(await api.GET('/api/v1/portfolio/requests/{id}/audit', { params, signal }));
+    case 'kpiCard':
+      return unwrap(await api.GET('/api/v1/kpi/cards/{id}/audit', { params, signal }));
+    case 'kpiResult':
+      return unwrap(await api.GET('/api/v1/kpi/results/{id}/audit', { params, signal }));
   }
 }
 
@@ -56,6 +69,10 @@ async function fetchAsOf(record: AuditedRecord, id: string, at: string, signal: 
       return unwrap(await api.GET('/api/v1/teams/{id}/audit/as-of', { params, signal }));
     case 'request':
       return unwrap(await api.GET('/api/v1/portfolio/requests/{id}/audit/as-of', { params, signal }));
+    case 'kpiCard':
+      return unwrap(await api.GET('/api/v1/kpi/cards/{id}/audit/as-of', { params, signal }));
+    case 'kpiResult':
+      return unwrap(await api.GET('/api/v1/kpi/results/{id}/audit/as-of', { params, signal }));
   }
 }
 

@@ -9,6 +9,7 @@ import {
   ClipboardCheck,
   FileSpreadsheet,
   Flag,
+  Gauge,
   Hash,
   KeyRound,
   Languages,
@@ -34,6 +35,7 @@ import {
 export type SettingsPageKey =
   | 'teams'
   | 'portfolio'
+  | 'kpi'
   | 'regional'
   | 'branding'
   | 'systems'
@@ -80,6 +82,7 @@ export type SettingsPath =
   | '/settings/tasks'
   | '/settings/teams'
   | '/settings/portfolio'
+  | '/settings/kpi'
   | '/settings/tasks/reassign'
   | '/settings/business-hours'
   | '/settings/holidays'
@@ -187,6 +190,12 @@ export const settingsGroups: readonly SettingsGroup[] = [
         to: '/settings/portfolio',
         icon: BriefcaseBusiness,
         permissions: ['portfolio.settings.manage'],
+      },
+      {
+        key: 'kpi',
+        to: '/settings/kpi',
+        icon: Gauge,
+        permissions: ['kpi.settings.manage', 'kpi.strategy.manage', 'kpi.plan.manage'],
       },
     ],
   },

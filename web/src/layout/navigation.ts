@@ -3,6 +3,7 @@ import {
   BriefcaseBusiness,
   FolderKanban,
   ListTodo,
+  Gauge,
   Building2,
   FileSpreadsheet,
   Layers,
@@ -22,6 +23,7 @@ export interface NavItem {
     | '/'
     | '/tasks'
     | '/teams'
+    | '/kpi'
     | '/sample'
     | '/portfolio/requests'
     | '/portfolio/projects'
@@ -42,6 +44,7 @@ export interface NavItem {
     | 'nav.home'
     | 'nav.tasks'
     | 'nav.teams'
+    | 'nav.kpi'
     | 'nav.sample'
     | 'nav.portfolioRequests'
     | 'nav.portfolioProjects'
@@ -100,6 +103,9 @@ export const settingsPermissions = [
   'tasks.reassignment.manage',
   'teams.settings.manage',
   'portfolio.settings.manage',
+  'kpi.settings.manage',
+  'kpi.strategy.manage',
+  'kpi.plan.manage',
 ] as const;
 
 /**
@@ -155,6 +161,7 @@ export const navigation: readonly NavSection[] = [
         system: 'portfolio',
         permissions: ['portfolio.project.read'],
       },
+      { to: '/kpi', labelKey: 'nav.kpi', icon: Gauge, system: 'kpi', permissions: ['kpi.card.read'] },
       { to: '/sample', labelKey: 'nav.sample', icon: Boxes, system: 'sample' },
     ],
   },

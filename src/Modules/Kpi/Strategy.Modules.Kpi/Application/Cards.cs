@@ -16,7 +16,7 @@ namespace Strategy.Modules.Kpi.Application;
 public sealed record KpiCardListItemDto(
     Guid Id, string Code, string? NameAr, string? NameEn, string Status, string? TypeCode, string UnitCode, string MeasuringPeriod, string Direction, string Level,
     KpiUnitDto? ResponsibleUnit, KpiPersonDto? ResponsiblePerson, Guid? ObjectiveId, string? ObjectiveNameAr, string? ObjectiveNameEn, bool IsGlobalStar,
-    IReadOnlyList<string> GemCriteria, int? Year, decimal? Target, decimal? Achieved, decimal? Actual, decimal? Capped, string Rag);
+    IReadOnlyList<string> GemCriteria, int? Year, string? TargetType, decimal? Target, decimal? RangeMin, decimal? RangeMax, decimal? Achieved, decimal? Actual, decimal? Capped, string Rag);
 
 public sealed record KpiCardTargetDto(int Year, string TargetType, decimal? Target, decimal? RangeMin, decimal? RangeMax);
 
@@ -105,7 +105,7 @@ internal sealed partial class CardRules(KpiDbContext db, ILookupService lookups)
         void Add(string field, string key, Dictionary<string, object?>? p = null) => errors.Add(new FieldError(field, key, key, p));
         if (string.IsNullOrWhiteSpace(v.NameAr) && string.IsNullOrWhiteSpace(v.NameEn))
         {
-            Add("nameEn", "validation.oneLanguageRequired");
+            Add("nameEn", "validation.atLeastOneLanguage");
         }
 
         foreach (var (field, value, max) in new[] { ("nameAr", v.NameAr, KpiCard.NameMaxLength), ("nameEn", v.NameEn, KpiCard.NameMaxLength),
@@ -120,34 +120,34 @@ internal sealed partial class CardRules(KpiDbContext db, ILookupService lookups)
 
         if (!Natures.All.Contains(v.Nature))
         {
-            Add("nature", "validation.invalidValue");
+            Add("nature", "validation.invalid");
         }
 
         if (!MeasuringPeriods.All.Contains(v.MeasuringPeriod))
         {
-            Add("measuringPeriod", "validation.invalidValue");
+            Add("measuringPeriod", "validation.invalid");
         }
 
         if (!Directions.All.Contains(v.Direction))
         {
-            Add("direction", "validation.invalidValue");
+            Add("direction", "validation.invalid");
         }
 
         if (!TargetTypes.All.Contains(v.TargetType))
         {
-            Add("targetType", "validation.invalidValue");
+            Add("targetType", "validation.invalid");
         }
 
         if (!CardLevels.All.Contains(v.Level))
         {
-            Add("level", "validation.invalidValue");
+            Add("level", "validation.invalid");
         }
 
         async Task Lookup(string field, string type, string? code)
         {
             if (code is not null && !await lookups.IsActiveCodeAsync(type, code, ct).ConfigureAwait(false))
             {
-                Add(field, "validation.invalidValue");
+                Add(field, "validation.invalid");
             }
         }
 
@@ -228,7 +228,7 @@ internal sealed partial class CardRules(KpiDbContext db, ILookupService lookups)
 
         if (v.BaselineYear is < 1990 or > 2200)
         {
-            Add("baselineYear", "validation.invalidValue");
+            Add("baselineYear", "validation.invalid");
         }
 
         return errors;
@@ -333,7 +333,7 @@ internal sealed class CardQueries(KpiDbContext db, KpiReader reader, IRequestCon
             var objective = c.ObjectiveId is { } o ? elements.GetValueOrDefault(o) : null;
             return new KpiCardListItemDto(c.Id, c.Code, c.NameAr, c.NameEn, c.Status, c.TypeCode, c.UnitCode, c.MeasuringPeriod, c.Direction, c.Level,
                 KpiReader.Unit(c.ResponsibleUnitId, units), KpiReader.Person(c.ResponsibleEmployeeId, people), c.ObjectiveId, objective?.NameAr, objective?.NameEn, c.IsGlobalStar,
-                c.GemCriteria, plan?.Year, plan?.Target, plan?.AchievedTotal, plan?.ActualPerformance, plan?.CappedPerformance, plan?.Rag ?? RagCodes.None);
+                c.GemCriteria, plan?.Year, plan?.TargetType, plan?.Target, plan?.RangeMin, plan?.RangeMax, plan?.AchievedTotal, plan?.ActualPerformance, plan?.CappedPerformance, plan?.Rag ?? RagCodes.None);
         }).ToList();
     }
 

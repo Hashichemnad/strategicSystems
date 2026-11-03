@@ -75,7 +75,7 @@ internal sealed class YearHandlers(
     {
         if (!ValidYear(query.Year))
         {
-            return Error.Validation([new FieldError("year", "validation.invalidValue", "validation.invalidValue")]);
+            return Error.Validation([new FieldError("year", "validation.invalid", "validation.invalid")]);
         }
 
         if (!await CanManageAsync(cancellationToken).ConfigureAwait(false))
@@ -122,7 +122,7 @@ internal sealed class YearHandlers(
     {
         if (!ValidYear(command.Year))
         {
-            return Error.Validation([new FieldError("year", "validation.invalidValue", "validation.invalidValue")]);
+            return Error.Validation([new FieldError("year", "validation.invalid", "validation.invalid")]);
         }
 
         if (!await CanManageAsync(cancellationToken).ConfigureAwait(false))
@@ -143,7 +143,7 @@ internal sealed class YearHandlers(
             if (!MeasuringPeriods.All.Contains(item.MeasuringPeriod) || !Directions.All.Contains(item.Direction) || !TargetTypes.All.Contains(item.TargetType)
                 || string.IsNullOrWhiteSpace(item.UnitCode))
             {
-                errors.Add(new FieldError($"items[{i}]", "validation.invalidValue", "validation.invalidValue"));
+                errors.Add(new FieldError($"items[{i}]", "validation.invalid", "validation.invalid"));
             }
             else if (TargetErrors.Of(item.TargetType, item.Target, item.RangeMin, item.RangeMax) is { } targetError)
             {
@@ -410,7 +410,7 @@ internal sealed class YearHandlers(
         var errors = new List<FieldError>();
         if (!TargetTypes.All.Contains(input.TargetType) || !Directions.All.Contains(input.Direction) || string.IsNullOrWhiteSpace(input.UnitCode))
         {
-            errors.Add(new FieldError("targetType", "validation.invalidValue", "validation.invalidValue"));
+            errors.Add(new FieldError("targetType", "validation.invalid", "validation.invalid"));
         }
         else if (TargetErrors.Of(input.TargetType, input.Target, input.RangeMin, input.RangeMax) is { } targetError)
         {
