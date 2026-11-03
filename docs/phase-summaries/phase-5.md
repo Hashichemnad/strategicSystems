@@ -62,12 +62,12 @@ interactive approval step, so the plan was written first and then implemented as
 |---|---|
 | `dotnet build Strategy.slnx -c Release` | 0 warnings, 0 errors |
 | `dotnet format --verify-no-changes` | clean |
-| `dotnet test` | **1 159 / 1 159** passed: unit 409 (59 new: schema validator, masking, prompts and injection, extraction post-processing, text extraction with Arabic reading order, month boundaries, redirect rules, rate limiter) · architecture 30 (licences of every new package) · integration 720 on real PostgreSQL (19 new AI / MCP tests; the generated authorization matrix covers every new endpoint) |
+| `dotnet test` | **1 172 / 1 172** after the OCR addition: unit 421 (71 new: schema validator, masking, prompts and injection, extraction post-processing, text extraction with Arabic reading order, **OCR on the Arabic and English scans and image-only PDFs**, month boundaries, redirect rules, rate limiter) · architecture 30 (licences of every new package) · integration 721 on real PostgreSQL (20 new AI / MCP / OCR tests; the generated authorization matrix covers every new endpoint). In the full parallel run the Gotenberg PDF snapshot test failed once at container start-up (`reporting.errors.pdfFailed`), as noted in Phase 4; it passes when re-run |
 | `tools/check-vulnerable.sh` · `tools/check-api-client.sh` | no High / Critical · OpenAPI document and TS client up to date |
 | `npm run lint` · `format:check` · `typecheck` | clean |
-| `npm test` (Vitest) | **81 / 81** (new: AI-filled form review in English, AI off in Arabic, Arabic translation draft; AI / MCP message keys in both languages) |
+| `npm test` (Vitest) | **81 / 81** (new: AI-filled form review in English with a "From scan" value, AI off in Arabic, Arabic translation draft; AI / MCP message keys in both languages) |
 | `npm run build` · `npm audit --audit-level=high` · `npm run lint:licenses` | OK · no High / Critical (the same 14 moderate dev-tool advisories as Phases 3–4) · 610 packages allowed |
-| `npx playwright test` | **66 / 66** (33 scenarios × ar + en; 4 new Phase 5 scenarios: AI and MCP settings with Test connection, the MCP consent flow, the AI-filled form review, the approver brief and Ask) |
+| `npx playwright test` | **68 / 68** (34 scenarios × ar + en; 5 new Phase 5 scenarios: AI and MCP settings with Test connection and OCR, the MCP consent flow, the AI-filled form review, a scanned page read by OCR, the approver brief and Ask) |
 | `--migrate` on an empty database | schemas `ai` and `mcp` added (migrations run by every integration test host and the E2E host) |
 
 **OS packages added to the image:** Tesseract 5 with Arabic and English data (Apache-2.0) and Leptonica (BSD-2-Clause), see ADR 0033 for
