@@ -150,11 +150,13 @@ test.describe('as an administrator', () => {
     expect(grades.map((g) => g.code)).toContain(code);
 
     await page.goto('/settings/numbering');
-    const pattern = page.getByLabel(tr(language, 'settings:numbering.pattern'));
+    // Several systems declare formats (Phase 6 adds task and timesheet numbers): work in the sample item's card.
+    const card = page.locator('form').filter({ has: page.locator('code', { hasText: /^sample\.item$/u }) });
+    const pattern = card.getByLabel(tr(language, 'settings:numbering.pattern'));
     await pattern.fill('ITEM/{YY}/{SEQ:3}');
     const year = String(new Date().getFullYear() % 100).padStart(2, '0');
-    await expect(page.getByRole('status').filter({ hasText: `ITEM/${year}/001` })).toBeVisible();
-    await page.getByRole('button', { name: tr(language, 'settings:save') }).click();
+    await expect(card.getByRole('status').filter({ hasText: `ITEM/${year}/001` })).toBeVisible();
+    await card.getByRole('button', { name: tr(language, 'settings:save') }).click();
     await expect(page.getByText(tr(language, 'settings:saved'), { exact: true }).first()).toBeVisible();
     await shot('settings-numbering');
     const created = await apiPost(adminApi, '/api/v1/sample/items', { nameEn: `Numbered ${code}` });

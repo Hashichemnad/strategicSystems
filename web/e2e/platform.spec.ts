@@ -204,7 +204,8 @@ test.describe('as an administrator', () => {
     await verify.getByRole('button', { name: tr(language, 'jobs:runNow') }).click();
     await expect(page.getByText(tr(language, 'jobs:toast.run'), { exact: true })).toBeVisible();
     await expect(verify.getByText(tr(language, 'jobs:statuses.succeeded'))).toBeVisible({ timeout: 20_000 });
-    await expect(page.getByTestId('job-row')).toHaveCount(7);
+    // Platform jobs and the three Task Management jobs (reminders, recurrence, digest).
+    await expect(page.getByTestId('job-row')).toHaveCount(10);
     await shot('job-dashboard', { fullPage: true });
   });
 });
