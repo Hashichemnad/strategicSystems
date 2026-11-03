@@ -51,3 +51,8 @@ Write an ADR for every choice the SPEC or CLAUDE.md leaves open (CLAUDE.md §2 r
 | [0044](0044-formation-memo-certificates-org-head.md) | Formation memo, certificates and the "head of the organisation" approver | Accepted by the owner |
 | [0045](0045-suggested-levels-and-minutes-delay.md) | Suggested criterion levels and minutes delay | Accepted by the owner |
 | [0046](0046-team-lifecycle.md) | Team lifecycle | Accepted by the owner |
+| [0047](0047-program-request-validation.md) | Program request validation: what applies when, and the "other" convention | Proposed |
+| [0048](0048-request-approval-chain-and-approved-budget.md) | Request approval chain, status per step and the Approved Budget | Proposed |
+| [0049](0049-project-auto-creation-and-numbering.md) | Automatic Project / Initiative creation and `PROJ-…` numbering | Proposed |
+| [0050](0050-proposal-assessment-and-dynamic-ai-choices.md) | Proposal Assessment versions and run-time choices for AI forms | Proposed |
+| [0051](0051-administration-quotation-hand-off.md) | Administration Dept quotation hand-off | Proposed |
