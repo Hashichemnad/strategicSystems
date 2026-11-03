@@ -14,6 +14,7 @@
     <ProjectReference Include="..\..\..\Platform\Strategy.Platform.Files.Contracts\Strategy.Platform.Files.Contracts.csproj" />
     <ProjectReference Include="..\..\..\Platform\Strategy.Platform.Notifications.Contracts\Strategy.Platform.Notifications.Contracts.csproj" />
     <ProjectReference Include="..\..\..\Platform\Strategy.Platform.Workflow.Contracts\Strategy.Platform.Workflow.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\Platform\Strategy.Platform.Links.Contracts\Strategy.Platform.Links.Contracts.csproj" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Strategy.UnitTests" />
