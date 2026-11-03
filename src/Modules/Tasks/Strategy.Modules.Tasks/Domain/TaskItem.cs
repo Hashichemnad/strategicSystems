@@ -408,6 +408,60 @@ public sealed class TaskItem : AuditableEntity
         return transition;
     }
 
+    /// <summary>
+    /// Administrative transfer of an open task to a new assignee (ADR 0040, an employee leaves): drafts and submitted tasks keep their status;
+    /// assigned / to-do tasks are re-assigned; work in progress, on hold or rejected goes back to Assigned (Full) / To Do (Simple) for the
+    /// new assignee, the running timesheet period closed.
+    /// </summary>
+    public Result TransferTo(Guid newAssigneeEmployeeId, Guid? newUnitId, DateTimeOffset now)
+    {
+        if (!IsOpen)
+        {
+            return Error.Rule("tasks.task.closed", "tasks.errors.closed");
+        }
+
+        CloseTimesheet(now, null, TaskEvents.Transferred);
+        AssigneeEmployeeId = newAssigneeEmployeeId;
+        UnitId = newUnitId;
+        if (Status is TaskStatuses.InProgress or TaskStatuses.OnHold or TaskStatuses.Rejected or TaskStatuses.Assigned or TaskStatuses.ToDo)
+        {
+            Status = Template == TaskTemplates.Simple ? TaskStatuses.ToDo : TaskStatuses.Assigned;
+            AssignedAt = now;
+            AcceptedAt = null;
+            RejectionReason = null;
+        }
+
+        return Result.Success();
+    }
+
+    /// <summary>The creator left: another employee becomes the task's creator (approver). Their own user is resolved through the record role.</summary>
+    public void TakeOverAsCreator(Guid employeeId)
+    {
+        CreatorEmployeeId = employeeId;
+        CreatorUserId = null;
+    }
+
+    /// <summary>
+    /// Hands an open task back to its creator for a decision (ADR 0040): work not yet submitted becomes Rejected with the reason, so the
+    /// creator reassigns or cancels it through the normal lifecycle; drafts and submitted tasks are already the creator's to act on.
+    /// </summary>
+    public Result ReturnToCreator(string reason, DateTimeOffset now)
+    {
+        if (!IsOpen)
+        {
+            return Error.Rule("tasks.task.closed", "tasks.errors.closed");
+        }
+
+        if (Status is TaskStatuses.Assigned or TaskStatuses.ToDo or TaskStatuses.InProgress or TaskStatuses.OnHold)
+        {
+            CloseTimesheet(now, null, TaskEvents.Transferred);
+            Status = TaskStatuses.Rejected;
+            RejectionReason = reason;
+        }
+
+        return Result.Success();
+    }
+
     private void OpenTimesheet(DateTimeOffset now)
     {
         if (OpenPeriod is null)

@@ -21,6 +21,7 @@ public static class TaskPermissions
     public const string DashboardRead = "tasks.dashboard.read";
     public const string PerformanceRead = "tasks.performance.read";
     public const string SettingsManage = "tasks.settings.manage";
+    public const string ReassignmentManage = "tasks.reassignment.manage";
 
     public const string AiFromText = "tasks.ai.from-text";
     public const string AiSummary = "tasks.ai.summary";
@@ -66,6 +67,7 @@ internal sealed class TasksAccessCatalogue : IAccessCatalogueSource
         new(TaskPermissions.DashboardRead, "عرض لوحة المهام", "View the task dashboard", Scopable: false),
         new(TaskPermissions.PerformanceRead, "عرض مؤشرات أداء الموظفين في المهام", "View employees' task performance input"),
         new(TaskPermissions.SettingsManage, "إدارة إعدادات المهام", "Manage task settings", Scopable: false),
+        new(TaskPermissions.ReassignmentManage, "إعادة إسناد المهام المفتوحة لموظف", "Reassign the open tasks of an employee"),
         new(TaskPermissions.AiFromText, "إنشاء مسودات مهام من نص بالذكاء الاصطناعي", "Draft tasks from text with AI", Scopable: false),
         new(TaskPermissions.AiSummary, "تلخيص المهام بالذكاء الاصطناعي", "Summarise tasks with AI", Scopable: false),
         new(TaskPermissions.AiAssignee, "اقتراح المكلفين", "Suggest assignees", Scopable: false),
@@ -86,7 +88,8 @@ internal sealed class TasksAccessCatalogue : IAccessCatalogueSource
             [new(TaskPermissions.Read, DataScope.Unit), new(TaskPermissions.FollowUp, DataScope.Unit), new(TaskPermissions.OnBehalf)]),
         new("hr", "الموارد البشرية (أداء المهام)", "HR (task performance)", [new(TaskPermissions.PerformanceRead, DataScope.All)]),
         new("administrator", "مسؤول المهام", "Task administrator",
-            [new(TaskPermissions.Read, DataScope.All), new(TaskPermissions.DashboardRead), new(TaskPermissions.SettingsManage), new(TaskPermissions.AiWorkload)],
+            [new(TaskPermissions.Read, DataScope.All), new(TaskPermissions.DashboardRead), new(TaskPermissions.SettingsManage), new(TaskPermissions.AiWorkload),
+                new(TaskPermissions.ReassignmentManage, DataScope.All)],
             RequiresMfa: true),
     ];
 

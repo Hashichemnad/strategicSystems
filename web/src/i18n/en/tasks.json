@@ -16,7 +16,12 @@
     "followUp": "Following",
     "team": "Team open"
   },
-  "views": { "list": "List", "kanban": "Kanban", "calendar": "Calendar", "label": "View" },
+  "views": {
+    "list": "List",
+    "kanban": "Kanban",
+    "calendar": "Calendar",
+    "label": "View"
+  },
   "filters": {
     "search": "Search by title or number",
     "allStatuses": "All statuses",
@@ -97,9 +102,21 @@
       "done": "Done"
     }
   },
-  "priority": { "high": "High", "medium": "Medium", "low": "Low" },
-  "indicator": { "on_time": "On time", "due_soon": "Due soon", "overdue": "Overdue", "on_hold": "On hold" },
-  "completionRule": { "all": "all are approved", "any": "any one is approved" },
+  "priority": {
+    "high": "High",
+    "medium": "Medium",
+    "low": "Low"
+  },
+  "indicator": {
+    "on_time": "On time",
+    "due_soon": "Due soon",
+    "overdue": "Overdue",
+    "on_hold": "On hold"
+  },
+  "completionRule": {
+    "all": "all are approved",
+    "any": "any one is approved"
+  },
   "recurrence": {
     "none": "Does not repeat",
     "daily": "Daily",
@@ -246,7 +263,9 @@
     "accept-reminded": "Reminder to accept sent",
     "overdue": "Overdue notice sent",
     "escalated": "Escalated to the manager",
-    "system": "System"
+    "system": "System",
+    "transferred": "Reassigned by an administrator",
+    "returned-to-creator": "Handed back to the creator"
   },
   "group": {
     "title": "Assignment group",
@@ -336,7 +355,11 @@
     "escalateAfterOverdueDays": "Escalate to the assignee's manager after (working days overdue)",
     "acceptReminderHours": "Remind to accept after (working hours in Assigned)",
     "digest": "Digest e-mail",
-    "digests": { "off": "Off", "daily": "Daily", "weekly": "Weekly" },
+    "digests": {
+      "off": "Off",
+      "daily": "Daily",
+      "weekly": "Weekly"
+    },
     "digestWeekday": "Weekday of the weekly digest (1 = Monday)",
     "workloadThreshold": "Open tasks that count as overloaded",
     "saved": "Task settings saved",
@@ -391,13 +414,42 @@
     "closed": "The task is closed.",
     "noEmployee": "Your account is not linked to an employee.",
     "followUpExists": "This person already follows the task or works on it.",
-    "dependencyCycle": "This dependency would create a loop."
+    "dependencyCycle": "This dependency would create a loop.",
+    "nothingToReassign": "There are no open tasks to reassign."
   },
   "validation": {
     "feedbackPoint": "Give a feedback point from 1 to {{max}}.",
     "mayNotAssign": "You may not assign tasks to {{name}}.",
     "notYourManager": "You can only create tasks on behalf of the head of your unit.",
     "recurrence": "Repeating tasks need one assignee and a planned start or due date.",
-    "mentionNotParticipant": "You can only mention the task's participants."
+    "mentionNotParticipant": "You can only mention the task's participants.",
+    "fallbackNeeded": "{{count}} of the tasks were created by this employee: choose who takes them."
+  },
+  "reassign": {
+    "title": "Reassign open tasks of an employee",
+    "description": "When someone leaves or moves: preview their open tasks, then give them to another employee or hand them back to their creators. Everyone involved is notified and the action is audited.",
+    "employee": "Employee whose tasks to reassign",
+    "preview": "Open tasks",
+    "none": "This employee has no open tasks.",
+    "select": "Include",
+    "restricted": "Confidential task (title hidden)",
+    "createdByLeaver": "Created by this employee",
+    "mode": "Who takes the tasks",
+    "modes": {
+      "to-employee": "Another employee takes all selected tasks",
+      "to-creators": "The creators decide (tasks come back to them to reassign or cancel)"
+    },
+    "newAssignee": "New assignee",
+    "fallback": "Takes the tasks this employee created",
+    "fallbackHint": "{{count}} selected task(s) were created by this employee: someone must take them.",
+    "reason": "Reason",
+    "submit": "Reassign {{count}} task(s)",
+    "confirmTitle": "Reassign these tasks?",
+    "confirmDescription": "{{count}} open task(s) will change hands now. Running timesheets stop and the people involved are notified.",
+    "done": "{{reassigned}} task(s) reassigned, {{returned}} handed back to their creators",
+    "statusRule": "In progress, on hold and rejected tasks restart as Assigned for the new person; submitted tasks stay with the creator for approval.",
+    "offerLeft": "{{name}} has left and still has {{count}} open task(s).",
+    "offer": "{{name}} has {{count}} open task(s).",
+    "offerAction": "Reassign tasks"
   }
 }

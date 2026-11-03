@@ -37,6 +37,7 @@ export function SettingsLayout() {
               <Link
                 key={page.key}
                 to={page.to}
+                activeOptions={{ exact: page.exact ?? false }}
                 className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm text-muted-foreground hover:bg-muted hover:text-foreground"
                 activeProps={{ className: 'bg-accent text-accent-foreground', 'aria-current': 'page' }}
               >

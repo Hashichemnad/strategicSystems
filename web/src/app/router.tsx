@@ -467,6 +467,13 @@ const taskSettingsRoute = createRoute({
   component: lazyRouteComponent(() => import('@/features/tasks/TaskSettingsPage'), 'TaskSettingsPage'),
 });
 
+export const taskReassignRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/tasks/reassign',
+  validateSearch: z.object({ employee: z.uuid().optional().catch(undefined) }),
+  component: lazyRouteComponent(() => import('@/features/tasks/ReassignTasksPage'), 'ReassignTasksPage'),
+});
+
 const mcpSettingsRoute = createRoute({
   getParentRoute: () => settingsLayout,
   path: '/mcp',
@@ -554,6 +561,7 @@ const routeTree = rootRoute.addChildren([
       aiSettingsRoute,
       mcpSettingsRoute,
       taskSettingsRoute,
+      taskReassignRoute,
       rolesRoute,
       assignmentsRoute,
       systemAccessRoute,

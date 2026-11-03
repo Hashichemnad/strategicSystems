@@ -4,7 +4,8 @@
 **Branch:** `claude/amazing-hawking-29lz6v`
 **Planning:** the plan is the design notes [`docs/design/links.md`](../design/links.md) and [`docs/design/tasks.md`](../design/tasks.md),
 written and committed before the code (commit `docs(tasks): Phase 6 design notes…`). This session ran without an interactive approval
-step, so the plan was written first and then implemented as it stands; its open choices are ADRs 0034–0039.
+step, so the plan was written first and then implemented as it stands; its open choices are ADRs 0034–0039. Before the pull request the owner asked for an administrative "Reassign open tasks of an
+employee" action (ADR 0040).
 
 ## What was built
 
@@ -25,6 +26,7 @@ step, so the plan was written first and then implemented as it stands; its open 
 | Employee performance input (§11.11) | Time to accept / complete, on-time flag and feedback point stored per task; `GET /tasks/performance/{employee}` for the employee, their manager (Team) and `tasks.performance.read` holders |
 | AI (Phase 5 registry) | `tasks-from-text` (prompt `tasks-from-text.v1.md`, schema-validated drafts; assignee names matched to employees; **nothing created until the creator confirms**), `task-summary` (thread summary, draft submission / return note), `task-assignee` and `task-workload` (deterministic, no model). Permissions `tasks.ai.*`. The offline demo provider handles both prompts |
 | MCP (Phase 5 registry, §11.10) | `my_tasks` (read, on), `create_task`, `update_task_status` (accept / reject / start / pause / submit / complete), `add_task_comment` (write, **off**), `approve_task` (**approve, never on by default**; the creator rule still applies). Search source and record source for `tasks.task` |
+| **Reassign open tasks of an employee** (owner request before the PR, ADR 0040) | Settings → *Reassign open tasks of an employee* (permission `tasks.reassignment.manage`, scoped on the leaving employee; in *Task administrator*, now a platform administrator role): choose the employee, **preview** their open tasks (confidential ones included but without title / number), select tasks, then **another employee takes them** (in progress / on hold / rejected restart as Assigned for the new person, submitted stays for approval, the leaver's own tasks get the new person as creator too) or **the creators decide** (work not yet submitted comes back to them as Rejected with the reason; a fallback employee takes the leaver's own tasks), with a **reason**. One transaction: tasks, timeline entries, record roles, deadlines, and summary notifications to the new assignee, every creator and the leaver; one audit event `tasks.task.bulk-reassign` plus field-level changes. **Offered** on the employee page (count + link) and by notification to permission holders and the manager when the employee is marked **Left** — nothing moves automatically |
 | Web | **My Tasks** (tabs Assigned / Created / Follow-up / Team, counts, **list · Kanban (drag-and-drop, `@dnd-kit/core`) · calendar**, filters, quick actions), **New Task** (several assignees with suggestions, type / source / category / priority, dates, checklist, recurrence, files copied to each task, confidential, on behalf, *Draft tasks from text*), **task page** (header, stepper, current-status banner actions, overview with checklist / sub-tasks / dependencies / link badge, **timeline with durations + timesheet**, comments with mentions and AI summary, documents, follow-ups, history), **assignment group page**, **task dashboard** (tiles, bars by unit / source / status / priority, workload, insights), **Settings → Tasks**, My Work card, Sample **Tasks** tab. AR + EN, RTL / LTR |
 
 ## Acceptance checks (BUILD_PLAN Phase 6)
@@ -51,6 +53,7 @@ step, so the plan was written first and then implemented as it stands; its open 
 | Links registry proven with the Sample module | Integration `Sample_item_shows_its_tasks_through_the_links_registry…` (owner sees both linked tasks, outsider cannot link, restricted badge without title, `/links/to` and `/resolve` 404 for outsiders, types by capability). E2E screenshot `sample-linked-tasks` |
 | MCP tools, approve off by default | Integration `Mcp_task_tools_are_registered_…` |
 | My Work Tasks card | Integration `My_work_shows_tasks_…` (to accept / awaiting approval items, counts, current status actions, dashboard workload) |
+| Reassign open tasks of an employee (owner request) | Unit `TaskTransferTests` (status each open task lands in, both ways; closed tasks never move). Integration `TaskReassignmentTests`: preview (closed tasks left out, confidential without title), reason required, 7 tasks to C with the expected statuses, timesheet closed, timeline entry with the reason, C can act and A no longer sees them, notifications to C and both creators, one audit event + field changes, nothing left on a second run (422); *creators decide* (fallback required for the leaver's own task, Rejected with the reason, creator reassigns through the lifecycle, notifications); access (no permission 403, other unit's scope 404, own unit OK); marking the employee **Left** notifies the task administrator and the manager with the link, and moves nothing. E2E (ar + en): employee marked left → offer on the employee page → preview → reassign to Ahmed; screenshots `employee-left-offer`, `tasks-reassign` |
 | Every server message key in AR and EN | Vitest `tasks/messageKeys.test` (also every action and status name of both templates); `TaskActionDialog.test` (reason / comment / feedback required, AR) |
 
 ## Quality gates run
@@ -58,11 +61,11 @@ step, so the plan was written first and then implemented as it stands; its open 
 | Gate | Result |
 |---|---|
 | `dotnet build Strategy.slnx -c Release` · `dotnet format --verify-no-changes` | 0 warnings, 0 errors · clean |
-| `dotnet test` | **1 778 / 1 778** (unit, architecture and integration on real PostgreSQL). New: **502** Task unit tests (transition tables, timesheet, recurrence, dependencies, settings), **15** Task / Links integration tests; the authorization matrix covers every new endpoint. Two existing tests were updated for the new jobs (`tasks.*`) and the two task roles assigned to everyone |
+| `dotnet test` | **1 806 / 1 806** (unit, architecture and integration on real PostgreSQL). New: **520** Task unit tests (transition tables, timesheet, recurrence, dependencies, settings, transfers), **19** Task / Links integration tests; the authorization matrix covers every new endpoint. Existing tests updated for the new jobs (`tasks.*`), the two task roles assigned to everyone and the task administrator among the platform administrator roles. The two Gotenberg PDF tests failed once at container start-up in the full parallel run (as noted in Phases 4–5) and passed when re-run |
 | `tools/check-api-client.sh` · `tools/check-vulnerable.sh` | OpenAPI document and TS client up to date · no High / Critical |
 | `npm run lint` · `format:check` · `typecheck` · `npm test` | clean · **89 / 89** Vitest (8 new) |
 | `npm run build` · `npm audit --audit-level=high` · `npm run lint:licenses` | OK · no High / Critical (the same 14 moderate dev-tool advisories as Phases 3–5) · 613 packages allowed |
-| `npx playwright test e2e/tasks.spec.ts` | **6 / 6** (3 scenarios × ar + en) with `E2E_SCREENSHOTS=phase-6`. The other specs were not re-run in this session |
+| `npx playwright test e2e/tasks.spec.ts` | **8 / 8** (4 scenarios × ar + en) with `E2E_SCREENSHOTS=phase-6`. The other specs were not re-run in this session |
 | `--migrate` on an empty database | schemas `links` and `tasks` added (run by every integration test host and the E2E host) |
 
 **Dependencies added:** `@dnd-kit/core` 6.3.1 (MIT, with `@dnd-kit/accessibility` and `@dnd-kit/utilities`) — listed in
@@ -78,6 +81,8 @@ step, so the plan was written first and then implemented as it stands; its open 
 - [0037](../decisions/0037-task-deadlines-and-reminders.md) Due dates, reminders and escalation in working time of the assignee's unit.
 - [0038](../decisions/0038-task-dependencies-and-recurrence.md) Finish-to-start dependencies (block submit / complete); recurrence rules.
 - [0039](../decisions/0039-confidential-tasks.md) One visibility rule for every read path.
+- [0040](../decisions/0040-reassign-open-tasks-of-an-employee.md) Reassigning the open tasks of an employee who leaves or moves: scope,
+  preview, the two ways and the status each task lands in, notifications, audit, the offer on *Left*.
 
 ## Deviations
 - **From the SPEC:** none known. Interpretations are in the ADRs above.
@@ -88,6 +93,8 @@ step, so the plan was written first and then implemented as it stands; its open 
   - Comment attachments reference files uploaded to the task (Documents tab) rather than an upload inside the comment box.
 - **Contracts added:** `Strategy.Platform.Links.Contracts` (new); `ITaskDirectory` in `Strategy.Modules.Tasks.Contracts`.
 - **CLAUDE.md:** platform schema list includes `links`.
+- **Platform administrators** now also receive the *Task administrator* role (first administrator, dev seed); existing installations assign
+  it in Settings → Assignments.
 - **Development demo AI provider** also drafts tasks from list lines ("- … @Name by YYYY-MM-DD") and writes a demo task summary.
 
 ## Fixes found along the way
@@ -96,8 +103,9 @@ step, so the plan was written first and then implemented as it stands; its open 
 - The links registry and the tasks link source depended on each other through DI; the registry now resolves sources on first use.
 
 ## Known gaps (by design: later phases or follow-ups)
-- Bulk role transfer does not re-route open tasks: tasks are assigned to people, not roles; re-assigning a leaver's tasks stays a manual
-  creator action (or a later "reassign all tasks of an employee" admin action).
+- Bulk role transfer does not re-route open tasks (tasks belong to people, not roles); the leaver's tasks move with the *Reassign open tasks
+  of an employee* action (ADR 0040). Tasks a leaver **created** for other people keep the leaver as creator / approver; a "take over as
+  creator" action is a possible follow-up.
 - Portfolio (milestone / project-level tasks, task-driven milestone progress), Teams (meeting decisions, committee members) and the other
   systems register their own linkable types and panels in their phases.
 - Personal leave calendars are not part of the working-time arithmetic (ADR 0027 / 0037).
@@ -117,10 +125,12 @@ cd web && npm ci && npm run dev        # http://localhost:5173
 4. New task → **Draft tasks from text** → paste minutes with "- … @Ahmed by 2026-12-01" lines → review the AI drafts → create.
 5. Sample module → an item → **Tasks** tab → *Create task* (linked); the task shows the item's live badge.
 6. Settings → **Tasks**: workflow per type (personal = Simple), assignment rule, reminders, escalation, digest, confidential categories.
+7. Employees → an employee with open tasks → status **Left**: the page offers *Reassign tasks* (task administrators also get a
+   notification) → Settings → *Reassign open tasks of an employee*: preview, choose a colleague or "the creators decide", reason, confirm.
 
 ## Cloud environment notes
 - Docker started manually (`dockerd`); Gotenberg and Mailpit through `mirror.gcr.io/`. Integration tests reuse the local PostgreSQL 16 with
   `STRATEGY_TEST_POSTGRES`; E2E ran against database `strategy` with `E2E_CHROMIUM_PATH=/opt/pw-browsers/chromium`.
 - Screenshots (`E2E_SCREENSHOTS=phase-6`) are in [`docs/screenshots/phase-6/`](../screenshots/phase-6/) as `ar-*` / `en-*` pairs:
   `tasks-list`, `tasks-kanban`, `tasks-calendar`, `tasks-new-multi-assign`, `task-page-timeline`, `task-assignment-group`, `tasks-dashboard`,
-  `tasks-from-text`, `sample-linked-tasks`. The lifecycle actions in the E2E run back to back, so the timesheet durations read 0:00 there.
+  `tasks-from-text`, `sample-linked-tasks`, `employee-left-offer`, `tasks-reassign`. The lifecycle actions in the E2E run back to back, so the timesheet durations read 0:00 there.

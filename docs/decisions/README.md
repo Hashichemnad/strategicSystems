@@ -44,3 +44,4 @@ Write an ADR for every choice the SPEC or CLAUDE.md leaves open (CLAUDE.md §2 r
 | [0037](0037-task-deadlines-and-reminders.md) | Task due dates, reminders and escalation in working time | Accepted |
 | [0038](0038-task-dependencies-and-recurrence.md) | Task dependencies and recurrence | Accepted |
 | [0039](0039-confidential-tasks.md) | Confidential tasks and one visibility rule for every read path | Accepted |
+| [0040](0040-reassign-open-tasks-of-an-employee.md) | Reassigning the open tasks of an employee who leaves or moves | Accepted |

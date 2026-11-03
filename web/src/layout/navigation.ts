@@ -89,6 +89,7 @@ export const settingsPermissions = [
   'org.unit.manage',
   'org.import.manage',
   'tasks.settings.manage',
+  'tasks.reassignment.manage',
 ] as const;
 
 /**

@@ -112,6 +112,13 @@ internal static class TasksEndpoints
         group.MapPut("/settings", async (SaveTaskSettings b, IDispatcher d, CancellationToken ct) => (await d.SendAsync(b, ct)).ToOk())
             .WithName("SaveTaskSettings").RequirePermission(TaskPermissions.SettingsManage);
 
+        // Administration: reassign the open tasks of an employee who leaves or moves (ADR 0040).
+        group.MapGet("/reassignment/{employeeId:guid}", async (Guid employeeId, IDispatcher d, CancellationToken ct) =>
+                (await d.SendAsync(new PreviewReassignment(employeeId), ct)).ToOk())
+            .WithName("PreviewTaskReassignment").RequirePermission(TaskPermissions.ReassignmentManage);
+        group.MapPost("/reassignment", async (ReassignEmployeeTasks b, IDispatcher d, CancellationToken ct) => (await d.SendAsync(b, ct)).ToOk())
+            .WithName("ReassignEmployeeTasks").RequirePermission(TaskPermissions.ReassignmentManage).WithIdempotency();
+
         var ai = group.MapGroup("/ai");
         ai.MapPost("/from-text", async (FromTextInput b, TaskAiService service, CancellationToken ct) => (await service.DraftFromTextAsync(b.Text, ct)).ToOk())
             .WithName("DraftTasksFromText").RequirePermission(TaskPermissions.Create);

@@ -367,3 +367,37 @@ export function formatDuration(seconds: number | null | undefined): string {
   }
   return `${hours}:${String(rest).padStart(2, '0')}`;
 }
+
+// ---- Reassign open tasks of an employee (ADR 0040) ----------------------------------------------------------------------
+
+export type ReassignmentPreview = components['schemas']['ReassignmentPreviewDto'];
+export type ReassignInput = components['schemas']['ReassignEmployeeTasks'];
+
+export function useReassignmentPreview(employeeId: string | undefined, enabled = true) {
+  return useQuery({
+    queryKey: [...taskKeys.all, 'reassignment', employeeId],
+    queryFn: async ({ signal }) =>
+      unwrap(
+        await api.GET('/api/v1/tasks/reassignment/{employeeId}', {
+          params: { path: { employeeId: employeeId ?? '' } },
+          signal,
+        }),
+      ),
+    enabled: enabled && !!employeeId,
+    retry: false,
+  });
+}
+
+export function useReassignTasks() {
+  const onSuccess = useInvalidateTasks();
+  return useMutation({
+    mutationFn: async ({ body, idempotencyKey }: { body: ReassignInput; idempotencyKey: string }) =>
+      unwrap(
+        await api.POST('/api/v1/tasks/reassignment', {
+          body,
+          headers: { 'Idempotency-Key': idempotencyKey },
+        }),
+      ),
+    onSuccess,
+  });
+}

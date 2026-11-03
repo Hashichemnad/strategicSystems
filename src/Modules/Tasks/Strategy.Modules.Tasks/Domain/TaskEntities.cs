@@ -289,4 +289,6 @@ public static class TaskEvents
     public const string Overdue = "overdue";
     public const string Escalated = "escalated";
     public const string GroupMessage = "group-message";
+    public const string Transferred = "transferred";
+    public const string ReturnedToCreator = "returned-to-creator";
 }

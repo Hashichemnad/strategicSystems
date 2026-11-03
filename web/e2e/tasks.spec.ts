@@ -155,7 +155,10 @@ test.describe('task management', () => {
     await approve.getByTestId('task-action-confirm').click();
     await expect(approve).toBeHidden();
     await expect(
-      page.getByRole('status').filter({ hasText: k(language, 'currentStatus.approved') }).first(),
+      page
+        .getByRole('status')
+        .filter({ hasText: k(language, 'currentStatus.approved') })
+        .first(),
     ).toBeVisible();
 
     // The assignment group shows "1 of 3 approved".
@@ -195,6 +198,66 @@ test.describe('task management', () => {
     await page.goto('/tasks/dashboard');
     await expect(page.getByTestId('task-dashboard')).toBeVisible();
     await shot('tasks-dashboard', { fullPage: true });
+  });
+
+  test('an employee who leaves is offered for reassignment and their open tasks move to a colleague', async ({
+    page,
+    language,
+    shot,
+    adminApi,
+  }) => {
+    const tag = `${language}${Date.now().toString(36)}`;
+    const mariam = await employeeIdByNumber(adminApi, 'E0001');
+    const leaver = await createEmployee(adminApi, tag, 'سالم', 'Salem', mariam);
+    for (const [ar, en] of [
+      ['تحديث سجل المخاطر', 'Update the risk register'],
+      ['إعداد محضر الاجتماع', 'Write the meeting minutes'],
+    ] as const) {
+      const response = await apiPost(page, '/api/v1/tasks', {
+        titleAr: `${ar} ${tag}`,
+        titleEn: `${en} ${tag}`,
+        typeCode: 'manager-assignment',
+        sourceCode: 'manager-assignment',
+        dueDate: inDays(3),
+        assigneeEmployeeIds: [leaver],
+      });
+      expect(response.status()).toBe(201);
+    }
+    const employee = (await (await adminApi.get(`/api/v1/org/employees/${leaver}`)).json()) as {
+      version: number;
+    };
+    expect(
+      (
+        await apiPost(adminApi, `/api/v1/org/employees/${leaver}/change-status`, {
+          status: 'left',
+          version: employee.version,
+        })
+      ).status(),
+    ).toBe(200);
+
+    // The employee page offers the action once the employee has left.
+    await page.goto(`/org/employees/${leaver}`);
+    const offer = page.getByTestId('reassign-offer');
+    await expect(offer).toBeVisible();
+    await shot('employee-left-offer');
+    await offer.click();
+
+    // Preview, choose the colleague, give a reason, confirm.
+    await expect(page.getByTestId('reassign-preview').getByRole('row')).toHaveCount(3);
+    await pickEmployee(page, page.locator('form'), language === 'ar' ? 'أحمد' : 'Ahmed');
+    await page
+      .getByLabel(k(language, 'reassign.reason'))
+      .fill(language === 'ar' ? 'انتهت خدمة الموظف' : 'The employee left the organisation');
+    await shot('tasks-reassign');
+    await page.getByTestId('reassign-submit').click();
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: k(language, 'reassign.submit', { count: 2 }) })
+      .click();
+    await expect(
+      page.getByText(k(language, 'reassign.done', { reassigned: 2, returned: 0 }), { exact: true }),
+    ).toBeVisible();
+    await expect(page.getByText(k(language, 'reassign.none'))).toBeVisible();
   });
 
   test('AI turns pasted meeting notes into draft tasks that the creator confirms', async ({

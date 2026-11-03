@@ -81,8 +81,47 @@ public static class TaskNotifications
         "Hello {{name}},\nYou have {{open}} open tasks: {{overdue}} overdue, {{dueSoon}} due soon, and {{approvals}} waiting for your approval.\n{{button}}",
         "فتح مهامي", "Open my tasks", ["name", "open", "overdue", "dueSoon", "approvals"]);
 
+    private static readonly string[] Bulk = ["name", "count", "fromAr", "fromEn", "toAr", "toEn", "actor", "text"];
+
+    private static NotificationTemplateDefinition BulkTemplate(
+        string key, string nameAr, string nameEn, string subjectAr, string subjectEn, string lineAr, string lineEn, string buttonAr, string buttonEn) =>
+        new(key, TaskPermissions.SystemCode, nameAr, nameEn, subjectAr, subjectEn,
+            $"مرحباً {{{{name}}}}،\n{lineAr}\n{{{{button}}}}", $"Hello {{{{name}}}},\n{lineEn}\n{{{{button}}}}", buttonAr, buttonEn, Bulk);
+
+    public static readonly NotificationTemplateDefinition ReassignedToYou = BulkTemplate(
+        "tasks.reassignedToYou", "مهام أُعيد إسنادها إليك", "Tasks reassigned to you", "{{count}} مهمة من {{fromAr}} أصبحت لك",
+        "{{count}} tasks of {{fromEn}} are now yours",
+        "نقل {{actor}} إليك {{count}} مهمة مفتوحة كانت مسندة إلى {{fromAr}}. السبب: {{text}}",
+        "{{actor}} moved {{count}} open tasks of {{fromEn}} to you. Reason: {{text}}", "فتح مهامي", "Open my tasks");
+
+    public static readonly NotificationTemplateDefinition AssigneeChanged = BulkTemplate(
+        "tasks.assigneeChanged", "تغيير المكلف بمهامك", "New assignee for your tasks", "{{count}} من مهامك انتقلت إلى {{toAr}}",
+        "{{count}} of your tasks moved to {{toEn}}",
+        "{{count}} من المهام التي أنشأتها وكانت مسندة إلى {{fromAr}} أصبحت مسندة إلى {{toAr}}. السبب: {{text}}",
+        "{{count}} tasks you created that were assigned to {{fromEn}} are now assigned to {{toEn}}. Reason: {{text}}", "فتح المهام", "Open the tasks");
+
+    public static readonly NotificationTemplateDefinition DecisionNeeded = BulkTemplate(
+        "tasks.decisionNeeded", "مهام بانتظار قرارك", "Tasks waiting for your decision", "{{count}} من مهامك تحتاج قرارك",
+        "{{count}} of your tasks need your decision",
+        "{{count}} من المهام التي أنشأتها كانت مسندة إلى {{fromAr}} وأُعيدت إليك. أعد إسنادها أو ألغها. السبب: {{text}}",
+        "{{count}} tasks you created were assigned to {{fromEn}} and came back to you: reassign or cancel them. Reason: {{text}}", "فتح المهام", "Open the tasks");
+
+    public static readonly NotificationTemplateDefinition YourTasksReassigned = BulkTemplate(
+        "tasks.yourTasksReassigned", "إعادة إسناد مهامك", "Your tasks were reassigned", "أُعيد إسناد {{count}} من مهامك",
+        "{{count}} of your tasks were reassigned",
+        "أعاد {{actor}} إسناد {{count}} من مهامك المفتوحة. السبب: {{text}}",
+        "{{actor}} reassigned {{count}} of your open tasks. Reason: {{text}}", "فتح", "Open");
+
+    public static readonly NotificationTemplateDefinition EmployeeLeftWithTasks = BulkTemplate(
+        "tasks.employeeLeftWithTasks", "موظف غادر ولديه مهام مفتوحة", "Employee left with open tasks", "{{fromAr}} غادر ولديه {{count}} مهمة مفتوحة",
+        "{{fromEn}} left with {{count}} open tasks",
+        "تغيرت حالة {{fromAr}} إلى «غادر» ولديه {{count}} مهمة مفتوحة. أعد إسنادها إلى موظف آخر أو أعدها إلى منشئيها.",
+        "{{fromEn}} is now marked as left and has {{count}} open tasks. Reassign them to another employee or hand them back to their creators.",
+        "إعادة إسناد المهام", "Reassign the tasks");
+
     public static readonly IReadOnlyList<NotificationTemplateDefinition> All =
-        [Assigned, Rejected, Submitted, Completed, Approved, Returned, Cancelled, FollowUpAdded, Mentioned, GroupMessage, DueChanged, DueSoon, Overdue, Escalated, AcceptReminder, Digest];
+        [Assigned, Rejected, Submitted, Completed, Approved, Returned, Cancelled, FollowUpAdded, Mentioned, GroupMessage, DueChanged, DueSoon, Overdue, Escalated, AcceptReminder, Digest, ReassignedToYou,
+            AssigneeChanged, DecisionNeeded, YourTasksReassigned, EmployeeLeftWithTasks];
 }
 
 /// <summary>Sends task notifications to employees (their active users), in the caller's transaction when given.</summary>

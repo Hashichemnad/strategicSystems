@@ -50,6 +50,7 @@ public sealed class TasksModule : IModule
         services.AddScoped<TaskAssignees>();
         services.AddScoped<TaskCreator>();
         services.AddScoped<ITaskDirectory, TaskDirectory>();
+        services.AddScoped<Platform.Organisation.Contracts.IEmployeeLifecycleHook, OfferReassignmentWhenEmployeeLeaves>();
 
         services.AddFilePurpose(TaskFiles.Purpose);
         services.AddFileOwnerAccess<TaskFiles>();

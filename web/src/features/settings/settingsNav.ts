@@ -19,6 +19,7 @@ import {
   Palette,
   Paperclip,
   Repeat,
+  UserRoundX,
   ShieldCheck,
   ShieldHalf,
   SquareStack,
@@ -43,6 +44,7 @@ export type SettingsPageKey =
   | 'ai'
   | 'mcp'
   | 'tasks'
+  | 'tasksReassign'
   | 'businessHours'
   | 'holidays'
   | 'roles'
@@ -72,6 +74,7 @@ export type SettingsPath =
   | '/settings/ai'
   | '/settings/mcp'
   | '/settings/tasks'
+  | '/settings/tasks/reassign'
   | '/settings/business-hours'
   | '/settings/holidays'
   | '/settings/access/roles'
@@ -92,6 +95,8 @@ export interface SettingsPageLink {
   icon: LucideIcon;
   /** Any one of these permissions opens the page (the server checks each call). */
   permissions: readonly string[];
+  /** Active only on this exact path (a sibling page lives below it). */
+  exact?: boolean;
 }
 
 export interface SettingsGroup {
@@ -157,7 +162,19 @@ export const settingsGroups: readonly SettingsGroup[] = [
         icon: ClipboardCheck,
         permissions: ['workflow.process.read'],
       },
-      { key: 'tasks', to: '/settings/tasks', icon: ListTodo, permissions: ['tasks.settings.manage'] },
+      {
+        key: 'tasks',
+        to: '/settings/tasks',
+        icon: ListTodo,
+        permissions: ['tasks.settings.manage'],
+        exact: true,
+      },
+      {
+        key: 'tasksReassign',
+        to: '/settings/tasks/reassign',
+        icon: UserRoundX,
+        permissions: ['tasks.reassignment.manage'],
+      },
     ],
   },
   {

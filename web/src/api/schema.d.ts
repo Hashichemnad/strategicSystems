@@ -3444,6 +3444,38 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/tasks/reassignment/{employeeId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['PreviewTaskReassignment'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tasks/reassignment': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ReassignEmployeeTasks'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/tasks/{id}/ai/summary': {
     parameters: {
       query?: never;
@@ -5648,6 +5680,51 @@ export interface components {
       regional: components['schemas']['RegionalSettings'];
       /** Format: int64 */
       translationsVersion: number;
+    };
+    /**
+     * @description "Reassign open tasks of an employee" (ADR 0040). `TaskIds` narrows the preview (null = all open tasks). In `to-creators` mode the
+     *     tasks the leaver created themself need `FallbackEmployeeId`, who receives them.
+     */
+    ReassignEmployeeTasks: {
+      /** Format: uuid */
+      fromEmployeeId: string;
+      mode: null | string;
+      /** Format: uuid */
+      toEmployeeId: null | string;
+      /** Format: uuid */
+      fallbackEmployeeId: null | string;
+      reason: null | string;
+      taskIds: null | string[];
+    };
+    ReassignmentPreviewDto: {
+      employee: components['schemas']['PersonDto'];
+      employeeStatus: string;
+      tasks: components['schemas']['ReassignmentTaskDto'][];
+    };
+    ReassignmentResultDto: {
+      /** Format: int32 */
+      reassigned: number;
+      /** Format: int32 */
+      returnedToCreators: number;
+      /** Format: int32 */
+      skipped: number;
+      taskIds: string[];
+    };
+    /** @description One open task of the leaving employee. Titles are left out for tasks the administrator may not read (confidential). */
+    ReassignmentTaskDto: {
+      /** Format: uuid */
+      id: string;
+      number: null | string;
+      titleAr: null | string;
+      titleEn: null | string;
+      status: string;
+      template: string;
+      confidential: boolean;
+      readable: boolean;
+      creator: components['schemas']['PersonDto'];
+      createdByLeaver: boolean;
+      /** Format: date */
+      dueDate: null | string;
     };
     RecordRolePermissionsInput: {
       permissions: null | string[];
@@ -15064,6 +15141,70 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['TaskSettingsDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  PreviewTaskReassignment: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        employeeId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReassignmentPreviewDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ReassignEmployeeTasks: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ReassignEmployeeTasks'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReassignmentResultDto'];
         };
       };
       /** @description Problem Details (RFC 9457) */

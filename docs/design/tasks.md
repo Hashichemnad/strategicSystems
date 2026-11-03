@@ -155,6 +155,11 @@ assignee and creator, escalation to the assignee's manager, accept reminder; `ta
   on the record sees all its non-confidential tasks). A link row is written in `links.record_link` with the task.
 - **Employee performance input (§11.11)**: time to accept, time to complete, on-time flag and feedback point stored on each task;
   `GET /tasks/performance/{employeeId}` aggregates them for the employee, their manager (Team) and `tasks.performance.read` holders.
+- **Reassign open tasks of an employee** (ADR 0040, added before the pull request at the owner's request): Settings → *Reassign open
+  tasks of an employee* (`tasks.reassignment.manage`, scoped on the leaving employee) — preview, then to another employee or back to the
+  creators (Rejected with the reason; a fallback employee takes the leaver's own tasks), with a reason, notifications to everyone involved,
+  timeline entries and one audit event. Offered on the employee page and by notification when the employee is marked *Left*; nothing moves
+  automatically. API `GET /reassignment/{employeeId}`, `POST /reassignment`.
 - **Creator approval** is a task-level decision with history in `task_event` (ADR 0035): no approval-engine process, nothing in Approval
   Settings.
 
