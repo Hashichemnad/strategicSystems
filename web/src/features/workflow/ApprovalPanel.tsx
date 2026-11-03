@@ -44,6 +44,25 @@ import {
 
 type ActionOption = MyTask['actions'][number];
 
+/** "Due ⟨date⟩ · ⟨business hours name⟩" (or "calendar hours"), ADR 0027. */
+export function useDueText() {
+  const { t, i18n } = useTranslation('workflow');
+  return (due: {
+    dueAt?: string | null;
+    slaMode?: string | null;
+    businessHoursNameAr?: string | null;
+    businessHoursNameEn?: string | null;
+  }) => {
+    if (!due.dueAt) return '';
+    const date = formatDateTime(due.dueAt, i18n.language);
+    const hours =
+      due.slaMode === 'calendar'
+        ? t('panel.calendarHours')
+        : pickText(i18n.language, due.businessHoursNameAr, due.businessHoursNameEn);
+    return hours ? t('panel.dueWith', { date, hours }) : t('panel.due', { date });
+  };
+}
+
 export function usePersonName() {
   const { i18n } = useTranslation();
   return (person: PersonName | null | undefined) =>
@@ -210,6 +229,7 @@ export function DecisionButtons({ task }: { task: MyTask }) {
 
 function StepRow({ step, last }: { step: StepState; last: boolean }) {
   const { t, i18n } = useTranslation('workflow');
+  const dueText = useDueText();
   const name = usePersonName();
   const { icon: Icon, className } = stepIcons[step.state] ?? upcomingIcon;
   const people = step.approvers.map(name).join('، ');
@@ -256,9 +276,7 @@ function StepRow({ step, last }: { step: StepState; last: boolean }) {
         )}
         {step.comment && <p className="rounded bg-muted px-2 py-1 text-sm">{step.comment}</p>}
         {step.state === 'current' && step.dueAt && (
-          <p className="text-xs text-muted-foreground">
-            {t('panel.due', { date: formatDateTime(step.dueAt, i18n.language) })}
-          </p>
+          <p className="text-xs text-muted-foreground">{dueText(step)}</p>
         )}
       </div>
     </li>

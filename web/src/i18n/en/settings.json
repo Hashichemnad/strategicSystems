@@ -87,6 +87,14 @@
     "approvals": {
       "title": "Approvals",
       "description": "Approval chains of every system: steps, approvers, conditions, deadlines."
+    },
+    "businessHours": {
+      "title": "Business hours",
+      "description": "Working days and hours per record, units with their own hours."
+    },
+    "holidays": {
+      "title": "Holidays",
+      "description": "Public holidays and closures, by year, with Excel import."
     }
   },
   "title": "Settings",

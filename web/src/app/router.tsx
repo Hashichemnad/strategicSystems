@@ -341,6 +341,19 @@ const jobsRoute = createRoute({
   component: lazyRouteComponent(() => import('@/features/jobs/JobsPage'), 'JobsPage'),
 });
 
+// Business hours and holidays (ADR 0027).
+const businessHoursRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/business-hours',
+  component: lazyRouteComponent(() => import('@/features/calendar/BusinessHoursPage'), 'BusinessHoursPage'),
+});
+
+const holidaysRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/holidays',
+  component: lazyRouteComponent(() => import('@/features/calendar/HolidaysPage'), 'HolidaysPage'),
+});
+
 // Approval Settings centre (SPEC §0.2): every approval process of every system, its steps, preview and versions.
 const approvalSettingsRoute = createRoute({
   getParentRoute: () => settingsLayout,
@@ -427,6 +440,8 @@ const routeTree = rootRoute.addChildren([
       notificationTemplatesRoute,
       filesSettingsRoute,
       jobsRoute,
+      businessHoursRoute,
+      holidaysRoute,
       approvalSettingsRoute,
       processEditorRoute,
       rolesRoute,

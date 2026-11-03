@@ -15,7 +15,7 @@ import { errorMessage, translateMessageKey } from '@/api/problem';
 import { useMe } from '@/features/auth/session';
 import { useMyNotifications } from '@/features/notifications/api';
 import { useMyWork, type MyWork } from '@/features/workflow/api';
-import { usePersonName } from '@/features/workflow/ApprovalPanel';
+import { useDueText, usePersonName } from '@/features/workflow/ApprovalPanel';
 import { cn } from '@/lib/cn';
 import { formatDateTime, formatNumber, pickText } from '@/lib/format';
 import { Button, EmptyState, PageHeader, Skeleton, StatusBanner, StatusChip } from '@/ui';
@@ -79,6 +79,7 @@ function Approvals({ data }: { data: MyWork }) {
   const { t, i18n } = useTranslation('workflow');
   const navigate = useNavigate();
   const name = usePersonName();
+  const dueText = useDueText();
   if (data.approvals.length === 0)
     return <p className="text-sm text-muted-foreground">{t('myWork.approvals.empty')}</p>;
   return (
@@ -112,9 +113,7 @@ function Approvals({ data }: { data: MyWork }) {
                 </StatusChip>
               ) : (
                 <span className="text-muted-foreground">
-                  {task.dueAt
-                    ? t('panel.due', { date: formatDateTime(task.dueAt, i18n.language) })
-                    : t('myWork.approvals.noDue')}
+                  {task.dueAt ? dueText(task) : t('myWork.approvals.noDue')}
                 </span>
               )}
             </div>

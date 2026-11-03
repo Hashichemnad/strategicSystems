@@ -77,6 +77,9 @@ function newStep(index: number): StepDefinition {
     onNoApprover: 'block',
     excludeSubmitter: true,
     notificationTemplate: null,
+    slaMode: 'working',
+    businessHoursSource: 'default',
+    businessHoursId: null,
   };
 }
 
@@ -564,6 +567,54 @@ function StepCard({
             disabled={disabled || !step.slaHours}
             onChange={(escalation) => set({ escalation })}
           />
+        </div>
+        <div className="grid gap-3 sm:grid-cols-3">
+          <FormField label={t('editor.slaMode')} hint={t('editor.slaModeHint')}>
+            <Select
+              value={step.slaMode}
+              disabled={disabled || !step.slaHours}
+              onValueChange={(slaMode) => set({ slaMode })}
+              options={[
+                { value: 'working', label: t('editor.slaModes.working') },
+                { value: 'calendar', label: t('editor.slaModes.calendar') },
+              ]}
+            />
+          </FormField>
+          {step.slaMode === 'working' && (
+            <FormField
+              label={t('editor.businessHoursSource')}
+              error={errors.errorFor(`${at}.businessHoursSource`)}
+            >
+              <Select
+                value={step.businessHoursSource}
+                disabled={disabled || !step.slaHours}
+                onValueChange={(businessHoursSource) =>
+                  set({
+                    businessHoursSource,
+                    businessHoursId: businessHoursSource === 'specific' ? step.businessHoursId : null,
+                  })
+                }
+                options={[
+                  { value: 'default', label: t('editor.businessHoursSources.default') },
+                  { value: 'unit', label: t('editor.businessHoursSources.unit') },
+                  { value: 'specific', label: t('editor.businessHoursSources.specific') },
+                ]}
+              />
+            </FormField>
+          )}
+          {step.slaMode === 'working' && step.businessHoursSource === 'specific' && (
+            <FormField label={t('editor.businessHours')} error={errors.errorFor(`${at}.businessHoursId`)}>
+              <Select
+                value={step.businessHoursId ?? undefined}
+                disabled={disabled || !step.slaHours}
+                onValueChange={(businessHoursId) => set({ businessHoursId })}
+                options={detail.businessHours.map((record) => ({
+                  value: record.code,
+                  label: pickText(i18n.language, record.labelAr, record.labelEn) || record.code,
+                }))}
+              />
+            </FormField>
+          )}
         </div>
         <div className="grid gap-3 sm:grid-cols-2">
           <FormField label={t('editor.onNoApprover')}>

@@ -121,7 +121,20 @@
       "viewing": "You are viewing version {{version}}. Saving creates a new version from these steps.",
       "backToCurrent": "Back to the version in use"
     },
-    "inFlight": "Approvals already in progress keep the version they started with."
+    "inFlight": "Approvals already in progress keep the version they started with.",
+    "slaMode": "Count the deadline in",
+    "slaModeHint": "Working hours skip closed days, weekends and holidays.",
+    "slaModes": {
+      "working": "Working hours",
+      "calendar": "Calendar hours"
+    },
+    "businessHoursSource": "Business hours",
+    "businessHoursSources": {
+      "default": "The default business hours",
+      "unit": "The record's unit (inherited from parent units)",
+      "specific": "A specific record"
+    },
+    "businessHours": "Business hours record"
   },
   "preview": {
     "title": "Who would approve this sample record?",
@@ -245,7 +258,9 @@
     "skipReasons": {
       "condition": "its condition was false",
       "noApprover": "nobody could approve it"
-    }
+    },
+    "dueWith": "Due {{date}} · {{hours}}",
+    "calendarHours": "calendar hours"
   },
   "myWork": {
     "title": "My Work",

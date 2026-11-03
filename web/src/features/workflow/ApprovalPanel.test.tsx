@@ -37,6 +37,9 @@ function instance(overrides: Partial<Instance>): Instance {
         completedAt: null,
         dueAt: null,
         overdue: false,
+        slaMode: null,
+        businessHoursNameAr: null,
+        businessHoursNameEn: null,
       },
       {
         sort: 2,
@@ -52,6 +55,9 @@ function instance(overrides: Partial<Instance>): Instance {
         completedAt: null,
         dueAt: '2026-11-03T08:00:00Z',
         overdue: true,
+        slaMode: 'working',
+        businessHoursNameAr: 'ساعات العمل الرسمية',
+        businessHoursNameEn: 'Standard business hours',
       },
     ],
     history: [
@@ -149,6 +155,7 @@ describe('ApprovalPanel', () => {
     expect(current).toHaveAttribute('aria-current', 'step');
     expect(within(current).getByText('Overdue')).toBeInTheDocument();
     expect(within(current).getByText('Mariam Al Hammadi')).toBeInTheDocument();
+    expect(within(current).getByText(/Standard business hours/u)).toBeInTheDocument();
     expect(screen.getAllByText('Section manager skipped')[0]).toBeInTheDocument();
     expect(screen.getAllByText(/its condition was false/u)[0]).toBeInTheDocument();
     expect(screen.getAllByText('Resubmitted after correction')[0]).toBeInTheDocument();

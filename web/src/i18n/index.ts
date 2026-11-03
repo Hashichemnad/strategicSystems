@@ -41,6 +41,8 @@ import enReporting from './en/reporting.json';
 import arWorkflow from './ar/workflow.json';
 import enWorkflow from './en/workflow.json';
 import arExpressions from './ar/expressions.json';
+import arCalendar from './ar/calendar.json';
+import enCalendar from './en/calendar.json';
 import enExpressions from './en/expressions.json';
 import { readPreference } from '@/lib/preferences';
 
@@ -70,6 +72,7 @@ export const resources = {
     reporting: arReporting,
     workflow: arWorkflow,
     expressions: arExpressions,
+    calendar: arCalendar,
   },
   en: {
     common: enCommon,
@@ -93,6 +96,7 @@ export const resources = {
     reporting: enReporting,
     workflow: enWorkflow,
     expressions: enExpressions,
+    calendar: enCalendar,
   },
 } as const;
 
