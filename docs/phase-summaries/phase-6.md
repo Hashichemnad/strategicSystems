@@ -65,7 +65,7 @@ employee" action (ADR 0040).
 | `tools/check-api-client.sh` · `tools/check-vulnerable.sh` | OpenAPI document and TS client up to date · no High / Critical |
 | `npm run lint` · `format:check` · `typecheck` · `npm test` | clean · **89 / 89** Vitest (8 new) |
 | `npm run build` · `npm audit --audit-level=high` · `npm run lint:licenses` | OK · no High / Critical (the same 14 moderate dev-tool advisories as Phases 3–5) · 613 packages allowed |
-| `npx playwright test e2e/tasks.spec.ts` | **8 / 8** (4 scenarios × ar + en) with `E2E_SCREENSHOTS=phase-6`. The other specs were not re-run in this session |
+| `npx playwright test` | **76 / 76**, the whole suite in Arabic and English on a fresh database (Phase 6: 4 scenarios × ar + en, screenshots with `E2E_SCREENSHOTS=phase-6`). Two older specs were updated: the job dashboard now lists 10 jobs, and the numbering test edits the sample item's card among several formats |
 | `--migrate` on an empty database | schemas `links` and `tasks` added (run by every integration test host and the E2E host) |
 
 **Dependencies added:** `@dnd-kit/core` 6.3.1 (MIT, with `@dnd-kit/accessibility` and `@dnd-kit/utilities`) — listed in
