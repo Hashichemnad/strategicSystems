@@ -33,8 +33,6 @@ public sealed class McpAdministration(
     ISettingsStore store,
     ToolCatalog catalog,
     IOpenIddictApplicationManager applications,
-    IOpenIddictAuthorizationManager authorizations,
-    IOpenIddictTokenManager tokens,
     IDataProtectionProvider protection,
     IHttpContextAccessor http,
     IRequestContext context,
@@ -111,17 +109,7 @@ public sealed class McpAdministration(
             return Error.NotFound();
         }
 
-        var applicationId = await applications.GetIdAsync(application, ct).ConfigureAwait(false);
-        await foreach (var token in tokens.FindByApplicationIdAsync(applicationId!, ct).ConfigureAwait(false))
-        {
-            await tokens.TryRevokeAsync(token, ct).ConfigureAwait(false);
-        }
-
-        await foreach (var authorization in authorizations.FindByApplicationIdAsync(applicationId!, ct).ConfigureAwait(false))
-        {
-            await authorizations.TryRevokeAsync(authorization, ct).ConfigureAwait(false);
-        }
-
+        // Deleting the client removes its authorizations and tokens with it; validation checks token entries, so they stop at once.
         await applications.DeleteAsync(application, ct).ConfigureAwait(false);
         await audit.WriteAsync(new AuditEvent("mcp.client.revoke", true, "mcp", "mcp.client", clientId), ct).ConfigureAwait(false);
         return Result.Success();

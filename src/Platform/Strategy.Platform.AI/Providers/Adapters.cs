@@ -29,7 +29,7 @@ public interface IAiProviderAdapter
     Task<IReadOnlyList<string>> ListModelsAsync(ProviderConnection connection, CancellationToken cancellationToken);
 }
 
-/// <summary>Anthropic Claude through the official C# SDK (<c>Anthropic</c> NuGet, MIT).</summary>
+/// <summary>Anthropic Claude through the official C# SDK (<c>Anthropic</c> NuGet, Apache-2.0).</summary>
 internal sealed class AnthropicAdapter : IAiProviderAdapter
 {
     public string Type => AiProviderTypes.Anthropic;

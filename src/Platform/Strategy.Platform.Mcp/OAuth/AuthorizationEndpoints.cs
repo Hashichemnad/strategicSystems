@@ -66,6 +66,13 @@ internal static class AuthorizationEndpoints
             return Deny("The MCP server is switched off.");
         }
 
+        var resource = BaseUrl(context.Request) + "/mcp";
+        if (request.Resources is { Length: > 0 } resources
+            && resources.Any(r => !string.Equals(r?.TrimEnd('/'), resource, StringComparison.OrdinalIgnoreCase)))
+        {
+            return Forbid(Errors.InvalidTarget, "The only resource of this server is " + resource + ".");
+        }
+
         var session = await context.AuthenticateAsync(IdentityConstants.ApplicationScheme);
         if (!session.Succeeded || session.Principal?.UserId() is not { } userId)
         {
@@ -87,7 +94,7 @@ internal static class AuthorizationEndpoints
         var applicationId = await applications.GetIdAsync(application, context.RequestAborted);
         var existing = new List<object>();
         await foreach (var authorization in authorizations.FindAsync(userId.ToString(), applicationId, Statuses.Valid, AuthorizationTypes.Permanent,
-            [McpScopes.Mcp], context.RequestAborted))
+            [McpScopes.Mcp, Scopes.OfflineAccess], context.RequestAborted))
         {
             existing.Add(authorization);
         }
@@ -105,7 +112,9 @@ internal static class AuthorizationEndpoints
         identity.SetClaim(Claims.Subject, userId.ToString())
             .SetClaim(Claims.Name, session.Principal.Identity?.Name)
             .SetClaim(Claims.ClientId, request.ClientId);
-        identity.SetScopes(ImmutableArray.Create(McpScopes.Mcp));
+        // offline_access: a refresh token, so the client keeps working for the refresh lifetime set in Settings → MCP.
+        identity.SetScopes(ImmutableArray.Create(McpScopes.Mcp, Scopes.OfflineAccess));
+        identity.SetResources(ImmutableArray.Create(resource));
         var authorizationRecord = existing.LastOrDefault() ?? await authorizations.CreateAsync(identity, userId.ToString(), applicationId!,
             AuthorizationTypes.Permanent, identity.GetScopes(), context.RequestAborted);
         identity.SetAuthorizationId(await authorizations.GetIdAsync(authorizationRecord, context.RequestAborted));

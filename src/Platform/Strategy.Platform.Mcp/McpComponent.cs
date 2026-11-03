@@ -61,7 +61,14 @@ public sealed class McpComponent : IPlatformComponent
                     .SetRevocationEndpointUris("/connect/revoke")
                     .SetConfigurationEndpointUris("/.well-known/oauth-authorization-server", "/.well-known/openid-configuration");
                 server.AllowAuthorizationCodeFlow().AllowRefreshTokenFlow().RequireProofKeyForCodeExchange();
-                server.RegisterScopes(McpScopes.Mcp);
+                server.RegisterScopes(McpScopes.Mcp, OpenIddict.Abstractions.OpenIddictConstants.Scopes.OfflineAccess);
+                // RFC 8707: MCP clients name this server's /mcp as the resource. Its URL depends on the installation's host, so the
+                // authorization endpoint checks it per request instead of a static list.
+                server.Configure(options =>
+                {
+                    options.DisableResourceValidation = true;
+                    options.IgnoreResourcePermissions = true;
+                });
                 // Tokens are ASP.NET Core Data Protection tokens (key ring in PostgreSQL, ADR 0012): they survive restarts without a certificate.
                 // No identity token is issued (no openid scope), so the ephemeral keys only satisfy the server's start-up requirement.
                 server.AddEphemeralEncryptionKey().AddEphemeralSigningKey();
@@ -81,6 +88,9 @@ public sealed class McpComponent : IPlatformComponent
             .AddValidation(validation =>
             {
                 validation.UseLocalServer();
+                // Revocation (client removed, refresh-token reuse) applies at once: each call checks the token and authorization entries.
+                validation.EnableAuthorizationEntryValidation();
+                validation.EnableTokenEntryValidation();
                 validation.UseDataProtection();
                 validation.UseAspNetCore();
             });

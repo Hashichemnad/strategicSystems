@@ -9,7 +9,7 @@ namespace Strategy.Platform.Notifications.Mcp;
 internal sealed class MyNotificationsTool(NotificationAdministration notifications) : IAppTool
 {
     public ToolDefinition Definition { get; } = new(
-        "my_notifications", "notifications", ToolKind.Read, "إشعاراتي", "My notifications",
+        "my_notifications", "settings", ToolKind.Read, "إشعاراتي", "My notifications",
         "Lists the signed-in user's latest in-app notifications (newest first), optionally unread only, with links to the records.",
         ToolRegistrationExtensions.Schema("""
             {"type":"object","properties":{

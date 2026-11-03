@@ -25,7 +25,12 @@ namespace Strategy.IntegrationTests.Platform;
 /// </summary>
 public partial class AuthorizationMatrixTests(ApiFixture api) : IClassFixture<ApiFixture>
 {
-    private static readonly string[] EveryonePermissions = ["org.unit.read", "org.employee.read"];
+    private static readonly string[] EveryonePermissions =
+    [
+        "org.unit.read", "org.employee.read",
+        // Phase 5: the seeded "AI user" role (assigned to everyone) holds the AI feature permissions; administrators narrow it per role.
+        "ai.extract.use", "ai.brief.use", "ai.translate.use", "ai.similar.use", "ai.ask.use",
+    ];
 
     public static TheoryData<string, string> NonPublicEndpoints() => Endpoints(e => e.Metadata.GetMetadata<PublicEndpoint>() is null);
 

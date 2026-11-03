@@ -44,12 +44,21 @@ Update this file in the same commit that adds a dependency.
 | Microsoft.AspNetCore.OpenApi | MIT | OpenAPI document |
 | Microsoft.Extensions.ApiDescription.Server | MIT | build-time OpenAPI generation |
 | Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore | MIT | readiness checks |
+| Microsoft.Extensions.AI | MIT | AI abstraction (`IChatClient`), function invocation for "Ask the system" (Phase 5) |
+| Microsoft.Extensions.AI.Abstractions | MIT | AI contracts (`IChatClient`, messages, tools) |
+| Microsoft.Extensions.AI.OpenAI | MIT | `IChatClient` adapter for OpenAI, Azure OpenAI and OpenAI-compatible servers |
+| OpenAI | MIT | OpenAI .NET SDK (OpenAI, Azure OpenAI v1 endpoint, Ollama / vLLM) |
+| Anthropic | Apache-2.0 | official Anthropic C# SDK with its `IChatClient` adapter (Claude) |
+| ModelContextProtocol.AspNetCore | Apache-2.0 | official MCP C# SDK, Streamable HTTP server at `/mcp` |
+| OpenIddict.AspNetCore | Apache-2.0 | built-in OAuth 2.1 authorization server and token validation for MCP clients |
+| OpenIddict.EntityFrameworkCore | Apache-2.0 | OAuth clients, authorizations and tokens in PostgreSQL (schema `mcp`) |
+| DocumentFormat.OpenXml | MIT | text extraction from Word and PowerPoint documents (document-to-form) |
 | xunit.v3 | Apache-2.0 | tests |
 | Shouldly | BSD-3-Clause | test assertions |
 | NSubstitute | BSD-3-Clause | test doubles |
 | Testcontainers.PostgreSql | MIT | integration tests on real PostgreSQL |
 | Testcontainers | MIT | integration tests against Keycloak (OIDC, OAuth, SAML) and OpenLDAP containers, Mailpit and Gotenberg |
-| PdfPig | Apache-2.0 | tests only: reads rendered PDFs (fonts, Arabic text, layout snapshot) |
+| PdfPig | Apache-2.0 | PDF text extraction for document-to-form (Phase 5); in tests, reads rendered PDFs (fonts, Arabic text, layout snapshot) |
 | Microsoft.AspNetCore.Mvc.Testing | MIT | in-memory host for API tests |
 | NetArchTest.Rules | MIT ¹ | architecture tests |
 
