@@ -150,6 +150,42 @@ public sealed class AiPlatformTests(AiFixture ai) : IClassFixture<AiFixture>
     }
 
     [Fact]
+    public async Task Scanned_documents_are_read_with_ocr_when_it_is_on_and_their_values_are_marked_from_scan()
+    {
+        var scan = File.ReadAllBytes(Path.Combine(AppContext.BaseDirectory, "AI", "Samples", "scan-ar.jpg"));
+        var builder = new UglyToad.PdfPig.Writer.PdfDocumentBuilder();
+        builder.AddPage(595, 842).AddJpeg(scan, new UglyToad.PdfPig.Core.PdfRectangle(0, 0, 595, 842));
+        var pdf = builder.Build();
+        var editor = await ai.Factory.CreateSignedInClientAsync(roles: TestIdentity.SampleEditor);
+
+        // OCR off (the default): a scan is explained, not guessed, and no model is called.
+        await ai.EnableAsync();
+        ai.Model.Reset((_, _) => throw new InvalidOperationException("must not be called"));
+        await (await editor.PostAsync("/api/v1/ai/forms/sample.item/extract", TestDocuments.Upload(pdf, "scan.pdf")))
+            .ShouldBeProblemAsync(HttpStatusCode.UnprocessableEntity, "ai.extract.noText");
+        await (await editor.PostAsync("/api/v1/ai/forms/sample.item/extract", TestDocuments.Upload(scan, "scan.jpg")))
+            .ShouldBeProblemAsync(HttpStatusCode.UnprocessableEntity, "ai.extract.ocrOff", "ai.errors.extractOcrOff");
+
+        // OCR on: the page is recognised; a value quoted from it is verified and marked as coming from the scan.
+        await ai.SaveSettingsAsync(s => s with { Ocr = new AiOcrSettings(Enabled: true) });
+        (await (await ai.AdminAsync()).GetFromJsonAsync<AiSettingsDto>("/api/v1/ai/settings"))!.OcrAvailable.ShouldBeTrue();
+        ai.Model.Reset((_, _) => FakeChatClient.Json(new
+        {
+            language = "ar",
+            fields = new object[] { new { name = "nameAr", value = "برنامج الأرشيف الرقمي", confidence = 0.8, source = "الاسم بالعربية: برنامج الأرشيف الرقمي" } },
+        }));
+        var response = await editor.PostAsync("/api/v1/ai/forms/sample.item/extract", TestDocuments.Upload(pdf, "scan.pdf"));
+        response.StatusCode.ShouldBe(HttpStatusCode.OK, await response.Content.ReadAsStringAsync());
+        var result = (await response.Content.ReadFromJsonAsync<ExtractionResultDto>())!;
+        result.ScannedPages.ShouldBe(1);
+        result.Warnings.ShouldContain("ai.extract.fromScan");
+        result.Fields.Single().ShouldSatisfyAllConditions(
+            f => f.SourceVerified.ShouldBeTrue(), f => f.FromScan.ShouldBeTrue(), f => f.LocationKind.ShouldBe("page"), f => f.LocationNumber.ShouldBe(1));
+        ai.Model.Calls.Single().Messages.Single(m => m.Role == ChatRole.User).Text.ShouldContain("[page 1 scan]");
+        await ai.SaveSettingsAsync(s => s with { Ocr = null });
+    }
+
+    [Fact]
     public async Task Extraction_needs_the_forms_own_permission_and_a_readable_document()
     {
         await ai.EnableAsync();

@@ -143,10 +143,12 @@ public sealed class ExtractionPostProcessingTests
         var name = fields[0];
         name.Value.ShouldBe("Archive pr"); // clipped to the field's max length
         warnings.ShouldContain("ai.extract.clipped:name");
-        name.Location.ShouldBe("page 1");
+        name.LocationKind.ShouldBe("page");
+        name.LocationNumber.ShouldBe(1);
+        name.FromScan.ShouldBeFalse();
         fields[1].Value.ShouldBe("1250000"); // Arabic-Indic digits and separators
         fields[2].Value.ShouldBe("2027-01-15");
-        fields[2].Location.ShouldBe("page 2"); // case-insensitive source match
+        fields[2].LocationNumber.ShouldBe(2); // case-insensitive source match
         fields[3].Value.ShouldBe("initiative"); // the choice code
         fields[3].Confidence.ShouldBe(1); // clamped
     }

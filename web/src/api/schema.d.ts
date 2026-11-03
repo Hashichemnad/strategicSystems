@@ -3054,6 +3054,21 @@ export interface components {
       /** Format: int32 */
       monthlyRequestsPerUser?: null | number;
     };
+    /**
+     * @description Text recognition (OCR) for scanned PDF pages and images (ADR 0033): off by default; Tesseract language codes joined by `+`; at most
+     *     `MaxPages` scanned pages per document.
+     */
+    AiOcrSettings: {
+      /** @default false */
+      enabled: boolean;
+      /** @default ara+eng */
+      languages: string;
+      /**
+       * Format: int32
+       * @default 20
+       */
+      maxPages: number;
+    };
     AiProviderDto: {
       /** Format: uuid */
       id: string;
@@ -3125,7 +3140,9 @@ export interface components {
       };
       dataSharing?: null | components['schemas']['AiDataSharing'];
       limits?: null | components['schemas']['AiLimits'];
+      ocr?: null | components['schemas']['AiOcrSettings'];
     };
+    /** @description Settings → AI. `OcrAvailable`: Tesseract and the configured languages are installed on the server (ADR 0033). */
     AiSettingsDto: {
       settings: components['schemas']['AiSettings'];
       /** Format: uint32 */
@@ -3133,6 +3150,7 @@ export interface components {
       features: components['schemas']['AiFeatureDto'][];
       providerTypes: components['schemas']['AiProviderTypeDto'][];
       systems: components['schemas']['AiSystemDto'][];
+      ocrAvailable: boolean;
     };
     AiSettingsInput: {
       settings: components['schemas']['AiSettings'];
@@ -3726,7 +3744,10 @@ export interface components {
       status: string;
       recoveryCodes: string[];
     };
-    /** @description One proposed value: never saved by the server; the review UI shows it as a draft (docs/design/ai.md §4.1). */
+    /**
+     * @description One proposed value: never saved by the server; the review UI shows it as a draft (docs/design/ai.md §4.1). Where the source was found:
+     *     `LocationKind``page` / `slide` / `image` with its number, and `FromScan` when the text came from OCR (ADR 0033).
+     */
     ExtractedFieldDto: {
       name: string;
       value: null | string;
@@ -3734,7 +3755,10 @@ export interface components {
       confidence: number;
       source: null | string;
       sourceVerified: boolean;
-      location: null | string;
+      locationKind: null | string;
+      /** Format: int32 */
+      locationNumber: null | number;
+      fromScan: boolean;
     };
     ExtractionResultDto: {
       formKey: string;
@@ -3746,6 +3770,11 @@ export interface components {
       warnings: string[];
       /** Format: uuid */
       usageId: string;
+      /**
+       * Format: int32
+       * @default 0
+       */
+      scannedPages: number;
     };
     FeatureFlagDto: {
       code: string;

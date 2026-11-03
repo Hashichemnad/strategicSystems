@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.AI;
 using Strategy.Platform.Access;
+using Strategy.Platform.AI.Documents;
 using Strategy.Platform.AI.Domain;
 using Strategy.Platform.AI.Infrastructure;
 using Strategy.Platform.AI.Providers;
@@ -38,8 +39,10 @@ public sealed record AiFeatureDto(string Key, string NameAr, string NameEn, stri
 
 public sealed record AiSystemDto(string Code, string NameAr, string NameEn);
 
+/// <summary>Settings → AI. <c>OcrAvailable</c>: Tesseract and the configured languages are installed on the server (ADR 0033).</summary>
 public sealed record AiSettingsDto(
-    AiSettings Settings, uint Version, IReadOnlyList<AiFeatureDto> Features, IReadOnlyList<AiProviderTypeDto> ProviderTypes, IReadOnlyList<AiSystemDto> Systems);
+    AiSettings Settings, uint Version, IReadOnlyList<AiFeatureDto> Features, IReadOnlyList<AiProviderTypeDto> ProviderTypes, IReadOnlyList<AiSystemDto> Systems,
+    bool OcrAvailable);
 
 public sealed record AiSettingsInput(AiSettings Settings, uint Version);
 
@@ -55,7 +58,7 @@ public sealed record AiUsageSummaryDto(DateTimeOffset MonthStart, int Requests, 
 public sealed record AiCapabilitiesDto(bool Enabled, IReadOnlyDictionary<string, bool> Features);
 
 /// <summary>Settings → AI use cases (docs/design/ai.md §2–3, §8). Keys go through <see cref="ISecretProtector"/> and are never returned.</summary>
-public sealed class AiAdministration(
+public sealed partial class AiAdministration(
     AiDbContext db,
     ISettingsEditor editor,
     ISettingsStore store,
@@ -64,7 +67,8 @@ public sealed class AiAdministration(
     IEnumerable<IAccessCatalogueSource> catalogue,
     AiGateway gateway,
     IAuditLog audit,
-    IClock clock)
+    IClock clock,
+    IOcrEngine ocr)
 {
     public const int MaxTestTokens = 20;
 
@@ -210,7 +214,8 @@ public sealed class AiAdministration(
         return new AiSettingsDto(document.Value, document.Version,
             gateway.Features.Select(f => new AiFeatureDto(f.Key, f.NameAr, f.NameEn, f.Permission, f.NeedsProvider)).ToList(),
             adapters.Select(a => new AiProviderTypeDto(a.Type, a.RequiresEndpoint, a.RequiresApiKey)).ToList(),
-            catalogue.Select(c => c.System).DistinctBy(s => s.Code).OrderBy(s => s.Sort).Select(s => new AiSystemDto(s.Code, s.NameAr, s.NameEn)).ToList());
+            catalogue.Select(c => c.System).DistinctBy(s => s.Code).OrderBy(s => s.Sort).Select(s => new AiSystemDto(s.Code, s.NameAr, s.NameEn)).ToList(),
+            await ocr.IsAvailableAsync(document.Value.Recognition.Languages, ct).ConfigureAwait(false));
     }
 
     public async Task<Result<AiSettingsDto>> SaveSettingsAsync(AiSettingsInput input, CancellationToken ct)
@@ -232,6 +237,17 @@ public sealed class AiAdministration(
                 {
                     errors.Add(new FieldError($"features.{key}", "validation.unknownCode", "validation.unknownCode"));
                 }
+            }
+
+            if (!OcrLanguages().IsMatch(value.Recognition.Languages))
+            {
+                errors.Add(new FieldError("ocr.languages", "validation.invalid", "validation.invalid"));
+            }
+
+            if (value.Recognition.MaxPages is < 1 or > 100)
+            {
+                errors.Add(new FieldError("ocr.maxPages", "validation.inclusiveBetween", "validation.inclusiveBetween",
+                    new Dictionary<string, object?> { ["from"] = 1, ["to"] = 100 }));
             }
 
             if (value.Quota.MonthlyTokens is <= 0 || value.Quota.MonthlyRequestsPerUser is <= 0)
@@ -332,6 +348,9 @@ public sealed class AiAdministration(
 
         return errors;
     }
+
+    [System.Text.RegularExpressions.GeneratedRegex("^[a-z_]{3,20}(\\+[a-z_]{3,20}){0,4}$")]
+    private static partial System.Text.RegularExpressions.Regex OcrLanguages();
 
     private static string? Blank(string? value) => string.IsNullOrWhiteSpace(value) ? null : value.Trim();
 }

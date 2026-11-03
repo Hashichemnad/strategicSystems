@@ -15,8 +15,8 @@
   speaker notes, `[slide n]` markers. Legacy `.doc` / `.ppt` are not supported.
 - **Normalisation**: NFKC (Arabic presentation forms and ligatures become letters), control characters removed, blank lines collapsed,
   60 000 characters kept (truncation reported to the user).
-- **No OCR**: a scanned PDF without a text layer answers `ai.extract.noText`. OCR (e.g. Tesseract, Apache-2.0, as a sidecar) is a later
-  option.
+- **Scans**: a PDF page without a text layer is read by optional OCR (Tesseract) when switched on — see [ADR 0033](0033-ocr-for-scanned-documents.md);
+  otherwise it answers `ai.extract.noText`.
 - **Similar records**: each module's `IRecordSearchSource.SimilarAsync` uses PostgreSQL `pg_trgm` similarity on its titles within the
   user's data scope (threshold 0.3, top 5). No model call; embeddings can be added behind the same contract later.
 

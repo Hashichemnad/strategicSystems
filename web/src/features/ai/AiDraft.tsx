@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router';
-import { Check, FileUp, Languages, Sparkles } from 'lucide-react';
+import { Check, FileUp, Languages, ScanText, Sparkles } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { errorMessage } from '@/api/problem';
@@ -34,7 +34,11 @@ export interface AiSuggestion {
   confidence: number | null;
   source: string | null;
   sourceVerified: boolean;
-  location: string | null;
+  /** Where the source was found: `page` / `slide` / `image` and its number. */
+  locationKind: string | null;
+  locationNumber: number | null;
+  /** The source text was read from a scan by OCR (ADR 0033). */
+  fromScan: boolean;
   accepted: boolean;
 }
 
@@ -64,6 +68,12 @@ export function AiFieldReview({ suggestion, onAccept }: { suggestion: AiSuggesti
     <div className="flex flex-col gap-1 rounded-md bg-info-soft/60 p-2 text-xs" data-testid="ai-field-review">
       <div className="flex flex-wrap items-center gap-2">
         <AiBadge />
+        {suggestion.fromScan && (
+          <StatusChip tone="warning" className="gap-1">
+            <ScanText className="size-3" aria-hidden />
+            <span title={t('fromScanHint')}>{t('fromScan')}</span>
+          </StatusChip>
+        )}
         {suggestion.confidence !== null && (
           <StatusChip tone={confidenceTone(suggestion.confidence)}>
             {t('confidence', { value: Math.round(suggestion.confidence * 100) })}
@@ -77,7 +87,16 @@ export function AiFieldReview({ suggestion, onAccept }: { suggestion: AiSuggesti
       {suggestion.source && (
         <details>
           <summary className="cursor-pointer text-muted-foreground">
-            {suggestion.location ? t('sourceAt', { location: suggestion.location }) : t('source')}
+            {suggestion.locationKind
+              ? t('sourceAt', {
+                  location: (t as unknown as (key: string, params: object) => string)(
+                    `location.${suggestion.locationKind}`,
+                    {
+                      number: suggestion.locationNumber ?? '',
+                    },
+                  ),
+                })
+              : t('source')}
           </summary>
           <blockquote className="mt-1 border-s-2 border-info ps-2 whitespace-pre-wrap" dir="auto">
             {suggestion.source}
@@ -150,7 +169,7 @@ export function FillFromDocumentDialog({
           <FileDrop
             label={t('fill.dropLabel')}
             hint={t('fill.dropHint')}
-            accept=".pdf,.docx,.pptx,.txt"
+            accept=".pdf,.docx,.pptx,.txt,.png,.jpg,.jpeg,.tif,.tiff"
             file={file}
             onFile={setFile}
             disabled={extract.isPending}

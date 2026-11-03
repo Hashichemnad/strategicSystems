@@ -12,7 +12,7 @@ namespace Strategy.UnitTests.AI;
 public sealed class DocumentTextExtractorTests
 {
     [Fact]
-    public void Word_paragraphs_and_tables_in_arabic_and_english()
+    public async Task Word_paragraphs_and_tables_in_arabic_and_english()
     {
         using var stream = new MemoryStream();
         using (var document = WordprocessingDocument.Create(stream, WordprocessingDocumentType.Document))
@@ -23,7 +23,7 @@ public sealed class DocumentTextExtractorTests
             main.Document.Save();
         }
 
-        var result = DocumentTextExtractor.Extract(stream.ToArray(), "case.docx");
+        var result = await DocumentTextExtractor.ExtractAsync(stream.ToArray(), "case.docx", null, CancellationToken.None);
 
         result.IsSuccess.ShouldBeTrue();
         result.Value.Kind.ShouldBe("docx");
@@ -33,9 +33,9 @@ public sealed class DocumentTextExtractorTests
     }
 
     [Fact]
-    public void PowerPoint_slides_with_markers_and_notes()
+    public async Task PowerPoint_slides_with_markers_and_notes()
     {
-        var result = DocumentTextExtractor.Extract(Slides(["Programme overview for 2027", "عرض البرنامج"], ["Second slide text", "Speaker notes are included"]), "deck.pptx");
+        var result = await DocumentTextExtractor.ExtractAsync(Slides(["Programme overview for 2027", "عرض البرنامج"], ["Second slide text", "Speaker notes are included"]), "deck.pptx", null, CancellationToken.None);
 
         result.IsSuccess.ShouldBeTrue(result.IsFailure ? result.Error.Code : null);
         result.Value.Kind.ShouldBe("pptx");
@@ -45,14 +45,14 @@ public sealed class DocumentTextExtractorTests
     }
 
     [Fact]
-    public void Pdf_pages_with_markers()
+    public async Task Pdf_pages_with_markers()
     {
         var builder = new PdfDocumentBuilder();
         var font = builder.AddStandard14Font(Standard14Font.Helvetica);
         builder.AddPage(UglyToad.PdfPig.Content.PageSize.A4).AddText("Project charter for the archive", 12, new UglyToad.PdfPig.Core.PdfPoint(50, 700), font);
         builder.AddPage(UglyToad.PdfPig.Content.PageSize.A4).AddText("Total budget 1250000 AED", 12, new UglyToad.PdfPig.Core.PdfPoint(50, 700), font);
 
-        var result = DocumentTextExtractor.Extract(builder.Build(), "charter.pdf");
+        var result = await DocumentTextExtractor.ExtractAsync(builder.Build(), "charter.pdf", null, CancellationToken.None);
 
         result.IsSuccess.ShouldBeTrue(result.IsFailure ? result.Error.Code : null);
         result.Value.Kind.ShouldBe("pdf");
@@ -70,10 +70,10 @@ public sealed class DocumentTextExtractorTests
         DocumentTextExtractor.Logical(visual).ShouldBe(logical);
 
     [Fact]
-    public void Arabic_presentation_forms_become_letters()
+    public async Task Arabic_presentation_forms_become_letters()
     {
         var text = "Name: " + "ﻣﺮﺣﺒﺎ"; // مرحبا in presentation forms
-        var result = DocumentTextExtractor.Extract(System.Text.Encoding.UTF8.GetBytes(text + " and enough words to count"), "note.txt");
+        var result = await DocumentTextExtractor.ExtractAsync(System.Text.Encoding.UTF8.GetBytes(text + " and enough words to count"), "note.txt", null, CancellationToken.None);
         result.Value.Text.ShouldContain("مرحبا");
     }
 
@@ -81,8 +81,8 @@ public sealed class DocumentTextExtractorTests
     [InlineData("MZ\u0090\u0000binary", "evil.docx", "ai.extract.unsupported")]
     [InlineData("%PDF-1.7 truncated", "broken.pdf", "ai.extract.unreadable")]
     [InlineData("tiny", "short.txt", "ai.extract.noText")]
-    public void Unsupported_unreadable_and_empty_documents_are_refused(string content, string name, string code) =>
-        DocumentTextExtractor.Extract(System.Text.Encoding.Latin1.GetBytes(content), name).Error!.Code.ShouldBe(code);
+    public async Task Unsupported_unreadable_and_empty_documents_are_refused(string content, string name, string code) =>
+        (await DocumentTextExtractor.ExtractAsync(System.Text.Encoding.Latin1.GetBytes(content), name, null, CancellationToken.None)).Error!.Code.ShouldBe(code);
 
     [Fact]
     public void The_file_name_does_not_decide_the_kind() =>

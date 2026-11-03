@@ -82,6 +82,10 @@ Install, backup and upgrade scripts arrive in Phase 18.
   OpenAI-compatible server such as Ollama / vLLM) and switches it on. Keys are stored encrypted with the Data Protection keys (back them up,
   see above). Customers who may not send data outside their network use a self-hosted model; the optional `ollama` container can host one.
   The host needs outbound HTTPS to the chosen provider only.
+- **Text recognition (OCR)** for scanned PDFs and images uses Tesseract with Arabic and English data, installed in the image
+  (ADR 0033). Switch it on in Settings → AI → *Data sharing and limits*; the page says whether the engine is installed. To build an image
+  without it: `docker compose … build --build-arg INSTALL_OCR=false`. Non-Docker installs: install `tesseract-ocr`, `tesseract-ocr-ara`,
+  `tesseract-ocr-eng` (or point `Ocr__TesseractPath` to the binary).
 - **MCP server** (`/mcp`) is off until switched on in **Settings → MCP**. Its OAuth sign-in requires **HTTPS** (`MCP_REQUIRE_HTTPS=true`,
   the default). Put the application behind a TLS reverse proxy and let it see the original address:
   ```

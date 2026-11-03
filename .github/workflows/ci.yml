@@ -32,6 +32,8 @@ jobs:
           node-version: 22
           cache: npm
           cache-dependency-path: web/package-lock.json
+      - name: Tesseract OCR with Arabic and English data (ADR 0033)
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends tesseract-ocr tesseract-ocr-ara tesseract-ocr-eng
       - name: Restore
         run: |
           dotnet tool restore
@@ -109,6 +111,8 @@ jobs:
           node-version: 22
           cache: npm
           cache-dependency-path: web/package-lock.json
+      - name: Tesseract OCR with Arabic and English data (ADR 0033)
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends tesseract-ocr tesseract-ocr-ara tesseract-ocr-eng
       - name: Install and build
         run: |
           dotnet build src/Host/Strategy.Host/Strategy.Host.csproj

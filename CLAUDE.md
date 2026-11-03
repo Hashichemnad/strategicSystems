@@ -254,6 +254,8 @@ docker compose -f deploy/docker-compose.yml --profile app up -d --build
 ```
 CI resolves `global.json` (`rollForward: latestFeature`) to the newest .NET 10 SDK, whose analyzers can be stricter than an
 older local SDK (e.g. IDE0005): check `dotnet --version` and keep the local SDK current.
+OCR tests (unit + integration, ADR 0033) need Tesseract with Arabic and English data on the machine:
+`sudo apt-get install tesseract-ocr tesseract-ocr-ara tesseract-ocr-eng` (CI installs it; the app image includes it).
 Integration tests also start Mailpit and Gotenberg containers (Mailpit delivery, PDF snapshot); `UPDATE_SNAPSHOTS=1` rewrites the PDF layout snapshot.
 Integration tests: `TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX=mirror.gcr.io/` behind a Docker Hub limit, or
 `STRATEGY_TEST_POSTGRES=<admin connection string>` to reuse a running server. Keep this section accurate.

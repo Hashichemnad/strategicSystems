@@ -10111,6 +10111,25 @@
         },
         "description": "Monthly limits (null = none), counted in the installation's time zone."
       },
+      "AiOcrSettings": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "default": false
+          },
+          "languages": {
+            "type": "string",
+            "default": "ara+eng"
+          },
+          "maxPages": {
+            "type": "integer",
+            "format": "int32",
+            "default": 20
+          }
+        },
+        "description": "Text recognition (OCR) for scanned PDF pages and images (ADR 0033): off by default; Tesseract language codes joined by `+`; at most\n`MaxPages` scanned pages per document."
+      },
       "AiProviderDto": {
         "required": [
           "id",
@@ -10403,6 +10422,16 @@
                 "$ref": "#/components/schemas/AiLimits"
               }
             ]
+          },
+          "ocr": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/AiOcrSettings"
+              }
+            ]
           }
         },
         "description": "Settings → AI (docs/design/ai.md §3). Master switch off on a new installation: everything works without AI."
@@ -10413,7 +10442,8 @@
           "version",
           "features",
           "providerTypes",
-          "systems"
+          "systems",
+          "ocrAvailable"
         ],
         "type": "object",
         "properties": {
@@ -10441,8 +10471,12 @@
             "items": {
               "$ref": "#/components/schemas/AiSystemDto"
             }
+          },
+          "ocrAvailable": {
+            "type": "boolean"
           }
-        }
+        },
+        "description": "Settings → AI. `OcrAvailable`: Tesseract and the configured languages are installed on the server (ADR 0033)."
       },
       "AiSettingsInput": {
         "required": [
@@ -12855,7 +12889,9 @@
           "confidence",
           "source",
           "sourceVerified",
-          "location"
+          "locationKind",
+          "locationNumber",
+          "fromScan"
         ],
         "type": "object",
         "properties": {
@@ -12881,14 +12917,24 @@
           "sourceVerified": {
             "type": "boolean"
           },
-          "location": {
+          "locationKind": {
             "type": [
               "null",
               "string"
             ]
+          },
+          "locationNumber": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "fromScan": {
+            "type": "boolean"
           }
         },
-        "description": "One proposed value: never saved by the server; the review UI shows it as a draft (docs/design/ai.md §4.1)."
+        "description": "One proposed value: never saved by the server; the review UI shows it as a draft (docs/design/ai.md §4.1). Where the source was found:\n`LocationKind``page` / `slide` / `image` with its number, and `FromScan` when the text came from OCR (ADR 0033)."
       },
       "ExtractionResultDto": {
         "required": [
@@ -12936,6 +12982,11 @@
           "usageId": {
             "type": "string",
             "format": "uuid"
+          },
+          "scannedPages": {
+            "type": "integer",
+            "format": "int32",
+            "default": 0
           }
         }
       },

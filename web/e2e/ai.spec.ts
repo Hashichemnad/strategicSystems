@@ -1,6 +1,19 @@
 import type { APIRequestContext, Browser, Page } from '@playwright/test';
 import { createHash, randomBytes } from 'node:crypto';
-import { apiPost, expect, savePreferences, screenshotPath, test, tr, type Language } from './fixtures';
+import { join } from 'node:path';
+import {
+  apiPost,
+  apiPut,
+  expect,
+  savePreferences,
+  screenshotPath,
+  test,
+  tr,
+  type Language,
+} from './fixtures';
+
+const samplePath = (name: string) =>
+  join(process.cwd(), '..', 'tests', 'Strategy.UnitTests', 'AI', 'Samples', name);
 
 /** Phase 5: AI platform (demo provider, offline) and the MCP server, in Arabic and English. */
 
@@ -69,6 +82,12 @@ test.describe('AI and MCP settings', () => {
     await shot('ai-settings-features');
     await page.getByRole('tab', { name: ai('settings.tabs.data') }).click();
     await expect(page.getByText(ai('settings.data.mask'))).toBeVisible();
+    // Text recognition for scans (ADR 0033): Tesseract is installed on the server, switch it on.
+    const ocr = page.getByTestId('ai-ocr');
+    await expect(ocr.getByText(ai('settings.ocr.available'))).toBeVisible();
+    const ocrSwitch = ocr.getByRole('switch', { name: ai('settings.ocr.enabled') });
+    if (!(await ocrSwitch.isChecked())) await ocrSwitch.click();
+    await expect(ocrSwitch).toBeChecked();
     await shot('ai-settings-data', { fullPage: true });
 
     // MCP: approve tools are listed but off by default.
@@ -160,6 +179,49 @@ test.describe('AI features', () => {
     await dialog.getByRole('button', { name: ai('acceptAll') }).click();
     await dialog.getByRole('button', { name: tr(language, 'actions.create') }).click();
     await expect(page.getByText(sm('toast.created')).first()).toBeVisible();
+  });
+
+  test('a scanned page is read by text recognition and its values are marked "from scan"', async ({
+    page,
+    language,
+    shot,
+    adminApi,
+  }) => {
+    const ai = (key: string, params?: Record<string, string | number>) => tr(language, `ai:${key}`, params);
+    const sm = (key: string) => tr(language, `sample:${key}`);
+    // OCR on (an administrator setting; the previous scenario switches it on through the screen).
+    const current = (await (await adminApi.get('/api/v1/ai/settings')).json()) as {
+      settings: Record<string, unknown>;
+      version: number;
+    };
+    const saved = await apiPut(adminApi, '/api/v1/ai/settings', {
+      settings: { ...current.settings, ocr: { enabled: true, languages: 'ara+eng', maxPages: 20 } },
+      version: current.version,
+    });
+    expect(saved.status()).toBe(200);
+
+    const sample = language === 'ar' ? 'scan-ar.jpg' : 'scan-en.png';
+    await page.goto('/sample');
+    await page.getByRole('button', { name: sm('new') }).click();
+    const dialog = page.getByRole('dialog', { name: sm('createTitle') });
+    await dialog.getByRole('button', { name: ai('fill.button') }).click();
+    const upload = page.getByRole('dialog', { name: ai('fill.title') });
+    await upload.locator('input[type="file"]').setInputFiles(samplePath(sample));
+    await upload.getByRole('button', { name: ai('fill.run') }).click();
+    await expect(upload).toBeHidden();
+
+    const field = language === 'ar' ? 'nameAr' : 'nameEn';
+    await expect(dialog.getByLabel(sm(`fields.${field}`))).toHaveValue(
+      language === 'ar' ? 'برنامج الأرشيف الرقمي' : 'Digital archive programme',
+    );
+    await expect(dialog.getByText(ai('fromScan')).first()).toBeVisible();
+    await dialog
+      .getByTestId('ai-field-review')
+      .first()
+      .getByText(ai('sourceAt', { location: ai('location.image') }))
+      .click();
+    await shot('ai-form-review-scan');
+    await expect(dialog.getByRole('button', { name: tr(language, 'actions.create') })).toBeDisabled();
   });
 
   test('the approver opens an AI brief on the approval panel and can ask the system', async ({

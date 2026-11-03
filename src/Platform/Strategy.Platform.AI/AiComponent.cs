@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Strategy.Platform.Access;
 using Strategy.Platform.AI.Api;
 using Strategy.Platform.AI.Application;
+using Strategy.Platform.AI.Documents;
 using Strategy.Platform.AI.Domain;
 using Strategy.Platform.AI.Features;
 using Strategy.Platform.AI.Infrastructure;
@@ -48,6 +49,7 @@ public sealed class AiComponent : IPlatformComponent
         services.AddScoped<AiGateway>();
         services.AddScoped<AiAdministration>();
         services.AddScoped<ExtractionService>();
+        services.AddSingleton<IOcrEngine, TesseractOcrEngine>();
         services.AddScoped<BriefService>();
         services.AddScoped<TranslationService>();
         services.AddScoped<SimilarService>();

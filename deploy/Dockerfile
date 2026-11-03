@@ -27,8 +27,14 @@ RUN dotnet publish src/Host/Strategy.Host/Strategy.Host.csproj -c Release -o /ap
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 # libldap: LDAP / Active Directory sign-in (System.DirectoryServices.Protocols needs the native library on Linux).
+# Tesseract OCR (Apache-2.0) with Arabic and English language data: text recognition of scanned documents, used only when switched on in
+# Settings → AI (ADR 0033). Build with --build-arg INSTALL_OCR=false to leave it out (about 40 MB smaller; scans then cannot be read).
+ARG INSTALL_OCR=true
 RUN apt-get update \
     && (apt-get install -y --no-install-recommends libldap2 || apt-get install -y --no-install-recommends libldap-2.5-0) \
+    && if [ "$INSTALL_OCR" = "true" ]; then \
+         apt-get install -y --no-install-recommends tesseract-ocr tesseract-ocr-ara tesseract-ocr-eng; \
+       fi \
     && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 ENV ASPNETCORE_URLS=http://+:8080 \

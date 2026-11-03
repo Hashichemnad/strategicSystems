@@ -15,12 +15,14 @@
     "title": "Fill the form from a document",
     "description": "Upload a PDF, Word or PowerPoint document in Arabic or English. The AI proposes values for the form; nothing is saved until you review them and save.",
     "dropLabel": "Choose or drop a document",
-    "dropHint": "PDF, DOCX, PPTX or TXT, up to 10 MB",
+    "dropHint": "PDF, DOCX, PPTX, TXT, or a scan (PNG, JPEG, TIFF), up to 10 MB",
     "run": "Read the document",
     "filled_one": "One field was filled from {{file}}. Review it before saving.",
     "filled_other": "{{count}} fields were filled from {{file}}. Review them before saving.",
     "none": "The AI found no value for this form in the document.",
-    "truncated": "The document is long: only its beginning was read."
+    "truncated": "The document is long: only its beginning was read.",
+    "scanned_one": "One scanned page was read by text recognition.",
+    "scanned_other": "{{count}} scanned pages were read by text recognition."
   },
   "translate": {
     "fromEn": "Translate from English",
@@ -70,11 +72,12 @@
     "limitReached": "The monthly AI limit has been reached.",
     "extractSize": "The document must be at most {{maxMb}} MB.",
     "extractUnsupported": "Only PDF, Word, PowerPoint and text documents can be read.",
-    "extractNoText": "No text was found in the document (a scanned PDF needs text recognition first).",
+    "extractNoText": "No text was found in the document. If it is a scan, switch on text recognition (OCR) in Settings → AI.",
     "extractUnreadable": "The document could not be read.",
     "briefNoApproval": "The record has not been submitted for approval yet.",
     "modelsUnavailable": "The model list could not be fetched: type the model name.",
-    "emptyReply": "The provider answered with nothing."
+    "emptyReply": "The provider answered with nothing.",
+    "extractOcrOff": "This is a scanned image. Text recognition (OCR) is switched off in Settings → AI."
   },
   "provider": {
     "testPassed": "The connection works."
@@ -178,7 +181,18 @@
       "failed": "Failed",
       "empty": "No AI call yet."
     },
-    "saved": "AI settings saved"
+    "saved": "AI settings saved",
+    "ocr": {
+      "title": "Text recognition for scans (OCR)",
+      "enabled": "Read scanned PDF pages and images",
+      "enabledHint": "Pages without a text layer and PNG, JPEG or TIFF images are read by Tesseract on this server before the text goes to the AI. Values read from a scan are marked “From scan”.",
+      "available": "Tesseract and the selected languages are installed on the server.",
+      "unavailable": "Tesseract or one of the languages is not installed on the server: scans cannot be read until it is (see the installation guide).",
+      "languages": "Languages",
+      "languagesHint": "Tesseract language codes joined by +, e.g. ara+eng",
+      "maxPages": "Scanned pages read per document",
+      "save": "Save"
+    }
   },
   "features": {
     "extract": "Fill forms from documents",
@@ -186,5 +200,12 @@
     "translate": "Arabic ⇄ English translation",
     "similar": "Similar records",
     "ask": "Ask the system"
-  }
+  },
+  "location": {
+    "page": "page {{number}}",
+    "slide": "slide {{number}}",
+    "image": "image"
+  },
+  "fromScan": "From scan",
+  "fromScanHint": "Read from a scanned page by text recognition: check spelling and numbers."
 }

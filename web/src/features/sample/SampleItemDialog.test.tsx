@@ -29,7 +29,9 @@ const extraction: ExtractionResult = {
       confidence: 0.92,
       source: 'Name (English): Digital archive',
       sourceVerified: true,
-      location: null,
+      locationKind: 'page',
+      locationNumber: 2,
+      fromScan: true,
     },
     {
       name: 'amount',
@@ -37,11 +39,14 @@ const extraction: ExtractionResult = {
       confidence: 0.35,
       source: 'not in the document',
       sourceVerified: false,
-      location: null,
+      locationKind: null,
+      locationNumber: null,
+      fromScan: false,
     },
   ],
-  warnings: [],
+  warnings: ['ai.extract.fromScan'],
   usageId: 'u-1',
+  scannedPages: 1,
 };
 
 function mockApi(capabilities: AiCapabilities) {
@@ -87,6 +92,8 @@ describe('SampleItemDialog with AI', () => {
     expect(screen.getByLabelText('Amount (AED)')).toHaveValue('1250000');
     expect(screen.getAllByText('AI draft')).toHaveLength(2);
     expect(screen.getByText('Confidence 92%')).toBeInTheDocument();
+    expect(screen.getByText('From scan')).toBeInTheDocument(); // read by OCR from a scanned page
+    expect(screen.getByText('Source (page 2)')).toBeInTheDocument();
     expect(screen.getByText('Not found in the document: check this value carefully.')).toBeInTheDocument();
     expect(screen.getByText('Review the 2 AI-suggested values before saving.')).toBeInTheDocument();
     const create = screen.getByRole('button', { name: 'Create' });

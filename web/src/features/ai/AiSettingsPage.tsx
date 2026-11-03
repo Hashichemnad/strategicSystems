@@ -661,6 +661,7 @@ function DataTab({
           ))}
         </TableBody>
       </Table>
+      <OcrCard document={document} update={update} saving={saving} />
       <form
         className="grid gap-4 rounded-lg border bg-card p-5 sm:grid-cols-2"
         onSubmit={(event) => {
@@ -698,6 +699,55 @@ function DataTab({
         </Button>
       </form>
     </div>
+  );
+}
+
+/** Text recognition for scanned PDF pages and images (ADR 0033): switch, languages, page limit and whether the engine is installed. */
+function OcrCard({
+  document,
+  update,
+  saving,
+}: {
+  document: AiSettingsDocument;
+  update: (change: (current: AiSettings) => AiSettings) => void;
+  saving: boolean;
+}) {
+  const { t } = useTranslation('ai');
+  const ocr = document.settings.ocr ?? { enabled: false, languages: 'ara+eng', maxPages: 20 };
+  const [languages, setLanguages] = useState(ocr.languages);
+  const [maxPages, setMaxPages] = useState(String(ocr.maxPages));
+  return (
+    <form
+      className="grid gap-4 rounded-lg border bg-card p-5 sm:grid-cols-2"
+      data-testid="ai-ocr"
+      onSubmit={(event) => {
+        event.preventDefault();
+        update((s) => ({ ...s, ocr: { ...ocr, languages, maxPages: Number(maxPages) || 0 } }));
+      }}
+    >
+      <h3 className="font-semibold sm:col-span-2">{t('settings.ocr.title')}</h3>
+      <Switch
+        className="sm:col-span-2"
+        checked={ocr.enabled}
+        onCheckedChange={(enabled) => update((s) => ({ ...s, ocr: { ...ocr, enabled } }))}
+        label={t('settings.ocr.enabled')}
+        description={t('settings.ocr.enabledHint')}
+      />
+      <StatusBanner
+        className="sm:col-span-2"
+        tone={document.ocrAvailable ? 'success' : 'warning'}
+        title={document.ocrAvailable ? t('settings.ocr.available') : t('settings.ocr.unavailable')}
+      />
+      <FormField label={t('settings.ocr.languages')} hint={t('settings.ocr.languagesHint')}>
+        <Input dir="ltr" value={languages} onChange={(e) => setLanguages(e.target.value)} />
+      </FormField>
+      <FormField label={t('settings.ocr.maxPages')}>
+        <Input dir="ltr" inputMode="numeric" value={maxPages} onChange={(e) => setMaxPages(e.target.value)} />
+      </FormField>
+      <Button type="submit" variant="outline" className="self-start" loading={saving}>
+        {t('settings.ocr.save')}
+      </Button>
+    </form>
   );
 }
 

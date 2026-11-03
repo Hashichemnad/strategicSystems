@@ -9,8 +9,14 @@ using W = DocumentFormat.OpenXml.Wordprocessing;
 
 namespace Strategy.Platform.AI.Documents;
 
-/// <summary>Plain text of an uploaded document with page / slide markers (<c>[page 2]</c>, <c>[slide 3]</c>).</summary>
-public sealed record ExtractedText(string Kind, string Text, int Sections, bool Truncated);
+/// <summary>
+/// Plain text of an uploaded document with page / slide markers (<c>[page 2]</c>, <c>[slide 3]</c>); text recognised from a scan is under
+/// <c>[page 2 scan]</c> or <c>[image scan]</c> (ADR 0033).
+/// </summary>
+public sealed record ExtractedText(string Kind, string Text, int Sections, bool Truncated, int ScannedPages = 0);
+
+/// <summary>Text recognition for pages without a text layer and for images; null when OCR is switched off or not installed.</summary>
+public sealed record OcrOptions(IOcrEngine Engine, string Languages, int MaxPages);
 
 /// <summary>
 /// Text extraction for document-to-form (ADR 0030), free libraries only: PdfPig (Apache-2.0) for PDF, DocumentFormat.OpenXml (MIT) for Word and
@@ -22,7 +28,7 @@ public static class DocumentTextExtractor
     public const int MaxCharacters = 60_000;
     public const long MaxBytes = 10 * 1024 * 1024;
 
-    public static Result<ExtractedText> Extract(byte[] content, string fileName)
+    public static async Task<Result<ExtractedText>> ExtractAsync(byte[] content, string fileName, OcrOptions? ocr, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(content);
         if (content.Length == 0 || content.Length > MaxBytes)
@@ -32,17 +38,34 @@ public static class DocumentTextExtractor
 
         try
         {
-            var (kind, text, sections) = Detect(content, fileName) switch
+            var kind = Detect(content, fileName);
+            string text;
+            int sections, scanned = 0;
+            switch (kind)
             {
-                "pdf" => ("pdf", Pdf(content, out var pages), pages),
-                "docx" => ("docx", Word(content), 1),
-                "pptx" => ("pptx", Slides(content, out var slides), slides),
-                "txt" => ("txt", Encoding.UTF8.GetString(content), 1),
-                _ => (string.Empty, string.Empty, 0),
-            };
-            if (kind.Length == 0)
-            {
-                return Error.Rule("ai.extract.unsupported", "ai.errors.extractUnsupported");
+                case "pdf":
+                    (text, sections, scanned) = await PdfAsync(content, ocr, cancellationToken).ConfigureAwait(false);
+                    break;
+                case "docx":
+                    (text, sections) = (Word(content), 1);
+                    break;
+                case "pptx":
+                    text = Slides(content, out sections);
+                    break;
+                case "txt":
+                    (text, sections) = (Encoding.UTF8.GetString(content), 1);
+                    break;
+                case "image":
+                    if (ocr is null)
+                    {
+                        return Error.Rule("ai.extract.ocrOff", "ai.errors.extractOcrOff");
+                    }
+
+                    var recognised = await ocr.Engine.RecognizeAsync(content, ocr.Languages, cancellationToken).ConfigureAwait(false);
+                    (text, sections, scanned) = ("[image scan]\n" + recognised, 1, 1);
+                    break;
+                default:
+                    return Error.Rule("ai.extract.unsupported", "ai.errors.extractUnsupported");
             }
 
             text = Clean(text);
@@ -52,10 +75,10 @@ public static class DocumentTextExtractor
             }
 
             var truncated = text.Length > MaxCharacters;
-            return new ExtractedText(kind, truncated ? text[..MaxCharacters] : text, sections, truncated);
+            return new ExtractedText(kind, truncated ? text[..MaxCharacters] : text, sections, truncated, scanned);
         }
 #pragma warning disable CA1031 // any parser failure of an uploaded file is the same answer for the user
-        catch (Exception)
+        catch (Exception exception) when (exception is not OperationCanceledException)
 #pragma warning restore CA1031
         {
             return Error.Rule("ai.extract.unreadable", "ai.errors.extractUnreadable");
@@ -69,6 +92,11 @@ public static class DocumentTextExtractor
         if (content.AsSpan().StartsWith("%PDF-"u8))
         {
             return "pdf";
+        }
+
+        if (IsImage(content))
+        {
+            return "image";
         }
 
         if (content.AsSpan().StartsWith("PK\u0003\u0004"u8))
@@ -99,15 +127,40 @@ public static class DocumentTextExtractor
         return string.Empty;
     }
 
-    private static string Pdf(byte[] content, out int pages)
+    /// <summary>PNG, JPEG or TIFF, by signature.</summary>
+    public static bool IsImage(byte[] content)
+    {
+        ArgumentNullException.ThrowIfNull(content);
+        var span = content.AsSpan();
+        return span.StartsWith((byte[])[0x89, 0x50, 0x4E, 0x47]) || span.StartsWith((byte[])[0xFF, 0xD8, 0xFF])
+            || span.StartsWith("II*\0"u8) || span.StartsWith("MM\0*"u8);
+    }
+
+    /// <summary>
+    /// Text layer page by page. A page without one (fewer than 10 letters) is a scan: with OCR its largest image is recognised — PNG when PdfPig
+    /// can decode it, the JPEG stream as is otherwise (ADR 0033); without OCR it stays empty.
+    /// </summary>
+    private static async Task<(string Text, int Pages, int Scanned)> PdfAsync(byte[] content, OcrOptions? ocr, CancellationToken ct)
     {
         using var document = PdfDocument.Open(content);
         var builder = new StringBuilder();
-        pages = document.NumberOfPages;
+        var scanned = 0;
         foreach (var page in document.GetPages())
         {
+            var lines = Lines(page.Letters).ToList();
+            if (lines.Sum(l => l.Count(char.IsLetterOrDigit)) < 10 && ocr is not null && scanned < ocr.MaxPages && PageImage(page) is { } image)
+            {
+                var recognised = await ocr.Engine.RecognizeAsync(image, ocr.Languages, ct).ConfigureAwait(false);
+                if (!string.IsNullOrWhiteSpace(recognised))
+                {
+                    scanned++;
+                    builder.Append("[page ").Append(page.Number).Append(" scan]\n").Append(recognised).Append("\n\n");
+                    continue;
+                }
+            }
+
             builder.Append("[page ").Append(page.Number).Append("]\n");
-            foreach (var line in Lines(page.Letters))
+            foreach (var line in lines)
             {
                 builder.Append(line).Append('\n');
             }
@@ -115,7 +168,24 @@ public static class DocumentTextExtractor
             builder.Append('\n');
         }
 
-        return builder.ToString();
+        return (builder.ToString(), document.NumberOfPages, scanned);
+    }
+
+    private static byte[]? PageImage(Page page)
+    {
+        var image = page.GetImages().OrderByDescending(i => i.WidthInSamples * i.HeightInSamples).FirstOrDefault();
+        if (image is null)
+        {
+            return null;
+        }
+
+        if (image.TryGetPng(out var png))
+        {
+            return png;
+        }
+
+        var raw = image.RawMemory.ToArray();
+        return raw.AsSpan().StartsWith((byte[])[0xFF, 0xD8, 0xFF]) ? raw : null;
     }
 
     /// <summary>Letters grouped into lines (top to bottom) and put into reading order.</summary>
@@ -276,6 +346,9 @@ public static class DocumentTextExtractor
         }
     }
 
+    /// <summary>Invisible direction marks (OCR output adds them around numbers and Latin words).</summary>
+    private static bool IsBidiMark(char c) => c is '\u200E' or '\u200F' or '\u061C' or >= '\u202A' and <= '\u202E' or >= '\u2066' and <= '\u2069';
+
     /// <summary>NFKC (Arabic presentation forms → letters, ligatures split), no control characters, no runs of blank lines.</summary>
     internal static string Clean(string text)
     {
@@ -284,7 +357,7 @@ public static class DocumentTextExtractor
         var blank = 0;
         foreach (var line in normalised.Split('\n'))
         {
-            var cleaned = new string(line.Where(c => c == '\t' || !char.IsControl(c)).ToArray()).TrimEnd();
+            var cleaned = new string(line.Where(c => c == '\t' || (!char.IsControl(c) && !IsBidiMark(c))).ToArray()).TrimEnd();
             blank = cleaned.Length == 0 ? blank + 1 : 0;
             if (blank <= 1)
             {

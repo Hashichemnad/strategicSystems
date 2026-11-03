@@ -37,3 +37,4 @@ Write an ADR for every choice the SPEC or CLAUDE.md leaves open (CLAUDE.md §2 r
 | [0030](0030-document-text-extraction-and-similar-records.md) | Document text extraction and similar records without embeddings | Accepted |
 | [0031](0031-tool-registry.md) | Tool registry shared by the MCP server and "Ask the system" | Accepted |
 | [0032](0032-mcp-server-and-oauth.md) | MCP server, OAuth 2.1 with OpenIddict, dynamic client registration and consent | Accepted |
+| [0033](0033-ocr-for-scanned-documents.md) | Text recognition (OCR) for scanned PDFs and images with Tesseract | Accepted (one licence point for owner confirmation) |

@@ -101,13 +101,17 @@ internal sealed partial class DemoChatClient(string model) : IChatClient
         foreach (Match field in FieldLine().Matches(system))
         {
             var (name, labels) = (field.Groups[1].Value, field.Groups[2].Value.Split(" / ").Select(l => l.Split(" — ")[0].Trim()).Append(field.Groups[1].Value));
-            var line = lines.FirstOrDefault(l => labels.Any(label => l.StartsWith(label + ":", StringComparison.OrdinalIgnoreCase)));
-            if (line is null)
+            // The label may follow scanner noise on an OCR line, so it is searched anywhere in the line.
+            var match = lines.Select(l => (Line: l, At: labels.Select(label => (label, i: l.IndexOf(label + ":", StringComparison.OrdinalIgnoreCase)))
+                    .Where(x => x.i >= 0).Select(x => x.i + x.label.Length + 1).DefaultIfEmpty(-1).First()))
+                .FirstOrDefault(x => x.At >= 0);
+            if (match.Line is null)
             {
                 continue;
             }
 
-            var value = line[(line.IndexOf(':', StringComparison.Ordinal) + 1)..].Trim();
+            var line = match.Line;
+            var value = line[match.At..].Trim();
             fields.Add(new JsonObject { ["name"] = name, ["value"] = value, ["confidence"] = 0.9, ["source"] = line.Length > 300 ? line[..300] : line });
         }
 

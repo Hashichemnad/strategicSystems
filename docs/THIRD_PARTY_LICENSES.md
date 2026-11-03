@@ -104,6 +104,18 @@ Tools: `dotnet-ef` (MIT), local tool in `dotnet-tools.json`.
 Transitive dev-only packages under BlueOak-1.0.0, Python-2.0, CC-BY-4.0 and CC0-1.0 are accepted for tooling only,
 as accepted by the owner in [ADR 0007](decisions/0007-licence-notes.md).
 
+## Operating-system packages in the product image (`deploy/Dockerfile`)
+
+| Package | Licence | Used for |
+|---|---|---|
+| libldap | OpenLDAP Public License | LDAP / Active Directory sign-in |
+| tesseract-ocr (Tesseract 5) | Apache-2.0 | optional text recognition of scanned documents ([ADR 0033](decisions/0033-ocr-for-scanned-documents.md)); leave out with `INSTALL_OCR=false` |
+| tesseract-ocr-ara, tesseract-ocr-eng (language data) | Apache-2.0 | Arabic and English recognition |
+| liblept5 (Leptonica) | BSD-2-Clause | image library used by Tesseract |
+
+Tesseract's distribution package also brings shared OS libraries (harfbuzz, fontconfig, libarchive, curl, ICU: MIT / BSD-style; glib, cairo,
+pango: LGPL, dynamically linked by the separate `tesseract` program) — listed for owner confirmation in ADR 0033.
+
 ## Container images (docker-compose, not bundled into the product image)
 
 | Image | Licence | Profile |

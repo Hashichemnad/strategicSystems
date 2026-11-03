@@ -17,7 +17,8 @@ interactive approval step, so the plan was written first and then implemented as
 | Prompt-injection defences | Untrusted text only as data in `<untrusted_document nonce>` blocks with a fresh nonce; tag look-alikes neutralised; "data, never instructions" in the system prompt; no tools for extraction; read-only, permission-checked tools for Ask; schema validation; **source snippets verified against the document** (unverified → flagged, confidence ≤ 0.3); a person reviews everything |
 | Data controls | Per system: may be sent / **excluded fields**; uploaded documents on / off; **masking** of e-mails, Emirates ID numbers, phone numbers and the record's people (restored in the output) |
 | Usage and limits | `ai.usage_log` (user, feature, provider, model, tokens in / out, latency, outcome, record); **monthly token limit (installation)** and **monthly requests per user**, counted in the installation's time zone → 422 `ai.limitReached`; Settings → AI → Usage (this month by feature, paged log) |
-| Document text extraction (ADR 0030) | Recognised by content, not name: **PDF** (PdfPig; Arabic lines put in reading order from glyph positions, Latin / digit runs kept LTR), **Word** (paragraphs + tables) and **PowerPoint** (slides in order + notes) with DocumentFormat.OpenXml; NFKC for Arabic presentation forms; page / slide markers; 60 000 characters; 10 MB; file not stored (audit keeps name, size, SHA-256). No OCR (known gap) |
+| Document text extraction (ADR 0030) | Recognised by content, not name: **PDF** (PdfPig; Arabic lines put in reading order from glyph positions, Latin / digit runs kept LTR), **Word** (paragraphs + tables) and **PowerPoint** (slides in order + notes) with DocumentFormat.OpenXml; NFKC for Arabic presentation forms; page / slide markers; 60 000 characters; 10 MB; file not stored (audit keeps name, size, SHA-256) |
+| **OCR for scans** (ADR 0033, added before the pull request at the owner's request) | Optional **Tesseract 5** text recognition with **Arabic and English** data, **bundled** in the application image and run as a separate process (per-page time-out, no native interop; `INSTALL_OCR=false` builds without it). **Settings → AI → OCR: on / off (off by default)**, languages (`ara+eng`), scanned-page limit (20), and whether the engine is installed on the server. **PDF pages without a text layer** are recognised from their page image (PNG via PdfPig, or the JPEG stream — no GPL rasteriser needed); **PNG / JPEG / TIFF** uploads are recognised directly. Recognised text sits under `[page n scan]` / `[image scan]`; values quoted from it are marked **`fromScan`** and the review shows a **"From scan"** chip with the translated location ("page 2", "image"); the toast counts the scanned pages; the audit event records them. With OCR off, scans are explained (`ai.extract.ocrOff` / `noText`) and no model is called |
 | Shared AI features | **Document-to-form extraction** (`POST /ai/forms/{formKey}/extract`; modules declare AI forms), **approver brief** (`POST /ai/brief/{type}/{id}`; changed fields since the last submission **computed from the audit trail**, return comments included; paragraph + points from the model), **AR ⇄ EN translation**, **similar records** (trigram similarity within the user's scope, no model), **Ask the system** (read tools as functions, run with the user's own permissions, ≤ 5 rounds, references to records) |
 | Tool registry (ADR 0031) | `IAppTool` contract in `AI.Contracts`; registered by each component / module; start-up guard: **an approve tool can never be default-enabled**; `ToolExecutor` audits every call (`<channel>.tool.call`) |
 | MCP server (`Strategy.Platform.Mcp`, schema `mcp`, ADR 0032) | Official `ModelContextProtocol.AspNetCore` SDK at **`/mcp`**, Streamable HTTP, stateless; `tools/list` / `tools/call` from the registry filtered by admin switches, enabled systems and the caller's permissions. Gate: **off by default** (404), **tokens only** (401 + `WWW-Authenticate` with resource metadata), **vendor principals 403**, PAT without `mcp` scope 403. **Rate limits** per user and per tool. Every call and refusal audited, channel `mcp`, with the client |
@@ -48,6 +49,7 @@ interactive approval step, so the plan was written first and then implemented as
 | Every AI and MCP call audited | `ai.<feature>` events with channel `ai` (extraction test), `ai.tool.call` (Ask test), `mcp.tool.call` incl. refusals (MCP tests), `ai.provider.test`, `mcp.client.register / consent.grant / client.revoke` |
 | Usage limits enforced | `Monthly_request_limit_per_user_is_enforced`, `Monthly_token_limit_for_the_installation_is_enforced`; unit `MonthStartTests` (installation time zone, DST, unknown zone) |
 | Approve / reject tools not enabled by default | `ToolCatalog` start-up guard; `Tools_run_with_…` (not listed); `Administrators_switch_tools_and_limits_…` (enabled by an admin, still `not_found` for a task that is not the caller's); Settings → MCP shows it off |
+| OCR with a scanned Arabic and an English sample (owner request) | **Unit** `OcrTests` with the real engine on committed samples (`tests/Strategy.UnitTests/AI/Samples`: an Arabic page as JPEG, an English page as PNG and TIFF, rendered with the product's fonts and degraded like office scans): the Arabic scan is read in reading order (`الاسم بالعربية: برنامج الأرشيف الرقمي`, `1250000`, no direction marks), the English TIFF line by line; an **image-only PDF** (Arabic JPEG page + English PNG page + one text page) gives `[page 1 scan]`, `[page 2 scan]`, `[page 3]`, and a source quoted from page 1 is `fromScan` while one from page 3 is not; the page limit; OCR off → `ai.extract.ocrOff` / `noText`; a missing engine is reported unavailable without failing. **Integration** `Scanned_documents_are_read_with_ocr_when_it_is_on_and_their_values_are_marked_from_scan` (off: explained, no model call; on: `OcrAvailable`, `scannedPages` 1, warning `ai.extract.fromScan`, field verified and `fromScan` on page 1, `[page 1 scan]` in the prompt). **Vitest**: the "From scan" chip and translated location. **E2E** (ar + en): the administrator switches OCR on in Settings → AI; a user fills the form from a scanned image (Arabic scan / English scan); screenshot `ai-form-review-scan` |
 | Approver brief | `Approver_brief_uses_record_access_and_computes_the_changes_from_the_audit_trail` (outsider 404 with no model call; after return + rename, `NameEn` before / after from the audit trail; the return comment reaches the prompt). **E2E** screenshot `approver-brief` |
 | Data sharing | `Excluded_fields_and_systems_never_reach_the_model` (excluded `Amount` absent from the prompt; system not allowed → 422 and no call) |
 | Similar records and Ask the system | `Similar_records_and_ask_the_system_only_see_what_the_user_may_read` (trigram hits only within the own scope; the model receives only Alice's record via `search_records`; references; approve tool not offered). **E2E** screenshot `ask-the-system` |
@@ -68,7 +70,8 @@ interactive approval step, so the plan was written first and then implemented as
 | `npx playwright test` | **66 / 66** (33 scenarios × ar + en; 4 new Phase 5 scenarios: AI and MCP settings with Test connection, the MCP consent flow, the AI-filled form review, the approver brief and Ask) |
 | `--migrate` on an empty database | schemas `ai` and `mcp` added (migrations run by every integration test host and the E2E host) |
 
-**Dependencies added** (all listed in [`THIRD_PARTY_LICENSES.md`](../THIRD_PARTY_LICENSES.md); transitive licences checked by the
+**OS packages added to the image:** Tesseract 5 with Arabic and English data (Apache-2.0) and Leptonica (BSD-2-Clause), see ADR 0033 for
+the shared libraries they bring. **Dependencies added** (all listed in [`THIRD_PARTY_LICENSES.md`](../THIRD_PARTY_LICENSES.md); transitive licences checked by the
 architecture tests): Microsoft.Extensions.AI (+ Abstractions, + OpenAI) MIT · OpenAI MIT · **Anthropic** Apache-2.0 ·
 ModelContextProtocol.AspNetCore Apache-2.0 · OpenIddict.AspNetCore / EntityFrameworkCore Apache-2.0 · DocumentFormat.OpenXml MIT; PdfPig
 (Apache-2.0) moves from tests-only to the product. No npm package added.
@@ -79,18 +82,22 @@ ModelContextProtocol.AspNetCore Apache-2.0 · OpenIddict.AspNetCore / EntityFram
 - [0029](../decisions/0029-prompts-output-validation-and-injection-defences.md) Versioned prompt templates, in-house schema-subset validator
   with one repair round, prompt-injection defences, data controls and reversible masking.
 - [0030](../decisions/0030-document-text-extraction-and-similar-records.md) PDF / Word / PowerPoint extraction with free libraries, Arabic
-  reading order, no OCR; similar records by trigram similarity.
+  reading order; similar records by trigram similarity.
 - [0031](../decisions/0031-tool-registry.md) One tool registry for MCP and Ask the system; approve tools never default-enabled.
 - [0032](../decisions/0032-mcp-server-and-oauth.md) Stateless MCP server, OpenIddict with Data Protection tokens, dynamic registration,
   consent ticket, resource indicators, offline access, in-memory rate limits.
+- [0033](../decisions/0033-ocr-for-scanned-documents.md) Optional OCR: Tesseract bundled in the image and run as a separate process (not a
+  sidecar), Arabic + English data, page images taken from scanned PDFs without a rasteriser, "from scan" marking, off by default.
+  **Owner confirmation asked:** Tesseract's OS package brings LGPL shared libraries (glib, cairo, pango) into the image, used dynamically by
+  the separate `tesseract` program like glibc; `INSTALL_OCR=false` leaves them out.
 
 ## Deviations
 - **From the SPEC:** none.
 - **From the plan / prompt:**
   - Per-role access to AI features is the permission model (one permission per feature) instead of a role list inside Settings → AI
     (ADR 0028); Settings → AI shows each feature's permission and points to Roles.
-  - OCR for scanned PDFs, legacy `.doc` / `.ppt`, embeddings for similar records, and Client ID Metadata Documents for MCP clients are not
-    built (ADRs 0030, 0032).
+  - Legacy `.doc` / `.ppt`, embeddings for similar records, and Client ID Metadata Documents for MCP clients are not built (ADRs 0030,
+    0032). Scans stored as JBIG2 / CCITT images inside PDFs (some black-and-white scanners) are not decoded for OCR (ADR 0033).
   - The MCP rate limiter keeps its counters in memory (single-instance host).
 - **Contracts changed:** `IApprovalEngine.ListAttemptsAsync` (+ `ApprovalAttempt`, `ApprovalDecision`); `AuditEvent.Channel` (and
   `AuditRecord.EventChannel`) so AI and MCP events carry their channel while keeping the acting user; `StrategyClaims.Client`;
@@ -113,7 +120,8 @@ ModelContextProtocol.AspNetCore Apache-2.0 · OpenIddict.AspNetCore / EntityFram
 - Modules from Phase 6 on add their own AI forms, record / search sources and MCP tools (projects, KPIs, risks…).
 - A live end-to-end check with Claude Desktop / claude.ai / Claude Code against an HTTPS installation is for the owner's acceptance
   ([`docs/mcp-guide.md`](../mcp-guide.md)); real provider keys were not used in this session.
-- No OCR, no embeddings, names inside free text are not detected for masking (only the record's people).
+- No embeddings; names inside free text are not detected for masking (only the record's people); OCR reads PNG / JPEG / TIFF and the
+  JPEG / decodable page images of scanned PDFs, not JBIG2 / CCITT ones.
 - The setup wizard's "AI provider (optional)" step and the admin health page's AI check come with Phase 18.
 
 ## How to demo
@@ -125,10 +133,11 @@ cd web && npm ci && npm run dev                       # http://localhost:5173
 1. **Mariam** (`mariam@strategy.local` / `Strategy#Demo2026`, MFA): Settings → **Artificial intelligence**: the master switch, the *Demo
    provider (offline)* → **Test connection**. Add an Anthropic / OpenAI / Azure / Ollama provider with a real key to try a real model; make
    it the default or route one feature to it in *Features*. *Data sharing and limits*: exclude `Amount` for the Sample system, set a
-   monthly limit. *Usage* shows every call.
+   monthly limit, switch **text recognition (OCR)** on (the card says whether Tesseract is installed). *Usage* shows every call.
 2. **Ahmed** (`ahmed@strategy.local`): Sample module → **New item** → **Fill from a document** → upload a `.docx` / `.pdf` / `.pptx` /
    `.txt` with lines such as `Name (English): Digital archive`, `Amount (AED): 1,250,000` (the demo provider reads "Label: value" lines; a
-   real model reads free text). The fields fill as **AI drafts** with confidence and source; **Create** stays disabled until you accept or
+   real model reads free text) — or a **scan** (`tests/Strategy.UnitTests/AI/Samples/scan-ar.jpg`, or a scanned PDF) with OCR on: the
+   values then carry **"From scan"**. The fields fill as **AI drafts** with confidence and source; **Create** stays disabled until you accept or
    edit them. Try **Translate from English** under the Arabic name, and watch **Similar items** while typing a name.
 3. Ahmed submits the item; **Mariam** opens it → *Approvals* → **Generate brief**. Return it with a comment, let Ahmed rename and resubmit,
    generate again: the brief lists the changed field (before / after) from the history.
@@ -141,8 +150,9 @@ cd web && npm ci && npm run dev                       # http://localhost:5173
    Audit Log, channel `mcp`, lists each call. Switching AI off in Settings removes every AI button; the application works as before.
 
 ## Cloud environment notes
+- Tesseract installed with `apt-get install tesseract-ocr tesseract-ocr-ara tesseract-ocr-eng` (5.3.4) for the OCR tests and the E2E host.
 - Docker is started manually (`dockerd`); images through `mirror.gcr.io/`. Integration tests reuse one PostgreSQL with
   `STRATEGY_TEST_POSTGRES`; E2E ran against a fresh database `strategy_e2e` with `E2E_CHROMIUM_PATH=/opt/pw-browsers/chromium`.
 - Screenshots (generated by the E2E suite with `E2E_SCREENSHOTS=phase-5`) are in [`docs/screenshots/phase-5/`](../screenshots/phase-5/) as
-  `ar-*` / `en-*` pairs: `ai-settings-test-connection`, `ai-settings-features`, `ai-settings-data`, `ai-form-review`, `approver-brief`,
+  `ar-*` / `en-*` pairs: `ai-settings-test-connection`, `ai-settings-features`, `ai-settings-data` (with the OCR card), `ai-form-review`, `ai-form-review-scan`, `approver-brief`,
   `ask-the-system`, `mcp-settings`, `mcp-consent`. Earlier phases' screenshots were not retaken (the full suite ran into a scratch folder).

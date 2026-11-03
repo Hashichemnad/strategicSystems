@@ -9,7 +9,8 @@ public sealed record AiSettings(
     Guid? DefaultProviderId = null,
     IReadOnlyDictionary<string, AiFeatureSettings>? Features = null,
     AiDataSharing? DataSharing = null,
-    AiLimits? Limits = null) : ISettingsArea
+    AiLimits? Limits = null,
+    AiOcrSettings? Ocr = null) : ISettingsArea
 {
     public static string Key => "ai";
 
@@ -20,6 +21,9 @@ public sealed record AiSettings(
 
     [JsonIgnore]
     public AiLimits Quota => Limits ?? new AiLimits();
+
+    [JsonIgnore]
+    public AiOcrSettings Recognition => Ocr ?? new AiOcrSettings();
 }
 
 /// <summary>Per feature: switch, provider and model (else the default provider and its default model).</summary>
@@ -41,3 +45,9 @@ public sealed record AiSystemSharing(bool Allowed = true, IReadOnlyList<string>?
 
 /// <summary>Monthly limits (null = none), counted in the installation's time zone.</summary>
 public sealed record AiLimits(long? MonthlyTokens = null, int? MonthlyRequestsPerUser = null);
+
+/// <summary>
+/// Text recognition (OCR) for scanned PDF pages and images (ADR 0033): off by default; Tesseract language codes joined by <c>+</c>; at most
+/// <c>MaxPages</c> scanned pages per document.
+/// </summary>
+public sealed record AiOcrSettings(bool Enabled = false, string Languages = "ara+eng", int MaxPages = 20);

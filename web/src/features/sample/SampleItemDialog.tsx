@@ -109,7 +109,9 @@ export function SampleItemDialog({ open, onOpenChange, item }: SampleItemDialogP
         confidence: field.confidence,
         source: field.source ?? null,
         sourceVerified: field.sourceVerified,
-        location: field.location ?? null,
+        locationKind: field.locationKind,
+        locationNumber: field.locationNumber,
+        fromScan: field.fromScan,
       });
     }
     toast({
@@ -117,7 +119,16 @@ export function SampleItemDialog({ open, onOpenChange, item }: SampleItemDialogP
         filled.length > 0
           ? ta('fill.filled', { count: filled.length, file: result.fileName })
           : ta('fill.none'),
-      ...(result.truncated ? { description: ta('fill.truncated') } : {}),
+      ...(result.truncated || result.scannedPages > 0
+        ? {
+            description: [
+              result.scannedPages > 0 ? ta('fill.scanned', { count: result.scannedPages }) : '',
+              result.truncated ? ta('fill.truncated') : '',
+            ]
+              .filter(Boolean)
+              .join(' '),
+          }
+        : {}),
     });
   };
 
@@ -166,7 +177,14 @@ export function SampleItemDialog({ open, onOpenChange, item }: SampleItemDialogP
         systemCode="sample"
         sourceText={form.watch(other)}
         onTranslated={(text) =>
-          propose(name, text, { confidence: null, source: null, sourceVerified: true, location: null })
+          propose(name, text, {
+            confidence: null,
+            source: null,
+            sourceVerified: true,
+            locationKind: null,
+            locationNumber: null,
+            fromScan: false,
+          })
         }
       />
     </div>
