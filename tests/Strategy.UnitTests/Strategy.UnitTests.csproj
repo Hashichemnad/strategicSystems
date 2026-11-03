@@ -16,5 +16,7 @@
     <ProjectReference Include="..\..\src\Platform\Strategy.Platform.Calendar\Strategy.Platform.Calendar.csproj" />
     <ProjectReference Include="..\..\src\Platform\Strategy.Platform.Reporting\Strategy.Platform.Reporting.csproj" />
     <ProjectReference Include="..\..\src\Platform\Strategy.Platform.Files\Strategy.Platform.Files.csproj" />
+    <ProjectReference Include="..\..\src\Platform\Strategy.Platform.AI\Strategy.Platform.AI.csproj" />
+    <ProjectReference Include="..\..\src\Platform\Strategy.Platform.Mcp\Strategy.Platform.Mcp.csproj" />
   </ItemGroup>
 </Project>
