@@ -9045,6 +9045,153 @@
         }
       }
     },
+    "/api/v1/links/types": {
+      "get": {
+        "tags": [
+          "links"
+        ],
+        "operationId": "ListLinkableTypes",
+        "parameters": [
+          {
+            "name": "capability",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LinkableTypeDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/links/resolve": {
+      "get": {
+        "tags": [
+          "links"
+        ],
+        "operationId": "ResolveLink",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinkView"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/links/to/{type}/{id}": {
+      "get": {
+        "tags": [
+          "links"
+        ],
+        "operationId": "ListLinksTo",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "kind",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LinksToDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/sample/items": {
       "get": {
         "tags": [
@@ -9648,6 +9795,2039 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/SampleEditorDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tasks": {
+      "get": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "ListTasks",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "view",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "priority",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "indicator",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "linkedType",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "linkedId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "groupId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "parentId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "dueFrom",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "dueTo",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "openOnly",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResultOfTaskListItemDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "CreateTask",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTask"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatedTasksDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tasks/counts": {
+      "get": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "GetTaskCounts",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskCountsDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tasks/{id}": {
+      "get": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "GetTask",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "UpdateTask",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTaskInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tasks/{id}/assign": {
+      "post": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "AssignTask",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskActionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tasks/{id}/accept": {
+      "post": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "AcceptTask",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskActionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tasks/{id}/reject": {
+      "post": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "RejectTask",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskActionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tasks/{id}/pause": {
+      "post": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "PauseTask",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskActionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tasks/{id}/start": {
+      "post": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "StartTask",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskActionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tasks/{id}/submit": {
+      "post": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "SubmitTask",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskActionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tasks/{id}/complete": {
+      "post": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "CompleteTask",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskActionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tasks/{id}/approve": {
+      "post": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "ApproveTask",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskActionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tasks/{id}/return": {
+      "post": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "ReturnTask",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskActionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tasks/{id}/reassign": {
+      "post": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "ReassignTask",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskActionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tasks/{id}/cancel": {
+      "post": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "CancelTask",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TaskActionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tasks/{id}/subtasks": {
+      "post": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "CreateSubtask",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubtaskInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tasks/{id}/timeline": {
+      "get": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "GetTaskTimeline",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TimelineDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tasks/{id}/comments": {
+      "get": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "ListTaskComments",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CommentDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "AddTaskComment",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommentInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommentDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tasks/{id}/follow-ups": {
+      "post": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "AddTaskFollowUp",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FollowUpInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tasks/{id}/follow-ups/{employeeId}/remove": {
+      "post": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "RemoveTaskFollowUp",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "employeeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tasks/{id}/checklist": {
+      "post": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "AddTaskChecklistItem",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChecklistInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tasks/{id}/checklist/{itemId}": {
+      "put": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "UpdateTaskChecklistItem",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChecklistUpdateInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tasks/{id}/checklist/{itemId}/remove": {
+      "post": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "RemoveTaskChecklistItem",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tasks/{id}/dependencies": {
+      "post": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "AddTaskDependency",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DependencyInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tasks/{id}/dependencies/{dependsOnId}/remove": {
+      "post": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "RemoveTaskDependency",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "dependsOnId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tasks/{id}/audit": {
+      "get": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "GetTaskAuditTrail",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "field",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResultOfAuditEntryDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tasks/{id}/audit/as-of": {
+      "get": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "GetTaskAsOf",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "at",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecordSnapshotDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tasks/dashboard": {
+      "get": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "GetTaskDashboard",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskDashboardDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tasks/performance/{employeeId}": {
+      "get": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "GetEmployeeTaskPerformance",
+        "parameters": [
+          {
+            "name": "employeeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PerformanceDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tasks/settings": {
+      "get": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "GetTaskSettings",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskSettingsDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "SaveTaskSettings",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveTaskSettings"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskSettingsDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tasks/{id}/ai/summary": {
+      "post": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "SummariseTask",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SummaryInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskSummaryDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tasks/groups/{id}": {
+      "get": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "GetAssignmentGroup",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GroupDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tasks/groups/{id}/message": {
+      "post": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "MessageAssignmentGroup",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GroupMessageInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GroupDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tasks/groups/{id}/extend-due": {
+      "post": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "ExtendAssignmentGroupDue",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GroupDueInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GroupDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tasks/groups/{id}/cancel": {
+      "post": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "CancelAssignmentGroup",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GroupCancelInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GroupDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tasks/ai/from-text": {
+      "post": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "DraftTasksFromText",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FromTextInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TaskDraftsDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tasks/ai/suggest-assignees": {
+      "post": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "SuggestTaskAssignees",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SuggestInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AssigneeSuggestionDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/tasks/ai/workload": {
+      "get": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "GetTaskWorkloadInsights",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/WorkloadInsightDto"
                   }
                 }
               }
@@ -11166,6 +13346,39 @@
           }
         }
       },
+      "AssigneeSuggestionDto": {
+        "required": [
+          "employee",
+          "score",
+          "openTasks",
+          "similarDone",
+          "reasons"
+        ],
+        "type": "object",
+        "properties": {
+          "employee": {
+            "$ref": "#/components/schemas/PersonDto"
+          },
+          "score": {
+            "type": "number",
+            "format": "double"
+          },
+          "openTasks": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "similarDone": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
       "AssignmentDto": {
         "required": [
           "id",
@@ -11531,6 +13744,27 @@
           }
         }
       },
+      "BilingualName": {
+        "required": [
+          "ar",
+          "en"
+        ],
+        "type": "object",
+        "properties": {
+          "ar": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "en": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "BilingualText": {
         "required": [
           "ar",
@@ -11877,6 +14111,161 @@
           }
         }
       },
+      "ChecklistInput": {
+        "required": [
+          "text"
+        ],
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "ChecklistItemDto": {
+        "required": [
+          "id",
+          "text",
+          "sort",
+          "done",
+          "doneAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "text": {
+            "type": "string"
+          },
+          "sort": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "done": {
+            "type": "boolean"
+          },
+          "doneAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          }
+        }
+      },
+      "ChecklistUpdateInput": {
+        "required": [
+          "text",
+          "done"
+        ],
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "done": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          }
+        }
+      },
+      "CommentDto": {
+        "required": [
+          "id",
+          "text",
+          "kind",
+          "author",
+          "mentions",
+          "fileIds",
+          "createdAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "text": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "author": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/PersonDto"
+              }
+            ]
+          },
+          "mentions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PersonDto"
+            }
+          },
+          "fileIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "CommentInput": {
+        "required": [
+          "text",
+          "mentions",
+          "fileIds"
+        ],
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "mentions": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "fileIds": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        }
+      },
       "ConditionCheckDto": {
         "required": [
           "valid",
@@ -11916,6 +14305,27 @@
           }
         }
       },
+      "CountByDto": {
+        "required": [
+          "key",
+          "open",
+          "overdue"
+        ],
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "open": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "overdue": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
       "CreatedAccessTokenDto": {
         "required": [
           "details",
@@ -11931,6 +14341,28 @@
           }
         },
         "description": "The new token: string CreatedAccessTokenDto.Token is shown once and never stored."
+      },
+      "CreatedTasksDto": {
+        "required": [
+          "tasks",
+          "groupId"
+        ],
+        "type": "object",
+        "properties": {
+          "tasks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TaskListItemDto"
+            }
+          },
+          "groupId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          }
+        }
       },
       "CreatedUserDto": {
         "required": [
@@ -11953,6 +14385,171 @@
             ]
           }
         }
+      },
+      "CreateTask": {
+        "required": [
+          "titleAr",
+          "titleEn",
+          "description",
+          "typeCode",
+          "sourceCode",
+          "categoryCode",
+          "priority",
+          "confidential",
+          "plannedStart",
+          "dueDate",
+          "estimatedHours",
+          "assigneeEmployeeIds"
+        ],
+        "type": "object",
+        "properties": {
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "typeCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sourceCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "categoryCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "priority": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "confidential": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          },
+          "plannedStart": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "dueDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "estimatedHours": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "assigneeEmployeeIds": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "assigneeUnitId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "completionRule": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "draft": {
+            "type": "boolean",
+            "default": false
+          },
+          "onBehalfOfEmployeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "linkedType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "linkedId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "checklist": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "recurrence": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/RecurrenceInput"
+              }
+            ]
+          },
+          "dependsOn": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        },
+        "description": "New Task (SPEC §11.7): one or many assignees (and / or every employee of a unit) → one task per assignee, tied by an assignment group\nwhen there are several (SPEC §11.4)."
       },
       "CreateTokenInput": {
         "required": [
@@ -12314,6 +14911,21 @@
           "at": {
             "type": "string",
             "format": "date-time"
+          }
+        }
+      },
+      "DependencyInput": {
+        "required": [
+          "dependsOnTaskId"
+        ],
+        "type": "object",
+        "properties": {
+          "dependsOnTaskId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
           }
         }
       },
@@ -13227,6 +15839,63 @@
           }
         }
       },
+      "FollowUpDto": {
+        "required": [
+          "employeeId",
+          "nameAr",
+          "nameEn",
+          "canUpload",
+          "since"
+        ],
+        "type": "object",
+        "properties": {
+          "employeeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "canUpload": {
+            "type": "boolean"
+          },
+          "since": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "FollowUpInput": {
+        "required": [
+          "employeeId",
+          "canUpload"
+        ],
+        "type": "object",
+        "properties": {
+          "employeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "canUpload": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          }
+        }
+      },
       "ForgotPasswordInput": {
         "required": [
           "login"
@@ -13238,6 +15907,192 @@
               "null",
               "string"
             ]
+          }
+        }
+      },
+      "FromTextInput": {
+        "required": [
+          "text"
+        ],
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "GroupCancelInput": {
+        "required": [
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "GroupDto": {
+        "required": [
+          "id",
+          "titleAr",
+          "titleEn",
+          "creator",
+          "completionRule",
+          "createdAt",
+          "total",
+          "finished",
+          "cancelled",
+          "complete",
+          "members",
+          "canManage",
+          "hidden"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "creator": {
+            "$ref": "#/components/schemas/PersonDto"
+          },
+          "completionRule": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "total": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "finished": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cancelled": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "complete": {
+            "type": "boolean"
+          },
+          "members": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GroupMemberDto"
+            }
+          },
+          "canManage": {
+            "type": "boolean"
+          },
+          "hidden": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "GroupDueInput": {
+        "required": [
+          "dueDate"
+        ],
+        "type": "object",
+        "properties": {
+          "dueDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          }
+        }
+      },
+      "GroupMemberDto": {
+        "required": [
+          "task",
+          "finished"
+        ],
+        "type": "object",
+        "properties": {
+          "task": {
+            "$ref": "#/components/schemas/TaskListItemDto"
+          },
+          "finished": {
+            "type": "boolean"
+          }
+        }
+      },
+      "GroupMessageInput": {
+        "required": [
+          "text"
+        ],
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "GroupSummaryDto": {
+        "required": [
+          "id",
+          "titleAr",
+          "titleEn",
+          "total",
+          "finished",
+          "complete"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "total": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "finished": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "complete": {
+            "type": "boolean"
           }
         }
       },
@@ -13877,6 +16732,173 @@
             "format": "int32"
           }
         }
+      },
+      "LinkableTypeDto": {
+        "required": [
+          "resourceType",
+          "systemCode",
+          "nameAr",
+          "nameEn",
+          "capabilities"
+        ],
+        "type": "object",
+        "properties": {
+          "resourceType": {
+            "type": "string"
+          },
+          "systemCode": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": "string"
+          },
+          "nameEn": {
+            "type": "string"
+          },
+          "capabilities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "LinksToDto": {
+        "required": [
+          "links",
+          "restricted"
+        ],
+        "type": "object",
+        "properties": {
+          "links": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LinkToDto"
+            }
+          },
+          "restricted": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "description": "Links pointing at a record: the visible ones resolved, the others only counted."
+      },
+      "LinkToDto": {
+        "required": [
+          "kind",
+          "from"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "from": {
+            "$ref": "#/components/schemas/LinkView"
+          }
+        }
+      },
+      "LinkView": {
+        "required": [
+          "type",
+          "id",
+          "visibility",
+          "systemCode",
+          "typeNameAr",
+          "typeNameEn",
+          "number",
+          "titleAr",
+          "titleEn",
+          "statusCode",
+          "statusLabelAr",
+          "statusLabelEn",
+          "tone",
+          "isClosed",
+          "link"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "visibility": {
+            "type": "string"
+          },
+          "systemCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "typeNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "typeNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "number": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "statusCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "statusLabelAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "statusLabelEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "tone": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "isClosed": {
+            "type": "boolean"
+          },
+          "link": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "description": "A resolved link as the UI shows it. Only string LinkVisibility.Visible views carry content."
       },
       "LoginInput": {
         "required": [
@@ -15972,6 +18994,40 @@
         },
         "description": "One page of items plus the total count across all pages."
       },
+      "PagedResultOfTaskListItemDto": {
+        "required": [
+          "items",
+          "page",
+          "pageSize",
+          "totalCount"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TaskListItemDto"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "description": "One page of items plus the total count across all pages."
+      },
       "PagedResultOfUserDto": {
         "required": [
           "items",
@@ -16034,6 +19090,56 @@
             "type": "boolean"
           },
           "history": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "PerformanceDto": {
+        "required": [
+          "employee",
+          "completed",
+          "completedOnTime",
+          "onTimeRate",
+          "averageHoursToAccept",
+          "averageFeedback",
+          "feedbackCount"
+        ],
+        "type": "object",
+        "properties": {
+          "employee": {
+            "$ref": "#/components/schemas/PersonDto"
+          },
+          "completed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "completedOnTime": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "onTimeRate": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "averageHoursToAccept": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "averageFeedback": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "feedbackCount": {
             "type": "integer",
             "format": "int32"
           }
@@ -16103,6 +19209,32 @@
             "items": {
               "$ref": "#/components/schemas/RecordRoleTypeDto"
             }
+          }
+        }
+      },
+      "PersonDto": {
+        "required": [
+          "employeeId",
+          "nameAr",
+          "nameEn"
+        ],
+        "type": "object",
+        "properties": {
+          "employeeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
@@ -17107,6 +20239,89 @@
           }
         }
       },
+      "RecurrenceDto": {
+        "required": [
+          "frequency",
+          "interval",
+          "until",
+          "count",
+          "nextOccurrenceOn",
+          "occurrenceCount"
+        ],
+        "type": "object",
+        "properties": {
+          "frequency": {
+            "type": "string"
+          },
+          "interval": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "until": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "count": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "nextOccurrenceOn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "occurrenceCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "RecurrenceInput": {
+        "required": [
+          "frequency",
+          "interval",
+          "until",
+          "count"
+        ],
+        "type": "object",
+        "properties": {
+          "frequency": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "interval": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "until": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "count": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          }
+        }
+      },
       "RegionalSettings": {
         "type": "object",
         "properties": {
@@ -17541,6 +20756,22 @@
               "integer"
             ],
             "format": "int32"
+          }
+        }
+      },
+      "SaveTaskSettings": {
+        "required": [
+          "value",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "#/components/schemas/TaskSettings"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
           }
         }
       },
@@ -18157,6 +21388,101 @@
           }
         }
       },
+      "SubtaskInput": {
+        "required": [
+          "titleAr",
+          "titleEn",
+          "description",
+          "assigneeEmployeeId",
+          "priority",
+          "plannedStart",
+          "dueDate"
+        ],
+        "type": "object",
+        "properties": {
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "assigneeEmployeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "priority": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "plannedStart": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "dueDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          }
+        }
+      },
+      "SuggestInput": {
+        "required": [
+          "title",
+          "unitId"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "unitId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          }
+        }
+      },
+      "SummaryInput": {
+        "required": [
+          "mode"
+        ],
+        "type": "object",
+        "properties": {
+          "mode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "SystemAccessDto": {
         "required": [
           "id",
@@ -18290,6 +21616,1057 @@
           "version": {
             "type": "integer",
             "format": "uint32"
+          }
+        }
+      },
+      "TaskActionInput": {
+        "required": [
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "comment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "feedbackPoint": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "assigneeEmployeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          }
+        }
+      },
+      "TaskCapabilitiesDto": {
+        "required": [
+          "canEdit",
+          "canComment",
+          "canUpload",
+          "canManageFollowUps",
+          "canManageChecklist",
+          "canManageDependencies",
+          "canCreateSubtask"
+        ],
+        "type": "object",
+        "properties": {
+          "canEdit": {
+            "type": "boolean"
+          },
+          "canComment": {
+            "type": "boolean"
+          },
+          "canUpload": {
+            "type": "boolean"
+          },
+          "canManageFollowUps": {
+            "type": "boolean"
+          },
+          "canManageChecklist": {
+            "type": "boolean"
+          },
+          "canManageDependencies": {
+            "type": "boolean"
+          },
+          "canCreateSubtask": {
+            "type": "boolean"
+          }
+        },
+        "description": "What the current user may do on the task besides the transitions in IReadOnlyList&lt;string&gt; TaskDto.Actions."
+      },
+      "TaskCountsDto": {
+        "required": [
+          "assignedOpen",
+          "assignedOverdue",
+          "awaitingMyApproval",
+          "createdOpen",
+          "followUp",
+          "team",
+          "teamOverdue"
+        ],
+        "type": "object",
+        "properties": {
+          "assignedOpen": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "assignedOverdue": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "awaitingMyApproval": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createdOpen": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "followUp": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "team": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "teamOverdue": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "TaskDashboardDto": {
+        "required": [
+          "open",
+          "overdue",
+          "dueSoon",
+          "closedLast90Days",
+          "averageHoursToAccept",
+          "averageHoursToComplete",
+          "onTimeRate",
+          "averageFeedback",
+          "byUnit",
+          "bySource",
+          "byStatus",
+          "byPriority",
+          "workload",
+          "unitNames"
+        ],
+        "type": "object",
+        "properties": {
+          "open": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "overdue": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "dueSoon": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "closedLast90Days": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "averageHoursToAccept": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "averageHoursToComplete": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "onTimeRate": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "averageFeedback": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "byUnit": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CountByDto"
+            }
+          },
+          "bySource": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CountByDto"
+            }
+          },
+          "byStatus": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CountByDto"
+            }
+          },
+          "byPriority": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CountByDto"
+            }
+          },
+          "workload": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WorkloadDto"
+            }
+          },
+          "unitNames": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/BilingualName"
+            }
+          }
+        }
+      },
+      "TaskDraftDto": {
+        "required": [
+          "titleAr",
+          "titleEn",
+          "description",
+          "assigneeName",
+          "assignee",
+          "assigneeCandidates",
+          "dueDate",
+          "priority",
+          "source"
+        ],
+        "type": "object",
+        "properties": {
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "assigneeName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "assignee": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/PersonDto"
+              }
+            ]
+          },
+          "assigneeCandidates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PersonDto"
+            }
+          },
+          "dueDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "priority": {
+            "type": "string"
+          },
+          "source": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "TaskDraftsDto": {
+        "required": [
+          "drafts",
+          "usageId"
+        ],
+        "type": "object",
+        "properties": {
+          "drafts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TaskDraftDto"
+            }
+          },
+          "usageId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "TaskDto": {
+        "required": [
+          "id",
+          "number",
+          "titleAr",
+          "titleEn",
+          "description",
+          "template",
+          "status",
+          "priority",
+          "indicator",
+          "typeCode",
+          "sourceCode",
+          "categoryCode",
+          "confidential",
+          "assignee",
+          "creator",
+          "enteredBy",
+          "plannedStart",
+          "dueDate",
+          "dueAt",
+          "dueSoonAt",
+          "assignedAt",
+          "acceptedAt",
+          "completedAt",
+          "approvedAt",
+          "closedAt",
+          "rejectionReason",
+          "cancelReason",
+          "completionComment",
+          "feedbackPoint",
+          "feedbackComment",
+          "percentComplete",
+          "estimatedHours",
+          "actualSeconds",
+          "timeToAcceptSeconds",
+          "timeToCompleteSeconds",
+          "completedOnTime",
+          "recurrence",
+          "recurrenceSourceId",
+          "link",
+          "parent",
+          "group",
+          "checklist",
+          "subtasks",
+          "dependencies",
+          "followUps",
+          "actions",
+          "capabilities",
+          "feedbackScaleMax",
+          "createdAt",
+          "updatedAt",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "template": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "string"
+          },
+          "indicator": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "typeCode": {
+            "type": "string"
+          },
+          "sourceCode": {
+            "type": "string"
+          },
+          "categoryCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "confidential": {
+            "type": "boolean"
+          },
+          "assignee": {
+            "$ref": "#/components/schemas/PersonDto"
+          },
+          "creator": {
+            "$ref": "#/components/schemas/PersonDto"
+          },
+          "enteredBy": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/PersonDto"
+              }
+            ]
+          },
+          "plannedStart": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "dueDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "dueAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "dueSoonAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "assignedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "acceptedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "completedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "approvedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "closedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "rejectionReason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "cancelReason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "completionComment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "feedbackPoint": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "feedbackComment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "percentComplete": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "estimatedHours": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "actualSeconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "timeToAcceptSeconds": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "timeToCompleteSeconds": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          },
+          "completedOnTime": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          },
+          "recurrence": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/RecurrenceDto"
+              }
+            ]
+          },
+          "recurrenceSourceId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "link": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/LinkView"
+              }
+            ]
+          },
+          "parent": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/TaskRefDto"
+              }
+            ]
+          },
+          "group": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/GroupSummaryDto"
+              }
+            ]
+          },
+          "checklist": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChecklistItemDto"
+            }
+          },
+          "subtasks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TaskListItemDto"
+            }
+          },
+          "dependencies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TaskRefDto"
+            }
+          },
+          "followUps": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FollowUpDto"
+            }
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "capabilities": {
+            "$ref": "#/components/schemas/TaskCapabilitiesDto"
+          },
+          "feedbackScaleMax": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "TaskEventDto": {
+        "required": [
+          "id",
+          "occurredAt",
+          "event",
+          "fromStatus",
+          "toStatus",
+          "actor",
+          "comment",
+          "data",
+          "secondsSincePrevious"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "occurredAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "event": {
+            "type": "string"
+          },
+          "fromStatus": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "toStatus": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "actor": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/PersonDto"
+              }
+            ]
+          },
+          "comment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "data": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "secondsSincePrevious": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int64"
+          }
+        }
+      },
+      "TaskListItemDto": {
+        "required": [
+          "id",
+          "number",
+          "titleAr",
+          "titleEn",
+          "template",
+          "status",
+          "priority",
+          "indicator",
+          "typeCode",
+          "sourceCode",
+          "categoryCode",
+          "confidential",
+          "assignee",
+          "creator",
+          "plannedStart",
+          "dueDate",
+          "dueAt",
+          "groupId",
+          "parentTaskId",
+          "linkedType",
+          "linkedId",
+          "percentComplete",
+          "createdAt",
+          "updatedAt",
+          "version",
+          "actions"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "template": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "string"
+          },
+          "indicator": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "typeCode": {
+            "type": "string"
+          },
+          "sourceCode": {
+            "type": "string"
+          },
+          "categoryCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "confidential": {
+            "type": "boolean"
+          },
+          "assignee": {
+            "$ref": "#/components/schemas/PersonDto"
+          },
+          "creator": {
+            "$ref": "#/components/schemas/PersonDto"
+          },
+          "plannedStart": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "dueDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "dueAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "groupId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "parentTaskId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "linkedType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "linkedId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "percentComplete": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "TaskRefDto": {
+        "required": [
+          "id",
+          "number",
+          "titleAr",
+          "titleEn",
+          "status",
+          "template",
+          "closed"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "template": {
+            "type": "string"
+          },
+          "closed": {
+            "type": "boolean"
+          }
+        }
+      },
+      "TaskSettings": {
+        "type": "object",
+        "properties": {
+          "typeTemplates": {
+            "type": [
+              "null",
+              "object"
+            ],
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "confidentialCategories": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "assignScope": {
+            "type": "string",
+            "default": "anyone"
+          },
+          "secretaryMayCreateOnBehalf": {
+            "type": "boolean",
+            "default": true
+          },
+          "feedbackScaleMax": {
+            "type": "integer",
+            "format": "int32",
+            "default": 5
+          },
+          "reminderDaysBeforeDue": {
+            "type": "integer",
+            "format": "int32",
+            "default": 2
+          },
+          "overdueNotice": {
+            "type": "boolean",
+            "default": true
+          },
+          "escalateAfterOverdueDays": {
+            "type": "integer",
+            "format": "int32",
+            "default": 3
+          },
+          "acceptReminderHours": {
+            "type": "integer",
+            "format": "int32",
+            "default": 8
+          },
+          "digest": {
+            "type": "string",
+            "default": "off"
+          },
+          "digestWeekday": {
+            "type": "integer",
+            "format": "int32",
+            "default": 1
+          },
+          "workloadThreshold": {
+            "type": "integer",
+            "format": "int32",
+            "default": 10
+          }
+        },
+        "description": "Settings → Tasks (docs/design/tasks.md §2). Defaults are the SPEC / Appendix A build defaults; nothing organisation-specific in code."
+      },
+      "TaskSettingsDto": {
+        "required": [
+          "value",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "value": {
+            "$ref": "#/components/schemas/TaskSettings"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "TaskSummaryDto": {
+        "required": [
+          "mode",
+          "text",
+          "usageId"
+        ],
+        "type": "object",
+        "properties": {
+          "mode": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          },
+          "usageId": {
+            "type": "string",
+            "format": "uuid"
           }
         }
       },
@@ -18432,6 +22809,98 @@
           },
           "html": {
             "type": "string"
+          }
+        }
+      },
+      "TimelineDto": {
+        "required": [
+          "events",
+          "timesheet"
+        ],
+        "type": "object",
+        "properties": {
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TaskEventDto"
+            }
+          },
+          "timesheet": {
+            "$ref": "#/components/schemas/TimesheetDto"
+          }
+        }
+      },
+      "TimesheetDto": {
+        "required": [
+          "periods",
+          "totalSeconds",
+          "running"
+        ],
+        "type": "object",
+        "properties": {
+          "periods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TimesheetPeriodDto"
+            }
+          },
+          "totalSeconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "running": {
+            "type": "boolean"
+          }
+        }
+      },
+      "TimesheetPeriodDto": {
+        "required": [
+          "id",
+          "number",
+          "startedAt",
+          "endedAt",
+          "durationSeconds",
+          "holdReason",
+          "endEvent"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "durationSeconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "holdReason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "endEvent": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
@@ -19102,6 +23571,96 @@
           }
         }
       },
+      "UpdateTaskInput": {
+        "required": [
+          "titleAr",
+          "titleEn",
+          "description",
+          "sourceCode",
+          "categoryCode",
+          "priority",
+          "confidential",
+          "plannedStart",
+          "dueDate",
+          "estimatedHours",
+          "percentComplete",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sourceCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "categoryCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "priority": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "confidential": {
+            "type": "boolean"
+          },
+          "plannedStart": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "dueDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "estimatedHours": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "percentComplete": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
       "UpdateUnitInput": {
         "required": [
           "code",
@@ -19554,6 +24113,75 @@
             "format": "int32"
           }
         }
+      },
+      "WorkloadDto": {
+        "required": [
+          "employee",
+          "open",
+          "overdue",
+          "onHold"
+        ],
+        "type": "object",
+        "properties": {
+          "employee": {
+            "$ref": "#/components/schemas/PersonDto"
+          },
+          "open": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "overdue": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "onHold": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "WorkloadInsightDto": {
+        "required": [
+          "employee",
+          "kind",
+          "open",
+          "overdue",
+          "closedRecently",
+          "late",
+          "lateRate"
+        ],
+        "type": "object",
+        "properties": {
+          "employee": {
+            "$ref": "#/components/schemas/PersonDto"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "open": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "overdue": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "closedRecently": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "late": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lateRate": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          }
+        }
       }
     }
   },
@@ -19598,7 +24226,13 @@
       "name": "mcp"
     },
     {
+      "name": "links"
+    },
+    {
       "name": "sample"
+    },
+    {
+      "name": "tasks"
     }
   ]
 }

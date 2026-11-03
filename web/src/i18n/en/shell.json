@@ -25,7 +25,8 @@
     },
     "settings": "Settings",
     "auditLog": "Audit log",
-    "auditVerification": "Audit verification"
+    "auditVerification": "Audit verification",
+    "tasks": "My tasks"
   },
   "language": {
     "label": "Language",

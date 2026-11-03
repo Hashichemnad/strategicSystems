@@ -13,6 +13,7 @@ import {
   Languages,
   Layers,
   ListChecks,
+  ListTodo,
   Mail,
   MapPinned,
   Palette,
@@ -41,6 +42,7 @@ export type SettingsPageKey =
   | 'approvals'
   | 'ai'
   | 'mcp'
+  | 'tasks'
   | 'businessHours'
   | 'holidays'
   | 'roles'
@@ -69,6 +71,7 @@ export type SettingsPath =
   | '/settings/approvals'
   | '/settings/ai'
   | '/settings/mcp'
+  | '/settings/tasks'
   | '/settings/business-hours'
   | '/settings/holidays'
   | '/settings/access/roles'
@@ -154,6 +157,7 @@ export const settingsGroups: readonly SettingsGroup[] = [
         icon: ClipboardCheck,
         permissions: ['workflow.process.read'],
       },
+      { key: 'tasks', to: '/settings/tasks', icon: ListTodo, permissions: ['tasks.settings.manage'] },
     ],
   },
   {

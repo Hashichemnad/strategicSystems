@@ -103,6 +103,10 @@
     "mcp": {
       "title": "MCP server",
       "description": "Connect Claude and other MCP clients; tools, sign-in and limits."
+    },
+    "tasks": {
+      "title": "Tasks",
+      "description": "Workflow per task type, who can be assigned, reminders, escalation and digest."
     }
   },
   "title": "Settings",

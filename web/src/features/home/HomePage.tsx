@@ -12,8 +12,10 @@ import {
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { errorMessage, translateMessageKey } from '@/api/problem';
+import { useCan } from '@/features/access/session';
 import { useMe } from '@/features/auth/session';
 import { useMyNotifications } from '@/features/notifications/api';
+import { MyTasksCard } from '@/features/tasks/MyTasksCard';
 import { useMyWork, type MyWork } from '@/features/workflow/api';
 import { useDueText, usePersonName } from '@/features/workflow/ApprovalPanel';
 import { cn } from '@/lib/cn';
@@ -138,6 +140,7 @@ export function HomePage() {
   const me = useMe();
   const work = useMyWork();
   const notifications = useMyNotifications(1, false);
+  const canTasks = useCan('tasks.task.read');
   const displayName =
     (pickText(i18n.language, me?.employee?.nameAr, me?.employee?.nameEn) || me?.userName) ?? '';
 
@@ -178,23 +181,29 @@ export function HomePage() {
           <Card title={t('myWork.approvals.title')} icon={ClipboardCheck}>
             {work.data ? <Approvals data={work.data} /> : <Skeleton className="h-32" />}
           </Card>
+          {canTasks && (
+            <MyTasksCard items={work.data?.actionItems.filter((item) => item.systemCode === 'tasks') ?? []} />
+          )}
           <Card title={t('myWork.actionItems.title')} icon={ListTodo}>
-            {work.data && work.data.actionItems.length === 0 && (
-              <p className="text-sm text-muted-foreground">{t('myWork.actionItems.empty')}</p>
-            )}
+            {work.data &&
+              work.data.actionItems.filter((item) => item.systemCode !== 'tasks').length === 0 && (
+                <p className="text-sm text-muted-foreground">{t('myWork.actionItems.empty')}</p>
+              )}
             <ul className="flex flex-col divide-y">
-              {work.data?.actionItems.map((item) => (
-                <li key={`${item.resourceType}:${item.resourceId}`} className="flex flex-col gap-0.5 py-3">
-                  <Link to={item.link as '/'} className="font-medium text-primary hover:underline">
-                    {[item.number, pickText(i18n.language, item.titleAr, item.titleEn)]
-                      .filter(Boolean)
-                      .join(' · ')}
-                  </Link>
-                  <span className="text-sm text-muted-foreground">
-                    {translateMessageKey(tc, item.messageKey)}
-                  </span>
-                </li>
-              ))}
+              {work.data?.actionItems
+                .filter((item) => item.systemCode !== 'tasks')
+                .map((item) => (
+                  <li key={`${item.resourceType}:${item.resourceId}`} className="flex flex-col gap-0.5 py-3">
+                    <Link to={item.link as '/'} className="font-medium text-primary hover:underline">
+                      {[item.number, pickText(i18n.language, item.titleAr, item.titleEn)]
+                        .filter(Boolean)
+                        .join(' · ')}
+                    </Link>
+                    <span className="text-sm text-muted-foreground">
+                      {translateMessageKey(tc, item.messageKey)}
+                    </span>
+                  </li>
+                ))}
             </ul>
           </Card>
         </div>

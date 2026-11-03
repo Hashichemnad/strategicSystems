@@ -48,6 +48,10 @@ import enCalendar from './en/calendar.json';
 import enExpressions from './en/expressions.json';
 import enAi from './en/ai.json';
 import enMcp from './en/mcp.json';
+import arTasks from './ar/tasks.json';
+import enTasks from './en/tasks.json';
+import arLinks from './ar/links.json';
+import enLinks from './en/links.json';
 import { readPreference } from '@/lib/preferences';
 
 export const languages = ['ar', 'en'] as const;
@@ -79,6 +83,8 @@ export const resources = {
     ai: arAi,
     mcp: arMcp,
     calendar: arCalendar,
+    tasks: arTasks,
+    links: arLinks,
   },
   en: {
     common: enCommon,
@@ -105,6 +111,8 @@ export const resources = {
     ai: enAi,
     mcp: enMcp,
     calendar: enCalendar,
+    tasks: enTasks,
+    links: enLinks,
   },
 } as const;
 

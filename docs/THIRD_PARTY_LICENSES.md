@@ -82,6 +82,7 @@ Tools: `dotnet-ef` (MIT), local tool in `dotnet-tools.json`.
 | class-variance-authority | Apache-2.0 | component variants |
 | clsx, tailwind-merge | MIT | class names |
 | lucide-react | ISC | icons |
+| @dnd-kit/core (+ @dnd-kit/accessibility, @dnd-kit/utilities) | MIT | Kanban drag and drop (Phase 6) |
 | react-hook-form, @hookform/resolvers | MIT | forms |
 | zod | MIT | schemas (forms, search params) |
 | react-day-picker | MIT | date picker |
