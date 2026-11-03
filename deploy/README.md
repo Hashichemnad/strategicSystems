@@ -85,7 +85,9 @@ Install, backup and upgrade scripts arrive in Phase 18.
 - **Text recognition (OCR)** for scanned PDFs and images uses Tesseract with Arabic and English data, installed in the image
   (ADR 0033). Switch it on in Settings → AI → *Data sharing and limits*; the page says whether the engine is installed. To build an image
   without it: `docker compose … build --build-arg INSTALL_OCR=false`. Non-Docker installs: install `tesseract-ocr`, `tesseract-ocr-ara`,
-  `tesseract-ocr-eng` (or point `Ocr__TesseractPath` to the binary).
+  `tesseract-ocr-eng` (or point `Ocr__TesseractPath` to the binary). The licence notices of every package the OCR install adds are in
+  `/app/licenses/ocr/` in the image (with `packages.txt`); PDFium's and SkiaSharp's are in `/app/licenses/`. Scanned PDF pages are rendered
+  with PDFium, which ships inside the application (no extra package).
 - **MCP server** (`/mcp`) is off until switched on in **Settings → MCP**. Its OAuth sign-in requires **HTTPS** (`MCP_REQUIRE_HTTPS=true`,
   the default). Put the application behind a TLS reverse proxy and let it see the original address:
   ```

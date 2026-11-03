@@ -58,8 +58,8 @@ platform administrator roles.
   the audit event keeps name, size and SHA-256.
 - Text extraction (ADR 0030): PdfPig (Apache-2.0) per page, DocumentFormat.OpenXml (MIT) for Word paragraphs / tables and PowerPoint
   slides + notes; NFKC normalisation turns Arabic presentation forms into letters; `[page n]` / `[slide n]` markers; 60 000 characters max
-  (truncation reported). **Scans** (ADR 0033): with OCR on (Settings → AI, off by default), PDF pages without a text layer and PNG / JPEG /
-  TIFF images are read by Tesseract (`ara+eng`) under `[page n scan]` / `[image scan]` markers; values quoted from them are marked
+  (truncation reported). **Scans** (ADR 0033): with OCR on (Settings → AI, off by default), PDF pages without a usable text layer (rendered
+  with PDFium at the scan's resolution — JBIG2 and CCITT included) and PNG / JPEG / TIFF images are read by Tesseract (`ara+eng`) under `[page n scan]` / `[image scan]` markers; values quoted from them are marked
   `fromScan` ("From scan" in the review). With OCR off: `ai.extract.ocrOff` / `ai.extract.noText`.
 - Post-processing (never trusts the model): unknown fields dropped; values coerced to the field type (number, ISO date, allowed choice, max
   length); the **source snippet must be found in the document** (normalised comparison) — otherwise `sourceVerified=false` and confidence

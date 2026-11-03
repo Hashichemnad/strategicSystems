@@ -46,6 +46,10 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <!-- Licence notices of native components shipped with the app (PDFium, SkiaSharp); the image adds licenses/ocr (ADR 0033). -->
+    <None Include="licenses\**" CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+  <ItemGroup>
     <InternalsVisibleTo Include="Strategy.IntegrationTests" />
   </ItemGroup>
 </Project>

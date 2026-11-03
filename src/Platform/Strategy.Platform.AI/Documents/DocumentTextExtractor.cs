@@ -137,8 +137,8 @@ public static class DocumentTextExtractor
     }
 
     /// <summary>
-    /// Text layer page by page. A page without one (fewer than 10 letters) is a scan: with OCR its largest image is recognised — PNG when PdfPig
-    /// can decode it, the JPEG stream as is otherwise (ADR 0033); without OCR it stays empty.
+    /// Text layer page by page. A page without a usable one (fewer than 10 letters) is a scan: with OCR the page is rendered by PDFium (every PDF
+    /// image codec, JBIG2 and CCITT included) and the image recognised (ADR 0033); without OCR it stays empty.
     /// </summary>
     private static async Task<(string Text, int Pages, int Scanned)> PdfAsync(byte[] content, OcrOptions? ocr, CancellationToken ct)
     {
@@ -148,7 +148,8 @@ public static class DocumentTextExtractor
         foreach (var page in document.GetPages())
         {
             var lines = Lines(page.Letters).ToList();
-            if (lines.Sum(l => l.Count(char.IsLetterOrDigit)) < 10 && ocr is not null && scanned < ocr.MaxPages && PageImage(page) is { } image)
+            if (lines.Sum(l => l.Count(char.IsLetterOrDigit)) < 10 && ocr is not null && scanned < ocr.MaxPages
+                && RenderPage(content, page.Number - 1, ScanDpi(page)) is { } image)
             {
                 var recognised = await ocr.Engine.RecognizeAsync(image, ocr.Languages, ct).ConfigureAwait(false);
                 if (!string.IsNullOrWhiteSpace(recognised))
@@ -171,21 +172,50 @@ public static class DocumentTextExtractor
         return (builder.ToString(), document.NumberOfPages, scanned);
     }
 
-    private static byte[]? PageImage(Page page)
+    /// <summary>Resolution of a rendered page that holds no image (vector-only content).</summary>
+    public const int DefaultRenderDpi = 300;
+
+    /// <summary>
+    /// The resolution the page was scanned at: pixels of its largest image over the inches it covers on the page, clamped to 150–400 dpi.
+    /// Rendering at the scan's own resolution keeps glyphs at the size the scanner produced; enlarging a 150 dpi scan to 300 dpi makes Tesseract's
+    /// line finder drop lines (ADR 0033).
+    /// </summary>
+    internal static int ScanDpi(Page page)
     {
         var image = page.GetImages().OrderByDescending(i => i.WidthInSamples * i.HeightInSamples).FirstOrDefault();
-        if (image is null)
+        if (image is null || image.BoundingBox.Width <= 0)
+        {
+            return DefaultRenderDpi;
+        }
+
+        var dpi = image.WidthInSamples / (image.BoundingBox.Width / 72.0);
+        return (int)Math.Clamp(Math.Round(dpi), 150, 400);
+    }
+
+    /// <summary>
+    /// Renders one page (greyscale, at <paramref name="dpi"/>) to a PNG with PDFium (BSD / Apache-2.0, through PDFtoImage, MIT). PDFium decodes JPEG, JPEG 2000, JBIG2, CCITT G3 / G4
+    /// and Flate images; no GPL renderer (Poppler, Ghostscript, MuPDF) is used. Null when the page cannot be rendered.
+    /// </summary>
+    internal static byte[]? RenderPage(byte[] pdf, int pageIndex, int dpi = DefaultRenderDpi)
+    {
+        if (!OperatingSystem.IsLinux() && !OperatingSystem.IsWindows() && !OperatingSystem.IsMacOS())
+        {
+            return null; // PDFium binaries ship for these platforms only
+        }
+
+        try
+        {
+            using var png = new MemoryStream();
+            PDFtoImage.Conversion.SavePng(png, pdf, pageIndex, password: null,
+                options: new PDFtoImage.RenderOptions(Dpi: dpi, Grayscale: true, WithAnnotations: false, WithFormFill: false));
+            return png.Length > 0 ? png.ToArray() : null;
+        }
+#pragma warning disable CA1031 // a page PDFium cannot render is simply not recognised
+        catch (Exception)
+#pragma warning restore CA1031
         {
             return null;
         }
-
-        if (image.TryGetPng(out var png))
-        {
-            return png;
-        }
-
-        var raw = image.RawMemory.ToArray();
-        return raw.AsSpan().StartsWith((byte[])[0xFF, 0xD8, 0xFF]) ? raw : null;
     }
 
     /// <summary>Letters grouped into lines (top to bottom) and put into reading order.</summary>

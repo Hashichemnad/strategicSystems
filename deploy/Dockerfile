@@ -29,11 +29,22 @@ FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 # libldap: LDAP / Active Directory sign-in (System.DirectoryServices.Protocols needs the native library on Linux).
 # Tesseract OCR (Apache-2.0) with Arabic and English language data: text recognition of scanned documents, used only when switched on in
 # Settings → AI (ADR 0033). Build with --build-arg INSTALL_OCR=false to leave it out (about 40 MB smaller; scans then cannot be read).
+# Licence notices: the copyright file of every package the OCR install adds (Tesseract and the OS libraries it loads, some LGPL) is copied
+# to /app/licenses/ocr/ with a package list (name, version); the build fails if one is missing. docs/THIRD_PARTY_LICENSES.md lists them.
 ARG INSTALL_OCR=true
 RUN apt-get update \
     && (apt-get install -y --no-install-recommends libldap2 || apt-get install -y --no-install-recommends libldap-2.5-0) \
     && if [ "$INSTALL_OCR" = "true" ]; then \
-         apt-get install -y --no-install-recommends tesseract-ocr tesseract-ocr-ara tesseract-ocr-eng; \
+         dpkg-query -W -f='${Package}\n' | sort > /tmp/before \
+         && apt-get install -y --no-install-recommends tesseract-ocr tesseract-ocr-ara tesseract-ocr-eng \
+         && dpkg-query -W -f='${Package}\n' | sort > /tmp/after \
+         && mkdir -p /app/licenses/ocr \
+         && for p in $(comm -13 /tmp/before /tmp/after); do \
+              test -f "/usr/share/doc/$p/copyright" || { echo "missing licence notice for $p"; exit 1; }; \
+              cp "/usr/share/doc/$p/copyright" "/app/licenses/ocr/$p.copyright"; \
+              dpkg-query -W -f='${Package} ${Version}\n' "$p" >> /app/licenses/ocr/packages.txt; \
+            done \
+         && rm /tmp/before /tmp/after; \
        fi \
     && rm -rf /var/lib/apt/lists/*
 WORKDIR /app

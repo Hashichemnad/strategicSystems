@@ -82,6 +82,39 @@ public sealed class OcrTests
         fields[1].ShouldSatisfyAllConditions(f => f.FromScan.ShouldBeFalse(), f => f.LocationNumber.ShouldBe(3));
     }
 
+    /// <summary>
+    /// Black-and-white office scanners store pages as CCITT Group 4 or JBIG2 images, which PdfPig cannot decode: the page is rendered by PDFium
+    /// instead and the rendering recognised (ADR 0033). Samples: a bilevel Arabic page as CCITT G4, a bilevel English page as JBIG2 (generic
+    /// region), each the only content of its PDF page.
+    /// </summary>
+    [Theory]
+    [InlineData("scan-ar-ccitt-g4.pdf", "CCITTFaxDecode", "ara", "الاسم بالعربية: برنامج الأرشيف الرقمي", "1250000")]
+    [InlineData("scan-en-jbig2.pdf", "JBIG2Decode", "eng", "Name (English): Digital archive programme", "Total budget: 1250000 AED")]
+    public async Task Ccitt_and_jbig2_scans_are_rendered_with_pdfium_and_recognised(string sample, string filter, string languages, string line, string amount)
+    {
+        var pdf = Sample(sample);
+        using (var document = UglyToad.PdfPig.PdfDocument.Open(pdf))
+        {
+            var image = document.GetPage(1).GetImages().Single();
+            image.ImageDictionary.ToString().ShouldContain(filter);
+            document.GetPage(1).Letters.ShouldBeEmpty();
+            DocumentTextExtractor.ScanDpi(document.GetPage(1)).ShouldBe(150); // rendered at the scan's own resolution
+            if (filter == "JBIG2Decode")
+            {
+                image.TryGetPng(out _).ShouldBeFalse(); // PdfPig cannot decode JBIG2: only a renderer reads this page
+            }
+        }
+
+        DocumentTextExtractor.RenderPage(pdf, 0).ShouldNotBeNull();
+        var result = await DocumentTextExtractor.ExtractAsync(pdf, sample, Ocr with { Languages = languages }, CancellationToken.None);
+
+        result.IsSuccess.ShouldBeTrue(result.IsFailure ? result.Error.Code : null);
+        result.Value.ScannedPages.ShouldBe(1);
+        result.Value.Text.ShouldStartWith("[page 1 scan]");
+        result.Value.Text.ShouldContain(line);
+        result.Value.Text.ShouldContain(amount);
+    }
+
     [Fact]
     public async Task The_page_limit_bounds_the_work()
     {
@@ -95,7 +128,7 @@ public sealed class OcrTests
     public async Task Without_ocr_scans_are_explained_not_guessed()
     {
         (await DocumentTextExtractor.ExtractAsync(Sample("scan-en.png"), "scan.png", null, CancellationToken.None)).Error!.Code.ShouldBe("ai.extract.ocrOff");
-        var onlyScans = Pdf(page => page.AddJpeg(Sample("scan-ar.jpg"), new PdfRectangle(0, 0, 595, 842)));
+        var onlyScans = Pdf(page => page.AddJpeg(Sample("scan-ar.jpg"), ScanArea));
         (await DocumentTextExtractor.ExtractAsync(onlyScans, "scan.pdf", null, CancellationToken.None)).Error!.Code.ShouldBe("ai.extract.noText");
     }
 
@@ -117,11 +150,14 @@ public sealed class OcrTests
     [InlineData(new byte[] { 0x47, 0x49, 0x46, 0x38 }, false)] // GIF is not accepted for OCR
     public void Images_are_recognised_by_their_signature(byte[] head, bool image) => DocumentTextExtractor.IsImage(head).ShouldBe(image);
 
+    /// <summary>Pages with the samples' proportions (1240 × 900 px at 150 dpi), as a scanner produces them.</summary>
+    private static readonly PdfRectangle ScanArea = new(0, 0, 595, 432);
+
     /// <summary>Two scanned pages (Arabic JPEG, English PNG) and one page with a text layer.</summary>
     private static byte[] ScannedPdf() => Pdf(
-        page => page.AddJpeg(Sample("scan-ar.jpg"), new PdfRectangle(0, 0, 595, 842)),
-        page => page.AddPng(Sample("scan-en.png"), new PdfRectangle(0, 0, 595, 842)),
-        page => page.AddText("Cover note with a real text layer", 12, new PdfPoint(50, 700)));
+        page => page.AddJpeg(Sample("scan-ar.jpg"), ScanArea),
+        page => page.AddPng(Sample("scan-en.png"), ScanArea),
+        page => page.AddText("Cover note with a real text layer", 12, new PdfPoint(50, 300)));
 
     private static byte[] Pdf(params Action<PageWriter>[] pages)
     {
@@ -129,7 +165,7 @@ public sealed class OcrTests
         var font = builder.AddStandard14Font(Standard14Font.Helvetica);
         foreach (var write in pages)
         {
-            write(new PageWriter(builder.AddPage(595, 842), font));
+            write(new PageWriter(builder.AddPage(ScanArea.Width, ScanArea.Height), font));
         }
 
         return builder.Build();

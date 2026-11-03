@@ -21,6 +21,7 @@
     <PackageReference Include="Anthropic" />
     <PackageReference Include="DocumentFormat.OpenXml" />
     <PackageReference Include="PdfPig" />
+    <PackageReference Include="PDFtoImage" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Prompts\*.md" />
