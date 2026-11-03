@@ -13,7 +13,8 @@
   },
   "of": {
     "record": "لوحدة السجل",
-    "submitter": "لوحدة مقدم الطلب"
+    "submitter": "لوحدة مقدم الطلب",
+    "organisation": "للجهة (أعلى وحدة)"
   },
   "actions": {
     "approve": "موافقة",

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Plus, Sparkles, Users, X } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api, unwrap } from '@/api/client';
 import { errorMessage } from '@/api/problem';
@@ -65,11 +65,14 @@ export function NewTaskDialog({
   onOpenChange,
   link,
   onCreated,
+  initial,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   link?: { type: string; id: string; view?: LinkView | undefined } | undefined;
   onCreated?: ((ids: string[], groupId: string | null | undefined) => void) | undefined;
+  /** Pre-filled values, e.g. a task from a team recommendation (Phase 7). */
+  initial?: { title: string; assigneeEmployeeId?: string | null; dueDate?: string | null } | undefined;
 }) {
   const { t, i18n } = useTranslation('tasks');
   const { t: tc } = useTranslation();
@@ -88,6 +91,26 @@ export function NewTaskDialog({
   const [categoryCode, setCategoryCode] = useState('-');
   const [priority, setPriority] = useState('medium');
   const [assignees, setAssignees] = useState<string[]>([]);
+  const [teamId, setTeamId] = useState('-');
+  const teams = useQuery({
+    queryKey: ['teams', 'list', 'task-assign'],
+    queryFn: async ({ signal }) =>
+      unwrap(
+        await api.GET('/api/v1/teams', {
+          params: { query: { view: 'all', status: 'active', pageSize: 100 } },
+          signal,
+        }),
+      ),
+    enabled: open,
+  });
+  useEffect(() => {
+    if (!open || !initial) return;
+    if (i18n.language === 'ar') setTitleAr(initial.title);
+    else setTitleEn(initial.title);
+    if (initial.assigneeEmployeeId) setAssignees([initial.assigneeEmployeeId]);
+    if (initial.dueDate) setDueDate(initial.dueDate);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- fill once when the dialog opens
+  }, [open]);
   const [completionRule, setCompletionRule] = useState('all');
   const [plannedStart, setPlannedStart] = useState<string>();
   const [dueDate, setDueDate] = useState<string>();
@@ -110,6 +133,7 @@ export function NewTaskDialog({
     setTitleEn('');
     setDescription('');
     setAssignees([]);
+    setTeamId('-');
     setPlannedStart(undefined);
     setDueDate(undefined);
     setConfidential(false);
@@ -145,6 +169,7 @@ export function NewTaskDialog({
       recurrence:
         frequency === 'none' ? null : { frequency, interval: 1, until: null, count: Number(count) || null },
       dependsOn: null,
+      assigneeTeamId: teamId === '-' ? null : teamId,
     };
     try {
       const created = await create.mutateAsync({ body, idempotencyKey });
@@ -168,7 +193,7 @@ export function NewTaskDialog({
     }
   }
 
-  const valid = (titleAr.trim() || titleEn.trim()) && assignees.length > 0;
+  const valid = (titleAr.trim() || titleEn.trim()) && (assignees.length > 0 || teamId !== '-');
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
@@ -277,6 +302,21 @@ export function NewTaskDialog({
                   onChange={(id) => id && setAssignees((list) => (list.includes(id) ? list : [...list, id]))}
                 />
               </FormField>
+              {(teams.data?.items.length ?? 0) > 0 && (
+                <FormField label={t('newTask.teamMembers')}>
+                  <Select
+                    value={teamId}
+                    onValueChange={setTeamId}
+                    options={[
+                      { value: '-', label: t('newTask.noTeam') },
+                      ...(teams.data?.items ?? []).map((team) => ({
+                        value: team.id,
+                        label: `${team.number ?? ''} · ${pickText(i18n.language, team.nameAr, team.nameEn)}`,
+                      })),
+                    ]}
+                  />
+                </FormField>
+              )}
               {aiAssignee && (titleEn || titleAr) && (
                 <div className="flex flex-wrap items-center gap-2">
                   <Button

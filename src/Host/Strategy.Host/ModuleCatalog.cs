@@ -1,5 +1,6 @@
 using Strategy.Modules.Sample;
 using Strategy.Modules.Tasks;
+using Strategy.Modules.Teams;
 using Strategy.Platform.Http.Modules;
 
 namespace Strategy.Host;
@@ -11,5 +12,6 @@ internal static class ModuleCatalog
     [
         new SampleModule(),
         new TasksModule(),
+        new TeamsModule(),
     ];
 }

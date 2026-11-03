@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCan } from '@/features/access/session';
 import { HistoryTab } from '@/features/audit/HistoryTab';
+import { EmployeeTeamsTab } from '@/features/teams/EmployeeTeamsTab';
 import { api, ApiError, unwrap } from '@/api/client';
 import { errorMessage, translateMessageKey } from '@/api/problem';
 import { formatDate, pickText } from '@/lib/format';
@@ -35,6 +36,7 @@ export function EmployeePage() {
   const { t } = useTranslation('org');
   const { t: tc, i18n } = useTranslation();
   const { t: ta } = useTranslation('audit');
+  const { t: tt } = useTranslation('teams');
   const { employeeId } = routeApi.useParams();
   const admin = useCan('org.employee.manage');
   const employee = useEmployee(employeeId);
@@ -147,6 +149,7 @@ export function EmployeePage() {
         <TabsList>
           <TabsTrigger value="details">{t('employees.tabs.details')}</TabsTrigger>
           <TabsTrigger value="history">{t('employees.tabs.history')}</TabsTrigger>
+          <TabsTrigger value="teams">{tt('employeeTab.title')}</TabsTrigger>
           <TabsTrigger value="audit">{ta('history.changeLog')}</TabsTrigger>
         </TabsList>
         <TabsContent value="details" className="grid gap-6 pt-4 lg:grid-cols-[2fr_1fr]">
@@ -228,6 +231,9 @@ export function EmployeePage() {
               </li>
             ))}
           </ol>
+        </TabsContent>
+        <TabsContent value="teams" className="pt-4">
+          <EmployeeTeamsTab employeeId={employeeId} />
         </TabsContent>
         <TabsContent value="audit">
           <HistoryTab record="employee" id={employeeId} fieldLabels={auditFieldLabels(t)} />

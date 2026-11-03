@@ -23,6 +23,7 @@ public sealed class SchedulingComponent : IPlatformComponent
         services.AddModuleDbContext<SchedulingDbContext>(SchedulingDbContext.SchemaName);
         services.AddSingleton<OutboxSignal>();
         services.AddScoped<IOutbox, Outbox>();
+        services.AddScoped<Strategy.Platform.Kernel.Messaging.IIntegrationEventPublisher, IntegrationEventPublisher>();
         services.AddSingleton<OutboxDispatcher>();
         services.AddHostedService<OutboxWorker>();
         services.AddSingleton<JobRunListener>();

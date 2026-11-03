@@ -109,6 +109,7 @@ function RuleEditor({
   const ofOptions = [
     { value: 'record', label: t('of.record') },
     { value: 'submitter', label: t('of.submitter') },
+    { value: 'organisation', label: t('of.organisation') },
   ];
   const set = (patch: Partial<ApproverRule>) => rule && onChange({ ...rule, ...patch });
   return (

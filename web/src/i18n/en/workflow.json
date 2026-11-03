@@ -13,7 +13,8 @@
   },
   "of": {
     "record": "of the record's unit",
-    "submitter": "of the submitter's unit"
+    "submitter": "of the submitter's unit",
+    "organisation": "of the organisation (top unit)"
   },
   "actions": {
     "approve": "Approve",

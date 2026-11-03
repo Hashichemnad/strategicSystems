@@ -127,6 +127,12 @@ internal static partial class Bootstrap
         await dispatcher.SendAsync(new UpdateUnit(
             strategy, department.Code, department.NameAr, department.NameEn, department.LevelCode, director, null, null, null, department.Version));
 
+        // Phase 7: she also heads the organisation (the demo General Manager), so the seeded formation chain (Q-T5: department director →
+        // General Manager) has approvers in the demo.
+        var organisation = (await dispatcher.SendAsync(new GetUnit(root))).Value;
+        await dispatcher.SendAsync(new UpdateUnit(
+            root, organisation.Code, organisation.NameAr, organisation.NameEn, organisation.LevelCode, director, null, null, null, organisation.Version));
+
         var users = provider.GetRequiredService<StrategyUserManager>();
         var password = configuration["Seed:Password"] ?? "Strategy#Demo2026";
         var (admin, adminUser) = await CreateUserAsync(users, "mariam@strategy.local", password, director);

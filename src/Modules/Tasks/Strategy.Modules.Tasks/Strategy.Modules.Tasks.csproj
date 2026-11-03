@@ -8,6 +8,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Strategy.Modules.Tasks.Contracts\Strategy.Modules.Tasks.Contracts.csproj" />
+    <ProjectReference Include="..\..\Teams\Strategy.Modules.Teams.Contracts\Strategy.Modules.Teams.Contracts.csproj" />
     <ProjectReference Include="..\..\..\Platform\Strategy.Platform.AI\Strategy.Platform.AI.csproj" />
     <ProjectReference Include="..\..\..\Platform\Strategy.Platform.AI.Contracts\Strategy.Platform.AI.Contracts.csproj" />
     <ProjectReference Include="..\..\..\Platform\Strategy.Platform.Kernel\Strategy.Platform.Kernel.csproj" />

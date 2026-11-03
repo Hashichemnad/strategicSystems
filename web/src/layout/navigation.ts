@@ -19,6 +19,7 @@ export interface NavItem {
   to:
     | '/'
     | '/tasks'
+    | '/teams'
     | '/sample'
     | '/ui-kit'
     | '/org/units'
@@ -36,6 +37,7 @@ export interface NavItem {
   labelKey:
     | 'nav.home'
     | 'nav.tasks'
+    | 'nav.teams'
     | 'nav.sample'
     | 'nav.uiKit'
     | 'nav.units'
@@ -90,6 +92,7 @@ export const settingsPermissions = [
   'org.import.manage',
   'tasks.settings.manage',
   'tasks.reassignment.manage',
+  'teams.settings.manage',
 ] as const;
 
 /**
@@ -103,6 +106,7 @@ export const navigation: readonly NavSection[] = [
     items: [
       { to: '/', labelKey: 'nav.home', icon: LayoutDashboard },
       { to: '/tasks', labelKey: 'nav.tasks', icon: ListTodo, permissions: ['tasks.task.read'] },
+      { to: '/teams', labelKey: 'nav.teams', icon: UsersRound, permissions: ['teams.team.read'] },
     ],
   },
   {

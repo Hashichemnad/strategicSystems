@@ -102,7 +102,7 @@ public sealed class ApproverRuleTests(ApiFixture api) : IClassFixture<ApiFixture
     }
 
     [Fact]
-    public async Task Record_role_resolves_the_holders_on_that_record_and_team_role_waits_for_the_teams_module()
+    public async Task Record_role_resolves_the_holders_on_that_record_and_team_role_resolves_through_the_teams_module()
     {
         var world = await ApprovalWorld.CreateAsync(api.Factory);
         var item = await world.CreateItemAsync();
@@ -115,7 +115,7 @@ public sealed class ApproverRuleTests(ApiFixture api) : IClassFixture<ApiFixture
 
         var team = await ResolveAsync(new ApproverRule(ApproverRuleKinds.TeamRole, RoleCode: "chair"), world);
         team.Approvers.ShouldBeEmpty();
-        team.Notes.ShouldContain("workflow.preview.teamRoleUnavailable");
+        team.Notes.ShouldNotContain("workflow.preview.teamRoleUnavailable"); // Phase 7: Teams resolves team roles (no team linked → nobody)
     }
 
     [Fact]

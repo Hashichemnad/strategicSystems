@@ -250,10 +250,10 @@ Finish with the phase summary.
 ```
 
 **Acceptance checks**
-- [ ] Create a committee through formation approval; memo PDF generated (AR/EN) or uploaded instead.
-- [ ] Meetings with minutes delay and a recommendations register feed the suggested evaluation levels.
-- [ ] Evaluation submitted by the configured evaluator, approved by HR, rewards calculated, certificates generated.
-- [ ] A member logs in and cannot see evaluation results; the President can.
+- [x] Create a committee through formation approval; memo PDF generated (AR/EN) or uploaded instead.
+- [x] Meetings with minutes delay and a recommendations register feed the suggested evaluation levels.
+- [x] Evaluation submitted by the configured evaluator, approved by HR, rewards calculated, certificates generated.
+- [x] A member logs in and cannot see evaluation results; the President can.
 
 ---
 
@@ -516,7 +516,7 @@ Implement, then run the full hardening review and fix findings, run performance 
 | 4 | Approval engine & My Work | ☑ built — awaiting owner acceptance | |
 | 5 | AI platform & MCP | ☑ built — awaiting owner acceptance | |
 | 6 | Links & Task Management | ☑ built — awaiting owner acceptance | |
-| 7 | Teams Management | ☐ | |
+| 7 | Teams Management | ☑ built — awaiting owner acceptance | |
 | 8 | Portfolio A — Requests | ☐ | |
 | 9 | Portfolio B — Lifecycle & change | ☐ | |
 | 10 | Portfolio C — Agile, standards, Gantt | ☐ | |

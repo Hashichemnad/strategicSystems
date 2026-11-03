@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Teams Management (SPEC §4, docs/design/teams.md). -->
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Ai\Prompts\*.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Strategy.Modules.Teams.Contracts\Strategy.Modules.Teams.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\Platform\Strategy.Platform.AI\Strategy.Platform.AI.csproj" />
+    <ProjectReference Include="..\..\..\Platform\Strategy.Platform.AI.Contracts\Strategy.Platform.AI.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\Platform\Strategy.Platform.Kernel\Strategy.Platform.Kernel.csproj" />
+    <ProjectReference Include="..\..\..\Platform\Strategy.Platform.Persistence\Strategy.Platform.Persistence.csproj" />
+    <ProjectReference Include="..\..\..\Platform\Strategy.Platform.Access.Contracts\Strategy.Platform.Access.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\Platform\Strategy.Platform.Audit.Contracts\Strategy.Platform.Audit.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\Platform\Strategy.Platform.Calendar.Contracts\Strategy.Platform.Calendar.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\Platform\Strategy.Platform.Http\Strategy.Platform.Http.csproj" />
+    <ProjectReference Include="..\..\..\Platform\Strategy.Platform.Organisation\Strategy.Platform.Organisation.csproj" />
+    <ProjectReference Include="..\..\..\Platform\Strategy.Platform.Settings\Strategy.Platform.Settings.csproj" />
+    <ProjectReference Include="..\..\..\Platform\Strategy.Platform.Scheduling\Strategy.Platform.Scheduling.csproj" />
+    <ProjectReference Include="..\..\..\Platform\Strategy.Platform.Reporting\Strategy.Platform.Reporting.csproj" />
+    <ProjectReference Include="..\..\..\Platform\Strategy.Platform.Files.Contracts\Strategy.Platform.Files.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\Platform\Strategy.Platform.Notifications.Contracts\Strategy.Platform.Notifications.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\Platform\Strategy.Platform.Workflow.Contracts\Strategy.Platform.Workflow.Contracts.csproj" />
+    <ProjectReference Include="..\..\..\Platform\Strategy.Platform.Links.Contracts\Strategy.Platform.Links.Contracts.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Strategy.UnitTests" />
+    <InternalsVisibleTo Include="Strategy.IntegrationTests" />
+  </ItemGroup>
+</Project>

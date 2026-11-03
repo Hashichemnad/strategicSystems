@@ -177,7 +177,9 @@
     "suggest": "اقتراح مكلفين",
     "suggestions": "مقترحون",
     "fromText": "مسودات مهام من نص",
-    "assignOptions": "خيارات أخرى"
+    "assignOptions": "خيارات أخرى",
+    "teamMembers": "أعضاء فريق (مهمة لكل عضو)",
+    "noTeam": "بدون فريق"
   },
   "fromText": {
     "title": "مسودات مهام من نص",

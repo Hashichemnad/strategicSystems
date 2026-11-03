@@ -19,5 +19,7 @@
   "code": "Use only the letters, digits and hyphens of the expected format.",
   "json": "Invalid JSON.",
   "unknownReference": "The selected item does not exist.",
-  "precisionScale": "Enter a positive number with at most 2 decimals."
+  "precisionScale": "Enter a positive number with at most 2 decimals.",
+  "duplicate": "Each entry must be unique.",
+  "greaterThan": "Must be more than {{value}}."
 }

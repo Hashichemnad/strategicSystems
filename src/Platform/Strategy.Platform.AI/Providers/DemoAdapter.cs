@@ -52,6 +52,38 @@ internal sealed partial class DemoChatClient(string model) : IChatClient
                 attentionPoints = new[] { arabic ? "تحقق من المبلغ المطلوب." : "Check the requested amount." },
             });
         }
+        else if (system.Contains("You turn meeting notes into structured minutes", StringComparison.Ordinal))
+        {
+            text = DraftMinutes(user);
+        }
+        else if (system.Contains("You help an organisation form a team", StringComparison.Ordinal))
+        {
+            var document = Document().Match(user) is { Success: true } d ? d.Groups[1].Value.Trim() : string.Empty;
+            text = JsonSerializer.Serialize(new
+            {
+                objectiveAr = $"تحقيق الغرض التالي: {document}",
+                objectiveEn = $"Deliver the following purpose: {document}",
+                mandateAr = "دراسة الوضع الحالي\nاقتراح الحلول والتوصيات\nمتابعة التنفيذ ورفع التقارير",
+                mandateEn = "Study the current situation\nPropose solutions and recommendations\nFollow up implementation and report",
+                memoAr = $"بناءً على الصلاحيات المخولة، يُشكَّل الفريق لتحقيق: {document}. يباشر الفريق مهامه من تاريخ القرار.",
+                memoEn = $"Under the delegated authority, the team is formed to deliver: {document}. The team starts its work on the date of this decision.",
+            });
+        }
+        else if (system.Contains("You help the evaluator of a team", StringComparison.Ordinal))
+        {
+            var arabic = system.Contains("Write in Arabic", StringComparison.Ordinal);
+            text = JsonSerializer.Serialize(new
+            {
+                summary = arabic
+                    ? "ملخص تجريبي: عقد الفريق اجتماعاته وأغلق معظم توصياته؛ المستويات المقترحة مبنية على بيانات السجل والمحاضر."
+                    : "Demo summary: the team held its meetings and closed most of its recommendations; the suggested levels come from the register and the minutes.",
+                points = new[]
+                {
+                    arabic ? "قارن المستوى المختار بالاقتراح وبرّر أي اختلاف." : "Compare each chosen level with the suggestion and justify any difference.",
+                    arabic ? "أرفق الأدلة إذا بلغت الدرجة الحد المطلوب." : "Attach evidence when the score reaches the threshold.",
+                },
+            });
+        }
         else if (system.Contains("You turn meeting minutes", StringComparison.Ordinal))
         {
             text = DraftTasks(user);
@@ -167,6 +199,38 @@ internal sealed partial class DemoChatClient(string model) : IChatClient
         }
 
         return new JsonObject { ["tasks"] = tasks }.ToJsonString();
+    }
+
+    /// <summary>Notes → minutes (non-list lines), decisions ("Decision:" / "قرار:" lines) and recommendations (list lines with @Owner and "by YYYY-MM-DD").</summary>
+    private static string DraftMinutes(string user)
+    {
+        var document = Document().Match(user) is { Success: true } d ? d.Groups[1].Value : string.Empty;
+        var minutes = new List<string>();
+        var decisions = new JsonArray();
+        var recommendations = new JsonArray();
+        foreach (var raw in document.Split('\n').Select(l => l.Trim()).Where(l => l.Length > 0))
+        {
+            if (raw.StartsWith("Decision:", StringComparison.OrdinalIgnoreCase) || raw.StartsWith("قرار:", StringComparison.Ordinal))
+            {
+                decisions.Add(raw[(raw.IndexOf(':', StringComparison.Ordinal) + 1)..].Trim());
+            }
+            else if (ListItem().Match(raw) is { Success: true } item)
+            {
+                var line = item.Groups[1].Value.Trim();
+                recommendations.Add(new JsonObject
+                {
+                    ["text"] = DueDate().Replace(Mention().Replace(line, string.Empty), string.Empty).Trim(' ', '.', ',', '،', '-'),
+                    ["ownerName"] = Mention().Match(line) is { Success: true } m ? m.Groups[1].Value.Replace('_', ' ') : null,
+                    ["dueDate"] = DueDate().Match(line) is { Success: true } date ? date.Groups[1].Value : null,
+                });
+            }
+            else
+            {
+                minutes.Add(raw);
+            }
+        }
+
+        return new JsonObject { ["minutes"] = string.Join("\n", minutes), ["decisions"] = decisions, ["recommendations"] = recommendations }.ToJsonString();
     }
 
     private static string LastWord(string text) =>
