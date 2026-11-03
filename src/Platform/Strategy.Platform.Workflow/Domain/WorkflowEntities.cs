@@ -93,6 +93,12 @@ public sealed class ProcessStep : Entity
 
     public string? NotificationTemplate { get; private set; }
 
+    public string SlaMode { get; private set; } = SlaModes.Working;
+
+    public string BusinessHoursSource { get; private set; } = BusinessHoursSources.Default;
+
+    public Guid? BusinessHoursId { get; private set; }
+
     public static ProcessStep Create(Guid versionId, int sort, ApprovalStepDefinition d) => new()
     {
         VersionId = versionId,
@@ -112,12 +118,16 @@ public sealed class ProcessStep : Entity
         OnNoApprover = d.OnNoApprover,
         ExcludeSubmitter = d.ExcludeSubmitter,
         NotificationTemplate = Clean(d.NotificationTemplate),
+        SlaMode = d.SlaMode,
+        BusinessHoursSource = d.BusinessHoursSource,
+        BusinessHoursId = d.BusinessHoursSource == BusinessHoursSources.Specific ? d.BusinessHoursId : null,
     };
 
     public ApprovalStepDefinition ToDefinition() => new(
         Code, NameAr, NameEn, WorkflowJson.Read<ApproverRule>(Rule), Condition, Actions,
         WorkflowJson.Read<List<CustomApprovalAction>>(CustomActions), CommentOnApprove, CommentOnReject, CommentOnReturn, SlaHours,
-        Escalation is null ? null : WorkflowJson.Read<ApproverRule>(Escalation), OnNoApprover, ExcludeSubmitter, NotificationTemplate);
+        Escalation is null ? null : WorkflowJson.Read<ApproverRule>(Escalation), OnNoApprover, ExcludeSubmitter, NotificationTemplate,
+        SlaMode, BusinessHoursSource, BusinessHoursId);
 
     private static string? Clean(string? value) => string.IsNullOrWhiteSpace(value) ? null : value.Trim();
 }
@@ -279,6 +289,15 @@ public sealed class ApprovalTask : AuditableEntity
 
     public DateTimeOffset? DueAt { get; private set; }
 
+    /// <summary>How the due time was counted (<see cref="SlaModes"/>) and, for working hours, with which business hours (snapshot).</summary>
+    public string? SlaMode { get; private set; }
+
+    public Guid? BusinessHoursId { get; private set; }
+
+    public string? BusinessHoursNameAr { get; private set; }
+
+    public string? BusinessHoursNameEn { get; private set; }
+
     public DateTimeOffset? EscalatedAt { get; private set; }
 
     public DateTimeOffset? CompletedAt { get; private set; }
@@ -298,7 +317,8 @@ public sealed class ApprovalTask : AuditableEntity
 
     public List<TaskAssignee> Assignees { get; private set; } = [];
 
-    public static ApprovalTask Open(Guid instanceId, ProcessStep step, DateTimeOffset now) => new()
+    /// <summary>Opens a task; <paramref name="due"/> is computed by the engine through the business-hours calculator (ADR 0027).</summary>
+    public static ApprovalTask Open(Guid instanceId, ProcessStep step, DateTimeOffset now, TaskDue? due) => new()
     {
         InstanceId = instanceId,
         StepSort = step.Sort,
@@ -306,7 +326,11 @@ public sealed class ApprovalTask : AuditableEntity
         StepNameAr = step.NameAr,
         StepNameEn = step.NameEn,
         OpenedAt = now,
-        DueAt = step.SlaHours is > 0 ? now.AddHours(step.SlaHours.Value) : null,
+        DueAt = due?.DueAt,
+        SlaMode = due?.SlaMode,
+        BusinessHoursId = due?.BusinessHoursId,
+        BusinessHoursNameAr = due?.NameAr,
+        BusinessHoursNameEn = due?.NameEn,
     };
 
     public IEnumerable<TaskAssignee> ActiveAssignees => Assignees.Where(a => a.Active);
@@ -340,6 +364,9 @@ public sealed class ApprovalTask : AuditableEntity
 
     public void MarkEscalated(DateTimeOffset now) => EscalatedAt = now;
 }
+
+/// <summary>A task's due time and how it was counted.</summary>
+public sealed record TaskDue(DateTimeOffset DueAt, string SlaMode, Guid? BusinessHoursId, string? NameAr, string? NameEn);
 
 public static class AssigneeSources
 {

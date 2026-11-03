@@ -15,7 +15,8 @@ internal sealed partial class StepValidator(
     IEmployeeDirectory employees,
     IOrgDirectory org,
     IEnumerable<IAccessCatalogueSource> catalogues,
-    IEnumerable<NotificationTemplateDefinition> templates)
+    IEnumerable<NotificationTemplateDefinition> templates,
+    Calendar.IBusinessHoursCalculator businessHours)
 {
     public const int MaxSteps = 30;
 
@@ -41,6 +42,7 @@ internal sealed partial class StepValidator(
         var recordRoles = catalogues.SelectMany(c => c.RecordRoles).Where(r => r.ResourceType == process.ResourceType).Select(r => r.RoleCode)
             .ToHashSet(StringComparer.Ordinal);
         var templateKeys = templates.Select(t => t.Key).ToHashSet(StringComparer.Ordinal);
+        var activeBusinessHours = (await businessHours.ListActiveAsync(ct).ConfigureAwait(false)).Select(b => b.Id).ToHashSet();
         var variables = ProcessRegistry.VariablesOf(process);
         var codes = new HashSet<string>(StringComparer.Ordinal);
         for (var i = 0; i < steps.Count; i++)
@@ -137,6 +139,21 @@ internal sealed partial class StepValidator(
             if (step.NotificationTemplate is { Length: > 0 } template && !templateKeys.Contains(template))
             {
                 errors.Add(Field($"{at}.notificationTemplate", "validation.unknownReference"));
+            }
+
+            if (!SlaModes.All.Contains(step.SlaMode))
+            {
+                errors.Add(Field($"{at}.slaMode", "validation.unknownReference"));
+            }
+
+            if (!BusinessHoursSources.All.Contains(step.BusinessHoursSource))
+            {
+                errors.Add(Field($"{at}.businessHoursSource", "validation.unknownReference"));
+            }
+            else if (step.SlaMode == SlaModes.Working && step.BusinessHoursSource == BusinessHoursSources.Specific
+                && (step.BusinessHoursId is not { } bh || !activeBusinessHours.Contains(bh)))
+            {
+                errors.Add(Field($"{at}.businessHoursId", "validation.unknownReference"));
             }
         }
 

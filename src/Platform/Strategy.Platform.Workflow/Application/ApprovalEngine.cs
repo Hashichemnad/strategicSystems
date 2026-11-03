@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Strategy.Platform.Access;
 using Strategy.Platform.Audit;
+using Strategy.Platform.Calendar;
 using Strategy.Platform.Kernel.Context;
 using Strategy.Platform.Kernel.Expressions;
 using Strategy.Platform.Kernel.Results;
@@ -44,6 +45,7 @@ internal sealed class ApprovalEngine(
     IRecordRoleService recordRoles,
     INotificationService notifications,
     IAuditSink auditSink,
+    IBusinessHoursCalculator businessHours,
     IEnumerable<IApprovalHook> hooks) : IApprovalEngine
 {
     private readonly List<ApprovalEvent> _pendingEvents = [];
@@ -464,7 +466,7 @@ internal sealed class ApprovalEngine(
                     new Dictionary<string, object?> { ["stepAr"] = step.NameAr ?? step.NameEn, ["stepEn"] = step.NameEn ?? step.NameAr });
             }
 
-            var task = ApprovalTask.Open(instance.Id, step, now);
+            var task = ApprovalTask.Open(instance.Id, step, now, await DueAsync(step, instance, now, ct).ConfigureAwait(false));
             foreach (var approver in approvers)
             {
                 task.Assignees.Add(TaskAssignee.Create(task.Id, approver.UserId, approver.EmployeeId, approver.DisplayName, AssigneeSources.Rule, now));
@@ -537,6 +539,34 @@ internal sealed class ApprovalEngine(
         CancellationToken ct) => AppendAuditAsync(process, instance, action, task, data, reason, ct);
 
     // ------------------------------------------------------------------ helpers
+
+    /// <summary>
+    /// The step's due time (ADR 0027): calendar hours, or working hours of the default / the record's unit / a specific business-hours record
+    /// (an inactive or missing one falls back to the default), through the shared calculator.
+    /// </summary>
+    private async Task<TaskDue?> DueAsync(ProcessStep step, ApprovalInstance instance, DateTimeOffset now, CancellationToken ct)
+    {
+        if (step.SlaHours is not > 0)
+        {
+            return null;
+        }
+
+        var hours = TimeSpan.FromHours(step.SlaHours.Value);
+        if (step.SlaMode == SlaModes.Calendar)
+        {
+            return new TaskDue(now + hours, SlaModes.Calendar, null, null, null);
+        }
+
+        var record = step.BusinessHoursSource switch
+        {
+            BusinessHoursSources.Unit => await businessHours.ResolveForUnitAsync(instance.SubjectUnitId, ct).ConfigureAwait(false),
+            BusinessHoursSources.Specific when step.BusinessHoursId is { } id
+                && await businessHours.GetAsync(id, ct).ConfigureAwait(false) is { Active: true } specific => specific,
+            _ => await businessHours.GetDefaultAsync(ct).ConfigureAwait(false),
+        };
+        var due = await businessHours.AddWorkingTimeAsync(record.Id, now, hours, ct).ConfigureAwait(false);
+        return new TaskDue(due, SlaModes.Working, record.Id, record.NameAr ?? record.NameEn, record.NameEn ?? record.NameAr);
+    }
 
     /// <summary>
     /// Time of the next history row: now, but strictly after the previous row of this unit of work (one microsecond apart), so the timeline

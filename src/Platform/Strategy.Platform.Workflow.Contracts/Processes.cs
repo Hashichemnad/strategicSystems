@@ -84,6 +84,25 @@ public static class ApprovalActions
     public static readonly IReadOnlyList<string> All = [Approve, Reject, Return];
 }
 
+/// <summary>How a step's SLA hours count (ADR 0027): working hours of a business-hours record, or plain calendar hours.</summary>
+public static class SlaModes
+{
+    public const string Working = "working";
+    public const string Calendar = "calendar";
+
+    public static readonly IReadOnlyList<string> All = [Working, Calendar];
+}
+
+/// <summary>Which business hours a working-hours SLA uses: the default, the record's unit (with inheritance), or a specific record.</summary>
+public static class BusinessHoursSources
+{
+    public const string Default = "default";
+    public const string Unit = "unit";
+    public const string Specific = "specific";
+
+    public static readonly IReadOnlyList<string> All = [Default, Unit, Specific];
+}
+
 public static class NoApproverBehaviours
 {
     public const string Block = "block";
@@ -111,7 +130,10 @@ public sealed record ApprovalStepDefinition(
     ApproverRule? Escalation = null,
     string OnNoApprover = NoApproverBehaviours.Block,
     bool ExcludeSubmitter = true,
-    string? NotificationTemplate = null)
+    string? NotificationTemplate = null,
+    string SlaMode = SlaModes.Working,
+    string BusinessHoursSource = BusinessHoursSources.Default,
+    Guid? BusinessHoursId = null)
 {
     [System.Text.Json.Serialization.JsonIgnore]
     public IReadOnlyList<string> EffectiveActions => Actions is { Count: > 0 } ? Actions : ApprovalActions.All;

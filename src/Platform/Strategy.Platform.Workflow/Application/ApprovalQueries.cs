@@ -14,7 +14,8 @@ namespace Strategy.Platform.Workflow.Application;
 public sealed record MyWorkTaskDto(
     Guid TaskId, uint TaskVersion, Guid InstanceId, string ProcessKey, string ProcessNameAr, string ProcessNameEn, string SystemCode, string ResourceType,
     Guid ResourceId, string? Number, string? TitleAr, string? TitleEn, string Link, string? StepNameAr, string? StepNameEn, string? SubmitterName,
-    DateTimeOffset SubmittedAt, DateTimeOffset OpenedAt, DateTimeOffset? DueAt, bool Overdue, PersonName? OnBehalfOf, int Attempt);
+    DateTimeOffset SubmittedAt, DateTimeOffset OpenedAt, DateTimeOffset? DueAt, bool Overdue, PersonName? OnBehalfOf, int Attempt,
+    string? SlaMode, string? BusinessHoursNameAr, string? BusinessHoursNameEn);
 
 public sealed record MySubmissionDto(
     Guid InstanceId, string ProcessKey, string ProcessNameAr, string ProcessNameEn, string SystemCode, string? Number, string? TitleAr, string? TitleEn,
@@ -31,7 +32,8 @@ public sealed record MyTaskDto(Guid TaskId, uint Version, IReadOnlyList<Approval
 
 public sealed record StepStateDto(
     int Sort, string Code, string? NameAr, string? NameEn, string State, IReadOnlyList<PersonName> Approvers, string? Outcome, PersonName? ActedBy,
-    PersonName? OnBehalfOf, string? Comment, DateTimeOffset? CompletedAt, DateTimeOffset? DueAt, bool Overdue);
+    PersonName? OnBehalfOf, string? Comment, DateTimeOffset? CompletedAt, DateTimeOffset? DueAt, bool Overdue, string? SlaMode,
+    string? BusinessHoursNameAr, string? BusinessHoursNameEn);
 
 public sealed record HistoryDto(
     Guid Id, DateTimeOffset OccurredAt, string Event, string? StepNameAr, string? StepNameEn, PersonName? Actor, PersonName? OnBehalfOf, string? Comment,
@@ -119,7 +121,8 @@ internal sealed partial class ApprovalQueries(
                 return new MyWorkTaskDto(t.Task.Id, t.Task.Version, instance.Id, process.Key, process.NameAr, process.NameEn, process.SystemCode,
                     instance.ResourceType, instance.ResourceId, instance.SubjectNumber, instance.TitleAr, instance.TitleEn, instance.Link, t.Task.StepNameAr,
                     t.Task.StepNameEn, instance.SubmitterName, instance.SubmittedAt, t.Task.OpenedAt, t.Task.DueAt, t.Task.DueAt is { } due && due < now,
-                    t.For is null ? null : onBehalf.FirstOrDefault(p => p.UserId == t.For.UserId), instance.Attempt);
+                    t.For is null ? null : onBehalf.FirstOrDefault(p => p.UserId == t.For.UserId), instance.Attempt, t.Task.SlaMode,
+                    t.Task.BusinessHoursNameAr, t.Task.BusinessHoursNameEn);
             })
             .OrderByDescending(t => t.Overdue).ThenBy(t => t.DueAt ?? DateTimeOffset.MaxValue).ThenBy(t => t.OpenedAt)
             .ToList();
@@ -235,7 +238,8 @@ internal sealed partial class ApprovalQueries(
                     .Select(a => Person(a.UserId, a.Name)!).ToList() ?? [];
                 return new StepStateDto(s.Sort, s.Code, s.NameAr, s.NameEn, state, approvers, task?.Outcome, Person(task?.ActedByUserId, task?.ActedByName),
                     Person(task?.OnBehalfOfUserId, task?.OnBehalfOfName), task?.Comment, task?.CompletedAt, task?.DueAt,
-                    task is { Status: ApprovalTaskStatuses.Pending, DueAt: { } due } && due < now);
+                    task is { Status: ApprovalTaskStatuses.Pending, DueAt: { } due } && due < now, task?.SlaMode, task?.BusinessHoursNameAr,
+                    task?.BusinessHoursNameEn);
             }).ToList();
 
             MyTaskDto? myTask = null;

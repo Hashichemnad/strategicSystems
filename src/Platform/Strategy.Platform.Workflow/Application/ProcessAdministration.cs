@@ -26,7 +26,8 @@ public sealed record VersionSummaryDto(int VersionNo, string? Note, DateTimeOffs
 public sealed record ProcessDetailDto(
     string Key, string SystemCode, string? SystemNameAr, string? SystemNameEn, string NameAr, string NameEn, string? DescriptionAr, string? DescriptionEn,
     string ResourceType, int VersionNo, IReadOnlyList<ApprovalStepDefinition> Steps, IReadOnlyList<VersionSummaryDto> Versions, IReadOnlyList<VariableDto> Variables,
-    IReadOnlyList<OptionDto> Roles, IReadOnlyList<OptionDto> RecordRoles, IReadOnlyList<OptionDto> Templates, IReadOnlyList<string> Functions);
+    IReadOnlyList<OptionDto> Roles, IReadOnlyList<OptionDto> RecordRoles, IReadOnlyList<OptionDto> Templates, IReadOnlyList<string> Functions,
+    IReadOnlyList<OptionDto> BusinessHours);
 
 public sealed record SaveProcessInput(IReadOnlyList<ApprovalStepDefinition>? Steps, string? Note, int? BaseVersionNo);
 
@@ -72,6 +73,7 @@ internal sealed class ProcessAdministration(
     ISettingsEditor settingsEditor,
     IEnumerable<IAccessCatalogueSource> catalogues,
     IEnumerable<NotificationTemplateDefinition> templates,
+    Calendar.IBusinessHoursCalculator businessHours,
     IClock clock)
 {
     private SystemDefinition? SystemOf(string code) => catalogues.Select(c => c.System).FirstOrDefault(s => s.Code == code);
@@ -128,7 +130,9 @@ internal sealed class ProcessAdministration(
             process.DescriptionEn, process.ResourceType, shown?.VersionNo ?? 0,
             shown?.OrderedSteps.Select(s => s.ToDefinition()).ToList() ?? [.. process.DefaultSteps],
             all.Select(v => new VersionSummaryDto(v.VersionNo, v.Note, v.CreatedAt, v.CreatedBy, AuthorName(v.CreatedBy), v.Steps.Count)).ToList(),
-            variables, roleOptions, recordRoleOptions, templateOptions, ExpressionFunctions.Names);
+            variables, roleOptions, recordRoleOptions, templateOptions, ExpressionFunctions.Names,
+            (await businessHours.ListActiveAsync(ct).ConfigureAwait(false))
+                .Select(b => new OptionDto(b.Id.ToString("D"), b.NameAr ?? b.NameEn, b.NameEn ?? b.NameAr)).ToList());
     }
 
     private static VariableDto ToDto(ExpressionVariable v, bool builtIn) =>

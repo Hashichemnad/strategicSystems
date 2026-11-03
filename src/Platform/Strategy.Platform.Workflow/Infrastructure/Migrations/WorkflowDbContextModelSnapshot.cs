@@ -186,6 +186,20 @@ namespace Strategy.Platform.Workflow.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("acted_by_user_id");
 
+                    b.Property<Guid?>("BusinessHoursId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("business_hours_id");
+
+                    b.Property<string>("BusinessHoursNameAr")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("business_hours_name_ar");
+
+                    b.Property<string>("BusinessHoursNameEn")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("business_hours_name_en");
+
                     b.Property<string>("Comment")
                         .HasMaxLength(4000)
                         .HasColumnType("character varying(4000)")
@@ -232,6 +246,11 @@ namespace Strategy.Platform.Workflow.Infrastructure.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)")
                         .HasColumnName("outcome");
+
+                    b.Property<string>("SlaMode")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("sla_mode");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -429,6 +448,18 @@ namespace Strategy.Platform.Workflow.Infrastructure.Migrations
                         .HasColumnType("text[]")
                         .HasColumnName("actions");
 
+                    b.Property<Guid?>("BusinessHoursId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("business_hours_id");
+
+                    b.Property<string>("BusinessHoursSource")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasDefaultValue("default")
+                        .HasColumnName("business_hours_source");
+
                     b.Property<string>("Code")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -494,6 +525,14 @@ namespace Strategy.Platform.Workflow.Infrastructure.Migrations
                     b.Property<int?>("SlaHours")
                         .HasColumnType("integer")
                         .HasColumnName("sla_hours");
+
+                    b.Property<string>("SlaMode")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasDefaultValue("working")
+                        .HasColumnName("sla_mode");
 
                     b.Property<int>("Sort")
                         .HasColumnType("integer")

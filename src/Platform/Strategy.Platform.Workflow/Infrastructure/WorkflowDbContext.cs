@@ -56,6 +56,8 @@ internal sealed class ProcessStepConfiguration : IEntityTypeConfiguration<Proces
         builder.Property(x => x.Escalation).HasColumnType("jsonb");
         builder.Property(x => x.OnNoApprover).HasMaxLength(20);
         builder.Property(x => x.NotificationTemplate).HasMaxLength(150);
+        builder.Property(x => x.SlaMode).HasMaxLength(20).HasDefaultValue(SlaModes.Working);
+        builder.Property(x => x.BusinessHoursSource).HasMaxLength(20).HasDefaultValue(BusinessHoursSources.Default);
         builder.HasIndex(x => new { x.VersionId, x.Sort }).IsUnique();
     }
 }
@@ -95,6 +97,9 @@ internal sealed class TaskConfiguration : IEntityTypeConfiguration<ApprovalTask>
         builder.Property(x => x.StepNameEn).HasMaxLength(200);
         builder.Property(x => x.Status).HasMaxLength(20);
         builder.Property(x => x.Outcome).HasMaxLength(50);
+        builder.Property(x => x.SlaMode).HasMaxLength(20);
+        builder.Property(x => x.BusinessHoursNameAr).HasMaxLength(200);
+        builder.Property(x => x.BusinessHoursNameEn).HasMaxLength(200);
         builder.Property(x => x.ActedByName).HasMaxLength(300);
         builder.Property(x => x.OnBehalfOfName).HasMaxLength(300);
         builder.Property(x => x.Comment).HasMaxLength(ApprovalTask.CommentMaxLength);
