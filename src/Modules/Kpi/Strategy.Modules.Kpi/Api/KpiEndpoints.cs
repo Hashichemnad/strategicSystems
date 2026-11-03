@@ -113,7 +113,7 @@ internal static class KpiEndpoints
         group.MapPost("/changes/{id:guid}/withdraw", async (Guid id, KpiWithdrawInput b, IDispatcher d, CancellationToken ct) =>
                 (await d.SendAsync(new WithdrawKpiDefinitionChange(id, b.Reason), ct)).ToOk())
             .WithName("WithdrawKpiDefinitionChange").RequirePermission(KpiPermissions.CardRead);
-        group.MapRecordHistory(KpiCard.EntityType, KpiPermissions.CardRead, "GetKpiCard", async (id, context) =>
+        group.MapGroup("/cards").MapRecordHistory(KpiCard.EntityType, KpiPermissions.CardRead, "GetKpiCard", async (id, context) =>
             (await context.RequestServices.GetRequiredService<IDispatcher>().SendAsync(new GetKpiCard(id), context.RequestAborted)).IsSuccess);
 
         // Measuring year, windows, plans
@@ -166,7 +166,7 @@ internal static class KpiEndpoints
             .WithName("ReopenKpiResult").RequirePermission(KpiPermissions.ResultReopen);
         group.MapPost("/results/{id:guid}/open-now", async (Guid id, IDispatcher d, CancellationToken ct) => (await d.SendAsync(new OpenKpiResultNow(id), ct)).ToOk())
             .WithName("OpenKpiResultNow").RequirePermission(KpiPermissions.PlanManage);
-        group.MapRecordHistory(KpiResult.EntityType, KpiPermissions.ResultRead, "GetKpiResult", async (id, context) =>
+        group.MapGroup("/results").MapRecordHistory(KpiResult.EntityType, KpiPermissions.ResultRead, "GetKpiResult", async (id, context) =>
             (await context.RequestServices.GetRequiredService<IDispatcher>().SendAsync(new GetKpiResult(id), context.RequestAborted)).IsSuccess);
 
         // Approval queue
