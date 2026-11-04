@@ -605,6 +605,20 @@ test.describe('portfolio — project lifecycle', () => {
     await waitFor(ahmed, id, (p) => p.subState === 'closure-draft', '100 % → Closure');
     expect(build.id).not.toBe('');
 
+    // Phase 10 quality (ADR 0095): the PM Office signs off every deliverable before the closure.
+    const finalPlan = await json<{ milestones: { id: string; isDeliverable: boolean; version: number }[] }>(
+      await ahmed.get(`${base}/milestones`),
+    );
+    for (const deliverable of finalPlan.milestones.filter((m) => m.isDeliverable)) {
+      await json(
+        await apiPost(adminApi, `/api/v1/portfolio/milestones/${deliverable.id}/sign-off`, {
+          decision: 'accepted',
+          comment: 'Meets the acceptance criteria',
+          version: deliverable.version,
+        }),
+      );
+    }
+
     // 9. Closure form with a lesson learned; submitted and approved → Impact (the project team's evaluation opens in Teams).
     await json(
       await apiPost(ahmed, `${base}/lessons`, {
