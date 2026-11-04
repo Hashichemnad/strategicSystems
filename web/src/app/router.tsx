@@ -562,6 +562,154 @@ export const kpiReportsRoute = createRoute({
   component: lazyRouteComponent(() => import('@/features/kpi/ReportsPage'), 'KpiReportsPage'),
 });
 
+// Corrective Action Plan (Phase 15, docs/design/cap.md §9): dashboard, sources, remarks, actions, suggestions.
+export const capDashboardRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/cap',
+  component: lazyRouteComponent(() => import('@/features/cap/DashboardPage'), 'CapDashboardPage'),
+});
+
+export const capSourcesRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/cap/sources',
+  validateSearch: z.object({
+    page: z.coerce.number().int().min(1).optional().catch(undefined),
+    search: z.string().max(200).optional().catch(undefined),
+    sourceType: z.string().max(100).optional().catch(undefined),
+  }),
+  component: lazyRouteComponent(() => import('@/features/cap/SourcesPage'), 'CapSourcesPage'),
+});
+
+export const capSourceRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/cap/sources/$sourceId',
+  component: lazyRouteComponent(() => import('@/features/cap/SourcePage'), 'CapSourcePage'),
+});
+
+export const capRemarksRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/cap/remarks',
+  validateSearch: z.object({
+    page: z.coerce.number().int().min(1).optional().catch(undefined),
+    view: z
+      .enum(['all', 'mine', 'to-accept', 'my-unit', 'overdue', 'to-confirm', 'open'])
+      .optional()
+      .catch(undefined),
+    search: z.string().max(200).optional().catch(undefined),
+    status: z.string().max(40).optional().catch(undefined),
+    priority: z.string().max(40).optional().catch(undefined),
+    unitId: z.uuid().optional().catch(undefined),
+    sourceType: z.string().max(100).optional().catch(undefined),
+  }),
+  component: lazyRouteComponent(() => import('@/features/cap/RemarksPage'), 'CapRemarksPage'),
+});
+
+export const capRemarkRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/cap/remarks/$remarkId',
+  validateSearch: z.object({
+    tab: z
+      .enum(['overview', 'root-cause', 'actions', 'tasks', 'documents', 'history'])
+      .optional()
+      .catch(undefined),
+  }),
+  component: lazyRouteComponent(() => import('@/features/cap/RemarkPage'), 'CapRemarkPage'),
+});
+
+export const capActionsRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/cap/my-actions',
+  validateSearch: z.object({
+    page: z.coerce.number().int().min(1).optional().catch(undefined),
+    view: z
+      .enum(['mine', 'all', 'to-validate', 'late', 'budget', 'pending-completion', 'open'])
+      .optional()
+      .catch(undefined),
+    search: z.string().max(200).optional().catch(undefined),
+  }),
+  component: lazyRouteComponent(() => import('@/features/cap/ActionsPage'), 'CapActionsPage'),
+});
+
+export const capActionRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/cap/actions/$actionId',
+  validateSearch: z.object({
+    tab: z
+      .enum(['overview', 'progress', 'evidence', 'extensions', 'approvals', 'tasks', 'history'])
+      .optional()
+      .catch(undefined),
+  }),
+  component: lazyRouteComponent(() => import('@/features/cap/ActionPage'), 'CapActionPage'),
+});
+
+export const capSuggestionsRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/cap/suggestions',
+  component: lazyRouteComponent(() => import('@/features/cap/SuggestionsPage'), 'CapSuggestionsPage'),
+});
+
+// Benchmarking (Phase 15, docs/design/benchmarking.md §9): dashboard, annual plan, studies, comparator register, best-practice library.
+export const benchDashboardRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/bench',
+  component: lazyRouteComponent(() => import('@/features/bench/DashboardPage'), 'BenchDashboardPage'),
+});
+
+export const benchPlanRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/bench/plan',
+  validateSearch: z.object({ year: z.coerce.number().int().min(2000).max(2100).optional().catch(undefined) }),
+  component: lazyRouteComponent(() => import('@/features/bench/PlanPage'), 'BenchPlanPage'),
+});
+
+export const benchStudiesRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/bench/studies',
+  validateSearch: z.object({
+    page: z.coerce.number().int().min(1).optional().catch(undefined),
+    view: z.enum(['all', 'mine', 'my-unit', 'pending', 'active']).optional().catch(undefined),
+    search: z.string().max(200).optional().catch(undefined),
+    stage: z.string().max(40).optional().catch(undefined),
+    year: z.coerce.number().int().min(2000).max(2100).optional().catch(undefined),
+  }),
+  component: lazyRouteComponent(() => import('@/features/bench/StudiesPage'), 'BenchStudiesPage'),
+});
+
+export const benchStudyRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/bench/studies/$studyId',
+  validateSearch: z.object({
+    tab: z
+      .enum([
+        'overview',
+        'search',
+        'visit',
+        'analysis',
+        'actions',
+        'impact',
+        'approvals',
+        'tasks',
+        'documents',
+        'history',
+      ])
+      .optional()
+      .catch(undefined),
+  }),
+  component: lazyRouteComponent(() => import('@/features/bench/StudyPage'), 'BenchStudyPage'),
+});
+
+export const benchComparatorsRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/bench/comparators',
+  component: lazyRouteComponent(() => import('@/features/bench/LibraryPages'), 'BenchComparatorsPage'),
+});
+
+export const benchPracticesRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/bench/practices',
+  component: lazyRouteComponent(() => import('@/features/bench/LibraryPages'), 'BenchPracticesPage'),
+});
+
 // Risk Management (Phase 13, docs/design/risk.md §12): dashboard, register, risk page and wizard, my actions, project risks, mechanism, reports.
 export const riskDashboardRoute = createRoute({
   getParentRoute: () => appLayout,
@@ -1087,6 +1235,18 @@ const ipSettingsRoute = createRoute({
   component: lazyRouteComponent(() => import('@/features/ip/SettingsPage'), 'IpSettingsPage'),
 });
 
+const capSettingsRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/cap',
+  component: lazyRouteComponent(() => import('@/features/cap/SettingsPage'), 'CapSettingsPage'),
+});
+
+const benchSettingsRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/bench',
+  component: lazyRouteComponent(() => import('@/features/bench/LibraryPages'), 'BenchSettingsPage'),
+});
+
 const taskSettingsRoute = createRoute({
   getParentRoute: () => settingsLayout,
   path: '/tasks',
@@ -1196,6 +1356,20 @@ const routeTree = rootRoute.addChildren([
     kpiScorecardRoute,
     kpiStrategyMapRoute,
     kpiReportsRoute,
+    capDashboardRoute,
+    capSourcesRoute,
+    capSourceRoute,
+    capRemarksRoute,
+    capRemarkRoute,
+    capActionsRoute,
+    capActionRoute,
+    capSuggestionsRoute,
+    benchDashboardRoute,
+    benchPlanRoute,
+    benchStudiesRoute,
+    benchStudyRoute,
+    benchComparatorsRoute,
+    benchPracticesRoute,
     riskDashboardRoute,
     riskRegisterRoute,
     riskNewRoute,
@@ -1261,6 +1435,8 @@ const routeTree = rootRoute.addChildren([
       requestTypeBuilderRoute,
       docregSettingsRoute,
       ipSettingsRoute,
+      capSettingsRoute,
+      benchSettingsRoute,
       taskReassignRoute,
       rolesRoute,
       assignmentsRoute,

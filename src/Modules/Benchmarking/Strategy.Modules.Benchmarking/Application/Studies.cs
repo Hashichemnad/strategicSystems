@@ -450,7 +450,7 @@ internal sealed class StudyCommands(
         var candidates = command.Candidates ?? [];
         if (candidates.Count > 30)
         {
-            errors.Add(new FieldError("candidates", "validation.maximumCount", "validation.maximumCount"));
+            errors.Add(new FieldError("candidates", "validation.invalid", "validation.invalid"));
         }
 
         for (var i = 0; i < candidates.Count; i++)

@@ -40,7 +40,9 @@
     "ip": "Intellectual property",
     "portfolioVendors": "Vendors (Wasel)",
     "portfolioCapacity": "Capacity",
-    "portfolioReviews": "Portfolio reviews"
+    "portfolioReviews": "Portfolio reviews",
+    "cap": "Corrective actions",
+    "bench": "Benchmarking"
   },
   "language": {
     "label": "Language",

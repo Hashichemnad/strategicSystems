@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -67,7 +68,16 @@ export function EventsTab({ risk }: { risk: Risk }) {
                   <span className="flex flex-col gap-1">
                     <bdi className="font-medium">{e.number}</bdi>
                     {e.values.nearMiss && <StatusChip tone="info">{t('events.nearMiss')}</StatusChip>}
-                    {e.capRemarkId && <StatusChip tone="warning">{t('events.capRemark')}</StatusChip>}
+                    {e.capRemarkId && (
+                      <Link
+                        to="/cap/remarks/$remarkId"
+                        params={{ remarkId: e.capRemarkId }}
+                        className="text-sm text-primary hover:underline"
+                        data-testid="risk-event-cap-remark"
+                      >
+                        <StatusChip tone="warning">{t('events.capRemark')}</StatusChip>
+                      </Link>
+                    )}
                   </span>
                 </TableCell>
                 <TableCell>{formatDate(e.values.occurredOn, language)}</TableCell>
