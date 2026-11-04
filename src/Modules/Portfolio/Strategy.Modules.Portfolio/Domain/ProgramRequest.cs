@@ -99,7 +99,7 @@ public sealed class ProgramRequest : AuditableEntity
 
     public Guid? RequesterUserId { get; private set; }
 
-    /// <summary><c>manual</c> or <c>document</c> (started from a document with AI).</summary>
+    /// <summary><c>manual</c>, <c>document</c> (started from a document with AI) or <c>action-plan</c> (CAP budget routing, ADR 0124).</summary>
     public string Source { get; private set; } = "manual";
 
     public Guid? ProjectId { get; private set; }
@@ -256,7 +256,7 @@ public sealed class ProgramRequest : AuditableEntity
         Number = number,
         RequesterEmployeeId = requesterEmployeeId,
         RequesterUserId = requesterUserId,
-        Source = source == "document" ? "document" : "manual",
+        Source = source is "document" or "action-plan" ? source : "manual",
     };
 
     /// <summary>Replaces the editable values (Draft only) with the computed classification and priority.</summary>

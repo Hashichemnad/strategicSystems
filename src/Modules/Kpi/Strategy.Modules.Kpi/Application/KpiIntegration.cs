@@ -50,7 +50,7 @@ internal sealed class CardFiles(KpiReader reader) : IFileOwnerAccess
 internal sealed class CardLinkTargets(KpiReader reader) : ILinkTargetSource
 {
     public static readonly LinkableTypeDefinition Definition = new(
-        KpiCard.EntityType, KpiPermissions.SystemCode, "بطاقة مؤشر أداء", "KPI card", [LinkCapabilities.TaskAble], KpiPermissions.CardRead, "/kpi/cards/{id}",
+        KpiCard.EntityType, KpiPermissions.SystemCode, "بطاقة مؤشر أداء", "KPI card", [LinkCapabilities.TaskAble, LinkCapabilities.RemarkSource], KpiPermissions.CardRead, "/kpi/cards/{id}",
         KpiPermissions.CardManage);
 
     public string ResourceType => KpiCard.EntityType;
@@ -70,7 +70,7 @@ internal sealed class CardLinkTargets(KpiReader reader) : ILinkTargetSource
 internal sealed class ResultLinkTargets(KpiDbContext db, KpiReader reader) : ILinkTargetSource
 {
     public static readonly LinkableTypeDefinition Definition = new(
-        KpiResult.EntityType, KpiPermissions.SystemCode, "نتيجة مؤشر أداء", "KPI result", [LinkCapabilities.TaskAble], KpiPermissions.ResultRead, "/kpi/results/{id}",
+        KpiResult.EntityType, KpiPermissions.SystemCode, "نتيجة مؤشر أداء", "KPI result", [LinkCapabilities.TaskAble, LinkCapabilities.RemarkSource], KpiPermissions.ResultRead, "/kpi/results/{id}",
         KpiPermissions.ResultSubmit);
 
     public string ResourceType => KpiResult.EntityType;

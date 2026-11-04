@@ -11,4 +11,7 @@ public interface IPortfolioDirectory
     Task<PortfolioRecordBadge?> GetRequestAsync(Guid id, ClaimsPrincipal user, CancellationToken cancellationToken = default);
 
     Task<PortfolioRecordBadge?> GetProjectAsync(Guid id, ClaimsPrincipal user, CancellationToken cancellationToken = default);
+
+    /// <summary>Projects the caller may read whose number or name matches <paramref name="text"/> (pickers, e.g. CAP "link project").</summary>
+    Task<IReadOnlyList<PortfolioRecordBadge>> SearchProjectsAsync(string? text, ClaimsPrincipal user, int take = 20, CancellationToken cancellationToken = default);
 }

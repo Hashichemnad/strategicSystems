@@ -64,4 +64,19 @@ internal sealed class PortfolioDirectory(RequestReader reader) : IPortfolioDirec
             .ConfigureAwait(false) is { } p
             ? new PortfolioRecordBadge(PortfolioPermissions.ProjectResource, p.Id, p.Number, p.NameAr, p.NameEn, p.Stage, p.Classification)
             : null;
+
+    public async Task<IReadOnlyList<PortfolioRecordBadge>> SearchProjectsAsync(string? text, ClaimsPrincipal user, int take = 20, CancellationToken cancellationToken = default)
+    {
+        var source = await reader.VisibleProjectsAsync(user, cancellationToken).ConfigureAwait(false);
+        if (!string.IsNullOrWhiteSpace(text))
+        {
+            var pattern = "%" + text.Trim().Replace("\\", "\\\\", StringComparison.Ordinal).Replace("%", "\\%", StringComparison.Ordinal)
+                .Replace("_", "\\_", StringComparison.Ordinal) + "%";
+            source = source.Where(p => EF.Functions.ILike(p.Number, pattern, "\\") || EF.Functions.ILike(p.NameAr ?? string.Empty, pattern, "\\")
+                || EF.Functions.ILike(p.NameEn ?? string.Empty, pattern, "\\"));
+        }
+
+        var rows = await source.OrderByDescending(p => p.Number).Take(Math.Clamp(take, 1, 100)).ToListAsync(cancellationToken).ConfigureAwait(false);
+        return rows.Select(p => new PortfolioRecordBadge(PortfolioPermissions.ProjectResource, p.Id, p.Number, p.NameAr, p.NameEn, p.Stage, p.Classification)).ToList();
+    }
 }

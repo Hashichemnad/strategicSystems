@@ -54,6 +54,7 @@ public sealed class PortfolioModule : IModule
         services.AddScoped<RequestFileFlags>();
         services.AddScoped<PortfolioNotifier>();
         services.AddScoped<IPortfolioDirectory, PortfolioDirectory>();
+        services.AddScoped<IProgramRequestDrafts, ProgramRequestDrafts>();
         services.AddScoped<StrategicObjectives>();
         services.AddScoped<IDatabaseSeeder, ObjectivesToKpiSeeder>();
         services.AddScoped<ProjectLoader>();
