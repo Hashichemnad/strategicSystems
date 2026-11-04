@@ -327,10 +327,11 @@ public sealed class RiskRecord : AuditableEntity
         ResidualImpact = impact;
     }
 
-    /// <summary>Writes computed ratings; true when a band changed.</summary>
+    /// <summary>Writes computed ratings; true when a score or a band changed.</summary>
     public bool ApplyRatings(RiskRatings r)
     {
-        var changed = InherentBand != r.InherentBand || ResidualBand != r.ResidualBand || TargetBand != r.TargetBand;
+        var changed = InherentBand != r.InherentBand || ResidualBand != r.ResidualBand || TargetBand != r.TargetBand || InherentScore != r.InherentScore
+            || ResidualScore != r.ResidualScore || TargetScore != r.TargetScore;
         InherentScore = r.InherentScore;
         InherentBand = r.InherentBand;
         ControlEffectivenessCode = r.ControlEffectiveness;
