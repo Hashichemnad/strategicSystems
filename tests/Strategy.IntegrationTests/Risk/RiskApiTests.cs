@@ -231,8 +231,13 @@ public sealed class RiskApiTests(RiskFixture fx) : IClassFixture<RiskFixture>
         // Validation: the statement needs cause → event → consequence and valid ratings.
         var bad = await w.C(w.CoordinatorA).PostAsJsonAsync($"{Base}/risks", new
         {
-            titleEn = "Vague", identifiedOn = new DateOnly(2026, 1, 1), riskType = "internal", categoryCodes = Array.Empty<string>(), unitId = w.DepartmentA,
-            inherentLikelihood = 6, inherentImpact = 1,
+            titleEn = "Vague",
+            identifiedOn = new DateOnly(2026, 1, 1),
+            riskType = "internal",
+            categoryCodes = Array.Empty<string>(),
+            unitId = w.DepartmentA,
+            inherentLikelihood = 6,
+            inherentImpact = 1,
         });
         await bad.ShouldBeProblemAsync(HttpStatusCode.BadRequest, "validation.failed");
 
@@ -491,7 +496,9 @@ public sealed class RiskApiTests(RiskFixture fx) : IClassFixture<RiskFixture>
         {
             values = new
             {
-                residualLikelihood = 2, residualImpact = 3, controlRatings = new Dictionary<Guid, string> { [control.Id] = "effective", [converted.Id] = "partially-effective" },
+                residualLikelihood = 2,
+                residualImpact = 3,
+                controlRatings = new Dictionary<Guid, string> { [control.Id] = "effective", [converted.Id] = "partially-effective" },
                 commentary = "Controls now work",
             },
             version = review.Version,
