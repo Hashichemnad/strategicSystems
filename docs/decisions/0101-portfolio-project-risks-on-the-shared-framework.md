@@ -11,6 +11,8 @@
   inherent × (11 − C) ÷ 10, the Phase 9 rule) or `formula` (the custom formula with `C`). Bands come from the framework.
 - Portfolio references `Strategy.Modules.Risk.Contracts`; `IProjectRiskScoring` becomes async and its default implementation uses
   `IRiskScoring` when registered (Risk enabled), else the Phase 9 rule.
+- Portfolio's `inherent_score` column stays an integer (no Portfolio migration while Phase 10 changes Portfolio in parallel): a fractional
+  inherent score from a custom formula is stored rounded; the band is taken from the framework's exact score.
 - Portfolio handles `RiskFrameworkChanged` (recalculation `now`, and the seeded version 1): it re-scores every active project risk through
   EF tracked changes, so the audit interceptor writes one entry per changed row. No data migration.
 

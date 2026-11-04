@@ -198,7 +198,7 @@ internal static class RiskEndpoints
         group.MapGet("/dashboard", async (Guid? unitId, string? category, string? residualStatus, int? year, bool? includeProjectRisks, IDispatcher d, CancellationToken ct) =>
                 (await d.SendAsync(new GetRiskDashboard(new RiskFilter(unitId, category, residualStatus, year, includeProjectRisks)), ct)).ToOk())
             .WithName("GetRiskDashboard").RequirePermission(RiskPermissions.DashboardRead);
-        group.MapGet("/heatmap/{kind}/{likelihood:int}/{impact:int}", async (string kind, int likelihood, int impact, Guid? unitId, string? category, string? residualStatus,
+        group.MapGet("/heatmap", async (string kind, int likelihood, int impact, Guid? unitId, string? category, string? residualStatus,
                     int? year, bool? includeProjectRisks, IDispatcher d, CancellationToken ct) =>
                 (await d.SendAsync(new GetHeatCellRisks(kind, likelihood, impact, new RiskFilter(unitId, category, residualStatus, year, includeProjectRisks)), ct)).ToOk())
             .WithName("GetRiskHeatCell").RequirePermission(RiskPermissions.DashboardRead);

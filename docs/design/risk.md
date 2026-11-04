@@ -201,7 +201,8 @@ ADoF sets the Internal Audit Office now and moves it to the Strategy Office late
 `GET /project-risks` reads `IProjectRiskDirectory.ListAsync(user, …)` **live** (Portfolio filters by the caller's project read scope) —
 nothing is stored in schema `risk`. Filters: project, unit (through `IPortfolioDirectory` project unit when available, else project),
 band. Each row links to `/portfolio/projects/{id}?tab=risks`. Dashboards / heat-maps add them as a **separate category `project`**
-(toggle *Include project risks*), scored with the same framework so the same ratings always land in the same cell.
+(toggle *Include project risks*), scored with the same framework so the same ratings always land in the same cell. They have no residual
+L / I, so they appear on the inherent heat-map and in the residual-rating counts, not on the residual heat-map (ADR 0103).
 
 ## 9. KRIs and KPI results (ADR 0104)
 `KpiResultApproved` handler (outbox, idempotent by `last_result_id`): for every active KRI of the card, value = `Achieve` (basis `value`) or
@@ -263,7 +264,7 @@ Framework: `GET /framework`, `GET /framework/versions`, `POST /framework/preview
 `GET|POST /categories`, `GET|PUT /settings`, `GET /mechanism`. Risks: `GET /risks` (views, filters, paging), `POST /risks`, `GET|PUT
 /risks/{id}`, `POST /risks/{id}/submit|recall|office-update|request-closure|reopen|escalate|committee-decisions|discard`, `GET
 /risks/{id}/assessments`, controls / actions / KRIs / reviews / events sub-resources, `POST /actions/{id}/progress|convert-to-control`,
-`GET /my-actions`, `GET /dashboard`, `GET /heatmap/cells`, `GET /top10`, `GET /project-risks`, `GET /reports/{kind}.{pdf|xlsx}`, AI
+`GET /my-actions`, `GET /dashboard`, `GET /heatmap?kind&likelihood&impact`, `GET /top10`, `GET /project-risks`, `GET /reports/{kind}.{pdf|xlsx}`, AI
 endpoints, History via `MapRecordHistory`.
 
 ## 17. Tests

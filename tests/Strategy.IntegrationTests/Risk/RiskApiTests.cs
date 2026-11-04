@@ -258,7 +258,7 @@ public sealed class RiskApiTests(RiskFixture fx) : IClassFixture<RiskFixture>
             active.NextReviewOn.ShouldBe(expected);
         }
 
-        var assessments = await RiskWorld.OkAsync<List<AssessmentDto>>(w.C(w.OwnerA).GetAsync($"{Base}/risks/{first.Id}/assessments"));
+        var assessments = await RiskWorld.OkAsync<List<RiskAssessmentDto>>(w.C(w.OwnerA).GetAsync($"{Base}/risks/{first.Id}/assessments"));
         assessments.Select(a => a.Kind).ShouldBe([AssessmentKinds.Registration, AssessmentKinds.Approval]);
         await ApprovalFlowTests.WaitForNotificationAsync(w.C(w.OwnerA), "risk.approved");
 
@@ -333,7 +333,7 @@ public sealed class RiskApiTests(RiskFixture fx) : IClassFixture<RiskFixture>
         (moved.InherentScore, moved.InherentBand, moved.FrameworkVersionNo, moved.OnCurrentFramework).ShouldBe((11m, "high", now.VersionNo, true));
         var low = await w.GetAsync(stays.Id);
         (low.InherentScore, low.InherentBand).ShouldBe((2m, "low"));
-        var snapshots = await RiskWorld.OkAsync<List<AssessmentDto>>(w.C(w.Office).GetAsync($"{Base}/risks/{changes.Id}/assessments"));
+        var snapshots = await RiskWorld.OkAsync<List<RiskAssessmentDto>>(w.C(w.Office).GetAsync($"{Base}/risks/{changes.Id}/assessments"));
         snapshots.ShouldContain(a => a.Kind == AssessmentKinds.Recalculation && a.FrameworkVersionNo == now.VersionNo);
         await using (var scope = TestAccess.SystemScope(fx.Factory))
         {
@@ -508,7 +508,7 @@ public sealed class RiskApiTests(RiskFixture fx) : IClassFixture<RiskFixture>
         await w.ActAsync(risk.Id, RiskProcesses.PeriodicReview, w.Office, "risk-office");
         var reviewed = await w.GetAsync(risk.Id);
         (reviewed.ResidualScore, reviewed.ResidualBand, reviewed.ReassessmentRequired, reviewed.PendingProcess).ShouldBe((6m, "medium", false, (string?)null));
-        (await RiskWorld.OkAsync<List<AssessmentDto>>(w.C(w.OwnerA).GetAsync($"{Base}/risks/{risk.Id}/assessments"))).ShouldContain(a => a.Kind == AssessmentKinds.Review);
+        (await RiskWorld.OkAsync<List<RiskAssessmentDto>>(w.C(w.OwnerA).GetAsync($"{Base}/risks/{risk.Id}/assessments"))).ShouldContain(a => a.Kind == AssessmentKinds.Review);
 
         // A logged event flags the risk again; the event is numbered and listed.
         var logged = await RiskWorld.OkAsync<EventDto>(c.PostAsJsonAsync($"{Base}/events", new
@@ -531,7 +531,7 @@ public sealed class RiskApiTests(RiskFixture fx) : IClassFixture<RiskFixture>
         dashboard.Inherent.Single(c => c.Likelihood == 5 && c.Impact == 5).Enterprise.ShouldBe(1);
         dashboard.Residual.Single(c => c.Likelihood == 5 && c.Impact == 4).Enterprise.ShouldBe(1);
         dashboard.Top10.Select(r => r.Id).Take(2).ShouldBe([flagged.Id, critical.Id]);
-        var cell = await RiskWorld.OkAsync<HeatCellRisksDto>(w.C(w.Office).GetAsync($"{Base}/heatmap/inherent/5/5?unitId={w.DepartmentA}"));
+        var cell = await RiskWorld.OkAsync<HeatCellRisksDto>(w.C(w.Office).GetAsync($"{Base}/heatmap?kind=inherent&likelihood=5&impact=5&unitId={w.DepartmentA}"));
         cell.Risks.Single().Id.ShouldBe(critical.Id);
         (await w.C(w.OwnerA).GetAsync($"{Base}/dashboard")).StatusCode.ShouldBe(HttpStatusCode.Forbidden);
 

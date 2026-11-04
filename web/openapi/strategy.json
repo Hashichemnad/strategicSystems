@@ -25038,7 +25038,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/CategoryDto"
+                    "$ref": "#/components/schemas/RiskCategoryDto"
                   }
                 }
               }
@@ -25077,7 +25077,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CategoryDto"
+                  "$ref": "#/components/schemas/RiskCategoryDto"
                 }
               }
             }
@@ -25128,7 +25128,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/CategoryDto"
+                  "$ref": "#/components/schemas/RiskCategoryDto"
                 }
               }
             }
@@ -25970,7 +25970,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/AssessmentDto"
+                    "$ref": "#/components/schemas/RiskAssessmentDto"
                   }
                 }
               }
@@ -27196,7 +27196,7 @@
         }
       }
     },
-    "/api/v1/risk/heatmap/{kind}/{likelihood}/{impact}": {
+    "/api/v1/risk/heatmap": {
       "get": {
         "tags": [
           "risk"
@@ -27205,7 +27205,7 @@
         "parameters": [
           {
             "name": "kind",
-            "in": "path",
+            "in": "query",
             "required": true,
             "schema": {
               "type": "string"
@@ -27213,7 +27213,7 @@
           },
           {
             "name": "likelihood",
-            "in": "path",
+            "in": "query",
             "required": true,
             "schema": {
               "type": "integer",
@@ -27222,7 +27222,7 @@
           },
           {
             "name": "impact",
-            "in": "path",
+            "in": "query",
             "required": true,
             "schema": {
               "type": "integer",
@@ -27758,7 +27758,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DuplicateCheckDto"
+                  "$ref": "#/components/schemas/RiskDuplicateCheckDto"
                 }
               }
             }
@@ -43547,7 +43547,7 @@
           "categories": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/CategoryDto"
+              "$ref": "#/components/schemas/RiskCategoryDto"
             }
           }
         }
@@ -53537,6 +53537,124 @@
           }
         }
       },
+      "RiskAssessmentDto": {
+        "required": [
+          "id",
+          "kind",
+          "inherentLikelihood",
+          "inherentImpact",
+          "inherentScore",
+          "inherentBand",
+          "residualLikelihood",
+          "residualImpact",
+          "residualScore",
+          "residualBand",
+          "residualStatus",
+          "targetScore",
+          "targetBand",
+          "controlEffectiveness",
+          "status",
+          "frameworkVersionNo",
+          "comment",
+          "at",
+          "by"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "inherentLikelihood": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "inherentImpact": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "inherentScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "inherentBand": {
+            "type": "string"
+          },
+          "residualLikelihood": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "residualImpact": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "residualScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "residualBand": {
+            "type": "string"
+          },
+          "residualStatus": {
+            "type": "string"
+          },
+          "targetScore": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "targetBand": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "controlEffectiveness": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "frameworkVersionNo": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "comment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "by": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/RiskPersonDto"
+              }
+            ]
+          }
+        }
+      },
       "RiskBody": {
         "required": [
           "values",
@@ -53546,6 +53664,66 @@
         "properties": {
           "values": {
             "$ref": "#/components/schemas/RiskValues"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "RiskCategoryDto": {
+        "required": [
+          "id",
+          "code",
+          "nameAr",
+          "nameEn",
+          "parentId",
+          "appetite",
+          "sort",
+          "active",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "parentId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "appetite": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "sort": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "active": {
+            "type": "boolean"
           },
           "version": {
             "type": "integer",
@@ -53601,6 +53779,22 @@
               "integer"
             ],
             "format": "uint32"
+          }
+        }
+      },
+      "RiskCountDto": {
+        "required": [
+          "code",
+          "count"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
@@ -53660,31 +53854,31 @@
           "byCategory": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/CountDto"
+              "$ref": "#/components/schemas/RiskCountDto"
             }
           },
           "byUnit": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/CountDto"
+              "$ref": "#/components/schemas/RiskCountDto"
             }
           },
           "byResidualBand": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/CountDto"
+              "$ref": "#/components/schemas/RiskCountDto"
             }
           },
           "byType": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/CountDto"
+              "$ref": "#/components/schemas/RiskCountDto"
             }
           },
           "byResidualStatus": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/CountDto"
+              "$ref": "#/components/schemas/RiskCountDto"
             }
           },
           "inherent": {
@@ -54056,6 +54250,25 @@
           }
         }
       },
+      "RiskDuplicateCheckDto": {
+        "required": [
+          "visible",
+          "otherUnits"
+        ],
+        "type": "object",
+        "properties": {
+          "visible": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskDuplicateMatchDto"
+            }
+          },
+          "otherUnits": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
       "RiskDuplicateInput": {
         "required": [
           "text",
@@ -54075,6 +54288,41 @@
               "string"
             ],
             "format": "uuid"
+          }
+        }
+      },
+      "RiskDuplicateMatchDto": {
+        "required": [
+          "id",
+          "number",
+          "titleAr",
+          "titleEn",
+          "score"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": "string"
+          },
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "score": {
+            "type": "number",
+            "format": "double"
           }
         }
       },
@@ -54430,7 +54678,7 @@
           "categories": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/CategoryDto"
+              "$ref": "#/components/schemas/RiskCategoryDto"
             }
           },
           "objectives": {

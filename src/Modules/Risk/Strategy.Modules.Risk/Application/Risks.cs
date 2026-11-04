@@ -67,7 +67,7 @@ public sealed record RiskDto(
     RiskPermissionsDto Can,
     uint Version);
 
-public sealed record AssessmentDto(
+public sealed record RiskAssessmentDto(
     Guid Id, string Kind, int InherentLikelihood, int InherentImpact, decimal InherentScore, string InherentBand, int? ResidualLikelihood, int? ResidualImpact,
     decimal ResidualScore, string ResidualBand, string ResidualStatus, decimal? TargetScore, string? TargetBand, string? ControlEffectiveness, string Status,
     int FrameworkVersionNo, string? Comment, DateTimeOffset At, RiskPersonDto? By);
@@ -77,11 +77,9 @@ public sealed record CommitteeDecisionDto(Guid Id, string DecisionCode, string? 
 public sealed record RiskOptionDto(string Code, string? LabelAr, string? LabelEn);
 
 public sealed record RiskOptionsDto(
-    IReadOnlyDictionary<string, IReadOnlyList<RiskOptionDto>> Lookups, IReadOnlyList<CategoryDto> Categories, IReadOnlyList<RiskOptionDto> Objectives,
+    IReadOnlyDictionary<string, IReadOnlyList<RiskOptionDto>> Lookups, IReadOnlyList<RiskCategoryDto> Categories, IReadOnlyList<RiskOptionDto> Objectives,
     FrameworkVersionDto Framework, IReadOnlyList<MatrixCell> Matrix, bool OpportunitiesEnabled, bool CanCreate, bool CanOffice, bool CanManageFramework,
     bool CanReadProjectRisks, bool CanExport, bool CanDashboard, int TopCount, bool IncludeProjectRisksByDefault);
-
-public sealed record RiskInput(RiskValues Values, uint? Version = null);
 
 public sealed record OfficeInput(string? ControlEffectivenessOverride, string? ResidualStatusOverride, string? Justification, bool Top10, int? Top10Rank, uint Version);
 
@@ -93,7 +91,7 @@ public sealed record GetRisk(Guid Id) : IQuery<RiskDto>;
 
 public sealed record GetRiskOptions : IQuery<RiskOptionsDto>;
 
-public sealed record ListRiskAssessments(Guid Id) : IQuery<IReadOnlyList<AssessmentDto>>;
+public sealed record ListRiskAssessments(Guid Id) : IQuery<IReadOnlyList<RiskAssessmentDto>>;
 
 public sealed record ListCommitteeDecisions(Guid Id) : IQuery<IReadOnlyList<CommitteeDecisionDto>>;
 
@@ -311,7 +309,7 @@ internal sealed class RiskQueries(
     RiskDbContext db, RiskReader reader, RiskViews views, FrameworkStore frameworks, ILookupService lookups, IRequestContext context, IClock clock,
     IServiceProvider services)
     : IQueryHandler<ListRisks, PagedResult<RiskListItemDto>>, IQueryHandler<GetRisk, RiskDto>, IQueryHandler<GetRiskOptions, RiskOptionsDto>,
-        IQueryHandler<ListRiskAssessments, IReadOnlyList<AssessmentDto>>, IQueryHandler<ListCommitteeDecisions, IReadOnlyList<CommitteeDecisionDto>>
+        IQueryHandler<ListRiskAssessments, IReadOnlyList<RiskAssessmentDto>>, IQueryHandler<ListCommitteeDecisions, IReadOnlyList<CommitteeDecisionDto>>
 {
     public static readonly IReadOnlyList<string> Views = ["all", "mine", "my-unit", "top10", "outside-appetite", "overdue-review", "under-review", "escalated", "reassessment"];
 
@@ -463,7 +461,7 @@ internal sealed class RiskQueries(
             settings.IncludeProjectRisksByDefault);
     }
 
-    public async Task<Result<IReadOnlyList<AssessmentDto>>> HandleAsync(ListRiskAssessments query, CancellationToken cancellationToken)
+    public async Task<Result<IReadOnlyList<RiskAssessmentDto>>> HandleAsync(ListRiskAssessments query, CancellationToken cancellationToken)
     {
         if (await reader.RiskAsync(query.Id, context.User, cancellationToken).ConfigureAwait(false) is null)
         {
@@ -483,7 +481,7 @@ internal sealed class RiskQueries(
             }
         }
 
-        return rows.Select(a => new AssessmentDto(a.Id, a.Kind, a.InherentLikelihood, a.InherentImpact, a.InherentScore, a.InherentBand, a.ResidualLikelihood,
+        return rows.Select(a => new RiskAssessmentDto(a.Id, a.Kind, a.InherentLikelihood, a.InherentImpact, a.InherentScore, a.InherentBand, a.ResidualLikelihood,
             a.ResidualImpact, a.ResidualScore, a.ResidualBand, a.ResidualStatus, a.TargetScore, a.TargetBand, a.ControlEffectiveness, a.Status, a.FrameworkVersionNo,
             a.Comment, a.At, a.By is { } b ? byUser.GetValueOrDefault(b) : null)).ToList();
     }

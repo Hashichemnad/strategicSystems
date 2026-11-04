@@ -16,7 +16,7 @@ public sealed record FrameworkVersionDto(Guid Id, int VersionNo, FrameworkConten
 
 public sealed record FrameworkSummaryDto(Guid Id, int VersionNo, string ScoringMethod, string? Formula, string? Reason, string Recalculation, DateTimeOffset CreatedAt);
 
-public sealed record CategoryDto(Guid Id, string Code, string? NameAr, string? NameEn, Guid? ParentId, decimal? Appetite, int Sort, bool Active, uint Version);
+public sealed record RiskCategoryDto(Guid Id, string Code, string? NameAr, string? NameEn, Guid? ParentId, decimal? Appetite, int Sort, bool Active, uint Version);
 
 public sealed record CategoryInput(string Code, string? NameAr, string? NameEn, Guid? ParentId, decimal? Appetite, int Sort, bool Active, uint? Version);
 
@@ -38,9 +38,9 @@ public sealed record PreviewRiskFramework(FrameworkContent Content) : IQuery<Fra
 
 public sealed record SaveRiskFramework(FrameworkInput Input) : ICommand<FrameworkVersionDto>;
 
-public sealed record ListRiskCategories(bool IncludeInactive) : IQuery<IReadOnlyList<CategoryDto>>;
+public sealed record ListRiskCategories(bool IncludeInactive) : IQuery<IReadOnlyList<RiskCategoryDto>>;
 
-public sealed record SaveRiskCategory(Guid? Id, CategoryInput Input) : ICommand<CategoryDto>;
+public sealed record SaveRiskCategory(Guid? Id, CategoryInput Input) : ICommand<RiskCategoryDto>;
 
 /// <summary>The current framework and its scorer (one per request scope).</summary>
 internal sealed class FrameworkStore(RiskDbContext db)
@@ -177,7 +177,7 @@ internal sealed class RiskRater(RiskDbContext db, FrameworkStore frameworks)
 
 internal sealed class FrameworkQueries(RiskDbContext db, FrameworkStore store)
     : IQueryHandler<GetRiskFramework, FrameworkVersionDto>, IQueryHandler<ListRiskFrameworkVersions, IReadOnlyList<FrameworkSummaryDto>>,
-        IQueryHandler<GetRiskFrameworkVersion, FrameworkVersionDto>, IQueryHandler<ListRiskCategories, IReadOnlyList<CategoryDto>>
+        IQueryHandler<GetRiskFrameworkVersion, FrameworkVersionDto>, IQueryHandler<ListRiskCategories, IReadOnlyList<RiskCategoryDto>>
 {
     public async Task<Result<FrameworkVersionDto>> HandleAsync(GetRiskFramework query, CancellationToken cancellationToken) =>
         ToDto(await store.CurrentAsync(cancellationToken).ConfigureAwait(false));
@@ -197,7 +197,7 @@ internal sealed class FrameworkQueries(RiskDbContext db, FrameworkStore store)
             ? ToDto(v)
             : Error.NotFound();
 
-    public async Task<Result<IReadOnlyList<CategoryDto>>> HandleAsync(ListRiskCategories query, CancellationToken cancellationToken)
+    public async Task<Result<IReadOnlyList<RiskCategoryDto>>> HandleAsync(ListRiskCategories query, CancellationToken cancellationToken)
     {
         var categories = await db.Categories.AsNoTracking().Where(c => query.IncludeInactive || c.Active).OrderBy(c => c.Sort).ThenBy(c => c.Code)
             .ToListAsync(cancellationToken).ConfigureAwait(false);
@@ -206,14 +206,14 @@ internal sealed class FrameworkQueries(RiskDbContext db, FrameworkStore store)
 
     public static FrameworkVersionDto ToDto(FrameworkVersion v) => new(v.Id, v.VersionNo, v.Read(), v.Reason, v.Recalculation, v.CreatedAt, v.CreatedBy);
 
-    public static CategoryDto ToDto(Category c) => new(c.Id, c.Code, c.NameAr, c.NameEn, c.ParentId, c.Appetite, c.Sort, c.Active, c.Version);
+    public static RiskCategoryDto ToDto(Category c) => new(c.Id, c.Code, c.NameAr, c.NameEn, c.ParentId, c.Appetite, c.Sort, c.Active, c.Version);
 }
 
 /// <summary>Preview, save (new version + recalculation, ADR 0100) and categories.</summary>
 internal sealed class FrameworkCommands(
     RiskDbContext db, FrameworkStore store, RiskRater rater, RiskReader reader, IIntegrationEventPublisher events, IClock clock, IRequestContext context,
     IServiceProvider services)
-    : IQueryHandler<PreviewRiskFramework, FrameworkPreviewDto>, ICommandHandler<SaveRiskFramework, FrameworkVersionDto>, ICommandHandler<SaveRiskCategory, CategoryDto>
+    : IQueryHandler<PreviewRiskFramework, FrameworkPreviewDto>, ICommandHandler<SaveRiskFramework, FrameworkVersionDto>, ICommandHandler<SaveRiskCategory, RiskCategoryDto>
 {
     public async Task<Result<FrameworkPreviewDto>> HandleAsync(PreviewRiskFramework query, CancellationToken cancellationToken)
     {
@@ -311,7 +311,7 @@ internal sealed class FrameworkCommands(
         return changed;
     }
 
-    public async Task<Result<CategoryDto>> HandleAsync(SaveRiskCategory command, CancellationToken cancellationToken)
+    public async Task<Result<RiskCategoryDto>> HandleAsync(SaveRiskCategory command, CancellationToken cancellationToken)
     {
         var v = command.Input;
         var errors = new List<FieldError>();

@@ -28,6 +28,8 @@ internal sealed class DemoAdapter : IAiProviderAdapter
 
 internal sealed partial class DemoChatClient(string model) : IChatClient
 {
+    private static readonly string[] RiskIssues = ["Demo: name a specific cause and the effect on objectives."];
+
     private static readonly string[] KpiSuggestions = ["Name the data source.", "Set a baseline and a target for each year of the strategy cycle."];
 
     public Task<ChatResponse> GetResponseAsync(IEnumerable<ChatMessage> messages, ChatOptions? options = null, CancellationToken cancellationToken = default)
@@ -166,6 +168,61 @@ internal sealed partial class DemoChatClient(string model) : IChatClient
             {
                 reportAr = $"تقرير تجريبي: بلغ الأداء العام {score}. تُعرض أبرز الأهداف والمؤشرات المتأخرة مع أسبابها والإجراءات التصحيحية.",
                 reportEn = $"Demo report: overall performance reached {score}. The highlights and the KPIs below target are listed with their reasons and corrective actions.",
+            });
+        }
+        else if (system.Contains("You help identify risks", StringComparison.Ordinal))
+        {
+            // Phase 13 (risk-identify): one deterministic suggestion built from the source text.
+            var document = Document().Match(user) is { Success: true } d ? d.Groups[1].Value.Trim() : string.Empty;
+            var subject = document.Length > 80 ? document[..80] : document;
+            text = JsonSerializer.Serialize(new
+            {
+                risks = new[]
+                {
+                    new
+                    {
+                        titleAr = $"تعثر التنفيذ: {subject}", titleEn = $"Delivery slips: {subject}", cause = $"Dependencies named in the source: {subject}",
+                        @event = "Key milestones are delivered late", consequence = "Objectives and services are delayed and costs rise", categoryCode = "operational",
+                        likelihood = 3, impact = 4, reasoning = "Demo: the source mentions dependencies that could delay delivery.",
+                    },
+                },
+            });
+        }
+        else if (system.Contains("You check the quality of a risk statement", StringComparison.Ordinal))
+        {
+            text = JsonSerializer.Serialize(new
+            {
+                issues = RiskIssues,
+                cause = "A specific, verifiable cause",
+                @event = "An uncertain event that may happen",
+                consequence = "The effect on the organisation's objectives",
+            });
+        }
+        else if (system.Contains("You suggest existing controls and treatment actions", StringComparison.Ordinal))
+        {
+            text = JsonSerializer.Serialize(new
+            {
+                controls = new[] { new { nameAr = "اعتماد مزدوج", nameEn = "Dual approval", typeCode = "preventive" } },
+                actions = new[] { new { titleAr = "تدريب الموظفين المعنيين", titleEn = "Train the staff concerned" } },
+            });
+        }
+        else if (system.Contains("You help a risk owner prepare the periodic review", StringComparison.Ordinal))
+        {
+            var arabic = system.Contains("Write in Arabic", StringComparison.Ordinal);
+            text = JsonSerializer.Serialize(new
+            {
+                changes = new[] { arabic ? "تقدم إجراءات المعالجة منذ المراجعة السابقة." : "Treatment actions progressed since the last review." },
+                commentary = arabic ? "(مسودة) تحسنت الضوابط ويُقترح إبقاء التقييم مع المتابعة." : "(Draft) Controls improved; keep the rating under follow-up.",
+            });
+        }
+        else if (system.Contains("You write the quarterly enterprise risk report", StringComparison.Ordinal))
+        {
+            text = JsonSerializer.Serialize(new
+            {
+                reportAr = "(مسودة) ملف المخاطر المؤسسي لهذا الربع وفق الأرقام المرفقة.",
+                reportEn = "(Draft) The enterprise risk profile this quarter, from the figures given.",
+                top10Ar = "(مسودة) أهم المخاطر المؤسسية كما في القائمة.",
+                top10En = "(Draft) The Top-10 institutional risks as listed.",
             });
         }
         else if (system.Contains("You translate", StringComparison.Ordinal))

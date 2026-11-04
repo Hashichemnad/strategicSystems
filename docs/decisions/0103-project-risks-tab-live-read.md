@@ -9,6 +9,9 @@
   caller's project read scope is applied by Portfolio. Nothing is stored in schema `risk`.
 - Dashboards / heat-maps take `includeProjectRisks` (default from `RiskSettings`) and show project risks as category `project` (cells
   carry `enterprise` and `project` counts; clicking a cell lists both, project rows link to `/portfolio/projects/{id}?tab=risks`).
+- Project risks have no residual likelihood / impact (only a 1–10 control evaluation), so they are placed on the **inherent** heat-map at
+  their probability × impact cell; the residual heat-map shows enterprise risks only, while the "by residual rating" counts include project
+  risks by their residual band.
 - Project risks need `risk.project-risks.read` in the Risk system **and** project read access in Portfolio.
 
 ## Consequences

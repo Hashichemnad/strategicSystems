@@ -50,9 +50,9 @@ public sealed record SuggestedActionDto(string? TitleAr, string? TitleEn);
 public sealed record TreatmentSuggestionDto(IReadOnlyList<SuggestedControlDto> Controls, IReadOnlyList<SuggestedActionDto> Actions, IReadOnlyList<RiskListRefDto> SimilarRisks,
     Guid UsageId);
 
-public sealed record DuplicateMatchDto(Guid Id, string Number, string? TitleAr, string? TitleEn, double Score);
+public sealed record RiskDuplicateMatchDto(Guid Id, string Number, string? TitleAr, string? TitleEn, double Score);
 
-public sealed record DuplicateCheckDto(IReadOnlyList<DuplicateMatchDto> Visible, int OtherUnits);
+public sealed record RiskDuplicateCheckDto(IReadOnlyList<RiskDuplicateMatchDto> Visible, int OtherUnits);
 
 public sealed record ReviewAssistDto(IReadOnlyList<string> Changes, string Commentary, IReadOnlyList<string> Facts, Guid UsageId);
 
@@ -264,7 +264,7 @@ internal sealed class RiskAiService(
     /// Duplicate detection without a model (ADR 0106): trigram similarity across every unit; details only for risks the caller may read, the
     /// rest as a count.
     /// </summary>
-    public async Task<Result<DuplicateCheckDto>> DuplicatesAsync(string? text, Guid? excludeId, CancellationToken ct)
+    public async Task<Result<RiskDuplicateCheckDto>> DuplicatesAsync(string? text, Guid? excludeId, CancellationToken ct)
     {
         if (string.IsNullOrWhiteSpace(text) || text.Length > 2000)
         {
@@ -288,8 +288,8 @@ internal sealed class RiskAiService(
         var ids = all.Select(a => a.Id).ToList();
         var visible = await (await reader.RisksAsync(context.User, ct).ConfigureAwait(false)).Where(r => ids.Contains(r.Id)).ToDictionaryAsync(r => r.Id, ct).ConfigureAwait(false);
         await gateway.RecordAsync(ready.Value, RiskRecord.EntityType, excludeId?.ToString("D"), true, null, 0, 0, 0, ct, new { matches = all.Count }).ConfigureAwait(false);
-        return new DuplicateCheckDto(
-            all.Where(a => visible.ContainsKey(a.Id)).Take(10).Select(a => new DuplicateMatchDto(a.Id, visible[a.Id].Number, visible[a.Id].TitleAr, visible[a.Id].TitleEn,
+        return new RiskDuplicateCheckDto(
+            all.Where(a => visible.ContainsKey(a.Id)).Take(10).Select(a => new RiskDuplicateMatchDto(a.Id, visible[a.Id].Number, visible[a.Id].TitleAr, visible[a.Id].TitleEn,
                 Math.Round(a.Score, 2))).ToList(),
             all.Count(a => !visible.ContainsKey(a.Id)));
     }

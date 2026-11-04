@@ -18,7 +18,7 @@ namespace Strategy.Modules.Risk.Application;
 
 public sealed record RiskFilter(Guid? UnitId, string? Category, string? ResidualStatus, int? Year, bool? IncludeProjectRisks);
 
-public sealed record CountDto(string Code, int Count);
+public sealed record RiskCountDto(string Code, int Count);
 
 public sealed record HeatCellDto(int Likelihood, int Impact, decimal Score, string Band, int Enterprise, int Project);
 
@@ -30,8 +30,8 @@ public sealed record KriBreachDto(Guid KriId, Guid RiskId, string RiskNumber, st
 public sealed record MovementDto(int Improved, int Worsened, int Unchanged, IReadOnlyList<RiskListItemDto> WorsenedRisks);
 
 public sealed record RiskDashboardDto(
-    int Total, int Active, int UnderReview, int Draft, int Closed, int ProjectRisks, IReadOnlyList<CountDto> ByCategory, IReadOnlyList<CountDto> ByUnit,
-    IReadOnlyList<CountDto> ByResidualBand, IReadOnlyList<CountDto> ByType, IReadOnlyList<CountDto> ByResidualStatus, IReadOnlyList<HeatCellDto> Inherent,
+    int Total, int Active, int UnderReview, int Draft, int Closed, int ProjectRisks, IReadOnlyList<RiskCountDto> ByCategory, IReadOnlyList<RiskCountDto> ByUnit,
+    IReadOnlyList<RiskCountDto> ByResidualBand, IReadOnlyList<RiskCountDto> ByType, IReadOnlyList<RiskCountDto> ByResidualStatus, IReadOnlyList<HeatCellDto> Inherent,
     IReadOnlyList<HeatCellDto> Residual, IReadOnlyList<RiskListItemDto> OutsideAppetite, int OutsideAppetiteCount, IReadOnlyList<RiskListItemDto> Top10,
     IReadOnlyList<ActionBriefDto> OverdueActions, int OverdueActionsCount, IReadOnlyList<RiskListItemDto> OverdueReviews, int OverdueReviewsCount, MovementDto Movement,
     IReadOnlyList<KriBreachDto> KriBreaches, IReadOnlyList<RatingBand> Bands, IReadOnlyDictionary<Guid, RiskUnitDto> Units);
@@ -43,7 +43,7 @@ public sealed record ProjectRiskRowDto(
 
 public sealed record HeatCellRisksDto(IReadOnlyList<RiskListItemDto> Risks, IReadOnlyList<ProjectRiskRowDto> ProjectRisks);
 
-public sealed record MechanismDto(FrameworkVersionDto Framework, IReadOnlyList<MatrixCell> Matrix, IReadOnlyList<CategoryDto> Categories);
+public sealed record MechanismDto(FrameworkVersionDto Framework, IReadOnlyList<MatrixCell> Matrix, IReadOnlyList<RiskCategoryDto> Categories);
 
 public sealed record RiskExportedFile(byte[] Content, string ContentType, string FileName);
 
@@ -115,12 +115,12 @@ internal sealed class DashboardHandlers(
         var settingsValue = await reader.SettingsAsync(cancellationToken).ConfigureAwait(false);
         var open = risks.Where(r => r.Status != RiskStatuses.Closed).ToList();
         var active = risks.Where(r => r.Status == RiskStatuses.Active).ToList();
-        List<CountDto> Count(IEnumerable<string> keys) => keys.GroupBy(k => k).Select(g => new CountDto(g.Key, g.Count())).OrderByDescending(c => c.Count).ToList();
+        List<RiskCountDto> Count(IEnumerable<string> keys) => keys.GroupBy(k => k).Select(g => new RiskCountDto(g.Key, g.Count())).OrderByDescending(c => c.Count).ToList();
 
         var byCategory = Count(open.SelectMany(r => r.CategoryCodes.Take(1)));
         if (projects.Count > 0)
         {
-            byCategory.Add(new CountDto(RiskPermissions.ProjectCategory, projects.Count));
+            byCategory.Add(new RiskCountDto(RiskPermissions.ProjectCategory, projects.Count));
         }
 
         var byBand = Count(open.Select(r => r.ResidualBand).Concat(projects.Select(p => p.ResidualBand)));
