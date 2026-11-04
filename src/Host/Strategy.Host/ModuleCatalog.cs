@@ -1,3 +1,4 @@
+using Strategy.Modules.Portfolio;
 using Strategy.Modules.Sample;
 using Strategy.Modules.Tasks;
 using Strategy.Modules.Teams;
@@ -13,5 +14,6 @@ internal static class ModuleCatalog
         new SampleModule(),
         new TasksModule(),
         new TeamsModule(),
+        new PortfolioModule(),
     ];
 }

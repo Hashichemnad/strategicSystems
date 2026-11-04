@@ -14,6 +14,8 @@ using Strategy.Platform.Organisation.Application;
 using Strategy.Platform.Organisation.Infrastructure;
 using Strategy.Platform.Persistence;
 using Strategy.Platform.Settings;
+using Strategy.Platform.Settings.Domain;
+using Strategy.Platform.Settings.Infrastructure;
 
 namespace Strategy.Host.Infrastructure;
 
@@ -150,6 +152,30 @@ internal static partial class Bootstrap
         {
             await AccessGrants.AssignRoleAsync(provider, "sample.editor", AccessGrants.User, analystUser.Id);
         }
+
+        // Phase 8 demo: everyone may open Portfolio Management (requester role); Mariam is the PM Office, DG Office, Budget Section and
+        // Administration Dept of the demo, so the three request approval routes and the quotation hand-off run with two people.
+        await AccessGrants.GrantSystemAccessAsync(provider, "portfolio", AccessGrants.Everyone, null);
+        if (admin.Succeeded)
+        {
+            foreach (var role in new[] { "portfolio.administrator", "portfolio.pm-office", "portfolio.dg-office", "portfolio.budget-section", "portfolio.administration" })
+            {
+                await AccessGrants.AssignRoleAsync(provider, role, AccessGrants.User, adminUser.Id);
+            }
+        }
+
+        var settingsDb = provider.GetRequiredService<SettingsDbContext>();
+        foreach (var (code, ar, en, sort) in new[]
+                 {
+                     ("digital-government", "حكومة رقمية استباقية", "Proactive digital government", 10),
+                     ("financial-sustainability", "استدامة مالية", "Financial sustainability", 20),
+                     ("institutional-excellence", "تميز مؤسسي", "Institutional excellence", 30),
+                 })
+        {
+            settingsDb.LookupValues.Add(LookupValue.Create("portfolio.strategic-objective", code, ar, en, sort, null, null));
+        }
+
+        await settingsDb.SaveChangesAsync();
 
         if (configuration["Seed:AdminTotpKey"] is { Length: > 0 } totpKey && await users.FindByNameAsync("mariam@strategy.local") is { } seededAdmin)
         {

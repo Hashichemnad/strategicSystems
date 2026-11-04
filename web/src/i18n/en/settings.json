@@ -115,6 +115,10 @@
     "teams": {
       "title": "Teams",
       "description": "Team types, member roles, evaluation templates and the reward matrix."
+    },
+    "portfolio": {
+      "title": "Portfolio",
+      "description": "Threshold, prioritisation criteria and bands, date windows, the budget step and the project scope template."
     }
   },
   "title": "Settings",

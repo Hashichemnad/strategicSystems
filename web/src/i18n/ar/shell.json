@@ -27,7 +27,9 @@
     "auditLog": "سجل التدقيق",
     "auditVerification": "التحقق من سجل التدقيق",
     "tasks": "مهامي",
-    "teams": "الفرق واللجان"
+    "teams": "الفرق واللجان",
+    "portfolioRequests": "طلبات البرامج",
+    "portfolioProjects": "المشاريع والمبادرات"
   },
   "language": {
     "label": "اللغة",

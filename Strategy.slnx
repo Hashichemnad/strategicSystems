@@ -12,6 +12,10 @@
     <Project Path="src/Modules/Tasks/Strategy.Modules.Tasks.Contracts/Strategy.Modules.Tasks.Contracts.csproj" />
     <Project Path="src/Modules/Tasks/Strategy.Modules.Tasks/Strategy.Modules.Tasks.csproj" />
   </Folder>
+  <Folder Name="/src/Modules/Portfolio/">
+    <Project Path="src/Modules/Portfolio/Strategy.Modules.Portfolio.Contracts/Strategy.Modules.Portfolio.Contracts.csproj" />
+    <Project Path="src/Modules/Portfolio/Strategy.Modules.Portfolio/Strategy.Modules.Portfolio.csproj" />
+  </Folder>
   <Folder Name="/src/Modules/Teams/">
     <Project Path="src/Modules/Teams/Strategy.Modules.Teams.Contracts/Strategy.Modules.Teams.Contracts.csproj" />
     <Project Path="src/Modules/Teams/Strategy.Modules.Teams/Strategy.Modules.Teams.csproj" />

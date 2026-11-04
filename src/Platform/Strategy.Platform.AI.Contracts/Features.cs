@@ -27,6 +27,10 @@ public static class AiRegistrationExtensions
     /// <summary>A form other people can fill from a document (document-to-form extraction).</summary>
     public static IServiceCollection AddAiForm(this IServiceCollection services, AiFormDefinition form) => services.AddSingleton(form);
 
+    /// <summary>Run-time choices of an AI form's fields (lookups, ADR 0050).</summary>
+    public static IServiceCollection AddAiFormChoiceSource<TSource>(this IServiceCollection services)
+        where TSource : class, IAiFormChoiceSource => services.AddScoped<IAiFormChoiceSource, TSource>();
+
     public static IServiceCollection AddAiRecordSource<TSource>(this IServiceCollection services)
         where TSource : class, IAiRecordSource => services.AddScoped<IAiRecordSource, TSource>();
 

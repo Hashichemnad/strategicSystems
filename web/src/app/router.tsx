@@ -285,6 +285,62 @@ export const teamRecommendationRoute = createRoute({
   ),
 });
 
+// Portfolio Management (Phase 8, docs/design/portfolio.md): program requests, the request wizard, projects / initiatives.
+export const portfolioRequestsRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/portfolio/requests',
+  validateSearch: z.object({
+    view: z.enum(['all', 'mine', 'in-approval', 'returned']).catch('all'),
+    page: z.coerce.number().int().min(1).catch(1),
+    status: z.string().max(50).optional().catch(undefined),
+    classification: z.string().max(50).optional().catch(undefined),
+    band: z.string().max(60).optional().catch(undefined),
+    search: z.string().max(200).optional().catch(undefined),
+  }),
+  component: lazyRouteComponent(() => import('@/features/portfolio/RequestsPage'), 'RequestsPage'),
+});
+
+export const portfolioRequestNewRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/portfolio/requests/new',
+  validateSearch: z.object({ mode: z.enum(['manual', 'document']).optional().catch(undefined) }),
+  component: lazyRouteComponent(() => import('@/features/portfolio/RequestFormPage'), 'RequestFormPage'),
+});
+
+export const portfolioRequestRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/portfolio/requests/$requestId',
+  validateSearch: z.object({
+    tab: z
+      .enum(['overview', 'assessment', 'approvals', 'files', 'documents', 'tasks', 'history'])
+      .catch('overview'),
+  }),
+  component: lazyRouteComponent(() => import('@/features/portfolio/RequestPage'), 'RequestPage'),
+});
+
+export const portfolioRequestEditRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/portfolio/requests/$requestId/edit',
+  component: lazyRouteComponent(() => import('@/features/portfolio/RequestFormPage'), 'RequestFormPage'),
+});
+
+export const portfolioProjectsRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/portfolio/projects',
+  validateSearch: z.object({
+    page: z.coerce.number().int().min(1).catch(1),
+    classification: z.string().max(50).optional().catch(undefined),
+    search: z.string().max(200).optional().catch(undefined),
+  }),
+  component: lazyRouteComponent(() => import('@/features/portfolio/ProjectPages'), 'ProjectsPage'),
+});
+
+export const portfolioProjectRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/portfolio/projects/$projectId',
+  component: lazyRouteComponent(() => import('@/features/portfolio/ProjectPages'), 'ProjectPage'),
+});
+
 // Audit trail (CLAUDE.md §8): global log for administrators and auditors, and the chain verification screen.
 export const auditSearchSchema = z.object({
   page: z.coerce.number().int().min(1).catch(1),
@@ -547,6 +603,15 @@ const teamSettingsRoute = createRoute({
   component: lazyRouteComponent(() => import('@/features/teams/TeamSettingsPage'), 'TeamSettingsPage'),
 });
 
+const portfolioSettingsRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/portfolio',
+  component: lazyRouteComponent(
+    () => import('@/features/portfolio/PortfolioSettingsPage'),
+    'PortfolioSettingsPage',
+  ),
+});
+
 const taskSettingsRoute = createRoute({
   getParentRoute: () => settingsLayout,
   path: '/tasks',
@@ -621,6 +686,12 @@ const routeTree = rootRoute.addChildren([
     teamMeetingRoute,
     teamEvaluationRoute,
     teamRecommendationRoute,
+    portfolioRequestsRoute,
+    portfolioRequestNewRoute,
+    portfolioRequestRoute,
+    portfolioRequestEditRoute,
+    portfolioProjectsRoute,
+    portfolioProjectRoute,
     auditRoute,
     auditVerificationRoute,
     notificationsRoute,
@@ -656,6 +727,7 @@ const routeTree = rootRoute.addChildren([
       mcpSettingsRoute,
       taskSettingsRoute,
       teamSettingsRoute,
+      portfolioSettingsRoute,
       taskReassignRoute,
       rolesRoute,
       assignmentsRoute,

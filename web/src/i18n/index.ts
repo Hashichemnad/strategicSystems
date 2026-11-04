@@ -52,6 +52,8 @@ import arTasks from './ar/tasks.json';
 import arTeams from './ar/teams.json';
 import enTasks from './en/tasks.json';
 import enTeams from './en/teams.json';
+import arPortfolio from './ar/portfolio.json';
+import enPortfolio from './en/portfolio.json';
 import arLinks from './ar/links.json';
 import enLinks from './en/links.json';
 import { readPreference } from '@/lib/preferences';
@@ -87,6 +89,7 @@ export const resources = {
     calendar: arCalendar,
     tasks: arTasks,
     teams: arTeams,
+    portfolio: arPortfolio,
     links: arLinks,
   },
   en: {
@@ -116,6 +119,7 @@ export const resources = {
     calendar: enCalendar,
     tasks: enTasks,
     teams: enTeams,
+    portfolio: enPortfolio,
     links: enLinks,
   },
 } as const;

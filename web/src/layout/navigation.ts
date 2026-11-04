@@ -1,5 +1,7 @@
 import {
   Boxes,
+  BriefcaseBusiness,
+  FolderKanban,
   ListTodo,
   Building2,
   FileSpreadsheet,
@@ -21,6 +23,8 @@ export interface NavItem {
     | '/tasks'
     | '/teams'
     | '/sample'
+    | '/portfolio/requests'
+    | '/portfolio/projects'
     | '/ui-kit'
     | '/org/units'
     | '/org/chart'
@@ -39,6 +43,8 @@ export interface NavItem {
     | 'nav.tasks'
     | 'nav.teams'
     | 'nav.sample'
+    | 'nav.portfolioRequests'
+    | 'nav.portfolioProjects'
     | 'nav.uiKit'
     | 'nav.units'
     | 'nav.chart'
@@ -93,6 +99,7 @@ export const settingsPermissions = [
   'tasks.settings.manage',
   'tasks.reassignment.manage',
   'teams.settings.manage',
+  'portfolio.settings.manage',
 ] as const;
 
 /**
@@ -133,7 +140,23 @@ export const navigation: readonly NavSection[] = [
   {
     key: 'systems',
     labelKey: 'nav.sections.systems',
-    items: [{ to: '/sample', labelKey: 'nav.sample', icon: Boxes, system: 'sample' }],
+    items: [
+      {
+        to: '/portfolio/requests',
+        labelKey: 'nav.portfolioRequests',
+        icon: BriefcaseBusiness,
+        system: 'portfolio',
+        permissions: ['portfolio.request.read'],
+      },
+      {
+        to: '/portfolio/projects',
+        labelKey: 'nav.portfolioProjects',
+        icon: FolderKanban,
+        system: 'portfolio',
+        permissions: ['portfolio.project.read'],
+      },
+      { to: '/sample', labelKey: 'nav.sample', icon: Boxes, system: 'sample' },
+    ],
   },
   {
     key: 'administration',

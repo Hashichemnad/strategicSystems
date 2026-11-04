@@ -125,7 +125,8 @@ public partial class AuthorizationMatrixTests(ApiFixture api) : IClassFixture<Ap
             // A body every endpoint can bind, so the request reaches the access check (binding errors would answer 400 first).
             var form = new MultipartFormDataContent();
             if (route.Contains("photo", StringComparison.Ordinal) || route.Contains("import", StringComparison.Ordinal)
-                || route.Contains("logo", StringComparison.Ordinal))
+                || route.Contains("logo", StringComparison.Ordinal) || route.EndsWith("/files/{kind}", StringComparison.Ordinal)
+                || route.EndsWith("/template", StringComparison.Ordinal))
             {
                 var file = new ByteArrayContent(Encoding.UTF8.GetBytes("x"));
                 file.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");

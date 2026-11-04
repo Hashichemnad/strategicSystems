@@ -4404,6 +4404,294 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/portfolio/options': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetPortfolioOptions'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/requests': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListProgramRequests'];
+    put?: never;
+    post: operations['CreateProgramRequest'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/requests/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetProgramRequest'];
+    put: operations['UpdateProgramRequest'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/requests/{id}/submit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SubmitProgramRequest'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/requests/{id}/cancel': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CancelProgramRequest'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/requests/{id}/classification': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['OverrideRequestClassification'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/requests/{id}/approved-budget': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SetRequestApprovedBudget'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/requests/{id}/hand-off': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['HandOffProgramRequest'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/requests/{id}/quotations-uploaded': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ConfirmRequestQuotations'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/requests/{id}/files': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListProgramRequestFiles'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/requests/{id}/files/{kind}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['UploadProgramRequestFile'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/requests/{id}/assessments': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListProposalAssessments'];
+    put?: never;
+    post: operations['GenerateProposalAssessment'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/requests/{id}/audit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetProgramRequestAuditTrail'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/requests/{id}/audit/as-of': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetProgramRequestAsOf'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListPortfolioProjects'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetPortfolioProject'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/settings': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetPortfolioSettings'];
+    put: operations['SavePortfolioSettings'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/settings/template': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['UploadProjectScopeTemplate'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -4684,6 +4972,17 @@ export interface components {
       monthlyRequestsPerUser: null | number;
       byFeature: components['schemas']['AiUsageFeatureTotalDto'][];
     };
+    AlignmentDto: {
+      objectives: components['schemas']['AlignmentItem'][];
+      summary: null | string;
+    };
+    AlignmentItem: {
+      code: string;
+      labelAr: null | string;
+      labelEn: null | string;
+      strength: string;
+      reason: null | string;
+    };
     AmountDto: {
       code: string;
       /** Format: double */
@@ -4750,6 +5049,12 @@ export interface components {
       /** Format: uuid */
       businessHoursId?: null | string;
     };
+    ApprovedBudgetInput: {
+      /** Format: double */
+      amount: number;
+      /** Format: uint32 */
+      version: number;
+    };
     /** @description An approver brief: the AI paragraph and points (drafts), plus the changes computed from the audit trail (facts). */
     ApproverBriefDto: {
       resourceType: string;
@@ -4812,6 +5117,30 @@ export interface components {
     AskTurn: {
       role: null | string;
       text: null | string;
+    };
+    /** @description The stored Proposal Assessment (docs/design/portfolio.md §8.2). */
+    AssessmentContent: {
+      summary: null | string;
+      gaps: string[];
+      strengths: string[];
+      risks: string[];
+      alignment: components['schemas']['AlignmentDto'];
+      suggestedClassification: components['schemas']['SuggestedClassificationDto'];
+      suggestedPriority: components['schemas']['SuggestedPriorityDto'];
+      similar: components['schemas']['SimilarRecordDto'][];
+      recommendations: string[];
+    };
+    AssessmentDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: int32 */
+      versionNo: number;
+      content: components['schemas']['AssessmentContent'];
+      language: null | string;
+      documents: string[];
+      generatedBy: null | components['schemas']['PortfolioPersonDto'];
+      /** Format: date-time */
+      generatedAt: string;
     };
     AssigneeSuggestionDto: {
       employee: components['schemas']['PersonDto'];
@@ -4993,6 +5322,11 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    CancelRequestInput: {
+      reason: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
     ChangedFieldDto: {
       field: string;
       labelAr: string;
@@ -5025,6 +5359,12 @@ export interface components {
     ChecklistUpdateInput: {
       text: null | string;
       done: null | boolean;
+    };
+    ClassificationInput: {
+      value: null | string;
+      reason: null | string;
+      /** Format: uint32 */
+      version: number;
     };
     CommentDto: {
       /** Format: uuid */
@@ -6700,6 +7040,30 @@ export interface components {
       totalPages?: number;
     };
     /** @description One page of items plus the total count across all pages. */
+    PagedResultOfProjectListItemDto: {
+      items: components['schemas']['ProjectListItemDto'][];
+      /** Format: int32 */
+      page: number;
+      /** Format: int32 */
+      pageSize: number;
+      /** Format: int32 */
+      totalCount: number;
+      /** Format: int32 */
+      totalPages?: number;
+    };
+    /** @description One page of items plus the total count across all pages. */
+    PagedResultOfRequestListItemDto: {
+      items: components['schemas']['RequestListItemDto'][];
+      /** Format: int32 */
+      page: number;
+      /** Format: int32 */
+      pageSize: number;
+      /** Format: int32 */
+      totalCount: number;
+      /** Format: int32 */
+      totalPages?: number;
+    };
+    /** @description One page of items plus the total count across all pages. */
     PagedResultOfSampleItemDto: {
       items: components['schemas']['SampleItemDto'][];
       /** Format: int32 */
@@ -6799,6 +7163,67 @@ export interface components {
       nameAr: null | string;
       nameEn: null | string;
     };
+    PortfolioOptionDto: {
+      code: string;
+      labelAr: null | string;
+      labelEn: null | string;
+    };
+    /** @description Everything the request screens need to render choices and live calculations (labels are configuration). */
+    PortfolioOptionsDto: {
+      objectives: components['schemas']['PortfolioOptionDto'][];
+      sources: components['schemas']['PortfolioOptionDto'][];
+      programTypes: components['schemas']['PortfolioOptionDto'][];
+      deliveryOptions: components['schemas']['PortfolioOptionDto'][];
+      criteria: components['schemas']['PriorityCriterion'][];
+      bands: components['schemas']['PriorityBand'][];
+      /** Format: double */
+      thresholdAmount: number;
+      currencyCode: string;
+      /** Format: int32 */
+      startYearsAhead: number;
+      /** Format: int32 */
+      endYearsAhead: number;
+      /** Format: date */
+      today: string;
+      /** Format: uuid */
+      projectScopeTemplateFileId: null | string;
+      assessmentOnCreate: boolean;
+      canCreate: boolean;
+      canManageSettings: boolean;
+    };
+    PortfolioPersonDto: {
+      /** Format: uuid */
+      id: string;
+      nameAr: null | string;
+      nameEn: null | string;
+    };
+    /** @description Settings → Portfolio (docs/design/portfolio.md §2.1). Defaults are SPEC Appendix A (Q-P5, Q-P6). */
+    PortfolioSettings: {
+      /** Format: double */
+      thresholdAmount?: number;
+      priorityCriteria?: components['schemas']['PriorityCriterion'][];
+      priorityBands?: components['schemas']['PriorityBand'][];
+      /** Format: int32 */
+      startYearsAhead?: number;
+      /** Format: int32 */
+      endYearsAhead?: number;
+      budgetStepCode?: string;
+      /** Format: uuid */
+      projectScopeTemplateFileId?: null | string;
+      assessmentOnCreate?: boolean;
+    };
+    PortfolioSettingsInput: {
+      settings: components['schemas']['PortfolioSettings'];
+      /** Format: uint32 */
+      version: number;
+    };
+    PortfolioUnitDto: {
+      /** Format: uuid */
+      id: string;
+      code: string;
+      nameAr: null | string;
+      nameEn: null | string;
+    };
     PreferencesInput: {
       language: null | string;
       theme: null | string;
@@ -6842,6 +7267,24 @@ export interface components {
       nameAr: null | string;
       nameEn: null | string;
       detail: null | string;
+    };
+    /** @description A priority band: the highest band whose minimum (ratio, 1.0 = 100 %) is at or below the score applies. */
+    PriorityBand: {
+      code: string;
+      labelAr: string;
+      labelEn: string;
+      /** Format: double */
+      minimum: number;
+    };
+    /** @description A prioritisation criterion (SPEC §1.12 configurable weighted scoring; defaults are the four ADoF criteria). */
+    PriorityCriterion: {
+      code: string;
+      labelAr: string;
+      labelEn: string;
+      /** Format: double */
+      weight: number;
+      /** @default true */
+      active: boolean;
     };
     Problem: {
       type?: string;
@@ -6903,6 +7346,71 @@ export interface components {
       changedAt: null | string;
       /** Format: int32 */
       inProgress: number;
+    };
+    ProjectDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      classification: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      description: null | string;
+      scopeOfWork: null | string;
+      stage: string;
+      status: string;
+      unit: null | components['schemas']['PortfolioUnitDto'];
+      sectionUnit: null | components['schemas']['PortfolioUnitDto'];
+      strategicObjectiveCode: null | string;
+      programTypeCode: null | string;
+      /** Format: double */
+      budget: null | number;
+      /** Format: double */
+      year1PlannedCost: null | number;
+      /** Format: double */
+      year2PlannedCost: null | number;
+      /** Format: double */
+      year3PlannedCost: null | number;
+      /** Format: double */
+      year4PlannedCost: null | number;
+      /** Format: date */
+      plannedStart: null | string;
+      /** Format: date */
+      plannedEnd: null | string;
+      owner: null | components['schemas']['PortfolioPersonDto'];
+      requester: null | components['schemas']['PortfolioPersonDto'];
+      /** Format: uuid */
+      requestId: string;
+      requestNumber: null | string;
+      stagePath: string[];
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: uint32 */
+      version: number;
+    };
+    ProjectListItemDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      classification: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      stage: string;
+      status: string;
+      unit: null | components['schemas']['PortfolioUnitDto'];
+      /** Format: double */
+      budget: null | number;
+      /** Format: date */
+      plannedStart: null | string;
+      /** Format: date */
+      plannedEnd: null | string;
+      /** Format: date-time */
+      createdAt: string;
+    };
+    ProjectRefDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      classification: string;
     };
     ProviderDto: {
       /** Format: uuid */
@@ -7181,6 +7689,209 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    /** @description What the current user may do on the request now (drives the record page; the server checks again on every call). */
+    RequestCapabilities: {
+      edit: boolean;
+      submit: boolean;
+      cancel: boolean;
+      manage: boolean;
+      quotations: boolean;
+      setApprovedBudget: boolean;
+      assess: boolean;
+    };
+    RequestDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      status: string;
+      approvalStatus: null | string;
+      approvalStepCode: null | string;
+      approvalStepNameAr: null | string;
+      approvalStepNameEn: null | string;
+      /** Format: date-time */
+      submittedAt: null | string;
+      /** Format: date-time */
+      lastActionAt: null | string;
+      cancelReason: null | string;
+      /** Format: date-time */
+      cancelledAt: null | string;
+      requester: null | components['schemas']['PortfolioPersonDto'];
+      source: string;
+      values: components['schemas']['RequestValues'];
+      unit: null | components['schemas']['PortfolioUnitDto'];
+      sectionUnit: null | components['schemas']['PortfolioUnitDto'];
+      classification: string;
+      classificationOverride: null | string;
+      overrideReason: null | string;
+      effectiveClassification: string;
+      /** Format: double */
+      evaluationScore: null | number;
+      priorityBand: null | string;
+      /** Format: double */
+      yearCostsTotal: null | number;
+      /** Format: int32 */
+      timeFrameMonths: null | number;
+      procurementStatus: null | string;
+      costEstimationUploaded: boolean;
+      projectScopeUploaded: boolean;
+      /** Format: date-time */
+      quotationsHandedOffAt: null | string;
+      /** Format: date-time */
+      quotationsUploadedAt: null | string;
+      /** Format: double */
+      approvedBudget: null | number;
+      project: null | components['schemas']['ProjectRefDto'];
+      /** Format: int32 */
+      assessmentCount: number;
+      can: components['schemas']['RequestCapabilities'];
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: date-time */
+      updatedAt: string;
+      /** Format: uint32 */
+      version: number;
+    };
+    /** @description A file on a request with its kind (`document`, `cost-estimation`, `project-scope`, `quotation`). */
+    RequestFileDto: {
+      kind: string;
+      file: components['schemas']['FileDto'];
+    };
+    RequestInput: {
+      values: components['schemas']['RequestValues'];
+      source?: null | string;
+    };
+    RequestListItemDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      status: string;
+      approvalStatus: null | string;
+      approvalStepNameAr: null | string;
+      approvalStepNameEn: null | string;
+      effectiveClassification: string;
+      /** Format: double */
+      evaluationScore: null | number;
+      priorityBand: null | string;
+      requiresBudget: null | boolean;
+      /** Format: double */
+      estimatedBudget: null | number;
+      unit: null | components['schemas']['PortfolioUnitDto'];
+      requester: null | components['schemas']['PortfolioPersonDto'];
+      /** Format: date-time */
+      submittedAt: null | string;
+      /** Format: date-time */
+      updatedAt: string;
+      projectNumber: null | string;
+    };
+    RequestUpdateInput: {
+      values: components['schemas']['RequestValues'];
+      /** Format: uint32 */
+      version: number;
+    };
+    /**
+     * @description Every editable value of a Program Request (SPEC §1.4 A, docs/design/portfolio.md §3.1). Used by the wizard (create / update), the rules
+     *     and the calculators. Amounts are in the installation currency, two decimals; ratios are 0–1.
+     */
+    RequestValues: {
+      nameAr?: null | string;
+      nameEn?: null | string;
+      description?: null | string;
+      justifications?: null | string;
+      strategicObjectiveCode?: null | string;
+      suggestionSourceCode?: null | string;
+      suggestionSourceOther?: null | string;
+      programTypeCode?: null | string;
+      requiresBudget?: null | boolean;
+      /** Format: double */
+      estimatedBudget?: null | number;
+      /** Format: double */
+      year1Cost?: null | number;
+      /** Format: double */
+      year2Cost?: null | number;
+      /** Format: double */
+      year3Cost?: null | number;
+      /** Format: double */
+      year4Cost?: null | number;
+      /** Format: date */
+      expectedStartDate?: null | string;
+      /** Format: date */
+      expectedEndDate?: null | string;
+      /**
+       * Format: uuid
+       * @description Requesting unit (department or section); defaults to the requester's unit.
+       */
+      unitId?: null | string;
+      /**
+       * Format: uuid
+       * @description Section to implement.
+       */
+      sectionUnitId?: null | string;
+      programNature?: null | string;
+      previousProgramName?: null | string;
+      scopeOfWork?: null | string;
+      screenCoreWork?: null | boolean;
+      screenOneTime?: null | boolean;
+      screenTimeBound?: null | boolean;
+      screenUniqueOutput?: null | boolean;
+      screenMinCost?: null | boolean;
+      screenOperationalCosts?: null | boolean;
+      /** @description Criterion code → score 1–5 (Settings → Portfolio criteria). */
+      priorityScores?: null | {
+        [key: string]: number;
+      };
+      mainOptionCode?: null | string;
+      mainOptionOther?: null | string;
+      mainAdvantages?: null | string;
+      mainDisadvantages?: null | string;
+      altOptionCode?: null | string;
+      altOptionOther?: null | string;
+      altAdvantages?: null | string;
+      altDisadvantages?: null | string;
+      othersBearCosts?: null | boolean;
+      othersCoverImplementation?: null | boolean;
+      /** Format: double */
+      sharedCostAmount?: null | number;
+      partnerName?: null | string;
+      /**
+       * Format: double
+       * @description Partner cost-sharing ratio (0–1).
+       */
+      partnerShare?: null | number;
+      /** Format: double */
+      annualOperationCost?: null | number;
+      /** Format: double */
+      annualLicenceCost?: null | number;
+      /** Format: double */
+      annualMaintenanceCost?: null | number;
+      /** Format: double */
+      annualOtherCost?: null | number;
+      /** Format: date */
+      operatingCostsFrom?: null | string;
+      returnExpected?: null | boolean;
+      /** Format: double */
+      returnValue?: null | number;
+      /** Format: int32 */
+      returnYear?: null | number;
+      reductionExpected?: null | boolean;
+      /** Format: double */
+      reductionValue?: null | number;
+      /** Format: int32 */
+      reductionYear?: null | number;
+      practiceOperation?: null | string;
+      practiceService?: null | string;
+      practiceProject?: null | string;
+      practiceInitiative?: null | string;
+      /** @description CostPaths: whether a cost estimation file is available or the project scope goes to Administration. */
+      costPath?: null | string;
+      costProposalsRequested?: null | boolean;
+    };
+    RequestVersionInput: {
+      /** Format: uint32 */
+      version: number;
+      comment?: null | string;
+    };
     ResetPasswordInput: {
       /** Format: uuid */
       userId: null | string;
@@ -7395,6 +8106,11 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    SettingsDocumentOfPortfolioSettings: {
+      value: null | components['schemas']['PortfolioSettings'];
+      /** Format: uint32 */
+      version: number;
+    };
     SettingsDocumentOfRegionalSettings: {
       value: null | components['schemas']['RegionalSettings'];
       /** Format: uint32 */
@@ -7421,6 +8137,18 @@ export interface components {
       text: null | string;
       /** Format: uuid */
       excludeId: null | string;
+    };
+    SimilarRecordDto: {
+      resourceType: string;
+      /** Format: uuid */
+      id: string;
+      number: null | string;
+      titleAr: null | string;
+      titleEn: null | string;
+      status: null | string;
+      link: string;
+      /** Format: double */
+      score: number;
     };
     SmtpSettingsDto: {
       enabled: boolean;
@@ -7501,6 +8229,20 @@ export interface components {
       plannedStart: null | string;
       /** Format: date */
       dueDate: null | string;
+    };
+    SuggestedClassificationDto: {
+      value: null | string;
+      reasoning: null | string;
+      computed: string;
+    };
+    SuggestedPriorityDto: {
+      scores: {
+        [key: string]: number;
+      };
+      reasoning: null | string;
+      /** Format: double */
+      score: null | number;
+      band: null | string;
     };
     SuggestInput: {
       title: null | string;
@@ -19245,6 +19987,750 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['RewardMatrixDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetPortfolioOptions: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PortfolioOptionsDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListProgramRequests: {
+    parameters: {
+      query?: {
+        page?: number;
+        pageSize?: number;
+        sort?: string;
+        view?: string;
+        status?: string;
+        classification?: string;
+        priorityBand?: string;
+        unitId?: string;
+        search?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PagedResultOfRequestListItemDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateProgramRequest: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RequestInput'];
+      };
+    };
+    responses: {
+      /** @description Created */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RequestDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetProgramRequest: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RequestDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateProgramRequest: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RequestUpdateInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RequestDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SubmitProgramRequest: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RequestVersionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RequestDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CancelProgramRequest: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CancelRequestInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RequestDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  OverrideRequestClassification: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ClassificationInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RequestDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SetRequestApprovedBudget: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ApprovedBudgetInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RequestDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  HandOffProgramRequest: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RequestVersionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RequestDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ConfirmRequestQuotations: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RequestVersionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RequestDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListProgramRequestFiles: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RequestFileDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UploadProgramRequestFile: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        kind: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'multipart/form-data': {
+          file: components['schemas']['IFormFile'];
+        } & {
+          comment?: string;
+        };
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RequestFileDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListProposalAssessments: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AssessmentDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GenerateProposalAssessment: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AssessmentDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetProgramRequestAuditTrail: {
+    parameters: {
+      query?: {
+        page?: number;
+        pageSize?: number;
+        field?: string;
+        userId?: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PagedResultOfAuditEntryDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetProgramRequestAsOf: {
+    parameters: {
+      query: {
+        at: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RecordSnapshotDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListPortfolioProjects: {
+    parameters: {
+      query?: {
+        page?: number;
+        pageSize?: number;
+        sort?: string;
+        classification?: string;
+        stage?: string;
+        unitId?: string;
+        search?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PagedResultOfProjectListItemDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetPortfolioProject: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProjectDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetPortfolioSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SettingsDocumentOfPortfolioSettings'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SavePortfolioSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['PortfolioSettingsInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SettingsDocumentOfPortfolioSettings'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UploadProjectScopeTemplate: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'multipart/form-data': {
+          file: components['schemas']['IFormFile'];
+        };
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SettingsDocumentOfPortfolioSettings'];
         };
       };
       /** @description Problem Details (RFC 9457) */

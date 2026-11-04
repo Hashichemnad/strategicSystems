@@ -1,5 +1,6 @@
 import {
   Bell,
+  BriefcaseBusiness,
   Bot,
   Cable,
   Building,
@@ -32,6 +33,7 @@ import {
 
 export type SettingsPageKey =
   | 'teams'
+  | 'portfolio'
   | 'regional'
   | 'branding'
   | 'systems'
@@ -77,6 +79,7 @@ export type SettingsPath =
   | '/settings/mcp'
   | '/settings/tasks'
   | '/settings/teams'
+  | '/settings/portfolio'
   | '/settings/tasks/reassign'
   | '/settings/business-hours'
   | '/settings/holidays'
@@ -179,6 +182,12 @@ export const settingsGroups: readonly SettingsGroup[] = [
         permissions: ['tasks.reassignment.manage'],
       },
       { key: 'teams', to: '/settings/teams', icon: UsersRound, permissions: ['teams.settings.manage'] },
+      {
+        key: 'portfolio',
+        to: '/settings/portfolio',
+        icon: BriefcaseBusiness,
+        permissions: ['portfolio.settings.manage'],
+      },
     ],
   },
   {

@@ -84,6 +84,10 @@ internal sealed partial class DemoChatClient(string model) : IChatClient
                 },
             });
         }
+        else if (system.Contains("You assess a program proposal", StringComparison.Ordinal))
+        {
+            text = AssessProposal(system);
+        }
         else if (system.Contains("You turn meeting minutes", StringComparison.Ordinal))
         {
             text = DraftTasks(user);
@@ -163,6 +167,56 @@ internal sealed partial class DemoChatClient(string model) : IChatClient
 
         var arabic = document.Count(c => c is >= '؀' and <= 'ۿ');
         return new JsonObject { ["language"] = arabic > document.Length / 4 ? "ar" : "en", ["fields"] = fields }.ToJsonString();
+    }
+
+    /// <summary>Phase 8: a fixed Proposal Assessment naming the first configured objective and scoring every criterion 4.</summary>
+    private static string AssessProposal(string system)
+    {
+        var arabic = system.Contains("in Arabic", StringComparison.Ordinal);
+        static IEnumerable<string> Codes(string system, string marker)
+        {
+            var start = system.IndexOf(marker, StringComparison.Ordinal);
+            if (start < 0)
+            {
+                return [];
+            }
+
+            var line = system[(start + marker.Length)..].Split('\n')[0];
+            return line.Split(';').Select(part => part.Split(" = ")[0].Trim()).Where(code => code.Length > 0 && !code.StartsWith('(')).ToList();
+        }
+
+        var objective = Codes(system, "Use only these objective codes:").FirstOrDefault();
+        var scores = new JsonObject();
+        foreach (var code in Codes(system, "for each of these criteria codes, with reasoning:"))
+        {
+            scores[code] = 4;
+        }
+
+        return JsonSerializer.Serialize(new
+        {
+            summary = arabic
+                ? "ملخص تجريبي: يقترح الطلب برنامجاً لتحسين الخدمة بنطاق واضح وميزانية موزعة على السنوات."
+                : "Demo summary: the request proposes a program that improves the service, with a clear scope and a budget spread over the years.",
+            gaps = arabic
+                ? new List<string> { "لا توجد مؤشرات أداء قابلة للقياس للفوائد المتوقعة.", "لم تُحدد المخاطر الرئيسية وخطط معالجتها." }
+                : new List<string> { "No measurable indicators for the expected benefits.", "The main risks and their treatment are not described." },
+            strengths = arabic ? new List<string> { "نطاق العمل واضح ومحدد." } : new List<string> { "The scope of work is clear and bounded." },
+            risks = arabic ? new List<string> { "الاعتماد على مورد واحد." } : new List<string> { "Dependence on a single vendor." },
+            alignment = new
+            {
+                objectives = objective is null ? Array.Empty<object>() : [new { code = objective, strength = "strong", reason = arabic ? "يدعم الهدف مباشرة." : "Supports the objective directly." }],
+                summary = arabic ? "توافق جيد مع الأهداف الاستراتيجية." : "Good alignment with the strategic objectives.",
+            },
+            suggestedClassification = new
+            {
+                value = system.Contains("Currently computed: project", StringComparison.Ordinal) ? "project" : "initiative",
+                reasoning = arabic ? "وفق قاعدة التصنيف المعتمدة لدى الجهة." : "Following the organisation's classification rule.",
+            },
+            suggestedPriority = new { scores, reasoning = arabic ? "أثر متوقع جيد مع تعقيد متوسط." : "Good expected impact with moderate complexity." },
+            recommendations = arabic
+                ? new List<string> { "حدد مؤشرات أداء ومستهدفات لكل فائدة.", "أضف سجلاً أولياً للمخاطر." }
+                : new List<string> { "Define KPIs and targets for each benefit.", "Add an initial risk register." },
+        });
     }
 
     /// <summary>Each line starting with "-", "*", "•" or "1." becomes a task; "@Name" names the assignee and "by YYYY-MM-DD" the due date.</summary>
