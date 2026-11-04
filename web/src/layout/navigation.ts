@@ -15,6 +15,7 @@ import {
   Palette,
   ScrollText,
   Settings2,
+  ShieldAlert,
   ShieldCheck,
   UsersRound,
   type LucideIcon,
@@ -27,6 +28,7 @@ export interface NavItem {
     | '/tasks'
     | '/teams'
     | '/kpi'
+    | '/risk'
     | '/requests'
     | '/documents'
     | '/ip'
@@ -51,6 +53,7 @@ export interface NavItem {
     | 'nav.tasks'
     | 'nav.teams'
     | 'nav.kpi'
+    | 'nav.risk'
     | 'nav.requests'
     | 'nav.documents'
     | 'nav.ip'
@@ -115,6 +118,7 @@ export const settingsPermissions = [
   'kpi.settings.manage',
   'kpi.strategy.manage',
   'kpi.plan.manage',
+  'risk.framework.manage',
   'requests.type.manage',
   'docreg.settings.manage',
   'ip.settings.manage',
@@ -174,6 +178,7 @@ export const navigation: readonly NavSection[] = [
         permissions: ['portfolio.project.read'],
       },
       { to: '/kpi', labelKey: 'nav.kpi', icon: Gauge, system: 'kpi', permissions: ['kpi.card.read'] },
+      { to: '/risk', labelKey: 'nav.risk', icon: ShieldAlert, system: 'risk', permissions: ['risk.risk.read'] },
       {
         to: '/requests',
         labelKey: 'nav.requests',

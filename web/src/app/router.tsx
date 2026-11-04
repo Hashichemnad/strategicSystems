@@ -454,6 +454,100 @@ export const kpiReportsRoute = createRoute({
   component: lazyRouteComponent(() => import('@/features/kpi/ReportsPage'), 'KpiReportsPage'),
 });
 
+// Risk Management (Phase 13, docs/design/risk.md §12): dashboard, register, risk page and wizard, my actions, project risks, mechanism, reports.
+export const riskDashboardRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/risk',
+  component: lazyRouteComponent(() => import('@/features/risk/DashboardPage'), 'RiskDashboardPage'),
+});
+
+export const riskRegisterRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/risk/risks',
+  validateSearch: z.object({
+    page: z.coerce.number().int().min(1).optional().catch(undefined),
+    view: z
+      .enum([
+        'all',
+        'mine',
+        'my-unit',
+        'top10',
+        'outside-appetite',
+        'overdue-review',
+        'under-review',
+        'escalated',
+        'reassessment',
+      ])
+      .optional()
+      .catch(undefined),
+    search: z.string().max(200).optional().catch(undefined),
+    unitId: z.uuid().optional().catch(undefined),
+    category: z.string().max(100).optional().catch(undefined),
+    status: z.string().max(40).optional().catch(undefined),
+    band: z.string().max(100).optional().catch(undefined),
+  }),
+  component: lazyRouteComponent(() => import('@/features/risk/RegisterPage'), 'RiskRegisterPage'),
+});
+
+export const riskNewRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/risk/risks/new',
+  component: lazyRouteComponent(() => import('@/features/risk/RiskWizardPage'), 'RiskWizardPage'),
+});
+
+export const riskRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/risk/risks/$riskId',
+  validateSearch: z.object({
+    tab: z
+      .enum(['overview', 'assessment', 'controls', 'actions', 'kris', 'events', 'reviews', 'documents', 'activity'])
+      .optional()
+      .catch(undefined),
+  }),
+  component: lazyRouteComponent(() => import('@/features/risk/RiskPage'), 'RiskPage'),
+});
+
+export const riskEditRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/risk/risks/$riskId/edit',
+  component: lazyRouteComponent(() => import('@/features/risk/RiskWizardPage'), 'RiskWizardPage'),
+});
+
+export const riskMyActionsRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/risk/my-actions',
+  validateSearch: z.object({ action: z.uuid().optional().catch(undefined) }),
+  component: lazyRouteComponent(() => import('@/features/risk/MyActionsPage'), 'RiskMyActionsPage'),
+});
+
+// Links registry target of a treatment action (task-able records): its owner's quick-update list.
+export const riskActionRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/risk/actions/$actionId',
+  beforeLoad: ({ params }) => {
+    // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router redirects are thrown
+    throw redirect({ to: '/risk/my-actions', search: { action: params.actionId } });
+  },
+});
+
+export const riskProjectRisksRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/risk/project-risks',
+  component: lazyRouteComponent(() => import('@/features/risk/ProjectRisksPage'), 'RiskProjectRisksPage'),
+});
+
+export const riskMechanismRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/risk/mechanism',
+  component: lazyRouteComponent(() => import('@/features/risk/MechanismPage'), 'RiskMechanismPage'),
+});
+
+export const riskReportsRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/risk/reports',
+  component: lazyRouteComponent(() => import('@/features/risk/ReportsPage'), 'RiskReportsPage'),
+});
+
 // Request Framework, Document Registry, IP Registry (Phase 14, docs/design/requests.md).
 export const requestCatalogueRoute = createRoute({
   getParentRoute: () => appLayout,
@@ -842,6 +936,15 @@ const kpiSettingsRoute = createRoute({
   component: lazyRouteComponent(() => import('@/features/kpi/KpiSettingsPage'), 'KpiSettingsPage'),
 });
 
+const riskSettingsRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/risk',
+  component: lazyRouteComponent(
+    () => import('@/features/risk/RiskFrameworkSettingsPage'),
+    'RiskFrameworkSettingsPage',
+  ),
+});
+
 const requestTypesRoute = createRoute({
   getParentRoute: () => settingsLayout,
   path: '/request-types',
@@ -960,6 +1063,16 @@ const routeTree = rootRoute.addChildren([
     kpiScorecardRoute,
     kpiStrategyMapRoute,
     kpiReportsRoute,
+    riskDashboardRoute,
+    riskRegisterRoute,
+    riskNewRoute,
+    riskRoute,
+    riskEditRoute,
+    riskMyActionsRoute,
+    riskActionRoute,
+    riskProjectRisksRoute,
+    riskMechanismRoute,
+    riskReportsRoute,
     requestCatalogueRoute,
     requestNewRoute,
     myRequestsRoute,
@@ -1010,6 +1123,7 @@ const routeTree = rootRoute.addChildren([
       teamSettingsRoute,
       portfolioSettingsRoute,
       kpiSettingsRoute,
+      riskSettingsRoute,
       requestTypesRoute,
       requestTypeBuilderRoute,
       docregSettingsRoute,
