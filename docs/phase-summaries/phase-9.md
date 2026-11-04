@@ -1,6 +1,6 @@
 # Phase 9 — Portfolio Management B: Project lifecycle and change control: summary
 
-**Status:** built and verified in the build session · awaiting owner acceptance
+**Status:** built and verified · ADRs 0070–0076 accepted by the owner · rebased on Phase 14 (`main` after PR #11)
 **Branch:** `claude/dreamy-keller-t7ikki`
 **Planning:** the plan is the Phase 9 part of [`docs/design/portfolio.md`](../design/portfolio.md) (§15–§28), committed before the code
 (`docs(portfolio): Phase 9 design note…`). As in earlier phases the session ran without an interactive approval step; open choices are ADRs
@@ -42,17 +42,26 @@ Also asked for: gate blocks submission (unit `ProjectGateTests`, integration); w
 | Gate | Result |
 |---|---|
 | `dotnet build Strategy.slnx -c Release` · `dotnet format --verify-no-changes` | 0 warnings, 0 errors · clean |
-| `dotnet test --solution Strategy.slnx` | Full run: **2 667** tests, 2 658 green; the 9 failures were environmental or expected facts — 8 OCR tests (Tesseract not installed in the container; after installing it they pass) and the job dashboard list (updated for `portfolio.monthly-cycle`; passes). Re-run after the UI merge: Portfolio integration **21 / 21**. New: **92** Portfolio unit test cases (147 in the namespace) (lifecycle, gates, progress, milestone rules, risk scoring, change lifecycle), **9** Portfolio integration tests |
+| `dotnet test --solution Strategy.slnx` | **After the rebase on Phase 14 and the recall addition: 2 944 / 2 944.** Before the rebase, full run: **2 667** tests, 2 658 green; the 9 failures were environmental or expected facts — 8 OCR tests (Tesseract not installed in the container; after installing it they pass) and the job dashboard list (updated for `portfolio.monthly-cycle`; passes). Re-run after the UI merge: Portfolio integration **21 / 21**. New: **92** Portfolio unit test cases (147 in the namespace) (lifecycle, gates, progress, milestone rules, risk scoring, change lifecycle), **9** Portfolio integration tests |
 | `tools/check-api-client.sh` · `tools/check-vulnerable.sh` | up to date · no High / Critical |
-| `npm run lint` · `format:check` · `typecheck` · `npm test` | clean · **125 / 125** Vitest (new `projectLogic.test.ts`; `messageKeys.test.ts` covers every Phase 9 server key in AR and EN) |
+| `npm run lint` · `format:check` · `typecheck` · `npm test` | clean · **185 / 185** Vitest after the rebase (new `projectLogic.test.ts`; `messageKeys.test.ts` covers every Phase 9 server key in AR and EN) |
 | `npm run build` · `npm audit --audit-level=high` · `npm run lint:licenses` | OK · no High / Critical (same 14 moderate dev-tool advisories) · 613 packages allowed |
-| `npx playwright test` | New `portfolio-projects.spec.ts` passes in ar and en; regression `portfolio.spec.ts`, `teams.spec.ts`, `platform.spec.ts` pass in both languages (two Arabic runs passed on re-run: a Gotenberg restart and a Phase 8 banner key, fixed). The whole suite was not re-run in this session |
+| `npx playwright test` | **Whole suite after the rebase on Phase 14: 88 / 88** in Arabic and English on a fresh database (Phases 0–9, 12 and 14; the job dashboard now lists 17 jobs) |
 
 Existing tests updated for Phase 9 facts: Portfolio MCP tool list; project response type (`ProjectFullDto`); Teams / KPI test doubles use their own link type `test.project` (the real `portfolio.project` now exists); authorization matrix sends a file to `/evidence`; job dashboard (API and E2E) lists 14 jobs; Phase 8 E2E reads the Phase 9 banner key.
 
 **Dependencies added:** none.
 
-## Decisions (ADRs, *Proposed* — for the owner)
+## Owner addition: recall a pending approval
+The submitter (the PM for stage and monthly approvals; the PM or the person who raised a change request) and the PM Office may **recall** a
+pending charter, planning, monthly update, closure, impact or change-request approval with a reason (`POST /projects/{id}/recall`): the engine
+instance is cancelled, the stage returns to its draft (monthly window and milestones returned, change request back to draft) and the project
+shows the result *recalled*. Hold stays refused while an approval runs; the refusal carries `action = recall` and the hold dialog offers
+**Recall**; the Approvals tab and the current-status banner show **Recall** too. Tests: integration `A_pending_approval_can_be_recalled…`
+(nothing to recall 422, hold refusal with the hint, viewer 403, reason required, planning / monthly / change-request recalls, hold afterwards),
+Vitest `offersRecall`, E2E step and screenshot `approval-recall`. Recorded in ADR 0070 and the design note.
+
+## Decisions (ADRs — accepted by the owner)
 - [0070](../decisions/0070-project-lifecycle-templates-and-gates.md) Stage templates, gates, one approval at a time, high-level vs detailed plan, rejection returns to draft, initiative completion by PM Office.
 - [0071](../decisions/0071-monthly-cycle-and-progress.md) Window opening / due / reminders in working time, pending values and lock, additional windows, linear planned-to-date.
 - [0072](../decisions/0072-team-formation-and-project-access.md) `TeamMembershipChanged` and the `team-member` record role; closure events.
@@ -89,4 +98,4 @@ cd web && npm ci && npm run dev        # http://localhost:5173
 ## Cloud environment notes
 - PostgreSQL 16 local (`max_connections = 600`, `STRATEGY_TEST_POSTGRES`); it had to be restarted once after the session paused. Docker started manually for Gotenberg / Mailpit; Tesseract installed for the OCR tests; E2E on a fresh database with the bundled Chromium.
 - The web UI and E2E were built in a parallel worktree and merged (`feat(web)…`, `test(e2e)…` commits; one backend fix there: unique OpenAPI schema names for project meetings, proposed members and the KPI card picker).
-- Screenshots (`E2E_SCREENSHOTS=phase-9`) in [`docs/screenshots/phase-9/`](../screenshots/phase-9/) as `ar-*` / `en-*` pairs: `take-ownership`, `charter-risks`, `charter-gate-blocked`, `team-formation`, `planning-items`, `milestones-weights`, `monthly-update-evidence`, `monthly-update-delay`, `closure-form`, `impact`, `change-request-apply`, `change-request-applied`, `project-record-execution`, `project-record-completed`.
+- Screenshots (`E2E_SCREENSHOTS=phase-9`) in [`docs/screenshots/phase-9/`](../screenshots/phase-9/) as `ar-*` / `en-*` pairs: `take-ownership`, `charter-risks`, `charter-gate-blocked`, `team-formation`, `planning-items`, `milestones-weights`, `approval-recall`, `monthly-update-evidence`, `monthly-update-delay`, `closure-form`, `impact`, `change-request-apply`, `change-request-applied`, `project-record-execution`, `project-record-completed`.
