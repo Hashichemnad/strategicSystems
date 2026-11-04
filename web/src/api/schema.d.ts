@@ -7188,6 +7188,854 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/risk/framework': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetRiskFramework'];
+    put?: never;
+    post: operations['SaveRiskFramework'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/framework/versions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListRiskFrameworkVersions'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/framework/versions/{versionNo}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetRiskFrameworkVersion'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/framework/preview': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['PreviewRiskFramework'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/categories': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListRiskCategories'];
+    put?: never;
+    post: operations['CreateRiskCategory'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/categories/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateRiskCategory'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/settings': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetRiskSettings'];
+    put: operations['SaveRiskSettings'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/mechanism': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetRiskMechanism'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/options': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetRiskOptions'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/risks': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListRisks'];
+    put?: never;
+    post: operations['CreateRisk'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/risks/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetRisk'];
+    put: operations['UpdateRisk'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/risks/{id}/submit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SubmitRisk'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/risks/{id}/recall': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RecallRisk'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/risks/{id}/office-update': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['OfficeUpdateRisk'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/risks/{id}/request-closure': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RequestRiskClosure'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/risks/{id}/reopen': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ReopenRisk'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/risks/{id}/escalation': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['EscalateRisk'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/risks/{id}/committee-decisions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListRiskCommitteeDecisions'];
+    put?: never;
+    post: operations['RecordRiskCommitteeDecision'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/risks/{id}/discard': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['DiscardRisk'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/risks/{id}/assessments': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListRiskAssessments'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/risks/{id}/controls': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListRiskControls'];
+    put?: never;
+    post: operations['CreateRiskControl'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/risks/{id}/controls/{controlId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateRiskControl'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/controls/{id}/rate': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RateRiskControl'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/controls/{id}/retire': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RetireRiskControl'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/risks/{id}/actions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListRiskActions'];
+    put?: never;
+    post: operations['CreateRiskAction'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/risks/{id}/actions/{actionId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateRiskAction'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/actions/{id}/cancel': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CancelRiskAction'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/actions/{id}/progress': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['UpdateRiskActionProgress'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/actions/{id}/convert-to-control': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ConvertRiskActionToControl'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/actions/{id}/updates': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListRiskActionUpdates'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/my-actions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListMyRiskActions'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/risks/{id}/kris': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListRiskKris'];
+    put?: never;
+    post: operations['CreateRiskKri'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/risks/{id}/kris/{kriId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateRiskKri'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/kris/{id}/remove': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RemoveRiskKri'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/events': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListRiskEvents'];
+    put?: never;
+    post: operations['LogRiskEvent'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/events/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateRiskEvent'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/risks/{id}/reviews': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListRiskReviews'];
+    put?: never;
+    post: operations['StartRiskReview'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/reviews/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['SaveRiskReview'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/reviews/{id}/submit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SubmitRiskReview'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/dashboard': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetRiskDashboard'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/heatmap': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetRiskHeatCell'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/project-risks': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListRiskProjectRisks'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/reports/{kind}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ExportRiskReport'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/mechanism/pdf': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ExportRiskMechanism'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/risks/{id}/audit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetRiskAuditTrail'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/risks/{id}/audit/as-of': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetRiskAsOf'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/ai/identify': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['IdentifyRisksWithAi'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/ai/identify/document': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['IdentifyRisksFromDocumentWithAi'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/ai/statement-check': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CheckRiskStatement'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/ai/risks/{id}/suggestions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SuggestRiskTreatmentWithAi'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/ai/duplicates': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['FindDuplicateRisks'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/ai/risks/{id}/review-assistant': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['AssistRiskReviewWithAi'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/ai/report': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['DraftRiskReportWithAi'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -7249,11 +8097,80 @@ export interface components {
       /** Format: uint32 */
       version: null | number;
     };
+    ActionBriefDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      titleAr: null | string;
+      titleEn: null | string;
+      /** Format: uuid */
+      riskId: string;
+      riskNumber: string;
+      /** Format: date */
+      plannedEnd: null | string;
+      /** Format: double */
+      completionPct: number;
+      owner: null | components['schemas']['RiskPersonDto'];
+    };
+    ActionDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      /** Format: uuid */
+      riskId: string;
+      riskNumber: string;
+      riskTitleAr: null | string;
+      riskTitleEn: null | string;
+      values: components['schemas']['ActionValues'];
+      owner: null | components['schemas']['RiskPersonDto'];
+      responsibleUnits: components['schemas']['RiskUnitDto'][];
+      /** Format: date */
+      actualStart: null | string;
+      /** Format: date */
+      actualEnd: null | string;
+      /** Format: double */
+      completionPct: number;
+      status: string;
+      overdue: boolean;
+      /** Format: uuid */
+      convertedControlId: null | string;
+      canEdit: boolean;
+      canProgress: boolean;
+      canConvert: boolean;
+      /** Format: int32 */
+      draftUpdates: number;
+      /** Format: uint32 */
+      version: number;
+    };
     ActionInput: {
       /** Format: uint32 */
       version: number;
       comment: null | string;
       form: null | components['schemas']['JsonObject'];
+    };
+    ActionUpdateDto: {
+      /** Format: uuid */
+      id: string;
+      note: null | string;
+      /** Format: double */
+      completionPct: number;
+      /** Format: date-time */
+      at: string;
+      by: null | components['schemas']['RiskPersonDto'];
+      draft: boolean;
+    };
+    ActionValues: {
+      titleAr: null | string;
+      titleEn: null | string;
+      /** Format: uuid */
+      ownerEmployeeId: null | string;
+      responsibleUnitIds: null | string[];
+      /** Format: date */
+      plannedStart: null | string;
+      /** Format: date */
+      plannedEnd: null | string;
+      /** Format: double */
+      cost: null | number;
     };
     /** @description Outcome of a decision. */
     ActResult: {
@@ -7265,6 +8182,16 @@ export interface components {
       outcome: string;
       nextStepNameAr: null | string;
       nextStepNameEn: null | string;
+    };
+    AffectedRiskDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      titleAr: null | string;
+      titleEn: null | string;
+      kind: string;
+      fromBand: string;
+      toBand: string;
     };
     AiCapabilitiesDto: {
       enabled: boolean;
@@ -7636,6 +8563,10 @@ export interface components {
       roleCode?: null | string;
       systemCode?: null | string;
     };
+    AreaCriterion: {
+      ar: null | string;
+      en: null | string;
+    };
     AskAnswerDto: {
       answer: string;
       references: components['schemas']['AskReferenceDto'][];
@@ -7974,6 +8905,20 @@ export interface components {
       labelAr: null | string;
       labelEn: null | string;
     };
+    CategoryInput: {
+      code: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      /** Format: uuid */
+      parentId: null | string;
+      /** Format: double */
+      appetite: null | number;
+      /** Format: int32 */
+      sort: number;
+      active: boolean;
+      /** Format: uint32 */
+      version: null | number;
+    };
     ChallengeDto: {
       /** Format: uuid */
       id: string;
@@ -8190,6 +9135,16 @@ export interface components {
       mentions: null | string[];
       fileIds: null | string[];
     };
+    CommitteeDecisionDto: {
+      /** Format: uuid */
+      id: string;
+      decisionCode: string;
+      note: null | string;
+      /** Format: date */
+      decidedOn: string;
+      /** Format: date-time */
+      createdAt: string;
+    };
     CompareDto: {
       /** Format: uuid */
       fromId: string;
@@ -8277,6 +9232,43 @@ export interface components {
       contributors: null | components['schemas']['ContributorInput'][];
       /** Format: uint32 */
       version: number;
+    };
+    ControlDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      riskId: string;
+      values: components['schemas']['ControlValues'];
+      owner: null | components['schemas']['RiskPersonDto'];
+      /** Format: uuid */
+      sourceActionId: null | string;
+      status: string;
+      canEdit: boolean;
+      canRate: boolean;
+      /** Format: uint32 */
+      version: number;
+    };
+    ControlValues: {
+      nameAr: null | string;
+      nameEn: null | string;
+      description: null | string;
+      typeCode: null | string;
+      natureCode: null | string;
+      /** Format: uuid */
+      ownerEmployeeId: null | string;
+      frequencyCode: null | string;
+      effectivenessCode: null | string;
+      /** Format: date */
+      lastAssessedOn: null | string;
+      evidence: null | string;
+    };
+    ConvertInput: {
+      effectivenessCode: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      typeCode: null | string;
+      natureCode: null | string;
+      frequencyCode: null | string;
     };
     CountByDto: {
       key: string;
@@ -8659,6 +9651,14 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    /** @description A control effectiveness level; decimal EffectivenessLevel.Factor is the formula variable `C` (0–10). */
+    EffectivenessLevel: {
+      code: string;
+      labelAr: null | string;
+      labelEn: null | string;
+      /** Format: double */
+      factor: number;
+    };
     EffectivePermissionDto: {
       permission: string;
       scopes: string[];
@@ -8884,6 +9884,37 @@ export interface components {
       notes: null | string;
       /** Format: uint32 */
       version: null | number;
+    };
+    EventDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      values: components['schemas']['EventValues'];
+      risks: components['schemas']['RiskListRefDto'][];
+      unit: null | components['schemas']['RiskUnitDto'];
+      /** Format: uuid */
+      capRemarkId: null | string;
+      status: string;
+      /** Format: date-time */
+      createdAt: string;
+      canEdit: boolean;
+      /** Format: uint32 */
+      version: number;
+    };
+    EventValues: {
+      /** Format: date */
+      occurredOn: string;
+      description: null | string;
+      /** Format: double */
+      financialImpact: null | number;
+      currency: null | string;
+      otherImpact: null | string;
+      nearMiss: boolean;
+      rootCause: null | string;
+      lessons: null | string;
+      /** Format: uuid */
+      unitId: null | string;
+      riskIds: string[];
     };
     ExpiryInput: {
       /** Format: date */
@@ -9124,6 +10155,63 @@ export interface components {
       system?: boolean;
       fields?: components['schemas']['FormField'][];
     };
+    /** @description The whole framework (one immutable version). */
+    FrameworkContent: {
+      scoringMethod: string;
+      formula: null | string;
+      likelihood: components['schemas']['LikelihoodLevel'][];
+      impactAreas: components['schemas']['ImpactArea'][];
+      impact: components['schemas']['ImpactLevel'][];
+      bands: components['schemas']['RatingBand'][];
+      controlEffectiveness: components['schemas']['EffectivenessLevel'][];
+      reviewFrequencyMonths: {
+        [key: string]: number;
+      };
+      /** @default control-reduction */
+      projectResidualRule: string;
+    };
+    FrameworkInput: {
+      content: components['schemas']['FrameworkContent'];
+      reason: null | string;
+      recalculation: string;
+    };
+    FrameworkPreviewDto: {
+      valid: boolean;
+      errors: components['schemas']['FieldError'][];
+      matrix: components['schemas']['MatrixCell'][];
+      /** Format: int32 */
+      openRisks: number;
+      /** Format: int32 */
+      affectedRisks: number;
+      /** Format: int32 */
+      affectedProjectRisks: number;
+      examples: components['schemas']['AffectedRiskDto'][];
+    };
+    FrameworkSummaryDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: int32 */
+      versionNo: number;
+      scoringMethod: string;
+      formula: null | string;
+      reason: null | string;
+      recalculation: string;
+      /** Format: date-time */
+      createdAt: string;
+    };
+    FrameworkVersionDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: int32 */
+      versionNo: number;
+      content: components['schemas']['FrameworkContent'];
+      reason: null | string;
+      recalculation: string;
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: uuid */
+      createdBy: null | string;
+    };
     FromTextInput: {
       text: null | string;
     };
@@ -9188,6 +10276,23 @@ export interface components {
       /** Format: int32 */
       finished: number;
       complete: boolean;
+    };
+    HeatCellDto: {
+      /** Format: int32 */
+      likelihood: number;
+      /** Format: int32 */
+      impact: number;
+      /** Format: double */
+      score: number;
+      band: string;
+      /** Format: int32 */
+      enterprise: number;
+      /** Format: int32 */
+      project: number;
+    };
+    HeatCellRisksDto: {
+      risks: components['schemas']['RiskListItemDto'][];
+      projectRisks: components['schemas']['ProjectRiskRowDto'][];
     };
     HistoryDto: {
       /** Format: uuid */
@@ -9261,6 +10366,11 @@ export interface components {
     };
     /** Format: binary */
     IFormFile: string;
+    ImpactArea: {
+      code: string;
+      labelAr: null | string;
+      labelEn: null | string;
+    };
     ImpactInput: {
       /** Format: double */
       costPerformance: null | number;
@@ -9275,6 +10385,15 @@ export interface components {
       impactNotes: null | string;
       /** Format: uint32 */
       version: number;
+    };
+    ImpactLevel: {
+      /** Format: int32 */
+      value: number;
+      labelAr: null | string;
+      labelEn: null | string;
+      criteria?: null | {
+        [key: string]: components['schemas']['AreaCriterion'];
+      };
     };
     /** @description One problem found in an uploaded file. int ImportIssue.Row is the sheet row number; string? ImportIssue.Column a column key. */
     ImportIssue: {
@@ -10369,6 +11488,24 @@ export interface components {
       rangeMax: null | number;
       isAccumulated: boolean;
     };
+    /** @description Year-to-date performance of a card's annual plan (approved results only). */
+    KpiYearPerformance: {
+      /** Format: uuid */
+      cardId: string;
+      /** Format: int32 */
+      year: number;
+      /** Format: double */
+      achieved: null | number;
+      /** Format: double */
+      actual: null | number;
+      /** Format: double */
+      capped: null | number;
+      rag: string;
+      /** Format: int32 */
+      approvedPeriods: number;
+      /** Format: int32 */
+      totalPeriods: number;
+    };
     KpiYearPointDto: {
       /** Format: int32 */
       year: number;
@@ -10413,6 +11550,64 @@ export interface components {
     KpiYearStartInput: {
       items: components['schemas']['KpiYearItemInput'][];
     };
+    KriBreachDto: {
+      /** Format: uuid */
+      kriId: string;
+      /** Format: uuid */
+      riskId: string;
+      riskNumber: string;
+      riskTitleAr: null | string;
+      riskTitleEn: null | string;
+      cardCode: string;
+      cardNameAr: null | string;
+      cardNameEn: null | string;
+      /** Format: double */
+      value: null | number;
+      /** Format: double */
+      threshold: number;
+      direction: string;
+      period: null | string;
+      /** Format: date-time */
+      at: null | string;
+    };
+    KriDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      riskId: string;
+      /** Format: uuid */
+      kpiCardId: string;
+      cardCode: string;
+      cardNameAr: null | string;
+      cardNameEn: null | string;
+      basis: string;
+      direction: string;
+      /** Format: double */
+      warningThreshold: null | number;
+      /** Format: double */
+      breachThreshold: number;
+      status: string;
+      /** Format: double */
+      lastValue: null | number;
+      lastLevel: string;
+      lastPeriod: null | string;
+      /** Format: date-time */
+      lastAt: null | string;
+      performance: null | components['schemas']['KpiYearPerformance'];
+      cardVisible: boolean;
+      /** Format: uint32 */
+      version: number;
+    };
+    KriValues: {
+      /** Format: uuid */
+      kpiCardId: string;
+      basis: string;
+      direction: string;
+      /** Format: double */
+      warningThreshold: null | number;
+      /** Format: double */
+      breachThreshold: number;
+    };
     LessonDto: {
       /** Format: uuid */
       id: string;
@@ -10447,6 +11642,14 @@ export interface components {
       levels: components['schemas']['FacetDto'][];
       types: components['schemas']['FacetDto'][];
       units: components['schemas']['UnitFacetDto'][];
+    };
+    LikelihoodLevel: {
+      /** Format: int32 */
+      value: number;
+      labelAr: null | string;
+      labelEn: null | string;
+      descriptionAr?: null | string;
+      descriptionEn?: null | string;
     };
     LinkableTypeDto: {
       resourceType: string;
@@ -10552,6 +11755,15 @@ export interface components {
       parentValueId: null | string;
       metadata: null | string;
     };
+    MatrixCell: {
+      /** Format: int32 */
+      likelihood: number;
+      /** Format: int32 */
+      impact: number;
+      /** Format: double */
+      score: number;
+      band: string;
+    };
     McpClientDto: {
       clientId: string;
       name: null | string;
@@ -10636,6 +11848,11 @@ export interface components {
     MeasuringMethodRule: {
       code: string;
       rule: string;
+    };
+    MechanismDto: {
+      framework: components['schemas']['FrameworkVersionDto'];
+      matrix: components['schemas']['MatrixCell'][];
+      categories: components['schemas']['RiskCategoryDto'][];
     };
     MeDto: {
       /** Format: uuid */
@@ -11103,6 +12320,15 @@ export interface components {
       /** Format: int32 */
       pendingMilestones: number;
     };
+    MovementDto: {
+      /** Format: int32 */
+      improved: number;
+      /** Format: int32 */
+      worsened: number;
+      /** Format: int32 */
+      unchanged: number;
+      worsenedRisks: components['schemas']['RiskListItemDto'][];
+    };
     MoveUnitInput: {
       /** Format: uuid */
       newParentId: null | string;
@@ -11288,6 +12514,16 @@ export interface components {
     NumberingPreviewDto: {
       pattern: string;
       preview: string;
+    };
+    OfficeInput: {
+      controlEffectivenessOverride: null | string;
+      residualStatusOverride: null | string;
+      justification: null | string;
+      top10: boolean;
+      /** Format: int32 */
+      top10Rank: null | number;
+      /** Format: uint32 */
+      version: number;
     };
     OpenEvaluationInput: {
       /** Format: int32 */
@@ -11542,6 +12778,18 @@ export interface components {
     /** @description One page of items plus the total count across all pages. */
     PagedResultOfRequestRowDto: {
       items: components['schemas']['RequestRowDto'][];
+      /** Format: int32 */
+      page: number;
+      /** Format: int32 */
+      pageSize: number;
+      /** Format: int32 */
+      totalCount: number;
+      /** Format: int32 */
+      totalPages?: number;
+    };
+    /** @description One page of items plus the total count across all pages. */
+    PagedResultOfRiskListItemDto: {
+      items: components['schemas']['RiskListItemDto'][];
       /** Format: int32 */
       page: number;
       /** Format: int32 */
@@ -11915,6 +13163,19 @@ export interface components {
       /** Format: int32 */
       inProgress: number;
     };
+    ProgressInput: {
+      /** Format: double */
+      completionPct: number;
+      note: null | string;
+      /** Format: date */
+      actualStart: null | string;
+      /** Format: date */
+      actualEnd: null | string;
+      /** Format: uint32 */
+      version: number;
+      /** @default false */
+      fromMcp: boolean;
+    };
     ProjectApprovalDto: {
       process: null | string;
       stepCode: null | string;
@@ -12242,6 +13503,36 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    ProjectRiskRowDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      projectId: string;
+      projectNumber: string;
+      projectNameAr: null | string;
+      projectNameEn: null | string;
+      title: null | string;
+      categoryCode: null | string;
+      categoryLabelAr: null | string;
+      categoryLabelEn: null | string;
+      /** Format: int32 */
+      probability: number;
+      /** Format: int32 */
+      impact: number;
+      /** Format: int32 */
+      controlEvaluation: null | number;
+      /** Format: double */
+      inherentScore: number;
+      inherentBand: string;
+      /** Format: double */
+      residualScore: number;
+      residualBand: string;
+      response: null | string;
+      /** Format: double */
+      implementationPct: null | number;
+      owner: null | components['schemas']['RiskPersonDto'];
+      link: string;
+    };
     ProjectRiskValues: {
       title: null | string;
       categoryCode: null | string;
@@ -12388,6 +13679,17 @@ export interface components {
     };
     QuestionInput: {
       question: null | string;
+    };
+    RatingBand: {
+      code: string;
+      labelAr: null | string;
+      labelEn: null | string;
+      color: string;
+      /** Format: double */
+      min: number;
+      /** Format: double */
+      max: number;
+      residualStatus: string;
     };
     /**
      * @description "Reassign open tasks of an employee" (ADR 0040). `TaskIds` narrows the preview (null = all open tasks). In `to-creators` mode the
@@ -12949,6 +14251,45 @@ export interface components {
       contributorId: string;
       emiratesId: string;
     };
+    ReviewAssistDto: {
+      changes: string[];
+      commentary: string;
+      facts: string[];
+      /** Format: uuid */
+      usageId: string;
+    };
+    ReviewDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      riskId: string;
+      status: string;
+      values: components['schemas']['ReviewValues'];
+      decisionComment: null | string;
+      /** Format: date-time */
+      submittedAt: null | string;
+      /** Format: date-time */
+      decidedAt: null | string;
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: double */
+      previewResidualScore: number;
+      previewResidualBand: string;
+      canEdit: boolean;
+      /** Format: uint32 */
+      version: number;
+    };
+    ReviewValues: {
+      /** Format: int32 */
+      residualLikelihood: number;
+      /** Format: int32 */
+      residualImpact: number;
+      controlRatings: null | {
+        [key: string]: string;
+      };
+      actionNotes: null | string;
+      commentary: null | string;
+    };
     RewardBudgetDto: {
       /** Format: int32 */
       year: number;
@@ -13016,10 +14357,412 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    RiskActionBody: {
+      values: components['schemas']['ActionValues'];
+      /** Format: uint32 */
+      version: null | number;
+    };
+    RiskAssessmentDto: {
+      /** Format: uuid */
+      id: string;
+      kind: string;
+      /** Format: int32 */
+      inherentLikelihood: number;
+      /** Format: int32 */
+      inherentImpact: number;
+      /** Format: double */
+      inherentScore: number;
+      inherentBand: string;
+      /** Format: int32 */
+      residualLikelihood: null | number;
+      /** Format: int32 */
+      residualImpact: null | number;
+      /** Format: double */
+      residualScore: number;
+      residualBand: string;
+      residualStatus: string;
+      /** Format: double */
+      targetScore: null | number;
+      targetBand: null | string;
+      controlEffectiveness: null | string;
+      status: string;
+      /** Format: int32 */
+      frameworkVersionNo: number;
+      comment: null | string;
+      /** Format: date-time */
+      at: string;
+      by: null | components['schemas']['RiskPersonDto'];
+    };
+    RiskBody: {
+      values: components['schemas']['RiskValues'];
+      /** Format: uint32 */
+      version: number;
+    };
+    RiskCategoryDto: {
+      /** Format: uuid */
+      id: string;
+      code: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      /** Format: uuid */
+      parentId: null | string;
+      /** Format: double */
+      appetite: null | number;
+      /** Format: int32 */
+      sort: number;
+      active: boolean;
+      /** Format: uint32 */
+      version: number;
+    };
+    RiskClosureInput: {
+      reasonCode: string;
+      note: null | string;
+    };
+    RiskCommentInput: {
+      comment: null | string;
+    };
+    RiskControlBody: {
+      values: components['schemas']['ControlValues'];
+      /** Format: uint32 */
+      version: null | number;
+    };
+    RiskCountDto: {
+      code: string;
+      /** Format: int32 */
+      count: number;
+    };
+    RiskDashboardDto: {
+      /** Format: int32 */
+      total: number;
+      /** Format: int32 */
+      active: number;
+      /** Format: int32 */
+      underReview: number;
+      /** Format: int32 */
+      draft: number;
+      /** Format: int32 */
+      closed: number;
+      /** Format: int32 */
+      projectRisks: number;
+      byCategory: components['schemas']['RiskCountDto'][];
+      byUnit: components['schemas']['RiskCountDto'][];
+      byResidualBand: components['schemas']['RiskCountDto'][];
+      byType: components['schemas']['RiskCountDto'][];
+      byResidualStatus: components['schemas']['RiskCountDto'][];
+      inherent: components['schemas']['HeatCellDto'][];
+      residual: components['schemas']['HeatCellDto'][];
+      outsideAppetite: components['schemas']['RiskListItemDto'][];
+      /** Format: int32 */
+      outsideAppetiteCount: number;
+      top10: components['schemas']['RiskListItemDto'][];
+      overdueActions: components['schemas']['ActionBriefDto'][];
+      /** Format: int32 */
+      overdueActionsCount: number;
+      overdueReviews: components['schemas']['RiskListItemDto'][];
+      /** Format: int32 */
+      overdueReviewsCount: number;
+      movement: components['schemas']['MovementDto'];
+      kriBreaches: components['schemas']['KriBreachDto'][];
+      bands: components['schemas']['RatingBand'][];
+      units: {
+        [key: string]: components['schemas']['RiskUnitDto'];
+      };
+    };
+    RiskDecisionInput: {
+      decisionCode: string;
+      note: null | string;
+      /** Format: date */
+      decidedOn: null | string;
+    };
+    RiskDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      /** Format: int32 */
+      registerYear: number;
+      values: components['schemas']['RiskValues'];
+      status: string;
+      unit: null | components['schemas']['RiskUnitDto'];
+      owner: null | components['schemas']['RiskPersonDto'];
+      coordinator: null | components['schemas']['RiskPersonDto'];
+      followUp: null | components['schemas']['RiskPersonDto'];
+      /** Format: double */
+      inherentScore: number;
+      inherentBand: string;
+      controlEffectiveness: null | string;
+      controlEffectivenessOverride: null | string;
+      /** Format: double */
+      residualScore: number;
+      residualBand: string;
+      residualStatus: string;
+      residualStatusOverride: null | string;
+      residualStatusJustification: null | string;
+      /** Format: double */
+      targetScore: null | number;
+      targetBand: null | string;
+      withinAppetite: null | boolean;
+      /** Format: double */
+      appetite: null | number;
+      top10: boolean;
+      /** Format: int32 */
+      top10Rank: null | number;
+      escalated: boolean;
+      escalationReason: null | string;
+      /** Format: date */
+      lastReviewOn: null | string;
+      /** Format: date */
+      nextReviewOn: null | string;
+      reviewOverdue: boolean;
+      reassessmentRequired: boolean;
+      reassessmentReason: null | string;
+      pendingProcess: null | string;
+      returned: boolean;
+      returnComment: null | string;
+      closureReasonCode: null | string;
+      closureNote: null | string;
+      /** Format: date-time */
+      closedAt: null | string;
+      rejectionReason: null | string;
+      /** Format: int32 */
+      frameworkVersionNo: number;
+      onCurrentFramework: boolean;
+      can: components['schemas']['RiskPermissionsDto'];
+      /** Format: uint32 */
+      version: number;
+    };
+    RiskDuplicateCheckDto: {
+      visible: components['schemas']['RiskDuplicateMatchDto'][];
+      /** Format: int32 */
+      otherUnits: number;
+    };
+    RiskDuplicateInput: {
+      text: null | string;
+      /** Format: uuid */
+      excludeId: null | string;
+    };
+    RiskDuplicateMatchDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      titleAr: null | string;
+      titleEn: null | string;
+      /** Format: double */
+      score: number;
+    };
+    RiskEscalationInput: {
+      escalated: boolean;
+      note: null | string;
+    };
+    RiskEventBody: {
+      values: components['schemas']['EventValues'];
+      /** Format: uint32 */
+      version: null | number;
+    };
+    RiskIdentificationDto: {
+      risks: components['schemas']['SuggestedRiskDto'][];
+      /** Format: uuid */
+      usageId: string;
+    };
+    RiskIdentifyInput: {
+      description: null | string;
+    };
     RiskInput: {
       values: components['schemas']['ProjectRiskValues'];
       /** Format: uint32 */
       version?: null | number;
+    };
+    RiskKriBody: {
+      values: components['schemas']['KriValues'];
+      /** Format: uint32 */
+      version: null | number;
+    };
+    RiskListItemDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      titleAr: null | string;
+      titleEn: null | string;
+      status: string;
+      unit: null | components['schemas']['RiskUnitDto'];
+      owner: null | components['schemas']['RiskPersonDto'];
+      categoryCodes: string[];
+      /** Format: double */
+      inherentScore: number;
+      inherentBand: string;
+      /** Format: double */
+      residualScore: number;
+      residualBand: string;
+      /** Format: double */
+      targetScore: null | number;
+      targetBand: null | string;
+      residualStatus: string;
+      withinAppetite: null | boolean;
+      top10: boolean;
+      /** Format: int32 */
+      top10Rank: null | number;
+      escalated: boolean;
+      /** Format: date */
+      nextReviewOn: null | string;
+      reviewOverdue: boolean;
+      reassessmentRequired: boolean;
+      pendingProcess: null | string;
+      emerging: boolean;
+      opportunity: boolean;
+      /** Format: int32 */
+      registerYear: number;
+    };
+    RiskListRefDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      titleAr: null | string;
+      titleEn: null | string;
+    };
+    RiskOptionDto: {
+      code: string;
+      labelAr: null | string;
+      labelEn: null | string;
+    };
+    RiskOptionsDto: {
+      lookups: {
+        [key: string]: components['schemas']['RiskOptionDto'][];
+      };
+      categories: components['schemas']['RiskCategoryDto'][];
+      objectives: components['schemas']['RiskOptionDto'][];
+      framework: components['schemas']['FrameworkVersionDto'];
+      matrix: components['schemas']['MatrixCell'][];
+      opportunitiesEnabled: boolean;
+      canCreate: boolean;
+      canOffice: boolean;
+      canManageFramework: boolean;
+      canReadProjectRisks: boolean;
+      canExport: boolean;
+      canDashboard: boolean;
+      /** Format: int32 */
+      topCount: number;
+      includeProjectRisksByDefault: boolean;
+    };
+    RiskPermissionsDto: {
+      edit: boolean;
+      submit: boolean;
+      recall: boolean;
+      office: boolean;
+      requestClosure: boolean;
+      reopen: boolean;
+      discard: boolean;
+      committeeDecide: boolean;
+      manageChildren: boolean;
+      startReview: boolean;
+      logEvent: boolean;
+    };
+    RiskPersonDto: {
+      /** Format: uuid */
+      id: string;
+      nameAr: null | string;
+      nameEn: null | string;
+    };
+    RiskPreviewInput: {
+      content: components['schemas']['FrameworkContent'];
+    };
+    RiskRateInput: {
+      effectivenessCode: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
+    RiskReasonInput: {
+      reason: string;
+    };
+    RiskReportDraftDto: {
+      reportAr: string;
+      reportEn: string;
+      top10Ar: string;
+      top10En: string;
+      /** Format: uuid */
+      usageId: string;
+    };
+    RiskReportInput: {
+      /** Format: uuid */
+      unitId: null | string;
+      /** Format: int32 */
+      year: null | number;
+    };
+    RiskReviewBody: {
+      values: components['schemas']['ReviewValues'];
+      /** Format: uint32 */
+      version: number;
+    };
+    /** @description Settings → Risk (docs/design/risk.md §2.2). */
+    RiskSettings: {
+      /** Format: int32 */
+      topCount?: number;
+      /** Format: int32 */
+      reviewReminderWorkingDays?: number;
+      /** Format: int32 */
+      actionReminderWorkingDays?: number;
+      /** Format: int32 */
+      actionEscalationWorkingDays?: number;
+      opportunitiesEnabled?: boolean;
+      escalateCritical?: boolean;
+      escalateOutsideAppetite?: boolean;
+      kriWarningNotifies?: boolean;
+      includeProjectRisksByDefault?: boolean;
+      organisationCode?: string;
+    };
+    RiskSettingsInput: {
+      settings: components['schemas']['RiskSettings'];
+      /** Format: uint32 */
+      version: number;
+    };
+    RiskUnitDto: {
+      /** Format: uuid */
+      id: string;
+      code: null | string;
+      nameAr: null | string;
+      nameEn: null | string;
+    };
+    /** @description Everything an author sets on a risk (wizard / API / AI draft). */
+    RiskValues: {
+      titleAr: null | string;
+      titleEn: null | string;
+      cause: null | string;
+      eventText: null | string;
+      consequence: null | string;
+      determinedByCode: null | string;
+      /** Format: date */
+      identifiedOn: string;
+      /** Format: date */
+      exposureStart: null | string;
+      riskType: string;
+      categoryCodes: string[];
+      emerging: boolean;
+      opportunity: boolean;
+      /** Format: uuid */
+      unitId: string;
+      /** Format: uuid */
+      ownerEmployeeId: null | string;
+      /** Format: uuid */
+      coordinatorEmployeeId: null | string;
+      /** Format: uuid */
+      followUpEmployeeId: null | string;
+      objectiveCodes: null | string[];
+      processes: null | string;
+      /** Format: int32 */
+      inherentLikelihood: number;
+      /** Format: int32 */
+      inherentImpact: number;
+      inherentImpactArea: null | string;
+      /** Format: int32 */
+      residualLikelihood: null | number;
+      /** Format: int32 */
+      residualImpact: null | number;
+      /** Format: int32 */
+      targetLikelihood: null | number;
+      /** Format: int32 */
+      targetImpact: null | number;
+      /** Format: date */
+      targetDate: null | string;
+      responseCode: null | string;
+      needsFollowUp: boolean;
     };
     RoleDto: {
       /** Format: uuid */
@@ -13204,6 +14947,11 @@ export interface components {
     };
     SettingsDocumentOfRegionalSettings: {
       value: null | components['schemas']['RegionalSettings'];
+      /** Format: uint32 */
+      version: number;
+    };
+    SettingsDocumentOfRiskSettings: {
+      value: null | components['schemas']['RiskSettings'];
       /** Format: uint32 */
       version: number;
     };
@@ -13402,6 +15150,20 @@ export interface components {
       email: null | string;
       phone: null | string;
     };
+    StatementCheckDto: {
+      flags: string[];
+      issues: string[];
+      cause: null | string;
+      eventText: null | string;
+      consequence: null | string;
+      /** Format: uuid */
+      usageId: null | string;
+    };
+    StatementInput: {
+      cause: null | string;
+      eventText: null | string;
+      consequence: null | string;
+    };
     StepStateDto: {
       /** Format: int32 */
       sort: number;
@@ -13453,10 +15215,19 @@ export interface components {
       /** Format: date */
       dueDate: null | string;
     };
+    SuggestedActionDto: {
+      titleAr: null | string;
+      titleEn: null | string;
+    };
     SuggestedClassificationDto: {
       value: null | string;
       reasoning: null | string;
       computed: string;
+    };
+    SuggestedControlDto: {
+      nameAr: null | string;
+      nameEn: null | string;
+      typeCode: null | string;
     };
     SuggestedPriorityDto: {
       scores: {
@@ -13466,6 +15237,19 @@ export interface components {
       /** Format: double */
       score: null | number;
       band: null | string;
+    };
+    SuggestedRiskDto: {
+      titleAr: null | string;
+      titleEn: null | string;
+      cause: null | string;
+      eventText: null | string;
+      consequence: null | string;
+      categoryCode: null | string;
+      /** Format: int32 */
+      likelihood: null | number;
+      /** Format: int32 */
+      impact: null | number;
+      reasoning: null | string;
     };
     SuggestInput: {
       title: null | string;
@@ -14236,6 +16020,13 @@ export interface components {
       };
       /** Format: int64 */
       version: number;
+    };
+    TreatmentSuggestionDto: {
+      controls: components['schemas']['SuggestedControlDto'][];
+      actions: components['schemas']['SuggestedActionDto'][];
+      similarRisks: components['schemas']['RiskListRefDto'][];
+      /** Format: uuid */
+      usageId: string;
     };
     TypeDetailDto: {
       /** Format: uuid */
@@ -32195,6 +33986,2119 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['SettingsDocumentOfIpSettings'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetRiskFramework: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['FrameworkVersionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SaveRiskFramework: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['FrameworkInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['FrameworkVersionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListRiskFrameworkVersions: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['FrameworkSummaryDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetRiskFrameworkVersion: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        versionNo: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['FrameworkVersionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  PreviewRiskFramework: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RiskPreviewInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['FrameworkPreviewDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListRiskCategories: {
+    parameters: {
+      query?: {
+        includeInactive?: boolean;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RiskCategoryDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateRiskCategory: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CategoryInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RiskCategoryDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateRiskCategory: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CategoryInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RiskCategoryDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetRiskSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SettingsDocumentOfRiskSettings'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SaveRiskSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RiskSettingsInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SettingsDocumentOfRiskSettings'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetRiskMechanism: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MechanismDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetRiskOptions: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RiskOptionsDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListRisks: {
+    parameters: {
+      query?: {
+        page?: number;
+        pageSize?: number;
+        sort?: string;
+        view?: string;
+        search?: string;
+        unitId?: string;
+        category?: string;
+        status?: string;
+        residualBand?: string;
+        residualStatus?: string;
+        year?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PagedResultOfRiskListItemDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateRisk: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RiskValues'];
+      };
+    };
+    responses: {
+      /** @description Created */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RiskDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetRisk: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RiskDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateRisk: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RiskBody'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RiskDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SubmitRisk: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RiskCommentInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RiskDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RecallRisk: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RiskDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  OfficeUpdateRisk: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['OfficeInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RiskDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RequestRiskClosure: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RiskClosureInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RiskDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ReopenRisk: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RiskReasonInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RiskDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  EscalateRisk: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RiskEscalationInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RiskDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListRiskCommitteeDecisions: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CommitteeDecisionDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RecordRiskCommitteeDecision: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RiskDecisionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CommitteeDecisionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  DiscardRisk: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': boolean;
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListRiskAssessments: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RiskAssessmentDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListRiskControls: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ControlDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateRiskControl: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RiskControlBody'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ControlDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateRiskControl: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        controlId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RiskControlBody'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ControlDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RateRiskControl: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RiskRateInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ControlDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RetireRiskControl: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ControlDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListRiskActions: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ActionDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateRiskAction: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RiskActionBody'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ActionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateRiskAction: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        actionId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RiskActionBody'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ActionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CancelRiskAction: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ActionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateRiskActionProgress: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ProgressInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ActionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ConvertRiskActionToControl: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ConvertInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ControlDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListRiskActionUpdates: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ActionUpdateDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListMyRiskActions: {
+    parameters: {
+      query?: {
+        includeCompleted?: boolean;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ActionDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListRiskKris: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KriDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateRiskKri: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RiskKriBody'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KriDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateRiskKri: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        kriId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RiskKriBody'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KriDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RemoveRiskKri: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KriDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListRiskEvents: {
+    parameters: {
+      query?: {
+        riskId?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['EventDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  LogRiskEvent: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RiskEventBody'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['EventDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateRiskEvent: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RiskEventBody'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['EventDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListRiskReviews: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReviewDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  StartRiskReview: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReviewDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SaveRiskReview: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RiskReviewBody'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReviewDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SubmitRiskReview: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RiskCommentInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReviewDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetRiskDashboard: {
+    parameters: {
+      query?: {
+        unitId?: string;
+        category?: string;
+        residualStatus?: string;
+        year?: number;
+        includeProjectRisks?: boolean;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RiskDashboardDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetRiskHeatCell: {
+    parameters: {
+      query: {
+        kind: string;
+        likelihood: number;
+        impact: number;
+        unitId?: string;
+        category?: string;
+        residualStatus?: string;
+        year?: number;
+        includeProjectRisks?: boolean;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HeatCellRisksDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListRiskProjectRisks: {
+    parameters: {
+      query?: {
+        projectId?: string;
+        band?: string;
+        search?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProjectRiskRowDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ExportRiskReport: {
+    parameters: {
+      query: {
+        format: string;
+        unitId?: string;
+        language?: string;
+      };
+      header?: never;
+      path: {
+        kind: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ExportRiskMechanism: {
+    parameters: {
+      query?: {
+        language?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetRiskAuditTrail: {
+    parameters: {
+      query?: {
+        page?: number;
+        pageSize?: number;
+        field?: string;
+        userId?: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PagedResultOfAuditEntryDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetRiskAsOf: {
+    parameters: {
+      query: {
+        at: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RecordSnapshotDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  IdentifyRisksWithAi: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RiskIdentifyInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RiskIdentificationDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  IdentifyRisksFromDocumentWithAi: {
+    parameters: {
+      query?: {
+        description?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'multipart/form-data': {
+          file: components['schemas']['IFormFile'];
+        };
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RiskIdentificationDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CheckRiskStatement: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['StatementInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['StatementCheckDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SuggestRiskTreatmentWithAi: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TreatmentSuggestionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  FindDuplicateRisks: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RiskDuplicateInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RiskDuplicateCheckDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  AssistRiskReviewWithAi: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReviewAssistDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  DraftRiskReportWithAi: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RiskReportInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RiskReportDraftDto'];
         };
       };
       /** @description Problem Details (RFC 9457) */

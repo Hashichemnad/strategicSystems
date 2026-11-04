@@ -388,10 +388,10 @@ Implement with tests: scoring for multiplicative, additive and a custom formula;
 Finish with the phase summary.
 ```
 
-**Acceptance checks**
-- [ ] Admin changes the formula; preview shows impact; chosen recalculation option applied and audited.
-- [ ] Heat-maps (inherent vs residual) and Top-10 work; project risks appear as a filterable category.
-- [ ] A KPI result breaching a KRI threshold notifies the risk owner.
+**Acceptance checks** (verified by Claude Code in the build session; owner acceptance pending — see `docs/phase-summaries/phase-13.md`)
+- [x] Admin changes the formula; preview shows impact; chosen recalculation option applied and audited.
+- [x] Heat-maps (inherent vs residual) and Top-10 work; project risks appear as a filterable category.
+- [x] A KPI result breaching a KRI threshold notifies the risk owner.
 
 ---
 
@@ -522,7 +522,7 @@ Implement, then run the full hardening review and fix findings, run performance 
 | 10 | Portfolio C — Agile, standards, Gantt | ☐ | |
 | 11 | Wasel vendor portal | ☐ | |
 | 12 | Performance Management | ☑ built — awaiting owner acceptance | |
-| 13 | Risk Management | ☐ | |
+| 13 | Risk Management | ☑ built — awaiting owner acceptance | |
 | 14 | Requests, Document Registry, IP | ☑ built — awaiting owner acceptance | |
 | 15 | CAP & Benchmarking | ☐ | |
 | 16 | Audit Management | ☐ | |

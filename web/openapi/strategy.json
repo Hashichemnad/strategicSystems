@@ -24832,6 +24832,3030 @@
           }
         }
       }
+    },
+    "/api/v1/risk/framework": {
+      "get": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "GetRiskFramework",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FrameworkVersionDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "SaveRiskFramework",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FrameworkInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FrameworkVersionDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/framework/versions": {
+      "get": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "ListRiskFrameworkVersions",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/FrameworkSummaryDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/framework/versions/{versionNo}": {
+      "get": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "GetRiskFrameworkVersion",
+        "parameters": [
+          {
+            "name": "versionNo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FrameworkVersionDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/framework/preview": {
+      "post": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "PreviewRiskFramework",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskPreviewInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FrameworkPreviewDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/categories": {
+      "get": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "ListRiskCategories",
+        "parameters": [
+          {
+            "name": "includeInactive",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RiskCategoryDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "CreateRiskCategory",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CategoryInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskCategoryDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/categories/{id}": {
+      "put": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "UpdateRiskCategory",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CategoryInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskCategoryDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/settings": {
+      "get": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "GetRiskSettings",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingsDocumentOfRiskSettings"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "SaveRiskSettings",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskSettingsInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingsDocumentOfRiskSettings"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/mechanism": {
+      "get": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "GetRiskMechanism",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MechanismDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/options": {
+      "get": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "GetRiskOptions",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskOptionsDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/risks": {
+      "get": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "ListRisks",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "view",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "unitId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "residualBand",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "residualStatus",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "year",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResultOfRiskListItemDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "CreateRisk",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskValues"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/risks/{id}": {
+      "get": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "GetRisk",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "UpdateRisk",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/risks/{id}/submit": {
+      "post": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "SubmitRisk",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskCommentInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/risks/{id}/recall": {
+      "post": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "RecallRisk",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/risks/{id}/office-update": {
+      "post": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "OfficeUpdateRisk",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OfficeInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/risks/{id}/request-closure": {
+      "post": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "RequestRiskClosure",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskClosureInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/risks/{id}/reopen": {
+      "post": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "ReopenRisk",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskReasonInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/risks/{id}/escalation": {
+      "post": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "EscalateRisk",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskEscalationInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/risks/{id}/committee-decisions": {
+      "get": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "ListRiskCommitteeDecisions",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CommitteeDecisionDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "RecordRiskCommitteeDecision",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskDecisionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommitteeDecisionDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/risks/{id}/discard": {
+      "post": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "DiscardRisk",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/risks/{id}/assessments": {
+      "get": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "ListRiskAssessments",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RiskAssessmentDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/risks/{id}/controls": {
+      "get": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "ListRiskControls",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ControlDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "CreateRiskControl",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskControlBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ControlDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/risks/{id}/controls/{controlId}": {
+      "put": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "UpdateRiskControl",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "controlId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskControlBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ControlDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/controls/{id}/rate": {
+      "post": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "RateRiskControl",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskRateInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ControlDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/controls/{id}/retire": {
+      "post": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "RetireRiskControl",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ControlDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/risks/{id}/actions": {
+      "get": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "ListRiskActions",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ActionDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "CreateRiskAction",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskActionBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/risks/{id}/actions/{actionId}": {
+      "put": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "UpdateRiskAction",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "actionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskActionBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/actions/{id}/cancel": {
+      "post": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "CancelRiskAction",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/actions/{id}/progress": {
+      "post": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "UpdateRiskActionProgress",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProgressInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActionDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/actions/{id}/convert-to-control": {
+      "post": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "ConvertRiskActionToControl",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConvertInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ControlDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/actions/{id}/updates": {
+      "get": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "ListRiskActionUpdates",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ActionUpdateDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/my-actions": {
+      "get": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "ListMyRiskActions",
+        "parameters": [
+          {
+            "name": "includeCompleted",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ActionDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/risks/{id}/kris": {
+      "get": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "ListRiskKris",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/KriDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "CreateRiskKri",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskKriBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KriDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/risks/{id}/kris/{kriId}": {
+      "put": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "UpdateRiskKri",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "kriId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskKriBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KriDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/kris/{id}/remove": {
+      "post": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "RemoveRiskKri",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KriDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/events": {
+      "get": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "ListRiskEvents",
+        "parameters": [
+          {
+            "name": "riskId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/EventDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "LogRiskEvent",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskEventBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/events/{id}": {
+      "put": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "UpdateRiskEvent",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskEventBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/risks/{id}/reviews": {
+      "get": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "ListRiskReviews",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReviewDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "StartRiskReview",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/reviews/{id}": {
+      "put": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "SaveRiskReview",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskReviewBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/reviews/{id}/submit": {
+      "post": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "SubmitRiskReview",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskCommentInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/dashboard": {
+      "get": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "GetRiskDashboard",
+        "parameters": [
+          {
+            "name": "unitId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "residualStatus",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "year",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "includeProjectRisks",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskDashboardDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/heatmap": {
+      "get": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "GetRiskHeatCell",
+        "parameters": [
+          {
+            "name": "kind",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "likelihood",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "impact",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "unitId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "residualStatus",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "year",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "includeProjectRisks",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HeatCellRisksDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/project-risks": {
+      "get": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "ListRiskProjectRisks",
+        "parameters": [
+          {
+            "name": "projectId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "band",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectRiskRowDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/reports/{kind}": {
+      "get": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "ExportRiskReport",
+        "parameters": [
+          {
+            "name": "kind",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "unitId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/mechanism/pdf": {
+      "get": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "ExportRiskMechanism",
+        "parameters": [
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/risks/{id}/audit": {
+      "get": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "GetRiskAuditTrail",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "field",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResultOfAuditEntryDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/risks/{id}/audit/as-of": {
+      "get": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "GetRiskAsOf",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "at",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecordSnapshotDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/ai/identify": {
+      "post": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "IdentifyRisksWithAi",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskIdentifyInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskIdentificationDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/ai/identify/document": {
+      "post": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "IdentifyRisksFromDocumentWithAi",
+        "parameters": [
+          {
+            "name": "description",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "file"
+                ],
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "$ref": "#/components/schemas/IFormFile"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskIdentificationDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/ai/statement-check": {
+      "post": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "CheckRiskStatement",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StatementInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatementCheckDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/ai/risks/{id}/suggestions": {
+      "post": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "SuggestRiskTreatmentWithAi",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TreatmentSuggestionDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/ai/duplicates": {
+      "post": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "FindDuplicateRisks",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskDuplicateInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskDuplicateCheckDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/ai/risks/{id}/review-assistant": {
+      "post": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "AssistRiskReviewWithAi",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReviewAssistDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/risk/ai/report": {
+      "post": {
+        "tags": [
+          "risk"
+        ],
+        "operationId": "DraftRiskReportWithAi",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskReportInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RiskReportDraftDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -25071,6 +28095,189 @@
         },
         "description": "A decision on a task (API body)."
       },
+      "ActionBriefDto": {
+        "required": [
+          "id",
+          "number",
+          "titleAr",
+          "titleEn",
+          "riskId",
+          "riskNumber",
+          "plannedEnd",
+          "completionPct",
+          "owner"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": "string"
+          },
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "riskId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "riskNumber": {
+            "type": "string"
+          },
+          "plannedEnd": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "completionPct": {
+            "type": "number",
+            "format": "double"
+          },
+          "owner": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/RiskPersonDto"
+              }
+            ]
+          }
+        }
+      },
+      "ActionDto": {
+        "required": [
+          "id",
+          "number",
+          "riskId",
+          "riskNumber",
+          "riskTitleAr",
+          "riskTitleEn",
+          "values",
+          "owner",
+          "responsibleUnits",
+          "actualStart",
+          "actualEnd",
+          "completionPct",
+          "status",
+          "overdue",
+          "convertedControlId",
+          "canEdit",
+          "canProgress",
+          "canConvert",
+          "draftUpdates",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": "string"
+          },
+          "riskId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "riskNumber": {
+            "type": "string"
+          },
+          "riskTitleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "riskTitleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "values": {
+            "$ref": "#/components/schemas/ActionValues"
+          },
+          "owner": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/RiskPersonDto"
+              }
+            ]
+          },
+          "responsibleUnits": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskUnitDto"
+            }
+          },
+          "actualStart": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "actualEnd": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "completionPct": {
+            "type": "number",
+            "format": "double"
+          },
+          "status": {
+            "type": "string"
+          },
+          "overdue": {
+            "type": "boolean"
+          },
+          "convertedControlId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "canEdit": {
+            "type": "boolean"
+          },
+          "canProgress": {
+            "type": "boolean"
+          },
+          "canConvert": {
+            "type": "boolean"
+          },
+          "draftUpdates": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
       "ActionInput": {
         "required": [
           "version",
@@ -25098,6 +28305,114 @@
                 "$ref": "#/components/schemas/JsonObject"
               }
             ]
+          }
+        }
+      },
+      "ActionUpdateDto": {
+        "required": [
+          "id",
+          "note",
+          "completionPct",
+          "at",
+          "by",
+          "draft"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "note": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "completionPct": {
+            "type": "number",
+            "format": "double"
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "by": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/RiskPersonDto"
+              }
+            ]
+          },
+          "draft": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ActionValues": {
+        "required": [
+          "titleAr",
+          "titleEn",
+          "ownerEmployeeId",
+          "responsibleUnitIds",
+          "plannedStart",
+          "plannedEnd",
+          "cost"
+        ],
+        "type": "object",
+        "properties": {
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "ownerEmployeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "responsibleUnitIds": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "plannedStart": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "plannedEnd": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "cost": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
           }
         }
       },
@@ -25140,6 +28455,48 @@
           }
         },
         "description": "Outcome of a decision."
+      },
+      "AffectedRiskDto": {
+        "required": [
+          "id",
+          "number",
+          "titleAr",
+          "titleEn",
+          "kind",
+          "fromBand",
+          "toBand"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": "string"
+          },
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "kind": {
+            "type": "string"
+          },
+          "fromBand": {
+            "type": "string"
+          },
+          "toBand": {
+            "type": "string"
+          }
+        }
       },
       "AiCapabilitiesDto": {
         "required": [
@@ -26498,6 +29855,27 @@
           }
         },
         "description": "Who approves a step. Only the parameters of string ApproverRule.Kind are used: `role` → string? ApproverRule.RoleKey; `sectionManager`,\n`departmentDirector` → string? ApproverRule.Of; `headOfUnit` → Guid? ApproverRule.UnitId or string? ApproverRule.Of; `owningUnit` →\nstring? ApproverRule.SystemCode (default: the process's system); `employee` → Guid? ApproverRule.EmployeeId; `recordRole` / `teamRole`\n→ string? ApproverRule.RoleCode."
+      },
+      "AreaCriterion": {
+        "required": [
+          "ar",
+          "en"
+        ],
+        "type": "object",
+        "properties": {
+          "ar": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "en": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
       },
       "AskAnswerDto": {
         "required": [
@@ -28030,6 +31408,64 @@
           }
         }
       },
+      "CategoryInput": {
+        "required": [
+          "code",
+          "nameAr",
+          "nameEn",
+          "parentId",
+          "appetite",
+          "sort",
+          "active",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "parentId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "appetite": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "sort": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          }
+        }
+      },
       "ChallengeDto": {
         "required": [
           "id",
@@ -28991,6 +32427,39 @@
           }
         }
       },
+      "CommitteeDecisionDto": {
+        "required": [
+          "id",
+          "decisionCode",
+          "note",
+          "decidedOn",
+          "createdAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "decisionCode": {
+            "type": "string"
+          },
+          "note": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "decidedOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
       "CompareDto": {
         "required": [
           "fromId",
@@ -29378,6 +32847,188 @@
           "version": {
             "type": "integer",
             "format": "uint32"
+          }
+        }
+      },
+      "ControlDto": {
+        "required": [
+          "id",
+          "riskId",
+          "values",
+          "owner",
+          "sourceActionId",
+          "status",
+          "canEdit",
+          "canRate",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "riskId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "values": {
+            "$ref": "#/components/schemas/ControlValues"
+          },
+          "owner": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/RiskPersonDto"
+              }
+            ]
+          },
+          "sourceActionId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string"
+          },
+          "canEdit": {
+            "type": "boolean"
+          },
+          "canRate": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "ControlValues": {
+        "required": [
+          "nameAr",
+          "nameEn",
+          "description",
+          "typeCode",
+          "natureCode",
+          "ownerEmployeeId",
+          "frequencyCode",
+          "effectivenessCode",
+          "lastAssessedOn",
+          "evidence"
+        ],
+        "type": "object",
+        "properties": {
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "typeCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "natureCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "ownerEmployeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "frequencyCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "effectivenessCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "lastAssessedOn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "evidence": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "ConvertInput": {
+        "required": [
+          "effectivenessCode",
+          "nameAr",
+          "nameEn",
+          "typeCode",
+          "natureCode",
+          "frequencyCode"
+        ],
+        "type": "object",
+        "properties": {
+          "effectivenessCode": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "typeCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "natureCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "frequencyCode": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
@@ -30963,6 +34614,37 @@
           }
         }
       },
+      "EffectivenessLevel": {
+        "required": [
+          "code",
+          "labelAr",
+          "labelEn",
+          "factor"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "labelAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "labelEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "factor": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "description": "A control effectiveness level; decimal EffectivenessLevel.Factor is the formula variable `C` (0–10)."
+      },
       "EffectivePermissionDto": {
         "required": [
           "permission",
@@ -31943,6 +35625,145 @@
           }
         }
       },
+      "EventDto": {
+        "required": [
+          "id",
+          "number",
+          "values",
+          "risks",
+          "unit",
+          "capRemarkId",
+          "status",
+          "createdAt",
+          "canEdit",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": "string"
+          },
+          "values": {
+            "$ref": "#/components/schemas/EventValues"
+          },
+          "risks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskListRefDto"
+            }
+          },
+          "unit": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/RiskUnitDto"
+              }
+            ]
+          },
+          "capRemarkId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "canEdit": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "EventValues": {
+        "required": [
+          "occurredOn",
+          "description",
+          "financialImpact",
+          "currency",
+          "otherImpact",
+          "nearMiss",
+          "rootCause",
+          "lessons",
+          "unitId",
+          "riskIds"
+        ],
+        "type": "object",
+        "properties": {
+          "occurredOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "financialImpact": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "currency": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "otherImpact": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nearMiss": {
+            "type": "boolean"
+          },
+          "rootCause": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "lessons": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "unitId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "riskIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        }
+      },
       "ExpiryInput": {
         "required": [
           "expiryDate",
@@ -32785,6 +36606,230 @@
           }
         }
       },
+      "FrameworkContent": {
+        "required": [
+          "scoringMethod",
+          "formula",
+          "likelihood",
+          "impactAreas",
+          "impact",
+          "bands",
+          "controlEffectiveness",
+          "reviewFrequencyMonths"
+        ],
+        "type": "object",
+        "properties": {
+          "scoringMethod": {
+            "type": "string"
+          },
+          "formula": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "likelihood": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LikelihoodLevel"
+            }
+          },
+          "impactAreas": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ImpactArea"
+            }
+          },
+          "impact": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ImpactLevel"
+            }
+          },
+          "bands": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RatingBand"
+            }
+          },
+          "controlEffectiveness": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EffectivenessLevel"
+            }
+          },
+          "reviewFrequencyMonths": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "projectResidualRule": {
+            "type": "string",
+            "default": "control-reduction"
+          }
+        },
+        "description": "The whole framework (one immutable version)."
+      },
+      "FrameworkInput": {
+        "required": [
+          "content",
+          "reason",
+          "recalculation"
+        ],
+        "type": "object",
+        "properties": {
+          "content": {
+            "$ref": "#/components/schemas/FrameworkContent"
+          },
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "recalculation": {
+            "type": "string"
+          }
+        }
+      },
+      "FrameworkPreviewDto": {
+        "required": [
+          "valid",
+          "errors",
+          "matrix",
+          "openRisks",
+          "affectedRisks",
+          "affectedProjectRisks",
+          "examples"
+        ],
+        "type": "object",
+        "properties": {
+          "valid": {
+            "type": "boolean"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FieldError"
+            }
+          },
+          "matrix": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MatrixCell"
+            }
+          },
+          "openRisks": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "affectedRisks": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "affectedProjectRisks": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "examples": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AffectedRiskDto"
+            }
+          }
+        }
+      },
+      "FrameworkSummaryDto": {
+        "required": [
+          "id",
+          "versionNo",
+          "scoringMethod",
+          "formula",
+          "reason",
+          "recalculation",
+          "createdAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "versionNo": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "scoringMethod": {
+            "type": "string"
+          },
+          "formula": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "recalculation": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "FrameworkVersionDto": {
+        "required": [
+          "id",
+          "versionNo",
+          "content",
+          "reason",
+          "recalculation",
+          "createdAt",
+          "createdBy"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "versionNo": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "$ref": "#/components/schemas/FrameworkContent"
+          },
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "recalculation": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdBy": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          }
+        }
+      },
       "FromTextInput": {
         "required": [
           "text"
@@ -33023,6 +37068,63 @@
           },
           "complete": {
             "type": "boolean"
+          }
+        }
+      },
+      "HeatCellDto": {
+        "required": [
+          "likelihood",
+          "impact",
+          "score",
+          "band",
+          "enterprise",
+          "project"
+        ],
+        "type": "object",
+        "properties": {
+          "likelihood": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "impact": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "score": {
+            "type": "number",
+            "format": "double"
+          },
+          "band": {
+            "type": "string"
+          },
+          "enterprise": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "project": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "HeatCellRisksDto": {
+        "required": [
+          "risks",
+          "projectRisks"
+        ],
+        "type": "object",
+        "properties": {
+          "risks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskListItemDto"
+            }
+          },
+          "projectRisks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProjectRiskRowDto"
+            }
           }
         }
       },
@@ -33334,6 +37436,31 @@
         "type": "string",
         "format": "binary"
       },
+      "ImpactArea": {
+        "required": [
+          "code",
+          "labelAr",
+          "labelEn"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "labelAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "labelEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "ImpactInput": {
         "required": [
           "costPerformance",
@@ -33390,6 +37517,41 @@
           "version": {
             "type": "integer",
             "format": "uint32"
+          }
+        }
+      },
+      "ImpactLevel": {
+        "required": [
+          "value",
+          "labelAr",
+          "labelEn"
+        ],
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "labelAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "labelEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "criteria": {
+            "type": [
+              "null",
+              "object"
+            ],
+            "additionalProperties": {
+              "$ref": "#/components/schemas/AreaCriterion"
+            }
           }
         }
       },
@@ -37940,6 +42102,62 @@
           }
         }
       },
+      "KpiYearPerformance": {
+        "required": [
+          "cardId",
+          "year",
+          "achieved",
+          "actual",
+          "capped",
+          "rag",
+          "approvedPeriods",
+          "totalPeriods"
+        ],
+        "type": "object",
+        "properties": {
+          "cardId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "achieved": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "actual": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "capped": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rag": {
+            "type": "string"
+          },
+          "approvedPeriods": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPeriods": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "description": "Year-to-date performance of a card's annual plan (approved results only)."
+      },
       "KpiYearPointDto": {
         "required": [
           "year",
@@ -38085,6 +42303,236 @@
             "items": {
               "$ref": "#/components/schemas/KpiYearItemInput"
             }
+          }
+        }
+      },
+      "KriBreachDto": {
+        "required": [
+          "kriId",
+          "riskId",
+          "riskNumber",
+          "riskTitleAr",
+          "riskTitleEn",
+          "cardCode",
+          "cardNameAr",
+          "cardNameEn",
+          "value",
+          "threshold",
+          "direction",
+          "period",
+          "at"
+        ],
+        "type": "object",
+        "properties": {
+          "kriId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "riskId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "riskNumber": {
+            "type": "string"
+          },
+          "riskTitleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "riskTitleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "cardCode": {
+            "type": "string"
+          },
+          "cardNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "cardNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "value": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "threshold": {
+            "type": "number",
+            "format": "double"
+          },
+          "direction": {
+            "type": "string"
+          },
+          "period": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "at": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          }
+        }
+      },
+      "KriDto": {
+        "required": [
+          "id",
+          "riskId",
+          "kpiCardId",
+          "cardCode",
+          "cardNameAr",
+          "cardNameEn",
+          "basis",
+          "direction",
+          "warningThreshold",
+          "breachThreshold",
+          "status",
+          "lastValue",
+          "lastLevel",
+          "lastPeriod",
+          "lastAt",
+          "performance",
+          "cardVisible",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "riskId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kpiCardId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "cardCode": {
+            "type": "string"
+          },
+          "cardNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "cardNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "basis": {
+            "type": "string"
+          },
+          "direction": {
+            "type": "string"
+          },
+          "warningThreshold": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "breachThreshold": {
+            "type": "number",
+            "format": "double"
+          },
+          "status": {
+            "type": "string"
+          },
+          "lastValue": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "lastLevel": {
+            "type": "string"
+          },
+          "lastPeriod": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "lastAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "performance": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/KpiYearPerformance"
+              }
+            ]
+          },
+          "cardVisible": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "KriValues": {
+        "required": [
+          "kpiCardId",
+          "basis",
+          "direction",
+          "warningThreshold",
+          "breachThreshold"
+        ],
+        "type": "object",
+        "properties": {
+          "kpiCardId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "basis": {
+            "type": "string"
+          },
+          "direction": {
+            "type": "string"
+          },
+          "warningThreshold": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "breachThreshold": {
+            "type": "number",
+            "format": "double"
           }
         }
       },
@@ -38252,6 +42700,44 @@
             "items": {
               "$ref": "#/components/schemas/UnitFacetDto"
             }
+          }
+        }
+      },
+      "LikelihoodLevel": {
+        "required": [
+          "value",
+          "labelAr",
+          "labelEn"
+        ],
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "labelAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "labelEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "descriptionAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "descriptionEn": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
@@ -38724,6 +43210,32 @@
           }
         }
       },
+      "MatrixCell": {
+        "required": [
+          "likelihood",
+          "impact",
+          "score",
+          "band"
+        ],
+        "type": "object",
+        "properties": {
+          "likelihood": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "impact": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "score": {
+            "type": "number",
+            "format": "double"
+          },
+          "band": {
+            "type": "string"
+          }
+        }
+      },
       "McpClientDto": {
         "required": [
           "clientId",
@@ -39014,6 +43526,31 @@
           }
         },
         "description": "A Measuring Method code mapped to its aggregation rule (SPEC K5)."
+      },
+      "MechanismDto": {
+        "required": [
+          "framework",
+          "matrix",
+          "categories"
+        ],
+        "type": "object",
+        "properties": {
+          "framework": {
+            "$ref": "#/components/schemas/FrameworkVersionDto"
+          },
+          "matrix": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MatrixCell"
+            }
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskCategoryDto"
+            }
+          }
+        }
       },
       "MeDto": {
         "required": [
@@ -40967,6 +45504,35 @@
           }
         }
       },
+      "MovementDto": {
+        "required": [
+          "improved",
+          "worsened",
+          "unchanged",
+          "worsenedRisks"
+        ],
+        "type": "object",
+        "properties": {
+          "improved": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "worsened": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unchanged": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "worsenedRisks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskListItemDto"
+            }
+          }
+        }
+      },
       "MoveUnitInput": {
         "required": [
           "newParentId",
@@ -41693,6 +46259,51 @@
           },
           "preview": {
             "type": "string"
+          }
+        }
+      },
+      "OfficeInput": {
+        "required": [
+          "controlEffectivenessOverride",
+          "residualStatusOverride",
+          "justification",
+          "top10",
+          "top10Rank",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "controlEffectivenessOverride": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "residualStatusOverride": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "justification": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "top10": {
+            "type": "boolean"
+          },
+          "top10Rank": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
           }
         }
       },
@@ -42583,6 +47194,40 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/RequestRowDto"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "description": "One page of items plus the total count across all pages."
+      },
+      "PagedResultOfRiskListItemDto": {
+        "required": [
+          "items",
+          "page",
+          "pageSize",
+          "totalCount"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskListItemDto"
             }
           },
           "page": {
@@ -43967,6 +48612,50 @@
           }
         }
       },
+      "ProgressInput": {
+        "required": [
+          "completionPct",
+          "note",
+          "actualStart",
+          "actualEnd",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "completionPct": {
+            "type": "number",
+            "format": "double"
+          },
+          "note": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "actualStart": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "actualEnd": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "fromMcp": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      },
       "ProjectApprovalDto": {
         "required": [
           "process",
@@ -45348,6 +50037,135 @@
           }
         }
       },
+      "ProjectRiskRowDto": {
+        "required": [
+          "id",
+          "projectId",
+          "projectNumber",
+          "projectNameAr",
+          "projectNameEn",
+          "title",
+          "categoryCode",
+          "categoryLabelAr",
+          "categoryLabelEn",
+          "probability",
+          "impact",
+          "controlEvaluation",
+          "inherentScore",
+          "inherentBand",
+          "residualScore",
+          "residualBand",
+          "response",
+          "implementationPct",
+          "owner",
+          "link"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "projectNumber": {
+            "type": "string"
+          },
+          "projectNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "projectNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "title": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "categoryCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "categoryLabelAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "categoryLabelEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "probability": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "impact": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "controlEvaluation": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "inherentScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "inherentBand": {
+            "type": "string"
+          },
+          "residualScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "residualBand": {
+            "type": "string"
+          },
+          "response": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "implementationPct": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "owner": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/RiskPersonDto"
+              }
+            ]
+          },
+          "link": {
+            "type": "string"
+          }
+        }
+      },
       "ProjectRiskValues": {
         "required": [
           "title",
@@ -45976,6 +50794,49 @@
               "null",
               "string"
             ]
+          }
+        }
+      },
+      "RatingBand": {
+        "required": [
+          "code",
+          "labelAr",
+          "labelEn",
+          "color",
+          "min",
+          "max",
+          "residualStatus"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "labelAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "labelEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "color": {
+            "type": "string"
+          },
+          "min": {
+            "type": "number",
+            "format": "double"
+          },
+          "max": {
+            "type": "number",
+            "format": "double"
+          },
+          "residualStatus": {
+            "type": "string"
           }
         }
       },
@@ -48294,6 +53155,148 @@
           }
         }
       },
+      "ReviewAssistDto": {
+        "required": [
+          "changes",
+          "commentary",
+          "facts",
+          "usageId"
+        ],
+        "type": "object",
+        "properties": {
+          "changes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "commentary": {
+            "type": "string"
+          },
+          "facts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "usageId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "ReviewDto": {
+        "required": [
+          "id",
+          "riskId",
+          "status",
+          "values",
+          "decisionComment",
+          "submittedAt",
+          "decidedAt",
+          "createdAt",
+          "previewResidualScore",
+          "previewResidualBand",
+          "canEdit",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "riskId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string"
+          },
+          "values": {
+            "$ref": "#/components/schemas/ReviewValues"
+          },
+          "decisionComment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "submittedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "decidedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "previewResidualScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "previewResidualBand": {
+            "type": "string"
+          },
+          "canEdit": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "ReviewValues": {
+        "required": [
+          "residualLikelihood",
+          "residualImpact",
+          "controlRatings",
+          "actionNotes",
+          "commentary"
+        ],
+        "type": "object",
+        "properties": {
+          "residualLikelihood": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "residualImpact": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "controlRatings": {
+            "type": [
+              "null",
+              "object"
+            ],
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "actionNotes": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "commentary": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "RewardBudgetDto": {
         "required": [
           "year",
@@ -48529,6 +53532,884 @@
           }
         }
       },
+      "RiskActionBody": {
+        "required": [
+          "values",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "values": {
+            "$ref": "#/components/schemas/ActionValues"
+          },
+          "version": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          }
+        }
+      },
+      "RiskAssessmentDto": {
+        "required": [
+          "id",
+          "kind",
+          "inherentLikelihood",
+          "inherentImpact",
+          "inherentScore",
+          "inherentBand",
+          "residualLikelihood",
+          "residualImpact",
+          "residualScore",
+          "residualBand",
+          "residualStatus",
+          "targetScore",
+          "targetBand",
+          "controlEffectiveness",
+          "status",
+          "frameworkVersionNo",
+          "comment",
+          "at",
+          "by"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "inherentLikelihood": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "inherentImpact": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "inherentScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "inherentBand": {
+            "type": "string"
+          },
+          "residualLikelihood": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "residualImpact": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "residualScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "residualBand": {
+            "type": "string"
+          },
+          "residualStatus": {
+            "type": "string"
+          },
+          "targetScore": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "targetBand": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "controlEffectiveness": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "frameworkVersionNo": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "comment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "by": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/RiskPersonDto"
+              }
+            ]
+          }
+        }
+      },
+      "RiskBody": {
+        "required": [
+          "values",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "values": {
+            "$ref": "#/components/schemas/RiskValues"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "RiskCategoryDto": {
+        "required": [
+          "id",
+          "code",
+          "nameAr",
+          "nameEn",
+          "parentId",
+          "appetite",
+          "sort",
+          "active",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "parentId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "appetite": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "sort": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "RiskClosureInput": {
+        "required": [
+          "reasonCode",
+          "note"
+        ],
+        "type": "object",
+        "properties": {
+          "reasonCode": {
+            "type": "string"
+          },
+          "note": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "RiskCommentInput": {
+        "required": [
+          "comment"
+        ],
+        "type": "object",
+        "properties": {
+          "comment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "RiskControlBody": {
+        "required": [
+          "values",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "values": {
+            "$ref": "#/components/schemas/ControlValues"
+          },
+          "version": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          }
+        }
+      },
+      "RiskCountDto": {
+        "required": [
+          "code",
+          "count"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "RiskDashboardDto": {
+        "required": [
+          "total",
+          "active",
+          "underReview",
+          "draft",
+          "closed",
+          "projectRisks",
+          "byCategory",
+          "byUnit",
+          "byResidualBand",
+          "byType",
+          "byResidualStatus",
+          "inherent",
+          "residual",
+          "outsideAppetite",
+          "outsideAppetiteCount",
+          "top10",
+          "overdueActions",
+          "overdueActionsCount",
+          "overdueReviews",
+          "overdueReviewsCount",
+          "movement",
+          "kriBreaches",
+          "bands",
+          "units"
+        ],
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "active": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "underReview": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "draft": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "closed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "projectRisks": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "byCategory": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskCountDto"
+            }
+          },
+          "byUnit": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskCountDto"
+            }
+          },
+          "byResidualBand": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskCountDto"
+            }
+          },
+          "byType": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskCountDto"
+            }
+          },
+          "byResidualStatus": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskCountDto"
+            }
+          },
+          "inherent": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HeatCellDto"
+            }
+          },
+          "residual": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/HeatCellDto"
+            }
+          },
+          "outsideAppetite": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskListItemDto"
+            }
+          },
+          "outsideAppetiteCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "top10": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskListItemDto"
+            }
+          },
+          "overdueActions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ActionBriefDto"
+            }
+          },
+          "overdueActionsCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "overdueReviews": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskListItemDto"
+            }
+          },
+          "overdueReviewsCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "movement": {
+            "$ref": "#/components/schemas/MovementDto"
+          },
+          "kriBreaches": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KriBreachDto"
+            }
+          },
+          "bands": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RatingBand"
+            }
+          },
+          "units": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/RiskUnitDto"
+            }
+          }
+        }
+      },
+      "RiskDecisionInput": {
+        "required": [
+          "decisionCode",
+          "note",
+          "decidedOn"
+        ],
+        "type": "object",
+        "properties": {
+          "decisionCode": {
+            "type": "string"
+          },
+          "note": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "decidedOn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          }
+        }
+      },
+      "RiskDto": {
+        "required": [
+          "id",
+          "number",
+          "registerYear",
+          "values",
+          "status",
+          "unit",
+          "owner",
+          "coordinator",
+          "followUp",
+          "inherentScore",
+          "inherentBand",
+          "controlEffectiveness",
+          "controlEffectivenessOverride",
+          "residualScore",
+          "residualBand",
+          "residualStatus",
+          "residualStatusOverride",
+          "residualStatusJustification",
+          "targetScore",
+          "targetBand",
+          "withinAppetite",
+          "appetite",
+          "top10",
+          "top10Rank",
+          "escalated",
+          "escalationReason",
+          "lastReviewOn",
+          "nextReviewOn",
+          "reviewOverdue",
+          "reassessmentRequired",
+          "reassessmentReason",
+          "pendingProcess",
+          "returned",
+          "returnComment",
+          "closureReasonCode",
+          "closureNote",
+          "closedAt",
+          "rejectionReason",
+          "frameworkVersionNo",
+          "onCurrentFramework",
+          "can",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": "string"
+          },
+          "registerYear": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "values": {
+            "$ref": "#/components/schemas/RiskValues"
+          },
+          "status": {
+            "type": "string"
+          },
+          "unit": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/RiskUnitDto"
+              }
+            ]
+          },
+          "owner": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/RiskPersonDto"
+              }
+            ]
+          },
+          "coordinator": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/RiskPersonDto"
+              }
+            ]
+          },
+          "followUp": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/RiskPersonDto"
+              }
+            ]
+          },
+          "inherentScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "inherentBand": {
+            "type": "string"
+          },
+          "controlEffectiveness": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "controlEffectivenessOverride": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "residualScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "residualBand": {
+            "type": "string"
+          },
+          "residualStatus": {
+            "type": "string"
+          },
+          "residualStatusOverride": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "residualStatusJustification": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "targetScore": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "targetBand": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "withinAppetite": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          },
+          "appetite": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "top10": {
+            "type": "boolean"
+          },
+          "top10Rank": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "escalated": {
+            "type": "boolean"
+          },
+          "escalationReason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "lastReviewOn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "nextReviewOn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "reviewOverdue": {
+            "type": "boolean"
+          },
+          "reassessmentRequired": {
+            "type": "boolean"
+          },
+          "reassessmentReason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "pendingProcess": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "returned": {
+            "type": "boolean"
+          },
+          "returnComment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "closureReasonCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "closureNote": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "closedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "rejectionReason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "frameworkVersionNo": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "onCurrentFramework": {
+            "type": "boolean"
+          },
+          "can": {
+            "$ref": "#/components/schemas/RiskPermissionsDto"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "RiskDuplicateCheckDto": {
+        "required": [
+          "visible",
+          "otherUnits"
+        ],
+        "type": "object",
+        "properties": {
+          "visible": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskDuplicateMatchDto"
+            }
+          },
+          "otherUnits": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "RiskDuplicateInput": {
+        "required": [
+          "text",
+          "excludeId"
+        ],
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "excludeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          }
+        }
+      },
+      "RiskDuplicateMatchDto": {
+        "required": [
+          "id",
+          "number",
+          "titleAr",
+          "titleEn",
+          "score"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": "string"
+          },
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "score": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "RiskEscalationInput": {
+        "required": [
+          "escalated",
+          "note"
+        ],
+        "type": "object",
+        "properties": {
+          "escalated": {
+            "type": "boolean"
+          },
+          "note": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "RiskEventBody": {
+        "required": [
+          "values",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "values": {
+            "$ref": "#/components/schemas/EventValues"
+          },
+          "version": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          }
+        }
+      },
+      "RiskIdentificationDto": {
+        "required": [
+          "risks",
+          "usageId"
+        ],
+        "type": "object",
+        "properties": {
+          "risks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SuggestedRiskDto"
+            }
+          },
+          "usageId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "RiskIdentifyInput": {
+        "required": [
+          "description"
+        ],
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "RiskInput": {
         "required": [
           "values"
@@ -48546,6 +54427,788 @@
             "format": "uint32"
           }
         }
+      },
+      "RiskKriBody": {
+        "required": [
+          "values",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "values": {
+            "$ref": "#/components/schemas/KriValues"
+          },
+          "version": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          }
+        }
+      },
+      "RiskListItemDto": {
+        "required": [
+          "id",
+          "number",
+          "titleAr",
+          "titleEn",
+          "status",
+          "unit",
+          "owner",
+          "categoryCodes",
+          "inherentScore",
+          "inherentBand",
+          "residualScore",
+          "residualBand",
+          "targetScore",
+          "targetBand",
+          "residualStatus",
+          "withinAppetite",
+          "top10",
+          "top10Rank",
+          "escalated",
+          "nextReviewOn",
+          "reviewOverdue",
+          "reassessmentRequired",
+          "pendingProcess",
+          "emerging",
+          "opportunity",
+          "registerYear"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": "string"
+          },
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "unit": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/RiskUnitDto"
+              }
+            ]
+          },
+          "owner": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/RiskPersonDto"
+              }
+            ]
+          },
+          "categoryCodes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "inherentScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "inherentBand": {
+            "type": "string"
+          },
+          "residualScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "residualBand": {
+            "type": "string"
+          },
+          "targetScore": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "targetBand": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "residualStatus": {
+            "type": "string"
+          },
+          "withinAppetite": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          },
+          "top10": {
+            "type": "boolean"
+          },
+          "top10Rank": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "escalated": {
+            "type": "boolean"
+          },
+          "nextReviewOn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "reviewOverdue": {
+            "type": "boolean"
+          },
+          "reassessmentRequired": {
+            "type": "boolean"
+          },
+          "pendingProcess": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "emerging": {
+            "type": "boolean"
+          },
+          "opportunity": {
+            "type": "boolean"
+          },
+          "registerYear": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "RiskListRefDto": {
+        "required": [
+          "id",
+          "number",
+          "titleAr",
+          "titleEn"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": "string"
+          },
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "RiskOptionDto": {
+        "required": [
+          "code",
+          "labelAr",
+          "labelEn"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "labelAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "labelEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "RiskOptionsDto": {
+        "required": [
+          "lookups",
+          "categories",
+          "objectives",
+          "framework",
+          "matrix",
+          "opportunitiesEnabled",
+          "canCreate",
+          "canOffice",
+          "canManageFramework",
+          "canReadProjectRisks",
+          "canExport",
+          "canDashboard",
+          "topCount",
+          "includeProjectRisksByDefault"
+        ],
+        "type": "object",
+        "properties": {
+          "lookups": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/RiskOptionDto"
+              }
+            }
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskCategoryDto"
+            }
+          },
+          "objectives": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskOptionDto"
+            }
+          },
+          "framework": {
+            "$ref": "#/components/schemas/FrameworkVersionDto"
+          },
+          "matrix": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MatrixCell"
+            }
+          },
+          "opportunitiesEnabled": {
+            "type": "boolean"
+          },
+          "canCreate": {
+            "type": "boolean"
+          },
+          "canOffice": {
+            "type": "boolean"
+          },
+          "canManageFramework": {
+            "type": "boolean"
+          },
+          "canReadProjectRisks": {
+            "type": "boolean"
+          },
+          "canExport": {
+            "type": "boolean"
+          },
+          "canDashboard": {
+            "type": "boolean"
+          },
+          "topCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "includeProjectRisksByDefault": {
+            "type": "boolean"
+          }
+        }
+      },
+      "RiskPermissionsDto": {
+        "required": [
+          "edit",
+          "submit",
+          "recall",
+          "office",
+          "requestClosure",
+          "reopen",
+          "discard",
+          "committeeDecide",
+          "manageChildren",
+          "startReview",
+          "logEvent"
+        ],
+        "type": "object",
+        "properties": {
+          "edit": {
+            "type": "boolean"
+          },
+          "submit": {
+            "type": "boolean"
+          },
+          "recall": {
+            "type": "boolean"
+          },
+          "office": {
+            "type": "boolean"
+          },
+          "requestClosure": {
+            "type": "boolean"
+          },
+          "reopen": {
+            "type": "boolean"
+          },
+          "discard": {
+            "type": "boolean"
+          },
+          "committeeDecide": {
+            "type": "boolean"
+          },
+          "manageChildren": {
+            "type": "boolean"
+          },
+          "startReview": {
+            "type": "boolean"
+          },
+          "logEvent": {
+            "type": "boolean"
+          }
+        }
+      },
+      "RiskPersonDto": {
+        "required": [
+          "id",
+          "nameAr",
+          "nameEn"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "RiskPreviewInput": {
+        "required": [
+          "content"
+        ],
+        "type": "object",
+        "properties": {
+          "content": {
+            "$ref": "#/components/schemas/FrameworkContent"
+          }
+        }
+      },
+      "RiskRateInput": {
+        "required": [
+          "effectivenessCode",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "effectivenessCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "RiskReasonInput": {
+        "required": [
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string"
+          }
+        }
+      },
+      "RiskReportDraftDto": {
+        "required": [
+          "reportAr",
+          "reportEn",
+          "top10Ar",
+          "top10En",
+          "usageId"
+        ],
+        "type": "object",
+        "properties": {
+          "reportAr": {
+            "type": "string"
+          },
+          "reportEn": {
+            "type": "string"
+          },
+          "top10Ar": {
+            "type": "string"
+          },
+          "top10En": {
+            "type": "string"
+          },
+          "usageId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "RiskReportInput": {
+        "required": [
+          "unitId",
+          "year"
+        ],
+        "type": "object",
+        "properties": {
+          "unitId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "year": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          }
+        }
+      },
+      "RiskReviewBody": {
+        "required": [
+          "values",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "values": {
+            "$ref": "#/components/schemas/ReviewValues"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "RiskSettings": {
+        "type": "object",
+        "properties": {
+          "topCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "reviewReminderWorkingDays": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "actionReminderWorkingDays": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "actionEscalationWorkingDays": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "opportunitiesEnabled": {
+            "type": "boolean"
+          },
+          "escalateCritical": {
+            "type": "boolean"
+          },
+          "escalateOutsideAppetite": {
+            "type": "boolean"
+          },
+          "kriWarningNotifies": {
+            "type": "boolean"
+          },
+          "includeProjectRisksByDefault": {
+            "type": "boolean"
+          },
+          "organisationCode": {
+            "type": "string"
+          }
+        },
+        "description": "Settings → Risk (docs/design/risk.md §2.2)."
+      },
+      "RiskSettingsInput": {
+        "required": [
+          "settings",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "settings": {
+            "$ref": "#/components/schemas/RiskSettings"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "RiskUnitDto": {
+        "required": [
+          "id",
+          "code",
+          "nameAr",
+          "nameEn"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "RiskValues": {
+        "required": [
+          "titleAr",
+          "titleEn",
+          "cause",
+          "eventText",
+          "consequence",
+          "determinedByCode",
+          "identifiedOn",
+          "exposureStart",
+          "riskType",
+          "categoryCodes",
+          "emerging",
+          "opportunity",
+          "unitId",
+          "ownerEmployeeId",
+          "coordinatorEmployeeId",
+          "followUpEmployeeId",
+          "objectiveCodes",
+          "processes",
+          "inherentLikelihood",
+          "inherentImpact",
+          "inherentImpactArea",
+          "residualLikelihood",
+          "residualImpact",
+          "targetLikelihood",
+          "targetImpact",
+          "targetDate",
+          "responseCode",
+          "needsFollowUp"
+        ],
+        "type": "object",
+        "properties": {
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "cause": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "eventText": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "consequence": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "determinedByCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "identifiedOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "exposureStart": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "riskType": {
+            "type": "string"
+          },
+          "categoryCodes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "emerging": {
+            "type": "boolean"
+          },
+          "opportunity": {
+            "type": "boolean"
+          },
+          "unitId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "ownerEmployeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "coordinatorEmployeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "followUpEmployeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "objectiveCodes": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "processes": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "inherentLikelihood": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "inherentImpact": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "inherentImpactArea": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "residualLikelihood": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "residualImpact": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "targetLikelihood": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "targetImpact": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "targetDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "responseCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "needsFollowUp": {
+            "type": "boolean"
+          }
+        },
+        "description": "Everything an author sets on a risk (wizard / API / AI draft)."
       },
       "RoleDto": {
         "required": [
@@ -49309,6 +55972,29 @@
               },
               {
                 "$ref": "#/components/schemas/RegionalSettings"
+              }
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "SettingsDocumentOfRiskSettings": {
+        "required": [
+          "value",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "value": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/RiskSettings"
               }
             ]
           },
@@ -50166,6 +56852,84 @@
           }
         }
       },
+      "StatementCheckDto": {
+        "required": [
+          "flags",
+          "issues",
+          "cause",
+          "eventText",
+          "consequence",
+          "usageId"
+        ],
+        "type": "object",
+        "properties": {
+          "flags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "issues": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "cause": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "eventText": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "consequence": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "usageId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          }
+        }
+      },
+      "StatementInput": {
+        "required": [
+          "cause",
+          "eventText",
+          "consequence"
+        ],
+        "type": "object",
+        "properties": {
+          "cause": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "eventText": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "consequence": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "StepStateDto": {
         "required": [
           "sort",
@@ -50414,6 +57178,27 @@
           }
         }
       },
+      "SuggestedActionDto": {
+        "required": [
+          "titleAr",
+          "titleEn"
+        ],
+        "type": "object",
+        "properties": {
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "SuggestedClassificationDto": {
         "required": [
           "value",
@@ -50436,6 +57221,34 @@
           },
           "computed": {
             "type": "string"
+          }
+        }
+      },
+      "SuggestedControlDto": {
+        "required": [
+          "nameAr",
+          "nameEn",
+          "typeCode"
+        ],
+        "type": "object",
+        "properties": {
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "typeCode": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
@@ -50469,6 +57282,78 @@
             "format": "double"
           },
           "band": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "SuggestedRiskDto": {
+        "required": [
+          "titleAr",
+          "titleEn",
+          "cause",
+          "eventText",
+          "consequence",
+          "categoryCode",
+          "likelihood",
+          "impact",
+          "reasoning"
+        ],
+        "type": "object",
+        "properties": {
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "cause": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "eventText": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "consequence": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "categoryCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "likelihood": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "impact": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "reasoning": {
             "type": [
               "null",
               "string"
@@ -53592,6 +60477,39 @@
           }
         }
       },
+      "TreatmentSuggestionDto": {
+        "required": [
+          "controls",
+          "actions",
+          "similarRisks",
+          "usageId"
+        ],
+        "type": "object",
+        "properties": {
+          "controls": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SuggestedControlDto"
+            }
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SuggestedActionDto"
+            }
+          },
+          "similarRisks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RiskListRefDto"
+            }
+          },
+          "usageId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
       "TypeDetailDto": {
         "required": [
           "id",
@@ -55475,6 +62393,9 @@
     },
     {
       "name": "ip"
+    },
+    {
+      "name": "risk"
     }
   ]
 }

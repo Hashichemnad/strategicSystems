@@ -16,6 +16,7 @@
     "resultType": "The result must be {{expected}}.",
     "divisionByZero": "Division by zero.",
     "invalidDate": "“{{text}}” is not a date (use yyyy-MM-dd).",
-    "overflow": "The number is too large."
+    "overflow": "The number is too large.",
+    "invalid": "The expression is not valid."
   }
 }

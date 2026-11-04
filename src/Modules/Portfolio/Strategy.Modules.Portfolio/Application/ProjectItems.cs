@@ -57,15 +57,25 @@ public sealed record ContractInput(ContractValues Values, uint? Version = null);
 
 public sealed record DeactivateInput(string? Reason, uint Version);
 
-/// <summary>Scores project risks (ADR 0074). Phase 13 registers the shared risk framework instead.</summary>
+/// <summary>Scores project risks (ADR 0074): the shared risk framework when the Risk module provides it (ADR 0101), else the Phase 9 rule.</summary>
 public interface IProjectRiskScoring
 {
-    RiskScore Score(int probability, int impact, int? controlEvaluation);
+    Task<RiskScore> ScoreAsync(int probability, int impact, int? controlEvaluation, CancellationToken cancellationToken);
 }
 
-internal sealed class DefaultProjectRiskScoring : IProjectRiskScoring
+internal sealed class DefaultProjectRiskScoring(IServiceProvider services) : IProjectRiskScoring
 {
-    public RiskScore Score(int probability, int impact, int? controlEvaluation) => DefaultRiskScoring.Score(probability, impact, controlEvaluation);
+    public async Task<RiskScore> ScoreAsync(int probability, int impact, int? controlEvaluation, CancellationToken cancellationToken)
+    {
+        if (services.GetService<Risk.Contracts.IRiskScoring>() is not { } shared)
+        {
+            return DefaultRiskScoring.Score(probability, impact, controlEvaluation);
+        }
+
+        // The inherent column stays an integer (no Portfolio migration, ADR 0101); the band comes from the framework's exact score.
+        var score = await shared.ScoreProjectRiskAsync(probability, impact, controlEvaluation, cancellationToken).ConfigureAwait(false);
+        return new RiskScore((int)Math.Round(score.InherentScore, MidpointRounding.AwayFromZero), score.InherentBand, score.ResidualScore, score.ResidualBand);
+    }
 }
 
 /// <summary>Who may write which kind of row, and when (docs/design/portfolio.md §22).</summary>
@@ -191,7 +201,7 @@ internal sealed class ProjectItems(
             Add(errors, "implementationPct", "validation.inclusiveBetween");
         }
 
-        var score = scoring.Score(v.Probability, v.Impact, v.ControlEvaluation);
+        var score = await scoring.ScoreAsync(v.Probability, v.Impact, v.ControlEvaluation, ct).ConfigureAwait(false);
         return await SaveAsync<ProjectRisk, ProjectRiskDto>(projectId, itemId, input.Version, ItemRule.Content, errors,
             p => ProjectRisk.Create(p.Id, p.Stage, v, score), r => r.Edit(v, score), async r =>
             {

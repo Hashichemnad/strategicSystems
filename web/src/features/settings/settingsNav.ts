@@ -26,6 +26,7 @@ import {
   Repeat,
   UserRoundX,
   UsersRound,
+  ShieldAlert,
   ShieldCheck,
   ShieldHalf,
   SquareStack,
@@ -39,6 +40,7 @@ export type SettingsPageKey =
   | 'teams'
   | 'portfolio'
   | 'kpi'
+  | 'risk'
   | 'requestTypes'
   | 'docreg'
   | 'ip'
@@ -89,6 +91,7 @@ export type SettingsPath =
   | '/settings/teams'
   | '/settings/portfolio'
   | '/settings/kpi'
+  | '/settings/risk'
   | '/settings/request-types'
   | '/settings/docreg'
   | '/settings/ip'
@@ -206,6 +209,7 @@ export const settingsGroups: readonly SettingsGroup[] = [
         icon: Gauge,
         permissions: ['kpi.settings.manage', 'kpi.strategy.manage', 'kpi.plan.manage'],
       },
+      { key: 'risk', to: '/settings/risk', icon: ShieldAlert, permissions: ['risk.framework.manage'] },
       {
         key: 'requestTypes',
         to: '/settings/request-types',

@@ -29,6 +29,13 @@ public sealed record ProjectRiskSummary(
     string Status,
     string Link);
 
+/// <summary>Shared lookup types of Portfolio other modules may read through the Settings lookup service (labels of stored codes).</summary>
+public static class PortfolioLookupTypes
+{
+    /// <summary>Category of a project risk (<see cref="ProjectRiskSummary.CategoryCode"/>).</summary>
+    public const string RiskCategory = "portfolio.risk-category";
+}
+
 /// <summary>Project risks for other modules; filtered by the caller's project read scope.</summary>
 public interface IProjectRiskDirectory
 {

@@ -32,6 +32,10 @@
     <Project Path="src/Modules/Kpi/Strategy.Modules.Kpi.Contracts/Strategy.Modules.Kpi.Contracts.csproj" />
     <Project Path="src/Modules/Kpi/Strategy.Modules.Kpi/Strategy.Modules.Kpi.csproj" />
   </Folder>
+  <Folder Name="/src/Modules/Risk/">
+    <Project Path="src/Modules/Risk/Strategy.Modules.Risk.Contracts/Strategy.Modules.Risk.Contracts.csproj" />
+    <Project Path="src/Modules/Risk/Strategy.Modules.Risk/Strategy.Modules.Risk.csproj" />
+  </Folder>
   <Folder Name="/src/Modules/Teams/">
     <Project Path="src/Modules/Teams/Strategy.Modules.Teams.Contracts/Strategy.Modules.Teams.Contracts.csproj" />
     <Project Path="src/Modules/Teams/Strategy.Modules.Teams/Strategy.Modules.Teams.csproj" />

@@ -766,7 +766,7 @@ public sealed class ProjectLifecycleTests(ProjectFixture fx) : IClassFixture<Pro
 
     // ---- helpers -------------------------------------------------------------------------------------------------------------------------
 
-    private static async Task<ProjectFullDto> ApprovedProjectAsync(PortfolioWorld w, string name)
+    internal static async Task<ProjectFullDto> ApprovedProjectAsync(PortfolioWorld w, string name)
     {
         var request = await w.SubmitAsync(await w.CreateWithCostFileAsync(PortfolioWorld.Valid(name, budget: 240_000m)));
         await w.ActAsync(w.Director, request.Id, RequestApprovalProcess.DepartmentDirectorStep);

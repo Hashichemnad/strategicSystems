@@ -16,6 +16,7 @@
     "resultType": "يجب أن تكون النتيجة من النوع {{expected}}.",
     "divisionByZero": "قسمة على صفر.",
     "invalidDate": "«{{text}}» ليس تاريخاً (استخدم الصيغة yyyy-MM-dd).",
-    "overflow": "الرقم كبير جداً."
+    "overflow": "الرقم كبير جداً.",
+    "invalid": "التعبير غير صالح."
   }
 }

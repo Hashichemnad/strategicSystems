@@ -1,0 +1,657 @@
+{
+  "nav": {
+    "label": "Risk Management",
+    "dashboard": "Dashboard",
+    "register": "Register",
+    "myActions": "My actions",
+    "projectRisks": "Project Risks",
+    "mechanism": "Assessment mechanism",
+    "reports": "Reports"
+  },
+  "common": {
+    "noData": "Nothing to show.",
+    "yes": "Yes",
+    "no": "No",
+    "none": "— None —",
+    "notSet": "Not set",
+    "note": "Note",
+    "comment": "Comment",
+    "reason": "Reason",
+    "projectCategory": "Project risks",
+    "projectRisk": "Project risk"
+  },
+  "status": {
+    "draft": "Draft",
+    "under_review": "Under review",
+    "active": "Active",
+    "closed": "Closed",
+    "rejected": "Rejected"
+  },
+  "residualStatus": {
+    "no-issue": "No issue",
+    "continuous-review": "Continuous review",
+    "active-management": "Active management"
+  },
+  "actionStatus": {
+    "not_started": "Not started",
+    "in_progress": "In progress",
+    "completed": "Completed",
+    "cancelled": "Cancelled"
+  },
+  "controlStatus": {
+    "active": "Active",
+    "retired": "Retired"
+  },
+  "reviewStatus": {
+    "draft": "Draft",
+    "submitted": "Submitted",
+    "approved": "Approved",
+    "returned": "Returned",
+    "cancelled": "Cancelled"
+  },
+  "kriLevel": {
+    "normal": "Normal",
+    "warning": "Warning",
+    "breach": "Breach",
+    "none": "No reading"
+  },
+  "kriBasis": {
+    "value": "Achieved value",
+    "performance": "Performance %"
+  },
+  "kriDirection": {
+    "above": "Above",
+    "below": "Below"
+  },
+  "assessmentKind": {
+    "registration": "Registration",
+    "approval": "Approval",
+    "review": "Periodic review",
+    "reassessment": "Reassessment",
+    "recalculation": "Framework recalculation",
+    "closure": "Closure",
+    "reopen": "Reopened"
+  },
+  "scoringMethod": {
+    "multiplicative": "Multiplicative (L × I)",
+    "additive": "Additive (L + I)",
+    "custom": "Custom formula"
+  },
+  "scoringMethodHint": {
+    "multiplicative": "The risk score is likelihood multiplied by impact.",
+    "additive": "The risk score is likelihood plus impact.",
+    "custom": "The risk score is calculated by the formula above from likelihood (L), impact (I) and control effectiveness (C)."
+  },
+  "projectResidualRule": {
+    "control-reduction": "Control reduction: score × (11 − C) ÷ 10",
+    "formula": "Same formula with C"
+  },
+  "projectResidualRuleHint": {
+    "control-reduction": "Project risks: the residual score is the inherent score reduced by the project's control evaluation (score × (11 − C) ÷ 10).",
+    "formula": "Project risks: the residual score uses the custom formula with the project's control evaluation as C."
+  },
+  "recalculation": {
+    "now": "Recalculate all open risks now",
+    "next-review": "Keep current ratings until each risk's next review"
+  },
+  "recalculationShort": {
+    "now": "Recalculated now",
+    "next-review": "At next review"
+  },
+  "riskType": {
+    "internal": "Internal",
+    "external": "External"
+  },
+  "escalationReason": {
+    "critical": "Critical rating",
+    "outside-appetite": "Outside appetite",
+    "manual": "Escalated by the Risk Office"
+  },
+  "views": {
+    "all": "All",
+    "mine": "My risks",
+    "my-unit": "My unit",
+    "top10": "Top risks",
+    "outside-appetite": "Outside appetite",
+    "overdue-review": "Overdue review",
+    "under-review": "Under review",
+    "escalated": "Escalated",
+    "reassessment": "Reassessment"
+  },
+  "statementFlags": {
+    "missing-cause": "The cause is missing.",
+    "missing-event": "The event is missing.",
+    "missing-consequence": "The consequence is missing.",
+    "short-cause": "The cause is too short to be clear.",
+    "short-event": "The event is too short to be clear.",
+    "short-consequence": "The consequence is too short to be clear.",
+    "vague": "The statement uses vague words — say what exactly could happen.",
+    "cause-equals-event": "The cause and the event say the same thing."
+  },
+  "fields": {
+    "number": "Number",
+    "title": "Title",
+    "titleAr": "Title (Arabic)",
+    "titleEn": "Title (English)",
+    "cause": "Cause",
+    "eventText": "Event",
+    "consequence": "Consequence",
+    "category": "Category",
+    "categories": "Categories",
+    "riskType": "Risk type",
+    "determinedBy": "Determined by",
+    "identifiedOn": "Identified on",
+    "exposureStart": "Exposure start",
+    "emerging": "Emerging risk",
+    "opportunity": "Opportunity",
+    "unit": "Owning unit",
+    "owner": "Risk owner",
+    "coordinator": "Risk coordinator",
+    "followUp": "Follow-up",
+    "objectives": "Strategic objectives",
+    "processes": "Processes",
+    "likelihood": "Likelihood",
+    "impact": "Impact",
+    "impactArea": "Impact area",
+    "targetDate": "Target date",
+    "response": "Response strategy",
+    "needsFollowUp": "Needs follow-up",
+    "status": "Status",
+    "residualStatus": "Residual status",
+    "nextReviewOn": "Next review",
+    "lastReviewOn": "Last review",
+    "controlEffectiveness": "Control effectiveness",
+    "appetite": "Appetite",
+    "withinAppetite": "Within appetite",
+    "rank": "Rank",
+    "risk": "Risk",
+    "plannedStart": "Planned start",
+    "plannedEnd": "Planned end"
+  },
+  "rating": {
+    "inherent": "Inherent",
+    "residual": "Residual",
+    "target": "Target",
+    "inherentShort": "I",
+    "residualShort": "R",
+    "targetShort": "T"
+  },
+  "flags": {
+    "top10": "Top risk {{rank}}",
+    "escalated": "Escalated",
+    "reassessment": "Reassessment required",
+    "outsideAppetite": "Outside appetite"
+  },
+  "heatmap": {
+    "inherent": "Inherent heat-map",
+    "residual": "Residual heat-map",
+    "likelihood": "Likelihood",
+    "impact": "Impact",
+    "projectShort": "P{{count}}",
+    "cellLabel": "Likelihood {{likelihood}}, impact {{impact}}, {{band}}: {{count}} risks, {{project}} project risks",
+    "cellRisks": "{{kind}} — likelihood {{likelihood}} × impact {{impact}}"
+  },
+  "matrix": {
+    "cellLabel": "Likelihood {{likelihood}}, impact {{impact}}: score {{score}}, {{band}}"
+  },
+  "dashboard": {
+    "title": "Risk dashboard",
+    "description": "The risk profile of the organisation: ratings, appetite, overdue work and movement.",
+    "year": "Register year",
+    "allYears": "All years",
+    "allResidualStatuses": "All residual statuses",
+    "includeProjectRisks": "Include project risks",
+    "tiles": {
+      "total": "Total risks",
+      "active": "Active",
+      "underReview": "Under review",
+      "projectRisks": "Project risks",
+      "outsideAppetite": "Outside appetite",
+      "overdueActions": "Overdue actions",
+      "overdueReviews": "Overdue reviews"
+    },
+    "byResidualBand": "By residual rating",
+    "byCategory": "By category",
+    "byUnit": "By unit",
+    "byResidualStatus": "By residual status",
+    "top10": "Top risks",
+    "outsideAppetite": "Outside appetite",
+    "overdueActions": "Overdue treatment actions",
+    "overdueReviews": "Overdue reviews",
+    "movement": "Movement this quarter",
+    "improved": "Improved",
+    "worsened": "Worsened",
+    "unchanged": "Unchanged",
+    "kriBreaches": "Key risk indicator breaches"
+  },
+  "register": {
+    "title": "Risk register",
+    "description": "Every risk you may see, with its inherent, residual and target ratings.",
+    "new": "New risk",
+    "views": "Saved views",
+    "search": "Search by number, title or statement",
+    "allCategories": "All categories",
+    "allStatuses": "All statuses",
+    "allBands": "All ratings",
+    "residualBand": "Residual rating",
+    "empty": "No risks match these filters."
+  },
+  "wizard": {
+    "newTitle": "New risk",
+    "editTitle": "Edit risk {{number}}",
+    "description": "Describe the risk as cause → event → consequence, classify it, assign its owner and rate it on the matrix.",
+    "steps": {
+      "statement": "Statement",
+      "classification": "Classification & ownership",
+      "assessment": "Assessment",
+      "review": "Review & save"
+    },
+    "statementHint": "Because of [cause], [event] may happen, which would lead to [consequence].",
+    "required": "Required.",
+    "optional": "optional",
+    "computedOnSave": "Computed on save",
+    "fixErrors": "Please correct the highlighted fields.",
+    "afterSave": "After saving, add controls, treatment actions and key risk indicators on the risk page, then submit the risk for approval."
+  },
+  "tabs": {
+    "overview": "Overview",
+    "assessment": "Assessment",
+    "controls": "Controls",
+    "actions": "Treatment actions",
+    "kris": "Key risk indicators",
+    "events": "Events",
+    "reviews": "Reviews",
+    "documents": "Documents",
+    "activity": "Activity"
+  },
+  "risk": {
+    "approvals": "Approvals",
+    "frameworkVersion": "Framework v{{version}}",
+    "oldFramework": "This risk is rated on an earlier framework version; it moves to the current one at its next review or reassessment.",
+    "oldFrameworkShort": "earlier version",
+    "requestClosure": "Request closure",
+    "discard": "Discard draft",
+    "discardHint": "The draft is removed for good. This cannot be undone.",
+    "submitHint": "The risk goes to its approvers. You can recall it until the first decision.",
+    "returnComment": "Returned for correction",
+    "rejectionReason": "Rejection reason"
+  },
+  "overview": {
+    "statement": "Risk statement"
+  },
+  "closure": {
+    "hint": "Closing a risk needs approval. Choose why it is no longer needed.",
+    "reason": "Closure reason",
+    "note": "Closure note",
+    "closedAt": "Closed at"
+  },
+  "office": {
+    "action": "Risk Office",
+    "title": "Risk Office adjustments",
+    "hint": "Override the computed values when there is a documented reason. Every change is audited.",
+    "effectivenessOverride": "Control effectiveness (override)",
+    "computed": "Computed: {{value}}",
+    "statusOverride": "Residual status (override)",
+    "noOverride": "No override",
+    "justification": "Justification",
+    "top10": "Include in the Top risks list",
+    "save": "Save adjustments",
+    "overridden": "set by the Risk Office"
+  },
+  "escalation": {
+    "escalate": "Escalate",
+    "deescalate": "De-escalate",
+    "reason": "Escalation reason"
+  },
+  "committee": {
+    "title": "Risk Committee decisions",
+    "record": "Record committee decision",
+    "decision": "Decision",
+    "decidedOn": "Decided on",
+    "empty": "No committee decisions recorded."
+  },
+  "assessment": {
+    "matrix": "Rating matrix",
+    "legend": "I = inherent, R = residual, T = target.",
+    "history": "Rating history",
+    "snapshots": "Assessment snapshots",
+    "kind": "Kind",
+    "at": "Date",
+    "by": "By",
+    "framework": "Framework",
+    "comment": "Comment",
+    "chartLabel": "Inherent and residual score over time: {{values}}"
+  },
+  "controls": {
+    "title": "Controls",
+    "add": "Add control",
+    "edit": "Edit control",
+    "empty": "No controls yet.",
+    "name": "Control",
+    "nameAr": "Name (Arabic)",
+    "nameEn": "Name (English)",
+    "description": "Description",
+    "type": "Type",
+    "nature": "Nature",
+    "frequency": "Frequency",
+    "effectiveness": "Effectiveness",
+    "notRated": "Not rated",
+    "rate": "Rate effectiveness",
+    "lastAssessedOn": "Last assessed",
+    "evidence": "Evidence",
+    "retire": "Retire",
+    "retireHint": "The control no longer counts towards the residual rating. Its history is kept.",
+    "fromAction": "Converted from a treatment action"
+  },
+  "treatment": {
+    "title": "Treatment actions",
+    "add": "Add action",
+    "edit": "Edit action",
+    "empty": "No treatment actions yet.",
+    "titleField": "Action",
+    "titleAr": "Title (Arabic)",
+    "titleEn": "Title (English)",
+    "cost": "Cost (AED)",
+    "responsibleUnits": "Responsible units",
+    "progress": "Progress",
+    "percent": "Completion (%)",
+    "updateProgress": "Update progress",
+    "actualStart": "Actual start",
+    "actualEnd": "Actual end",
+    "overdue": "Overdue",
+    "convert": "Convert to control",
+    "convertHint": "The completed action becomes a control of this risk. Rate its effectiveness.",
+    "updates": "Progress updates",
+    "draftMcp": "Draft (MCP)",
+    "draftUpdates_one": "{{count}} draft update to confirm",
+    "draftUpdates_other": "{{count}} draft updates to confirm",
+    "tasks": "Tasks of {{number}}",
+    "cancel": "Cancel action",
+    "cancelHint": "The action is cancelled and no longer tracked. Its history is kept."
+  },
+  "kris": {
+    "title": "Key risk indicators",
+    "hint": "A KRI watches a KPI card: when an approved result crosses the breach threshold, the risk is flagged for reassessment.",
+    "add": "Add KRI",
+    "edit": "Edit KRI",
+    "empty": "No key risk indicators yet.",
+    "card": "KPI card",
+    "searchCard": "Search KPI cards",
+    "chooseCard": "Choose a KPI card",
+    "dialogHint": "Thresholds use the card's achieved value, or its performance ratio (1 = 100 %).",
+    "basis": "Basis",
+    "direction": "Breach when",
+    "warningThreshold": "Warning threshold",
+    "breachThreshold": "Breach threshold",
+    "ratioHint": "As a ratio: 0.8 = 80 %.",
+    "lastValue": "Last reading",
+    "period": "Period",
+    "performance": "Card performance (year)",
+    "remove": "Remove",
+    "removeHint": "The KRI stops watching this KPI card."
+  },
+  "events": {
+    "title": "Risk events",
+    "log": "Log event",
+    "hint": "Record an incident or near miss linked to this risk. Logging an event flags the risk for reassessment.",
+    "empty": "No events logged.",
+    "occurredOn": "Occurred on",
+    "description": "What happened",
+    "financialImpact": "Financial impact",
+    "currency": "Currency",
+    "otherImpact": "Other impact",
+    "nearMiss": "Near miss",
+    "rootCause": "Root cause",
+    "lessons": "Lessons learned",
+    "capRemark": "Corrective action remark"
+  },
+  "reviews": {
+    "history": "Periodic reviews",
+    "empty": "No reviews yet.",
+    "formTitle": "Periodic review",
+    "createdAt": "Started",
+    "commentary": "Review commentary",
+    "decision": "Decision",
+    "actionNotes": "Notes on treatment actions",
+    "controlRatings": "Control effectiveness",
+    "returned": "The review was returned for correction",
+    "saved": "Saved:"
+  },
+  "myActions": {
+    "title": "My treatment actions",
+    "description": "Actions you own across all risks. Update their progress here.",
+    "includeCompleted": "Include completed",
+    "empty": "You have no open treatment actions."
+  },
+  "projectRisks": {
+    "title": "Project Risks",
+    "description": "Risks recorded inside Portfolio projects, read live and rated on the shared framework — they are not copied into the register.",
+    "search": "Search by project or risk",
+    "empty": "No project risks match.",
+    "project": "Project",
+    "pxi": "P × I",
+    "controlEvaluation": "Control evaluation",
+    "implementation": "Implementation"
+  },
+  "mechanism": {
+    "title": "Risk assessment mechanism",
+    "description": "Generated from the current risk framework (version {{version}}, {{date}}).",
+    "print": "Print",
+    "pdf": "Download PDF",
+    "scoring": "Scoring method",
+    "likelihood": "Likelihood scale",
+    "impact": "Impact scale and criteria",
+    "matrix": "Risk matrix",
+    "bands": "Rating bands",
+    "effectiveness": "Control effectiveness",
+    "categories": "Categories and appetite",
+    "level": "Level",
+    "label": "Name",
+    "descriptionCol": "Description",
+    "band": "Rating",
+    "range": "Score range",
+    "reviewEvery": "Review every",
+    "months_one": "{{count}} month",
+    "months_other": "{{count}} months",
+    "factor": "Factor (C)",
+    "gapRule": "A score between two bands takes the higher band."
+  },
+  "reports": {
+    "title": "Risk reports",
+    "description": "Bilingual reports in the language you are using; every export is audited.",
+    "unit": "Unit (optional)",
+    "exports": "Reports",
+    "noAccess": "You may view reports but not export them.",
+    "formats": {
+      "pdf": "PDF",
+      "xlsx": "Excel"
+    },
+    "kinds": {
+      "register": "Risk register",
+      "top10": "Top risks briefing",
+      "unit-profile": "Unit risk profile",
+      "action-tracker": "Treatment action tracker"
+    },
+    "hints": {
+      "register": "Every risk with its ratings, owner and status.",
+      "top10": "The Top risks with their treatment and trend.",
+      "unit-profile": "Ratings, appetite and overdue work of a unit.",
+      "action-tracker": "Open treatment actions with progress and due dates."
+    }
+  },
+  "settings": {
+    "title": "Risk framework",
+    "description": "Current version: v{{version}}. Saving creates a new version; earlier versions stay unchanged.",
+    "scoring": "Scoring method",
+    "formula": "Formula",
+    "formulaHint": "Variables: L (likelihood), I (impact), C (control effectiveness factor 0–10). Example: L * I * (11 - C) / 10",
+    "projectResidualRule": "Residual rule for project risks",
+    "preview": "Live preview",
+    "invalid": "The framework cannot be saved yet",
+    "affected_one": "{{count}} of {{total}} open risks would change rating.",
+    "affected_other": "{{count}} of {{total}} open risks would change rating.",
+    "affectedProject_one": "(+ {{count}} project risk)",
+    "affectedProject_other": "(+ {{count}} project risks)",
+    "likelihood": "Likelihood scale",
+    "impact": "Impact scale and criteria per area",
+    "impactAreas": "Impact areas",
+    "bands": "Rating bands",
+    "effectiveness": "Control effectiveness levels",
+    "reviewFrequency": "Review frequency",
+    "code": "Code",
+    "labelAr": "Name (Arabic)",
+    "labelEn": "Name (English)",
+    "descriptionAr": "Description (Arabic)",
+    "descriptionEn": "Description (English)",
+    "criteriaAr": "Criteria (Arabic)",
+    "criteriaEn": "Criteria (English)",
+    "color": "Colour",
+    "min": "From",
+    "max": "To",
+    "add": "Add",
+    "remove": "Remove",
+    "unsaved": "Unsaved changes",
+    "reset": "Discard changes",
+    "saveVersion": "Save as version {{version}}",
+    "saveTitle": "Save a new framework version",
+    "saveHint": "Explain the change and choose when open risks take the new ratings.",
+    "recalculation": "Recalculation",
+    "saved": "Framework version {{version}} saved.",
+    "versions": "Version history",
+    "version": "Version",
+    "date": "Saved at",
+    "active": "Active",
+    "inactive": "Inactive",
+    "categories": {
+      "title": "Risk categories",
+      "hint": "Appetite is the highest acceptable residual score; leave it empty when not set.",
+      "add": "Add category",
+      "edit": "Edit category",
+      "code": "Code",
+      "codeFixed": "The code cannot change once created.",
+      "parent": "Parent category",
+      "sort": "Order",
+      "appetiteHint": "Empty = not set."
+    },
+    "general": {
+      "title": "Module settings",
+      "topCount": "Number of Top risks",
+      "reviewReminderWorkingDays": "Review reminder (working days before)",
+      "actionReminderWorkingDays": "Action reminder (working days before)",
+      "actionEscalationWorkingDays": "Escalate overdue actions after (working days)",
+      "opportunitiesEnabled": "Record opportunities (exploit / enhance responses)",
+      "escalateCritical": "Escalate risks rated in the highest band",
+      "escalateOutsideAppetite": "Escalate risks outside appetite",
+      "kriWarningNotifies": "Notify on KRI warnings (not only breaches)",
+      "includeProjectRisksByDefault": "Include project risks in the dashboard by default",
+      "organisationCode": "Organisation code for reports"
+    }
+  },
+  "ai": {
+    "generatedDraft": "AI-generated draft",
+    "prefilled": "Pre-filled from an AI suggestion — review every field",
+    "use": "Use",
+    "add": "Add",
+    "again": "Generate again",
+    "none": "No suggestions.",
+    "identify": {
+      "action": "Identify risks with AI",
+      "title": "Identify risks with AI",
+      "hint": "Describe an activity, or upload a document such as a project charter. The suggestions are drafts — nothing is saved until you do.",
+      "description": "Description",
+      "file": "Document (optional)",
+      "fileHint": "PDF, Word, PowerPoint, Excel, text or an image.",
+      "run": "Suggest risks"
+    },
+    "statement": {
+      "action": "Check statement",
+      "noFlags": "No problems found in the statement.",
+      "use": "Use rewrite"
+    },
+    "duplicates": {
+      "action": "Check for duplicates",
+      "none": "No similar risks found.",
+      "otherUnits_one": "{{count}} similar risk in other units.",
+      "otherUnits_other": "{{count}} similar risks in other units."
+    },
+    "suggest": {
+      "action": "Suggest controls and actions",
+      "title": "Suggested controls and actions",
+      "basedOn": "Based on similar risks"
+    },
+    "review": {
+      "action": "Draft review commentary",
+      "changes": "What changed since the last review",
+      "commentary": "Draft commentary"
+    },
+    "report": {
+      "action": "Draft quarterly report",
+      "title": "Quarterly risk report",
+      "hint": "A bilingual draft from the dashboard figures. Review and edit before sharing.",
+      "run": "Draft report",
+      "report": "Report",
+      "top10": "Top risks briefing"
+    }
+  },
+  "errors": {
+    "invalidTransition": "This action is not possible in the risk's current status.",
+    "opportunitiesDisabled": "Opportunities are not enabled in the risk settings.",
+    "pairRequired": "Choose both likelihood and impact, or neither.",
+    "unitNotAllowed": "You may not record risks for this unit.",
+    "notEditable": "This record cannot be changed now.",
+    "nothingPending": "There is nothing pending to recall.",
+    "alreadyPending": "An approval is already in progress for this risk.",
+    "notActive": "This is only possible for an active record.",
+    "notDiscardable": "Only a draft that was never submitted can be discarded.",
+    "categoryCodeFixed": "A category's code cannot be changed.",
+    "duplicateCodes": "Codes must be unique.",
+    "bandsMinimum": "Define at least two bands.",
+    "bandRange": "The band's \"from\" must not be greater than its \"to\".",
+    "bandsOverlap": "Bands must be in ascending order and must not overlap.",
+    "effectivenessScale": "Define at least one control effectiveness level.",
+    "effectivenessFactor": "Each effectiveness factor must be between 0 and 10.",
+    "reviewFrequency": "Choose a review frequency of 1, 2, 3, 4, 6 or 12 months.",
+    "scale": "The scale must run 1, 2, 3 … without gaps.",
+    "formulaCell": "The formula has no valid result for likelihood {{likelihood}}, impact {{impact}} (C = {{c}}).",
+    "endBeforeStart": "The end date cannot be before the start date.",
+    "actionClosed": "This action is completed or cancelled.",
+    "actionNotCompleted": "Only a completed action can become a control.",
+    "warningBeforeBreach": "The warning threshold must be reached before the breach threshold.",
+    "reviewNotAllowed": "A review cannot be started for this risk now."
+  },
+  "currentStatus": {
+    "draft": "Draft — complete the risk and submit it for approval",
+    "returned": "Returned for correction — update the risk and submit it again",
+    "reviewPending": "Periodic review waiting for approval",
+    "closurePending": "Closure request waiting for approval",
+    "reassessment": "Reassessment required: {{reason}}",
+    "reviewOverdue": "Periodic review overdue since {{date}}",
+    "active": "Active — next review on {{date}}",
+    "closed": "Closed",
+    "rejected": "Rejected",
+    "owner": "Risk owner"
+  },
+  "actions": {
+    "submit": "Submit for approval",
+    "recall": "Recall",
+    "decide": "Review and decide",
+    "startReview": "Start periodic review",
+    "reopen": "Reopen"
+  },
+  "myWork": {
+    "title": "Risks",
+    "all": "My actions",
+    "empty": "Nothing needs your attention.",
+    "counts": {
+      "reviews": "Reviews due",
+      "overdueReviews": "Overdue reviews",
+      "returned": "Returned",
+      "overdueActions": "Overdue actions"
+    },
+    "returned": "Returned for correction",
+    "reassessment": "Reassessment required",
+    "reviewOverdue": "Periodic review overdue",
+    "reviewDue": "Periodic review due",
+    "actionOverdue": "Treatment action overdue"
+  }
+}

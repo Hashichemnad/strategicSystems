@@ -185,11 +185,16 @@ internal static partial class Bootstrap
             foreach (var role in new[]
                      {
                          "requests.office", "requests.type-administrator", "docreg.office", "docreg.administrator", "ip.office", "ip.administrator",
+                         "risk.risk-office", "risk.risk-committee",
                      })
             {
                 await AccessGrants.AssignRoleAsync(provider, role, AccessGrants.User, adminUser.Id);
             }
         }
+
+        // Phase 13 demo: everyone may open Risk Management (each person sees the risks they own); Mariam is the Risk Office and sits on the
+        // Risk Committee (role assignment above).
+        await AccessGrants.GrantSystemAccessAsync(provider, "risk", AccessGrants.Everyone, null);
 
         // Phase 9 (ADR 0075): strategic objectives live in the KPI strategy hierarchy, shared by Portfolio and Performance Management.
         if (provider.GetService<Strategy.Modules.Kpi.Contracts.IKpiStrategyCatalog>() is { } strategyCatalog)

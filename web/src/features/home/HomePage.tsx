@@ -16,6 +16,7 @@ import { useCan, useHasSystem } from '@/features/access/session';
 import { useMe } from '@/features/auth/session';
 import { useMyNotifications } from '@/features/notifications/api';
 import { MyKpiCard } from '@/features/kpi/MyKpiCard';
+import { MyRiskCard } from '@/features/risk/MyRiskCard';
 import { MyTasksCard } from '@/features/tasks/MyTasksCard';
 import { useMyWork, type MyWork } from '@/features/workflow/api';
 import { useDueText, usePersonName } from '@/features/workflow/ApprovalPanel';
@@ -145,6 +146,8 @@ export function HomePage() {
   const hasKpi = useHasSystem('kpi');
   const canKpiResults = useCan('kpi.result.read');
   const canKpi = hasKpi && canKpiResults;
+  const canRiskRead = useCan('risk.risk.read');
+  const canRisk = useHasSystem('risk') && canRiskRead;
   const displayName =
     (pickText(i18n.language, me?.employee?.nameAr, me?.employee?.nameEn) || me?.userName) ?? '';
 
@@ -191,15 +194,23 @@ export function HomePage() {
           {canKpi && (
             <MyKpiCard items={work.data?.actionItems.filter((item) => item.systemCode === 'kpi') ?? []} />
           )}
+          {canRisk && (
+            <MyRiskCard items={work.data?.actionItems.filter((item) => item.systemCode === 'risk') ?? []} />
+          )}
           <Card title={t('myWork.actionItems.title')} icon={ListTodo}>
             {work.data &&
-              work.data.actionItems.filter((item) => item.systemCode !== 'tasks' && item.systemCode !== 'kpi')
-                .length === 0 && (
+              work.data.actionItems.filter(
+                (item) =>
+                  item.systemCode !== 'tasks' && item.systemCode !== 'kpi' && item.systemCode !== 'risk',
+              ).length === 0 && (
                 <p className="text-sm text-muted-foreground">{t('myWork.actionItems.empty')}</p>
               )}
             <ul className="flex flex-col divide-y">
               {work.data?.actionItems
-                .filter((item) => item.systemCode !== 'tasks' && item.systemCode !== 'kpi')
+                .filter(
+                  (item) =>
+                    item.systemCode !== 'tasks' && item.systemCode !== 'kpi' && item.systemCode !== 'risk',
+                )
                 .map((item) => (
                   <li key={`${item.resourceType}:${item.resourceId}`} className="flex flex-col gap-0.5 py-3">
                     <Link to={item.link as '/'} className="font-medium text-primary hover:underline">

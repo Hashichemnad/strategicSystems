@@ -18,7 +18,7 @@ public class JobDashboardTests(ApiFixture api) : IClassFixture<ApiFixture>
             () => admin.GetFromJsonAsync<List<JobDto>>("/api/v1/scheduling/jobs"), j => j!.All(x => x.NextRunAt is not null)))!;
         jobs.Select(j => j.Key).ShouldBe(
             ["audit.verify-chain", "docreg.validity", "files.rescan-pending", "ip.renewals", "kpi.period-windows", "notifications.digest", "org.directory-sync", "portfolio.monthly-cycle", "scheduling.cleanup", "tasks.digest", "tasks.recurrence", "tasks.reminders", "teams.evaluation-triggers", "teams.reports", "workflow.idempotency-cleanup",
-                "workflow.sla", "requests.stage-overdue"], ignoreOrder: true);
+                "workflow.sla", "requests.stage-overdue", "risk.monitor"], ignoreOrder: true);
         jobs.ShouldAllBe(j => j.NameAr.Length > 0 && j.NameEn.Length > 0 && !j.Paused);
 
         (await admin.PostAsync("/api/v1/scheduling/jobs/audit.verify-chain/run", null)).StatusCode.ShouldBe(HttpStatusCode.NoContent);

@@ -58,6 +58,8 @@ import arLinks from './ar/links.json';
 import enLinks from './en/links.json';
 import arKpi from './ar/kpi.json';
 import enKpi from './en/kpi.json';
+import arRisk from './ar/risk.json';
+import enRisk from './en/risk.json';
 import arRequests from './ar/requests.json';
 import enRequests from './en/requests.json';
 import arDocreg from './ar/docreg.json';
@@ -100,6 +102,7 @@ export const resources = {
     portfolio: arPortfolio,
     links: arLinks,
     kpi: arKpi,
+    risk: arRisk,
     requests: arRequests,
     docreg: arDocreg,
     ip: arIp,
@@ -134,6 +137,7 @@ export const resources = {
     portfolio: enPortfolio,
     links: enLinks,
     kpi: enKpi,
+    risk: enRisk,
     requests: enRequests,
     docreg: enDocreg,
     ip: enIp,
