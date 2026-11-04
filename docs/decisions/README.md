@@ -62,3 +62,12 @@ Write an ADR for every choice the SPEC or CLAUDE.md leaves open (CLAUDE.md §2 r
 | [0063](0063-kpi-definition-change-control.md) | KPI definition change control | Accepted by the owner |
 | [0064](0064-kpi-approval-checklist-and-bulk.md) | KPI verification checklist and bulk approval | Accepted by the owner |
 | [0065](0065-kpi-contracts-and-integration-events.md) | KPI contracts for other systems and integration events | Accepted by the owner |
+| [0080](0080-request-framework-types-forms-stages.md) | Request Framework: built-in and custom types, form schema, stages and handlers | Proposed |
+| [0081](0081-dynamic-approval-processes-and-approve-forms.md) | Approval processes for request types and approve mini-forms | Proposed |
+| [0082](0082-numbering-type-and-org-tokens.md) | Numbering tokens `{TYPE}` and `{ORG}`; Document ID and version numbers | Proposed |
+| [0083](0083-document-sensitivity-clearance.md) | Document sensitivity clearance: one visibility rule for every read path | Proposed |
+| [0084](0084-document-validity-and-expiry.md) | Document validity by type, reminders, confirmation and expiry | Proposed |
+| [0085](0085-uncontrolled-copy-watermark.md) | "Uncontrolled when printed" watermark on downloads | Proposed |
+| [0086](0086-emirates-id-encryption-and-masking.md) | Emirates ID: encryption, masking and who may see it | Proposed |
+| [0087](0087-ip-from-documents-renewal-internal.md) | IP from published documents, expiry, renewal and internal-only protection | Proposed |
+| [0088](0088-request-pdf-templates-and-embedding.md) | Request PDF templates and the embeddable submit page | Proposed |
