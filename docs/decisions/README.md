@@ -104,3 +104,13 @@ Write an ADR for every choice the SPEC or CLAUDE.md leaves open (CLAUDE.md §2 r
 | [0115](0115-vendor-access-expiry-notifications-rating.md) | Vendor access expiry, dormant accounts, notifications, rating | Accepted by the owner |
 | [0116](0116-capacity-view-and-portfolio-review.md) | Capacity view and quarterly portfolio review | Accepted by the owner |
 | [0117](0117-wasel-ai-gantt-font-sprint-notification.md) | Wasel AI, bundled Gantt export font, sprint review notification | Accepted by the owner |
+| [0120](0120-cap-data-model-and-numbering.md) | CAP data model, many-to-many actions and numbering | Proposed |
+| [0121](0121-cap-lifecycle-and-approvals.md) | CAP lifecycle: owner response, per-action PMO validation, completion and extension | Proposed |
+| [0122](0122-cap-due-dates-late-and-reminders.md) | CAP due dates by priority in working time, late actions, escalation, monthly reminders | Proposed |
+| [0123](0123-cap-source-system-contract.md) | CAP source-system contract, live links, KPI and Risk integrations | Proposed |
+| [0124](0124-cap-budget-routing-to-portfolio.md) | Budget routing: draft Program Request from a CAP action | Proposed |
+| [0125](0125-cap-access-model.md) | CAP access: PM Office role, record roles, unit scope | Proposed |
+| [0126](0126-benchmarking-on-the-request-framework.md) | Benchmarking: Plan on the Request Framework, stages and gates, access | Proposed |
+| [0127](0127-benchmarking-plan-and-pre-quarter-notice.md) | Annual benchmarking plan and the pre-quarter search notification | Proposed |
+| [0128](0128-benchmarking-to-cap-closure-kpi-library.md) | Analysis → CAP, closure rule, KPI benchmark update, library, impact follow-up | Proposed |
+| [0129](0129-cap-and-benchmarking-ai-and-mcp.md) | CAP and Benchmarking AI features and MCP tools | Proposed |
