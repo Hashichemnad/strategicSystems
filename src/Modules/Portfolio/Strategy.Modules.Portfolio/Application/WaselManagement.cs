@@ -79,7 +79,7 @@ public sealed record PmVendorItemDto(
 
 public sealed record VendorFileDto(Guid Id, string Name, string ContentType, long SizeBytes, string ScanStatus);
 
-public sealed record AssignmentInput(Guid VendorId, Guid? ContractId, DateOnly? AccessUntil, string? ExpiryRule);
+public sealed record VendorAssignmentInput(Guid VendorId, Guid? ContractId, DateOnly? AccessUntil, string? ExpiryRule);
 
 public sealed record InvitationInput(Guid VendorId, string Email, string? Name, string Role, string? Language);
 
@@ -93,15 +93,15 @@ public sealed record ItemReviewInput(VendorProgressValues? Values, string? Comme
 
 public sealed record ShareOutcomeInput(string? Note);
 
-public sealed record DecisionInput(string? Comment, uint Version);
+public sealed record WaselDecisionInput(string? Comment, uint Version);
 
 public sealed record VendorRatingInput(Guid VendorId, Guid? MilestoneId, VendorRatingValues Values);
 
 public sealed record MeetingVendorInput(Guid? VendorId);
 
-public sealed record CommentInput(string SubjectType, Guid SubjectId, string Body, Guid? VendorId = null);
+public sealed record WaselCommentInput(string SubjectType, Guid SubjectId, string Body, Guid? VendorId = null);
 
-public sealed record CommentDto(Guid Id, string SubjectType, Guid SubjectId, string AuthorKind, string? AuthorName, string Body, DateTimeOffset CreatedAt);
+public sealed record WaselCommentDto(Guid Id, string SubjectType, Guid SubjectId, string AuthorKind, string? AuthorName, string Body, DateTimeOffset CreatedAt);
 
 public sealed record VendorReviewAiDto(IReadOnlyList<VendorReviewFlagDto> Flags, string? Summary, string? ReturnCommentAr, string? ReturnCommentEn, bool AiUsed);
 
@@ -452,7 +452,7 @@ internal sealed class WaselManagementService(
         return await PanelAsync(projectId, ct).ConfigureAwait(false);
     }
 
-    public async Task<Result<WaselPanelDto>> AssignAsync(Guid projectId, AssignmentInput input, CancellationToken ct)
+    public async Task<Result<WaselPanelDto>> AssignAsync(Guid projectId, VendorAssignmentInput input, CancellationToken ct)
     {
         var (project, error) = await ProjectAsync(projectId, manage: true, ct).ConfigureAwait(false);
         if (project is null)
@@ -1005,7 +1005,7 @@ internal sealed class WaselManagementService(
 
     // ---------------------------------------------------------------- deliverables, proposed items, meetings
 
-    public async Task<Result<WaselPanelDto>> DecideDeliverableAsync(Guid deliverableId, bool accept, DecisionInput input, CancellationToken ct)
+    public async Task<Result<WaselPanelDto>> DecideDeliverableAsync(Guid deliverableId, bool accept, WaselDecisionInput input, CancellationToken ct)
     {
         var deliverable = await db.VendorDeliverables.FirstOrDefaultAsync(d => d.Id == deliverableId, ct).ConfigureAwait(false);
         if (deliverable is null)
@@ -1042,7 +1042,7 @@ internal sealed class WaselManagementService(
     }
 
     /// <summary>Accepting a vendor draft creates the real record through the normal services (RAID issue / challenge / project risk).</summary>
-    public async Task<Result<WaselPanelDto>> DecideItemAsync(Guid itemId, bool accept, DecisionInput input, CancellationToken ct)
+    public async Task<Result<WaselPanelDto>> DecideItemAsync(Guid itemId, bool accept, WaselDecisionInput input, CancellationToken ct)
     {
         var item = await db.VendorItems.FirstOrDefaultAsync(i => i.Id == itemId, ct).ConfigureAwait(false);
         if (item is null)
@@ -1144,7 +1144,7 @@ internal sealed class WaselManagementService(
 
     // ---------------------------------------------------------------- comments and rating
 
-    public async Task<Result<IReadOnlyList<CommentDto>>> CommentsAsync(Guid projectId, string? subjectType, Guid? subjectId, CancellationToken ct)
+    public async Task<Result<IReadOnlyList<WaselCommentDto>>> CommentsAsync(Guid projectId, string? subjectType, Guid? subjectId, CancellationToken ct)
     {
         var (project, error) = await ProjectAsync(projectId, manage: false, ct).ConfigureAwait(false);
         if (project is null)
@@ -1164,10 +1164,10 @@ internal sealed class WaselManagementService(
         }
 
         return await query.OrderBy(c => c.CreatedAt).Take(500)
-            .Select(c => new CommentDto(c.Id, c.SubjectType, c.SubjectId, c.AuthorKind, c.AuthorName, c.Body, c.CreatedAt)).ToListAsync(ct).ConfigureAwait(false);
+            .Select(c => new WaselCommentDto(c.Id, c.SubjectType, c.SubjectId, c.AuthorKind, c.AuthorName, c.Body, c.CreatedAt)).ToListAsync(ct).ConfigureAwait(false);
     }
 
-    public async Task<Result<IReadOnlyList<CommentDto>>> AddCommentAsync(Guid projectId, CommentInput input, CancellationToken ct)
+    public async Task<Result<IReadOnlyList<WaselCommentDto>>> AddCommentAsync(Guid projectId, WaselCommentInput input, CancellationToken ct)
     {
         var (project, error) = await ProjectAsync(projectId, manage: true, ct).ConfigureAwait(false);
         if (project is null)
@@ -1350,7 +1350,7 @@ internal sealed class WaselManagementService(
 /// <summary>Comment subjects must belong to the project (and to the vendor's side of it).</summary>
 internal static class WaselComments
 {
-    public static Error? Invalid(CommentInput input) =>
+    public static Error? Invalid(WaselCommentInput input) =>
         !CommentSubjects.All.Contains(input.SubjectType)
             ? Error.Validation([new FieldError("subjectType", "validation.unknownCode", "validation.unknownCode")])
             : string.IsNullOrWhiteSpace(input.Body) || input.Body.Length > VendorComment.MaxLength

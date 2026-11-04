@@ -16715,7 +16715,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/DecisionInput"
+                "$ref": "#/components/schemas/WaselDecisionInput"
               }
             }
           },
@@ -16766,7 +16766,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/DecisionInput"
+                "$ref": "#/components/schemas/WaselDecisionInput"
               }
             }
           },
@@ -16817,7 +16817,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/DecisionInput"
+                "$ref": "#/components/schemas/WaselDecisionInput"
               }
             }
           },
@@ -16868,7 +16868,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/DecisionInput"
+                "$ref": "#/components/schemas/WaselDecisionInput"
               }
             }
           },
@@ -16966,7 +16966,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ReviewListItemDto"
+                    "$ref": "#/components/schemas/PortfolioReviewListItemDto"
                   }
                 }
               }
@@ -16993,7 +16993,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ReviewInput"
+                "$ref": "#/components/schemas/PortfolioReviewInput"
               }
             }
           },
@@ -17005,7 +17005,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ReviewDto"
+                  "$ref": "#/components/schemas/PortfolioReviewDto"
                 }
               }
             }
@@ -17046,7 +17046,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ReviewDto"
+                  "$ref": "#/components/schemas/PortfolioReviewDto"
                 }
               }
             }
@@ -17094,7 +17094,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ReviewDecisionInput"
+                "$ref": "#/components/schemas/PortfolioReviewDecisionInput"
               }
             }
           },
@@ -17106,7 +17106,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ReviewDto"
+                  "$ref": "#/components/schemas/PortfolioReviewDto"
                 }
               }
             }
@@ -17147,7 +17147,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ReviewDto"
+                  "$ref": "#/components/schemas/PortfolioReviewDto"
                 }
               }
             }
@@ -24860,7 +24860,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/AssignmentInput"
+                "$ref": "#/components/schemas/VendorAssignmentInput"
               }
             }
           },
@@ -24981,7 +24981,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/CommentDto"
+                    "$ref": "#/components/schemas/WaselCommentDto"
                   }
                 }
               }
@@ -25019,7 +25019,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CommentInput"
+                "$ref": "#/components/schemas/WaselCommentInput"
               }
             }
           },
@@ -25033,7 +25033,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/CommentDto"
+                    "$ref": "#/components/schemas/WaselCommentDto"
                   }
                 }
               }
@@ -26235,7 +26235,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/CommentDto"
+                    "$ref": "#/components/schemas/WaselCommentDto"
                   }
                 }
               }
@@ -26273,7 +26273,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CommentInput"
+                "$ref": "#/components/schemas/WaselCommentInput"
               }
             }
           },
@@ -26287,7 +26287,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/CommentDto"
+                    "$ref": "#/components/schemas/WaselCommentDto"
                   }
                 }
               }
@@ -42466,25 +42466,6 @@
                 "$ref": "#/components/schemas/JsonObject"
               }
             ]
-          }
-        }
-      },
-      "DecisionInput": {
-        "required": [
-          "comment",
-          "version"
-        ],
-        "type": "object",
-        "properties": {
-          "comment": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "version": {
-            "type": "integer",
-            "format": "uint32"
           }
         }
       },
@@ -59054,6 +59035,270 @@
           }
         }
       },
+      "PortfolioReviewDecisionInput": {
+        "required": [
+          "decision",
+          "comment"
+        ],
+        "type": "object",
+        "properties": {
+          "decision": {
+            "type": "string"
+          },
+          "comment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "PortfolioReviewDto": {
+        "required": [
+          "id",
+          "period",
+          "title",
+          "reviewDate",
+          "notes",
+          "status",
+          "completedAt",
+          "projects",
+          "canManage",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "period": {
+            "type": "string"
+          },
+          "title": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "reviewDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "notes": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "completedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "projects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PortfolioReviewProjectDto"
+            }
+          },
+          "canManage": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "PortfolioReviewInput": {
+        "required": [
+          "period",
+          "title",
+          "reviewDate",
+          "notes"
+        ],
+        "type": "object",
+        "properties": {
+          "period": {
+            "type": "string"
+          },
+          "title": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "reviewDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "notes": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "PortfolioReviewListItemDto": {
+        "required": [
+          "id",
+          "period",
+          "title",
+          "reviewDate",
+          "status",
+          "decisions",
+          "completedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "period": {
+            "type": "string"
+          },
+          "title": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "reviewDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "status": {
+            "type": "string"
+          },
+          "decisions": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "completedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          }
+        }
+      },
+      "PortfolioReviewProjectDto": {
+        "required": [
+          "projectId",
+          "number",
+          "nameAr",
+          "nameEn",
+          "stage",
+          "status",
+          "performance",
+          "progressStatus",
+          "budget",
+          "decision",
+          "comment",
+          "changeRequestId",
+          "changeRequestNumber",
+          "changeRequestStatus",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "stage": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "performance": {
+            "type": "number",
+            "format": "double"
+          },
+          "progressStatus": {
+            "type": "string"
+          },
+          "budget": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "decision": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "comment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "changeRequestId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "changeRequestNumber": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "changeRequestStatus": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "version": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          }
+        }
+      },
       "PortfolioSettings": {
         "type": "object",
         "properties": {
@@ -65440,35 +65685,19 @@
           }
         }
       },
-      "ReviewDecisionInput": {
-        "required": [
-          "decision",
-          "comment"
-        ],
-        "type": "object",
-        "properties": {
-          "decision": {
-            "type": "string"
-          },
-          "comment": {
-            "type": [
-              "null",
-              "string"
-            ]
-          }
-        }
-      },
       "ReviewDto": {
         "required": [
           "id",
-          "period",
-          "title",
-          "reviewDate",
-          "notes",
+          "riskId",
           "status",
-          "completedAt",
-          "projects",
-          "canManage",
+          "values",
+          "decisionComment",
+          "submittedAt",
+          "decidedAt",
+          "createdAt",
+          "previewResidualScore",
+          "previewResidualBand",
+          "canEdit",
           "version"
         ],
         "type": "object",
@@ -65477,229 +65706,52 @@
             "type": "string",
             "format": "uuid"
           },
-          "period": {
-            "type": "string"
-          },
-          "title": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "reviewDate": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "date"
-          },
-          "notes": {
-            "type": [
-              "null",
-              "string"
-            ]
+          "riskId": {
+            "type": "string",
+            "format": "uuid"
           },
           "status": {
             "type": "string"
           },
-          "completedAt": {
+          "values": {
+            "$ref": "#/components/schemas/ReviewValues"
+          },
+          "decisionComment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "submittedAt": {
             "type": [
               "null",
               "string"
             ],
             "format": "date-time"
           },
-          "projects": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ReviewProjectDto"
-            }
+          "decidedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
           },
-          "canManage": {
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "previewResidualScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "previewResidualBand": {
+            "type": "string"
+          },
+          "canEdit": {
             "type": "boolean"
           },
           "version": {
             "type": "integer",
-            "format": "uint32"
-          }
-        }
-      },
-      "ReviewInput": {
-        "required": [
-          "period",
-          "title",
-          "reviewDate",
-          "notes"
-        ],
-        "type": "object",
-        "properties": {
-          "period": {
-            "type": "string"
-          },
-          "title": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "reviewDate": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "date"
-          },
-          "notes": {
-            "type": [
-              "null",
-              "string"
-            ]
-          }
-        }
-      },
-      "ReviewListItemDto": {
-        "required": [
-          "id",
-          "period",
-          "title",
-          "reviewDate",
-          "status",
-          "decisions",
-          "completedAt"
-        ],
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "period": {
-            "type": "string"
-          },
-          "title": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "reviewDate": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "date"
-          },
-          "status": {
-            "type": "string"
-          },
-          "decisions": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "completedAt": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "date-time"
-          }
-        }
-      },
-      "ReviewProjectDto": {
-        "required": [
-          "projectId",
-          "number",
-          "nameAr",
-          "nameEn",
-          "stage",
-          "status",
-          "performance",
-          "progressStatus",
-          "budget",
-          "decision",
-          "comment",
-          "changeRequestId",
-          "changeRequestNumber",
-          "changeRequestStatus",
-          "version"
-        ],
-        "type": "object",
-        "properties": {
-          "projectId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "number": {
-            "type": "string"
-          },
-          "nameAr": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "nameEn": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "stage": {
-            "type": "string"
-          },
-          "status": {
-            "type": "string"
-          },
-          "performance": {
-            "type": "number",
-            "format": "double"
-          },
-          "progressStatus": {
-            "type": "string"
-          },
-          "budget": {
-            "type": [
-              "null",
-              "number"
-            ],
-            "format": "double"
-          },
-          "decision": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "comment": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "changeRequestId": {
-            "type": [
-              "null",
-              "string"
-            ],
-            "format": "uuid"
-          },
-          "changeRequestNumber": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "changeRequestStatus": {
-            "type": [
-              "null",
-              "string"
-            ]
-          },
-          "version": {
-            "type": [
-              "null",
-              "integer"
-            ],
             "format": "uint32"
           }
         }
@@ -75568,6 +75620,41 @@
           }
         }
       },
+      "VendorAssignmentInput": {
+        "required": [
+          "vendorId",
+          "contractId",
+          "accessUntil",
+          "expiryRule"
+        ],
+        "type": "object",
+        "properties": {
+          "vendorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "contractId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "accessUntil": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "expiryRule": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "VendorContactDto": {
         "required": [
           "nameAr",
@@ -77813,6 +77900,93 @@
               "null",
               "string"
             ]
+          }
+        }
+      },
+      "WaselCommentDto": {
+        "required": [
+          "id",
+          "subjectType",
+          "subjectId",
+          "authorKind",
+          "authorName",
+          "body",
+          "createdAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "subjectType": {
+            "type": "string"
+          },
+          "subjectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "authorKind": {
+            "type": "string"
+          },
+          "authorName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "body": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "WaselCommentInput": {
+        "required": [
+          "subjectType",
+          "subjectId",
+          "body"
+        ],
+        "type": "object",
+        "properties": {
+          "subjectType": {
+            "type": "string"
+          },
+          "subjectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "body": {
+            "type": "string"
+          },
+          "vendorId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          }
+        }
+      },
+      "WaselDecisionInput": {
+        "required": [
+          "comment",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "comment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
           }
         }
       },

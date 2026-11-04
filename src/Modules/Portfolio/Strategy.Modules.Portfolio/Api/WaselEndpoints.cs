@@ -98,7 +98,7 @@ internal static class WaselEndpoints
         projects.MapGet("/{id:guid}/comments", async (Guid id, string? subjectType, Guid? subjectId, VendorPortalService s, CancellationToken ct) =>
                 (await s.CommentsAsync(id, subjectType, subjectId, ct)).ToOk())
             .WithName("ListWaselComments").RequireVendorPermission(Read);
-        projects.MapPost("/{id:guid}/comments", async (Guid id, CommentInput b, VendorPortalService s, CancellationToken ct) => (await s.AddCommentAsync(id, b, ct)).ToOk())
+        projects.MapPost("/{id:guid}/comments", async (Guid id, WaselCommentInput b, VendorPortalService s, CancellationToken ct) => (await s.AddCommentAsync(id, b, ct)).ToOk())
             .WithName("AddWaselComment").RequireVendorPermission(WaselPermissions.CommentWrite);
 
         projects.MapGet("/{id:guid}/files/{fileId:guid}", async Task<Results<FileStreamHttpResult, ProblemHttpResult>> (Guid id, Guid fileId, VendorPortalService s,

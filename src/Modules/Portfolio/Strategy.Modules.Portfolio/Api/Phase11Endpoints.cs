@@ -39,14 +39,14 @@ internal static class Phase11Endpoints
             .WithName("GetProjectWasel").RequirePermission(Read);
         projects.MapPut("/{id:guid}/wasel/mode", async (Guid id, UpdateModeInput b, WaselManagementService s, CancellationToken ct) => (await s.SetModeAsync(id, b, ct)).ToOk())
             .WithName("SetProjectUpdateMode").RequirePermission(Vendors);
-        projects.MapPost("/{id:guid}/wasel/assignments", async (Guid id, AssignmentInput b, WaselManagementService s, CancellationToken ct) => (await s.AssignAsync(id, b, ct)).ToOk())
+        projects.MapPost("/{id:guid}/wasel/assignments", async (Guid id, VendorAssignmentInput b, WaselManagementService s, CancellationToken ct) => (await s.AssignAsync(id, b, ct)).ToOk())
             .WithName("AssignProjectVendor").RequirePermission(Vendors);
         projects.MapPost("/{id:guid}/wasel/invitations", async (Guid id, InvitationInput b, WaselManagementService s, CancellationToken ct) => (await s.InviteAsync(id, b, ct)).ToOk())
             .WithName("InviteVendorUser").RequirePermission(Vendors);
         projects.MapGet("/{id:guid}/wasel/comments", async (Guid id, string? subjectType, Guid? subjectId, WaselManagementService s, CancellationToken ct) =>
                 (await s.CommentsAsync(id, subjectType, subjectId, ct)).ToOk())
             .WithName("ListProjectWaselComments").RequirePermission(Read);
-        projects.MapPost("/{id:guid}/wasel/comments", async (Guid id, CommentInput b, WaselManagementService s, CancellationToken ct) => (await s.AddCommentAsync(id, b, ct)).ToOk())
+        projects.MapPost("/{id:guid}/wasel/comments", async (Guid id, WaselCommentInput b, WaselManagementService s, CancellationToken ct) => (await s.AddCommentAsync(id, b, ct)).ToOk())
             .WithName("AddProjectWaselComment").RequirePermission(Vendors);
         projects.MapPost("/{id:guid}/wasel/ratings", async (Guid id, VendorRatingInput b, WaselManagementService s, CancellationToken ct) => (await s.RateAsync(id, b, ct)).ToOk())
             .WithName("RateProjectVendor").RequirePermission(Vendors);
@@ -79,16 +79,16 @@ internal static class Phase11Endpoints
             .WithName("ShareVendorOutcome").RequirePermission(Vendors);
         group.MapPost("/vendor-submissions/{sid:guid}/ai-review", async (Guid sid, VendorReviewAiService s, CancellationToken ct) => (await s.ReviewAsync(sid, ct)).ToOk())
             .WithName("ReviewVendorSubmissionWithAi").RequirePermission(Vendors);
-        group.MapPost("/vendor-deliverables/{did:guid}/accept", async (Guid did, DecisionInput b, WaselManagementService s, CancellationToken ct) =>
+        group.MapPost("/vendor-deliverables/{did:guid}/accept", async (Guid did, WaselDecisionInput b, WaselManagementService s, CancellationToken ct) =>
                 (await s.DecideDeliverableAsync(did, true, b, ct)).ToOk())
             .WithName("AcceptVendorDeliverable").RequirePermission(Vendors);
-        group.MapPost("/vendor-deliverables/{did:guid}/return", async (Guid did, DecisionInput b, WaselManagementService s, CancellationToken ct) =>
+        group.MapPost("/vendor-deliverables/{did:guid}/return", async (Guid did, WaselDecisionInput b, WaselManagementService s, CancellationToken ct) =>
                 (await s.DecideDeliverableAsync(did, false, b, ct)).ToOk())
             .WithName("ReturnVendorDeliverable").RequirePermission(Vendors);
-        group.MapPost("/vendor-items/{vid:guid}/accept", async (Guid vid, DecisionInput b, WaselManagementService s, CancellationToken ct) =>
+        group.MapPost("/vendor-items/{vid:guid}/accept", async (Guid vid, WaselDecisionInput b, WaselManagementService s, CancellationToken ct) =>
                 (await s.DecideItemAsync(vid, true, b, ct)).ToOk())
             .WithName("AcceptVendorItem").RequirePermission(Vendors);
-        group.MapPost("/vendor-items/{vid:guid}/reject", async (Guid vid, DecisionInput b, WaselManagementService s, CancellationToken ct) =>
+        group.MapPost("/vendor-items/{vid:guid}/reject", async (Guid vid, WaselDecisionInput b, WaselManagementService s, CancellationToken ct) =>
                 (await s.DecideItemAsync(vid, false, b, ct)).ToOk())
             .WithName("RejectVendorItem").RequirePermission(Vendors);
 
@@ -98,11 +98,11 @@ internal static class Phase11Endpoints
             .WithName("GetPortfolioCapacity").RequirePermission(PortfolioPermissions.CapacityRead);
         group.MapGet("/reviews", async (PortfolioReviewService s, CancellationToken ct) => TypedResults.Ok(await s.ListAsync(ct)))
             .WithName("ListPortfolioReviews").RequirePermission(PortfolioPermissions.ReviewRead);
-        group.MapPost("/reviews", async (ReviewInput b, PortfolioReviewService s, CancellationToken ct) => (await s.CreateAsync(b, ct)).ToOk())
+        group.MapPost("/reviews", async (PortfolioReviewInput b, PortfolioReviewService s, CancellationToken ct) => (await s.CreateAsync(b, ct)).ToOk())
             .WithName("CreatePortfolioReview").RequirePermission(PortfolioPermissions.ReviewManage);
         group.MapGet("/reviews/{rid:guid}", async (Guid rid, PortfolioReviewService s, CancellationToken ct) => (await s.GetAsync(rid, ct)).ToOk())
             .WithName("GetPortfolioReview").RequirePermission(PortfolioPermissions.ReviewRead);
-        group.MapPut("/reviews/{rid:guid}/decisions/{projectId:guid}", async (Guid rid, Guid projectId, ReviewDecisionInput b, PortfolioReviewService s, CancellationToken ct) =>
+        group.MapPut("/reviews/{rid:guid}/decisions/{projectId:guid}", async (Guid rid, Guid projectId, PortfolioReviewDecisionInput b, PortfolioReviewService s, CancellationToken ct) =>
                 (await s.DecideAsync(rid, projectId, b, ct)).ToOk())
             .WithName("SetPortfolioReviewDecision").RequirePermission(PortfolioPermissions.ReviewManage);
         group.MapPost("/reviews/{rid:guid}/complete", async (Guid rid, PortfolioReviewService s, CancellationToken ct) => (await s.CompleteAsync(rid, ct)).ToOk())

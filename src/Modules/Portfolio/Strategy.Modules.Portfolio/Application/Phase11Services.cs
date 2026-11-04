@@ -249,29 +249,29 @@ internal sealed class CapacityService(
 
 // ---------------------------------------------------------------- quarterly portfolio review (SPEC §1.12, ADR 0116)
 
-public sealed record ReviewListItemDto(Guid Id, string Period, string? Title, DateOnly? ReviewDate, string Status, int Decisions, DateTimeOffset? CompletedAt);
+public sealed record PortfolioReviewListItemDto(Guid Id, string Period, string? Title, DateOnly? ReviewDate, string Status, int Decisions, DateTimeOffset? CompletedAt);
 
-public sealed record ReviewProjectDto(
+public sealed record PortfolioReviewProjectDto(
     Guid ProjectId, string Number, string? NameAr, string? NameEn, string Stage, string Status, decimal Performance, string ProgressStatus, decimal? Budget, string? Decision,
     string? Comment, Guid? ChangeRequestId, string? ChangeRequestNumber, string? ChangeRequestStatus, uint? Version);
 
-public sealed record ReviewDto(
-    Guid Id, string Period, string? Title, DateOnly? ReviewDate, string? Notes, string Status, DateTimeOffset? CompletedAt, IReadOnlyList<ReviewProjectDto> Projects,
+public sealed record PortfolioReviewDto(
+    Guid Id, string Period, string? Title, DateOnly? ReviewDate, string? Notes, string Status, DateTimeOffset? CompletedAt, IReadOnlyList<PortfolioReviewProjectDto> Projects,
     bool CanManage, uint Version);
 
-public sealed record ReviewInput(string Period, string? Title, DateOnly? ReviewDate, string? Notes);
+public sealed record PortfolioReviewInput(string Period, string? Title, DateOnly? ReviewDate, string? Notes);
 
-public sealed record ReviewDecisionInput(string Decision, string? Comment);
+public sealed record PortfolioReviewDecisionInput(string Decision, string? Comment);
 
 internal sealed class PortfolioReviewService(
     PortfolioDbContext db, ProjectLoader loader, ChangeRequestService changes, CostVisibility costs, IAccessService access, IRequestContext context, IClock clock)
 {
-    public async Task<IReadOnlyList<ReviewListItemDto>> ListAsync(CancellationToken ct) =>
+    public async Task<IReadOnlyList<PortfolioReviewListItemDto>> ListAsync(CancellationToken ct) =>
         await db.Reviews.AsNoTracking().OrderByDescending(r => r.Period).ThenByDescending(r => r.CreatedAt)
-            .Select(r => new ReviewListItemDto(r.Id, r.Period, r.Title, r.ReviewDate, r.Status, db.ReviewDecisions.Count(d => d.ReviewId == r.Id), r.CompletedAt))
+            .Select(r => new PortfolioReviewListItemDto(r.Id, r.Period, r.Title, r.ReviewDate, r.Status, db.ReviewDecisions.Count(d => d.ReviewId == r.Id), r.CompletedAt))
             .ToListAsync(ct).ConfigureAwait(false);
 
-    public async Task<Result<ReviewDto>> CreateAsync(ReviewInput input, CancellationToken ct)
+    public async Task<Result<PortfolioReviewDto>> CreateAsync(PortfolioReviewInput input, CancellationToken ct)
     {
         var errors = Validate(input);
         if (errors.Count > 0)
@@ -285,7 +285,7 @@ internal sealed class PortfolioReviewService(
         return await GetAsync(review.Id, ct).ConfigureAwait(false);
     }
 
-    public async Task<Result<ReviewDto>> GetAsync(Guid id, CancellationToken ct)
+    public async Task<Result<PortfolioReviewDto>> GetAsync(Guid id, CancellationToken ct)
     {
         var review = await db.Reviews.AsNoTracking().FirstOrDefaultAsync(r => r.Id == id, ct).ConfigureAwait(false);
         if (review is null)
@@ -305,14 +305,14 @@ internal sealed class PortfolioReviewService(
         {
             var d = decisions.FirstOrDefault(x => x.ProjectId == p.Id);
             var cr = d?.ChangeRequestId is { } cid ? crs.GetValueOrDefault(cid) : null;
-            return new ReviewProjectDto(p.Id, p.Number, p.NameAr, p.NameEn, p.Stage, p.Status, p.Performance, p.ProgressStatus, costVisible.Contains(p.Id) ? p.Budget : null,
+            return new PortfolioReviewProjectDto(p.Id, p.Number, p.NameAr, p.NameEn, p.Stage, p.Status, p.Performance, p.ProgressStatus, costVisible.Contains(p.Id) ? p.Budget : null,
                 d?.Decision, d?.Comment, d?.ChangeRequestId, cr?.Number, cr?.Status, d?.Version);
         }).ToList();
         var canManage = await access.CanAsync(context.User, PortfolioPermissions.ReviewManage, cancellationToken: ct).ConfigureAwait(false);
-        return new ReviewDto(review.Id, review.Period, review.Title, review.ReviewDate, review.Notes, review.Status, review.CompletedAt, rows, canManage, review.Version);
+        return new PortfolioReviewDto(review.Id, review.Period, review.Title, review.ReviewDate, review.Notes, review.Status, review.CompletedAt, rows, canManage, review.Version);
     }
 
-    public async Task<Result<ReviewDto>> DecideAsync(Guid id, Guid projectId, ReviewDecisionInput input, CancellationToken ct)
+    public async Task<Result<PortfolioReviewDto>> DecideAsync(Guid id, Guid projectId, PortfolioReviewDecisionInput input, CancellationToken ct)
     {
         var review = await db.Reviews.AsNoTracking().FirstOrDefaultAsync(r => r.Id == id, ct).ConfigureAwait(false);
         if (review is null || await loader.FindAsync(projectId, context.User, ct).ConfigureAwait(false) is null)
@@ -351,7 +351,7 @@ internal sealed class PortfolioReviewService(
     /// Completing never changes a project (ADR 0116): hold / cancel start a change request submitted into the normal approval (left as draft when another
     /// is already under review); re-scope opens a draft details change request for the PM.
     /// </summary>
-    public async Task<Result<ReviewDto>> CompleteAsync(Guid id, CancellationToken ct)
+    public async Task<Result<PortfolioReviewDto>> CompleteAsync(Guid id, CancellationToken ct)
     {
         var review = await db.Reviews.FirstOrDefaultAsync(r => r.Id == id, ct).ConfigureAwait(false);
         if (review is null)
@@ -406,7 +406,7 @@ internal sealed class PortfolioReviewService(
         return await GetAsync(id, ct).ConfigureAwait(false);
     }
 
-    private static List<FieldError> Validate(ReviewInput input)
+    private static List<FieldError> Validate(PortfolioReviewInput input)
     {
         var errors = new List<FieldError>();
         if (!PortfolioReview.ValidPeriod(input.Period))

@@ -524,10 +524,9 @@ internal sealed class VendorPortalService(
             return ProjectService.NotInStage(s.Project);
         }
 
+        // The file is stored first (checks, scan) under the new deliverable's id; the record is saved only when the file was accepted. No transaction spans
+        // both: the Files service writes the audit chain on its own connection.
         var deliverable = VendorDeliverable.Create(projectId, s.Vendor.Id, milestoneId, title, description);
-        await using var transaction = await db.Database.BeginTransactionAsync(ct).ConfigureAwait(false);
-        db.VendorDeliverables.Add(deliverable);
-        await db.SaveChangesAsync(ct).ConfigureAwait(false);
         var uploaded = await files.UploadAsync(new FileUpload(WaselFilePurposes.Deliverable.Key, deliverable.Id.ToString("D"), fileName, content, $"wasel:{s.Vendor.Number}"), ct)
             .ConfigureAwait(false);
         if (uploaded.IsFailure)
@@ -535,7 +534,8 @@ internal sealed class VendorPortalService(
             return uploaded.Error;
         }
 
-        await transaction.CommitAsync(ct).ConfigureAwait(false);
+        db.VendorDeliverables.Add(deliverable);
+        await db.SaveChangesAsync(ct).ConfigureAwait(false);
         await notifier.ToPmAsync(PortfolioNotifications.WaselDeliverableReceived, s.Project, ct, title, VendorName(s)).ConfigureAwait(false);
         return await DeliverablesAsync(projectId, ct).ConfigureAwait(false);
     }
@@ -640,7 +640,7 @@ internal sealed class VendorPortalService(
         return await MeetingsAsync(projectId, ct).ConfigureAwait(false);
     }
 
-    public async Task<Result<IReadOnlyList<CommentDto>>> CommentsAsync(Guid projectId, string? subjectType, Guid? subjectId, CancellationToken ct)
+    public async Task<Result<IReadOnlyList<WaselCommentDto>>> CommentsAsync(Guid projectId, string? subjectType, Guid? subjectId, CancellationToken ct)
     {
         var scope = await wasel.ProjectAsync(projectId, WaselPermissions.ProjectRead, ct).ConfigureAwait(false);
         if (scope.IsFailure)
@@ -661,10 +661,10 @@ internal sealed class VendorPortalService(
         }
 
         return await query.OrderBy(c => c.CreatedAt).Take(500)
-            .Select(c => new CommentDto(c.Id, c.SubjectType, c.SubjectId, c.AuthorKind, c.AuthorName, c.Body, c.CreatedAt)).ToListAsync(ct).ConfigureAwait(false);
+            .Select(c => new WaselCommentDto(c.Id, c.SubjectType, c.SubjectId, c.AuthorKind, c.AuthorName, c.Body, c.CreatedAt)).ToListAsync(ct).ConfigureAwait(false);
     }
 
-    public async Task<Result<IReadOnlyList<CommentDto>>> AddCommentAsync(Guid projectId, CommentInput input, CancellationToken ct)
+    public async Task<Result<IReadOnlyList<WaselCommentDto>>> AddCommentAsync(Guid projectId, WaselCommentInput input, CancellationToken ct)
     {
         var scope = await wasel.ProjectAsync(projectId, WaselPermissions.CommentWrite, ct).ConfigureAwait(false);
         if (scope.IsFailure)
