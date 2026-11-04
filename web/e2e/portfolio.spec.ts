@@ -265,7 +265,7 @@ test.describe('portfolio — program requests', () => {
     await shot('request-approved');
     await page.goto(`/portfolio/projects/${done.project?.id ?? ''}`);
     await expect(page.getByTestId('project-page')).toContainText(done.project?.number ?? '');
-    await expect(page.getByText(k(language, 'currentStatus.takeOwnership'))).toBeVisible();
+    await expect(page.getByText(k(language, 'currentStatus.project.takeOwnership'))).toBeVisible();
     await shot('project-created', { fullPage: true });
     await page.goto('/portfolio/requests?view=mine');
     await expect(page.getByTestId('requests-table')).toContainText(done.number);
