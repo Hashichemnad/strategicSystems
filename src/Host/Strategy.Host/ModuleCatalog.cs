@@ -1,3 +1,4 @@
+using Strategy.Modules.Benchmarking;
 using Strategy.Modules.Cap;
 using Strategy.Modules.DocumentRegistry;
 using Strategy.Modules.IpRegistry;
@@ -27,5 +28,6 @@ internal static class ModuleCatalog
         new IpRegistryModule(),
         new RiskModule(),
         new CapModule(),
+        new BenchModule(),
     ];
 }

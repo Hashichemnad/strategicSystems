@@ -20,6 +20,10 @@
     <Project Path="src/Modules/Requests/Strategy.Modules.Requests.Contracts/Strategy.Modules.Requests.Contracts.csproj" />
     <Project Path="src/Modules/Requests/Strategy.Modules.Requests/Strategy.Modules.Requests.csproj" />
   </Folder>
+  <Folder Name="/src/Modules/Benchmarking/">
+    <Project Path="src/Modules/Benchmarking/Strategy.Modules.Benchmarking.Contracts/Strategy.Modules.Benchmarking.Contracts.csproj" />
+    <Project Path="src/Modules/Benchmarking/Strategy.Modules.Benchmarking/Strategy.Modules.Benchmarking.csproj" />
+  </Folder>
   <Folder Name="/src/Modules/Cap/">
     <Project Path="src/Modules/Cap/Strategy.Modules.Cap.Contracts/Strategy.Modules.Cap.Contracts.csproj" />
     <Project Path="src/Modules/Cap/Strategy.Modules.Cap/Strategy.Modules.Cap.csproj" />

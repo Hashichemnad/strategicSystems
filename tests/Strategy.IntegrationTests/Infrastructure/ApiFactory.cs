@@ -51,6 +51,7 @@ public sealed class ApiFactory(
         builder.UseSetting("Modules:Kpi:Enabled", "true");
         builder.UseSetting("Modules:Risk:Enabled", "true");
         builder.UseSetting("Modules:Cap:Enabled", "true");
+        builder.UseSetting("Modules:Bench:Enabled", "true");
         builder.UseSetting("Modules:Requests:Enabled", "true");
         builder.UseSetting("Modules:DocReg:Enabled", "true");
         builder.UseSetting("Modules:Ip:Enabled", "true");

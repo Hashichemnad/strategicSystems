@@ -28,6 +28,15 @@ internal sealed class DemoAdapter : IAiProviderAdapter
 
 internal sealed partial class DemoChatClient(string model) : IChatClient
 {
+    private static readonly string[] CapWhysAr = ["لأن الإجراء غير موثق.", "لأنه لم يُحدَّد مالك للعملية.", "لأن الأدوار والمسؤوليات غير معتمدة."];
+
+    private static readonly string[] CapWhysEn =
+        ["Because the procedure is not documented.", "Because no process owner was named.", "Because roles and responsibilities are not approved."];
+
+    private static readonly string[] BenchGaps = ["Demo: our process is manual where theirs is automated."];
+
+    private static readonly char[] KeywordSeparators = [' ', '?', '،', ','];
+
     private static readonly string[] RiskIssues = ["Demo: name a specific cause and the effect on objectives."];
 
     private static readonly string[] KpiSuggestions = ["Name the data source.", "Set a baseline and a target for each year of the strategy cycle."];
@@ -228,6 +237,110 @@ internal sealed partial class DemoChatClient(string model) : IChatClient
                 top10Ar = "(مسودة) أهم المخاطر المؤسسية كما في القائمة.",
                 top10En = "(Draft) The Top-10 institutional risks as listed.",
             });
+        }
+        else if (system.Contains("You extract improvement remarks from a report", StringComparison.Ordinal))
+        {
+            // Phase 15 (cap-extract): one remark per list line of the report (at most 5), else one remark from the text.
+            var document = Document().Match(user) is { Success: true } d ? d.Groups[1].Value.Trim() : string.Empty;
+            var lines = document.Split('\n').Select(l => ListItem().Match(l.Trim())).Where(m => m.Success).Select(m => m.Groups[1].Value.Trim()).Take(5).ToList();
+            if (lines.Count == 0)
+            {
+                lines.Add(document.Length > 160 ? document[..160] : document);
+            }
+
+            text = JsonSerializer.Serialize(new
+            {
+                remarks = lines.Select(l => new { textAr = $"ملاحظة: {l}", textEn = l, criterionCode = "processes", typeCode = "improvement", priority = "medium", departmentCode = "" }),
+            });
+        }
+        else if (system.Contains("You guide a remark owner through a root cause analysis", StringComparison.Ordinal))
+        {
+            var arabic = system.Contains("Write in Arabic", StringComparison.Ordinal);
+            text = JsonSerializer.Serialize(new
+            {
+                whys = arabic ? CapWhysAr : CapWhysEn,
+                causes = new[]
+                {
+                    new { categoryCode = "process", text = arabic ? "غياب إجراء موثق" : "No documented procedure" },
+                    new { categoryCode = "people", text = arabic ? "عدم وضوح المسؤوليات" : "Unclear responsibilities" },
+                },
+                analysis = arabic ? "(مسودة) السبب الجذري الأرجح هو غياب مالك معتمد للعملية." : "(Draft) The most likely root cause is the absence of an approved process owner.",
+            });
+        }
+        else if (system.Contains("You propose corrective actions for a remark", StringComparison.Ordinal))
+        {
+            text = JsonSerializer.Serialize(new
+            {
+                actions = new[]
+                {
+                    new { detailsAr = "توثيق الإجراء واعتماده ونشره على الموظفين المعنيين", detailsEn = "Document, approve and publish the procedure to the staff concerned", typeCode = "corrective", durationDays = 60 },
+                    new { detailsAr = "تعيين مالك للعملية ومتابعة مؤشر شهري", detailsEn = "Name a process owner and follow a monthly indicator", typeCode = "preventive", durationDays = 30 },
+                },
+            });
+        }
+        else if (system.Contains("You review the quality of a corrective action", StringComparison.Ordinal))
+        {
+            var arabic = system.Contains("Write in Arabic", StringComparison.Ordinal);
+            text = JsonSerializer.Serialize(new
+            {
+                issues = new[] { arabic ? "حدد مخرجاً قابلاً للقياس وتاريخاً واقعياً." : "Name a measurable output and a realistic date." },
+                rewriteAr = "(مسودة) نشر الإجراء المعتمد وتدريب 100% من موظفي القسم قبل التاريخ المحدد",
+                rewriteEn = "(Draft) Publish the approved procedure and train 100% of the section staff by the due date",
+            });
+        }
+        else if (system.Contains("You write the monthly corrective action plan summary", StringComparison.Ordinal))
+        {
+            text = JsonSerializer.Serialize(new
+            {
+                summaryAr = "(مسودة) ملخص حالة الملاحظات والإجراءات لهذا الشهر وفق الأرقام المرفقة.",
+                summaryEn = "(Draft) The status of remarks and actions this month, from the figures given.",
+                lateUnitsAr = "(مسودة) لا توجد وحدات متأخرة بشكل مزمن.",
+                lateUnitsEn = "(Draft) No unit is chronically late.",
+            });
+        }
+        else if (system.Contains("You suggest comparator entities for a benchmarking study", StringComparison.Ordinal))
+        {
+            text = JsonSerializer.Serialize(new
+            {
+                entities = new[]
+                {
+                    new { nameAr = "هيئة حكومية رائدة", nameEn = "Leading government authority", country = "UAE", scope = "local", reason = "Demo: recognised for excellence in the topics." },
+                    new { nameAr = "جهة دولية نظيرة", nameEn = "International peer agency", country = "Singapore", scope = "international", reason = "Demo: a known benchmark in the field." },
+                },
+            });
+        }
+        else if (system.Contains("You draft the pre-visit questionnaire", StringComparison.Ordinal))
+        {
+            text = JsonSerializer.Serialize(new
+            {
+                questionsAr = "1. كيف تنظمون العملية من البداية إلى النهاية؟\n2. ما المؤشرات التي تقيسون بها الأداء؟\n3. ما الدروس المستفادة؟",
+                questionsEn = "1. How do you organise the process end to end?\n2. Which indicators do you use to measure performance?\n3. What lessons did you learn?",
+            });
+        }
+        else if (system.Contains("You turn benchmarking visit notes into structured practice comparisons", StringComparison.Ordinal))
+        {
+            var document = Document().Matches(user).Select(m => m.Groups[1].Value.Trim()).LastOrDefault() ?? string.Empty;
+            var subject = document.Length > 80 ? document[..80] : document;
+            text = JsonSerializer.Serialize(new
+            {
+                practices = new[] { new { topic = "", subject = $"Practice: {subject}", ourPractice = "Manual, case by case", theirPractice = subject, category = "compared" } },
+                gaps = BenchGaps,
+                actions = new[] { new { titleAr = "أتمتة العملية وفق الممارسة المقارنة", titleEn = "Automate the process following the compared practice", priority = "high" } },
+            });
+        }
+        else if (system.Contains("You summarise a benchmarking study for leadership", StringComparison.Ordinal))
+        {
+            text = JsonSerializer.Serialize(new
+            {
+                summaryAr = "(مسودة) ملخص الدراسة: الغرض والجهة المقارن بها وأبرز الممارسات والفجوات وتقدم الإجراءات.",
+                summaryEn = "(Draft) Study summary: purpose, comparator, key practices, gaps and action progress.",
+            });
+        }
+        else if (system.Contains("You turn a question about best practices into search keywords", StringComparison.Ordinal))
+        {
+            var document = Document().Match(user) is { Success: true } d ? d.Groups[1].Value.Trim() : string.Empty;
+            var words = document.Split(KeywordSeparators, StringSplitOptions.RemoveEmptyEntries).Where(w => w.Length > 3).Take(4).ToArray();
+            text = JsonSerializer.Serialize(new { keywords = words.Length > 0 ? words : [document] });
         }
         else if (system.Contains("You translate", StringComparison.Ordinal))
         {
