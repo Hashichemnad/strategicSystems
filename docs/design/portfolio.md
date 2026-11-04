@@ -378,7 +378,7 @@ Every project command is `(stage, sub-state, status) × action → guard → new
 | `closure-approval` | approved | — | events `ProjectClosureApproved` + `LinkedRecordClosed(closure-approved)`; Stage **Impact** (`impact` on) else **Completed** |
 | `impact-draft` | impact form · `submit-impact` | cost performance + the three satisfactions | `impact-approval` (`portfolio.impact`) |
 | `impact-approval` | approved | — | Stage / status **Completed** |
-| active (not completed) | `hold` (PM Office, reason) | no approval in progress is cancelled: the open instance is cancelled | status `on-hold` (everything read-only; monthly cycle skipped) |
+| active (not completed) | `hold` (PM Office, reason) | refused while an approval is in progress (`approvalInProgress`) | status `on-hold` (everything read-only; monthly cycle skipped) |
 | on-hold | `resume` (PM Office) | — | status `active` (sub-state unchanged; re-submit any cancelled approval) |
 | active / on-hold | `cancel` (PM Office, reason) or approved cancellation / merge change request | open approval cancelled | status `cancelled` (final), `LinkedRecordClosed(cancelled)` |
 | completed / cancelled | anything | — | refused `portfolio.errors.projectClosed` (409 / 422) |
@@ -414,9 +414,10 @@ New roles: `portfolio.finance-section`, `portfolio.gm-office` (approver roles, r
 
 ## 19. Monthly cycle (W4, ADR 0071)
 
-- **Record** `monthly_update` (`portfolio.monthly-update`): `project_id`, `period` (`YYYY-MM`), `status` (`open` · `submitted` · `returned` ·
+- **Record** `monthly_update` (`portfolio.monthly-update`): `project_id`, `period` (`YYYY-MM`), `sequence` (1 = the month's window opened by
+  the job; 2, 3… = additional windows the PM Office opens in the same month once the previous one is approved), `status` (`open` · `submitted` · `returned` ·
   `approved`), `opened_at`, `due_at`, `opened_by` (`job` / user), `submitted_at`, `approved_at`, `reminded_at`, `overdue_notified_at`,
-  `items` (jsonb snapshot of the submitted milestone updates), unique (project, period).
+  `items` (jsonb snapshot of the submitted milestone updates), unique (project, period, sequence).
 - **Window** (job `portfolio.monthly-cycle`, hourly, idempotent): for each **active** project in Execution, the period is the month of *today*
   in the installation time zone. The window **opens on the 1st at the start of the first working moment** of the project unit's business
   hours (a 1st that is a weekend / holiday rolls to the next working day; `IBusinessHoursCalculator`). One row per project and period;
@@ -543,7 +544,8 @@ challenges | lessons | meetings | contracts}`, `PUT …/{itemId}`, `POST …/{it
 `PUT /milestones/{mid}`, `POST /milestones/{mid}/cancel`, `POST /milestones/{mid}/progress`, `POST /milestones/{mid}/evidence` ·
 `GET /projects/{id}/monthly`, `POST /projects/{id}/monthly/{open | submit}` · `GET /projects/{id}/files`, `POST /projects/{id}/files/{kind}` ·
 `GET|POST /projects/{id}/change-requests`, `PUT /change-requests/{cid}`, `POST /change-requests/{cid}/{submit | cancel | apply}` ·
-`GET /kpi-cards?search=` (Existing KPI picker) · history `GET /projects/{id}/history`. Submit / apply endpoints accept the idempotency key.
+`GET /kpi-cards?search=` (Existing KPI picker) · history `GET /projects/{id}/audit` (shared record history). Project commands are services called
+directly by the endpoints (as Phase 8's `AssessmentService`), not dispatcher handlers; validation lives in the services. Submit / apply endpoints accept the idempotency key.
 
 ## 27. Screens (AR + EN, RTL / LTR, shared components)
 

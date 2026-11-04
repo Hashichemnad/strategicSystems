@@ -11,7 +11,8 @@
   Execution. **Opening moment:** the first working moment on or after the 1st in the project unit's business hours (a non-working 1st rolls to
   the next working day). **Due:** end of working time *N* working days after opening (`monthlyDueWorkingDays`, default 10). Reminder *R*
   working days before due (default 3), one overdue notice. Stamps make every step happen once (idempotent re-runs). A period not yet approved
-  blocks the next window (no pile-up). The PM Office can open the window now (audited).
+  blocks the next window (no pile-up). The PM Office can open the window now (audited); once this month's window is approved it may open an
+  **additional window in the same month** (`sequence` 2, 3…) — e.g. to record a milestone finished early instead of waiting for the 1st.
 - Milestone updates are **pending values** on the milestone (`pending_achieve`, pending actual dates, causality, corrective actions, evidence
   files) while the period is open / returned. Rules (server-side): 0 ≤ achieve ≤ weight; **achieve ≥ Max Achieved** (approved achievement is
   locked, never lowered); first achievement needs an actual start; achieve = weight needs actual end **and** at least one evidence file;
