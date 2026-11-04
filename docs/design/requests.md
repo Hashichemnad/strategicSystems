@@ -100,7 +100,7 @@ Statuses (code, translatable labels): `draft` · `in_review` (approval stage) ·
 |---|---|---|---|---|---|---|---|
 | draft | draft | first stage | — | — | — | — | cancelled (own draft: hard delete never; status) |
 | in_review | — | — | next stage | rejected | returned | — | cancelled (requester or admin; instance cancelled) |
-| returned | returned | first stage (new attempt) | — | — | — | — | cancelled |
+| returned | returned | the stage that returned it (new attempt) | — | — | — | — | cancelled |
 | in_progress | — | — | — | — | — | action's target stage / completed / rejected / returned | cancelled (admin only) |
 | completed · rejected · cancelled | — | — | — | — | — | — | — |
 
@@ -235,8 +235,8 @@ Visibility of one request = read scope **or** processor of its type **or** recor
   `name_search` (normalised Arabic, trigram), audit, `xmin`.
 * `document_version`: `document_id`, `major`, `minor`, `label` ("1.0"), `request_id` (framework request), `change_summary`
   (reason for change), `status` (`draft`, `submitted`, `under_review`, `returned`, `rejected`, `approved`, `current`, `superseded`,
-  `withdrawn`), `requested_by`, `reviewed_by`, `approved_at`, `published_at`, `published_by`, `final_file_id` (purpose `docreg.final`, owner
-  `docreg.version`), `text_extract` (for search / compare / Q&A; trimmed), `ai_summary_ar/en` (accepted drafts only).
+  `withdrawn`), `requested_by`, `reviewed_by`, `approved_at`, `published_at`, `published_by`, `final_file_id` (the signed PDF uploaded to the publishing request; the Document Registry checks visibility itself on download — copying it
+  inside the publish transaction would write on a second connection while the audit chain is locked), `text_extract` (for search / compare / Q&A; trimmed), `ai_summary_ar/en` (accepted drafts only).
 * `acknowledgement`: `version_id`, `employee_id`, `acknowledged_at` (unique per version / employee).
 * `validity_event`: `document_id`, kind (`reminder-60`, `reminder-30`, `confirmed`, `expired`, `extended`), old / new expiry, actor, at —
   idempotency of the job and the "logged" confirmation.
@@ -252,7 +252,7 @@ expired · superseded · under_revision · withdrawn`. For a new version of a pu
 | Form (code-defined) | `isNewVersion` (checkbox) · `existingDocument` (record `docreg.document`, visibleWhen isNewVersion; must be published / expired, readable, owner unit or office, no version in progress) · `nameAr`, `nameEn` (prefilled from the document for new versions) · `ownerUnit` (unit, default requester's unit, `requestUnit`) · `description` · `draftFile` (file, required) · `changeReason` (required for new versions) |
 | Stage `review` | approval `docreg.review` (one step `docreg.office`); **approve form**: `level`, `docType`, `sensitivity` (picklists), `reviewMonths` override (optional) |
 | Stage `publish` | processing by `docreg.office`; action **Publish**: `finalFile` (file, PDF), `shareToAll`, `effectiveDate` (default today), `expiryDate` (default from the type rule, editable), `ackRequired`; action **Return** to requester |
-| Handler | submit → create document (new) + version `submitted`; approved → classification, **Document ID** (new documents, numbering in the same transaction) and **version** (new: 1.0; new version: next major — `minor` is used by the office's *Republish correction* action later), version `approved`; publish → copy the final file to the version (purpose `docreg.final`), version `current`, previous current version → `superseded`, document `published`, effective / expiry dates, requester notified, **`DocumentPublished` integration event** through the outbox (§4.6) |
+| Handler | submit → create document (new) + version `submitted`; approved → classification, **Document ID** (new documents, numbering in the same transaction) and **version** (new: 1.0; new version: next major — `minor` is used by the office's *Republish correction* action later), version `approved`; publish → the version points at the signed PDF, version `current`, previous current version → `superseded`, document `published`, effective / expiry dates, requester notified, **`DocumentPublished` integration event** through the outbox (§4.6) |
 
 `docreg.withdrawal` (request type): `document` (record), `reason` → approval `docreg.withdrawal` → document `withdrawn` (archive; not in
 the active library), version `withdrawn`. Owners request it from the document page or from the expiry reminder.
@@ -336,9 +336,8 @@ Developer, Contributor). Settings area `ip`: per protection type **term in years
 |---|---|
 | Form (code-defined) | `nameAr`, `nameEn`, `description`, `files` (supporting files), **`contributors`** (table: `employee` (employee) · `externalName` · `externalOrganisation` · `emiratesId` (**secret**, format `emiratesId`) · `role` (picklist) · `share` (number, %)) — at least one row, employee or external name per row, shares total 100 · `declaration` (checkbox, required: rights assigned to the organisation) |
 | Stage `review` | approval `ip.review` (one step `ip.office`); approve form: `propertyType`, `protectionType`, `notes` |
-| Stage `filing` | processing by `ip.office`: **Record filing** (`filingDate`, `applicationNo`) → `moet`; **Register internally** (only when the protection type is internal-only; `notes`) → completed (internal registration number, status `registered`, `internal`); **Withdraw** |
-| Stage `moet` | **Record registration** (`registrationNo`, `registrationDate`, `expiryDate` proposed = registration date + term, editable, `certificate` file) → completed; certificate e-mailed to all contributors (employees' e-mail; externals listed for manual sending) · **Rejected by MOET** (`reason`) → back to `filing` with status `rejected_by_moet` (re-file or *Close*) |
-| Handler | submit → IP record `submitted` + contributors (Emirates IDs re-encrypted with the IP purpose); approved → types, `approved_to_file`; filing → `filed`; registered → period, expiry, certificate copy, e-mails; rejected-by-MOET → reason |
+| After approval | the request completes; filing and registration continue **on the IP record page** (the same path for records created from documents, §4.6): **Record filing** (`filingDate`, `applicationNo`) → `filed`; **Register internally** (only internal-only protection types) → internal number, `registered`; **Record registration** (`registrationNo`, `registrationDate`, `expiryDate` proposed = registration date + term, certificate file of the record) → `registered`, certificate notice to every employee contributor; **Rejected by MOET** (`reason`) → `rejected_by_moet` → re-file or **Close** |
+| Handler | submit → IP record `under_review`; approved → property / protection type, contributors created from the form (Emirates IDs re-encrypted with the IP purpose), `approved_to_file`; returned / rejected / cancelled follow |
 
 ### 4.4 Emirates ID (ADR 0086)
 

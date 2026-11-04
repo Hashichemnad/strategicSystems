@@ -1,4 +1,5 @@
 using Strategy.Modules.DocumentRegistry;
+using Strategy.Modules.IpRegistry;
 using Strategy.Modules.Kpi;
 using Strategy.Modules.Portfolio;
 using Strategy.Modules.Requests;
@@ -21,5 +22,6 @@ internal static class ModuleCatalog
         new KpiModule(),
         new RequestsModule(),
         new DocumentRegistryModule(),
+        new IpRegistryModule(),
     ];
 }

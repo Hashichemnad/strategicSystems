@@ -19643,6 +19643,1857 @@
           }
         }
       }
+    },
+    "/api/v1/docreg/library": {
+      "get": {
+        "tags": [
+          "docreg"
+        ],
+        "operationId": "GetDocumentLibrary",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "level",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "unitId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "sensitivity",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "expiringWithin",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LibraryDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/docreg/dashboard": {
+      "get": {
+        "tags": [
+          "docreg"
+        ],
+        "operationId": "GetDocumentDashboard",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DashboardDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/docreg/documents/{id}": {
+      "get": {
+        "tags": [
+          "docreg"
+        ],
+        "operationId": "GetDocument",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/docreg/documents/{id}/compare": {
+      "get": {
+        "tags": [
+          "docreg"
+        ],
+        "operationId": "CompareDocumentVersions",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompareDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/docreg/documents/{id}/download": {
+      "get": {
+        "tags": [
+          "docreg"
+        ],
+        "operationId": "DownloadDocument",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "versionId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/docreg/documents/{id}/confirm-valid": {
+      "post": {
+        "tags": [
+          "docreg"
+        ],
+        "operationId": "ConfirmDocumentValid",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConfirmInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/docreg/documents/{id}/expiry": {
+      "put": {
+        "tags": [
+          "docreg"
+        ],
+        "operationId": "SetDocumentExpiry",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExpiryInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/docreg/documents/{id}/acknowledge": {
+      "post": {
+        "tags": [
+          "docreg"
+        ],
+        "operationId": "AcknowledgeDocument",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/docreg/documents/{id}/audit": {
+      "get": {
+        "tags": [
+          "docreg"
+        ],
+        "operationId": "GetDocumentAuditTrail",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "field",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResultOfAuditEntryDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/docreg/documents/{id}/audit/as-of": {
+      "get": {
+        "tags": [
+          "docreg"
+        ],
+        "operationId": "GetDocumentAsOf",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "at",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecordSnapshotDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/docreg/ai/requests/{requestId}/classify": {
+      "post": {
+        "tags": [
+          "docreg"
+        ],
+        "operationId": "SuggestDocumentClassification",
+        "parameters": [
+          {
+            "name": "requestId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClassificationSuggestionDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/docreg/ai/requests/{requestId}/duplicates": {
+      "post": {
+        "tags": [
+          "docreg"
+        ],
+        "operationId": "CheckDocumentDuplicates",
+        "parameters": [
+          {
+            "name": "requestId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DuplicateCheckDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/docreg/ai/documents/{id}/summary": {
+      "post": {
+        "tags": [
+          "docreg"
+        ],
+        "operationId": "SummariseDocument",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SummaryDraftDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/docreg/ai/documents/{id}/what-changed": {
+      "post": {
+        "tags": [
+          "docreg"
+        ],
+        "operationId": "ExplainDocumentChanges",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SummaryDraftDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/docreg/ai/ask": {
+      "post": {
+        "tags": [
+          "docreg"
+        ],
+        "operationId": "AskDocuments",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuestionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AnswerDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/docreg/settings": {
+      "get": {
+        "tags": [
+          "docreg"
+        ],
+        "operationId": "GetDocRegSettings",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingsDocumentOfDocRegSettings"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "docreg"
+        ],
+        "operationId": "SaveDocRegSettings",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DocRegSettingsInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingsDocumentOfDocRegSettings"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ip/records": {
+      "get": {
+        "tags": [
+          "ip"
+        ],
+        "operationId": "ListIpRecords",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "propertyType",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "protectionType",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "unitId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "year",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "expiringWithin",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "mine",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResultOfIpListItemDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ip/dashboard": {
+      "get": {
+        "tags": [
+          "ip"
+        ],
+        "operationId": "GetIpDashboard",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IpDashboardDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ip/records/{id}": {
+      "get": {
+        "tags": [
+          "ip"
+        ],
+        "operationId": "GetIpRecord",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IpRecordDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ip/records/{id}/filing": {
+      "post": {
+        "tags": [
+          "ip"
+        ],
+        "operationId": "RecordIpFiling",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FilingInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IpRecordDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ip/records/{id}/register-internally": {
+      "post": {
+        "tags": [
+          "ip"
+        ],
+        "operationId": "RegisterIpInternally",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InternalInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IpRecordDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ip/records/{id}/registration": {
+      "post": {
+        "tags": [
+          "ip"
+        ],
+        "operationId": "RecordIpRegistration",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegistrationInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IpRecordDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ip/records/{id}/moet-rejection": {
+      "post": {
+        "tags": [
+          "ip"
+        ],
+        "operationId": "RecordIpMoetRejection",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MoetRejectionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IpRecordDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ip/records/{id}/close": {
+      "post": {
+        "tags": [
+          "ip"
+        ],
+        "operationId": "CloseIpRecord",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InternalInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IpRecordDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ip/records/{id}/renewal": {
+      "post": {
+        "tags": [
+          "ip"
+        ],
+        "operationId": "RenewIpRecord",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RenewalInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IpRecordDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ip/records/{id}/contributors": {
+      "put": {
+        "tags": [
+          "ip"
+        ],
+        "operationId": "SetIpContributors",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContributorsInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IpRecordDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ip/records/{id}/moet-description": {
+      "put": {
+        "tags": [
+          "ip"
+        ],
+        "operationId": "SetIpMoetDescription",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MoetDescriptionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IpRecordDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ip/records/{id}/contributors/{contributorId}/emirates-id": {
+      "get": {
+        "tags": [
+          "ip"
+        ],
+        "operationId": "RevealContributorEmiratesId",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "contributorId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RevealDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ip/records/{id}/moet-form": {
+      "get": {
+        "tags": [
+          "ip"
+        ],
+        "operationId": "GetIpMoetForm",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ip/records/{id}/certificate": {
+      "get": {
+        "tags": [
+          "ip"
+        ],
+        "operationId": "DownloadIpCertificate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ip/records/{id}/audit": {
+      "get": {
+        "tags": [
+          "ip"
+        ],
+        "operationId": "GetIpRecordAuditTrail",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "field",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResultOfAuditEntryDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ip/records/{id}/audit/as-of": {
+      "get": {
+        "tags": [
+          "ip"
+        ],
+        "operationId": "GetIpRecordAsOf",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "at",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecordSnapshotDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ip/ai/suggest": {
+      "post": {
+        "tags": [
+          "ip"
+        ],
+        "operationId": "SuggestIpTypes",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SuggestInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypeSuggestionDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ip/ai/similar": {
+      "post": {
+        "tags": [
+          "ip"
+        ],
+        "operationId": "FindSimilarIp",
+        "parameters": [
+          {
+            "name": "excludeId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SuggestInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SimilarityDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ip/ai/records/{id}/moet-description": {
+      "post": {
+        "tags": [
+          "ip"
+        ],
+        "operationId": "DraftIpMoetDescription",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MoetDraftDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/ip/settings": {
+      "get": {
+        "tags": [
+          "ip"
+        ],
+        "operationId": "GetIpSettings",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingsDocumentOfIpSettings"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "ip"
+        ],
+        "operationId": "SaveIpSettings",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IpSettingsInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingsDocumentOfIpSettings"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -19821,6 +21672,26 @@
           },
           "state": {
             "type": "string"
+          }
+        }
+      },
+      "AckDto": {
+        "required": [
+          "required",
+          "mine",
+          "count"
+        ],
+        "type": "object",
+        "properties": {
+          "required": {
+            "type": "boolean"
+          },
+          "mine": {
+            "type": "boolean"
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
@@ -20774,6 +22645,66 @@
           "amount": {
             "type": "number",
             "format": "double"
+          }
+        }
+      },
+      "AnswerDto": {
+        "required": [
+          "answer",
+          "sources",
+          "usageId"
+        ],
+        "type": "object",
+        "properties": {
+          "answer": {
+            "type": "string"
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AnswerSourceDto"
+            }
+          },
+          "usageId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "AnswerSourceDto": {
+        "required": [
+          "documentId",
+          "documentNo",
+          "nameAr",
+          "nameEn",
+          "link"
+        ],
+        "type": "object",
+        "properties": {
+          "documentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "documentNo": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "link": {
+            "type": "string"
           }
         }
       },
@@ -22834,6 +24765,46 @@
           }
         }
       },
+      "ClassificationSuggestionDto": {
+        "required": [
+          "level",
+          "docType",
+          "sensitivity",
+          "reasons",
+          "usageId"
+        ],
+        "type": "object",
+        "properties": {
+          "level": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "docType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sensitivity": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "usageId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
       "CommentDto": {
         "required": [
           "id",
@@ -22921,6 +24892,54 @@
           }
         }
       },
+      "CompareDto": {
+        "required": [
+          "fromId",
+          "fromLabel",
+          "toId",
+          "toLabel",
+          "parts",
+          "added",
+          "removed"
+        ],
+        "type": "object",
+        "properties": {
+          "fromId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "fromLabel": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "toId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "toLabel": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "parts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DiffPart"
+            }
+          },
+          "added": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "removed": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
       "ConditionCheckDto": {
         "required": [
           "valid",
@@ -22957,6 +24976,178 @@
               "null",
               "string"
             ]
+          }
+        }
+      },
+      "ConfirmInput": {
+        "required": [
+          "comment"
+        ],
+        "type": "object",
+        "properties": {
+          "comment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "ContributorDto": {
+        "required": [
+          "id",
+          "employee",
+          "externalName",
+          "externalOrganisation",
+          "emiratesIdMasked",
+          "hasEmiratesId",
+          "role",
+          "sharePercent",
+          "signatureStatus",
+          "certificateSentAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "employee": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/IpPersonDto"
+              }
+            ]
+          },
+          "externalName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "externalOrganisation": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "emiratesIdMasked": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "hasEmiratesId": {
+            "type": "boolean"
+          },
+          "role": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sharePercent": {
+            "type": "number",
+            "format": "double"
+          },
+          "signatureStatus": {
+            "type": "string"
+          },
+          "certificateSentAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          }
+        },
+        "description": "A contributor as the API shows it: the Emirates ID is masked for everyone (reveal is a separate, audited call — ADR 0086)."
+      },
+      "ContributorInput": {
+        "required": [
+          "id",
+          "employeeId",
+          "externalName",
+          "externalOrganisation",
+          "emiratesId",
+          "role",
+          "sharePercent",
+          "signatureStatus"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "employeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "externalName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "externalOrganisation": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "emiratesId": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "role": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sharePercent": {
+            "type": "number",
+            "format": "double"
+          },
+          "signatureStatus": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "ContributorsInput": {
+        "required": [
+          "contributors",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "contributors": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/ContributorInput"
+            }
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
           }
         }
       },
@@ -23521,6 +25712,73 @@
         },
         "description": "A labelled extra button, e.g. \"Approve with conditions\" (outcome approve)."
       },
+      "DashboardDto": {
+        "required": [
+          "published",
+          "expired",
+          "expiringSoon",
+          "pendingReview",
+          "awaitingPublication",
+          "byLevel",
+          "byType",
+          "byUnit",
+          "expiring",
+          "recentlyPublished"
+        ],
+        "type": "object",
+        "properties": {
+          "published": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "expired": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "expiringSoon": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pendingReview": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "awaitingPublication": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "byLevel": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FacetDto"
+            }
+          },
+          "byType": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FacetDto"
+            }
+          },
+          "byUnit": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UnitFacetDto"
+            }
+          },
+          "expiring": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DocumentListItemDto"
+            }
+          },
+          "recentlyPublished": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DocumentListItemDto"
+            }
+          }
+        }
+      },
       "DataElement": {
         "required": [
           "code",
@@ -23795,6 +26053,493 @@
           }
         }
       },
+      "DiffPart": {
+        "required": [
+          "kind",
+          "text"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "text": {
+            "type": "string"
+          }
+        },
+        "description": "A run of the comparison: `same`, `added` or `removed` text."
+      },
+      "DocPersonDto": {
+        "required": [
+          "id",
+          "nameAr",
+          "nameEn"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "DocRegSettings": {
+        "type": "object",
+        "properties": {
+          "organisationCode": {
+            "type": "string"
+          },
+          "types": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DocTypeRule"
+            }
+          },
+          "sensitivities": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SensitivityRule"
+            }
+          },
+          "reminderDays": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "watermark": {
+            "type": "boolean"
+          },
+          "watermarkAr": {
+            "type": "string"
+          },
+          "watermarkEn": {
+            "type": "string"
+          },
+          "publicLinks": {
+            "type": "boolean"
+          }
+        },
+        "description": "Settings → Document Registry (docs/design/requests.md §3.1)."
+      },
+      "DocRegSettingsInput": {
+        "required": [
+          "settings",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "settings": {
+            "$ref": "#/components/schemas/DocRegSettings"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "DocTypeRule": {
+        "required": [
+          "code",
+          "numberCode",
+          "validityMonths"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Lookup code of `docreg.type`."
+          },
+          "numberCode": {
+            "type": "string",
+            "description": "Value of `{TYPE}` in the Document ID."
+          },
+          "validityMonths": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "description": "Null: valid until superseded.",
+            "format": "int32"
+          },
+          "createsIp": {
+            "type": "boolean",
+            "description": "\"Creates IP register entry\" (SPEC §0.0).",
+            "default": false
+          },
+          "ackRequired": {
+            "type": "boolean",
+            "description": "Read acknowledgement required by default on publish.",
+            "default": false
+          }
+        },
+        "description": "Validity and behaviour of a document type (ADR 0084, 0087)."
+      },
+      "DocumentCapabilities": {
+        "required": [
+          "confirmValid",
+          "newVersion",
+          "withdraw",
+          "editExpiry",
+          "acknowledge",
+          "download",
+          "manage"
+        ],
+        "type": "object",
+        "properties": {
+          "confirmValid": {
+            "type": "boolean"
+          },
+          "newVersion": {
+            "type": "boolean"
+          },
+          "withdraw": {
+            "type": "boolean"
+          },
+          "editExpiry": {
+            "type": "boolean"
+          },
+          "acknowledge": {
+            "type": "boolean"
+          },
+          "download": {
+            "type": "boolean"
+          },
+          "manage": {
+            "type": "boolean"
+          }
+        }
+      },
+      "DocumentDto": {
+        "required": [
+          "id",
+          "documentNo",
+          "nameAr",
+          "nameEn",
+          "description",
+          "level",
+          "docType",
+          "sensitivity",
+          "ownerUnit",
+          "owner",
+          "status",
+          "currentVersion",
+          "currentVersionId",
+          "effectiveDate",
+          "expiryDate",
+          "validityMonths",
+          "shareToAll",
+          "underRevision",
+          "withdrawnReason",
+          "linked",
+          "versions",
+          "validity",
+          "acknowledgements",
+          "can",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "documentNo": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "level": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "docType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sensitivity": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "ownerUnit": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/DocUnitDto"
+              }
+            ]
+          },
+          "owner": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/DocPersonDto"
+              }
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "currentVersion": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "currentVersionId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "effectiveDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "expiryDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "validityMonths": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "shareToAll": {
+            "type": "boolean"
+          },
+          "underRevision": {
+            "type": "boolean"
+          },
+          "withdrawnReason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "linked": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/LinkView"
+            }
+          },
+          "versions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/VersionDto"
+            }
+          },
+          "validity": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ValidityEventDto"
+            }
+          },
+          "acknowledgements": {
+            "$ref": "#/components/schemas/AckDto"
+          },
+          "can": {
+            "$ref": "#/components/schemas/DocumentCapabilities"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "DocumentListItemDto": {
+        "required": [
+          "id",
+          "documentNo",
+          "nameAr",
+          "nameEn",
+          "level",
+          "docType",
+          "sensitivity",
+          "ownerUnit",
+          "status",
+          "currentVersion",
+          "effectiveDate",
+          "expiryDate",
+          "expiringSoon",
+          "shareToAll",
+          "underRevision",
+          "publishedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "documentNo": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "level": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "docType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sensitivity": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "ownerUnit": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/DocUnitDto"
+              }
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "currentVersion": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "effectiveDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "expiryDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "expiringSoon": {
+            "type": "boolean"
+          },
+          "shareToAll": {
+            "type": "boolean"
+          },
+          "underRevision": {
+            "type": "boolean"
+          },
+          "publishedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          }
+        }
+      },
+      "DocUnitDto": {
+        "required": [
+          "id",
+          "code",
+          "nameAr",
+          "nameEn"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "DraftInput": {
         "required": [
           "typeCode",
@@ -23823,6 +26568,33 @@
               "null",
               "string"
             ]
+          }
+        }
+      },
+      "DuplicateCheckDto": {
+        "required": [
+          "findings",
+          "compared",
+          "usageId"
+        ],
+        "type": "object",
+        "properties": {
+          "findings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OverlapDto"
+            }
+          },
+          "compared": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "usageId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
           }
         }
       },
@@ -24922,6 +27694,33 @@
           }
         }
       },
+      "ExpiryInput": {
+        "required": [
+          "expiryDate",
+          "comment",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "expiryDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "comment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
       "ExtractedFieldDto": {
         "required": [
           "name",
@@ -25027,6 +27826,22 @@
             "type": "integer",
             "format": "int32",
             "default": 0
+          }
+        }
+      },
+      "FacetDto": {
+        "required": [
+          "code",
+          "count"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
@@ -25285,6 +28100,33 @@
               "null",
               "string"
             ]
+          }
+        }
+      },
+      "FilingInput": {
+        "required": [
+          "filingDate",
+          "applicationNo",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "filingDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "applicationNo": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
           }
         }
       },
@@ -26373,6 +29215,540 @@
               {
                 "$ref": "#/components/schemas/MyTaskDto"
               }
+            ]
+          }
+        }
+      },
+      "InternalInput": {
+        "required": [
+          "notes",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "notes": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "IpCapabilities": {
+        "required": [
+          "file",
+          "registerInternally",
+          "register",
+          "moetRejection",
+          "renew",
+          "editContributors",
+          "sensitive",
+          "close"
+        ],
+        "type": "object",
+        "properties": {
+          "file": {
+            "type": "boolean"
+          },
+          "registerInternally": {
+            "type": "boolean"
+          },
+          "register": {
+            "type": "boolean"
+          },
+          "moetRejection": {
+            "type": "boolean"
+          },
+          "renew": {
+            "type": "boolean"
+          },
+          "editContributors": {
+            "type": "boolean"
+          },
+          "sensitive": {
+            "type": "boolean"
+          },
+          "close": {
+            "type": "boolean"
+          }
+        }
+      },
+      "IpDashboardDto": {
+        "required": [
+          "total",
+          "registered",
+          "pending",
+          "expiringSoon",
+          "expired",
+          "byType",
+          "byProtection",
+          "byYear",
+          "byUnit",
+          "upcomingExpiries"
+        ],
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "registered": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pending": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "expiringSoon": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "expired": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "byType": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CountDto"
+            }
+          },
+          "byProtection": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CountDto"
+            }
+          },
+          "byYear": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CountDto"
+            }
+          },
+          "byUnit": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UnitCountDto"
+            }
+          },
+          "upcomingExpiries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IpListItemDto"
+            }
+          }
+        }
+      },
+      "IpListItemDto": {
+        "required": [
+          "id",
+          "number",
+          "nameAr",
+          "nameEn",
+          "propertyType",
+          "protectionType",
+          "source",
+          "status",
+          "ownerUnit",
+          "registrationDate",
+          "expiryDate",
+          "expiringSoon",
+          "year",
+          "createdAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "propertyType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "protectionType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "source": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "ownerUnit": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/IpUnitDto"
+              }
+            ]
+          },
+          "registrationDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "expiryDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "expiringSoon": {
+            "type": "boolean"
+          },
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "IpPersonDto": {
+        "required": [
+          "id",
+          "nameAr",
+          "nameEn"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "IpRecordDto": {
+        "required": [
+          "id",
+          "number",
+          "nameAr",
+          "nameEn",
+          "description",
+          "descriptionAr",
+          "descriptionEn",
+          "propertyType",
+          "protectionType",
+          "source",
+          "requestId",
+          "documentId",
+          "documentNo",
+          "ownerUnit",
+          "requester",
+          "status",
+          "filingDate",
+          "applicationNo",
+          "registrationNo",
+          "registrationDate",
+          "expiryDate",
+          "proposedExpiry",
+          "certificateFileId",
+          "internal",
+          "notes",
+          "moetRejectionReason",
+          "contributors",
+          "periods",
+          "can",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "descriptionAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "descriptionEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "propertyType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "protectionType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "source": {
+            "type": "string"
+          },
+          "requestId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "documentId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "documentNo": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "ownerUnit": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/IpUnitDto"
+              }
+            ]
+          },
+          "requester": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/IpPersonDto"
+              }
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "filingDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "applicationNo": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "registrationNo": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "registrationDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "expiryDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "proposedExpiry": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "certificateFileId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "internal": {
+            "type": "boolean"
+          },
+          "notes": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "moetRejectionReason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "contributors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ContributorDto"
+            }
+          },
+          "periods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PeriodDto"
+            }
+          },
+          "can": {
+            "$ref": "#/components/schemas/IpCapabilities"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "IpSettings": {
+        "type": "object",
+        "properties": {
+          "protections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProtectionRule"
+            }
+          },
+          "reminderMonths": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "moetHeaderAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "moetHeaderEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "description": "Settings → IP (docs/design/requests.md §4.1)."
+      },
+      "IpSettingsInput": {
+        "required": [
+          "settings",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "settings": {
+            "$ref": "#/components/schemas/IpSettings"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "IpUnitDto": {
+        "required": [
+          "id",
+          "code",
+          "nameAr",
+          "nameEn"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
             ]
           }
         }
@@ -30336,6 +33712,38 @@
           }
         }
       },
+      "LibraryDto": {
+        "required": [
+          "page",
+          "levels",
+          "types",
+          "units"
+        ],
+        "type": "object",
+        "properties": {
+          "page": {
+            "$ref": "#/components/schemas/PagedResultOfDocumentListItemDto"
+          },
+          "levels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FacetDto"
+            }
+          },
+          "types": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FacetDto"
+            }
+          },
+          "units": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UnitFacetDto"
+            }
+          }
+        }
+      },
       "LinkableTypeDto": {
         "required": [
           "resourceType",
@@ -32386,6 +35794,71 @@
           }
         }
       },
+      "MoetDescriptionInput": {
+        "required": [
+          "descriptionAr",
+          "descriptionEn",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "descriptionAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "descriptionEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "MoetDraftDto": {
+        "required": [
+          "descriptionAr",
+          "descriptionEn",
+          "usageId"
+        ],
+        "type": "object",
+        "properties": {
+          "descriptionAr": {
+            "type": "string"
+          },
+          "descriptionEn": {
+            "type": "string"
+          },
+          "usageId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "MoetRejectionInput": {
+        "required": [
+          "reason",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
       "MoveUnitInput": {
         "required": [
           "newParentId",
@@ -33608,6 +37081,47 @@
           }
         }
       },
+      "OverlapDto": {
+        "required": [
+          "documentId",
+          "documentNo",
+          "nameAr",
+          "nameEn",
+          "kind",
+          "explanation"
+        ],
+        "type": "object",
+        "properties": {
+          "documentId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "documentNo": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "kind": {
+            "type": "string"
+          },
+          "explanation": {
+            "type": "string"
+          }
+        }
+      },
       "PagedResultOfAiUsageRowDto": {
         "required": [
           "items",
@@ -33744,6 +37258,40 @@
         },
         "description": "One page of items plus the total count across all pages."
       },
+      "PagedResultOfDocumentListItemDto": {
+        "required": [
+          "items",
+          "page",
+          "pageSize",
+          "totalCount"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DocumentListItemDto"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "description": "One page of items plus the total count across all pages."
+      },
       "PagedResultOfEmployeeListItemDto": {
         "required": [
           "items",
@@ -33757,6 +37305,40 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/EmployeeListItemDto"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "description": "One page of items plus the total count across all pages."
+      },
+      "PagedResultOfIpListItemDto": {
+        "required": [
+          "items",
+          "page",
+          "pageSize",
+          "totalCount"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/IpListItemDto"
             }
           },
           "page": {
@@ -34133,6 +37715,47 @@
           "feedbackCount": {
             "type": "integer",
             "format": "int32"
+          }
+        }
+      },
+      "PeriodDto": {
+        "required": [
+          "id",
+          "kind",
+          "from",
+          "to",
+          "registrationNo",
+          "certificateFileId"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "registrationNo": {
+            "type": "string"
+          },
+          "certificateFileId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
           }
         }
       },
@@ -35382,6 +39005,30 @@
         },
         "description": "What a definition change proposes (null = unchanged)."
       },
+      "ProtectionRule": {
+        "required": [
+          "code",
+          "termYears",
+          "internalOnly"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "termYears": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "internalOnly": {
+            "type": "boolean"
+          }
+        },
+        "description": "Term and handling per protection type (ADR 0087)."
+      },
       "ProviderDto": {
         "required": [
           "id",
@@ -35713,6 +39360,20 @@
           "translationsVersion": {
             "type": "integer",
             "format": "int64"
+          }
+        }
+      },
+      "QuestionInput": {
+        "required": [
+          "question"
+        ],
+        "type": "object",
+        "properties": {
+          "question": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
@@ -36350,6 +40011,92 @@
           }
         },
         "description": "Regional settings (SPEC §0, §0.2 localisation). Hijri display is off by default."
+      },
+      "RegistrationInput": {
+        "required": [
+          "registrationNo",
+          "registrationDate",
+          "expiryDate",
+          "certificateFileId",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "registrationNo": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "registrationDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "expiryDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "certificateFileId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "RenewalInput": {
+        "required": [
+          "registrationNo",
+          "from",
+          "to",
+          "certificateFileId",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "registrationNo": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "from": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "to": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "certificateFileId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
       },
       "ReportDto": {
         "required": [
@@ -37344,6 +41091,22 @@
           }
         }
       },
+      "RevealDto": {
+        "required": [
+          "contributorId",
+          "emiratesId"
+        ],
+        "type": "object",
+        "properties": {
+          "contributorId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "emiratesId": {
+            "type": "string"
+          }
+        }
+      },
       "RewardBudgetDto": {
         "required": [
           "year",
@@ -38107,6 +41870,37 @@
           }
         }
       },
+      "SensitivityRule": {
+        "required": [
+          "code",
+          "allEmployees",
+          "ownerUnit",
+          "roleKeys"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "allEmployees": {
+            "type": "boolean"
+          },
+          "ownerUnit": {
+            "type": "boolean"
+          },
+          "roleKeys": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "allowShareToAll": {
+            "type": "boolean",
+            "default": true
+          }
+        },
+        "description": "Who is cleared for a sensitivity level (ADR 0083)."
+      },
       "SessionDto": {
         "required": [
           "id",
@@ -38181,6 +41975,29 @@
           }
         }
       },
+      "SettingsDocumentOfDocRegSettings": {
+        "required": [
+          "value",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "value": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/DocRegSettings"
+              }
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
       "SettingsDocumentOfFilesSettings": {
         "required": [
           "value",
@@ -38195,6 +42012,29 @@
               },
               {
                 "$ref": "#/components/schemas/FilesSettings"
+              }
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "SettingsDocumentOfIpSettings": {
+        "required": [
+          "value",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "value": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/IpSettings"
               }
             ]
           },
@@ -38360,6 +42200,66 @@
               "string"
             ],
             "format": "uuid"
+          }
+        }
+      },
+      "SimilarItemDto": {
+        "required": [
+          "resourceType",
+          "id",
+          "number",
+          "titleAr",
+          "titleEn",
+          "link",
+          "score"
+        ],
+        "type": "object",
+        "properties": {
+          "resourceType": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "link": {
+            "type": "string"
+          },
+          "score": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "SimilarityDto": {
+        "required": [
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SimilarItemDto"
+            }
           }
         }
       },
@@ -39185,6 +43085,26 @@
           }
         },
         "description": "The data behind a suggested level: e.g. 12 of 13 closed = 92.31 %, or 30 h average over 6 meetings."
+      },
+      "SummaryDraftDto": {
+        "required": [
+          "summaryAr",
+          "summaryEn",
+          "usageId"
+        ],
+        "type": "object",
+        "properties": {
+          "summaryAr": {
+            "type": "string"
+          },
+          "summaryEn": {
+            "type": "string"
+          },
+          "usageId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
       },
       "SummaryInput": {
         "required": [
@@ -42590,6 +46510,39 @@
           }
         }
       },
+      "TypeSuggestionDto": {
+        "required": [
+          "propertyType",
+          "protectionType",
+          "reasons",
+          "usageId"
+        ],
+        "type": "object",
+        "properties": {
+          "propertyType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "protectionType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "usageId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
       "TypeSummaryDto": {
         "required": [
           "id",
@@ -42732,6 +46685,37 @@
           }
         }
       },
+      "UnitCountDto": {
+        "required": [
+          "id",
+          "nameAr",
+          "nameEn",
+          "count"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
       "UnitDto": {
         "required": [
           "id",
@@ -42755,6 +46739,37 @@
               "null",
               "string"
             ]
+          }
+        }
+      },
+      "UnitFacetDto": {
+        "required": [
+          "id",
+          "nameAr",
+          "nameEn",
+          "count"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
@@ -43420,6 +47435,53 @@
           }
         }
       },
+      "ValidityEventDto": {
+        "required": [
+          "kind",
+          "days",
+          "oldExpiry",
+          "newExpiry",
+          "comment",
+          "at"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "days": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "oldExpiry": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "newExpiry": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "comment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
       "VariableDto": {
         "required": [
           "name",
@@ -43575,6 +47637,108 @@
           "version": {
             "type": "integer",
             "format": "uint32"
+          }
+        }
+      },
+      "VersionDto": {
+        "required": [
+          "id",
+          "label",
+          "status",
+          "changeSummary",
+          "requestId",
+          "requestNo",
+          "requestedBy",
+          "approvedAt",
+          "publishedAt",
+          "finalFileId",
+          "finalFileName",
+          "hasText",
+          "summaryAr",
+          "summaryEn"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "label": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "changeSummary": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "requestId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "requestNo": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "requestedBy": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/DocPersonDto"
+              }
+            ]
+          },
+          "approvedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "publishedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "finalFileId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "finalFileName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "hasText": {
+            "type": "boolean"
+          },
+          "summaryAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "summaryEn": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
@@ -43833,6 +47997,12 @@
     },
     {
       "name": "requests"
+    },
+    {
+      "name": "docreg"
+    },
+    {
+      "name": "ip"
     }
   ]
 }

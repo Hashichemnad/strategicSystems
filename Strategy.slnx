@@ -24,6 +24,10 @@
     <Project Path="src/Modules/DocumentRegistry/Strategy.Modules.DocumentRegistry.Contracts/Strategy.Modules.DocumentRegistry.Contracts.csproj" />
     <Project Path="src/Modules/DocumentRegistry/Strategy.Modules.DocumentRegistry/Strategy.Modules.DocumentRegistry.csproj" />
   </Folder>
+  <Folder Name="/src/Modules/IpRegistry/">
+    <Project Path="src/Modules/IpRegistry/Strategy.Modules.IpRegistry.Contracts/Strategy.Modules.IpRegistry.Contracts.csproj" />
+    <Project Path="src/Modules/IpRegistry/Strategy.Modules.IpRegistry/Strategy.Modules.IpRegistry.csproj" />
+  </Folder>
   <Folder Name="/src/Modules/Kpi/">
     <Project Path="src/Modules/Kpi/Strategy.Modules.Kpi.Contracts/Strategy.Modules.Kpi.Contracts.csproj" />
     <Project Path="src/Modules/Kpi/Strategy.Modules.Kpi/Strategy.Modules.Kpi.csproj" />
