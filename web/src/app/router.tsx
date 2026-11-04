@@ -420,7 +420,11 @@ export const waselLoginRoute = createRoute({
 export const waselMfaRoute = createRoute({
   getParentRoute: () => waselRoot,
   path: '/wasel/login/mfa',
-  validateSearch: z.object({ redirect: redirectParam, methods: methodsParam, enrol: z.coerce.number().optional().catch(undefined) }),
+  validateSearch: z.object({
+    redirect: redirectParam,
+    methods: methodsParam,
+    enrol: z.coerce.number().optional().catch(undefined),
+  }),
   component: lazyRouteComponent(() => import('@/features/wasel/WaselAuthPages'), 'WaselMfaPage'),
 });
 
@@ -1142,7 +1146,13 @@ const routeTree = rootRoute.addChildren([
   publicLayout.addChildren([loginRoute, mfaRoute, enrolRoute, forgotRoute, resetRoute]),
   consentLayout.addChildren([consentRoute]),
   embedLayout.addChildren([embedRequestRoute]),
-  waselRoot.addChildren([waselLoginRoute, waselMfaRoute, waselSetPasswordRoute, waselHomeRoute, waselProjectRoute]),
+  waselRoot.addChildren([
+    waselLoginRoute,
+    waselMfaRoute,
+    waselSetPasswordRoute,
+    waselHomeRoute,
+    waselProjectRoute,
+  ]),
   appLayout.addChildren([
     homeRoute,
     sampleRoute,
