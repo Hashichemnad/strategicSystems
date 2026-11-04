@@ -54,16 +54,8 @@ internal sealed class EvaluationTriggerRunner(TeamsDbContext db, IServiceScopeFa
                 continue;
             }
 
-            // One scope (DbContexts, transaction) per team: a failure on one team never leaks into the next.
-            await using var scope = JobScope.Create(scopes);
-            var teamDb = scope.ServiceProvider.GetRequiredService<TeamsDbContext>();
-            var tracked = await teamDb.Teams.FirstAsync(t => t.Id == id, ct).ConfigureAwait(false);
-            await using var transaction = await teamDb.Database.BeginTransactionAsync(ct).ConfigureAwait(false);
-            var opened = await scope.ServiceProvider.GetRequiredService<EvaluationOpener>()
-                .OpenAsync(tracked, year is null ? Domain.EvaluationTriggers.EndDate : Domain.EvaluationTriggers.Annual, year, closeAfter: year is null, ct).ConfigureAwait(false);
-            if (opened.IsSuccess)
+            if (await OpenAsync(id, year, ct).ConfigureAwait(false))
             {
-                await transaction.CommitAsync(ct).ConfigureAwait(false);
                 if (year is null)
                 {
                     endDate++;
@@ -102,6 +94,43 @@ internal sealed class EvaluationTriggerRunner(TeamsDbContext db, IServiceScopeFa
         }
 
         return (annual, endDate, reminders);
+    }
+
+    /// <summary>
+    /// Opens the cycle in its own scope (DbContexts, transaction), so a failure on one team never leaks into the next. A concurrent change of the
+    /// team (e.g. the formation memo stored by the outbox a moment earlier) is a conflict on its row version: the attempt is rolled back and
+    /// retried on fresh data, at most three times; the next run picks the team up otherwise.
+    /// </summary>
+    private async Task<bool> OpenAsync(Guid id, int? year, CancellationToken ct)
+    {
+        for (var attempt = 1; ; attempt++)
+        {
+            await using var scope = JobScope.Create(scopes);
+            var teamDb = scope.ServiceProvider.GetRequiredService<TeamsDbContext>();
+            try
+            {
+                var tracked = await teamDb.Teams.FirstAsync(t => t.Id == id, ct).ConfigureAwait(false);
+                await using var transaction = await teamDb.Database.BeginTransactionAsync(ct).ConfigureAwait(false);
+                var opened = await scope.ServiceProvider.GetRequiredService<EvaluationOpener>()
+                    .OpenAsync(tracked, year is null ? Domain.EvaluationTriggers.EndDate : Domain.EvaluationTriggers.Annual, year, closeAfter: year is null, ct)
+                    .ConfigureAwait(false);
+                if (!opened.IsSuccess)
+                {
+                    return false;
+                }
+
+                await transaction.CommitAsync(ct).ConfigureAwait(false);
+                return true;
+            }
+            catch (DbUpdateConcurrencyException) when (attempt < 3)
+            {
+                // Rolled back with the scope; read the team again.
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return false;
+            }
+        }
     }
 }
 
