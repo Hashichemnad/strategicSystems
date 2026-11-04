@@ -1,6 +1,6 @@
 # Phase 11 — Wasel vendor portal and Portfolio completion: summary
 
-**Status:** built and verified in this session · ADRs 0110–0117 proposed, awaiting owner acceptance
+**Status:** built and verified in this session (all gates green) · ADRs 0110–0117 proposed, awaiting owner acceptance
 **Branch:** `claude/happy-planck-sl7tck`
 **Planning:** the plan is the Phase 11 part of [`docs/design/portfolio.md`](../design/portfolio.md) (§46–§62), committed before the code. As in earlier
 phases the session ran without an interactive approval step; open choices are ADRs 0110–0117. Phase 15 is built in a parallel session: shared
@@ -39,7 +39,16 @@ Manual penetration checklist (reviewed against the code): vendor cookie path `/a
 
 ## Quality gates run
 
-_(filled in after the final run)_
+| Gate | Result |
+|---|---|
+| `dotnet build -c Release` · `dotnet format --verify-no-changes` | 0 warnings, 0 errors · clean |
+| `dotnet test --solution Strategy.slnx` | **3 751 tests: 3 743 passed in the full run**; the 8 failures were 7 OCR unit tests (Tesseract was not installed in the sandbox at that moment — 14 / 14 pass once installed) and `McpServerTests.Vendor_principals_are_refused`, whose expected code changed by design (the principal-type wall now answers `auth.principalRefused` before the MCP gate); re-run green with `EndpointCatalogueTests`. New: Wasel integration 5 tests (`WaselTests`), unit 64 (`WaselRulesTests`), endpoint catalogue check for vendor endpoints |
+| `tools/check-api-client.sh` · `tools/check-vulnerable.sh` | OpenAPI document and TS client regenerated · no High / Critical NuGet vulnerabilities |
+| `npm run lint` · `format:check` · `typecheck` · `npm test` | clean (RTL class check included) · clean · clean · **304 / 304** Vitest |
+| `npm run build` · `npm audit --audit-level=high` · `npm run lint:licenses` | OK (existing chunk-size warning) · no High / Critical (8 moderate, pre-existing: ECharts and typescript-eslint/minimatch) · 617 packages allowed |
+| `npx playwright test` (whole suite, fresh database) | **94 / 94** in Arabic and English (92 earlier + the new `wasel.spec.ts` in both languages); the job dashboard spec now expects 20 jobs |
+
+Existing tests updated for Phase 11 facts: job lists (integration and E2E) include `portfolio.wasel-access`; the endpoint catalogue accepts `VendorEndpoint` metadata; the MCP vendor test expects the earlier wall; three Vitest files type the `api.POST` spy loosely (TS2589 after the client grew).
 
 ## Decisions (ADRs — proposed)
 - [0110](../decisions/0110-wasel-vendor-principal-and-scheme.md) Vendor principal and a separate authentication scheme.
@@ -84,4 +93,8 @@ cd web && npm ci && npm run dev        # http://localhost:5173
 7. Vendor: the PM's change and *Included in approved update*. Portfolio → *Capacity*, *Portfolio reviews*; a project's Gantt → export PNG in Arabic.
 
 ## Cloud environment notes
-_(filled in after the final run)_
+- PostgreSQL 16 local (`max_connections = 600`, `STRATEGY_TEST_POSTGRES`); Gotenberg / Mailpit containers through `mirror.gcr.io`; Tesseract installed during the session.
+- E2E with `E2E_CHROMIUM_PATH=/opt/pw-browsers/chromium-1243/chrome-linux64/chrome` on a fresh `strategy` database.
+- The web screens were built by three parallel helpers on separate files (vendor portal; PM-side screens and register; capacity / reviews / Gantt font) and wired by the shared routes and namespaces committed first.
+- Two problems found and fixed by tests: duplicate proposal keys raised a 500 (now a validation error); the deliverable upload deadlocked when wrapped in a transaction with the Files service (the file is now stored first). A third, found by the UI helper: contract / meeting / member DTOs did not return the new fields, so editing cleared them.
+- Screenshots (`E2E_SCREENSHOTS=phase-11`) in [`docs/screenshots/phase-11/`](../screenshots/phase-11/) as `ar-*` / `en-*` pairs: `vendor-invitation`, `wasel-login-mfa`, `vendor-project-overview`, `plan-proposal`, `monthly-submission`, `pm-review-diff`, `vendor-sees-review`, `vendor-rating`, `capacity-view`, `portfolio-review`, `gantt-export` (the PNG produced by the export button).
