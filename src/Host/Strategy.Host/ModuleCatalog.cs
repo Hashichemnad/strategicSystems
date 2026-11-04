@@ -3,6 +3,7 @@ using Strategy.Modules.IpRegistry;
 using Strategy.Modules.Kpi;
 using Strategy.Modules.Portfolio;
 using Strategy.Modules.Requests;
+using Strategy.Modules.Risk;
 using Strategy.Modules.Sample;
 using Strategy.Modules.Tasks;
 using Strategy.Modules.Teams;
@@ -23,5 +24,6 @@ internal static class ModuleCatalog
         new RequestsModule(),
         new DocumentRegistryModule(),
         new IpRegistryModule(),
+        new RiskModule(),
     ];
 }

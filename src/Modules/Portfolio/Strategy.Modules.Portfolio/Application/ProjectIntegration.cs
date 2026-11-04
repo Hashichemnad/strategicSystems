@@ -725,3 +725,30 @@ internal sealed class MonthlyCycleJob(RequestContext requestContext, MonthlyCycl
         return $"opened={opened} reminded={reminded} overdue={overdue}";
     }
 }
+
+/// <summary>
+/// Re-scores active project risks on the shared risk framework when a version is saved with "recalculate now" (and on the seeded version 1) —
+/// ADR 0101. Tracked changes, so the audit trail records one entry per re-rated risk. Idempotent.
+/// </summary>
+internal sealed class ProjectRiskRescoreHandler(PortfolioDbContext db, IProjectRiskScoring scoring) : IIntegrationEventHandler<Risk.Contracts.RiskFrameworkChanged>
+{
+    public async Task HandleAsync(Risk.Contracts.RiskFrameworkChanged integrationEvent, CancellationToken cancellationToken)
+    {
+        if (integrationEvent.Recalculation != Risk.Contracts.RiskRecalculation.Now)
+        {
+            return;
+        }
+
+        var risks = await db.Risks.Where(r => r.Status == ItemStatuses.Active).ToListAsync(cancellationToken).ConfigureAwait(false);
+        foreach (var risk in risks)
+        {
+            var score = await scoring.ScoreAsync(risk.Probability, risk.Impact, risk.ControlEvaluation, cancellationToken).ConfigureAwait(false);
+            if (score.Inherent != risk.InherentScore || score.InherentBand != risk.InherentBand || score.Residual != risk.ResidualScore || score.ResidualBand != risk.ResidualBand)
+            {
+                risk.Score(score);
+            }
+        }
+
+        await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+    }
+}

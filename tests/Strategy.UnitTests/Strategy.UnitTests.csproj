@@ -13,6 +13,7 @@
     <ProjectReference Include="..\..\src\Modules\Teams\Strategy.Modules.Teams\Strategy.Modules.Teams.csproj" />
     <ProjectReference Include="..\..\src\Modules\Portfolio\Strategy.Modules.Portfolio\Strategy.Modules.Portfolio.csproj" />
     <ProjectReference Include="..\..\src\Modules\Kpi\Strategy.Modules.Kpi\Strategy.Modules.Kpi.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Risk\Strategy.Modules.Risk\Strategy.Modules.Risk.csproj" />
     <ProjectReference Include="..\..\src\Modules\Requests\Strategy.Modules.Requests\Strategy.Modules.Requests.csproj" />
     <ProjectReference Include="..\..\src\Modules\DocumentRegistry\Strategy.Modules.DocumentRegistry\Strategy.Modules.DocumentRegistry.csproj" />
     <ProjectReference Include="..\..\src\Modules\IpRegistry\Strategy.Modules.IpRegistry\Strategy.Modules.IpRegistry.csproj" />

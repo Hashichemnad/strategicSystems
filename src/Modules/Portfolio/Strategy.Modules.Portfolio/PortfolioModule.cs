@@ -68,6 +68,7 @@ public sealed class PortfolioModule : IModule
         services.AddScoped<IKpiLinkedRecordSource, ProjectKpiLinks>();
         services.AddScheduledJob(MonthlyCycleJob.Definition);
         services.AddIntegrationEventHandler<TeamMembershipChanged, ProjectTeamMembershipHandler>();
+        services.AddIntegrationEventHandler<Risk.Contracts.RiskFrameworkChanged, ProjectRiskRescoreHandler>();
 
         services.AddApprovalProcess(RequestApprovalProcess.Definition);
         foreach (var process in ProjectApprovalProcesses.All)
