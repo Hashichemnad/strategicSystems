@@ -36,7 +36,33 @@ internal sealed class RequestReader(
     public async Task<IQueryable<Project>> VisibleProjectsAsync(ClaimsPrincipal user, CancellationToken ct) =>
         await access.ApplyScopeAsync(db.Projects.AsNoTracking(), user, PortfolioPermissions.ProjectRead, ProjectScope.Map, ct).ConfigureAwait(false);
 
-    public Task<PortfolioSettings> SettingsAsync(CancellationToken ct) => settings.GetAsync<PortfolioSettings>(ct);
+    /// <summary>Settings → Portfolio; with the prioritisation switch off the default model applies (ADR 0092).</summary>
+    public async Task<PortfolioSettings> SettingsAsync(CancellationToken ct)
+    {
+        var value = await settings.GetAsync<PortfolioSettings>(ct).ConfigureAwait(false);
+        return value.Features.Prioritisation
+            ? value
+            : value with { PriorityCriteria = PortfolioSettings.DefaultCriteria, PriorityBands = PortfolioSettings.DefaultBands };
+    }
+
+    /// <summary>Settings as stored (the settings editor).</summary>
+    public Task<PortfolioSettings> StoredSettingsAsync(CancellationToken ct) => settings.GetAsync<PortfolioSettings>(ct);
+
+    /// <summary>The installation's time zone (Settings → Regional), UTC when unknown.</summary>
+    public async Task<TimeZoneInfo> ZoneAsync(CancellationToken ct)
+    {
+        var zoneId = (await settings.GetAsync<RegionalSettings>(ct).ConfigureAwait(false)).TimeZone;
+        try
+        {
+            return TimeZoneInfo.FindSystemTimeZoneById(zoneId);
+        }
+        catch (TimeZoneNotFoundException)
+        {
+            return TimeZoneInfo.Utc;
+        }
+    }
+
+    public static DateOnly LocalDate(DateTimeOffset at, TimeZoneInfo zone) => DateOnly.FromDateTime(TimeZoneInfo.ConvertTime(at, zone).DateTime);
 
     /// <summary>Today in the installation's time zone (Settings → Regional): the "current year" of the date rules.</summary>
     public async Task<DateOnly> TodayAsync(CancellationToken ct)

@@ -99,6 +99,7 @@ internal static class PortfolioEndpoints
             .WithName("ListPortfolioProjects").RequirePermission(PortfolioPermissions.ProjectRead);
 
         ProjectEndpoints.Map(group);
+        Phase10Endpoints.Map(group);
 
         var settings = group.MapGroup("/settings");
         settings.MapGet("/", async (IDispatcher d, CancellationToken ct) => (await d.SendAsync(new GetPortfolioSettings(), ct)).ToOk())

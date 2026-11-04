@@ -251,7 +251,13 @@ public sealed record GateFacts(
     int DetailedLeaves,
     decimal DetailedWeight,
     int LeavesWithBadDates,
-    int DeliverablesIncomplete);
+    int DeliverablesIncomplete,
+    string Methodology = Methodologies.Waterfall,
+    int Releases = 0,
+    AgileGateFacts? Agile = null);
+
+/// <summary>Agile / hybrid planning facts (ADR 0090): project-level epics, sprint set-up, hybrid milestones whose epics do not total 100 %.</summary>
+public sealed record AgileGateFacts(int Epics, decimal EpicWeight, bool SprintLength, bool DefinitionOfDone, int HybridMilestonesNot100);
 
 /// <summary>A gate item as the record page shows it (live checklist).</summary>
 public sealed record GateItem(string Code, string MessageKey, bool Met, IReadOnlyDictionary<string, object?>? Params = null);
@@ -280,15 +286,49 @@ public static class ProjectGates
     public static IReadOnlyList<GateItem> Planning(GateFacts f)
     {
         ArgumentNullException.ThrowIfNull(f);
-        return
-        [
+        var items = new List<GateItem>
+        {
             new("pm", "portfolio.errors.gatePm", f.HasPm),
             new("scope-items", "portfolio.errors.gateScope", f.InScopeItems >= 1),
-            new("weights", "portfolio.errors.weightsNot100", f.DetailedLeaves >= 1 && f.DetailedWeight == 1m,
-                new Dictionary<string, object?> { ["total"] = Percent(f.DetailedWeight) }),
-            new("dates", "portfolio.errors.milestoneDates", f.LeavesWithBadDates == 0),
-            new("deliverables", "portfolio.errors.deliverableFields", f.DeliverablesIncomplete == 0),
-        ];
+        };
+        if (f.Methodology != Methodologies.Agile)
+        {
+            items.Add(new("weights", "portfolio.errors.weightsNot100", f.DetailedLeaves >= 1 && f.DetailedWeight == 1m,
+                new Dictionary<string, object?> { ["total"] = Percent(f.DetailedWeight) }));
+            items.Add(new("dates", "portfolio.errors.milestoneDates", f.LeavesWithBadDates == 0));
+            items.Add(new("deliverables", "portfolio.errors.deliverableFields", f.DeliverablesIncomplete == 0));
+        }
+
+        if (Methodologies.UsesSprints(f.Methodology))
+        {
+            var agile = f.Agile ?? new AgileGateFacts(0, 0, false, false, 0);
+            if (f.Methodology == Methodologies.Agile)
+            {
+                items.Add(new("releases", "portfolio.errors.gateReleases", f.Releases >= 1));
+                items.Add(new("epics", "portfolio.errors.epicWeightsNot100", agile.Epics >= 1 && agile.EpicWeight == 1m,
+                    new Dictionary<string, object?> { ["total"] = Percent(agile.EpicWeight) }));
+            }
+            else
+            {
+                items.Add(new("hybrid-epics", "portfolio.errors.hybridEpicsNot100", agile.HybridMilestonesNot100 == 0,
+                    new Dictionary<string, object?> { ["count"] = agile.HybridMilestonesNot100 }));
+            }
+
+            items.Add(new("sprint-length", "portfolio.errors.gateSprintLength", agile.SprintLength));
+            items.Add(new("definition-of-done", "portfolio.errors.gateDefinitionOfDone", agile.DefinitionOfDone));
+        }
+
+        return items;
+    }
+
+    /// <summary>Configured checklist items of a gate (ADR 0095); required ones must be ticked.</summary>
+    public static IReadOnlyList<GateItem> Checklist(IReadOnlyList<ChecklistItemDefinition> definitions, IReadOnlyDictionary<string, ChecklistTick>? ticks)
+    {
+        ArgumentNullException.ThrowIfNull(definitions);
+        return definitions.Where(d => d.Required)
+            .Select(d => new GateItem($"checklist.{d.Code}", "portfolio.errors.gateChecklist", ticks is not null && ticks.TryGetValue(d.Code, out var t) && t.Checked,
+                new Dictionary<string, object?> { ["labelAr"] = d.LabelAr, ["labelEn"] = d.LabelEn }))
+            .ToList();
     }
 
     /// <summary>The failed items as a validation error (all of them together).</summary>

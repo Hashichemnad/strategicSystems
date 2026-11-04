@@ -20,6 +20,7 @@ public static class ProjectApprovalProcesses
     public const string Closure = "portfolio.closure";
     public const string Impact = "portfolio.impact";
     public const string ChangeRequest = "portfolio.change-request";
+    public const string SprintReview = "portfolio.sprint-review";
 
     public const string ClassificationVariable = "classification";
     public const string BudgetVariable = "budget";
@@ -29,6 +30,8 @@ public static class ProjectApprovalProcesses
     public const string CostAffectedVariable = "costAffected";
     public const string CostChangeVariable = "costChange";
     public const string GmThresholdVariable = "gmThreshold";
+    public const string SprintVariable = "sprint";
+    public const string CompletedPointsVariable = "completedPoints";
 
     public const string FinanceCondition = "costAffected";
     public const string GmCondition = "changeType == 'cancellation' or changeType == 'merge' or costChange > gmThreshold";
@@ -94,8 +97,15 @@ public static class ProjectApprovalProcesses
         new ExpressionVariable(CostChangeVariable, ExpressionValueType.Number, "مقدار تغيير التكلفة", "Cost change"),
         new ExpressionVariable(GmThresholdVariable, ExpressionValueType.Number, "حد مكتب المدير العام", "GM Office threshold"));
 
+    /// <summary>ADR 0091: sprint mode — each closed sprint's review is approved like a monthly update.</summary>
+    public static readonly ApprovalProcessDefinition SprintReviewDefinition = Define(
+        SprintReview, "اعتماد مراجعة السبرنت", "Sprint review approval", [Director(), PmOffice()],
+        "مراجعة السبرنت (وضع الاعتماد لكل سبرنت): مدير الإدارة ← مكتب إدارة المشاريع.", "Sprint review (approval after every sprint): department director → PM Office.",
+        new ExpressionVariable(SprintVariable, ExpressionValueType.Number, "رقم السبرنت", "Sprint number"),
+        new ExpressionVariable(CompletedPointsVariable, ExpressionValueType.Number, "النقاط المنجزة", "Completed points"));
+
     public static readonly IReadOnlyList<ApprovalProcessDefinition> All =
-        [CharterDefinition, PlanningDefinition, MonthlyDefinition, ClosureDefinition, ImpactDefinition, ChangeRequestDefinition];
+        [CharterDefinition, PlanningDefinition, MonthlyDefinition, ClosureDefinition, ImpactDefinition, ChangeRequestDefinition, SprintReviewDefinition];
 
     public static ApprovalProcessDefinition? Find(string key) => All.FirstOrDefault(d => d.Key == key);
 }
@@ -179,7 +189,20 @@ internal sealed class ProjectLoader(PortfolioDbContext db, RequestReader reader,
             leaves.Count,
             leaves.Sum(m => m.Weight),
             leaves.Count(m => m.PlannedStart is null || m.PlannedEnd is null || m.PlannedEnd < m.PlannedStart),
-            leaves.Count(m => m.IsDeliverable && (string.IsNullOrWhiteSpace(m.MainDeliverable) || string.IsNullOrWhiteSpace(m.AcceptanceCriteria))));
+            leaves.Count(m => m.IsDeliverable && (string.IsNullOrWhiteSpace(m.MainDeliverable) || string.IsNullOrWhiteSpace(m.AcceptanceCriteria))),
+            project.Methodology,
+            await db.Releases.CountAsync(r => r.ProjectId == id && r.Status != ReleaseStatuses.Cancelled, ct).ConfigureAwait(false),
+            await AgileFactsAsync(project, leaves, ct).ConfigureAwait(false));
+    }
+
+    private async Task<AgileGateFacts> AgileFactsAsync(Project project, List<Milestone> leaves, CancellationToken ct)
+    {
+        var epics = await db.Epics.AsNoTracking().Where(e => e.ProjectId == project.Id && e.Status != EpicStatuses.Cancelled).ToListAsync(ct).ConfigureAwait(false);
+        var sprintMilestones = leaves.Where(m => m.DeliveredInSprints).ToList();
+        return new AgileGateFacts(
+            epics.Count(e => e.MilestoneId is null), epics.Where(e => e.MilestoneId is null).Sum(e => e.Weight),
+            project.SprintLengthDays is >= 1 and <= 28, !string.IsNullOrWhiteSpace(project.DefinitionOfDone),
+            sprintMilestones.Count(m => epics.Where(e => e.MilestoneId == m.Id).Sum(e => e.Weight) != 1m));
     }
 }
 
@@ -188,6 +211,13 @@ internal sealed class ProjectProgress(PortfolioDbContext db, RequestReader reade
 {
     public async Task RecalculateAsync(Project project, CancellationToken ct)
     {
+        ArgumentNullException.ThrowIfNull(project);
+        if (project.Methodology == Methodologies.Agile)
+        {
+            await RecalculateAgileAsync(project, ct).ConfigureAwait(false);
+            return;
+        }
+
         var stored = await db.Milestones.Where(m => m.ProjectId == project.Id).ToListAsync(ct).ConfigureAwait(false);
         var milestones = stored.Concat(db.Milestones.Local.Where(m => m.ProjectId == project.Id)).DistinctBy(m => m.Id).ToList(); // unsaved rows count too
         foreach (var header in milestones.Where(m => m.IsHeader))
@@ -202,6 +232,22 @@ internal sealed class ProjectProgress(PortfolioDbContext db, RequestReader reade
         var settings = await reader.SettingsAsync(ct).ConfigureAwait(false);
         project.SetProgress(ProgressCalculator.Performance(leaves), ProgressCalculator.PlannedToDate(leaves, today),
             ProgressCalculator.Status(leaves, today, settings.ProgressTolerance));
+    }
+
+    /// <summary>ADR 0091: Σ epic weight × approved-done points; planned-to-date linear over the project's planned dates.</summary>
+    private async Task RecalculateAgileAsync(Project project, CancellationToken ct)
+    {
+        var epics = (await db.Epics.Where(e => e.ProjectId == project.Id).ToListAsync(ct).ConfigureAwait(false))
+            .Concat(db.Epics.Local.Where(e => e.ProjectId == project.Id)).DistinctBy(e => e.Id).Where(e => e.MilestoneId is null)
+            .Select(e => new EpicProgressInput(e.Id, e.Weight, !e.IsActive)).ToList();
+        var stories = (await db.Stories.Where(s => s.ProjectId == project.Id).ToListAsync(ct).ConfigureAwait(false))
+            .Concat(db.Stories.Local.Where(s => s.ProjectId == project.Id)).DistinctBy(s => s.Id)
+            .Select(s => new StoryProgressInput(s.EpicId, s.StoryPoints, s.IsDone, s.ApprovedDone, !s.IsActive)).ToList();
+        var today = await reader.TodayAsync(ct).ConfigureAwait(false);
+        var settings = await reader.SettingsAsync(ct).ConfigureAwait(false);
+        var performance = AgileProgressCalculator.Progress(epics, stories);
+        var plan = new[] { new MilestoneProgressInput(1m, performance, project.PlannedStart, project.PlannedEnd) };
+        project.SetProgress(performance, ProgressCalculator.PlannedToDate(plan, today), ProgressCalculator.Status(plan, today, settings.ProgressTolerance));
     }
 }
 

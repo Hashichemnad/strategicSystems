@@ -142,9 +142,21 @@ internal sealed class RequestApprovalHook(
             ct).ConfigureAwait(false);
         var owner = await reader.DepartmentDirectorOfAsync(request.UnitId, ct).ConfigureAwait(false);
         var settings = await reader.SettingsAsync(ct).ConfigureAwait(false);
-        var project = Project.FromRequest(number, request, owner, settings.TemplateFor(request.EffectiveClassification));
+        var project = Project.FromRequest(number, request, owner, settings.TemplateFor(request.EffectiveClassification),
+            settings.SuggestedMethodology(request.ProgramTypeCode));
+        if (settings.SuggestedMethodology(request.ProgramTypeCode) != Methodologies.Waterfall)
+        {
+            project.SetMethodology(project.Methodology, settings.DefaultSprintLengthDays, null, null);
+            project.SetBoard(BoardConfig.Default);
+        }
+
         db.Projects.Add(project);
         request.LinkProject(project.Id);
+        foreach (var benefit in await db.Benefits.Where(b => b.RequestId == request.Id).ToListAsync(ct).ConfigureAwait(false))
+        {
+            benefit.AttachToProject(project.Id); // ADR 0095: benefits defined at request carry to the project
+        }
+
         await db.SaveChangesAsync(ct).ConfigureAwait(false);
         if (owner is { } ownerId)
         {

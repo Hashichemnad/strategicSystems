@@ -23,6 +23,203 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Strategy.Modules.Portfolio.Domain.Baseline", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<decimal?>("Budget")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("budget");
+
+                    b.Property<Guid?>("ChangeRequestId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("change_request_id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<string>("Items")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("items");
+
+                    b.Property<DateOnly?>("PlannedEnd")
+                        .HasColumnType("date")
+                        .HasColumnName("planned_end");
+
+                    b.Property<DateOnly?>("PlannedStart")
+                        .HasColumnType("date")
+                        .HasColumnName("planned_start");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("project_id");
+
+                    b.Property<string>("Reason")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("reason");
+
+                    b.Property<DateTimeOffset>("TakenAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("taken_at");
+
+                    b.Property<Guid?>("TakenByUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("taken_by_user_id");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<int>("VersionNo")
+                        .HasColumnType("integer")
+                        .HasColumnName("version_no");
+
+                    b.HasKey("Id")
+                        .HasName("pk_baseline");
+
+                    b.HasIndex("ProjectId", "VersionNo")
+                        .IsUnique()
+                        .HasDatabaseName("ix_baseline_project_id_version_no");
+
+                    b.ToTable("baseline", "portfolio");
+                });
+
+            modelBuilder.Entity("Strategy.Modules.Portfolio.Domain.Benefit", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<decimal?>("ActualValue")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("numeric(18,4)")
+                        .HasColumnName("actual_value");
+
+                    b.Property<decimal?>("BaselineValue")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("numeric(18,4)")
+                        .HasColumnName("baseline_value");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<string>("ItemStatus")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("item_status");
+
+                    b.Property<string>("Measure")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("measure");
+
+                    b.Property<DateTimeOffset?>("MeasuredAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("measured_at");
+
+                    b.Property<Guid?>("MeasuredByUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("measured_by_user_id");
+
+                    b.Property<DateOnly?>("MeasurementDate")
+                        .HasColumnType("date")
+                        .HasColumnName("measurement_date");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("note");
+
+                    b.Property<Guid?>("OwnerEmployeeId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("owner_employee_id");
+
+                    b.Property<Guid?>("ProjectId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("project_id");
+
+                    b.Property<Guid?>("RequestId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("request_id");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<decimal?>("TargetValue")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("numeric(18,4)")
+                        .HasColumnName("target_value");
+
+                    b.Property<string>("TitleAr")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("title_ar");
+
+                    b.Property<string>("TitleEn")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("title_en");
+
+                    b.Property<string>("Unit")
+                        .HasMaxLength(60)
+                        .HasColumnType("character varying(60)")
+                        .HasColumnName("unit");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_benefit");
+
+                    b.HasIndex("ProjectId")
+                        .HasDatabaseName("ix_benefit_project_id");
+
+                    b.HasIndex("RequestId")
+                        .HasDatabaseName("ix_benefit_request_id");
+
+                    b.ToTable("benefit", "portfolio");
+                });
+
             modelBuilder.Entity("Strategy.Modules.Portfolio.Domain.Challenge", b =>
                 {
                     b.Property<Guid>("Id")
@@ -185,6 +382,11 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                         .HasColumnType("date")
                         .HasColumnName("proposed_end");
 
+                    b.Property<string>("ProposedMethodology")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("proposed_methodology");
+
                     b.Property<string>("ProposedNameAr")
                         .HasMaxLength(300)
                         .HasColumnType("character varying(300)")
@@ -260,6 +462,102 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                     b.ToTable("change_request", "portfolio");
                 });
 
+            modelBuilder.Entity("Strategy.Modules.Portfolio.Domain.CommunicationItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Audience")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("audience");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<string>("Frequency")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("frequency");
+
+                    b.Property<string>("InactiveReason")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("inactive_reason");
+
+                    b.Property<DateOnly?>("LastDone")
+                        .HasColumnType("date")
+                        .HasColumnName("last_done");
+
+                    b.Property<string>("Message")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("message");
+
+                    b.Property<string>("Method")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("method");
+
+                    b.Property<DateOnly?>("NextDue")
+                        .HasColumnType("date")
+                        .HasColumnName("next_due");
+
+                    b.Property<Guid?>("OwnerEmployeeId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("owner_employee_id");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("project_id");
+
+                    b.Property<DateOnly?>("RemindedFor")
+                        .HasColumnType("date")
+                        .HasColumnName("reminded_for");
+
+                    b.Property<Guid?>("StakeholderId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("stakeholder_id");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_communication_item");
+
+                    b.HasIndex("NextDue")
+                        .HasDatabaseName("ix_communication_item_next_due");
+
+                    b.HasIndex("ProjectId")
+                        .HasDatabaseName("ix_communication_item_project_id");
+
+                    b.ToTable("communication_item", "portfolio");
+                });
+
             modelBuilder.Entity("Strategy.Modules.Portfolio.Domain.Contract", b =>
                 {
                     b.Property<Guid>("Id")
@@ -308,6 +606,31 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("project_id");
 
+                    b.Property<DateTimeOffset?>("RatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("rated_at");
+
+                    b.Property<Guid?>("RatedByUserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("rated_by_user_id");
+
+                    b.Property<string>("RatingComment")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("rating_comment");
+
+                    b.Property<int?>("RatingCommunication")
+                        .HasColumnType("integer")
+                        .HasColumnName("rating_communication");
+
+                    b.Property<int?>("RatingQuality")
+                        .HasColumnType("integer")
+                        .HasColumnName("rating_quality");
+
+                    b.Property<int?>("RatingTimeliness")
+                        .HasColumnType("integer")
+                        .HasColumnName("rating_timeliness");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -340,6 +663,171 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                         .HasDatabaseName("ix_contract_project_id");
 
                     b.ToTable("contract", "portfolio");
+                });
+
+            modelBuilder.Entity("Strategy.Modules.Portfolio.Domain.ContractPayment", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("amount");
+
+                    b.Property<Guid>("ContractId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("contract_id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<DateOnly?>("DueDate")
+                        .HasColumnType("date")
+                        .HasColumnName("due_date");
+
+                    b.Property<Guid?>("MilestoneId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("milestone_id");
+
+                    b.Property<DateOnly?>("PaidOn")
+                        .HasColumnType("date")
+                        .HasColumnName("paid_on");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("project_id");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("title");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_contract_payment");
+
+                    b.HasIndex("ContractId")
+                        .HasDatabaseName("ix_contract_payment_contract_id");
+
+                    b.HasIndex("ProjectId")
+                        .HasDatabaseName("ix_contract_payment_project_id");
+
+                    b.ToTable("contract_payment", "portfolio");
+                });
+
+            modelBuilder.Entity("Strategy.Modules.Portfolio.Domain.Epic", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("AcceptanceCriteria")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("acceptance_criteria");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)")
+                        .HasColumnName("code");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<Guid?>("MilestoneId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("milestone_id");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("project_id");
+
+                    b.Property<Guid?>("ReleaseId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("release_id");
+
+                    b.Property<int>("Sort")
+                        .HasColumnType("integer")
+                        .HasColumnName("sort");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<string>("TitleAr")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("title_ar");
+
+                    b.Property<string>("TitleEn")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("title_en");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<decimal>("Weight")
+                        .HasPrecision(9, 4)
+                        .HasColumnType("numeric(9,4)")
+                        .HasColumnName("weight");
+
+                    b.HasKey("Id")
+                        .HasName("pk_epic");
+
+                    b.HasIndex("Code")
+                        .IsUnique()
+                        .HasDatabaseName("ix_epic_code");
+
+                    b.HasIndex("ProjectId")
+                        .HasDatabaseName("ix_epic_project_id");
+
+                    b.ToTable("epic", "portfolio");
                 });
 
             modelBuilder.Entity("Strategy.Modules.Portfolio.Domain.Lesson", b =>
@@ -533,6 +1021,10 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("created_by");
 
+                    b.Property<bool>("DeliveredInSprints")
+                        .HasColumnType("boolean")
+                        .HasColumnName("delivered_in_sprints");
+
                     b.Property<string>("EvidenceNote")
                         .HasMaxLength(4000)
                         .HasColumnType("character varying(4000)")
@@ -598,9 +1090,27 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("project_id");
 
+                    b.Property<DateTimeOffset?>("QualityAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("quality_at");
+
+                    b.Property<Guid?>("QualityByEmployeeId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("quality_by_employee_id");
+
+                    b.Property<string>("QualityComment")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("quality_comment");
+
                     b.Property<bool?>("QualityMet")
                         .HasColumnType("boolean")
                         .HasColumnName("quality_met");
+
+                    b.Property<string>("QualityStatus")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("quality_status");
 
                     b.Property<int>("Sort")
                         .HasColumnType("integer")
@@ -687,6 +1197,16 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                         .HasColumnType("jsonb")
                         .HasColumnName("items");
 
+                    b.Property<string>("NarrativeAr")
+                        .HasMaxLength(5000)
+                        .HasColumnType("character varying(5000)")
+                        .HasColumnName("narrative_ar");
+
+                    b.Property<string>("NarrativeEn")
+                        .HasMaxLength(5000)
+                        .HasColumnType("character varying(5000)")
+                        .HasColumnName("narrative_en");
+
                     b.Property<DateTimeOffset>("OpenedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("opened_at");
@@ -720,6 +1240,13 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                         .HasColumnType("integer")
                         .HasDefaultValue(1)
                         .HasColumnName("sequence");
+
+                    b.Property<string>("Sprints")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("sprints")
+                        .HasDefaultValueSql("'[]'::jsonb");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -830,6 +1357,85 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                         .HasDatabaseName("ix_planning_item_project_id");
 
                     b.ToTable("planning_item", "portfolio");
+                });
+
+            modelBuilder.Entity("Strategy.Modules.Portfolio.Domain.PortfolioGroup", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("character varying(60)")
+                        .HasColumnName("code");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("description");
+
+                    b.Property<string>("Kind")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("kind");
+
+                    b.Property<string>("NameAr")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("name_ar");
+
+                    b.Property<string>("NameEn")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("name_en");
+
+                    b.Property<Guid?>("OwnerEmployeeId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("owner_employee_id");
+
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("parent_id");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_portfolio_group");
+
+                    b.HasIndex("Code")
+                        .IsUnique()
+                        .HasDatabaseName("ix_portfolio_group_code");
+
+                    b.ToTable("portfolio_group", "portfolio");
                 });
 
             modelBuilder.Entity("Strategy.Modules.Portfolio.Domain.ProgramRequest", b =>
@@ -1286,6 +1892,11 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<string>("AgileApprovalMode")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("agile_approval_mode");
+
                     b.Property<decimal?>("AnnualLicenceCost")
                         .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,2)")
@@ -1331,6 +1942,10 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                         .HasColumnType("character varying(300)")
                         .HasColumnName("approval_step_name_en");
 
+                    b.Property<string>("Board")
+                        .HasColumnType("jsonb")
+                        .HasColumnName("board");
+
                     b.Property<decimal?>("Budget")
                         .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,2)")
@@ -1340,6 +1955,13 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                         .HasMaxLength(5000)
                         .HasColumnType("character varying(5000)")
                         .HasColumnName("cancel_reason");
+
+                    b.Property<string>("Checklist")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("checklist")
+                        .HasDefaultValueSql("'{}'::jsonb");
 
                     b.Property<string>("Classification")
                         .IsRequired()
@@ -1373,6 +1995,11 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("created_by");
 
+                    b.Property<string>("DefinitionOfDone")
+                        .HasMaxLength(5000)
+                        .HasColumnType("character varying(5000)")
+                        .HasColumnName("definition_of_done");
+
                     b.Property<string>("Description")
                         .HasMaxLength(5000)
                         .HasColumnType("character varying(5000)")
@@ -1381,6 +2008,13 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                     b.Property<int?>("EmployeeSatisfaction")
                         .HasColumnType("integer")
                         .HasColumnName("employee_satisfaction");
+
+                    b.Property<string>("HealthOverrides")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("health_overrides")
+                        .HasDefaultValueSql("'{}'::jsonb");
 
                     b.Property<string>("HoldReason")
                         .HasMaxLength(5000)
@@ -1404,6 +2038,14 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                     b.Property<Guid?>("MergedIntoProjectId")
                         .HasColumnType("uuid")
                         .HasColumnName("merged_into_project_id");
+
+                    b.Property<string>("Methodology")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasDefaultValue("waterfall")
+                        .HasColumnName("methodology");
 
                     b.Property<DateTimeOffset?>("MonthlyApprovedAt")
                         .HasColumnType("timestamp with time zone")
@@ -1466,6 +2108,10 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("pm_employee_id");
 
+                    b.Property<Guid?>("PortfolioGroupId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("portfolio_group_id");
+
                     b.Property<decimal?>("PreviousOperationalCost")
                         .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,2)")
@@ -1476,6 +2122,10 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                         .HasColumnType("character varying(100)")
                         .HasColumnName("program_type_code");
 
+                    b.Property<Guid?>("ProgrammeId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("programme_id");
+
                     b.Property<string>("ProgressStatus")
                         .IsRequired()
                         .ValueGeneratedOnAdd()
@@ -1483,6 +2133,10 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                         .HasColumnType("character varying(40)")
                         .HasDefaultValue("on-track")
                         .HasColumnName("progress_status");
+
+                    b.Property<Guid?>("ReplanChangeRequestId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("replan_change_request_id");
 
                     b.Property<Guid>("RequestId")
                         .HasColumnType("uuid")
@@ -1529,6 +2183,10 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                     b.Property<Guid?>("SectionUnitId")
                         .HasColumnType("uuid")
                         .HasColumnName("section_unit_id");
+
+                    b.Property<int?>("SprintLengthDays")
+                        .HasColumnType("integer")
+                        .HasColumnName("sprint_length_days");
 
                     b.Property<string>("Stage")
                         .IsRequired()
@@ -1672,6 +2330,12 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
 
                     b.HasIndex("PmEmployeeId")
                         .HasDatabaseName("ix_project_pm_employee_id");
+
+                    b.HasIndex("PortfolioGroupId")
+                        .HasDatabaseName("ix_project_portfolio_group_id");
+
+                    b.HasIndex("ProgrammeId")
+                        .HasDatabaseName("ix_project_programme_id");
 
                     b.HasIndex("RequestId")
                         .IsUnique()
@@ -1903,6 +2567,10 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                         .HasColumnType("character varying(40)")
                         .HasColumnName("response");
 
+                    b.Property<DateOnly?>("ReviewDate")
+                        .HasColumnType("date")
+                        .HasColumnName("review_date");
+
                     b.Property<string>("RiskFactor")
                         .HasMaxLength(2000)
                         .HasColumnType("character varying(2000)")
@@ -1945,6 +2613,77 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                         .HasDatabaseName("ix_project_risk_project_id");
 
                     b.ToTable("project_risk", "portfolio");
+                });
+
+            modelBuilder.Entity("Strategy.Modules.Portfolio.Domain.ProjectTemplate", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("character varying(60)")
+                        .HasColumnName("code");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("content");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<string>("Methodology")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("methodology");
+
+                    b.Property<string>("NameAr")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("name_ar");
+
+                    b.Property<string>("NameEn")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("name_en");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_project_template");
+
+                    b.HasIndex("Code")
+                        .IsUnique()
+                        .HasDatabaseName("ix_project_template_code");
+
+                    b.ToTable("project_template", "portfolio");
                 });
 
             modelBuilder.Entity("Strategy.Modules.Portfolio.Domain.ProposalAssessment", b =>
@@ -2091,6 +2830,403 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                     b.ToTable("team_member", "portfolio");
                 });
 
+            modelBuilder.Entity("Strategy.Modules.Portfolio.Domain.RaciEntry", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Area")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("area");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("employee_id");
+
+                    b.Property<string>("InactiveReason")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("inactive_reason");
+
+                    b.Property<Guid?>("MilestoneId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("milestone_id");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("project_id");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("character varying(2)")
+                        .HasColumnName("role");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_raci_entry");
+
+                    b.HasIndex("ProjectId")
+                        .HasDatabaseName("ix_raci_entry_project_id");
+
+                    b.ToTable("raci_entry", "portfolio");
+                });
+
+            modelBuilder.Entity("Strategy.Modules.Portfolio.Domain.RaidItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)")
+                        .HasColumnName("code");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<string>("DecidedBy")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("decided_by");
+
+                    b.Property<DateOnly?>("DecidedOn")
+                        .HasColumnType("date")
+                        .HasColumnName("decided_on");
+
+                    b.Property<Guid?>("DependsOnMilestoneId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("depends_on_milestone_id");
+
+                    b.Property<Guid?>("DependsOnProjectId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("depends_on_project_id");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("description");
+
+                    b.Property<DateOnly?>("DueDate")
+                        .HasColumnType("date")
+                        .HasColumnName("due_date");
+
+                    b.Property<Guid?>("MilestoneId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("milestone_id");
+
+                    b.Property<Guid?>("OwnerEmployeeId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("owner_employee_id");
+
+                    b.Property<string>("Priority")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("priority");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("project_id");
+
+                    b.Property<string>("Resolution")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("resolution");
+
+                    b.Property<string>("Source")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("source");
+
+                    b.Property<Guid?>("SourceId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("source_id");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("title");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("type");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_raid_item");
+
+                    b.HasIndex("Code")
+                        .IsUnique()
+                        .HasDatabaseName("ix_raid_item_code");
+
+                    b.HasIndex("DependsOnProjectId")
+                        .HasDatabaseName("ix_raid_item_depends_on_project_id");
+
+                    b.HasIndex("ProjectId")
+                        .HasDatabaseName("ix_raid_item_project_id");
+
+                    b.ToTable("raid_item", "portfolio");
+                });
+
+            modelBuilder.Entity("Strategy.Modules.Portfolio.Domain.Release", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<string>("Goal")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("goal");
+
+                    b.Property<string>("NameAr")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("name_ar");
+
+                    b.Property<string>("NameEn")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("name_en");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("project_id");
+
+                    b.Property<int>("Sort")
+                        .HasColumnType("integer")
+                        .HasColumnName("sort");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<DateOnly?>("TargetDate")
+                        .HasColumnType("date")
+                        .HasColumnName("target_date");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_release");
+
+                    b.HasIndex("ProjectId")
+                        .HasDatabaseName("ix_release_project_id");
+
+                    b.ToTable("release", "portfolio");
+                });
+
+            modelBuilder.Entity("Strategy.Modules.Portfolio.Domain.Sprint", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Actions")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("actions");
+
+                    b.Property<string>("ApprovalPeriod")
+                        .HasMaxLength(7)
+                        .HasColumnType("character varying(7)")
+                        .HasColumnName("approval_period");
+
+                    b.Property<DateTimeOffset?>("ApprovedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("approved_at");
+
+                    b.Property<int?>("CapacityPoints")
+                        .HasColumnType("integer")
+                        .HasColumnName("capacity_points");
+
+                    b.Property<DateTimeOffset?>("ClosedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("closed_at");
+
+                    b.Property<int>("CommittedPoints")
+                        .HasColumnType("integer")
+                        .HasColumnName("committed_points");
+
+                    b.Property<string>("CommittedStoryIds")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("committed_story_ids");
+
+                    b.Property<int>("CompletedPoints")
+                        .HasColumnType("integer")
+                        .HasColumnName("completed_points");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<string>("DemoOutcome")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("demo_outcome");
+
+                    b.Property<DateOnly?>("EndDate")
+                        .HasColumnType("date")
+                        .HasColumnName("end_date");
+
+                    b.Property<string>("Goal")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("goal");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("name");
+
+                    b.Property<int>("Number")
+                        .HasColumnType("integer")
+                        .HasColumnName("number");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("project_id");
+
+                    b.Property<string>("StakeholderFeedback")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("stakeholder_feedback");
+
+                    b.Property<DateOnly?>("StartDate")
+                        .HasColumnType("date")
+                        .HasColumnName("start_date");
+
+                    b.Property<DateTimeOffset?>("StartedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("started_at");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<string>("ToImprove")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("to_improve");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<string>("WentWell")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("went_well");
+
+                    b.HasKey("Id")
+                        .HasName("pk_sprint");
+
+                    b.HasIndex("ProjectId", "Number")
+                        .IsUnique()
+                        .HasDatabaseName("ix_sprint_project_id_number");
+
+                    b.ToTable("sprint", "portfolio");
+                });
+
             modelBuilder.Entity("Strategy.Modules.Portfolio.Domain.Stakeholder", b =>
                 {
                     b.Property<Guid>("Id")
@@ -2181,6 +3317,203 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                         .HasDatabaseName("ix_stakeholder_project_id");
 
                     b.ToTable("stakeholder", "portfolio");
+                });
+
+            modelBuilder.Entity("Strategy.Modules.Portfolio.Domain.StoryEvent", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("At")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("at");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("category");
+
+                    b.Property<string>("FromColumn")
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("from_column");
+
+                    b.Property<int>("Points")
+                        .HasColumnType("integer")
+                        .HasColumnName("points");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("project_id");
+
+                    b.Property<Guid?>("SprintId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("sprint_id");
+
+                    b.Property<Guid>("StoryId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("story_id");
+
+                    b.Property<string>("ToColumn")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("to_column");
+
+                    b.HasKey("Id")
+                        .HasName("pk_story_event");
+
+                    b.HasIndex("ProjectId")
+                        .HasDatabaseName("ix_story_event_project_id");
+
+                    b.HasIndex("StoryId")
+                        .HasDatabaseName("ix_story_event_story_id");
+
+                    b.ToTable("story_event", "portfolio");
+                });
+
+            modelBuilder.Entity("Strategy.Modules.Portfolio.Domain.UserStory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("AcceptanceCriteria")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("acceptance_criteria");
+
+                    b.Property<bool>("Accepted")
+                        .HasColumnType("boolean")
+                        .HasColumnName("accepted");
+
+                    b.Property<bool>("ApprovedDone")
+                        .HasColumnType("boolean")
+                        .HasColumnName("approved_done");
+
+                    b.Property<string>("AsA")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("as_a");
+
+                    b.Property<Guid?>("AssigneeEmployeeId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("assignee_employee_id");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("category");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)")
+                        .HasColumnName("code");
+
+                    b.Property<string>("ColumnCode")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("column_code");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<DateTimeOffset?>("DoneAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("done_at");
+
+                    b.Property<Guid>("EpicId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("epic_id");
+
+                    b.Property<string>("IWant")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("i_want");
+
+                    b.Property<string>("Priority")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("priority");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("project_id");
+
+                    b.Property<int>("Rank")
+                        .HasColumnType("integer")
+                        .HasColumnName("rank");
+
+                    b.Property<string>("SoThat")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("so_that");
+
+                    b.Property<Guid?>("SprintId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("sprint_id");
+
+                    b.Property<DateTimeOffset?>("StartedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("started_at");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("status");
+
+                    b.Property<int>("StoryPoints")
+                        .HasColumnType("integer")
+                        .HasColumnName("story_points");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("title");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_user_story");
+
+                    b.HasIndex("Code")
+                        .IsUnique()
+                        .HasDatabaseName("ix_user_story_code");
+
+                    b.HasIndex("EpicId")
+                        .HasDatabaseName("ix_user_story_epic_id");
+
+                    b.HasIndex("ProjectId")
+                        .HasDatabaseName("ix_user_story_project_id");
+
+                    b.HasIndex("SprintId")
+                        .HasDatabaseName("ix_user_story_sprint_id");
+
+                    b.ToTable("user_story", "portfolio");
                 });
 #pragma warning restore 612, 618
         }

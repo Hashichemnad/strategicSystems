@@ -44,7 +44,9 @@ public sealed record ChangeRequestDto(
     bool CanEdit,
     bool CanApply,
     DateTimeOffset CreatedAt,
-    uint Version);
+    uint Version,
+    string? ProposedMethodology = null,
+    bool CostsHidden = false);
 
 public sealed record ChangeRequestInput(ChangeRequestValues Values, uint? Version = null);
 
@@ -58,7 +60,9 @@ public sealed record ChangeApplyValues(
     DateOnly? PlannedEnd = null,
     decimal? Budget = null,
     Guid? NewPmEmployeeId = null,
-    Guid? NewOwnerEmployeeId = null);
+    Guid? NewOwnerEmployeeId = null,
+    string? Methodology = null,
+    bool Rebaseline = false);
 
 public sealed record ChangeApplyInput(ChangeApplyValues Values, uint Version);
 
@@ -72,9 +76,11 @@ internal sealed class ChangeRequestService(
     IApprovalEngine engine,
     IRecordRoleService recordRoles,
     IRequestContext context,
-    IClock clock)
+    IClock clock,
+    BaselineService baselines,
+    CostVisibility costs)
 {
-    private static readonly string[] AreaCodes = ["name", "description", "scope", "dates", "budget", "ownership"];
+    private static readonly string[] AreaCodes = ["name", "description", "scope", "dates", "budget", "ownership", "plan", "methodology"];
 
     public async Task<Result<IReadOnlyList<ChangeRequestDto>>> ListAsync(Guid projectId, CancellationToken ct)
     {
@@ -342,6 +348,16 @@ internal sealed class ChangeRequestService(
                 }
 
                 tracked.ApplyDetails(v.NameAr, v.NameEn, v.Description, v.Scope, v.PlannedStart, v.PlannedEnd, v.Budget);
+                if ((v.Methodology ?? cr.ProposedMethodology) is { } methodology && Methodologies.All.Contains(methodology) && methodology != tracked.Methodology)
+                {
+                    Log("methodology", tracked.Methodology, methodology);
+                    tracked.ChangeMethodology(methodology);
+                    if (Methodologies.UsesSprints(methodology) && tracked.Board is null)
+                    {
+                        tracked.SetBoard(BoardConfig.Default);
+                    }
+                }
+
                 break;
             case ChangeTypes.Ownership:
                 if (v.NewPmEmployeeId is { } pm && pm != tracked.PmEmployeeId)
@@ -369,6 +385,18 @@ internal sealed class ChangeRequestService(
                 }
 
                 break;
+        }
+
+        if (tracked.ReplanChangeRequestId == cr.Id)
+        {
+            tracked.OpenReplan(null);
+            log.Add(new ChangeLogEntry("plan", "re-opened", "closed"));
+        }
+
+        if (v.Rebaseline && cr.Type is ChangeTypes.Details or ChangeTypes.Postponement)
+        {
+            var baseline = await baselines.TakeAsync(tracked, cr.Number, cr.Id, ct).ConfigureAwait(false); // ADR 0094: only here
+            log.Add(new ChangeLogEntry("baseline", null, $"v{baseline.VersionNo}"));
         }
 
         cr.Move(ChangeActions.Apply, clock.UtcNow);
@@ -452,9 +480,14 @@ internal sealed class ChangeRequestService(
         {
             case ChangeTypes.Details:
                 if (v.ProposedNameAr is null && v.ProposedNameEn is null && v.ProposedDescription is null && v.ProposedScope is null && v.ProposedStart is null
-                    && v.ProposedEnd is null && v.ProposedBudget is null)
+                    && v.ProposedEnd is null && v.ProposedBudget is null && v.ProposedMethodology is null && !(v.Areas ?? []).Contains("plan"))
                 {
                     Add("areas", "portfolio.errors.changeNothing");
+                }
+
+                if (v.ProposedMethodology is { } m && (!Methodologies.All.Contains(m) || m == project.Methodology))
+                {
+                    Add("proposedMethodology", "validation.unknownCode");
                 }
 
                 break;
@@ -504,6 +537,33 @@ internal sealed class ChangeRequestService(
         if (v.Budget is { } b && (b < 0 || decimal.Round(b, 2) != b))
         {
             errors.Add(new FieldError("budget", "portfolio.errors.twoDecimals", "portfolio.errors.twoDecimals"));
+        }
+
+        if (v.Rebaseline)
+        {
+            var settings = await reader.SettingsAsync(ct).ConfigureAwait(false);
+            if (!settings.Features.Baselines)
+            {
+                errors.Add(new FieldError("rebaseline", "portfolio.errors.featureOff", "portfolio.errors.featureOff"));
+            }
+            else if (cr.Type is not (ChangeTypes.Details or ChangeTypes.Postponement))
+            {
+                errors.Add(new FieldError("rebaseline", "portfolio.errors.rebaselineType", "portfolio.errors.rebaselineType"));
+            }
+            else if ((JsonSerializer.Deserialize<List<string>>(cr.Areas) ?? []).Contains("plan"))
+            {
+                var project = await db.Projects.AsNoTracking().FirstAsync(p => p.Id == cr.ProjectId, ct).ConfigureAwait(false);
+                var facts = await loader.FactsAsync(project, ct).ConfigureAwait(false);
+                foreach (var item in ProjectGates.Planning(facts).Where(i => !i.Met && i.Code is "weights" or "epics" or "hybrid-epics"))
+                {
+                    errors.Add(new FieldError($"gate.{item.Code}", item.MessageKey, item.MessageKey, item.Params));
+                }
+            }
+        }
+
+        if (v.Methodology is { } methodology && !Methodologies.All.Contains(methodology))
+        {
+            errors.Add(new FieldError("methodology", "validation.unknownCode", "validation.unknownCode"));
         }
 
         if (cr.Type == ChangeTypes.Ownership)
@@ -577,13 +637,14 @@ internal sealed class ChangeRequestService(
         var numbers = await db.Projects.AsNoTracking().Where(p => targets.Contains(p.Id)).ToDictionaryAsync(p => p.Id, p => p.Number, ct).ConfigureAwait(false);
         var canChange = await loader.CanAsync(context.User, PortfolioPermissions.ProjectChange, project, ct).ConfigureAwait(false);
         var canEdit = await loader.CanAsync(context.User, PortfolioPermissions.ProjectEdit, project, ct).ConfigureAwait(false);
+        var show = await costs.CanSeeAsync(context.User, project, ct).ConfigureAwait(false);
         return rows.Select(c => new ChangeRequestDto(
             c.Id, c.ProjectId, c.Number, c.Type, JsonSerializer.Deserialize<List<string>>(c.Areas) ?? [], c.Reason, c.ImpactOfNonResponse, c.ProposedNameAr,
-            c.ProposedNameEn, c.ProposedDescription, c.ProposedScope, c.ProposedStart, c.ProposedEnd, c.ProposedBudget, c.CostAffected,
+            c.ProposedNameEn, c.ProposedDescription, c.ProposedScope, c.ProposedStart, c.ProposedEnd, show ? c.ProposedBudget : null, c.CostAffected,
             c.NewPmEmployeeId is { } pm ? people.GetValueOrDefault(pm) : null, c.NewOwnerEmployeeId is { } o ? people.GetValueOrDefault(o) : null, c.MergeIntoProjectId,
             c.MergeIntoProjectId is { } t ? numbers.GetValueOrDefault(t) : null, c.RequestedDate, c.Status,
             c.RequestedByEmployeeId is { } r ? people.GetValueOrDefault(r) : null, c.SubmittedAt, c.DecidedAt, c.ImplementedAt,
-            JsonSerializer.Deserialize<List<ChangeLogEntry>>(c.Applied, LogJson) ?? [], c.CancelReason,
-            canChange && c.Status == ChangeStatuses.Draft, canEdit && c.Status == ChangeStatuses.Approved, c.CreatedAt, c.Version)).ToList();
+            (JsonSerializer.Deserialize<List<ChangeLogEntry>>(c.Applied, LogJson) ?? []).Where(e => show || e.Field != "budget").ToList(), c.CancelReason,
+            canChange && c.Status == ChangeStatuses.Draft, canEdit && c.Status == ChangeStatuses.Approved, c.CreatedAt, c.Version, c.ProposedMethodology, !show)).ToList();
     }
 }

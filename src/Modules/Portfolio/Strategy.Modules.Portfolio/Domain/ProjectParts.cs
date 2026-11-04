@@ -138,7 +138,8 @@ public sealed record ProjectRiskValues(
     DateOnly? ImplementationStart,
     DateOnly? ImplementationEnd,
     Guid? OwnerEmployeeId,
-    string? RmsStatus);
+    string? RmsStatus,
+    DateOnly? ReviewDate = null);
 
 /// <summary>Project risk (SPEC §1.4 D) with stored scores so the scoring can be swapped (ADR 0074).</summary>
 [Audited(EntityType)]
@@ -185,6 +186,8 @@ public sealed class ProjectRisk : ProjectChild
 
     public string? RmsStatus { get; private set; }
 
+    public DateOnly? ReviewDate { get; private set; }
+
     public string CreatedStage { get; private set; } = ProjectStages.Initiation;
 
     public static ProjectRisk Create(Guid projectId, string stage, ProjectRiskValues values, RiskScore score)
@@ -211,6 +214,7 @@ public sealed class ProjectRisk : ProjectChild
         ImplementationEnd = v.ImplementationEnd;
         OwnerEmployeeId = v.OwnerEmployeeId;
         RmsStatus = Clean(v.RmsStatus);
+        ReviewDate = v.ReviewDate;
         Score(score);
     }
 
@@ -507,6 +511,31 @@ public sealed class Contract : ProjectChild
 
     public string ContractStatus { get; private set; } = "active";
 
+    public int? RatingQuality { get; private set; }
+
+    public int? RatingTimeliness { get; private set; }
+
+    public int? RatingCommunication { get; private set; }
+
+    public string? RatingComment { get; private set; }
+
+    public Guid? RatedByUserId { get; private set; }
+
+    public DateTimeOffset? RatedAt { get; private set; }
+
+    /// <summary>Average of the three supplier ratings (1–5), null until rated.</summary>
+    public decimal? RatingOverall => RatingQuality is { } q && RatingTimeliness is { } t && RatingCommunication is { } c ? decimal.Round((q + t + c) / 3m, 2) : null;
+
+    public void Rate(int quality, int timeliness, int communication, string? comment, Guid? by, DateTimeOffset at)
+    {
+        RatingQuality = quality;
+        RatingTimeliness = timeliness;
+        RatingCommunication = communication;
+        RatingComment = Clean(comment);
+        RatedByUserId = by;
+        RatedAt = at;
+    }
+
     public static Contract Create(Guid projectId, ContractValues values)
     {
         var item = new Contract { ProjectId = projectId };
@@ -560,7 +589,8 @@ public sealed record MilestoneValues(
     bool? QualityMet,
     bool IsInnovative,
     string? InnovativeReason,
-    int Sort = 0);
+    int Sort = 0,
+    bool DeliveredInSprints = false);
 
 /// <summary>Milestone / work plan (SPEC §1.4 C, <c>&lt;Number&gt;-1.1</c>). Weights and achievements are ratios of the whole project.</summary>
 [Audited(EntityType)]
@@ -634,7 +664,27 @@ public sealed class Milestone : AuditableEntity
 
     public string? CancelReason { get; private set; }
 
+    /// <summary>Hybrid: delivered in sprints — achievement comes from its epics (ADR 0091).</summary>
+    public bool DeliveredInSprints { get; private set; }
+
+    /// <summary>Deliverable quality sign-off: pending · accepted · rejected (ADR 0095).</summary>
+    public string? QualityStatus { get; private set; }
+
+    public Guid? QualityByEmployeeId { get; private set; }
+
+    public DateTimeOffset? QualityAt { get; private set; }
+
+    public string? QualityComment { get; private set; }
+
     public bool IsActive => Status != MilestoneStatuses.Cancelled;
+
+    public void SignOff(string decision, string? comment, Guid? by, DateTimeOffset at)
+    {
+        QualityStatus = decision;
+        QualityComment = Clean(comment);
+        QualityByEmployeeId = by;
+        QualityAt = at;
+    }
 
     public static Milestone Create(Guid projectId, string code, MilestoneValues values)
     {
@@ -662,6 +712,8 @@ public sealed class Milestone : AuditableEntity
         IsInnovative = v.IsInnovative;
         InnovativeReason = v.IsInnovative ? Clean(v.InnovativeReason) : null;
         Sort = v.Sort;
+        DeliveredInSprints = !v.IsHeader && v.DeliveredInSprints;
+        QualityStatus = IsDeliverable ? QualityStatus ?? "pending" : null;
     }
 
     /// <summary>Stores the PM's pending values for the open window (validated by <see cref="MilestoneRules"/> first).</summary>
@@ -802,6 +854,22 @@ public sealed class MonthlyUpdate : AuditableEntity
     /// <summary>jsonb snapshot of the submitted milestone updates.</summary>
     public string Items { get; private set; } = "[]";
 
+    /// <summary>jsonb snapshot of the sprints carried by the roll-up (agile / hybrid, ADR 0091).</summary>
+    public string Sprints { get; private set; } = "[]";
+
+    /// <summary>The month's progress narrative (status report, ADR 0097).</summary>
+    public string? NarrativeAr { get; private set; }
+
+    public string? NarrativeEn { get; private set; }
+
+    public void SetNarrative(string? ar, string? en)
+    {
+        NarrativeAr = string.IsNullOrWhiteSpace(ar) ? null : ar.Trim();
+        NarrativeEn = string.IsNullOrWhiteSpace(en) ? null : en.Trim();
+    }
+
+    public void SetSprints(string json) => Sprints = json;
+
     public static MonthlyUpdate Open(Guid projectId, string period, int sequence, DateTimeOffset openedAt, DateTimeOffset? dueAt, string openedBy) =>
         new() { ProjectId = projectId, Period = period, Sequence = sequence, OpenedAt = openedAt, DueAt = dueAt, OpenedBy = openedBy };
 
@@ -904,7 +972,8 @@ public sealed record ChangeRequestValues(
     Guid? NewPmEmployeeId,
     Guid? NewOwnerEmployeeId,
     Guid? MergeIntoProjectId,
-    DateOnly? RequestedDate);
+    DateOnly? RequestedDate,
+    string? ProposedMethodology = null);
 
 /// <summary>Change request (SPEC §1.4 D, W7). Applying it is a separate PM confirmation (ADR 0073).</summary>
 [Audited(EntityType)]
@@ -954,6 +1023,8 @@ public sealed class ChangeRequest : AuditableEntity
 
     public DateOnly? RequestedDate { get; private set; }
 
+    public string? ProposedMethodology { get; private set; }
+
     public string Status { get; private set; } = ChangeStatuses.Draft;
 
     public Guid? RequestedByEmployeeId { get; private set; }
@@ -995,6 +1066,7 @@ public sealed class ChangeRequest : AuditableEntity
         NewOwnerEmployeeId = v.NewOwnerEmployeeId;
         MergeIntoProjectId = v.MergeIntoProjectId;
         RequestedDate = v.RequestedDate;
+        ProposedMethodology = v.ProposedMethodology is { } m && Methodologies.All.Contains(m) ? m : null;
     }
 
     public Result Move(string action, DateTimeOffset at, string? reason = null)
@@ -1024,7 +1096,7 @@ public sealed class ChangeRequest : AuditableEntity
 
     public ChangeRequestValues ToValues() =>
         new(Type, System.Text.Json.JsonSerializer.Deserialize<List<string>>(Areas) ?? [], Reason, ImpactOfNonResponse, ProposedNameAr, ProposedNameEn, ProposedDescription,
-            ProposedScope, ProposedStart, ProposedEnd, ProposedBudget, CostAffected, NewPmEmployeeId, NewOwnerEmployeeId, MergeIntoProjectId, RequestedDate);
+            ProposedScope, ProposedStart, ProposedEnd, ProposedBudget, CostAffected, NewPmEmployeeId, NewOwnerEmployeeId, MergeIntoProjectId, RequestedDate, ProposedMethodology);
 
     public void MarkApplied(string log, DateTimeOffset at)
     {

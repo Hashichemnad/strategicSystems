@@ -22,7 +22,7 @@ namespace Strategy.Modules.Portfolio.Application;
 /// <summary>Moves the project with every project approval process, inside the engine's transaction (docs/design/portfolio.md §16, §18).</summary>
 internal sealed class ProjectApprovalHook(
     PortfolioDbContext db, ProjectLoader loader, ProjectProgress progress, ProjectNotifier notifier, IRecordRoleService recordRoles, IRoleHolderQuery roles,
-    IIntegrationEventPublisher events, IClock clock, IServiceProvider services) : IApprovalHook
+    IIntegrationEventPublisher events, IClock clock, IServiceProvider services, AgileService agile, BaselineService baselines, RequestReader reader) : IApprovalHook
 {
     public IReadOnlyCollection<string> ProcessKeys { get; } = ProjectApprovalProcesses.All.Select(d => d.Key).ToList();
 
@@ -111,6 +111,12 @@ internal sealed class ProjectApprovalHook(
                     }
 
                     await progress.RecalculateAsync(project, ct).ConfigureAwait(false);
+                    if ((await reader.SettingsAsync(ct).ConfigureAwait(false)).Features.Baselines
+                        && !await db.Baselines.AnyAsync(b => b.ProjectId == project.Id, ct).ConfigureAwait(false))
+                    {
+                        await baselines.TakeAsync(project, "planning-approved", null, ct).ConfigureAwait(false); // ADR 0094: v1
+                    }
+
                     break;
                 }
 
@@ -124,6 +130,8 @@ internal sealed class ProjectApprovalHook(
                     {
                         milestone.ApproveUpdate();
                     }
+
+                    await agile.ApproveCarriedAsync(project.Id, now, ct).ConfigureAwait(false); // ADR 0091: monthly roll-up of sprints
 
                     await db.SaveChangesAsync(ct).ConfigureAwait(false);
                     await progress.RecalculateAsync(project, ct).ConfigureAwait(false);
@@ -162,12 +170,31 @@ internal sealed class ProjectApprovalHook(
                     break;
                 }
 
+            case ProjectApprovalProcesses.SprintReview:
+                {
+                    await agile.ApproveCarriedAsync(project.Id, now, ct).ConfigureAwait(false);
+                    await db.SaveChangesAsync(ct).ConfigureAwait(false);
+                    await progress.RecalculateAsync(project, ct).ConfigureAwait(false);
+                    project.MarkMonthlyApproved(now);
+                    if (project.Performance >= 1m && project.SubState == SubStates.Execution)
+                    {
+                        project.Apply(ProjectActions.AchievementComplete, template, now);
+                    }
+
+                    break;
+                }
+
             case ProjectApprovalProcesses.ChangeRequest:
                 {
                     var cr = await db.ChangeRequests.Where(c => c.ProjectId == project.Id && c.Status == ChangeStatuses.UnderReview).FirstOrDefaultAsync(ct).ConfigureAwait(false);
                     if (cr is not null)
                     {
                         cr.Move(ChangeActions.Approve, now);
+                        if ((System.Text.Json.JsonSerializer.Deserialize<List<string>>(cr.Areas) ?? []).Contains("plan"))
+                        {
+                            project.OpenReplan(cr.Id); // ADR 0094: the plan re-opens until the change is applied
+                        }
+
                         await notifier.ToEmployeesAsync(PortfolioNotifications.ChangeRequestDecided, project, [project.PmEmployeeId, project.OwnerEmployeeId], db, ct,
                             cr.Number, stage: new BilingualText("معتمد", "Approved")).ConfigureAwait(false);
                     }
@@ -200,8 +227,13 @@ internal sealed class ProjectApprovalHook(
                         milestone.ReturnUpdate();
                     }
 
+                    await agile.ReturnCarriedAsync(project.Id, now, ct).ConfigureAwait(false);
                     return Result.Success();
                 }
+
+            case ProjectApprovalProcesses.SprintReview:
+                await agile.ReturnCarriedAsync(project.Id, now, ct).ConfigureAwait(false);
+                return Result.Success();
 
             case ProjectApprovalProcesses.ChangeRequest:
                 {
@@ -468,6 +500,31 @@ public static class ProjectLinks
     public static readonly LinkableTypeDefinition Milestone = new(
         PortfolioPermissions.MilestoneResource, PortfolioPermissions.SystemCode, "مرحلة / معلم مشروع", "Project milestone", [LinkCapabilities.TaskAble],
         PortfolioPermissions.ProjectRead, "/portfolio/milestones/{id}", FollowLinkedPermission: PortfolioPermissions.ProjectEdit);
+
+    /// <summary>ADR 0090: user stories use Task Management for their tasks.</summary>
+    public static readonly LinkableTypeDefinition Story = new(
+        PortfolioPermissions.StoryResource, PortfolioPermissions.SystemCode, "قصة مستخدم", "User story", [LinkCapabilities.TaskAble],
+        PortfolioPermissions.ProjectRead, "/portfolio/stories/{id}", FollowLinkedPermission: PortfolioPermissions.ProjectEdit);
+}
+
+internal sealed class StoryLinkTargets(PortfolioDbContext db, ProjectLoader loader) : ILinkTargetSource
+{
+    public string ResourceType => PortfolioPermissions.StoryResource;
+
+    public async Task<IReadOnlyDictionary<Guid, LinkTarget>> GetAsync(IReadOnlyCollection<Guid> ids, ClaimsPrincipal user, CancellationToken cancellationToken)
+    {
+        var visible = await loader.VisibleAsync(user, cancellationToken).ConfigureAwait(false);
+        var rows = await db.Stories.AsNoTracking().Where(s => ids.Contains(s.Id) && visible.Any(p => p.Id == s.ProjectId)).ToListAsync(cancellationToken).ConfigureAwait(false);
+        return rows.ToDictionary(s => s.Id, s => new LinkTarget(s.Id, s.Code, s.Title, s.Title, s.Category, s.ColumnCode, s.ColumnCode,
+            s.IsDone ? "success" : s.IsActive ? "info" : "neutral", !s.IsActive || s.ApprovedDone));
+    }
+
+    public async Task<bool> HasPermissionAsync(Guid id, string permission, ClaimsPrincipal user, CancellationToken cancellationToken)
+    {
+        var projectId = await db.Stories.AsNoTracking().Where(s => s.Id == id).Select(s => (Guid?)s.ProjectId).FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
+        return projectId is { } p && await loader.FindAsync(p, user, cancellationToken).ConfigureAwait(false) is { } project
+            && await loader.CanAsync(user, permission, project, cancellationToken).ConfigureAwait(false);
+    }
 }
 
 internal sealed class ProjectLinkTargets(ProjectLoader loader) : ILinkTargetSource
@@ -658,6 +715,12 @@ internal sealed class MonthlyCycleRunner(PortfolioDbContext db, IServiceScopeFac
             var notifier = scope.ServiceProvider.GetRequiredService<ProjectNotifier>();
             var settings = await scope.ServiceProvider.GetRequiredService<RequestReader>().SettingsAsync(ct).ConfigureAwait(false);
             var project = await scoped.Projects.FirstAsync(p => p.Id == id, ct).ConfigureAwait(false);
+            if (project.Methodology == Methodologies.Agile
+                && AgileApprovalModes.Effective(project.Methodology, project.AgileApprovalMode, settings.AgileApprovalMode) == AgileApprovalModes.Sprint)
+            {
+                continue; // ADR 0091: sprint mode approves each sprint — no monthly window
+            }
+
             var unit = project.SectionUnitId ?? project.UnitId;
             await using var transaction = await scoped.Database.BeginTransactionAsync(ct).ConfigureAwait(false);
             var changed = false;

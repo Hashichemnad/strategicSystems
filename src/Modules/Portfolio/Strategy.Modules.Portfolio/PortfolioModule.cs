@@ -67,6 +67,22 @@ public sealed class PortfolioModule : IModule
         services.AddScoped<IProjectRiskDirectory, ProjectRiskDirectory>();
         services.AddScoped<IKpiLinkedRecordSource, ProjectKpiLinks>();
         services.AddScheduledJob(MonthlyCycleJob.Definition);
+        services.AddScoped<CostVisibility>();
+        services.AddScoped<ProjectGuard>();
+        services.AddScoped<AgileService>();
+        services.AddScoped<HealthService>();
+        services.AddScoped<BaselineService>();
+        services.AddScoped<RaidService>();
+        services.AddScoped<RaciService>();
+        services.AddScoped<CommunicationService>();
+        services.AddScoped<BenefitService>();
+        services.AddScoped<ProjectExtrasService>();
+        services.AddScoped<TemplateService>();
+        services.AddScoped<GroupService>();
+        services.AddScoped<PortfolioViewService>();
+        services.AddScoped<StatusReportService>();
+        services.AddScoped<CommunicationReminderRunner>();
+        services.AddScheduledJob(CommunicationReminderJob.Definition);
         services.AddIntegrationEventHandler<TeamMembershipChanged, ProjectTeamMembershipHandler>();
         services.AddIntegrationEventHandler<Risk.Contracts.RiskFrameworkChanged, ProjectRiskRescoreHandler>();
 
@@ -104,6 +120,8 @@ public sealed class PortfolioModule : IModule
         services.AddLinkTargetSource<RequestLinkTargets>();
         services.AddLinkableType(ProjectLinks.Project);
         services.AddLinkableType(ProjectLinks.Milestone);
+        services.AddLinkableType(ProjectLinks.Story);
+        services.AddLinkTargetSource<StoryLinkTargets>();
         services.AddLinkTargetSource<ProjectLinkTargets>();
         services.AddLinkTargetSource<MilestoneLinkTargets>();
 
