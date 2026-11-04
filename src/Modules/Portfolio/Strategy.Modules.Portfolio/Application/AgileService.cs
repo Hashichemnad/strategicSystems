@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Strategy.Modules.Portfolio.Domain;
 using Strategy.Modules.Portfolio.Infrastructure;
 using Strategy.Platform.Access;
@@ -67,7 +68,7 @@ internal sealed class AgileService(
     ProjectLoader loader,
     RequestReader reader,
     ProjectProgress progress,
-    IApprovalEngine engine,
+    IServiceProvider services,
     IRequestContext context,
     IClock clock)
 {
@@ -715,6 +716,7 @@ internal sealed class AgileService(
         var variables = ProjectService.Variables(project);
         variables[ProjectApprovalProcesses.SprintVariable] = sprint.Number;
         variables[ProjectApprovalProcesses.CompletedPointsVariable] = sprint.CompletedPoints;
+        var engine = services.GetRequiredService<IApprovalEngine>(); // resolved lazily: the engine's hooks depend on this service
         var started = await engine.SubmitAsync(
             new ApprovalSubmission(ProjectApprovalProcesses.SprintReview, ProjectService.Subject(project), variables, input.Comment), db, ct).ConfigureAwait(false);
         if (started.IsFailure)

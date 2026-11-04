@@ -380,7 +380,8 @@ public sealed class PortfolioApiTests(PortfolioFixture fx) : IClassFixture<Portf
         tools.Select(t => t.Definition.Name).ShouldBe(
             [
                 "portfolio_search_requests", "portfolio_my_requests", "portfolio_get_request", "portfolio_get_project", "portfolio_create_draft_request",
-                "portfolio_my_projects", "portfolio_project_milestones", "portfolio_update_milestone_draft",
+                "portfolio_my_projects", "portfolio_project_milestones", "portfolio_update_milestone_draft", "portfolio_project_backlog", "portfolio_sprint_summary",
+                "portfolio_summary", "portfolio_create_story_draft",
             ], ignoreOrder: true);
         tools.Where(t => t.Definition.Kind == ToolKind.Write).ShouldAllBe(t => !t.Definition.DefaultEnabled, "write tools are off by default (ADR 0031)");
         tools.ShouldNotContain(t => t.Definition.Kind == ToolKind.Approve);

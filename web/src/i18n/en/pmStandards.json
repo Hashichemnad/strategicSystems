@@ -1,0 +1,435 @@
+{
+  "saved": "Saved",
+  "remove": "Remove",
+  "actionsColumn": "Actions",
+  "rag": {
+    "green": "Green — on track",
+    "amber": "Amber — at risk",
+    "red": "Red — off track",
+    "grey": "Grey — not assessed"
+  },
+  "bands": {
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High",
+    "critical": "Critical"
+  },
+  "ai": {
+    "draft": "AI-generated draft",
+    "retry": "Try again",
+    "dismiss": "Dismiss"
+  },
+  "health": {
+    "title": "Project health (RAG)",
+    "hint": "Calculated from the plan, costs, change requests and risks. The PM or PM Office may override a value with a justification.",
+    "dimensions": {
+      "schedule": "Schedule",
+      "cost": "Cost",
+      "scope": "Scope",
+      "risk": "Risk",
+      "overall": "Overall"
+    },
+    "overridden": "Overridden",
+    "calculated": "Calculated",
+    "justification": "Justification",
+    "override": "Override",
+    "overrideHint": "The override replaces the calculated value until it is cleared. It is recorded in the history.",
+    "clear": "Clear override",
+    "value": "Value",
+    "facts": {
+      "progress": "Progress",
+      "planned": "Planned to date",
+      "costVariance": "Cost variance",
+      "daysPastDue": "Most days past due",
+      "overdueTasks": "Overdue linked tasks"
+    }
+  },
+  "baseline": {
+    "title": "Baselines and variance",
+    "hint": "Version 1 is taken at planning approval; a new version only when an approved change request is applied with re-baseline.",
+    "none": "No baseline yet",
+    "noneHint": "The first baseline is taken when the planning stage is approved.",
+    "version": "Baseline v{{value}}",
+    "budget": "Budget",
+    "compareWith": "Compare with",
+    "latest": "Latest baseline",
+    "baselineEnd": "Baseline end",
+    "currentEnd": "Current planned end",
+    "endVariance": "End-date variance",
+    "budgetVariance": "Budget (baseline → current)",
+    "noRows": "No milestones or epics in this baseline",
+    "item": "Milestone / epic",
+    "change": "Change",
+    "baselineDates": "Baseline dates",
+    "currentDates": "Current dates",
+    "actualEnd": "Actual end",
+    "startDelta": "Start Δ",
+    "endDelta": "End Δ",
+    "actualDelta": "Actual end Δ",
+    "weight": "Weight",
+    "cost": "Cost",
+    "changes": {
+      "added": "Added",
+      "removed": "Removed",
+      "changed": "Changed",
+      "unchanged": "Unchanged"
+    },
+    "days": "{{value}} days"
+  },
+  "evm": {
+    "title": "Earned value",
+    "hint": "As of today, from the baseline budget and plan. Ratios below 1 mean behind schedule or over cost.",
+    "asOf": "As of {{date}}",
+    "ratios": "Planned {{planned}} % · progress {{progress}} %",
+    "below": "Below 1",
+    "names": {
+      "bac": "Budget at completion",
+      "pv": "Planned value",
+      "ev": "Earned value",
+      "ac": "Actual cost",
+      "sv": "Schedule variance",
+      "cv": "Cost variance",
+      "spi": "Schedule performance index",
+      "cpi": "Cost performance index",
+      "eac": "Estimate at completion",
+      "etc": "Estimate to complete",
+      "vac": "Variance at completion",
+      "tcpi": "To-complete performance index"
+    },
+    "short": {
+      "bac": "BAC",
+      "pv": "PV",
+      "ev": "EV",
+      "ac": "AC",
+      "sv": "SV",
+      "cv": "CV",
+      "spi": "SPI",
+      "cpi": "CPI",
+      "eac": "EAC",
+      "etc": "ETC",
+      "vac": "VAC",
+      "tcpi": "TCPI"
+    },
+    "explain": {
+      "bac": "Total approved budget (baseline).",
+      "pv": "Budget of the work planned to date.",
+      "ev": "Budget of the work actually done.",
+      "ac": "What has been spent so far.",
+      "sv": "EV − PV: negative is behind schedule.",
+      "cv": "EV − AC: negative is over cost.",
+      "spi": "EV ÷ PV: below 1 is behind schedule.",
+      "cpi": "EV ÷ AC: below 1 is over cost.",
+      "eac": "BAC ÷ CPI: expected total cost.",
+      "etc": "EAC − AC: still to spend.",
+      "vac": "BAC − EAC: negative is an expected overrun.",
+      "tcpi": "Efficiency needed on the remaining work to stay within budget."
+    }
+  },
+  "raid": {
+    "title": "RAID log",
+    "hint": "Risks, assumptions, issues, dependencies and decisions. Entries from team members start as proposed until the PM accepts them.",
+    "risksHint": "From the Risks tab (read only here).",
+    "empty": "No entries",
+    "propose": "Propose",
+    "proposeHint": "Your entry is saved as proposed; the PM accepts it.",
+    "accept": "Accept",
+    "accepted": "Entry accepted",
+    "thisProject": "This project",
+    "none": "None",
+    "sections": {
+      "risk": "Risks",
+      "issue": "Issues",
+      "assumption": "Assumptions",
+      "dependency": "Dependencies",
+      "decision": "Decisions"
+    },
+    "add": {
+      "issue": "Add issue",
+      "assumption": "Add assumption",
+      "dependency": "Add dependency",
+      "decision": "Add decision"
+    },
+    "types": {
+      "issue": "Issue",
+      "assumption": "Assumption",
+      "dependency": "Dependency",
+      "decision": "Decision"
+    },
+    "priorities": {
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "statuses": {
+      "proposed": "Proposed",
+      "open": "Open",
+      "resolved": "Resolved",
+      "closed": "Closed"
+    },
+    "fields": {
+      "code": "Code",
+      "title": "Title",
+      "description": "Description",
+      "owner": "Owner",
+      "priority": "Priority",
+      "dueDate": "Due date",
+      "status": "Status",
+      "dependsOn": "Depends on",
+      "decidedOn": "Decided on",
+      "decidedBy": "Decided by",
+      "milestone": "Milestone",
+      "resolution": "Resolution",
+      "dependsOnProject": "Depends on project",
+      "dependsOnMilestone": "Depends on milestone",
+      "searchProject": "Search projects"
+    }
+  },
+  "matrix": {
+    "title": "Risk matrix",
+    "hint": "Number of risks per probability × impact ({{basis}} score). Select a cell to see its risks.",
+    "probability": "Probability",
+    "impact": "Impact",
+    "inherent": "inherent",
+    "residual": "Residual",
+    "pxi": "P × I",
+    "reviewDate": "Review date",
+    "cellLabel": "Probability {{probability}}, impact {{impact}}, {{band}}: {{count}} risks",
+    "cellTitle": "Probability {{probability}} × impact {{impact}}",
+    "noRisks": "No risks in this cell"
+  },
+  "raci": {
+    "title": "RACI matrix",
+    "hint": "Who is Responsible, Accountable, Consulted and Informed for each area.",
+    "add": "Add assignment",
+    "addTo": "Add an assignment to {{area}}",
+    "edit": "Edit assignment",
+    "legend": "Legend",
+    "roles": {
+      "R": "Responsible",
+      "A": "Accountable",
+      "C": "Consulted",
+      "I": "Informed"
+    },
+    "oneAccountable": "Each area needs exactly one Accountable (A) person.",
+    "missingA": "Without an A: {{areas}}.",
+    "multipleA": "More than one A: {{areas}}.",
+    "empty": "No RACI assignments yet",
+    "area": "Area",
+    "areaHint": "A deliverable, milestone or work area.",
+    "noRole": "No role",
+    "editEntry": "Edit {{person}} on {{area}} ({{role}})",
+    "milestone": "Milestone (optional)",
+    "person": "Person",
+    "role": "Role"
+  },
+  "communication": {
+    "title": "Communication plan",
+    "hint": "Who hears what, how and how often. The owner is reminded when an item is due.",
+    "generate": "Generate from stakeholders",
+    "generated": "Items generated from the stakeholders",
+    "add": "Add item",
+    "edit": "Edit item",
+    "empty": "No communication items",
+    "audience": "Audience",
+    "message": "Message",
+    "method": "Method",
+    "frequency": "Frequency",
+    "owner": "Owner",
+    "nextDue": "Next due",
+    "lastDone": "Last done",
+    "overdue": "Overdue",
+    "due": "Due",
+    "marked": "Marked as done",
+    "markDone": "Mark done",
+    "removeTitle": "Remove this item?",
+    "removeHint": "The item is removed from the plan; the history keeps it.",
+    "stakeholder": "Stakeholder",
+    "frequencies": {
+      "weekly": "Weekly",
+      "biweekly": "Every two weeks",
+      "monthly": "Monthly",
+      "quarterly": "Quarterly",
+      "once": "Once"
+    }
+  },
+  "benefits": {
+    "tab": "Benefits",
+    "title": "Benefits",
+    "hint": "Expected benefits with a measure, baseline and target; measured after delivery (Closure / Impact).",
+    "add": "Add benefit",
+    "edit": "Edit benefit",
+    "empty": "No benefits defined",
+    "benefit": "Benefit",
+    "measure": "Measure",
+    "measureHint": "How the benefit is measured.",
+    "baseline": "Baseline",
+    "target": "Target",
+    "actual": "Actual",
+    "owner": "Owner",
+    "measurementDate": "Measurement date",
+    "status": "Status",
+    "measureAction": "Measure",
+    "removeTitle": "Remove this benefit?",
+    "removeHint": "The benefit is removed from the list; the history keeps it.",
+    "titleAr": "Title (Arabic)",
+    "titleEn": "Title (English)",
+    "unit": "Unit",
+    "measureTitle": "Measure benefit",
+    "targetIs": "Target: {{value}} {{unit}}",
+    "note": "Note",
+    "statuses": {
+      "planned": "Planned",
+      "realised": "Realised",
+      "partly": "Partly realised",
+      "not-realised": "Not realised"
+    }
+  },
+  "checklist": {
+    "title": "{{gate}} checklist",
+    "gates": {
+      "charter": "Charter",
+      "planning": "Planning",
+      "closure": "Closure"
+    },
+    "progress": "{{done}} of {{total}} done",
+    "required": "Required",
+    "optional": "Optional",
+    "noteFor": "Note for {{item}}",
+    "note": "Note (optional)"
+  },
+  "charterAi": {
+    "title": "Charter assistant",
+    "hint": "Suggestions for the charter. Tick what you want; nothing is saved until you choose Add selected.",
+    "target": "Target",
+    "interestImpact": "Interest {{interest}} · impact {{impact}}",
+    "added": "{{count}} item(s) added",
+    "addSelected": "Add selected ({{count}})",
+    "none": "No suggestions",
+    "groups": {
+      "kpis": "KPIs",
+      "risks": "Risks",
+      "stakeholders": "Stakeholders",
+      "planningItems": "Planning items"
+    }
+  },
+  "lessons": {
+    "title": "Relevant lessons from past projects",
+    "search": "Search lessons",
+    "none": "No lessons found",
+    "recommendation": "Recommendation"
+  },
+  "procurement": {
+    "title": "Payments and supplier rating",
+    "hint": "Open a contract to manage its payment milestones and rate the supplier.",
+    "payments": "Payment milestones",
+    "totals": "Planned {{planned}} · paid {{paid}}",
+    "addPayment": "Add payment",
+    "editPayment": "Edit payment",
+    "noPayments": "No payment milestones",
+    "paymentTitle": "Payment",
+    "dueDate": "Due date",
+    "amount": "Amount",
+    "milestone": "Linked milestone",
+    "status": "Status",
+    "paidOn": "Paid on",
+    "statuses": {
+      "planned": "Planned",
+      "paid": "Paid",
+      "cancelled": "Cancelled"
+    },
+    "rating": "Supplier rating",
+    "overall": "Overall {{value}} / 5",
+    "ratedAt": "Rated {{date}}",
+    "criteria": {
+      "quality": "Quality",
+      "timeliness": "Timeliness",
+      "communication": "Communication"
+    },
+    "comment": "Comment",
+    "saveRating": "Save rating"
+  },
+  "quality": {
+    "statuses": {
+      "pending": "Quality: pending",
+      "accepted": "Quality: accepted",
+      "rejected": "Quality: rejected"
+    },
+    "inSprints": "Delivered in sprints",
+    "signOff": "Sign off",
+    "deliveredInSprints": "Delivered in sprints",
+    "deliveredInSprintsHint": "Progress comes from the stories of the linked epics.",
+    "decision": "Decision",
+    "decisions": {
+      "accepted": "Accept deliverable",
+      "rejected": "Reject deliverable"
+    },
+    "comment": "Comment",
+    "acceptanceCriteria": "Acceptance criteria"
+  },
+  "templates": {
+    "apply": "Apply template",
+    "applyHint": "Creates the template's milestones, planning items, risks and epics on this project.",
+    "applyAction": "Apply",
+    "applied": "Added {{milestones}} milestones, {{planningItems}} planning items, {{risks}} risks and {{epics}} epics",
+    "none": "No active templates",
+    "template": "Template",
+    "methodologies": {
+      "waterfall": "Waterfall",
+      "agile": "Agile",
+      "hybrid": "Hybrid"
+    },
+    "saveAs": "Save as template",
+    "saveHint": "Saves this project's plan as a reusable template.",
+    "saved": "Template saved",
+    "code": "Code",
+    "nameAr": "Name (Arabic)",
+    "nameEn": "Name (English)"
+  },
+  "monthly": {
+    "narrative": "Month narrative",
+    "narrativeHint": "Shown in the monthly status report. Save it before you submit.",
+    "draftWithAi": "Draft with AI",
+    "updateAssistant": "Update assistant",
+    "narrativeAr": "Narrative (Arabic)",
+    "narrativeEn": "Narrative (English)",
+    "atRisk": "Milestones at risk",
+    "atRiskReasons": {
+      "past-end": "past its planned end",
+      "behind-plan": "behind plan"
+    },
+    "correctiveActions": "Suggested corrective actions",
+    "saveNarrative": "Save narrative",
+    "sprints": "Sprints in this update",
+    "sprint": "Sprint {{number}}",
+    "points": "{{completed}} of {{committed}} points done",
+    "statusReport": "Status report PDF",
+    "downloadAr": "Download the status report in Arabic",
+    "downloadEn": "Download the status report in English"
+  },
+  "impact": {
+    "analyse": "Analyse impact (AI)",
+    "summary": "Summary",
+    "dates": "Dates",
+    "cost": "Cost",
+    "weights": "Weights",
+    "dependents": "Dependencies",
+    "recommendation": "Recommendations",
+    "dependentProjects": "Dependent projects",
+    "noDependents": "No other project depends on this one"
+  },
+  "change": {
+    "methodology": "Proposed methodology",
+    "methodologies": {
+      "waterfall": "Waterfall",
+      "agile": "Agile",
+      "hybrid": "Hybrid"
+    },
+    "areas": "Areas",
+    "replan": "Re-plan milestones / epics",
+    "replanHint": "Once approved, planning re-opens until the change is applied.",
+    "changeMethodology": "Change the methodology",
+    "replanOpen": "Planning is open for this change: adjust the milestones / epics before applying.",
+    "rebaseline": "Re-baseline",
+    "rebaselineHint": "Takes a new baseline version from the plan as it stands after this change."
+  }
+}

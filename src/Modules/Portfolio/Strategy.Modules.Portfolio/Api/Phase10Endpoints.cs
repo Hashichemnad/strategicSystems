@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Routing;
+using Strategy.Modules.Portfolio.Ai;
 using Strategy.Modules.Portfolio.Application;
 using Strategy.Platform.Http.Access;
 using Strategy.Platform.Http.Problems;
@@ -231,5 +232,23 @@ internal static class Phase10Endpoints
         group.MapGet("/dashboard", async (Guid? portfolioGroupId, Guid? programmeId, Guid? unitId, PortfolioViewService s, CancellationToken ct) =>
                 (await s.DashboardAsync(new DashboardFilter(portfolioGroupId, programmeId, unitId), ct)).ToOk())
             .WithName("GetPortfolioDashboard").RequirePermission(read);
+
+        const string Ai = PortfolioPermissions.AiAssist;
+        projects.MapPost("/{id:guid}/ai/charter", async (Guid id, ProjectAssistService s, CancellationToken ct) => (await s.CharterAsync(id, ct)).ToOk())
+            .WithName("SuggestProjectCharter").RequirePermission(Ai);
+        projects.MapPost("/{id:guid}/ai/plan", async (Guid id, ProjectAssistService s, CancellationToken ct) => (await s.PlanAsync(id, ct)).ToOk())
+            .WithName("DraftProjectPlan").RequirePermission(Ai);
+        projects.MapPost("/{id:guid}/ai/update", async (Guid id, ProjectAssistService s, CancellationToken ct) => (await s.UpdateAsync(id, ct)).ToOk())
+            .WithName("DraftProjectUpdate").RequirePermission(Ai);
+        projects.MapPost("/{id:guid}/ai/status-report", async (Guid id, ProjectAssistService s, CancellationToken ct) => (await s.StatusNarrativeAsync(id, ct)).ToOk())
+            .WithName("DraftProjectStatusNarrative").RequirePermission(Ai);
+        group.MapPost("/change-requests/{cid:guid}/ai/impact", async (Guid cid, ProjectAssistService s, CancellationToken ct) => (await s.ChangeImpactAsync(cid, ct)).ToOk())
+            .WithName("AnalyseChangeImpact").RequirePermission(Ai);
+        group.MapPost("/ai/insights", async (Guid? portfolioGroupId, Guid? programmeId, Guid? unitId, ProjectAssistService s, CancellationToken ct) =>
+                (await s.InsightsAsync(new DashboardFilter(portfolioGroupId, programmeId, unitId), ct)).ToOk())
+            .WithName("DraftPortfolioInsights").RequirePermission(Ai);
+        group.MapGet("/lessons/search", async (string? q, Guid? excludeProjectId, ProjectAssistService s, CancellationToken ct) =>
+                (await s.SearchLessonsAsync(q, excludeProjectId, ct)).ToOk())
+            .WithName("SearchPortfolioLessons").RequirePermission(read);
     }
 }

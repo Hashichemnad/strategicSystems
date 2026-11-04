@@ -975,9 +975,9 @@ public sealed record RiskMatrixCell(int Probability, int Impact, int Count, IRea
 
 public sealed record RiskMatrixDto(string Basis, IReadOnlyList<RiskMatrixCell> Cells, IReadOnlyList<RaidRiskDto> Risks);
 
-public sealed record ChecklistItemDto(string Gate, string Code, string? LabelAr, string? LabelEn, bool Required, bool Checked, DateTimeOffset? At, string? Note);
+public sealed record GateChecklistItemDto(string Gate, string Code, string? LabelAr, string? LabelEn, bool Required, bool Checked, DateTimeOffset? At, string? Note);
 
-public sealed record ChecklistDto(IReadOnlyList<ChecklistItemDto> Items, bool CanTick, uint Version);
+public sealed record GateChecklistDto(IReadOnlyList<GateChecklistItemDto> Items, bool CanTick, uint Version);
 
 public sealed record ChecklistTickInput(bool Checked, string? Note, uint Version);
 
@@ -1213,7 +1213,7 @@ internal sealed class ProjectExtrasService(
             r.OwnerEmployeeId is { } o ? people.GetValueOrDefault(o) : null, r.ReviewDate)).ToList());
     }
 
-    public async Task<Result<ChecklistDto>> ChecklistAsync(Guid projectId, CancellationToken ct)
+    public async Task<Result<GateChecklistDto>> ChecklistAsync(Guid projectId, CancellationToken ct)
     {
         var (project, error) = await guard.ReadAsync(projectId, ct).ConfigureAwait(false);
         if (project is null)
@@ -1226,13 +1226,13 @@ internal sealed class ProjectExtrasService(
         var items = Gates.All.SelectMany(g => settings.GateChecklists.For(g).Select(d =>
         {
             var tick = ticks.GetValueOrDefault(g)?.GetValueOrDefault(d.Code);
-            return new ChecklistItemDto(g, d.Code, d.LabelAr, d.LabelEn, d.Required, tick?.Checked == true, tick?.At, tick?.Note);
+            return new GateChecklistItemDto(g, d.Code, d.LabelAr, d.LabelEn, d.Required, tick?.Checked == true, tick?.At, tick?.Note);
         })).ToList();
-        return new ChecklistDto(items,
+        return new GateChecklistDto(items,
             project.Status == ProjectStatuses.Active && await guard.HasAsync(project, PortfolioPermissions.ProjectEdit, ct).ConfigureAwait(false), project.Version);
     }
 
-    public async Task<Result<ChecklistDto>> TickAsync(Guid projectId, string gate, string code, ChecklistTickInput input, CancellationToken ct)
+    public async Task<Result<GateChecklistDto>> TickAsync(Guid projectId, string gate, string code, ChecklistTickInput input, CancellationToken ct)
     {
         var (project, error) = await guard.CanAsync(projectId, PortfolioPermissions.ProjectEdit, ct).ConfigureAwait(false);
         if (project is null)

@@ -88,7 +88,7 @@ public sealed record SavePortfolioSettings(PortfolioSettings Settings, uint Vers
 
 public sealed record UploadProjectScopeTemplate(string FileName, Stream Content) : ICommand<SettingsDocument<PortfolioSettings>>;
 
-internal sealed class ProjectHandlers(PortfolioDbContext db, RequestReader reader, ProjectLoader loader, IRequestContext context)
+internal sealed class ProjectHandlers(PortfolioDbContext db, RequestReader reader, ProjectLoader loader, IRequestContext context, CostVisibility costs)
     : IQueryHandler<GetProject, ProjectDto>, IQueryHandler<ListProjects, PagedResult<ProjectListItemDto>>
 {
     public async Task<Result<ProjectDto>> HandleAsync(GetProject query, CancellationToken cancellationToken)
@@ -104,10 +104,12 @@ internal sealed class ProjectHandlers(PortfolioDbContext db, RequestReader reade
         var units = await reader.UnitsAsync([p.UnitId, p.SectionUnitId], cancellationToken).ConfigureAwait(false);
         var requestNumber = await db.Requests.AsNoTracking().Where(r => r.Id == p.RequestId).Select(r => r.Number).FirstOrDefaultAsync(cancellationToken)
             .ConfigureAwait(false);
+        var show = await costs.CanSeeAsync(context.User, p, cancellationToken).ConfigureAwait(false);
         return new ProjectDto(
             p.Id, p.Number, p.Classification, p.NameAr, p.NameEn, p.Description, p.ScopeOfWork, p.Stage, p.Status,
             p.UnitId is { } u ? units.GetValueOrDefault(u) : null, p.SectionUnitId is { } s ? units.GetValueOrDefault(s) : null, p.StrategicObjectiveCode,
-            p.ProgramTypeCode, p.Budget, p.Year1PlannedCost, p.Year2PlannedCost, p.Year3PlannedCost, p.Year4PlannedCost, p.PlannedStart, p.PlannedEnd,
+            p.ProgramTypeCode, show ? p.Budget : null, show ? p.Year1PlannedCost : null, show ? p.Year2PlannedCost : null, show ? p.Year3PlannedCost : null,
+            show ? p.Year4PlannedCost : null, p.PlannedStart, p.PlannedEnd,
             p.OwnerEmployeeId is { } o ? people.GetValueOrDefault(o) : null, p.RequesterEmployeeId is { } q ? people.GetValueOrDefault(q) : null, p.RequestId, requestNumber,
             p.Classification == Classifications.Project ? ProjectStages.ProjectPath : ProjectStages.InitiativePath, p.CreatedAt, p.Version);
     }
@@ -169,8 +171,10 @@ internal sealed class ProjectHandlers(PortfolioDbContext db, RequestReader reade
         var projects = await source.Skip(page.Skip).Take(page.PageSize).ToListAsync(cancellationToken).ConfigureAwait(false);
         var units = await reader.UnitsAsync(projects.Select(p => p.UnitId), cancellationToken).ConfigureAwait(false);
         var people = await reader.PeopleAsync(projects.Select(p => p.PmEmployeeId), cancellationToken).ConfigureAwait(false);
+        var visibleCosts = await costs.VisibleSetAsync(context.User, projects.Select(p => p.Id).ToList(), cancellationToken).ConfigureAwait(false);
         return new PagedResult<ProjectListItemDto>(projects.Select(p => new ProjectListItemDto(
-            p.Id, p.Number, p.Classification, p.NameAr, p.NameEn, p.Stage, p.Status, p.UnitId is { } u ? units.GetValueOrDefault(u) : null, p.Budget, p.PlannedStart,
+            p.Id, p.Number, p.Classification, p.NameAr, p.NameEn, p.Stage, p.Status, p.UnitId is { } u ? units.GetValueOrDefault(u) : null,
+            visibleCosts.Contains(p.Id) ? p.Budget : null, p.PlannedStart,
             p.PlannedEnd, p.CreatedAt, p.SubState, p.PmEmployeeId is { } pm ? people.GetValueOrDefault(pm) : null, p.Performance, p.PlannedProgress, p.ProgressStatus))
             .ToList(), page.Page, page.PageSize, total);
     }

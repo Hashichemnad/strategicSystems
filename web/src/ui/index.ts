@@ -41,3 +41,11 @@ export { OtpInput } from './otp-input';
 export { Checkbox, Switch } from './toggle';
 export { buildTree, type FlatNode, type TreeNode } from './tree';
 export { TreeView } from './tree-view';
+export {
+  Gantt,
+  exportGanttPdf,
+  exportGanttPng,
+  type GanttDependency,
+  type GanttProps,
+  type GanttRow,
+} from './gantt';

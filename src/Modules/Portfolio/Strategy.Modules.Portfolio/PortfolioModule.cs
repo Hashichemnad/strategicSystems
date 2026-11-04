@@ -125,16 +125,19 @@ public sealed class PortfolioModule : IModule
         services.AddLinkTargetSource<ProjectLinkTargets>();
         services.AddLinkTargetSource<MilestoneLinkTargets>();
 
-        foreach (var feature in PortfolioAiFeatures.All)
+        foreach (var feature in PortfolioAiFeatures.All.Concat(ProjectAssistFeatures.All))
         {
             services.AddAiFeature(feature);
         }
+
+        services.AddScoped<ProjectAssistService>();
 
         services.AddAiPromptAssembly(typeof(PortfolioModule).Assembly);
         services.AddAiForm(RequestAiForm.Definition);
         services.AddAiFormChoiceSource<RequestFormChoices>();
         services.AddScoped<AssessmentService>();
         services.AddAiRecordSource<RequestRecordSource>();
+        services.AddAiRecordSource<ProjectRecordSource>();
         services.AddRecordSearchSource<RequestSearchSource>();
         services.AddRecordSearchSource<ProjectSearchSource>();
         services.AddAppTool<SearchRequestsTool>();
@@ -145,6 +148,10 @@ public sealed class PortfolioModule : IModule
         services.AddAppTool<MyProjectsTool>();
         services.AddAppTool<ProjectMilestonesTool>();
         services.AddAppTool<UpdateMilestoneDraftTool>();
+        services.AddAppTool<ProjectBacklogTool>();
+        services.AddAppTool<SprintSummaryTool>();
+        services.AddAppTool<PortfolioSummaryTool>();
+        services.AddAppTool<CreateStoryDraftTool>();
     }
 
     public void MapEndpoints(IEndpointRouteBuilder endpoints) => PortfolioEndpoints.Map(endpoints.MapModuleGroup(this));

@@ -476,7 +476,40 @@
     "weightsOver100": "Milestone weights would total {{total}} % (more than 100 %).",
     "windowAlreadyOpen": "A monthly update window is already open.",
     "windowClosed": "No monthly update window is open.",
-    "nothingToRecall": "There is no pending approval to recall."
+    "nothingToRecall": "There is no pending approval to recall.",
+    "boardNeedsTodoAndDone": "The board needs at least one to-do column and one done column.",
+    "columnNotEmpty": "A column that still has stories cannot be removed; move the stories first.",
+    "dependencySelf": "A milestone cannot depend on itself.",
+    "epicHasApprovedStories": "An epic with approved done stories cannot be cancelled.",
+    "epicMilestone": "In a hybrid project an epic belongs to a milestone delivered in sprints; in an agile project it has no milestone.",
+    "epicWeightsNot100": "Epic weights must total exactly 100% (now {{total}}%).",
+    "featureOff": "This feature is switched off in Settings → Portfolio.",
+    "gateBenefits": "Measure every expected benefit before submitting the impact.",
+    "gateChecklist": "Checklist item required: {{labelEn}}",
+    "gateDefinitionOfDone": "Enter the Definition of Done.",
+    "gateQuality": "Every deliverable must be quality-accepted before closure.",
+    "gateReleases": "Add at least one release to the release plan.",
+    "gateSprintLength": "Set the sprint length (1–28 days).",
+    "hybridEpicsNot100": "The epics of each sprint-delivered milestone must total 100% ({{count}} milestone(s) do not).",
+    "justificationRequired": "Enter the justification of the override.",
+    "methodologyLocked": "After the charter the methodology changes only through an approved change request.",
+    "noApprovedUpdate": "There is no approved monthly update for this period.",
+    "noBaseline": "There is no baseline yet; it is taken at planning approval.",
+    "notAgile": "This project is not delivered in sprints.",
+    "notDeliverable": "This milestone is not a deliverable.",
+    "notDraft": "The request can be changed only while it is a draft.",
+    "projectClosed": "The project is closed.",
+    "raciOneAccountable": "Only one Accountable (A) per area.",
+    "rebaselineType": "Re-baselining is available for details and postponement change requests only.",
+    "sprintAlreadyActive": "A sprint is already active; close it first.",
+    "sprintEmpty": "Add stories to the sprint before starting it.",
+    "sprintLength": "A sprint lasts 1 to 28 days and ends after it starts.",
+    "sprintMonthlyMode": "This project approves sprints in the monthly roll-up; submit the monthly update.",
+    "sprintNotAllowed": "This action is not allowed in the sprint's status.",
+    "sprintNotOpen": "The chosen sprint is not open.",
+    "storyLocked": "This story's completion is approved; it cannot be moved back.",
+    "thresholdOrder": "The red threshold must be at least the amber threshold, between 0 and 1.",
+    "wipLimit": "The column reached its WIP limit ({{limit}})."
   },
   "warnings": {
     "openTasks": "This milestone still has open tasks: close or cancel them."
@@ -579,7 +612,16 @@
       "impact": "Impact",
       "approvals": "Approvals",
       "documents": "Documents",
-      "history": "History"
+      "history": "History",
+      "backlog": "Backlog",
+      "board": "Board",
+      "sprints": "Sprints",
+      "gantt": "Gantt",
+      "health": "Health & baseline",
+      "raid": "RAID log",
+      "raci": "RACI",
+      "communication": "Communication",
+      "benefits": "Benefits"
     },
     "list": {
       "view": "View",
@@ -891,6 +933,10 @@
       "title": "Recall the pending approval",
       "hint": "The running approval is cancelled and the record goes back to where it was before submission, so it can be corrected or the project put on hold.",
       "done": "Approval recalled"
+    },
+    "assist": {
+      "aiCharter": "Charter assistant (AI)",
+      "aiPlan": "Generate plan (AI)"
     }
   }
 }

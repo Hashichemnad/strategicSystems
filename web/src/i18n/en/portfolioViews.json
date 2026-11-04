@@ -1,0 +1,358 @@
+{
+  "percent": "{{value}}%",
+  "methodology": {
+    "waterfall": "Waterfall",
+    "agile": "Agile",
+    "hybrid": "Hybrid"
+  },
+  "rag": {
+    "green": "Green",
+    "amber": "Amber",
+    "red": "Red",
+    "grey": "Not rated"
+  },
+  "dimensions": {
+    "schedule": "Schedule",
+    "cost": "Cost",
+    "scope": "Scope",
+    "risk": "Risk",
+    "overall": "Overall"
+  },
+  "filters": {
+    "all": "All",
+    "portfolio": "Portfolio",
+    "programme": "Programme",
+    "unit": "Department"
+  },
+  "gantt": {
+    "title": "Gantt chart",
+    "ariaLabel": "Gantt chart of {{title}} with {{count}} rows",
+    "baselineShown": "Thin grey bars show the current baseline.",
+    "empty": "Nothing is planned yet.",
+    "zoom": "Time scale",
+    "zoomMonth": "Months",
+    "zoomQuarter": "Quarters",
+    "quarter": "Q{{quarter}} {{year}}",
+    "percent": "{{value}}%",
+    "exportPng": "Export PNG",
+    "exportPdf": "Export PDF",
+    "exportFailed": "The chart could not be exported.",
+    "legend": {
+      "title": "Legend",
+      "planned": "Planned",
+      "achieved": "Achieved",
+      "actual": "Actual",
+      "baseline": "Baseline",
+      "milestone": "Milestone",
+      "delayed": "Delayed",
+      "today": "Today"
+    },
+    "kinds": {
+      "phase": "Phase",
+      "milestone": "Milestone",
+      "release": "Release",
+      "sprint": "Sprint",
+      "project": "Project"
+    },
+    "tooltip": {
+      "kind": "Type",
+      "planned": "Planned",
+      "actual": "Actual",
+      "baseline": "Baseline",
+      "achieved": "Achieved",
+      "weight": "Weight",
+      "status": "Status",
+      "delayed": "Delayed",
+      "onTrack": "On track"
+    }
+  },
+  "portfolioGantt": {
+    "title": "Portfolio Gantt",
+    "description": "Every project you can see with its phases and main milestones.",
+    "empty": "No projects match the filters."
+  },
+  "dashboard": {
+    "title": "Portfolio dashboard",
+    "description": "Health, value, budget and delivery of the projects you may see.",
+    "empty": "No projects match the filters.",
+    "noUnit": "No department",
+    "hidden": "Hidden",
+    "projects": "Projects",
+    "insights": "AI portfolio insights",
+    "insightsTitle": "Portfolio insights",
+    "insightsHint": "Draft written by AI from the figures on this page. Check it before you share it.",
+    "recommendations": "Recommendations",
+    "tiles": {
+      "total": "Projects",
+      "active": "Active",
+      "delayed": "Delayed",
+      "averageProgress": "Average progress"
+    },
+    "heat": {
+      "title": "Health by department",
+      "unit": "Department",
+      "cell": "R {{red}} · A {{amber}} · G {{green}}",
+      "cellTitle": "Red {{red}}, amber {{amber}}, green {{green}}, not rated {{grey}}",
+      "legend": "R = red, A = amber, G = green: number of active projects in each health state. The cell colour shows the worst state."
+    },
+    "bubble": {
+      "title": "Value and complexity",
+      "value": "Value (evaluation score %)",
+      "complexity": "Complexity (1–5)",
+      "budget": "Budget",
+      "health": "Health",
+      "empty": "No active project has both a value and a complexity score.",
+      "hint": "Bubble size is the budget (when you may see costs); colour is the overall health.",
+      "aria": "Bubble chart of {{count}} projects: value against complexity"
+    },
+    "budget": {
+      "title": "Budget and actual cost by department",
+      "budget": "Budget",
+      "actual": "Actual cost",
+      "empty": "No cost figures you may see.",
+      "hidden_one": "The costs of {{count}} project are hidden from you and not included.",
+      "hidden_other": "The costs of {{count}} projects are hidden from you and not included."
+    },
+    "stages": {
+      "title": "Projects by stage"
+    },
+    "funnel": {
+      "title": "Pipeline",
+      "submitted": "Requests submitted",
+      "inApproval": "In approval",
+      "approved": "Approved",
+      "active": "Active projects",
+      "completed": "Completed"
+    },
+    "delayed": {
+      "title": "Delayed projects",
+      "empty": "No project is delayed.",
+      "gap": "{{progress}} done of {{planned}} planned"
+    },
+    "upcoming": {
+      "title": "Upcoming milestones (60 days)",
+      "empty": "No milestones due in the next 60 days."
+    },
+    "table": {
+      "title": "Projects",
+      "project": "Project",
+      "unit": "Department",
+      "methodology": "Methodology",
+      "stage": "Stage",
+      "progress": "Progress",
+      "planned": "Planned",
+      "health": "Health",
+      "delayed": "delayed"
+    }
+  },
+  "groups": {
+    "title": "Portfolios & programmes",
+    "description": "Group projects into programmes and portfolios to steer them together.",
+    "off": "Portfolios and programmes are switched off in Settings → Portfolio.",
+    "empty": "No portfolio or programme yet.",
+    "newPortfolio": "New portfolio",
+    "newProgramme": "New programme",
+    "edit": "Edit portfolio / programme",
+    "editNamed": "Edit {{name}}",
+    "addProgrammeTo": "Add a programme to {{name}}",
+    "saved": "Saved.",
+    "name": "Name",
+    "code": "Code",
+    "nameAr": "Name (Arabic)",
+    "nameEn": "Name (English)",
+    "descriptionField": "Description",
+    "kind": "Type",
+    "kinds": {
+      "portfolio": "Portfolio",
+      "programme": "Programme"
+    },
+    "parent": "Portfolio",
+    "noParent": "No portfolio",
+    "owner": "Owner",
+    "projects": "Projects",
+    "progress": "Average progress",
+    "delayed": "Delayed",
+    "inactive": "Inactive",
+    "actions": "Actions"
+  },
+  "grouping": {
+    "title": "Portfolio and programme",
+    "portfolio": "Portfolio",
+    "programme": "Programme",
+    "programmeHint": "Choosing a programme also sets its portfolio.",
+    "none": "None",
+    "change": "Change",
+    "save": "Save",
+    "cancel": "Cancel",
+    "saved": "Portfolio and programme saved."
+  },
+  "settings": {
+    "prioritisationOff": "Prioritisation is switched off",
+    "prioritisationOffHint": "The default criteria with equal weights and the default bands are used. Switch prioritisation on to edit them.",
+    "features": {
+      "title": "Features",
+      "description": "Switch the project management standards on or off. Data is kept when a feature is off and comes back when it is switched on.",
+      "items": {
+        "portfolios": {
+          "label": "Portfolios & programmes",
+          "description": "Group projects into programmes and portfolios; filter dashboards and the Gantt by them."
+        },
+        "prioritisation": {
+          "label": "Prioritisation",
+          "description": "Weighted evaluation criteria and priority bands for requests."
+        },
+        "health": {
+          "label": "RAG health",
+          "description": "Schedule, cost, scope and risk health with overrides and the dashboard heat-map."
+        },
+        "baselines": {
+          "label": "Baselines",
+          "description": "Baseline at planning approval, re-baseline through change requests, variance."
+        },
+        "earnedValue": {
+          "label": "Earned value",
+          "description": "PV, EV, AC, SPI, CPI and forecasts (optional)."
+        },
+        "raid": {
+          "label": "RAID log",
+          "description": "Issues, assumptions, dependencies and decisions."
+        },
+        "riskMatrix": {
+          "label": "Risk matrix",
+          "description": "5 × 5 probability and impact matrix of project risks."
+        },
+        "raci": {
+          "label": "RACI",
+          "description": "Responsible, accountable, consulted and informed per area."
+        },
+        "communicationPlan": {
+          "label": "Communication plan",
+          "description": "Planned messages to stakeholders with due reminders."
+        },
+        "benefits": {
+          "label": "Benefits",
+          "description": "Expected benefits from the request, measured at impact."
+        },
+        "quality": {
+          "label": "Quality sign-off",
+          "description": "Deliverables accepted by the owner before closure."
+        },
+        "procurement": {
+          "label": "Procurement",
+          "description": "Contract payment milestones and supplier rating."
+        },
+        "statusReport": {
+          "label": "Monthly status report",
+          "description": "Bilingual PDF generated from the approved monthly update."
+        },
+        "gateChecklists": {
+          "label": "Stage-gate checklists",
+          "description": "Checklist items at the charter, planning and closure gates."
+        },
+        "templates": {
+          "label": "Project templates",
+          "description": "Start projects from templates of milestones, planning items, risks and epics."
+        }
+      }
+    },
+    "agile": {
+      "title": "Agile delivery",
+      "approvalMode": "Agile progress approval",
+      "approvalModeHint": "Approve progress at the end of each sprint, or once a month like waterfall projects.",
+      "modes": {
+        "sprint": "Per sprint",
+        "monthly": "Monthly"
+      },
+      "sprintLength": "Default sprint length (days)",
+      "membersCreateStories": "Team members may create user stories",
+      "membersCreateStoriesHint": "When off, only the project manager adds stories to the backlog.",
+      "suggestions": "Suggested methodology per program type",
+      "suggestionsHint": "Proposed to the project manager when the methodology is chosen; the manager can pick another.",
+      "noSuggestion": "No suggestion"
+    },
+    "costs": {
+      "title": "Cost visibility",
+      "membersSeeCosts": "Team members may see project costs",
+      "membersSeeCostsHint": "Off by default: team members see the project without budget and cost figures."
+    },
+    "health": {
+      "title": "Health thresholds",
+      "description": "Limits between green, amber and red. Percentages are of the plan or budget.",
+      "scheduleAmberGap": "Schedule amber gap (%)",
+      "scheduleRedGap": "Schedule red gap (%)",
+      "costAmberVariance": "Cost amber variance (%)",
+      "costRedVariance": "Cost red variance (%)",
+      "pastDueRedDays": "Past due before red (days)",
+      "scopeWindowDays": "Scope change window (days)",
+      "scopeRedChanges": "Scope changes for red"
+    },
+    "checklists": {
+      "title": "Stage-gate checklists",
+      "description": "Items the project ticks at each gate. Required items must be ticked before the gate can be submitted.",
+      "gates": {
+        "charter": "Charter gate",
+        "planning": "Planning gate",
+        "closure": "Closure gate"
+      },
+      "code": "Code",
+      "labelAr": "Label (Arabic)",
+      "labelEn": "Label (English)",
+      "required": "Required",
+      "add": "Add item",
+      "empty": "No items."
+    }
+  },
+  "templates": {
+    "title": "Project templates",
+    "description": "Milestones, planning items, risks and epics a project manager can apply in charter or planning.",
+    "empty": "No templates yet.",
+    "new": "New template",
+    "edit": "Edit template",
+    "editNamed": "Edit template {{code}}",
+    "saved": "Template saved.",
+    "code": "Code",
+    "name": "Name",
+    "nameAr": "Name (Arabic)",
+    "nameEn": "Name (English)",
+    "methodology": "Methodology",
+    "contents": "Contents",
+    "counts": "{{milestones}} milestones · {{items}} planning items · {{risks}} risks · {{epics}} epics",
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "activate": "Activate",
+    "deactivate": "Deactivate",
+    "actions": "Actions",
+    "milestones": "Milestones",
+    "addMilestone": "Add milestone",
+    "titleAr": "Title (Arabic)",
+    "titleEn": "Title (English)",
+    "weight": "Weight %",
+    "weightSum": "Total weight {{value}} (must not exceed 100%)",
+    "offsetDays": "Start (day)",
+    "durationDays": "Duration (days)",
+    "header": "Phase header",
+    "parent": "Phase",
+    "noParent": "No phase",
+    "planningItems": "Planning items",
+    "addPlanningItem": "Add planning item",
+    "category": "Category",
+    "categories": {
+      "in-scope": "In scope",
+      "out-of-scope": "Out of scope",
+      "assumption": "Assumption",
+      "constraint": "Constraint",
+      "deliverable": "Deliverable"
+    },
+    "itemDescription": "Description",
+    "risks": "Risks",
+    "addRisk": "Add risk",
+    "riskTitle": "Risk",
+    "riskCategory": "Category code",
+    "probability": "Probability",
+    "impact": "Impact",
+    "epics": "Epics",
+    "addEpic": "Add epic",
+    "remove": "Remove"
+  }
+}

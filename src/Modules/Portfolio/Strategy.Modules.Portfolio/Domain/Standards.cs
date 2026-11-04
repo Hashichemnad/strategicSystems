@@ -542,7 +542,7 @@ public sealed record TemplateRisk(string Title, string? CategoryCode, int Probab
 
 public sealed record TemplateEpic(string? TitleAr, string? TitleEn, decimal Weight);
 
-public sealed record TemplateContent(
+public sealed record ProjectTemplateContent(
     IReadOnlyList<TemplateMilestone>? Milestones = null,
     IReadOnlyList<TemplatePlanningItem>? PlanningItems = null,
     IReadOnlyList<TemplateRisk>? Risks = null,
@@ -815,21 +815,21 @@ public static class Gates
     public static readonly IReadOnlyList<string> All = [Charter, Planning, Closure];
 }
 
-/// <summary>Configurable stage-gate checklists (SPEC §1.12), in addition to the hard minimums.</summary>
+/// <summary>Configurable stage-gate checklists (SPEC §1.12), in addition to the hard minimums. Seeded items are optional; an organisation marks the ones it requires.</summary>
 public sealed record GateChecklists(
     IReadOnlyList<ChecklistItemDefinition> Charter, IReadOnlyList<ChecklistItemDefinition> Planning, IReadOnlyList<ChecklistItemDefinition> Closure)
 {
     public static readonly GateChecklists Default = new(
         [
-            new("business-case-reviewed", "تمت مراجعة دراسة الجدوى", "Business case reviewed"),
-            new("sponsor-agreed", "وافق راعي المشروع على الميثاق", "Sponsor agreed the charter"),
+            new("business-case-reviewed", "تمت مراجعة دراسة الجدوى", "Business case reviewed", Required: false),
+            new("sponsor-agreed", "وافق راعي المشروع على الميثاق", "Sponsor agreed the charter", Required: false),
         ],
         [
-            new("schedule-reviewed", "تمت مراجعة الجدول الزمني مع الفريق", "Schedule reviewed with the team"),
+            new("schedule-reviewed", "تمت مراجعة الجدول الزمني مع الفريق", "Schedule reviewed with the team", Required: false),
             new("resources-confirmed", "تم تأكيد توفر الموارد", "Resources confirmed", Required: false),
         ],
         [
-            new("deliverables-handed-over", "تم تسليم المخرجات للجهة المستفيدة", "Deliverables handed over"),
+            new("deliverables-handed-over", "تم تسليم المخرجات للجهة المستفيدة", "Deliverables handed over", Required: false),
             new("documents-archived", "تمت أرشفة وثائق المشروع", "Project documents archived", Required: false),
         ]);
 

@@ -11,9 +11,9 @@ namespace Strategy.Modules.Portfolio.Application;
 
 // ---------------------------------------------------------------- templates (ADR 0095)
 
-public sealed record ProjectTemplateDto(Guid Id, string Code, string? NameAr, string? NameEn, string Methodology, TemplateContent Content, string Status, uint Version);
+public sealed record ProjectTemplateDto(Guid Id, string Code, string? NameAr, string? NameEn, string Methodology, ProjectTemplateContent Content, string Status, uint Version);
 
-public sealed record ProjectTemplateInput(string Code, string? NameAr, string? NameEn, string Methodology, TemplateContent Content, uint? Version = null);
+public sealed record ProjectTemplateInput(string Code, string? NameAr, string? NameEn, string Methodology, ProjectTemplateContent Content, uint? Version = null);
 
 public sealed record ApplyTemplateInput(Guid TemplateId);
 
@@ -126,7 +126,7 @@ internal sealed class TemplateService(
             return Error.NotFound();
         }
 
-        var content = JsonSerializer.Deserialize<TemplateContent>(template.Content, Json) ?? new TemplateContent();
+        var content = JsonSerializer.Deserialize<ProjectTemplateContent>(template.Content, Json) ?? new ProjectTemplateContent();
         var existing = await db.Milestones.Where(m => m.ProjectId == projectId).ToListAsync(ct).ConfigureAwait(false);
         var existingWeight = existing.Where(m => m.IsActive && !m.IsHeader && !m.HighLevel).Sum(m => m.Weight);
         var leafWeight = (content.Milestones ?? []).Where(m => !m.IsHeader).Sum(m => m.Weight);
@@ -223,11 +223,11 @@ internal sealed class TemplateService(
             .Select(x => new TemplateRisk(x.Title ?? string.Empty, x.CategoryCode, x.Probability, x.Impact)).ToListAsync(ct).ConfigureAwait(false);
         var epics = await db.Epics.AsNoTracking().Where(x => x.ProjectId == projectId && x.Status != EpicStatuses.Cancelled && x.MilestoneId == null)
             .Select(x => new TemplateEpic(x.TitleAr, x.TitleEn, x.Weight)).ToListAsync(ct).ConfigureAwait(false);
-        return await SaveAsync(null, new ProjectTemplateInput(input.Code, input.NameAr, input.NameEn, project.Methodology, new TemplateContent(rows, items, risks, epics)), ct)
+        return await SaveAsync(null, new ProjectTemplateInput(input.Code, input.NameAr, input.NameEn, project.Methodology, new ProjectTemplateContent(rows, items, risks, epics)), ct)
             .ConfigureAwait(false);
     }
 
-    private static List<FieldError> ContentErrors(TemplateContent? content)
+    private static List<FieldError> ContentErrors(ProjectTemplateContent? content)
     {
         var errors = new List<FieldError>();
         if (content is null)
@@ -261,7 +261,7 @@ internal sealed class TemplateService(
     }
 
     private static ProjectTemplateDto ToDto(ProjectTemplate t) =>
-        new(t.Id, t.Code, t.NameAr, t.NameEn, t.Methodology, JsonSerializer.Deserialize<TemplateContent>(t.Content, Json) ?? new TemplateContent(), t.Status, t.Version);
+        new(t.Id, t.Code, t.NameAr, t.NameEn, t.Methodology, JsonSerializer.Deserialize<ProjectTemplateContent>(t.Content, Json) ?? new ProjectTemplateContent(), t.Status, t.Version);
 }
 
 // ---------------------------------------------------------------- portfolios and programmes

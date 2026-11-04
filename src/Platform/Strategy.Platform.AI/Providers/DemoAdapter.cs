@@ -88,6 +88,10 @@ internal sealed partial class DemoChatClient(string model) : IChatClient
                 },
             });
         }
+        else if (system.Contains("You assist the project management office. Task: ", StringComparison.Ordinal))
+        {
+            text = ProjectAssist(system, user);
+        }
         else if (system.Contains("You assess a program proposal", StringComparison.Ordinal))
         {
             text = AssessProposal(system);
@@ -412,6 +416,109 @@ internal sealed partial class DemoChatClient(string model) : IChatClient
 
     private static string LastWord(string text) =>
         text.Split(' ', StringSplitOptions.RemoveEmptyEntries).Select(w => w.Trim('?', '؟', '.', '!')).LastOrDefault(w => w.Length > 2) ?? text;
+
+    /// <summary>Portfolio Phase 10 assists (charter, plan, update, status report, change impact, insights): deterministic drafts for development and E2E.</summary>
+    private static string ProjectAssist(string system, string user)
+    {
+        var arabic = system.Contains("Write free text in Arabic", StringComparison.Ordinal);
+        var name = user.Split('\n').Select(l => l.Trim()).FirstOrDefault(l => l.StartsWith(arabic ? "Name (Arabic):" : "Name (English):", StringComparison.Ordinal))
+            ?.Split(':', 2)[1].Trim() ?? "—";
+        if (system.Contains("Task: charter-assistant", StringComparison.Ordinal))
+        {
+            return JsonSerializer.Serialize(new
+            {
+                kpis = new[] { new { nameAr = "نسبة إنجاز مخرجات المشروع في موعدها", nameEn = "Deliverables completed on time", equation = "on-time deliverables ÷ planned deliverables × 100", target = (decimal?)90 } },
+                risks = new[]
+                {
+                    new { title = arabic ? "تأخر توريد المتطلبات من المورّد" : "Supplier delivers late", probability = 3, impact = 4, mitigation = arabic ? "متابعة أسبوعية مع المورّد" : "Weekly supplier follow-up" },
+                    new { title = arabic ? "نقص الموارد المتخصصة" : "Shortage of specialised staff", probability = 2, impact = 3, mitigation = arabic ? "خطة بديلة للموارد" : "Backup resourcing plan" },
+                },
+                stakeholders = new[] { new { name = arabic ? "الإدارة المستفيدة" : "Beneficiary department", classification = "internal", interest = "high", impact = "high" } },
+                planningItems = new[]
+                {
+                    new { category = "in-scope", description = arabic ? $"تنفيذ {name}" : $"Deliver {name}" },
+                    new { category = "assumption", description = arabic ? "توفر الميزانية المعتمدة في موعدها" : "The approved budget is available on time" },
+                },
+            });
+        }
+
+        if (system.Contains("Task: plan-generator", StringComparison.Ordinal))
+        {
+            var agile = system.Contains("Methodology: agile", StringComparison.Ordinal);
+            object[] milestones = agile ? [] :
+            [
+                new { phase = arabic ? "التحليل" : "Analysis", titleAr = "تحليل المتطلبات", titleEn = "Requirements analysis", weight = 15, durationDays = 30 },
+                new { phase = arabic ? "التحليل" : "Analysis", titleAr = "التصميم", titleEn = "Design", weight = 15, durationDays = 30 },
+                new { phase = arabic ? "التنفيذ" : "Delivery", titleAr = "البناء والتطوير", titleEn = "Build", weight = 40, durationDays = 75 },
+                new { phase = arabic ? "التنفيذ" : "Delivery", titleAr = "الاختبار والقبول", titleEn = "Testing and acceptance", weight = 20, durationDays = 30 },
+                new { phase = arabic ? "الإطلاق" : "Launch", titleAr = "الإطلاق والتسليم", titleEn = "Launch and handover", weight = 10, durationDays = 15 },
+            ];
+            object[] epics = !agile ? [] :
+            [
+                new
+                {
+                    titleAr = "بوابة الخدمات", titleEn = "Service portal", weight = 50,
+                    stories = new[]
+                    {
+                        new { title = arabic ? "تقديم طلب إلكتروني" : "Submit a request online", asA = "customer", iWant = "to submit a request online", soThat = "I do not visit the office", points = 5 },
+                        new { title = arabic ? "متابعة حالة الطلب" : "Track the request status", asA = "customer", iWant = "to see my request status", soThat = "I know what happens next", points = 3 },
+                    },
+                },
+                new
+                {
+                    titleAr = "لوحة الموظف", titleEn = "Staff workspace", weight = 30,
+                    stories = new[] { new { title = arabic ? "معالجة الطلبات" : "Process requests", asA = "employee", iWant = "a queue of requests", soThat = "I process them in order", points = 8 } },
+                },
+                new
+                {
+                    titleAr = "التقارير", titleEn = "Reports", weight = 20,
+                    stories = new[] { new { title = arabic ? "تقرير شهري" : "Monthly report", asA = "manager", iWant = "a monthly report", soThat = "I follow performance", points = 3 } },
+                },
+            ];
+            return JsonSerializer.Serialize(new { milestones, epics });
+        }
+
+        if (system.Contains("Task: update-assistant", StringComparison.Ordinal))
+        {
+            return JsonSerializer.Serialize(new
+            {
+                narrative = arabic
+                    ? $"ملخص تجريبي: تقدّم العمل في «{name}» خلال الفترة وفق الخطة في معظم المراحل، مع متابعة المراحل المعرضة للتأخر."
+                    : $"Demo narrative: work on “{name}” progressed mostly as planned this period; the milestones at risk are being followed up.",
+                correctiveActions = new[] { arabic ? "إعادة جدولة الموارد للمراحل المتأخرة" : "Re-assign resources to the late milestones" },
+            });
+        }
+
+        if (system.Contains("Task: status-report", StringComparison.Ordinal))
+        {
+            return JsonSerializer.Serialize(new
+            {
+                narrativeAr = $"تقرير تجريبي: يسير مشروع «{name}» وفق الخطة المعتمدة، مع متابعة المخاطر الرئيسية والإجراءات التصحيحية للمراحل المتأخرة.",
+                narrativeEn = $"Demo report: “{name}” is progressing against the approved plan; the main risks and the corrective actions for late milestones are being followed up.",
+            });
+        }
+
+        if (system.Contains("Task: change-impact", StringComparison.Ordinal))
+        {
+            return JsonSerializer.Serialize(new
+            {
+                summary = arabic ? "تحليل تجريبي: يؤثر التغيير على الجدول الزمني ويستلزم إعادة اعتماد خط الأساس." : "Demo analysis: the change affects the schedule and needs a re-baseline.",
+                dates = arabic ? "يتأخر تاريخ الانتهاء وفق المقترح." : "The end date moves as proposed.",
+                cost = arabic ? "لا تغيير على التكلفة ما لم تُعدَّل الميزانية." : "No cost effect unless the budget changes.",
+                weights = arabic ? "تبقى الأوزان كما هي." : "Weights stay the same.",
+                dependents = arabic ? "راجع المشاريع المعتمدة على هذا المشروع." : "Check the projects that depend on this one.",
+                recommendation = new[] { arabic ? "تحقق من أثر التغيير على المشاريع المعتمدة." : "Check the effect on the dependent projects." },
+            });
+        }
+
+        return JsonSerializer.Serialize(new
+        {
+            narrative = arabic
+                ? "رؤى تجريبية: معظم المشاريع في المسار الصحيح، وتحتاج المشاريع المتأخرة إلى متابعة أسبوعية."
+                : "Demo insights: most projects are on track; the delayed projects need weekly follow-up.",
+            recommendations = new[] { arabic ? "مراجعة المشاريع الحمراء في اجتماع المحفظة القادم." : "Review the red projects at the next portfolio meeting." },
+        });
+    }
 
     private static UsageDetails Usage(string input, string output) =>
         new() { InputTokenCount = Math.Max(1, Encoding.UTF8.GetByteCount(input) / 4), OutputTokenCount = Math.Max(1, Encoding.UTF8.GetByteCount(output) / 4) };
