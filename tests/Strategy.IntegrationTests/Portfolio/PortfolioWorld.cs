@@ -46,6 +46,8 @@ internal sealed class PortfolioWorld
 
     public required string Suffix { get; init; }
 
+    public required Guid OrganisationId { get; init; }
+
     public required Guid DepartmentId { get; init; }
 
     public required Guid SectionId { get; init; }
@@ -118,6 +120,9 @@ internal sealed class PortfolioWorld
         await ApprovalWorld.SetHeadAsync(factory, department, director.EmployeeId);
         await ApprovalWorld.SetHeadAsync(factory, section, manager.EmployeeId);
         await ApprovalWorld.SetHeadAsync(factory, other, otherDirector.EmployeeId);
+
+        // The DG Office holder heads the organisation: the General Manager of the Teams formation chain (Phase 9 project teams).
+        await ApprovalWorld.SetHeadAsync(factory, organisation, dg.EmployeeId);
         var clients = new Dictionary<Guid, HttpClient>();
         foreach (var user in new[] { director, manager, requester, sectionRequester, pmOffice, dg, budget, administration, viewer, otherRequester, outsider })
         {
@@ -128,6 +133,7 @@ internal sealed class PortfolioWorld
         {
             Factory = factory,
             Suffix = suffix,
+            OrganisationId = organisation,
             DepartmentId = department,
             SectionId = section,
             OtherDepartmentId = other,

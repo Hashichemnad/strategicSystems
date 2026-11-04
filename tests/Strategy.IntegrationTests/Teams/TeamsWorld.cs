@@ -31,10 +31,13 @@ public sealed class CapturingPdfRenderer : IPdfRenderer
     }
 }
 
-/// <summary>Stands in for Portfolio's project (Phase 9): a team-able linkable type whose records everyone may read (ADR 0043 test double).</summary>
+/// <summary>
+/// A team-able linkable type whose records everyone may read (ADR 0043 test double). Its own type code: the real <c>portfolio.project</c> exists
+/// since Phase 9 and is tested end to end in the Portfolio tests.
+/// </summary>
 public sealed class FakeProjectLinkTargets : ILinkTargetSource
 {
-    public const string Type = "portfolio.project";
+    public const string Type = "test.project";
 
     public static readonly LinkableTypeDefinition Definition = new(
         Type, "sample", "مشروع (اختبار)", "Project (test)", [LinkCapabilities.TeamAble], "teams.team.read", "/projects/{id}");

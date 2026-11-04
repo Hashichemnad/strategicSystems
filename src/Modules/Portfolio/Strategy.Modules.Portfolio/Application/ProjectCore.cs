@@ -188,7 +188,8 @@ internal sealed class ProjectProgress(PortfolioDbContext db, RequestReader reade
 {
     public async Task RecalculateAsync(Project project, CancellationToken ct)
     {
-        var milestones = await db.Milestones.Where(m => m.ProjectId == project.Id).ToListAsync(ct).ConfigureAwait(false);
+        var stored = await db.Milestones.Where(m => m.ProjectId == project.Id).ToListAsync(ct).ConfigureAwait(false);
+        var milestones = stored.Concat(db.Milestones.Local.Where(m => m.ProjectId == project.Id)).DistinctBy(m => m.Id).ToList(); // unsaved rows count too
         foreach (var header in milestones.Where(m => m.IsHeader))
         {
             var children = milestones.Where(m => m.ParentId == header.Id && m.IsActive).ToList();

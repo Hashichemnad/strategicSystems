@@ -227,7 +227,8 @@ internal sealed class UpdateMilestoneDraftTool(MilestoneService milestones) : IA
         "portfolio_update_milestone_draft", PortfolioPermissions.SystemCode, ToolKind.Write, "حفظ مسودة تحديث مرحلة", "Save a milestone update draft",
         "Saves the pending monthly values of one milestone (achievement in percent of the whole project, actual dates, causality and corrective actions when delayed). Requires an open monthly window. It never submits the update for approval.",
         ToolRegistrationExtensions.Schema("""{"type":"object","required":["milestoneId","achievePercent","version"],"properties":{"milestoneId":{"type":"string","format":"uuid"},"achievePercent":{"type":"number"},"actualStart":{"type":"string","format":"date"},"actualEnd":{"type":"string","format":"date"},"causality":{"type":"string"},"correctiveActions":{"type":"string"},"version":{"type":"integer"}}}"""),
-        PortfolioPermissions.ProjectEdit);
+        PortfolioPermissions.ProjectEdit,
+        DefaultEnabled: false);
 
     public async Task<ToolResult> InvokeAsync(JsonElement arguments, ToolContext context, CancellationToken cancellationToken)
     {
