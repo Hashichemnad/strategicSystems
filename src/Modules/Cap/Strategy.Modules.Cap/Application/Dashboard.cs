@@ -61,7 +61,9 @@ internal sealed class CapDashboardQueries(
 
     public async Task<Result<CapDashboardDto>> HandleAsync(GetCapDashboard query, CancellationToken cancellationToken)
     {
-        if (!await reader.CanAsync(context.User, CapPermissions.DashboardRead, cancellationToken).ConfigureAwait(false))
+        // The AI summary (cap.ai.summary) reads the same scope-filtered figures as the dashboard.
+        if (!await reader.CanAsync(context.User, CapPermissions.DashboardRead, cancellationToken).ConfigureAwait(false)
+            && !await reader.CanAsync(context.User, CapPermissions.AiSummary, cancellationToken).ConfigureAwait(false))
         {
             return Error.Forbidden();
         }
@@ -226,7 +228,9 @@ internal sealed class CapDashboardQueries(
     public async Task<Result<SettingsDocument<CapSettings>>> HandleAsync(SaveCapSettings command, CancellationToken cancellationToken) =>
         !await reader.CanAsync(context.User, CapPermissions.SettingsManage, cancellationToken).ConfigureAwait(false)
             ? Error.Forbidden()
-            : await editor.SaveAsync(command.Settings, command.Version, CapSettings.Validate, cancellationToken).ConfigureAwait(false);
+            : command.Settings is null
+                ? Error.Validation([new FieldError("settings", "validation.required", "validation.required")])
+                : await editor.SaveAsync(command.Settings, command.Version, CapSettings.Validate, cancellationToken).ConfigureAwait(false);
 
     private async Task<IQueryable<Remark>> FilteredAsync(Guid? unitId, int? year, CancellationToken ct)
     {

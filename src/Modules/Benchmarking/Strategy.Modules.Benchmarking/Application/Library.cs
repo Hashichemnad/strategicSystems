@@ -53,9 +53,15 @@ public sealed record SaveBenchSettings(BenchSettings Settings, uint Version) : I
 /// <summary>Validation of register and library entries.</summary>
 internal static class LibraryRules
 {
-    public static List<FieldError> Comparator(ComparatorValues v)
+    public static List<FieldError> Comparator(ComparatorValues? v)
     {
         var errors = new List<FieldError>();
+        if (v is null)
+        {
+            errors.Add(new FieldError("values", "validation.required", "validation.required"));
+            return errors;
+        }
+
         if (string.IsNullOrWhiteSpace(v.NameAr) && string.IsNullOrWhiteSpace(v.NameEn))
         {
             errors.Add(new FieldError("nameEn", "validation.atLeastOneLanguage", "validation.atLeastOneLanguage"));
@@ -76,9 +82,15 @@ internal static class LibraryRules
         return errors;
     }
 
-    public static List<FieldError> Practice(BenchPracticeValues v)
+    public static List<FieldError> Practice(BenchPracticeValues? v)
     {
         var errors = new List<FieldError>();
+        if (v is null)
+        {
+            errors.Add(new FieldError("values", "validation.required", "validation.required"));
+            return errors;
+        }
+
         if (string.IsNullOrWhiteSpace(v.TitleAr) && string.IsNullOrWhiteSpace(v.TitleEn))
         {
             errors.Add(new FieldError("titleEn", "validation.atLeastOneLanguage", "validation.atLeastOneLanguage"));
@@ -160,7 +172,7 @@ internal sealed class LibraryHandlers(BenchDbContext db, BenchReader reader, ILo
         }
 
         var errors = LibraryRules.Comparator(command.Values);
-        if (command.Values.SectorCode is { } sector && !await lookups.IsActiveCodeAsync(BenchPermissions.SectorLookup, sector, cancellationToken).ConfigureAwait(false))
+        if (command.Values?.SectorCode is { } sector && !await lookups.IsActiveCodeAsync(BenchPermissions.SectorLookup, sector, cancellationToken).ConfigureAwait(false))
         {
             errors.Add(new FieldError("sectorCode", "validation.invalid", "validation.invalid"));
         }
@@ -341,7 +353,9 @@ internal sealed class LibraryHandlers(BenchDbContext db, BenchReader reader, ILo
     public async Task<Result<SettingsDocument<BenchSettings>>> HandleAsync(SaveBenchSettings command, CancellationToken cancellationToken) =>
         !await reader.CanAsync(context.User, BenchPermissions.SettingsManage, cancellationToken).ConfigureAwait(false)
             ? Error.Forbidden()
-            : await editor.SaveAsync(command.Settings, command.Version, BenchSettings.Validate, cancellationToken).ConfigureAwait(false);
+            : command.Settings is null
+                ? Error.Validation([new FieldError("settings", "validation.required", "validation.required")])
+                : await editor.SaveAsync(command.Settings, command.Version, BenchSettings.Validate, cancellationToken).ConfigureAwait(false);
 
     private async Task<BenchComparatorDto> ToDtoAsync(Comparator c, bool history, CancellationToken ct)
     {
