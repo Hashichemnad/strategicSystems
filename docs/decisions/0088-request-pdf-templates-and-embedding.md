@@ -1,6 +1,6 @@
 # 0088 — Request PDF templates and the embeddable submit page
 
-- **Status:** Proposed (Phase 14) — for owner confirmation
+- **Status:** Accepted by the owner (Phase 14, before the pull request)
 - **Context:** SPEC §5.1: template-based bilingual PDF generation with merge fields; optional deep links / embeddable "submit request" pages
   for the intranet using the same SSO login.
 

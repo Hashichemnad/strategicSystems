@@ -39,8 +39,20 @@ public static class IpScope
     public static readonly ScopeMap<IpRecord> Map = new(IpRecord.EntityType, x => x.Id, ownerEmployee: x => x.RequesterEmployeeId, unit: x => x.OwnerUnitId);
 }
 
-/// <summary>Term and handling per protection type (ADR 0087).</summary>
-public sealed record ProtectionRule(string Code, int? TermYears, bool InternalOnly);
+/// <summary>From which date a protection term counts (ADR 0087).</summary>
+public static class TermBases
+{
+    /// <summary>The registration date (patents, designs, trademarks, utility models).</summary>
+    public const string Registration = "registration";
+
+    /// <summary>The first publication of the work (copyright of works owned by the organisation).</summary>
+    public const string Publication = "publication";
+
+    public static readonly IReadOnlyList<string> All = [Registration, Publication];
+}
+
+/// <summary>Term and handling per protection type (ADR 0087): years (null: no expiry), the date the term counts from, internal-only.</summary>
+public sealed record ProtectionRule(string Code, int? TermYears, bool InternalOnly, string TermFrom = TermBases.Registration);
 
 /// <summary>Settings → IP (docs/design/requests.md §4.1).</summary>
 public sealed record IpSettings : ISettingsArea
@@ -49,7 +61,8 @@ public sealed record IpSettings : ISettingsArea
 
     public IReadOnlyList<ProtectionRule> Protections { get; init; } =
     [
-        new("copyright", 20, false), new("industrial-design", 20, false), new("patent", 20, false), new("trademark", 10, false), new("trade-secret", null, true),
+        new("copyright", 50, false, TermBases.Publication), new("industrial-design", 20, false), new("patent", 20, false), new("utility-model", 10, false),
+        new("trademark", 10, false), new("trade-secret", null, true),
     ];
 
     public IReadOnlyList<int> ReminderMonths { get; init; } = [6, 3];
@@ -69,6 +82,11 @@ public sealed record IpSettings : ISettingsArea
             if (value.Protections[i].TermYears is < 1 or > 100)
             {
                 errors.Add(new FieldError($"protections[{i}].termYears", "ip.errors.term", "ip.errors.term"));
+            }
+
+            if (!TermBases.All.Contains(value.Protections[i].TermFrom))
+            {
+                errors.Add(new FieldError($"protections[{i}].termFrom", "validation.unknownCode", "validation.unknownCode"));
             }
         }
 
@@ -136,7 +154,7 @@ internal sealed class IpAccessCatalogue : IAccessCatalogueSource
         new(IpPermissions.ProtectionTypeLookup, IpPermissions.SystemCode, "نوع الحماية", "Protection type",
         [
             new("copyright", "حق المؤلف", "Copyright"), new("industrial-design", "تصميم صناعي", "Industrial design"), new("patent", "براءة اختراع", "Patent"),
-            new("trademark", "علامة تجارية", "Trademark"), new("trade-secret", "سر تجاري / تسجيل داخلي", "Trade secret / internal registration"),
+            new("utility-model", "نموذج منفعة", "Utility model"), new("trademark", "علامة تجارية", "Trademark"), new("trade-secret", "سر تجاري / تسجيل داخلي", "Trade secret / internal registration"),
         ]),
         new(IpPermissions.ContributorRoleLookup, IpPermissions.SystemCode, "دور المساهم", "Contributor role",
         [

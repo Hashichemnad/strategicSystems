@@ -165,13 +165,22 @@ public sealed class IpRegistryTests(IpFixture fixture) : IClassFixture<IpFixture
         html.ShouldContain("منهجية قياس رضا المتعاملين");
         html.ShouldContain("dir=\"rtl\"");
 
-        // Filing with MOET, then registration: expiry proposed at registration + 20 years, certificate notice to the employee contributor.
+        // Filing with MOET, then registration. Copyright counts 50 years from the first publication of the work (ADR 0087): without that date
+        // (and without an explicit expiry) the registration is refused; with it the expiry is publication + 50 years.
         record = await RequestWorld.OkAsync<IpRecordDto>(w.C(w.Office).PostAsJsonAsync($"{Ip}/records/{recordId}/filing",
             new { filingDate = "2026-02-01", applicationNo = "MOET-2026-555", version = record.Version }));
         record.Status.ShouldBe("filed");
+        (record.TermYears, record.TermFrom).ShouldBe(((int?)50, "publication"));
+        var noPublication = await w.C(w.Office).PostAsJsonAsync($"{Ip}/records/{recordId}/registration",
+            new { registrationNo = "REG-77", registrationDate = "2026-03-01", version = record.Version });
+        (await noPublication.Content.ReadAsStringAsync()).ShouldContain("ip.errors.publicationRequired");
+        var afterRegistration = await w.C(w.Office).PostAsJsonAsync($"{Ip}/records/{recordId}/registration",
+            new { registrationNo = "REG-77", registrationDate = "2026-03-01", firstPublicationDate = "2026-04-01", version = record.Version });
+        (await afterRegistration.Content.ReadAsStringAsync()).ShouldContain("ip.errors.publicationDate");
         record = await RequestWorld.OkAsync<IpRecordDto>(w.C(w.Office).PostAsJsonAsync($"{Ip}/records/{recordId}/registration",
-            new { registrationNo = "REG-77", registrationDate = "2026-03-01", version = record.Version }));
-        (record.Status, record.ExpiryDate).ShouldBe(("registered", (DateOnly?)new DateOnly(2046, 3, 1)));
+            new { registrationNo = "REG-77", registrationDate = "2026-03-01", firstPublicationDate = "2025-06-15", version = record.Version }));
+        (record.Status, record.FirstPublicationDate, record.ExpiryDate)
+            .ShouldBe(("registered", (DateOnly?)new DateOnly(2025, 6, 15), (DateOnly?)new DateOnly(2075, 6, 15)));
         record.Contributors[0].CertificateSentAt.ShouldNotBeNull();
         record.Periods.Single().RegistrationNo.ShouldBe("REG-77");
 
@@ -241,6 +250,7 @@ public sealed class IpRegistryTests(IpFixture fixture) : IClassFixture<IpFixture
 
         (created!.Source, created.Status, created.DocumentId, created.PropertyType).ShouldBe(("document", "approved_to_file", (Guid?)manual, "document"));
         created.Contributors.Single().Employee!.Id.ShouldBe(w.EmployeeA.EmployeeId!.Value);
+        created.FirstPublicationDate.ShouldNotBeNull(); // the document's publication: a copyright term counts from it
         (await RequestWorld.OkAsync<JsonElement>(w.C(w.Office).GetAsync($"{Ip}/records?search=Leave%20policy"))).GetProperty("totalCount").GetInt32().ShouldBe(0);
 
         // The document shows the IP record as a linked record.
@@ -260,6 +270,15 @@ public sealed class IpRegistryTests(IpFixture fixture) : IClassFixture<IpFixture
             await w.DecideAsync(w.Office, draft.Id, "approve", new { propertyType = "software", protectionType = protection });
             return await RequestWorld.OkAsync<IpRecordDto>(w.C(w.Office).GetAsync($"{Ip}/records/{submitted.SubjectId}"));
         }
+
+        // Utility model: 10 years from the registration date.
+        var utility = await ApprovedAsync("utility-model");
+        (utility.TermYears, utility.TermFrom).ShouldBe(((int?)10, "registration"));
+        utility = await RequestWorld.OkAsync<IpRecordDto>(w.C(w.Office).PostAsJsonAsync($"{Ip}/records/{utility.Id}/filing",
+            new { filingDate = "2026-01-05", applicationNo = "UM-1", version = utility.Version }));
+        utility = await RequestWorld.OkAsync<IpRecordDto>(w.C(w.Office).PostAsJsonAsync($"{Ip}/records/{utility.Id}/registration",
+            new { registrationNo = "UM-REG-1", registrationDate = "2026-02-01", version = utility.Version }));
+        utility.ExpiryDate.ShouldBe(new DateOnly(2036, 2, 1));
 
         var secret = await ApprovedAsync("trade-secret");
         (secret.Can.File, secret.Can.RegisterInternally).ShouldBe((false, true));

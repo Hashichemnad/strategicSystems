@@ -312,8 +312,9 @@ the filtered query).
 
 Lookups `ip.property-type` (Methodology, Software / System, Literary work, Design, Invention, Trademark, Document), `ip.protection-type`
 (Copyright, Industrial design, Patent, Trademark, Trade secret / internal only), `ip.contributor-role` (Author, Inventor, Designer,
-Developer, Contributor). Settings area `ip`: per protection type **term in years** (default 20; trade secret / internal: none) and
-**internal only** flag (default: trade secret); renewal reminder months (default **6 and 3**); MOET form header texts. Numbering
+Developer, Contributor), plus *Utility model* among the protection types. Settings area `ip`: per protection type **term in years**, the
+date it **counts from** (registration or first publication) and an **internal only** flag — seed: copyright 50 years from first publication,
+patent 20, industrial design 20, utility model 10, trademark 10 (renewable), trade secret internal-only without expiry (ADR 0087); renewal reminder months (default **6 and 3**); MOET form header texts. Numbering
 `ip.record` default `IP-Registry-{SEQ:4}`, `ip.internal` default `IP-INT-{YYYY}-{SEQ:4}`.
 
 ### 4.2 Data model
@@ -321,7 +322,7 @@ Developer, Contributor). Settings area `ip`: per protection type **term in years
 * `ip_record`: `number`, `name_ar/en`, `description`, `property_type`, `protection_type`, `source` (`request` | `document`), `request_id`,
   `document_id`, `document_version_id`, `owner_unit_id`, `status` (SPEC §7.2: `draft · submitted · under_review · returned · rejected ·
   approved_to_file · filed · registered · rejected_by_moet · expired · renewed · withdrawn`), `filing_date`, `application_no`,
-  `registration_no`, `registration_date`, `expiry_date`, `certificate_file_id`, `internal`, notes, `linked` records via Links, `name_search`,
+  `registration_no`, `registration_date`, `first_publication_date`, `expiry_date`, `certificate_file_id`, `internal`, notes, `linked` records via Links, `name_search`,
   audit, `xmin`.
 * `contributor`: `ip_record_id`, `employee_id` **or** `external_name` + `external_organisation`, `role`, `share` (contribution, ratio,
   total must be 100 %), **`emirates_id_enc`** (Data Protection, purpose `ip.contributor.emirates-id.v1`, `[AuditMasked]`),
@@ -336,7 +337,7 @@ Developer, Contributor). Settings area `ip`: per protection type **term in years
 |---|---|
 | Form (code-defined) | `nameAr`, `nameEn`, `description`, `files` (supporting files), **`contributors`** (table: `employee` (employee) · `externalName` · `externalOrganisation` · `emiratesId` (**secret**, format `emiratesId`) · `role` (picklist) · `share` (number, %)) — at least one row, employee or external name per row, shares total 100 · `declaration` (checkbox, required: rights assigned to the organisation) |
 | Stage `review` | approval `ip.review` (one step `ip.office`); approve form: `propertyType`, `protectionType`, `notes` |
-| After approval | the request completes; filing and registration continue **on the IP record page** (the same path for records created from documents, §4.6): **Record filing** (`filingDate`, `applicationNo`) → `filed`; **Register internally** (only internal-only protection types) → internal number, `registered`; **Record registration** (`registrationNo`, `registrationDate`, `expiryDate` proposed = registration date + term, certificate file of the record) → `registered`, certificate notice to every employee contributor; **Rejected by MOET** (`reason`) → `rejected_by_moet` → re-file or **Close** |
+| After approval | the request completes; filing and registration continue **on the IP record page** (the same path for records created from documents, §4.6): **Record filing** (`filingDate`, `applicationNo`) → `filed`; **Register internally** (only internal-only protection types) → internal number, `registered`; **Record registration** (`registrationNo`, `registrationDate`, `firstPublicationDate`, `expiryDate` proposed from the protection rule — registration date or first publication + term, certificate file of the record) → `registered`, certificate notice to every employee contributor; **Rejected by MOET** (`reason`) → `rejected_by_moet` → re-file or **Close** |
 | Handler | submit → IP record `under_review`; approved → property / protection type, contributors created from the form (Emirates IDs re-encrypted with the IP purpose), `approved_to_file`; returned / rejected / cancelled follow |
 
 ### 4.4 Emirates ID (ADR 0086)

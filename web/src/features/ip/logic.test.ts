@@ -6,7 +6,7 @@ import {
   sharesAreValid,
   sharesTotal,
   stageOf,
-  termFromProposed,
+  proposeExpiry,
 } from './logic';
 
 describe('IP rules', () => {
@@ -43,8 +43,11 @@ describe('IP rules', () => {
   });
 
   it('proposes registration date + term', () => {
-    expect(termFromProposed('2046-11-04', '2026-11-04')).toBe(20);
-    expect(termFromProposed(null, '2026-11-04')).toBeUndefined();
+    // Copyright: 50 years from the first publication; patents and utility models from the registration date.
+    expect(proposeExpiry(50, 'publication', '2026-03-01', '2025-06-15')).toBe('2075-06-15');
+    expect(proposeExpiry(50, 'publication', '2026-03-01', undefined)).toBeUndefined();
+    expect(proposeExpiry(10, 'registration', '2026-02-01', '2025-06-15')).toBe('2036-02-01');
+    expect(proposeExpiry(null, 'registration', '2026-02-01', undefined)).toBeUndefined();
     expect(addYears('2026-03-15', 20)).toBe('2046-03-15');
     expect(addYears('2024-02-29', 1)).toBe('2025-02-28');
     expect(daysUntil('2026-11-14', '2026-11-04')).toBe(10);

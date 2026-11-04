@@ -1,6 +1,6 @@
 # 0080 — Request Framework: built-in and custom types, form schema, stages and handlers
 
-- **Status:** Proposed (Phase 14) — for owner confirmation
+- **Status:** Accepted by the owner (Phase 14, before the pull request)
 - **Context:** SPEC §5: Document Registry, IP and Benchmarking are "request → review → process → register" systems built on one framework;
   module-specific fields are defined in code, organisations add fields without code; stages and actions are configurable per type; new
   types can be added by configuration. CLAUDE.md §5: stages are code unless the SPEC says they are configurable — here it does.

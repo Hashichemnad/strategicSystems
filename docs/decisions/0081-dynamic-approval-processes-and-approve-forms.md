@@ -1,6 +1,6 @@
 # 0081 — Approval processes for request types and approve mini-forms
 
-- **Status:** Proposed (Phase 14) — for owner confirmation
+- **Status:** Accepted by the owner (Phase 14, before the pull request)
 - **Context:** Approval processes are registered in code (ADR 0024) and their chains seeded once. Custom request types are created at run
   time but each needs its own chain, "default single PMO step per type, editable in the Approval Settings centre" (SPEC §5–8 decision).
   The review of a document must capture classification (level, type, sensitivity) with the approval (SPEC §5.1 "each action can open a

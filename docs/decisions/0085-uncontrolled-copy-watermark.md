@@ -1,6 +1,6 @@
 # 0085 — "Uncontrolled when printed" watermark on downloads
 
-- **Status:** Proposed (Phase 14) — for owner confirmation
+- **Status:** Accepted by the owner (Phase 14, before the pull request)
 - **Context:** SPEC §6.4: download with an "uncontrolled when printed" watermark (configurable). Arabic text needs shaping; QuestPDF and
   commercial PDF libraries are not allowed (CLAUDE.md §4.3).
 

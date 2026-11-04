@@ -67,7 +67,8 @@
     "certificate": "الشهادة",
     "moetRejectionReason": "سبب رفض الوزارة",
     "from": "من",
-    "to": "إلى"
+    "to": "إلى",
+    "firstPublicationDate": "تاريخ أول نشر"
   },
   "register": {
     "title": "سجل الملكية الفكرية",
@@ -138,7 +139,14 @@
     "expiryHint_few": "المقترح: تاريخ التسجيل + {{count}} سنوات.",
     "expiryHint_many": "المقترح: تاريخ التسجيل + {{count}} سنة.",
     "expiryHint_other": "المقترح: تاريخ التسجيل + {{count}} سنة.",
-    "noExpiryHint": "لا ينتهي نوع الحماية هذا؛ اترك الحقل فارغاً."
+    "noExpiryHint": "لا ينتهي نوع الحماية هذا؛ اترك الحقل فارغاً.",
+    "publicationHint": "تحتسب مدة حماية حق المؤلف من تاريخ أول نشر للمصنف.",
+    "expiryHintPublication_zero": "المقترح: تاريخ أول نشر + {{count}} سنة.",
+    "expiryHintPublication_one": "المقترح: تاريخ أول نشر + سنة واحدة.",
+    "expiryHintPublication_two": "المقترح: تاريخ أول نشر + سنتان.",
+    "expiryHintPublication_few": "المقترح: تاريخ أول نشر + {{count}} سنوات.",
+    "expiryHintPublication_many": "المقترح: تاريخ أول نشر + {{count}} سنة.",
+    "expiryHintPublication_other": "المقترح: تاريخ أول نشر + {{count}} سنة."
   },
   "contributors": {
     "edit": "تعديل المساهمين",
@@ -252,7 +260,11 @@
     "add": "إضافة",
     "moetHeader": "ترويسة نموذج الوزارة",
     "moetHeaderAr": "الترويسة (بالعربية)",
-    "moetHeaderEn": "الترويسة (بالإنجليزية)"
+    "moetHeaderEn": "الترويسة (بالإنجليزية)",
+    "termFrom": "بداية احتساب المدة",
+    "termFromFor": "بداية احتساب مدة {{name}}",
+    "termFromRegistration": "تاريخ التسجيل",
+    "termFromPublication": "أول نشر"
   },
   "errors": {
     "term": "يجب أن تكون المدة بين 1 و100 سنة، أو بدون انتهاء.",
@@ -263,6 +275,8 @@
     "notAllowed": "لا يمكن تنفيذ هذا الإجراء في الحالة الحالية للسجل.",
     "expiryBeforeRegistration": "يجب أن يكون تاريخ الانتهاء بعد تاريخ التسجيل.",
     "file": "اختر أحد ملفات هذا السجل كشهادة.",
-    "period": "أدخل رقم التسجيل وفترة تنتهي بعد بدايتها."
+    "period": "أدخل رقم التسجيل وفترة تنتهي بعد بدايتها.",
+    "publicationDate": "لا يمكن أن يكون تاريخ أول نشر بعد تاريخ التسجيل أو في المستقبل.",
+    "publicationRequired": "أدخل تاريخ أول نشر (تحتسب المدة منه) أو تاريخ الانتهاء."
   }
 }

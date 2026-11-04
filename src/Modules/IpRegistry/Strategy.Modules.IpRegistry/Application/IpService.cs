@@ -59,7 +59,10 @@ public sealed record IpRecordDto(
     string? RegistrationNo,
     DateOnly? RegistrationDate,
     DateOnly? ExpiryDate,
+    DateOnly? FirstPublicationDate,
     DateOnly? ProposedExpiry,
+    int? TermYears,
+    string TermFrom,
     Guid? CertificateFileId,
     bool Internal,
     string? Notes,
@@ -71,7 +74,8 @@ public sealed record IpRecordDto(
 
 public sealed record FilingInput(DateOnly? FilingDate, string? ApplicationNo, uint Version);
 
-public sealed record RegistrationInput(string? RegistrationNo, DateOnly? RegistrationDate, DateOnly? ExpiryDate, Guid? CertificateFileId, uint Version);
+public sealed record RegistrationInput(
+    string? RegistrationNo, DateOnly? RegistrationDate, DateOnly? ExpiryDate, Guid? CertificateFileId, uint Version, DateOnly? FirstPublicationDate = null);
 
 public sealed record MoetRejectionInput(string? Reason, uint Version);
 
@@ -199,7 +203,8 @@ internal sealed class IpService(
             Close: office && r.Status == IpStatuses.RejectedByMoet);
         return new IpRecordDto(r.Id, r.Number, r.NameAr, r.NameEn, r.Description, r.DescriptionAr, r.DescriptionEn, r.PropertyType, r.ProtectionType, r.Source, r.RequestId,
             r.DocumentId, r.DocumentNo, await UnitAsync(r.OwnerUnitId, ct).ConfigureAwait(false), Person(r.RequesterEmployeeId), r.Status, r.FilingDate, r.ApplicationNo,
-            r.RegistrationNo, r.RegistrationDate, r.ExpiryDate, IpRules.ProposedExpiry(clock.Today, rule.TermYears), r.CertificateFileId, r.Internal, r.Notes,
+            r.RegistrationNo, r.RegistrationDate, r.ExpiryDate, r.FirstPublicationDate,
+            IpRules.ProposedExpiry(r.RegistrationDate ?? clock.Today, r.FirstPublicationDate, rule.TermYears, rule.TermFrom), rule.TermYears, rule.TermFrom, r.CertificateFileId, r.Internal, r.Notes,
             r.MoetRejectionReason,
             contributors.Select(c => new ContributorDto(c.Id, Person(c.EmployeeId), c.ExternalName, c.ExternalOrganisation, c.EmiratesIdMasked, c.EmiratesIdEncrypted is not null,
                 c.Role, Math.Round(c.Share * 100m, 2), c.SignatureStatus, c.CertificateSentAt)).ToList(),
@@ -249,7 +254,19 @@ internal sealed class IpService(
             return Error.Validation([new FieldError("registrationNo", "validation.notEmpty", "validation.notEmpty")]);
         }
 
-        var expiry = input.ExpiryDate ?? IpRules.ProposedExpiry(input.RegistrationDate.Value, rule.TermYears);
+        var published = input.FirstPublicationDate ?? record.FirstPublicationDate;
+        if (published is { } p && (p > input.RegistrationDate || p > clock.Today))
+        {
+            return Error.Validation([new FieldError("firstPublicationDate", "ip.errors.publicationDate", "ip.errors.publicationDate")]);
+        }
+
+        if (input.ExpiryDate is null && rule.TermFrom == TermBases.Publication && rule.TermYears is not null && published is null)
+        {
+            // A publication-based term (copyright) needs the first publication date, or an explicit expiry from the office.
+            return Error.Validation([new FieldError("firstPublicationDate", "ip.errors.publicationRequired", "ip.errors.publicationRequired")]);
+        }
+
+        var expiry = input.ExpiryDate ?? IpRules.ProposedExpiry(input.RegistrationDate.Value, published, rule.TermYears, rule.TermFrom);
         if (expiry is { } e && e <= input.RegistrationDate)
         {
             return Error.Validation([new FieldError("expiryDate", "ip.errors.expiryBeforeRegistration", "ip.errors.expiryBeforeRegistration")]);
@@ -260,7 +277,7 @@ internal sealed class IpService(
             return Error.Validation([new FieldError("certificateFileId", "ip.errors.file", "ip.errors.file")]);
         }
 
-        record.Register(input.RegistrationNo, input.RegistrationDate.Value, expiry, input.CertificateFileId, internalOnly: false);
+        record.Register(input.RegistrationNo, input.RegistrationDate.Value, expiry, input.CertificateFileId, internalOnly: false, published);
         db.Periods.Add(RegistrationPeriod.Create(record.Id, "initial", input.RegistrationDate.Value, expiry, input.RegistrationNo, input.CertificateFileId));
         await db.SaveChangesAsync(ct).ConfigureAwait(false);
 

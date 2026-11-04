@@ -67,7 +67,8 @@
     "certificate": "Certificate",
     "moetRejectionReason": "MOET rejection reason",
     "from": "From",
-    "to": "To"
+    "to": "To",
+    "firstPublicationDate": "First publication date"
   },
   "register": {
     "title": "IP register",
@@ -130,7 +131,10 @@
     "certificateHint": "One of the files uploaded on the Documents tab.",
     "expiryHint_one": "Proposed: registration date + {{count}} year.",
     "expiryHint_other": "Proposed: registration date + {{count}} years.",
-    "noExpiryHint": "This protection type has no expiry; leave empty."
+    "noExpiryHint": "This protection type has no expiry; leave empty.",
+    "publicationHint": "The copyright term counts from the first publication of the work.",
+    "expiryHintPublication_one": "Proposed: first publication + {{count}} year.",
+    "expiryHintPublication_other": "Proposed: first publication + {{count}} years."
   },
   "contributors": {
     "edit": "Edit contributors",
@@ -232,7 +236,11 @@
     "add": "Add",
     "moetHeader": "MOET form header",
     "moetHeaderAr": "Header (Arabic)",
-    "moetHeaderEn": "Header (English)"
+    "moetHeaderEn": "Header (English)",
+    "termFrom": "Term counts from",
+    "termFromFor": "Term of {{name}} counts from",
+    "termFromRegistration": "Registration date",
+    "termFromPublication": "First publication"
   },
   "errors": {
     "term": "The term must be between 1 and 100 years, or no expiry.",
@@ -243,6 +251,8 @@
     "notAllowed": "This action is not possible in the record's current status.",
     "expiryBeforeRegistration": "The expiry date must be after the registration date.",
     "file": "Choose one of this record's files as the certificate.",
-    "period": "Enter the registration number and a period whose end is after its start."
+    "period": "Enter the registration number and a period whose end is after its start.",
+    "publicationDate": "The first publication cannot be after the registration date or in the future.",
+    "publicationRequired": "Give the first publication date (the term counts from it) or an expiry date."
   }
 }

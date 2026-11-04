@@ -54,16 +54,18 @@ export function addYears(date: string, years: number): string {
 }
 
 /**
- * The protection term in years the server used for `proposedExpiry` (today + term), so the dialog can propose
- * registration date + term when the user changes the registration date. Undefined when the protection has no expiry.
+ * The expiry a protection rule proposes (ADR 0087, the server's `IpRules.ProposedExpiry`): `termYears` from the registration date, or from the
+ * first publication for publication-based terms (copyright). Undefined when there is no expiry or the needed date is missing.
  */
-export function termFromProposed(
-  proposedExpiry: string | null | undefined,
-  today: string,
-): number | undefined {
-  if (!proposedExpiry) return undefined;
-  const years = Number(proposedExpiry.slice(0, 4)) - Number(today.slice(0, 4));
-  return years > 0 ? years : undefined;
+export function proposeExpiry(
+  termYears: number | null | undefined,
+  termFrom: string,
+  registrationDate: string | undefined,
+  firstPublicationDate: string | undefined,
+): string | undefined {
+  if (!termYears) return undefined;
+  const start = termFrom === 'publication' ? firstPublicationDate : registrationDate;
+  return start ? addYears(start, termYears) : undefined;
 }
 
 /** Days from `today` to `date` (both `YYYY-MM-DD`). */

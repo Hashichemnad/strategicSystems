@@ -1,6 +1,6 @@
 # 0084 — Document validity by type, reminders, confirmation and expiry
 
-- **Status:** Proposed (Phase 14) — for owner confirmation
+- **Status:** Accepted by the owner (Phase 14, before the pull request)
 - **Context:** SPEC §6.2.5 replaces a fixed review cycle with a validity rule per document type: until superseded, or N months from the
   effective date; reminders 60 / 30 days; owner confirms (extended by the type's period, logged), submits a new version or requests
   withdrawal; at expiry without action → Expired (still visible, flagged).

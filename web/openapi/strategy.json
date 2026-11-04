@@ -29603,7 +29603,10 @@
           "registrationNo",
           "registrationDate",
           "expiryDate",
+          "firstPublicationDate",
           "proposedExpiry",
+          "termYears",
+          "termFrom",
           "certificateFileId",
           "internal",
           "notes",
@@ -29743,12 +29746,29 @@
             ],
             "format": "date"
           },
+          "firstPublicationDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
           "proposedExpiry": {
             "type": [
               "null",
               "string"
             ],
             "format": "date"
+          },
+          "termYears": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "termFrom": {
+            "type": "string"
           },
           "certificateFileId": {
             "type": [
@@ -39197,9 +39217,13 @@
           },
           "internalOnly": {
             "type": "boolean"
+          },
+          "termFrom": {
+            "type": "string",
+            "default": "registration"
           }
         },
-        "description": "Term and handling per protection type (ADR 0087)."
+        "description": "Term and handling per protection type (ADR 0087): years (null: no expiry), the date the term counts from, internal-only."
       },
       "ProviderDto": {
         "required": [
@@ -40224,6 +40248,13 @@
           "version": {
             "type": "integer",
             "format": "uint32"
+          },
+          "firstPublicationDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
           }
         }
       },

@@ -84,6 +84,9 @@ public sealed class IpRecord : AuditableEntity
 
     public DateOnly? RegistrationDate { get; private set; }
 
+    /// <summary>First publication of the work (copyright terms count from it, ADR 0087).</summary>
+    public DateOnly? FirstPublicationDate { get; private set; }
+
     public DateOnly? ExpiryDate { get; private set; }
 
     public Guid? CertificateFileId { get; private set; }
@@ -105,7 +108,7 @@ public sealed class IpRecord : AuditableEntity
     }
 
     public static IpRecord FromDocument(string number, Guid documentId, Guid versionId, string documentNo, string? nameAr, string? nameEn, string? description,
-        Guid? ownerUnit, Guid? requester, string propertyType)
+        Guid? ownerUnit, Guid? requester, string propertyType, DateOnly? firstPublication)
     {
         var record = new IpRecord
         {
@@ -118,6 +121,7 @@ public sealed class IpRecord : AuditableEntity
             RequesterEmployeeId = requester,
             PropertyType = propertyType,
             Status = IpStatuses.ApprovedToFile,
+            FirstPublicationDate = firstPublication,
         };
         record.Describe(nameAr, nameEn, description);
         return record;
@@ -163,8 +167,9 @@ public sealed class IpRecord : AuditableEntity
         Status = IpStatuses.RejectedByMoet;
     }
 
-    public void Register(string registrationNo, DateOnly registrationDate, DateOnly? expiry, Guid? certificateFileId, bool internalOnly)
+    public void Register(string registrationNo, DateOnly registrationDate, DateOnly? expiry, Guid? certificateFileId, bool internalOnly, DateOnly? firstPublication = null)
     {
+        FirstPublicationDate = firstPublication ?? FirstPublicationDate;
         RegistrationNo = registrationNo.Trim();
         RegistrationDate = registrationDate;
         ExpiryDate = expiry;
@@ -318,6 +323,15 @@ public static class IpRules
     public static bool SharesTotal100(IEnumerable<decimal> percentages) => Math.Abs(percentages.Sum() - 100m) <= 0.01m;
 
     public static DateOnly? ProposedExpiry(DateOnly registrationDate, int? termYears) => termYears is > 0 and var t ? registrationDate.AddYears(t) : null;
+
+    /// <summary>
+    /// The expiry a protection rule gives (ADR 0087): term years from the registration date, or from the first publication for publication-based
+    /// terms (null when that date is unknown — the office must give it or an explicit expiry).
+    /// </summary>
+    public static DateOnly? ProposedExpiry(DateOnly registrationDate, DateOnly? firstPublication, int? termYears, string termFrom) =>
+        termFrom == "publication"
+            ? firstPublication is { } published ? ProposedExpiry(published, termYears) : null
+            : ProposedExpiry(registrationDate, termYears);
 
     /// <summary>Reminder month counts due today (each once per expiry), largest first.</summary>
     public static IReadOnlyList<int> DueReminders(DateOnly expiry, DateOnly today, IEnumerable<int> months, IReadOnlyCollection<int> alreadySent) =>

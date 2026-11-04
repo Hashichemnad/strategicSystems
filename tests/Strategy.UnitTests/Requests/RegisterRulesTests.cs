@@ -81,6 +81,29 @@ public class IpRulesTests
     }
 
     [Fact]
+    public void Terms_count_from_registration_or_first_publication()
+    {
+        var registered = new DateOnly(2026, 3, 1);
+        var published = new DateOnly(2025, 6, 15);
+        IpRules.ProposedExpiry(registered, published, 50, "publication").ShouldBe(new DateOnly(2075, 6, 15)); // copyright
+        IpRules.ProposedExpiry(registered, null, 50, "publication").ShouldBeNull(); // the office gives the date or an expiry
+        IpRules.ProposedExpiry(registered, published, 10, "registration").ShouldBe(new DateOnly(2036, 3, 1)); // utility model, trademark
+        IpRules.ProposedExpiry(registered, null, 20, "registration").ShouldBe(new DateOnly(2046, 3, 1)); // patent, industrial design
+        IpRules.ProposedExpiry(registered, published, null, "registration").ShouldBeNull(); // trade secret: no expiry
+    }
+
+    [Fact]
+    public void Seeded_protection_terms()
+    {
+        var rules = new Strategy.Modules.IpRegistry.Application.IpSettings().Protections.ToDictionary(p => p.Code);
+        (rules["copyright"].TermYears, rules["copyright"].TermFrom).ShouldBe(((int?)50, "publication"));
+        (rules["patent"].TermYears, rules["industrial-design"].TermYears, rules["utility-model"].TermYears, rules["trademark"].TermYears)
+            .ShouldBe(((int?)20, (int?)20, (int?)10, (int?)10));
+        (rules["trade-secret"].TermYears, rules["trade-secret"].InternalOnly).ShouldBe(((int?)null, true));
+        Strategy.Modules.IpRegistry.Application.IpSettings.Validate(new Strategy.Modules.IpRegistry.Application.IpSettings()).ShouldBeEmpty();
+    }
+
+    [Fact]
     public void Emirates_id_mask_keeps_only_the_last_digit()
     {
         IpRules.MaskEmiratesId("784-1990-1234567-1").ShouldBe("784-****-*******-1");

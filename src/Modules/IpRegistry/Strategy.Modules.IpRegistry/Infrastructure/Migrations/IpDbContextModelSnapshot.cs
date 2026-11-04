@@ -174,6 +174,10 @@ namespace Strategy.Modules.IpRegistry.Infrastructure.Migrations
                         .HasColumnType("date")
                         .HasColumnName("filing_date");
 
+                    b.Property<DateOnly?>("FirstPublicationDate")
+                        .HasColumnType("date")
+                        .HasColumnName("first_publication_date");
+
                     b.Property<bool>("Internal")
                         .HasColumnType("boolean")
                         .HasColumnName("internal");

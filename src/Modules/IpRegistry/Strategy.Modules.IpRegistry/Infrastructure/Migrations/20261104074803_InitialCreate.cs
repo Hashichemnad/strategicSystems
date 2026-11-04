@@ -68,6 +68,7 @@ namespace Strategy.Modules.IpRegistry.Infrastructure.Migrations
                     application_no = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     registration_no = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     registration_date = table.Column<DateOnly>(type: "date", nullable: true),
+                    first_publication_date = table.Column<DateOnly>(type: "date", nullable: true),
                     expiry_date = table.Column<DateOnly>(type: "date", nullable: true),
                     certificate_file_id = table.Column<Guid>(type: "uuid", nullable: true),
                     @internal = table.Column<bool>(name: "internal", type: "boolean", nullable: false),

@@ -1,6 +1,6 @@
 # 0082 — Numbering tokens `{TYPE}` and `{ORG}`; Document ID and version numbers
 
-- **Status:** Proposed (Phase 14) — for owner confirmation
+- **Status:** Accepted by the owner (Phase 14, before the pull request)
 - **Context:** SPEC §6.2.3: Document ID default `{ORG}-{UNITCODE}-{TYPECODE}-{YYYY}-{NN}` (e.g. `DOF-LG-LEG-2026-01`); SPEC §5.1: each request
   type has a numbering format. The numbering service (ADR 0017) knows `{YYYY} {YY} {MM} {UNIT} {SEQ:n}` only.
 

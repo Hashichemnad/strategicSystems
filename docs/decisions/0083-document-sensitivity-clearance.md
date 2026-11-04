@@ -1,6 +1,6 @@
 # 0083 — Document sensitivity clearance: one visibility rule for every read path
 
-- **Status:** Proposed (Phase 14) — for owner confirmation
+- **Status:** Accepted by the owner (Phase 14, before the pull request)
 - **Context:** SPEC §6.4–6.5: the library shows only documents the user's sensitivity clearance allows; sensitivity levels are mapped to
   roles / units in Settings (e.g. Confidential → owner unit + Strategy Office + leadership); published Internal documents are visible to all
   employees; "Share to all employees?" on publish (otherwise visibility follows sensitivity). Q-RQ2: Public · Internal · Confidential ·

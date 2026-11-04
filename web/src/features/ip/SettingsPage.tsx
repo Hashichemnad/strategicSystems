@@ -12,6 +12,7 @@ import {
   PageHeader,
   Skeleton,
   StatusBanner,
+  Select,
   Table,
   TableBody,
   TableCell,
@@ -56,7 +57,12 @@ export function IpSettingsPage() {
     ...new Set([...protections.filter((p) => p.active).map((p) => p.code), ...rules.map((r) => r.code)]),
   ];
   const ruleOf = (code: string): ProtectionRule =>
-    rules.find((r) => r.code === code) ?? { code, termYears: null, internalOnly: false };
+    rules.find((r) => r.code === code) ?? {
+      code,
+      termYears: null,
+      internalOnly: false,
+      termFrom: 'registration',
+    };
   const setRule = (code: string, patch: Partial<ProtectionRule>) =>
     set({ protections: codes.map((c) => (c === code ? { ...ruleOf(c), ...patch } : ruleOf(c))) });
   const label = (code: string) => {
@@ -103,6 +109,7 @@ export function IpSettingsPage() {
               <TableRow>
                 <TableHeaderCell>{t('fields.protectionType')}</TableHeaderCell>
                 <TableHeaderCell>{t('settings.term')}</TableHeaderCell>
+                <TableHeaderCell>{t('settings.termFrom')}</TableHeaderCell>
                 <TableHeaderCell>{t('settings.noExpiry')}</TableHeaderCell>
                 <TableHeaderCell>{t('settings.internalOnly')}</TableHeaderCell>
               </TableRow>
@@ -125,6 +132,18 @@ export function IpSettingsPage() {
                         onChange={(e) =>
                           setRule(code, { termYears: e.target.value === '' ? null : Number(e.target.value) })
                         }
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <Select
+                        aria-label={t('settings.termFromFor', { name: label(code) })}
+                        disabled={rule.termYears === null}
+                        value={rule.termFrom}
+                        onValueChange={(v) => setRule(code, { termFrom: v })}
+                        options={[
+                          { value: 'registration', label: t('settings.termFromRegistration') },
+                          { value: 'publication', label: t('settings.termFromPublication') },
+                        ]}
                       />
                     </TableCell>
                     <TableCell>

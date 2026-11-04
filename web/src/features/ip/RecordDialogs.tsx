@@ -16,7 +16,7 @@ import {
 } from '@/ui';
 import { IP_OWNER_TYPE, ipApi, useIpRecordMutation, type IpRecord } from './api';
 import { actionError } from './components';
-import { addYears, termFromProposed, todayIso } from './logic';
+import { addYears, proposeExpiry, todayIso } from './logic';
 
 export type IpDialog = 'filing' | 'internal' | 'registration' | 'moetRejection' | 'close' | 'renew';
 
@@ -224,13 +224,26 @@ function RegistrationDialog({ record, onClose }: DialogProps) {
   const { t } = useTranslation('ip');
   const action = useAction(record, ipApi.register, onClose);
   const today = todayIso();
-  const term = termFromProposed(record.proposedExpiry, today);
+  const term = record.termYears ?? undefined;
+  const byPublication = record.termFrom === 'publication';
   const [registrationNo, setRegistrationNo] = useState('');
   const [registrationDate, setRegistrationDate] = useState<string | undefined>(today);
-  const [expiryDate, setExpiryDate] = useState<string | undefined>(record.proposedExpiry ?? undefined);
+  const [publicationDate, setPublicationDate] = useState<string | undefined>(
+    record.firstPublicationDate ?? undefined,
+  );
+  const [expiryDate, setExpiryDate] = useState<string | undefined>(
+    proposeExpiry(term, record.termFrom, today, record.firstPublicationDate ?? undefined),
+  );
   const [expiryTouched, setExpiryTouched] = useState(false);
   const [certificate, setCertificate] = useState<string | undefined>();
   const invalidExpiry = !!expiryDate && !!registrationDate && expiryDate <= registrationDate;
+  const invalidPublication =
+    !!publicationDate &&
+    ((!!registrationDate && publicationDate > registrationDate) || publicationDate > today);
+  const missingPublication = byPublication && !!term && !publicationDate && !expiryDate;
+  const repropose = (registration: string | undefined, publication: string | undefined) => {
+    if (!expiryTouched) setExpiryDate(proposeExpiry(term, record.termFrom, registration, publication));
+  };
   return (
     <ActionForm
       title={t('actions.register')}
@@ -238,11 +251,18 @@ function RegistrationDialog({ record, onClose }: DialogProps) {
       confirm={t('actions.register')}
       busy={action.busy}
       error={action.error}
-      disabled={!registrationNo.trim() || !registrationDate || invalidExpiry}
+      disabled={
+        !registrationNo.trim() ||
+        !registrationDate ||
+        invalidExpiry ||
+        invalidPublication ||
+        missingPublication
+      }
       onSubmit={() =>
         action.run({
           registrationNo: registrationNo.trim(),
           registrationDate: registrationDate ?? null,
+          firstPublicationDate: publicationDate ?? null,
           expiryDate: expiryDate ?? null,
           certificateFileId: certificate ?? null,
           version: record.version,
@@ -263,13 +283,31 @@ function RegistrationDialog({ record, onClose }: DialogProps) {
           value={registrationDate}
           onChange={(value) => {
             setRegistrationDate(value);
-            if (!expiryTouched && value && term) setExpiryDate(addYears(value, term));
+            repropose(value, publicationDate);
+          }}
+        />
+      </FormField>
+      <FormField
+        label={t('fields.firstPublicationDate')}
+        required={byPublication && !!term}
+        hint={byPublication ? t('dialogs.publicationHint') : undefined}
+        error={invalidPublication ? t('errors.publicationDate') : undefined}
+      >
+        <DatePicker
+          value={publicationDate}
+          onChange={(value) => {
+            setPublicationDate(value);
+            repropose(registrationDate, value);
           }}
         />
       </FormField>
       <FormField
         label={t('fields.expiryDate')}
-        hint={term ? t('dialogs.expiryHint', { count: term }) : t('dialogs.noExpiryHint')}
+        hint={
+          term
+            ? t(byPublication ? 'dialogs.expiryHintPublication' : 'dialogs.expiryHint', { count: term })
+            : t('dialogs.noExpiryHint')
+        }
         error={invalidExpiry ? t('errors.expiryBeforeRegistration') : undefined}
       >
         <DatePicker
@@ -329,7 +367,7 @@ function RenewDialog({ record, onClose }: DialogProps) {
   const { t } = useTranslation('ip');
   const action = useAction(record, ipApi.renew, onClose);
   const today = todayIso();
-  const term = termFromProposed(record.proposedExpiry, today);
+  const term = record.termYears ?? undefined;
   const initialFrom = record.expiryDate ?? today;
   const [registrationNo, setRegistrationNo] = useState(record.registrationNo ?? '');
   const [from, setFrom] = useState<string | undefined>(initialFrom);

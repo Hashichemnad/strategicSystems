@@ -12,7 +12,7 @@ using Strategy.Modules.IpRegistry.Infrastructure;
 namespace Strategy.Modules.IpRegistry.Infrastructure.Migrations
 {
     [DbContext(typeof(IpDbContext))]
-    [Migration("20261104060237_InitialCreate")]
+    [Migration("20261104074803_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -176,6 +176,10 @@ namespace Strategy.Modules.IpRegistry.Infrastructure.Migrations
                     b.Property<DateOnly?>("FilingDate")
                         .HasColumnType("date")
                         .HasColumnName("filing_date");
+
+                    b.Property<DateOnly?>("FirstPublicationDate")
+                        .HasColumnType("date")
+                        .HasColumnName("first_publication_date");
 
                     b.Property<bool>("Internal")
                         .HasColumnType("boolean")

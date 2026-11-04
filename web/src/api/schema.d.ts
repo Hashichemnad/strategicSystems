@@ -8368,7 +8368,12 @@ export interface components {
       /** Format: date */
       expiryDate: null | string;
       /** Format: date */
+      firstPublicationDate: null | string;
+      /** Format: date */
       proposedExpiry: null | string;
+      /** Format: int32 */
+      termYears: null | number;
+      termFrom: string;
       /** Format: uuid */
       certificateFileId: null | string;
       internal: boolean;
@@ -10713,12 +10718,14 @@ export interface components {
       /** Format: double */
       rangeMax: null | number;
     };
-    /** @description Term and handling per protection type (ADR 0087). */
+    /** @description Term and handling per protection type (ADR 0087): years (null: no expiry), the date the term counts from, internal-only. */
     ProtectionRule: {
       code: string;
       /** Format: int32 */
       termYears: null | number;
       internalOnly: boolean;
+      /** @default registration */
+      termFrom: string;
     };
     ProviderDto: {
       /** Format: uuid */
@@ -10982,6 +10989,8 @@ export interface components {
       certificateFileId: null | string;
       /** Format: uint32 */
       version: number;
+      /** Format: date */
+      firstPublicationDate?: null | string;
     };
     RenewalInput: {
       registrationNo: null | string;

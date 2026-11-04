@@ -33,7 +33,8 @@ internal sealed class DocumentPublishedHandler(IpDbContext db, INumberingService
         await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
         var number = await numbering.NextAsync(db, IpPermissions.RecordNumbering, new NumberingContext(clock.Today), cancellationToken).ConfigureAwait(false);
         var record = IpRecord.FromDocument(number, integrationEvent.DocumentId, integrationEvent.VersionId, integrationEvent.DocumentNo, integrationEvent.NameAr,
-            integrationEvent.NameEn, integrationEvent.DescriptionAr, integrationEvent.OwnerUnitId, integrationEvent.RequesterEmployeeId, IpPermissions.DocumentPropertyType);
+            integrationEvent.NameEn, integrationEvent.DescriptionAr, integrationEvent.OwnerUnitId, integrationEvent.RequesterEmployeeId, IpPermissions.DocumentPropertyType,
+            DateOnly.FromDateTime(integrationEvent.PublishedAt.UtcDateTime));
         db.Records.Add(record);
         var authors = new[] { integrationEvent.RequesterEmployeeId, integrationEvent.OwnerEmployeeId }.Where(e => e is not null).Select(e => e!.Value).Distinct().ToList();
         for (var i = 0; i < authors.Count; i++)

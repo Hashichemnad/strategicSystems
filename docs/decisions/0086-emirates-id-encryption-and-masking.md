@@ -1,6 +1,6 @@
 # 0086 — Emirates ID: encryption, masking and who may see it
 
-- **Status:** Proposed (Phase 14) — for owner confirmation
+- **Status:** Accepted by the owner (Phase 14, before the pull request)
 - **Context:** SPEC §7.3: contributor Emirates ID needed on the MOET form, stored encrypted, shown masked, visible only to IP administrators.
   CLAUDE.md §6: sensitive values encrypted with Data Protection, masked in UI and logs.
 
