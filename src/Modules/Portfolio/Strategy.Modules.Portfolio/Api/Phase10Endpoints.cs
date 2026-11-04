@@ -9,6 +9,8 @@ using Strategy.Platform.Http.Problems;
 
 namespace Strategy.Modules.Portfolio.Api;
 
+public sealed record TemplateActiveInput(bool Active);
+
 public sealed record PortfolioFeaturesDto(IReadOnlyDictionary<string, bool> Features, string AgileApprovalMode, int DefaultSprintLengthDays, bool TeamMembersSeeCosts,
     bool TeamMembersCreateStories);
 
@@ -194,8 +196,8 @@ internal static class Phase10Endpoints
             .WithName("CreateProjectTemplate").RequirePermission(PortfolioPermissions.SettingsManage).RequireFeature(FeatureCodes.Templates);
         group.MapPut("/templates/{tid:guid}", async (Guid tid, ProjectTemplateInput b, TemplateService s, CancellationToken ct) => (await s.SaveAsync(tid, b, ct)).ToOk())
             .WithName("UpdateProjectTemplate").RequirePermission(PortfolioPermissions.SettingsManage).RequireFeature(FeatureCodes.Templates);
-        group.MapPost("/templates/{tid:guid}/active/{active:bool}", async (Guid tid, bool active, TemplateService s, CancellationToken ct) =>
-                (await s.SetActiveAsync(tid, active, ct)).ToOk())
+        group.MapPost("/templates/{tid:guid}/active", async (Guid tid, TemplateActiveInput b, TemplateService s, CancellationToken ct) =>
+                (await s.SetActiveAsync(tid, b.Active, ct)).ToOk())
             .WithName("SetProjectTemplateActive").RequirePermission(PortfolioPermissions.SettingsManage).RequireFeature(FeatureCodes.Templates);
         projects.MapPost("/{id:guid}/apply-template", async (Guid id, ApplyTemplateInput b, TemplateService s, CancellationToken ct) => (await s.ApplyAsync(id, b, ct)).ToOk())
             .WithName("ApplyProjectTemplate").RequirePermission(read).RequireFeature(FeatureCodes.Templates);

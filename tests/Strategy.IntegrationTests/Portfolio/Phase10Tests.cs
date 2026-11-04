@@ -308,11 +308,27 @@ public sealed class Phase10Tests(Phase10Fixture fx) : IClassFixture<Phase10Fixtu
         };
         try
         {
-            await fx.SettingsAsync(s => s with { Features = new PortfolioFeatures
+            await fx.SettingsAsync(s => s with
             {
-                Portfolios = false, Prioritisation = false, Health = false, Baselines = false, EarnedValue = false, Raid = false, RiskMatrix = false, Raci = false,
-                CommunicationPlan = false, Benefits = false, Quality = false, Procurement = false, StatusReport = false, GateChecklists = false, Templates = false,
-            } });
+                Features = new PortfolioFeatures
+                {
+                    Portfolios = false,
+                    Prioritisation = false,
+                    Health = false,
+                    Baselines = false,
+                    EarnedValue = false,
+                    Raid = false,
+                    RiskMatrix = false,
+                    Raci = false,
+                    CommunicationPlan = false,
+                    Benefits = false,
+                    Quality = false,
+                    Procurement = false,
+                    StatusReport = false,
+                    GateChecklists = false,
+                    Templates = false,
+                }
+            });
             var features = await PortfolioWorld.OkAsync<PortfolioFeaturesDto>(pm.GetAsync($"{Base}/features"));
             features.Features.Values.ShouldAllBe(on => !on);
             foreach (var (code, method, url) in checks)

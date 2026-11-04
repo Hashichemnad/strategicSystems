@@ -32,7 +32,15 @@ internal sealed class ProjectBacklogTool(AgileService agile) : IAppTool
             epics = v.Epics.Select(e => new { e.Id, e.Code, title = e.TitleEn ?? e.TitleAr, weight = Math.Round(e.Weight * 100, 2), e.Points, e.DonePoints, e.Status }),
             stories = v.Stories.Where(s => s.Status == ItemStatuses.Active).Select(s => new
             {
-                s.Id, s.Code, s.Title, s.StoryPoints, s.Priority, column = s.ColumnCode, s.Category, s.SprintId, assignee = s.Assignee?.NameEn ?? s.Assignee?.NameAr,
+                s.Id,
+                s.Code,
+                s.Title,
+                s.StoryPoints,
+                s.Priority,
+                column = s.ColumnCode,
+                s.Category,
+                s.SprintId,
+                assignee = s.Assignee?.NameEn ?? s.Assignee?.NameAr,
                 s.ApprovedDone,
             }),
         });

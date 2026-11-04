@@ -228,8 +228,9 @@ export function useSetTemplateActive() {
   return useMutation({
     mutationFn: async ({ id, active }: { id: string; active: boolean }) =>
       unwrap(
-        await api.POST('/api/v1/portfolio/templates/{tid}/active/{active}', {
-          params: { path: { tid: id, active } },
+        await api.POST('/api/v1/portfolio/templates/{tid}/active', {
+          params: { path: { tid: id } },
+          body: { active },
         }),
       ) as unknown as ProjectTemplate,
     onSuccess: async () => {

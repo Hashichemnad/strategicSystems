@@ -179,7 +179,7 @@ export function orderRows(
   return out;
 }
 
-/** The date range shown: the given start / end, else the rows' extent (with today), snapped to whole months. */
+/** The date range shown: the rows' extent widened by the given start / end (and today when none is given), snapped to whole months. */
 export function dateRange(
   rows: readonly GanttRow[],
   start: string | null | undefined,
@@ -198,8 +198,11 @@ export function dateRange(
     ])
       if (valid(v)) days.push(dayOf(v));
   const todayDay = dayOf(today);
-  let first = valid(start) ? dayOf(start) : days.length ? Math.min(...days) : todayDay;
-  let last = valid(end) ? dayOf(end) : days.length ? Math.max(...days) : todayDay;
+  // The given start / end widen the rows' extent; they never clip a row (a milestone planned before the project start stays visible).
+  let first = Math.min(...(valid(start) ? [dayOf(start)] : []), ...days);
+  let last = Math.max(...(valid(end) ? [dayOf(end)] : []), ...days);
+  if (!Number.isFinite(first)) first = todayDay;
+  if (!Number.isFinite(last)) last = todayDay;
   if (!valid(start) && !Number.isNaN(todayDay)) first = Math.min(first, todayDay);
   if (!valid(end) && !Number.isNaN(todayDay)) last = Math.max(last, todayDay);
   if (Number.isNaN(first)) first = Math.floor(Date.now() / DAY_MS);

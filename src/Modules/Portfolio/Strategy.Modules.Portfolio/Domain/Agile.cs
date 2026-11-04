@@ -626,8 +626,14 @@ public sealed class StoryEvent : Entity
         ArgumentNullException.ThrowIfNull(story);
         return new StoryEvent
         {
-            ProjectId = story.ProjectId, StoryId = story.Id, SprintId = story.SprintId, FromColumn = from, ToColumn = story.ColumnCode, Category = story.Category,
-            Points = story.StoryPoints, At = at,
+            ProjectId = story.ProjectId,
+            StoryId = story.Id,
+            SprintId = story.SprintId,
+            FromColumn = from,
+            ToColumn = story.ColumnCode,
+            Category = story.Category,
+            Points = story.StoryPoints,
+            At = at,
         };
     }
 }

@@ -529,8 +529,16 @@ public sealed class Baseline : AuditableEntity
         DateOnly? end, string items) =>
         new()
         {
-            ProjectId = projectId, VersionNo = versionNo, TakenAt = at, TakenByUserId = by, Reason = reason, ChangeRequestId = changeRequestId, Budget = budget,
-            PlannedStart = start, PlannedEnd = end, Items = items,
+            ProjectId = projectId,
+            VersionNo = versionNo,
+            TakenAt = at,
+            TakenByUserId = by,
+            Reason = reason,
+            ChangeRequestId = changeRequestId,
+            Budget = budget,
+            PlannedStart = start,
+            PlannedEnd = end,
+            Items = items,
         };
 }
 

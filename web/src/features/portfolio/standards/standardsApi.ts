@@ -195,9 +195,7 @@ export function useGateChecklist(id: string, enabled = true) {
   return useQuery({
     queryKey: standardsKeys.checklist(id),
     queryFn: async ({ signal }) =>
-      unwrap(
-        await api.GET('/api/v1/portfolio/projects/{id}/checklist', { ...path(id), signal }),
-      ),
+      unwrap(await api.GET('/api/v1/portfolio/projects/{id}/checklist', { ...path(id), signal })),
     enabled,
   });
 }

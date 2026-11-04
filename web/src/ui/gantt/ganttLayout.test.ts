@@ -95,14 +95,25 @@ describe('ganttLayout', () => {
     expect(layout.quarters.map((q) => q.index)).toEqual([1, 2, 3, 4]);
     expect(layout.quarters[1]?.x).toBeCloseTo(layout.x('2026-04-01'));
     expect(layout.quarters[1]?.width).toBeCloseTo(layout.x('2026-07-01') - layout.x('2026-04-01'));
-    // A range starting mid-quarter gets a partial first band.
-    const partial = layoutGantt({ ...base, start: '2026-02-10', end: '2026-05-20', rtl: false });
+    // A range starting mid-quarter gets a partial first band (rows inside it: a given start never clips a row).
+    const partial = layoutGantt({
+      ...base,
+      rows: base.rows.filter(
+        (r) => (r.plannedStart ?? '') >= '2026-02-10' && (r.plannedEnd ?? '9') <= '2026-05-20',
+      ),
+      start: '2026-02-10',
+      end: '2026-05-20',
+      rtl: false,
+    });
     expect(partial.start).toBe('2026-02-01');
     expect(partial.quarters.map((q) => q.start)).toEqual(['2026-02-01', '2026-04-01']);
     expect(partial.quarters[0]?.index).toBe(1);
     // RTL: the first quarter sits at the right end of the axis.
     const rtl = layoutGantt({ ...base, rtl: true });
     expect((rtl.quarters[0]?.x ?? 0) + (rtl.quarters[0]?.width ?? 0)).toBeCloseTo(1000);
+    // A row planned before the given start widens the range instead of being clipped.
+    const early = layoutGantt({ ...base, start: '2026-06-01', end: '2026-12-31', rtl: false });
+    expect(early.start <= (base.rows[0]?.plannedStart ?? '')).toBe(true);
   });
 
   it('computes planned, actual (to today when open), baseline bars and the achievement fill', () => {
