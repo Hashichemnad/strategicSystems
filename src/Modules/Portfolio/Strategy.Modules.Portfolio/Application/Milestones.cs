@@ -48,7 +48,11 @@ public sealed record MilestoneDto(
     bool IsInnovative,
     string? InnovativeReason,
     int Sort,
-    uint Version);
+    uint Version,
+    bool DeliveredInSprints = false,
+    string? QualityStatus = null,
+    string? QualityComment = null,
+    DateTimeOffset? QualityAt = null);
 
 public sealed record MilestonePlanDto(
     IReadOnlyList<MilestoneDto> Milestones, decimal DetailedWeight, decimal HighLevelWeight, decimal Performance, decimal PlannedProgress, string ProgressStatus);
@@ -61,7 +65,9 @@ public sealed record MilestoneProgressResult(MilestoneDto Milestone, IReadOnlyLi
 
 public sealed record MonthlyUpdateDto(
     Guid Id, string Period, int Sequence, string Status, DateTimeOffset OpenedAt, DateTimeOffset? DueAt, string OpenedBy, DateTimeOffset? SubmittedAt, DateTimeOffset? ApprovedAt,
-    bool Overdue, string? SubmitComment, string Items);
+    bool Overdue, string? SubmitComment, string Items, string Sprints = "[]", string? NarrativeAr = null, string? NarrativeEn = null);
+
+public sealed record NarrativeInput(string? NarrativeAr, string? NarrativeEn);
 
 public sealed record MonthlyViewDto(MonthlyUpdateDto? Current, IReadOnlyList<MonthlyUpdateDto> History, bool CanUpdate, bool CanSubmit, bool CanOpen, int PendingMilestones);
 
@@ -76,7 +82,9 @@ internal sealed class MilestoneService(
     IApprovalEngine engine,
     IServiceProvider services,
     IRequestContext context,
-    IClock clock)
+    IClock clock,
+    AgileService agile,
+    CostVisibility costs)
 {
     private static readonly JsonSerializerOptions SnapshotJson = new(JsonSerializerDefaults.Web);
 
@@ -216,7 +224,7 @@ internal sealed class MilestoneService(
             return Error.Rule("portfolio.monthly.closed", "portfolio.errors.windowClosed");
         }
 
-        if (milestone.IsHeader || milestone.HighLevel || !milestone.IsActive || milestone.UpdateState == UpdateStates.PendingApproval)
+        if (milestone.IsHeader || milestone.HighLevel || !milestone.IsActive || milestone.UpdateState == UpdateStates.PendingApproval || milestone.DeliveredInSprints)
         {
             return Error.Rule("portfolio.milestone.notUpdatable", "portfolio.errors.milestoneNotUpdatable");
         }
@@ -365,11 +373,13 @@ internal sealed class MilestoneService(
             return ProjectService.ApprovalRunning(project!.ApprovalProcess!);
         }
 
-        var milestones = await db.Milestones.Where(m => m.ProjectId == projectId && (m.UpdateState == UpdateStates.Draft || m.UpdateState == UpdateStates.Returned))
-            .ToListAsync(ct).ConfigureAwait(false);
+        var sprintSnapshot = Methodologies.UsesSprints(project.Methodology) ? await agile.CarryIntoMonthlyAsync(project, window.Period, ct).ConfigureAwait(false) : "[]";
+        var milestones = (await db.Milestones.Where(m => m.ProjectId == projectId && (m.UpdateState == UpdateStates.Draft || m.UpdateState == UpdateStates.Returned))
+            .ToListAsync(ct).ConfigureAwait(false)).Concat(db.Milestones.Local.Where(m => m.ProjectId == projectId && m.UpdateState == UpdateStates.Draft))
+            .DistinctBy(m => m.Id).ToList();
         var today = await reader.TodayAsync(ct).ConfigureAwait(false);
         var errors = new List<FieldError>();
-        foreach (var m in milestones.Where(m => m.PendingAchieve is not null))
+        foreach (var m in milestones.Where(m => m.PendingAchieve is not null && !m.DeliveredInSprints))
         {
             var values = new MilestoneProgressValues(m.PendingAchieve!.Value, m.PendingActualStart, m.PendingActualEnd, m.Causality, m.CorrectiveActions, m.EvidenceNote);
             errors.AddRange(MilestoneRules.ValidateProgress(values, m.Weight, m.MaxAchieved, m.PlannedEnd, today, await EvidenceCountAsync(m.Id, ct).ConfigureAwait(false))
@@ -402,6 +412,7 @@ internal sealed class MilestoneService(
             m.EvidenceNote,
         }), SnapshotJson);
         window.Submit(clock.UtcNow, snapshot, comment);
+        window.SetSprints(sprintSnapshot);
         db.Entry(project).Property(x => x.Version).OriginalValue = version;
         project.EnterApproval(ProjectApprovalProcesses.MonthlyUpdate, null, null, null);
         await using var transaction = await db.Database.BeginTransactionAsync(ct).ConfigureAwait(false);
@@ -430,7 +441,38 @@ internal sealed class MilestoneService(
 
     private static MonthlyUpdateDto Dto(MonthlyUpdate m, DateTimeOffset now) =>
         new(m.Id, m.Period, m.Sequence, m.Status, m.OpenedAt, m.DueAt, m.OpenedBy, m.SubmittedAt, m.ApprovedAt,
-            MonthlyStatuses.AcceptsUpdates(m.Status) && m.DueAt is { } due && now > due, m.SubmitComment, m.Items);
+            MonthlyStatuses.AcceptsUpdates(m.Status) && m.DueAt is { } due && now > due, m.SubmitComment, m.Items, m.Sprints, m.NarrativeAr, m.NarrativeEn);
+
+    /// <summary>The month's narrative (status report, ADR 0097) — typed by the PM or accepted from the status report writer while the window is open.</summary>
+    public async Task<Result<MonthlyViewDto>> SaveNarrativeAsync(Guid projectId, NarrativeInput input, CancellationToken ct)
+    {
+        var project = await loader.FindAsync(projectId, context.User, ct).ConfigureAwait(false);
+        if (project is null)
+        {
+            return Error.NotFound();
+        }
+
+        if (!await loader.CanAsync(context.User, PortfolioPermissions.ProjectEdit, project, ct).ConfigureAwait(false))
+        {
+            return Error.Forbidden();
+        }
+
+        var window = await db.MonthlyUpdates.Where(m => m.ProjectId == projectId && m.Status != MonthlyStatuses.Approved).OrderByDescending(m => m.Period)
+            .ThenByDescending(m => m.Sequence).FirstOrDefaultAsync(ct).ConfigureAwait(false);
+        if (window is null || !MonthlyStatuses.AcceptsUpdates(window.Status))
+        {
+            return Error.Rule("portfolio.monthly.closed", "portfolio.errors.windowClosed");
+        }
+
+        if (input.NarrativeAr is { Length: > RequestRules.LongTextMaxLength } || input.NarrativeEn is { Length: > RequestRules.LongTextMaxLength })
+        {
+            return Error.Validation([new FieldError("narrativeEn", "validation.maximumLength", "validation.maximumLength")]);
+        }
+
+        window.SetNarrative(input.NarrativeAr, input.NarrativeEn);
+        await db.SaveChangesAsync(ct).ConfigureAwait(false);
+        return await MonthlyAsync(projectId, ct).ConfigureAwait(false);
+    }
 
     private async Task<Error?> PlanDeniedAsync(Project project, CancellationToken ct)
     {
@@ -439,7 +481,7 @@ internal sealed class MilestoneService(
             return Error.Forbidden();
         }
 
-        return ProjectLifecycle.CanPlanMilestones(project.Status, project.SubState) ? null : ProjectService.NotInStage(project);
+        return AgileService.CanPlan(project) ? null : ProjectService.NotInStage(project);
     }
 
     private static List<FieldError> Validate(MilestoneValues v, Milestone? self, List<Milestone> all)
@@ -553,9 +595,12 @@ internal sealed class MilestoneService(
     private async Task<int> EvidenceCountAsync(Guid milestoneId, CancellationToken ct) =>
         (await files.ListAsync(PortfolioPermissions.MilestoneResource, milestoneId.ToString("D"), ProjectFilePurposes.Evidence.Key, ct).ConfigureAwait(false)).Count;
 
-    private async Task<IReadOnlyList<MilestoneDto>> ToDtosAsync(IReadOnlyList<Milestone> rows, CancellationToken ct)
+    private async Task<IReadOnlyList<MilestoneDto>> ToDtosAsync(List<Milestone> rows, CancellationToken ct)
     {
         var today = await reader.TodayAsync(ct).ConfigureAwait(false);
+        var projectId = rows.Count == 0 ? Guid.Empty : rows[0].ProjectId;
+        var project = rows.Count == 0 ? null : await db.Projects.AsNoTracking().FirstOrDefaultAsync(p => p.Id == projectId, ct).ConfigureAwait(false);
+        var showCosts = project is not null && await costs.CanSeeAsync(context.User, project, ct).ConfigureAwait(false);
         var withEvidence = await files.OwnersWithFilesAsync(ProjectFilePurposes.Evidence.Key, rows.Select(r => r.Id.ToString("D")).ToList(), ct).ConfigureAwait(false);
         var result = new List<MilestoneDto>();
         foreach (var m in rows)
@@ -564,9 +609,10 @@ internal sealed class MilestoneService(
             var current = m.PendingAchieve ?? m.MaxAchieved;
             result.Add(new MilestoneDto(
                 m.Id, m.Code, m.ParentId, m.IsHeader, m.HighLevel, m.TitleAr, m.TitleEn, m.PlannedStart, m.PlannedEnd, m.Weight, m.MaxAchieved, m.PendingAchieve,
-                ProgressCalculator.CompletionRate(m.MaxAchieved, m.Weight), m.ActualStart, m.ActualEnd, m.PendingActualStart, m.PendingActualEnd, m.Cost, m.Status,
+                ProgressCalculator.CompletionRate(m.MaxAchieved, m.Weight), m.ActualStart, m.ActualEnd, m.PendingActualStart, m.PendingActualEnd, showCosts ? m.Cost : null, m.Status,
                 m.UpdateState, m.IsActive && !m.IsHeader && MilestoneRules.IsDelayed(current, m.Weight, m.PlannedEnd, today), m.Causality, m.CorrectiveActions,
-                m.EvidenceNote, evidence, m.IsDeliverable, m.MainDeliverable, m.AcceptanceCriteria, m.QualityMet, m.IsInnovative, m.InnovativeReason, m.Sort, m.Version));
+                m.EvidenceNote, evidence, m.IsDeliverable, m.MainDeliverable, m.AcceptanceCriteria, m.QualityMet, m.IsInnovative, m.InnovativeReason, m.Sort, m.Version,
+                m.DeliveredInSprints, m.QualityStatus, m.QualityComment, m.QualityAt));
         }
 
         return result;

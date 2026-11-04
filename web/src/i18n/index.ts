@@ -66,6 +66,12 @@ import arDocreg from './ar/docreg.json';
 import enDocreg from './en/docreg.json';
 import arIp from './ar/ip.json';
 import enIp from './en/ip.json';
+import arAgile from './ar/agile.json';
+import enAgile from './en/agile.json';
+import arPmStandards from './ar/pmStandards.json';
+import enPmStandards from './en/pmStandards.json';
+import arPortfolioViews from './ar/portfolioViews.json';
+import enPortfolioViews from './en/portfolioViews.json';
 import { readPreference } from '@/lib/preferences';
 
 export const languages = ['ar', 'en'] as const;
@@ -100,6 +106,9 @@ export const resources = {
     tasks: arTasks,
     teams: arTeams,
     portfolio: arPortfolio,
+    agile: arAgile,
+    pmStandards: arPmStandards,
+    portfolioViews: arPortfolioViews,
     links: arLinks,
     kpi: arKpi,
     risk: arRisk,
@@ -135,6 +144,9 @@ export const resources = {
     tasks: enTasks,
     teams: enTeams,
     portfolio: enPortfolio,
+    agile: enAgile,
+    pmStandards: enPmStandards,
+    portfolioViews: enPortfolioViews,
     links: enLinks,
     kpi: enKpi,
     risk: enRisk,

@@ -4436,6 +4436,198 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/portfolio/features': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetPortfolioFeatures'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/milestones/{mid}/sign-off': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SignOffMilestoneQuality'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/templates': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListProjectTemplates'];
+    put?: never;
+    post: operations['CreateProjectTemplate'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/templates/{tid}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateProjectTemplate'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/templates/{tid}/active': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SetProjectTemplateActive'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/groups': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListPortfolioGroups'];
+    put?: never;
+    post: operations['CreatePortfolioGroup'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/groups/{gid}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdatePortfolioGroup'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/gantt': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetPortfolioGantt'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/dashboard': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetPortfolioDashboard'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/change-requests/{cid}/ai/impact': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['AnalyseChangeImpact'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/ai/insights': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['DraftPortfolioInsights'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/lessons/search': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['SearchPortfolioLessons'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/portfolio/requests': {
     parameters: {
       query?: never;
@@ -5486,6 +5678,966 @@ export interface paths {
     get?: never;
     put?: never;
     post: operations['ApplyProjectChangeRequest'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/agile': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetProjectAgile'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/methodology': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['SetProjectMethodology'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/board': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['SetProjectBoard'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/releases': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CreateProjectRelease'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/releases/{itemId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateProjectRelease'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/epics': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CreateProjectEpic'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/epics/{itemId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateProjectEpic'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/epics/{itemId}/cancel': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CancelProjectEpic'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/stories': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CreateProjectStory'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/stories/{itemId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateProjectStory'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/sprints': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CreateProjectSprint'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/sprints/{itemId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateProjectSprint'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/health': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetProjectHealth'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/health/{dimension}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['OverrideProjectHealth'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/baselines': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListProjectBaselines'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/baselines/variance': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetProjectBaselineVariance'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/evm': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetProjectEarnedValue'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/raid': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetProjectRaidLog'];
+    put?: never;
+    post: operations['CreateProjectRaidItem'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/raid/{itemId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateProjectRaidItem'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/raid/{itemId}/accept': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['AcceptProjectRaidItem'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/risk-matrix': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetProjectRiskMatrix'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/raci': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetProjectRaci'];
+    put?: never;
+    post: operations['CreateProjectRaciEntry'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/raci/{itemId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateProjectRaciEntry'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/raci/{itemId}/remove': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RemoveProjectRaciEntry'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/communications': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListProjectCommunications'];
+    put?: never;
+    post: operations['CreateProjectCommunication'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/communications/{itemId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateProjectCommunication'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/communications/generate': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['GenerateProjectCommunications'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/communications/{itemId}/done': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['MarkProjectCommunicationDone'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/communications/{itemId}/remove': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RemoveProjectCommunication'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/benefits': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListProjectBenefits'];
+    put?: never;
+    post: operations['CreateProjectBenefit'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/benefits/{itemId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateProjectBenefit'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/benefits/{itemId}/measure': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['MeasureProjectBenefit'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/benefits/{itemId}/remove': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RemoveProjectBenefit'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/contracts/{cid}/extras': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetProjectContractExtras'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/contracts/{cid}/payments': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CreateContractPayment'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/contracts/{cid}/payments/{pid}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateContractPayment'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/contracts/{cid}/rating': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RateContractSupplier'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/checklist': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetProjectGateChecklist'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/checklist/{gate}/{code}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['TickProjectGateChecklist'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/apply-template': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ApplyProjectTemplate'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/save-as-template': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SaveProjectAsTemplate'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/grouping': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['SetProjectGrouping'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/status-report': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetProjectStatusReport'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/monthly/narrative': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['SaveProjectMonthlyNarrative'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/gantt': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetProjectGantt'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/ai/charter': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SuggestProjectCharter'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/ai/plan': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['DraftProjectPlan'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/ai/update': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['DraftProjectUpdate'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/ai/status-report': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['DraftProjectStatusNarrative'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/stories/{sid}/move': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['MoveProjectStory'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/stories/{sid}/cancel': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CancelProjectStory'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/sprints/{sid}/burndown': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetSprintBurndown'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/sprints/{sid}/start': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['StartProjectSprint'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/sprints/{sid}/close': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CloseProjectSprint'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/sprints/{sid}/submit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SubmitProjectSprint'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/sprints/{sid}/cancel': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CancelProjectSprint'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/sprints/{sid}/impediments': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RaiseSprintImpediment'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/requests/{id}/benefits': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListRequestBenefits'];
+    put?: never;
+    post: operations['CreateRequestBenefit'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/requests/{id}/benefits/{itemId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateRequestBenefit'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/requests/{id}/benefits/{itemId}/remove': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RemoveRequestBenefit'];
     delete?: never;
     options?: never;
     head?: never;
@@ -8193,6 +9345,43 @@ export interface components {
       fromBand: string;
       toBand: string;
     };
+    AgileMetricsDto: {
+      velocity: components['schemas']['VelocityPoint'][];
+      cumulativeFlow: components['schemas']['FlowPoint'][];
+      cycleTimes: components['schemas']['CycleTimePoint'][];
+      /** Format: double */
+      averageCycleTime: null | number;
+      burnup: components['schemas']['ReleaseBurnupDto'][];
+    };
+    AgilePermissionsDto: {
+      canSetMethodology: boolean;
+      canPlan: boolean;
+      canCreateStory: boolean;
+      canRunSprints: boolean;
+      canSubmitSprint: boolean;
+    };
+    AgileViewDto: {
+      methodology: string;
+      approvalMode: string;
+      /** Format: int32 */
+      sprintLengthDays: null | number;
+      definitionOfDone: null | string;
+      board: components['schemas']['BoardConfig'];
+      releases: components['schemas']['ReleaseDto'][];
+      epics: components['schemas']['EpicDto'][];
+      stories: components['schemas']['StoryDto'][];
+      sprints: components['schemas']['SprintDto'][];
+      /** Format: double */
+      approvedProgress: number;
+      /** Format: double */
+      pendingProgress: number;
+      /** Format: double */
+      epicWeight: number;
+      permissions: components['schemas']['AgilePermissionsDto'];
+      metrics: components['schemas']['AgileMetricsDto'];
+      /** Format: uint32 */
+      projectVersion: number;
+    };
     AiCapabilitiesDto: {
       enabled: boolean;
       features: {
@@ -8442,6 +9631,20 @@ export interface components {
       token: string;
       headerName: string;
     };
+    ApplyTemplateInput: {
+      /** Format: uuid */
+      templateId: string;
+    };
+    ApplyTemplateResult: {
+      /** Format: int32 */
+      milestones: number;
+      /** Format: int32 */
+      planningItems: number;
+      /** Format: int32 */
+      risks: number;
+      /** Format: int32 */
+      epics: number;
+    };
     ApprovalActionOptionDto: {
       code: string;
       outcome: string;
@@ -8667,6 +9870,14 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    AtRiskDto: {
+      /** Format: uuid */
+      id: string;
+      code: string;
+      titleAr: null | string;
+      titleEn: null | string;
+      reason: string;
+    };
     AttendanceDto: {
       /** Format: uuid */
       memberId: string;
@@ -8731,6 +9942,99 @@ export interface components {
       /** Format: date-time */
       at: string;
     };
+    BaselineDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: int32 */
+      versionNo: number;
+      /** Format: date-time */
+      takenAt: string;
+      reason: null | string;
+      /** Format: uuid */
+      changeRequestId: null | string;
+      changeRequestNumber: null | string;
+      /** Format: double */
+      budget: null | number;
+      /** Format: date */
+      plannedStart: null | string;
+      /** Format: date */
+      plannedEnd: null | string;
+      items: components['schemas']['BaselineItem'][];
+    };
+    /** @description One item of a baseline snapshot (milestone or epic). */
+    BaselineItem: {
+      /** Format: uuid */
+      id: string;
+      kind: string;
+      code: string;
+      titleAr: null | string;
+      titleEn: null | string;
+      /** Format: date */
+      start: null | string;
+      /** Format: date */
+      end: null | string;
+      /** Format: double */
+      weight: number;
+      /** Format: double */
+      cost: null | number;
+    };
+    BenefitDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      requestId: null | string;
+      /** Format: uuid */
+      projectId: null | string;
+      titleAr: null | string;
+      titleEn: null | string;
+      measure: null | string;
+      /** Format: double */
+      baselineValue: null | number;
+      /** Format: double */
+      targetValue: null | number;
+      unit: null | string;
+      owner: null | components['schemas']['PortfolioPersonDto'];
+      /** Format: date */
+      measurementDate: null | string;
+      /** Format: double */
+      actualValue: null | number;
+      /** Format: date-time */
+      measuredAt: null | string;
+      status: string;
+      note: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
+    BenefitInput: {
+      values: components['schemas']['BenefitValues'];
+      /** Format: uint32 */
+      version?: null | number;
+    };
+    BenefitMeasureInput: {
+      values: components['schemas']['BenefitMeasurement'];
+      /** Format: uint32 */
+      version: number;
+    };
+    BenefitMeasurement: {
+      /** Format: double */
+      actualValue: null | number;
+      status: null | string;
+      note: null | string;
+    };
+    BenefitValues: {
+      titleAr: null | string;
+      titleEn: null | string;
+      measure: null | string;
+      /** Format: double */
+      baselineValue: null | number;
+      /** Format: double */
+      targetValue: null | number;
+      unit: null | string;
+      /** Format: uuid */
+      ownerEmployeeId: null | string;
+      /** Format: date */
+      measurementDate: null | string;
+    };
     BilingualName: {
       ar: null | string;
       en: null | string;
@@ -8739,6 +10043,26 @@ export interface components {
     BilingualText: {
       ar: null | string;
       en: null | string;
+    };
+    BoardColumn: {
+      code: string;
+      labelAr: null | string;
+      labelEn: null | string;
+      category: string;
+      /** Format: int32 */
+      wipLimit?: null | number;
+    };
+    /** @description A project's board (configurable columns, WIP limits, swimlanes — SPEC §1.13). */
+    BoardConfig: {
+      columns: components['schemas']['BoardColumn'][];
+      /** @default none */
+      swimlane: string;
+      firstColumn?: null | string;
+    };
+    BoardInput: {
+      board: components['schemas']['BoardConfig'];
+      /** Format: uint32 */
+      version: number;
     };
     /** @description Branding per installation (SPEC §0.2): names, colour, email header / footer. Logos are separate assets. */
     BrandingSettings: {
@@ -8750,6 +10074,18 @@ export interface components {
       emailHeaderEn?: null | string;
       emailFooterAr?: null | string;
       emailFooterEn?: null | string;
+    };
+    BudgetRowDto: {
+      /** Format: uuid */
+      unitId: null | string;
+      unitAr: null | string;
+      unitEn: null | string;
+      /** Format: double */
+      budget: number;
+      /** Format: double */
+      actual: number;
+      /** Format: int32 */
+      projects: number;
     };
     BulkCompleteInput: {
       ids: null | string[];
@@ -8764,6 +10100,36 @@ export interface components {
     BulkResultDto: {
       done: string[];
       failed: components['schemas']['BulkFailureDto'][];
+    };
+    BurndownDto: {
+      /** Format: uuid */
+      sprintId: string;
+      /** Format: int32 */
+      number: number;
+      /** Format: date */
+      start: null | string;
+      /** Format: date */
+      end: null | string;
+      /** Format: int32 */
+      committed: number;
+      points: components['schemas']['BurnPoint'][];
+    };
+    BurnPoint: {
+      /** Format: date */
+      date: string;
+      /** Format: double */
+      remaining: number;
+      /** Format: double */
+      ideal: number;
+    };
+    BurnupPoint: {
+      label: string;
+      /** Format: date */
+      date: string;
+      /** Format: int32 */
+      done: number;
+      /** Format: int32 */
+      scope: number;
     };
     BusinessHoursDto: {
       /** Format: uuid */
@@ -8972,6 +10338,9 @@ export interface components {
       newPmEmployeeId?: null | string;
       /** Format: uuid */
       newOwnerEmployeeId?: null | string;
+      methodology?: null | string;
+      /** @default false */
+      rebaseline: boolean;
     };
     ChangedFieldDto: {
       field: string;
@@ -8979,6 +10348,15 @@ export interface components {
       labelEn: string;
       before: null | string;
       after: null | string;
+    };
+    ChangeImpactDto: {
+      summary: null | string;
+      dates: null | string;
+      cost: null | string;
+      weights: null | string;
+      dependents: null | string;
+      recommendation: string[];
+      dependentProjects: components['schemas']['DependentProjectDto'][];
     };
     ChangeLogEntry: {
       field: string;
@@ -9033,6 +10411,9 @@ export interface components {
       createdAt: string;
       /** Format: uint32 */
       version: number;
+      proposedMethodology?: null | string;
+      /** @default false */
+      costsHidden: boolean;
     };
     ChangeRequestInput: {
       values: components['schemas']['ChangeRequestValues'];
@@ -9063,6 +10444,7 @@ export interface components {
       mergeIntoProjectId: null | string;
       /** Format: date */
       requestedDate: null | string;
+      proposedMethodology?: null | string;
     };
     ChangeStatusInput: {
       status: null | string;
@@ -9073,6 +10455,21 @@ export interface components {
       values: components['schemas']['ProjectCharterValues'];
       /** Format: uint32 */
       version: number;
+    };
+    CharterRiskSuggestionDto: {
+      title: string;
+      /** Format: int32 */
+      probability: number;
+      /** Format: int32 */
+      impact: number;
+      mitigation: null | string;
+    };
+    CharterSuggestionsDto: {
+      kpis: components['schemas']['SuggestedKpiDto'][];
+      risks: components['schemas']['CharterRiskSuggestionDto'][];
+      stakeholders: components['schemas']['SuggestedStakeholderDto'][];
+      planningItems: components['schemas']['SuggestedPlanningItemDto'][];
+      lessons: components['schemas']['LessonHitDto'][];
     };
     ChecklistInput: {
       text: null | string;
@@ -9085,6 +10482,13 @@ export interface components {
       /** @default true */
       required: boolean;
     };
+    ChecklistItemDefinition: {
+      code: string;
+      labelAr: null | string;
+      labelEn: null | string;
+      /** @default true */
+      required: boolean;
+    };
     ChecklistItemDto: {
       /** Format: uuid */
       id: string;
@@ -9094,6 +10498,12 @@ export interface components {
       done: boolean;
       /** Format: date-time */
       doneAt: null | string;
+    };
+    ChecklistTickInput: {
+      checked: boolean;
+      note: null | string;
+      /** Format: uint32 */
+      version: number;
     };
     ChecklistUpdateInput: {
       text: null | string;
@@ -9145,6 +10555,41 @@ export interface components {
       /** Format: date-time */
       createdAt: string;
     };
+    CommunicationDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      stakeholderId: null | string;
+      stakeholderName: null | string;
+      audience: null | string;
+      message: null | string;
+      method: null | string;
+      frequency: string;
+      owner: null | components['schemas']['PortfolioPersonDto'];
+      /** Format: date */
+      nextDue: null | string;
+      /** Format: date */
+      lastDone: null | string;
+      due: boolean;
+      status: string;
+      /** Format: uint32 */
+      version: number;
+    };
+    CommunicationInput: {
+      values: components['schemas']['CommunicationValues'];
+    };
+    CommunicationValues: {
+      /** Format: uuid */
+      stakeholderId: null | string;
+      audience: null | string;
+      message: null | string;
+      method: null | string;
+      frequency: null | string;
+      /** Format: uuid */
+      ownerEmployeeId: null | string;
+      /** Format: date */
+      nextDue: null | string;
+    };
     CompareDto: {
       /** Format: uuid */
       fromId: string;
@@ -9183,6 +10628,17 @@ export interface components {
       status: string;
       /** Format: uint32 */
       version: number;
+    };
+    ContractExtrasDto: {
+      /** Format: uuid */
+      contractId: string;
+      payments: components['schemas']['PaymentDto'][];
+      /** Format: double */
+      paidTotal: null | number;
+      /** Format: double */
+      plannedTotal: null | number;
+      rating: components['schemas']['RatingDto'];
+      costsHidden: boolean;
     };
     ContractInput: {
       values: components['schemas']['ContractValues'];
@@ -9405,6 +10861,13 @@ export interface components {
       labelEn: string;
       outcome: string;
     };
+    CycleTimePoint: {
+      /** Format: uuid */
+      storyId: string;
+      code: string;
+      /** Format: double */
+      days: number;
+    };
     DashboardDto: {
       /** Format: int32 */
       published: number;
@@ -9421,6 +10884,34 @@ export interface components {
       byUnit: components['schemas']['UnitFacetDto'][];
       expiring: components['schemas']['DocumentListItemDto'][];
       recentlyPublished: components['schemas']['DocumentListItemDto'][];
+    };
+    DashboardProjectDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      classification: string;
+      methodology: string;
+      stage: string;
+      status: string;
+      progressStatus: string;
+      /** Format: double */
+      performance: number;
+      /** Format: double */
+      planned: number;
+      unit: null | components['schemas']['PortfolioUnitDto'];
+      /** Format: double */
+      budget: null | number;
+      /** Format: double */
+      actual: null | number;
+      health: null | components['schemas']['ProjectHealth'];
+      /** Format: date */
+      plannedEnd: null | string;
+      /** Format: double */
+      value: null | number;
+      /** Format: int32 */
+      complexity: null | number;
     };
     /** @description A data element of a composite KPI (e.g. numerator / denominator). */
     DataElement: {
@@ -9491,6 +10982,13 @@ export interface components {
     DependencyInput: {
       /** Format: uuid */
       dependsOnTaskId: null | string;
+    };
+    DependentProjectDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      nameAr: null | string;
+      nameEn: null | string;
     };
     /** @description A run of the comparison: `same`, `added` or `removed` text. */
     DiffPart: {
@@ -9612,10 +11110,36 @@ export interface components {
       nameAr: null | string;
       nameEn: null | string;
     };
+    DraftEpicDto: {
+      titleAr: null | string;
+      titleEn: null | string;
+      /** Format: double */
+      weight: number;
+      stories: components['schemas']['DraftStoryDto'][];
+    };
     DraftInput: {
       typeCode: null | string;
       data: null | components['schemas']['JsonObject'];
       source?: null | string;
+    };
+    DraftMilestoneDto: {
+      phase: null | string;
+      titleAr: null | string;
+      titleEn: null | string;
+      /** Format: double */
+      weight: number;
+      /** Format: date */
+      plannedStart: string;
+      /** Format: date */
+      plannedEnd: string;
+    };
+    DraftStoryDto: {
+      title: string;
+      asA: null | string;
+      iWant: null | string;
+      soThat: null | string;
+      /** Format: int32 */
+      points: number;
     };
     DuplicateCheckDto: {
       findings: components['schemas']['OverlapDto'][];
@@ -9623,6 +11147,36 @@ export interface components {
       compared: number;
       /** Format: uuid */
       usageId: null | string;
+    };
+    EarnedValue: {
+      /** Format: double */
+      bac: number;
+      /** Format: double */
+      plannedRatio: number;
+      /** Format: double */
+      progressRatio: number;
+      /** Format: double */
+      pv: number;
+      /** Format: double */
+      ev: number;
+      /** Format: double */
+      ac: number;
+      /** Format: double */
+      sv: number;
+      /** Format: double */
+      cv: number;
+      /** Format: double */
+      spi: null | number;
+      /** Format: double */
+      cpi: null | number;
+      /** Format: double */
+      eac: null | number;
+      /** Format: double */
+      etc: null | number;
+      /** Format: double */
+      vac: null | number;
+      /** Format: double */
+      tcpi: null | number;
     };
     EditorInput: {
       /** Format: uuid */
@@ -9768,6 +11322,55 @@ export interface components {
     EnrolmentResultDto: {
       status: string;
       recoveryCodes: string[];
+    };
+    EpicDto: {
+      /** Format: uuid */
+      id: string;
+      code: string;
+      /** Format: uuid */
+      releaseId: null | string;
+      /** Format: uuid */
+      milestoneId: null | string;
+      titleAr: null | string;
+      titleEn: null | string;
+      /** Format: double */
+      weight: number;
+      acceptanceCriteria: null | string;
+      /** Format: int32 */
+      sort: number;
+      status: string;
+      /** Format: int32 */
+      points: number;
+      /** Format: int32 */
+      donePoints: number;
+      /** Format: double */
+      approvedFraction: number;
+      /** Format: double */
+      pendingFraction: number;
+      /** Format: uint32 */
+      version: number;
+    };
+    EpicInput: {
+      values: components['schemas']['EpicValues'];
+      /** Format: uint32 */
+      version?: null | number;
+    };
+    EpicValues: {
+      titleAr: null | string;
+      titleEn: null | string;
+      /** Format: double */
+      weight: number;
+      /** Format: uuid */
+      releaseId: null | string;
+      /** Format: uuid */
+      milestoneId: null | string;
+      acceptanceCriteria: null | string;
+      /**
+       * Format: int32
+       * @default 0
+       */
+      sort: number;
+      status?: null | string;
     };
     EvaluationAssistantDto: {
       summary: string;
@@ -9916,6 +11519,13 @@ export interface components {
       unitId: null | string;
       riskIds: string[];
     };
+    EvmDto: {
+      values: components['schemas']['EarnedValue'];
+      /** Format: int32 */
+      baselineVersion: null | number;
+      /** Format: date */
+      asOf: string;
+    };
     ExpiryInput: {
       /** Format: date */
       expiryDate: null | string;
@@ -10057,6 +11667,16 @@ export interface components {
       applicationNo: null | string;
       /** Format: uint32 */
       version: number;
+    };
+    FlowPoint: {
+      /** Format: date */
+      date: string;
+      /** Format: int32 */
+      toDo: number;
+      /** Format: int32 */
+      doing: number;
+      /** Format: int32 */
+      done: number;
     };
     FollowUpDto: {
       /** Format: uuid */
@@ -10215,6 +11835,93 @@ export interface components {
     FromTextInput: {
       text: null | string;
     };
+    FunnelDto: {
+      /** Format: int32 */
+      submitted: number;
+      /** Format: int32 */
+      inApproval: number;
+      /** Format: int32 */
+      approved: number;
+      /** Format: int32 */
+      active: number;
+      /** Format: int32 */
+      completed: number;
+    };
+    GanttDependencyDto: {
+      /** Format: uuid */
+      from: string;
+      /** Format: uuid */
+      to: string;
+    };
+    GanttDto: {
+      /** Format: uuid */
+      projectId: null | string;
+      number: null | string;
+      nameAr: null | string;
+      nameEn: null | string;
+      /** Format: date */
+      start: null | string;
+      /** Format: date */
+      end: null | string;
+      /** Format: date */
+      today: string;
+      rows: components['schemas']['GanttRowDto'][];
+      dependencies: components['schemas']['GanttDependencyDto'][];
+      baselineShown: boolean;
+    };
+    GanttRowDto: {
+      /** Format: uuid */
+      id: string;
+      kind: string;
+      /** Format: uuid */
+      parentId: null | string;
+      code: string;
+      titleAr: null | string;
+      titleEn: null | string;
+      /** Format: date */
+      plannedStart: null | string;
+      /** Format: date */
+      plannedEnd: null | string;
+      /** Format: date */
+      actualStart: null | string;
+      /** Format: date */
+      actualEnd: null | string;
+      /** Format: date */
+      baselineStart: null | string;
+      /** Format: date */
+      baselineEnd: null | string;
+      /** Format: double */
+      weight: number;
+      /** Format: double */
+      achieved: number;
+      status: string;
+      delayed: boolean;
+      highLevel: boolean;
+      rag?: null | string;
+    };
+    GateChecklistDto: {
+      items: components['schemas']['GateChecklistItemDto'][];
+      canTick: boolean;
+      /** Format: uint32 */
+      version: number;
+    };
+    GateChecklistItemDto: {
+      gate: string;
+      code: string;
+      labelAr: null | string;
+      labelEn: null | string;
+      required: boolean;
+      checked: boolean;
+      /** Format: date-time */
+      at: null | string;
+      note: null | string;
+    };
+    /** @description Configurable stage-gate checklists (SPEC §1.12), in addition to the hard minimums. Seeded items are optional; an organisation marks the ones it requires. */
+    GateChecklists: {
+      charter: components['schemas']['ChecklistItemDefinition'][];
+      planning: components['schemas']['ChecklistItemDefinition'][];
+      closure: components['schemas']['ChecklistItemDefinition'][];
+    };
     /** @description A gate item as the record page shows it (live checklist). */
     GateItem: {
       code: string;
@@ -10259,6 +11966,14 @@ export interface components {
       /** Format: date */
       dueDate: null | string;
     };
+    GroupingInput: {
+      /** Format: uuid */
+      portfolioGroupId: null | string;
+      /** Format: uuid */
+      programmeId: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
     GroupMemberDto: {
       task: components['schemas']['TaskListItemDto'];
       finished: boolean;
@@ -10276,6 +11991,79 @@ export interface components {
       /** Format: int32 */
       finished: number;
       complete: boolean;
+    };
+    HealthDto: {
+      health: components['schemas']['ProjectHealth'];
+      /** Format: double */
+      costVariance: null | number;
+      /** Format: double */
+      progress: number;
+      /** Format: double */
+      planned: number;
+      /** Format: int32 */
+      maxDaysPastDue: number;
+      /** Format: int32 */
+      overdueTasks: number;
+      canOverride: boolean;
+      /** Format: uint32 */
+      version: number;
+    };
+    HealthOverride: {
+      value: string;
+      justification: string;
+      /** Format: uuid */
+      byUserId: null | string;
+      /** Format: date-time */
+      at: string;
+    };
+    HealthOverrideInput: {
+      value: null | string;
+      justification: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
+    /** @description Configurable RAG thresholds (ADR 0093). */
+    HealthThresholds: {
+      /**
+       * Format: double
+       * @default 0.05
+       */
+      scheduleAmberGap: number;
+      /**
+       * Format: double
+       * @default 0.15
+       */
+      scheduleRedGap: number;
+      /**
+       * Format: int32
+       * @default 30
+       */
+      pastDueRedDays: number;
+      /**
+       * Format: double
+       * @default 0.05
+       */
+      costAmberVariance: number;
+      /**
+       * Format: double
+       * @default 0.15
+       */
+      costRedVariance: number;
+      /**
+       * Format: int32
+       * @default 180
+       */
+      scopeWindowDays: number;
+      /**
+       * Format: int32
+       * @default 2
+       */
+      scopeRedChanges: number;
+    };
+    HealthValue: {
+      auto: string;
+      effective: string;
+      override: null | components['schemas']['HealthOverride'];
     };
     HeatCellDto: {
       /** Format: int32 */
@@ -10395,6 +12183,13 @@ export interface components {
         [key: string]: components['schemas']['AreaCriterion'];
       };
     };
+    ImpedimentInput: {
+      title: null | string;
+      description: null | string;
+      /** Format: uuid */
+      ownerEmployeeId: null | string;
+      priority: null | string;
+    };
     /** @description One problem found in an uploaded file. int ImportIssue.Row is the sheet row number; string? ImportIssue.Column a column key. */
     ImportIssue: {
       /** Format: int32 */
@@ -10414,6 +12209,10 @@ export interface components {
       /** Format: int32 */
       updated: number;
       issues: components['schemas']['ImportIssue'][];
+    };
+    InsightsDto: {
+      narrative: null | string;
+      recommendations: string[];
     };
     InstanceDto: {
       /** Format: uuid */
@@ -11619,6 +13418,18 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    LessonHitDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      projectId: string;
+      projectNumber: string;
+      projectNameAr: null | string;
+      projectNameEn: null | string;
+      lesson: null | string;
+      typeCode: null | string;
+      recommendation: null | string;
+    };
     LessonInput: {
       values: components['schemas']['LessonValues'];
       /** Format: uint32 */
@@ -12122,6 +13933,15 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    MethodologyInput: {
+      methodology: string;
+      /** Format: int32 */
+      sprintLengthDays: null | number;
+      definitionOfDone: null | string;
+      agileApprovalMode: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
     MfaCodeInput: {
       method: null | string;
       code: null | string;
@@ -12183,6 +14003,12 @@ export interface components {
       sort: number;
       /** Format: uint32 */
       version: number;
+      /** @default false */
+      deliveredInSprints: boolean;
+      qualityStatus?: null | string;
+      qualityComment?: null | string;
+      /** Format: date-time */
+      qualityAt?: null | string;
     };
     MilestoneInput: {
       values: components['schemas']['MilestoneValues'];
@@ -12248,6 +14074,8 @@ export interface components {
        * @default 0
        */
       sort: number;
+      /** @default false */
+      deliveredInSprints: boolean;
     };
     MinutesAiInput: {
       notes: null | string;
@@ -12310,6 +14138,10 @@ export interface components {
       overdue: boolean;
       submitComment: null | string;
       items: string;
+      /** @default [] */
+      sprints: string;
+      narrativeAr?: null | string;
+      narrativeEn?: null | string;
     };
     MonthlyViewDto: {
       current: null | components['schemas']['MonthlyUpdateDto'];
@@ -12456,6 +14288,10 @@ export interface components {
       slaMode: null | string;
       businessHoursNameAr: null | string;
       businessHoursNameEn: null | string;
+    };
+    NarrativeInput: {
+      narrativeAr: null | string;
+      narrativeEn: null | string;
     };
     NotificationDto: {
       /** Format: uuid */
@@ -12857,6 +14693,41 @@ export interface components {
       /** Format: int32 */
       history: number;
     };
+    PaymentDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      contractId: string;
+      title: null | string;
+      /** Format: date */
+      dueDate: null | string;
+      /** Format: double */
+      amount: null | number;
+      /** Format: uuid */
+      milestoneId: null | string;
+      status: string;
+      /** Format: date */
+      paidOn: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
+    PaymentInput: {
+      values: components['schemas']['PaymentValues'];
+      /** Format: uint32 */
+      version?: null | number;
+    };
+    PaymentValues: {
+      title: null | string;
+      /** Format: date */
+      dueDate: null | string;
+      /** Format: double */
+      amount: number;
+      /** Format: uuid */
+      milestoneId: null | string;
+      status: null | string;
+      /** Format: date */
+      paidOn: null | string;
+    };
     /** @description A bilingual HTML template with merge fields (ADR 0088). */
     PdfTemplate: {
       code?: string;
@@ -12921,6 +14792,11 @@ export interface components {
       nameAr: null | string;
       nameEn: null | string;
     };
+    PlanDraftDto: {
+      methodology: string;
+      milestones: components['schemas']['DraftMilestoneDto'][];
+      epics: components['schemas']['DraftEpicDto'][];
+    };
     PlanningItemDto: {
       /** Format: uuid */
       id: string;
@@ -12939,6 +14815,106 @@ export interface components {
     PlanningItemValues: {
       category: string;
       description: null | string;
+    };
+    PortfolioDashboardDto: {
+      /** Format: int32 */
+      total: number;
+      /** Format: int32 */
+      active: number;
+      /** Format: int32 */
+      delayed: number;
+      /** Format: double */
+      averageProgress: number;
+      byStage: components['schemas']['StageCountDto'][];
+      heat: components['schemas']['PortfolioHeatCellDto'][];
+      budget: components['schemas']['BudgetRowDto'][];
+      projects: components['schemas']['DashboardProjectDto'][];
+      delayedProjects: components['schemas']['DashboardProjectDto'][];
+      upcoming: components['schemas']['UpcomingMilestoneDto'][];
+      funnel: components['schemas']['FunnelDto'];
+      healthOn: boolean;
+      /** Format: int32 */
+      costsHidden: number;
+    };
+    /** @description Switches of the standards enhancements (ADR 0092). All on except earned value ("optional"). */
+    PortfolioFeatures: {
+      portfolios?: boolean;
+      prioritisation?: boolean;
+      health?: boolean;
+      baselines?: boolean;
+      earnedValue?: boolean;
+      raid?: boolean;
+      riskMatrix?: boolean;
+      raci?: boolean;
+      communicationPlan?: boolean;
+      benefits?: boolean;
+      quality?: boolean;
+      procurement?: boolean;
+      statusReport?: boolean;
+      gateChecklists?: boolean;
+      templates?: boolean;
+    };
+    PortfolioFeaturesDto: {
+      features: {
+        [key: string]: boolean;
+      };
+      agileApprovalMode: string;
+      /** Format: int32 */
+      defaultSprintLengthDays: number;
+      teamMembersSeeCosts: boolean;
+      teamMembersCreateStories: boolean;
+    };
+    PortfolioGroupDto: {
+      /** Format: uuid */
+      id: string;
+      kind: string;
+      code: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      description: null | string;
+      /** Format: uuid */
+      parentId: null | string;
+      owner: null | components['schemas']['PortfolioPersonDto'];
+      status: string;
+      /** Format: int32 */
+      projects: number;
+      /** Format: double */
+      averageProgress: number;
+      /** Format: int32 */
+      delayed: number;
+      /** Format: uint32 */
+      version: number;
+    };
+    PortfolioGroupInput: {
+      values: components['schemas']['PortfolioGroupValues'];
+      /** Format: uint32 */
+      version?: null | number;
+    };
+    PortfolioGroupValues: {
+      kind: null | string;
+      code: null | string;
+      nameAr: null | string;
+      nameEn: null | string;
+      description: null | string;
+      /** Format: uuid */
+      parentId: null | string;
+      /** Format: uuid */
+      ownerEmployeeId: null | string;
+    };
+    PortfolioHeatCellDto: {
+      /** Format: uuid */
+      unitId: null | string;
+      unitAr: null | string;
+      unitEn: null | string;
+      dimension: string;
+      /** Format: int32 */
+      green: number;
+      /** Format: int32 */
+      amber: number;
+      /** Format: int32 */
+      red: number;
+      /** Format: int32 */
+      grey: number;
     };
     PortfolioKpiCardDto: {
       /** Format: uuid */
@@ -13027,6 +15003,22 @@ export interface components {
        * @description Q-P4: change requests with a cost change above this amount go to the GM Office.
        */
       gmThreshold?: number;
+      /** @description Standards enhancements switches (SPEC §1.12, ADR 0092). */
+      features?: components['schemas']['PortfolioFeatures'];
+      /** @description SPEC §1.13 decision, ADR 0091: `monthly` (default) or `sprint`; a project may override. */
+      agileApprovalMode?: string;
+      /** Format: int32 */
+      defaultSprintLengthDays?: number;
+      /** @description Program type code → suggested methodology (ADR 0090). */
+      methodologySuggestions?: {
+        [key: string]: string;
+      };
+      /** @description SPEC §1.9 "View costs / budget — team member: configurable" (ADR 0098). Default off. */
+      teamMembersSeeCosts?: boolean;
+      /** @description SPEC §1.9 "Create tasks / user stories — team member: configurable". Default off. */
+      teamMembersCreateStories?: boolean;
+      health?: components['schemas']['HealthThresholds'];
+      gateChecklists?: components['schemas']['GateChecklists'];
     };
     PortfolioSettingsInput: {
       settings: components['schemas']['PortfolioSettings'];
@@ -13254,6 +15246,22 @@ export interface components {
       /** Format: int32 */
       changeRequests: number;
     };
+    /** @description Phase 10 additions of the project record: methodology, grouping, re-plan, cost visibility (ADRs 0090, 0094, 0095, 0098). */
+    ProjectDeliveryDto: {
+      methodology: string;
+      approvalMode: string;
+      /** Format: int32 */
+      sprintLengthDays: null | number;
+      definitionOfDone: null | string;
+      canSetMethodology: boolean;
+      /** Format: uuid */
+      portfolioGroupId: null | string;
+      /** Format: uuid */
+      programmeId: null | string;
+      /** Format: uuid */
+      replanChangeRequestId: null | string;
+      costsHidden: boolean;
+    };
     ProjectFileDto: {
       /** Format: uuid */
       id: string;
@@ -13350,12 +15358,20 @@ export interface components {
       createdAt: string;
       /** Format: uint32 */
       version: number;
+      delivery: components['schemas']['ProjectDeliveryDto'];
     };
     ProjectGatesDto: {
       charter: components['schemas']['GateItem'][];
       planning: components['schemas']['GateItem'][];
       charterMandatoryDone: boolean;
       planningMandatoryDone: boolean;
+    };
+    ProjectHealth: {
+      schedule: components['schemas']['HealthValue'];
+      cost: components['schemas']['HealthValue'];
+      scope: components['schemas']['HealthValue'];
+      risk: components['schemas']['HealthValue'];
+      overall: components['schemas']['HealthValue'];
     };
     ProjectKpiDto: {
       /** Format: uuid */
@@ -13554,6 +15570,35 @@ export interface components {
       /** Format: uuid */
       ownerEmployeeId: null | string;
       rmsStatus: null | string;
+      /** Format: date */
+      reviewDate?: null | string;
+    };
+    ProjectTemplateContent: {
+      milestones?: null | components['schemas']['TemplateMilestone'][];
+      planningItems?: null | components['schemas']['TemplatePlanningItem'][];
+      risks?: null | components['schemas']['TemplateRisk'][];
+      epics?: null | components['schemas']['TemplateEpic'][];
+    };
+    ProjectTemplateDto: {
+      /** Format: uuid */
+      id: string;
+      code: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      methodology: string;
+      content: components['schemas']['ProjectTemplateContent'];
+      status: string;
+      /** Format: uint32 */
+      version: number;
+    };
+    ProjectTemplateInput: {
+      code: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      methodology: string;
+      content: components['schemas']['ProjectTemplateContent'];
+      /** Format: uint32 */
+      version?: null | number;
     };
     ProjectVersionInput: {
       /** Format: uint32 */
@@ -13680,6 +15725,110 @@ export interface components {
     QuestionInput: {
       question: null | string;
     };
+    RaciEntryDto: {
+      /** Format: uuid */
+      id: string;
+      area: string;
+      /** Format: uuid */
+      milestoneId: null | string;
+      employee: null | components['schemas']['PortfolioPersonDto'];
+      /** Format: uuid */
+      employeeId: string;
+      role: string;
+      /** Format: uint32 */
+      version: number;
+    };
+    RaciInput: {
+      values: components['schemas']['RaciValues'];
+    };
+    RaciMatrixDto: {
+      entries: components['schemas']['RaciEntryDto'][];
+      areas: string[];
+      people: components['schemas']['PortfolioPersonDto'][];
+      canEdit: boolean;
+    };
+    RaciValues: {
+      area: null | string;
+      /** Format: uuid */
+      milestoneId: null | string;
+      /** Format: uuid */
+      employeeId: string;
+      role: null | string;
+    };
+    RaidInput: {
+      values: components['schemas']['RaidValues'];
+      /** Format: uint32 */
+      version?: null | number;
+    };
+    RaidItemDto: {
+      /** Format: uuid */
+      id: string;
+      type: string;
+      code: string;
+      title: null | string;
+      description: null | string;
+      owner: null | components['schemas']['PortfolioPersonDto'];
+      priority: string;
+      /** Format: date */
+      dueDate: null | string;
+      status: string;
+      resolution: null | string;
+      /** Format: uuid */
+      milestoneId: null | string;
+      /** Format: uuid */
+      dependsOnProjectId: null | string;
+      dependsOnProjectNumber: null | string;
+      /** Format: uuid */
+      dependsOnMilestoneId: null | string;
+      /** Format: date */
+      decidedOn: null | string;
+      decidedBy: null | string;
+      source: string;
+      /** Format: uuid */
+      sourceId: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
+    RaidLogDto: {
+      items: components['schemas']['RaidItemDto'][];
+      risks: components['schemas']['RaidRiskDto'][];
+      canEdit: boolean;
+      canPropose: boolean;
+    };
+    RaidRiskDto: {
+      /** Format: uuid */
+      id: string;
+      title: null | string;
+      /** Format: int32 */
+      probability: number;
+      /** Format: int32 */
+      impact: number;
+      residualBand: string;
+      owner: null | components['schemas']['PortfolioPersonDto'];
+      /** Format: date */
+      reviewDate: null | string;
+    };
+    RaidValues: {
+      type: null | string;
+      title: null | string;
+      description: null | string;
+      /** Format: uuid */
+      ownerEmployeeId: null | string;
+      priority: null | string;
+      /** Format: date */
+      dueDate: null | string;
+      status: null | string;
+      resolution: null | string;
+      /** Format: uuid */
+      milestoneId: null | string;
+      /** Format: uuid */
+      dependsOnProjectId: null | string;
+      /** Format: uuid */
+      dependsOnMilestoneId: null | string;
+      /** Format: date */
+      decidedOn: null | string;
+      decidedBy: null | string;
+    };
     RatingBand: {
       code: string;
       labelAr: null | string;
@@ -13690,6 +15839,28 @@ export interface components {
       /** Format: double */
       max: number;
       residualStatus: string;
+    };
+    RatingDto: {
+      /** Format: int32 */
+      quality: null | number;
+      /** Format: int32 */
+      timeliness: null | number;
+      /** Format: int32 */
+      communication: null | number;
+      /** Format: double */
+      overall: null | number;
+      comment: null | string;
+      /** Format: date-time */
+      ratedAt: null | string;
+    };
+    RatingInput: {
+      /** Format: int32 */
+      quality: number;
+      /** Format: int32 */
+      timeliness: number;
+      /** Format: int32 */
+      communication: number;
+      comment: null | string;
     };
     /**
      * @description "Reassign open tasks of an employee" (ADR 0040). `TaskIds` narrows the preview (null = all open tasks). In `to-creators` mode the
@@ -13874,6 +16045,47 @@ export interface components {
       version: number;
       /** Format: date */
       firstPublicationDate?: null | string;
+    };
+    ReleaseBurnupDto: {
+      /** Format: uuid */
+      releaseId: string;
+      points: components['schemas']['BurnupPoint'][];
+    };
+    ReleaseDto: {
+      /** Format: uuid */
+      id: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      goal: null | string;
+      /** Format: date */
+      targetDate: null | string;
+      /** Format: int32 */
+      sort: number;
+      status: string;
+      /** Format: int32 */
+      points: number;
+      /** Format: int32 */
+      donePoints: number;
+      /** Format: uint32 */
+      version: number;
+    };
+    ReleaseInput: {
+      values: components['schemas']['ReleaseValues'];
+      /** Format: uint32 */
+      version?: null | number;
+    };
+    ReleaseValues: {
+      nameAr: null | string;
+      nameEn: null | string;
+      goal: null | string;
+      /** Format: date */
+      targetDate: null | string;
+      status: null | string;
+      /**
+       * Format: int32
+       * @default 0
+       */
+      sort: number;
     };
     RenewalInput: {
       registrationNo: null | string;
@@ -14618,6 +16830,20 @@ export interface components {
       titleAr: null | string;
       titleEn: null | string;
     };
+    RiskMatrixCell: {
+      /** Format: int32 */
+      probability: number;
+      /** Format: int32 */
+      impact: number;
+      /** Format: int32 */
+      count: number;
+      riskIds: string[];
+    };
+    RiskMatrixDto: {
+      basis: string;
+      cells: components['schemas']['RiskMatrixCell'][];
+      risks: components['schemas']['RaidRiskDto'][];
+    };
     RiskOptionDto: {
       code: string;
       labelAr: null | string;
@@ -14842,6 +17068,11 @@ export interface components {
       /** Format: double */
       amount?: null | number;
     };
+    SaveAsTemplateInput: {
+      code: string;
+      nameAr: null | string;
+      nameEn: null | string;
+    };
     SaveInput: {
       data: null | components['schemas']['JsonObject'];
       /** Format: uint32 */
@@ -14972,6 +17203,12 @@ export interface components {
       displayNameEn: null | string;
       challengeUrl: string;
     };
+    SignOffInput: {
+      decision: string;
+      comment: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
     SimilarInput: {
       text: null | string;
       /** Format: uuid */
@@ -15063,6 +17300,70 @@ export interface components {
       to: null | string;
       settings: null | components['schemas']['SmtpSettingsInput'];
     };
+    SprintActionInput: {
+      /** Format: uint32 */
+      version: number;
+      comment?: null | string;
+    };
+    SprintCloseInput: {
+      values: components['schemas']['SprintReviewValues'];
+      /** Format: uint32 */
+      version: number;
+    };
+    SprintDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: int32 */
+      number: number;
+      name: null | string;
+      goal: null | string;
+      /** Format: date */
+      startDate: null | string;
+      /** Format: date */
+      endDate: null | string;
+      /** Format: int32 */
+      capacityPoints: null | number;
+      status: string;
+      /** Format: int32 */
+      committedPoints: number;
+      /** Format: int32 */
+      completedPoints: number;
+      /** Format: int32 */
+      plannedPoints: number;
+      demoOutcome: null | string;
+      stakeholderFeedback: null | string;
+      wentWell: null | string;
+      toImprove: null | string;
+      actions: null | string;
+      approvalPeriod: null | string;
+      /** Format: date-time */
+      approvedAt: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
+    SprintInput: {
+      values: components['schemas']['SprintValues'];
+      /** Format: uint32 */
+      version?: null | number;
+    };
+    SprintReviewValues: {
+      demoOutcome: null | string;
+      stakeholderFeedback: null | string;
+      wentWell: null | string;
+      toImprove: null | string;
+      actions: null | string;
+      acceptedStoryIds?: null | string[];
+    };
+    SprintValues: {
+      name: null | string;
+      goal: null | string;
+      /** Format: date */
+      startDate: null | string;
+      /** Format: date */
+      endDate: null | string;
+      /** Format: int32 */
+      capacityPoints: null | number;
+    };
     /** @description An action of a processing stage, with an optional mini-form. */
     StageAction: {
       code?: string;
@@ -15084,6 +17385,11 @@ export interface components {
       form: null | components['schemas']['FormSchema'];
       requiresComment: boolean;
       tone: string;
+    };
+    StageCountDto: {
+      stage: string;
+      /** Format: int32 */
+      count: number;
     };
     /** @description One stage of a request type. */
     StageDefinition: {
@@ -15164,6 +17470,10 @@ export interface components {
       eventText: null | string;
       consequence: null | string;
     };
+    StatusNarrativeDto: {
+      narrativeAr: null | string;
+      narrativeEn: null | string;
+    };
     StepStateDto: {
       /** Format: int32 */
       sort: number;
@@ -15184,6 +17494,66 @@ export interface components {
       slaMode: null | string;
       businessHoursNameAr: null | string;
       businessHoursNameEn: null | string;
+    };
+    StoryDto: {
+      /** Format: uuid */
+      id: string;
+      code: string;
+      /** Format: uuid */
+      epicId: string;
+      /** Format: uuid */
+      sprintId: null | string;
+      title: null | string;
+      asA: null | string;
+      iWant: null | string;
+      soThat: null | string;
+      acceptanceCriteria: null | string;
+      /** Format: int32 */
+      storyPoints: number;
+      priority: string;
+      assignee: null | components['schemas']['PortfolioPersonDto'];
+      columnCode: string;
+      category: string;
+      /** Format: int32 */
+      rank: number;
+      /** Format: date-time */
+      startedAt: null | string;
+      /** Format: date-time */
+      doneAt: null | string;
+      accepted: boolean;
+      approvedDone: boolean;
+      status: string;
+      canMove: boolean;
+      /** Format: uint32 */
+      version: number;
+    };
+    StoryInput: {
+      values: components['schemas']['StoryValues'];
+      /** Format: uint32 */
+      version?: null | number;
+    };
+    StoryMoveInput: {
+      column: string;
+      /** Format: int32 */
+      rank: number;
+      /** Format: uint32 */
+      version: number;
+    };
+    StoryValues: {
+      /** Format: uuid */
+      epicId: string;
+      title: null | string;
+      asA: null | string;
+      iWant: null | string;
+      soThat: null | string;
+      acceptanceCriteria: null | string;
+      /** Format: int32 */
+      storyPoints: number;
+      priority: null | string;
+      /** Format: uuid */
+      assigneeEmployeeId: null | string;
+      /** Format: uuid */
+      sprintId: null | string;
     };
     SubjectApprovalsDto: {
       resourceType: string;
@@ -15229,6 +17599,17 @@ export interface components {
       nameEn: null | string;
       typeCode: null | string;
     };
+    SuggestedKpiDto: {
+      nameAr: null | string;
+      nameEn: null | string;
+      equation: null | string;
+      /** Format: double */
+      target: null | number;
+    };
+    SuggestedPlanningItemDto: {
+      category: string;
+      description: string;
+    };
     SuggestedPriorityDto: {
       scores: {
         [key: string]: number;
@@ -15250,6 +17631,12 @@ export interface components {
       /** Format: int32 */
       impact: null | number;
       reasoning: null | string;
+    };
+    SuggestedStakeholderDto: {
+      name: string;
+      classification: string;
+      interest: string;
+      impact: string;
     };
     SuggestInput: {
       title: null | string;
@@ -15892,6 +18279,9 @@ export interface components {
       activeMemberships: number;
       overAssigned: boolean;
     };
+    TemplateActiveInput: {
+      active: boolean;
+    };
     /** @description The content of an evaluation template version (stored as JSON). */
     TemplateContent: {
       criteria: components['schemas']['TeamCriterion'][];
@@ -15921,6 +18311,12 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    TemplateEpic: {
+      titleAr: null | string;
+      titleEn: null | string;
+      /** Format: double */
+      weight: number;
+    };
     TemplateInput: {
       subjectAr: null | string;
       subjectEn: null | string;
@@ -15931,6 +18327,24 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    TemplateMilestone: {
+      titleAr: null | string;
+      titleEn: null | string;
+      /** Format: double */
+      weight: number;
+      /** Format: int32 */
+      offsetDays: number;
+      /** Format: int32 */
+      durationDays: number;
+      /** @default false */
+      isHeader: boolean;
+      /** Format: int32 */
+      parentIndex?: null | number;
+    };
+    TemplatePlanningItem: {
+      category: string;
+      description: string;
+    };
     TemplatePreviewDto: {
       subject: string;
       html: string;
@@ -15938,6 +18352,14 @@ export interface components {
     TemplatePreviewInput: {
       template: null | components['schemas']['PdfTemplate'];
       language: null | string;
+    };
+    TemplateRisk: {
+      title: string;
+      categoryCode: null | string;
+      /** Format: int32 */
+      probability: number;
+      /** Format: int32 */
+      impact: number;
     };
     TimelineDto: {
       events: components['schemas']['TaskEventDto'][];
@@ -16193,6 +18615,27 @@ export interface components {
       /** Format: date */
       effectiveFrom: null | string;
     };
+    UpcomingMilestoneDto: {
+      /** Format: uuid */
+      projectId: string;
+      projectNumber: string;
+      projectNameAr: null | string;
+      projectNameEn: null | string;
+      /** Format: uuid */
+      milestoneId: string;
+      code: string;
+      titleAr: null | string;
+      titleEn: null | string;
+      /** Format: date */
+      plannedEnd: string;
+      /** Format: double */
+      completion: number;
+    };
+    UpdateDraftDto: {
+      narrative: null | string;
+      correctiveActions: string[];
+      atRisk: components['schemas']['AtRiskDto'][];
+    };
     UpdateEmployeeInput: {
       employeeNo: null | string;
       nameAr: null | string;
@@ -16341,6 +18784,64 @@ export interface components {
       labelAr: null | string;
       labelEn: null | string;
       builtIn: boolean;
+    };
+    VarianceDto: {
+      /** Format: int32 */
+      versionNo: number;
+      rows: components['schemas']['VarianceRow'][];
+      /** Format: double */
+      baselineBudget: null | number;
+      /** Format: double */
+      currentBudget: null | number;
+      /** Format: date */
+      baselineEnd: null | string;
+      /** Format: date */
+      currentEnd: null | string;
+      /** Format: int32 */
+      endVarianceDays: null | number;
+      costsHidden: boolean;
+    };
+    VarianceRow: {
+      /** Format: uuid */
+      id: string;
+      kind: string;
+      code: string;
+      titleAr: null | string;
+      titleEn: null | string;
+      change: string;
+      /** Format: date */
+      baselineStart: null | string;
+      /** Format: date */
+      baselineEnd: null | string;
+      /** Format: date */
+      currentStart: null | string;
+      /** Format: date */
+      currentEnd: null | string;
+      /** Format: date */
+      actualEnd: null | string;
+      /** Format: int32 */
+      startVarianceDays: null | number;
+      /** Format: int32 */
+      endVarianceDays: null | number;
+      /** Format: int32 */
+      actualEndVarianceDays: null | number;
+      /** Format: double */
+      baselineWeight: number;
+      /** Format: double */
+      currentWeight: number;
+      /** Format: double */
+      baselineCost: null | number;
+      /** Format: double */
+      currentCost: null | number;
+    };
+    VelocityPoint: {
+      /** Format: int32 */
+      number: number;
+      name: null | string;
+      /** Format: int32 */
+      committed: number;
+      /** Format: int32 */
+      completed: number;
     };
     VerificationRunDto: {
       /** Format: uuid */
@@ -27269,6 +29770,463 @@ export interface operations {
       };
     };
   };
+  GetPortfolioFeatures: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PortfolioFeaturesDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SignOffMilestoneQuality: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        mid: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SignOffInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': string;
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListProjectTemplates: {
+    parameters: {
+      query?: {
+        all?: boolean;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProjectTemplateDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateProjectTemplate: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ProjectTemplateInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProjectTemplateDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateProjectTemplate: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        tid: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ProjectTemplateInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProjectTemplateDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SetProjectTemplateActive: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        tid: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['TemplateActiveInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProjectTemplateDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListPortfolioGroups: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PortfolioGroupDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreatePortfolioGroup: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['PortfolioGroupInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PortfolioGroupDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdatePortfolioGroup: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        gid: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['PortfolioGroupInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PortfolioGroupDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetPortfolioGantt: {
+    parameters: {
+      query?: {
+        portfolioGroupId?: string;
+        programmeId?: string;
+        unitId?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['GanttDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetPortfolioDashboard: {
+    parameters: {
+      query?: {
+        portfolioGroupId?: string;
+        programmeId?: string;
+        unitId?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PortfolioDashboardDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  AnalyseChangeImpact: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        cid: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ChangeImpactDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  DraftPortfolioInsights: {
+    parameters: {
+      query?: {
+        portfolioGroupId?: string;
+        programmeId?: string;
+        unitId?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['InsightsDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SearchPortfolioLessons: {
+    parameters: {
+      query?: {
+        q?: string;
+        excludeProjectId?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['LessonHitDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
   ListProgramRequests: {
     parameters: {
       query?: {
@@ -30070,6 +33028,2193 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['ChangeRequestDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetProjectAgile: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AgileViewDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SetProjectMethodology: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['MethodologyInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AgileViewDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SetProjectBoard: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['BoardInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AgileViewDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateProjectRelease: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ReleaseInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AgileViewDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateProjectRelease: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        itemId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ReleaseInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AgileViewDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateProjectEpic: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['EpicInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AgileViewDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateProjectEpic: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        itemId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['EpicInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AgileViewDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CancelProjectEpic: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        itemId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AgileViewDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateProjectStory: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['StoryInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AgileViewDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateProjectStory: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        itemId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['StoryInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AgileViewDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateProjectSprint: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SprintInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AgileViewDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateProjectSprint: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        itemId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SprintInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AgileViewDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetProjectHealth: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HealthDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  OverrideProjectHealth: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        dimension: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['HealthOverrideInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HealthDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListProjectBaselines: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BaselineDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetProjectBaselineVariance: {
+    parameters: {
+      query?: {
+        version?: number;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VarianceDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetProjectEarnedValue: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['EvmDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetProjectRaidLog: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RaidLogDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateProjectRaidItem: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RaidInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RaidItemDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateProjectRaidItem: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        itemId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RaidInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RaidItemDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  AcceptProjectRaidItem: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        itemId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RaidItemDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetProjectRiskMatrix: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RiskMatrixDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetProjectRaci: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RaciMatrixDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateProjectRaciEntry: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RaciInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RaciMatrixDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateProjectRaciEntry: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        itemId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RaciInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RaciMatrixDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RemoveProjectRaciEntry: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        itemId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RaciMatrixDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListProjectCommunications: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CommunicationDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateProjectCommunication: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CommunicationInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CommunicationDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateProjectCommunication: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        itemId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CommunicationInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CommunicationDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GenerateProjectCommunications: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CommunicationDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  MarkProjectCommunicationDone: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        itemId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CommunicationDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RemoveProjectCommunication: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        itemId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CommunicationDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListProjectBenefits: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BenefitDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateProjectBenefit: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['BenefitInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BenefitDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateProjectBenefit: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        itemId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['BenefitInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BenefitDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  MeasureProjectBenefit: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        itemId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['BenefitMeasureInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BenefitDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RemoveProjectBenefit: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        itemId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BenefitDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetProjectContractExtras: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        cid: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ContractExtrasDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateContractPayment: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        cid: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['PaymentInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ContractExtrasDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateContractPayment: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        cid: string;
+        pid: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['PaymentInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ContractExtrasDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RateContractSupplier: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        cid: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RatingInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ContractExtrasDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetProjectGateChecklist: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['GateChecklistDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  TickProjectGateChecklist: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        gate: string;
+        code: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ChecklistTickInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['GateChecklistDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ApplyProjectTemplate: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ApplyTemplateInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ApplyTemplateResult'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SaveProjectAsTemplate: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SaveAsTemplateInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProjectTemplateDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SetProjectGrouping: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['GroupingInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['GroupingInput'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetProjectStatusReport: {
+    parameters: {
+      query?: {
+        period?: string;
+        language?: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SaveProjectMonthlyNarrative: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['NarrativeInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MonthlyViewDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetProjectGantt: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['GanttDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SuggestProjectCharter: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CharterSuggestionsDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  DraftProjectPlan: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PlanDraftDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  DraftProjectUpdate: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['UpdateDraftDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  DraftProjectStatusNarrative: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['StatusNarrativeDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  MoveProjectStory: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        sid: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['StoryMoveInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AgileViewDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CancelProjectStory: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        sid: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AgileViewDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetSprintBurndown: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        sid: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BurndownDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  StartProjectSprint: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        sid: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SprintActionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AgileViewDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CloseProjectSprint: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        sid: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SprintCloseInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AgileViewDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SubmitProjectSprint: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        sid: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SprintActionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AgileViewDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CancelProjectSprint: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        sid: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SprintActionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AgileViewDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RaiseSprintImpediment: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        sid: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ImpedimentInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AgileViewDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListRequestBenefits: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BenefitDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateRequestBenefit: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['BenefitInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BenefitDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateRequestBenefit: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        itemId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['BenefitInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BenefitDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RemoveRequestBenefit: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        itemId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BenefitDto'][];
         };
       };
       /** @description Problem Details (RFC 9457) */

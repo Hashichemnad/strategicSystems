@@ -441,7 +441,16 @@ export const allProjectTabs = [
   'assumptions',
   'values',
   'milestones',
+  'backlog',
+  'board',
+  'sprints',
+  'gantt',
   'monthly',
+  'health',
+  'raid',
+  'raci',
+  'communication',
+  'benefits',
   'tasks',
   'challenges',
   'meetings',
@@ -456,8 +465,20 @@ export const allProjectTabs = [
 ] as const;
 export type ProjectTab = (typeof allProjectTabs)[number];
 
-export function visibleTabs(template: StageTemplateValue): ProjectTab[] {
+/** Agile tabs only when the project runs sprints (ADR 0090); standards tabs only when their switch is on (ADR 0092). */
+export function visibleTabs(
+  template: StageTemplateValue,
+  methodology = 'waterfall',
+  features: Partial<Record<string, boolean>> = {},
+): ProjectTab[] {
+  const sprints = methodology === 'agile' || methodology === 'hybrid';
   return allProjectTabs.filter((tab) => {
+    if (tab === 'backlog' || tab === 'board' || tab === 'sprints') return sprints;
+    if (tab === 'health') return Boolean(features.health || features.baselines || features.earnedValue);
+    if (tab === 'raid') return Boolean(features.raid || features.riskMatrix);
+    if (tab === 'raci') return Boolean(features.raci);
+    if (tab === 'communication') return Boolean(features.communicationPlan);
+    if (tab === 'benefits') return Boolean(features.benefits);
     if (tab === 'contracts') return template.charter || template.lpo;
     if (tab === 'closure') return template.closure;
     if (tab === 'impact') return template.closure && template.impact;

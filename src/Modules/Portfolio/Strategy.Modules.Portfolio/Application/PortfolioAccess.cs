@@ -23,6 +23,10 @@ public static class PortfolioPermissions
     public const string ProjectChange = "portfolio.project.change";
     public const string ProjectManage = "portfolio.project.manage";
     public const string ProjectLpo = "portfolio.project.lpo";
+    public const string ProjectCosts = "portfolio.project.costs";
+    public const string PortfolioManage = "portfolio.portfolio.manage";
+    public const string AiAssist = "portfolio.ai.assist";
+    public const string StoryResource = UserStory.EntityType;
     public const string MilestoneResource = Milestone.EntityType;
     public const string SettingsManage = "portfolio.settings.manage";
     public const string AiAssessment = "portfolio.ai.assessment";
@@ -153,6 +157,9 @@ internal sealed class PortfolioAccessCatalogue : IAccessCatalogueSource
         new(PortfolioPermissions.ProjectChange, "طلبات التغيير على المشروع", "Raise project change requests"),
         new(PortfolioPermissions.ProjectManage, "إدارة المشاريع (تعيين مدير، تعليق، إلغاء، فتح التحديث)", "Manage projects (assign PM, hold, cancel, open the update window)"),
         new(PortfolioPermissions.ProjectLpo, "رفع أمر الشراء والعقود", "Upload the LPO and contracts"),
+        new(PortfolioPermissions.ProjectCosts, "عرض تكاليف وميزانية المشروع", "View project costs and budget"),
+        new(PortfolioPermissions.PortfolioManage, "إدارة المحافظ والبرامج", "Manage portfolios and programmes", Scopable: false),
+        new(PortfolioPermissions.AiAssist, "مساعدات الذكاء الاصطناعي للمشاريع", "AI assists for projects", Scopable: false),
         new(PortfolioPermissions.SettingsManage, "إدارة إعدادات المحافظ", "Manage portfolio settings", Scopable: false),
         new(PortfolioPermissions.AiAssessment, "تقييم المقترح بالذكاء الاصطناعي", "AI proposal assessment", Scopable: false),
     ];
@@ -161,12 +168,14 @@ internal sealed class PortfolioAccessCatalogue : IAccessCatalogueSource
     [
         new("requester", "مقدم طلب", "Requester",
             [new(PortfolioPermissions.RequestRead, DataScope.Own), new(PortfolioPermissions.RequestCreate), new(PortfolioPermissions.RequestEdit, DataScope.Own),
-                new(PortfolioPermissions.ProjectRead, DataScope.Own), new(PortfolioPermissions.AiAssessment)],
+                new(PortfolioPermissions.ProjectRead, DataScope.Own), new(PortfolioPermissions.AiAssessment), new(PortfolioPermissions.ProjectCosts, DataScope.Own),
+                new(PortfolioPermissions.AiAssist)],
             AssignToEveryone: true),
         new("department-viewer", "مستعرض الإدارة", "Department viewer",
-            [new(PortfolioPermissions.RequestRead, DataScope.UnitAndBelow), new(PortfolioPermissions.ProjectRead, DataScope.UnitAndBelow)]),
+            [new(PortfolioPermissions.RequestRead, DataScope.UnitAndBelow), new(PortfolioPermissions.ProjectRead, DataScope.UnitAndBelow),
+                new(PortfolioPermissions.ProjectCosts, DataScope.UnitAndBelow)]),
         new("viewer", "مستعرض المحفظة (القيادة)", "Portfolio viewer (leadership)",
-            [new(PortfolioPermissions.RequestRead, DataScope.All), new(PortfolioPermissions.ProjectRead, DataScope.All)]),
+            [new(PortfolioPermissions.RequestRead, DataScope.All), new(PortfolioPermissions.ProjectRead, DataScope.All), new(PortfolioPermissions.ProjectCosts, DataScope.All)]),
         new("pm-office", "مكتب إدارة المشاريع", "PM Office",
             [new(PortfolioPermissions.RequestRead, DataScope.All), new(PortfolioPermissions.RequestCreate), new(PortfolioPermissions.RequestEdit, DataScope.All),
                 new(PortfolioPermissions.RequestManage, DataScope.All), new(PortfolioPermissions.ProjectRead, DataScope.All), new(PortfolioPermissions.AiAssessment),
@@ -186,7 +195,8 @@ internal sealed class PortfolioAccessCatalogue : IAccessCatalogueSource
     private static readonly PermissionGrant[] PmOfficeProjectGrants =
     [
         new(PortfolioPermissions.ProjectEdit, DataScope.All), new(PortfolioPermissions.ProjectContribute, DataScope.All), new(PortfolioPermissions.ProjectChange, DataScope.All),
-        new(PortfolioPermissions.ProjectManage, DataScope.All),
+        new(PortfolioPermissions.ProjectManage, DataScope.All), new(PortfolioPermissions.ProjectCosts, DataScope.All), new(PortfolioPermissions.PortfolioManage),
+        new(PortfolioPermissions.AiAssist),
     ];
 
     public IEnumerable<RecordRoleDefinition> RecordRoles =>
@@ -197,15 +207,18 @@ internal sealed class PortfolioAccessCatalogue : IAccessCatalogueSource
         new(PortfolioPermissions.RequestResource, PortfolioPermissions.ProcurementRole, "المشتريات (عروض الأسعار)", "Procurement (quotations)",
             [PortfolioPermissions.RequestRead, PortfolioPermissions.RequestQuotations]),
         new(PortfolioPermissions.ProjectResource, PortfolioPermissions.OwnerRole, "مالك المشروع", "Project owner",
-            [PortfolioPermissions.ProjectRead, PortfolioPermissions.ProjectContribute, PortfolioPermissions.ProjectChange]),
+            [PortfolioPermissions.ProjectRead, PortfolioPermissions.ProjectContribute, PortfolioPermissions.ProjectChange, PortfolioPermissions.ProjectCosts]),
         new(PortfolioPermissions.ProjectResource, PortfolioPermissions.PmRole, "مدير المشروع", "Project manager",
-            [PortfolioPermissions.ProjectRead, PortfolioPermissions.ProjectEdit, PortfolioPermissions.ProjectContribute, PortfolioPermissions.ProjectChange]),
+            [PortfolioPermissions.ProjectRead, PortfolioPermissions.ProjectEdit, PortfolioPermissions.ProjectContribute, PortfolioPermissions.ProjectChange,
+                PortfolioPermissions.ProjectCosts]),
         new(PortfolioPermissions.ProjectResource, PortfolioPermissions.TeamMemberRole, "عضو فريق المشروع", "Project team member",
             [PortfolioPermissions.ProjectRead, PortfolioPermissions.ProjectContribute]),
-        new(PortfolioPermissions.ProjectResource, PortfolioPermissions.ApproverRole, "معتمد المشروع", "Project approver", [PortfolioPermissions.ProjectRead]),
+        new(PortfolioPermissions.ProjectResource, PortfolioPermissions.ApproverRole, "معتمد المشروع", "Project approver",
+            [PortfolioPermissions.ProjectRead, PortfolioPermissions.ProjectCosts]),
         new(PortfolioPermissions.ProjectResource, PortfolioPermissions.ProcurementRole, "المشتريات (أمر الشراء)", "Procurement (LPO)",
-            [PortfolioPermissions.ProjectRead, PortfolioPermissions.ProjectLpo]),
-        new(PortfolioPermissions.ProjectResource, PortfolioPermissions.RequesterRole, "مقدم طلب المشروع", "Project requester", [PortfolioPermissions.ProjectRead]),
+            [PortfolioPermissions.ProjectRead, PortfolioPermissions.ProjectLpo, PortfolioPermissions.ProjectCosts]),
+        new(PortfolioPermissions.ProjectResource, PortfolioPermissions.RequesterRole, "مقدم طلب المشروع", "Project requester",
+            [PortfolioPermissions.ProjectRead, PortfolioPermissions.ProjectCosts]),
     ];
 
     public static readonly NumberingDefinition RequestNumbering = new(

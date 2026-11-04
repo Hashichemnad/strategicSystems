@@ -42,6 +42,30 @@ public sealed record PortfolioSettings : ISettingsArea
     /// <summary>Q-P4: change requests with a cost change above this amount go to the GM Office.</summary>
     public decimal GmThreshold { get; init; } = 100_000m;
 
+    /// <summary>Standards enhancements switches (SPEC §1.12, ADR 0092).</summary>
+    public PortfolioFeatures Features { get; init; } = new();
+
+    /// <summary>SPEC §1.13 decision, ADR 0091: <c>monthly</c> (default) or <c>sprint</c>; a project may override.</summary>
+    public string AgileApprovalMode { get; init; } = AgileApprovalModes.Monthly;
+
+    public int DefaultSprintLengthDays { get; init; } = 14;
+
+    /// <summary>Program type code → suggested methodology (ADR 0090).</summary>
+    public IReadOnlyDictionary<string, string> MethodologySuggestions { get; init; } = new Dictionary<string, string>();
+
+    /// <summary>SPEC §1.9 "View costs / budget — team member: configurable" (ADR 0098). Default off.</summary>
+    public bool TeamMembersSeeCosts { get; init; }
+
+    /// <summary>SPEC §1.9 "Create tasks / user stories — team member: configurable". Default off.</summary>
+    public bool TeamMembersCreateStories { get; init; }
+
+    public HealthThresholds Health { get; init; } = HealthThresholds.Default;
+
+    public GateChecklists GateChecklists { get; init; } = GateChecklists.Default;
+
+    public string SuggestedMethodology(string? programTypeCode) =>
+        programTypeCode is { } code && MethodologySuggestions.TryGetValue(code, out var m) && Methodologies.All.Contains(m) ? m : Methodologies.Waterfall;
+
     public StageTemplate TemplateFor(string classification) => classification == Classifications.Project ? ProjectTemplate : InitiativeTemplate;
 
     public static readonly IReadOnlyList<PriorityCriterion> DefaultCriteria =
@@ -103,6 +127,57 @@ public sealed record PortfolioSettings : ISettingsArea
             foreach (var problem in template?.Problems() ?? ["validation.notEmpty"])
             {
                 errors.Add(new FieldError(field, problem, problem));
+            }
+        }
+
+        if (!AgileApprovalModes.All.Contains(value.AgileApprovalMode ?? string.Empty))
+        {
+            errors.Add(new FieldError("agileApprovalMode", "validation.unknownCode", "validation.unknownCode"));
+        }
+
+        Range("defaultSprintLengthDays", value.DefaultSprintLengthDays, 1, 28);
+        foreach (var (code, methodology) in value.MethodologySuggestions ?? new Dictionary<string, string>())
+        {
+            if (!Methodologies.All.Contains(methodology) || string.IsNullOrWhiteSpace(code))
+            {
+                errors.Add(new FieldError($"methodologySuggestions.{code}", "validation.unknownCode", "validation.unknownCode"));
+            }
+        }
+
+        var health = value.Health ?? HealthThresholds.Default;
+        if (health.ScheduleAmberGap is < 0 or > 1 || health.ScheduleRedGap < health.ScheduleAmberGap || health.ScheduleRedGap > 1)
+        {
+            errors.Add(new FieldError("health.scheduleRedGap", "portfolio.errors.thresholdOrder", "portfolio.errors.thresholdOrder"));
+        }
+
+        if (health.CostAmberVariance is < 0 or > 1 || health.CostRedVariance < health.CostAmberVariance || health.CostRedVariance > 1)
+        {
+            errors.Add(new FieldError("health.costRedVariance", "portfolio.errors.thresholdOrder", "portfolio.errors.thresholdOrder"));
+        }
+
+        Range("health.pastDueRedDays", health.PastDueRedDays, 0, 365);
+        Range("health.scopeWindowDays", health.ScopeWindowDays, 1, 3650);
+        Range("health.scopeRedChanges", health.ScopeRedChanges, 1, 50);
+        foreach (var gate in Gates.All)
+        {
+            var items = (value.GateChecklists ?? GateChecklists.Default).For(gate);
+            for (var i = 0; i < items.Count; i++)
+            {
+                var item = items[i];
+                if (string.IsNullOrWhiteSpace(item.Code) || item.Code.Length > 60 || !item.Code.All(ch => char.IsAsciiLetterOrDigit(ch) || ch == '-'))
+                {
+                    errors.Add(new FieldError($"gateChecklists.{gate}[{i}].code", "validation.code", "validation.code"));
+                }
+
+                if (string.IsNullOrWhiteSpace(item.LabelAr) && string.IsNullOrWhiteSpace(item.LabelEn))
+                {
+                    errors.Add(new FieldError($"gateChecklists.{gate}[{i}].labelEn", "validation.atLeastOneLanguage", "validation.atLeastOneLanguage"));
+                }
+            }
+
+            if (items.Select(x => x.Code).Distinct(StringComparer.Ordinal).Count() != items.Count)
+            {
+                errors.Add(new FieldError($"gateChecklists.{gate}", "validation.duplicate", "validation.duplicate"));
             }
         }
 
@@ -171,6 +246,87 @@ public sealed record PortfolioSettings : ISettingsArea
 
         return errors;
     }
+}
+
+public static class FeatureCodes
+{
+    public const string Portfolios = "portfolios";
+    public const string Prioritisation = "prioritisation";
+    public const string Health = "health";
+    public const string Baselines = "baselines";
+    public const string EarnedValue = "earnedValue";
+    public const string Raid = "raid";
+    public const string RiskMatrix = "riskMatrix";
+    public const string Raci = "raci";
+    public const string CommunicationPlan = "communicationPlan";
+    public const string Benefits = "benefits";
+    public const string Quality = "quality";
+    public const string Procurement = "procurement";
+    public const string StatusReport = "statusReport";
+    public const string GateChecklists = "gateChecklists";
+    public const string Templates = "templates";
+
+    public static readonly IReadOnlyList<string> AllCodes =
+    [
+        Portfolios, Prioritisation, Health, Baselines, EarnedValue, Raid, RiskMatrix, Raci, CommunicationPlan, Benefits, Quality, Procurement, StatusReport,
+        GateChecklists, Templates,
+    ];
+}
+
+/// <summary>Switches of the standards enhancements (ADR 0092). All on except earned value ("optional").</summary>
+public sealed record PortfolioFeatures
+{
+    public bool Portfolios { get; init; } = true;
+
+    public bool Prioritisation { get; init; } = true;
+
+    public bool Health { get; init; } = true;
+
+    public bool Baselines { get; init; } = true;
+
+    public bool EarnedValue { get; init; }
+
+    public bool Raid { get; init; } = true;
+
+    public bool RiskMatrix { get; init; } = true;
+
+    public bool Raci { get; init; } = true;
+
+    public bool CommunicationPlan { get; init; } = true;
+
+    public bool Benefits { get; init; } = true;
+
+    public bool Quality { get; init; } = true;
+
+    public bool Procurement { get; init; } = true;
+
+    public bool StatusReport { get; init; } = true;
+
+    public bool GateChecklists { get; init; } = true;
+
+    public bool Templates { get; init; } = true;
+
+    public bool IsOn(string code) => code switch
+    {
+        FeatureCodes.Portfolios => Portfolios,
+        FeatureCodes.Prioritisation => Prioritisation,
+        FeatureCodes.Health => Health,
+        FeatureCodes.Baselines => Baselines,
+        FeatureCodes.EarnedValue => EarnedValue,
+        FeatureCodes.Raid => Raid,
+        FeatureCodes.RiskMatrix => RiskMatrix,
+        FeatureCodes.Raci => Raci,
+        FeatureCodes.CommunicationPlan => CommunicationPlan,
+        FeatureCodes.Benefits => Benefits,
+        FeatureCodes.Quality => Quality,
+        FeatureCodes.Procurement => Procurement,
+        FeatureCodes.StatusReport => StatusReport,
+        FeatureCodes.GateChecklists => GateChecklists,
+        FeatureCodes.Templates => Templates,
+        _ => false,
+    };
+
+    public IReadOnlyDictionary<string, bool> ToMap() => FeatureCodes.AllCodes.ToDictionary(c => c, IsOn);
 }
 
 /// <summary>Bilingual templates of Portfolio Management (SPEC §1.7; editable in Settings → Notifications).</summary>
@@ -261,8 +417,18 @@ public static class PortfolioNotifications
         "portfolio.projectCancelled", "إلغاء مشروع", "Project cancelled", "أُلغي المشروع {{number}}", "Project {{number}} cancelled",
         "أُلغي المشروع «{{projectAr}}». السبب: {{text}}", "“{{projectEn}}” was cancelled. Reason: {{text}}");
 
+    public static readonly NotificationTemplateDefinition CommunicationDue = P(
+        "portfolio.communicationDue", "موعد بند في خطة التواصل", "Communication plan item due", "تواصل مستحق — المشروع {{number}}", "Communication due — project {{number}}",
+        "حان موعد التواصل مع «{{text}}» في خطة تواصل المشروع «{{projectAr}}» (الموعد: {{due}}).",
+        "Communication with “{{text}}” is due in the communication plan of “{{projectEn}}” (due: {{due}}).");
+
+    public static readonly NotificationTemplateDefinition SprintSubmitted = P(
+        "portfolio.sprintReviewed", "اعتماد مراجعة السبرنت", "Sprint review decided", "مراجعة السبرنت — المشروع {{number}}", "Sprint review — project {{number}}",
+        "صدر القرار على مراجعة السبرنت {{text}} للمشروع «{{projectAr}}»: {{stageAr}}.", "The review of sprint {{text}} of “{{projectEn}}” was decided: {{stageEn}}.");
+
     public static readonly IReadOnlyList<NotificationTemplateDefinition> All =
     [
+        CommunicationDue, SprintSubmitted,
         ScopeSubmitted, QuotationsUploaded, RequestApproved, RequestCancelled, OwnershipTaken, CharterApproved, LpoUploaded, StageChanged, MonthlyOpened, MonthlyReminder,
         MonthlyOverdue, ChangeRequestSubmitted, ChangeRequestDecided, ProjectOnHold, ProjectCancelled,
     ];

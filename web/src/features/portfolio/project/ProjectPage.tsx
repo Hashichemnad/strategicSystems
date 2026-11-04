@@ -56,6 +56,22 @@ import {
   TeamTab,
 } from './ProjectItemTabs';
 import { ChangesTab, ClosureTab, ImpactTab, MonthlyTab } from './StageTabs';
+import { AiPlanDialog } from '../agile/AiPlanDialog';
+import { BacklogTab } from '../agile/BacklogTab';
+import { BoardTab } from '../agile/BoardTab';
+import { MethodologyCard } from '../agile/MethodologyCard';
+import { SprintsTab } from '../agile/SprintsTab';
+import { usePortfolioFeatures } from '../featuresApi';
+import { BenefitsTab } from '../standards/BenefitsTab';
+import { CharterAssistantDialog } from '../standards/CharterAssistantDialog';
+import { CommunicationTab } from '../standards/CommunicationTab';
+import { GateChecklistPanel } from '../standards/GateChecklistPanel';
+import { HealthTab } from '../standards/HealthTab';
+import { RaciTab } from '../standards/RaciTab';
+import { RaidTab } from '../standards/RaidTab';
+import { useAiAssist } from '../standards/standardsApi';
+import { GroupingCard } from '../views/GroupingCard';
+import { ProjectGanttTab } from '../views/ProjectGanttTab';
 
 const route = getRouteApi('/app/portfolio/projects/$projectId');
 
@@ -85,6 +101,7 @@ export function ProjectPage() {
   const toast = useToast();
   const project = useProjectFull(projectId);
   const options = usePortfolioOptions();
+  const features = usePortfolioFeatures();
   const take = useProjectMutation(projectId, projectApi.takeOwnership);
   const confirm = useProjectMutation(projectId, projectApi.confirmCompletion);
   const open = useProjectMutation(projectId, projectApi.openWindow);
@@ -94,7 +111,7 @@ export function ProjectPage() {
   if (options.isError) return <StatusBanner tone="danger" title={errorMessage(tc, options.error)} />;
   const p = project.data;
   const lang = i18n.language;
-  const tabs = visibleTabs(p.template);
+  const tabs = visibleTabs(p.template, p.delivery.methodology, features.data?.features);
   const tab: ProjectTab = tabs.includes(search.tab as ProjectTab) ? (search.tab as ProjectTab) : 'overview';
   const go = (next: ProjectTab) => void navigate({ search: { tab: next } });
   const fail = (e: unknown) => toast({ tone: 'error', title: errorMessage(tc, e) });
@@ -283,6 +300,33 @@ export function ProjectPage() {
             today={options.data.today}
             canUpdate={p.permissions.canEdit && p.subState === 'execution'}
           />
+        </TabsContent>
+        <TabsContent value="backlog">
+          <BacklogTab project={p} />
+        </TabsContent>
+        <TabsContent value="board">
+          <BoardTab project={p} />
+        </TabsContent>
+        <TabsContent value="sprints">
+          <SprintsTab project={p} />
+        </TabsContent>
+        <TabsContent value="gantt">
+          <ProjectGanttTab project={p} />
+        </TabsContent>
+        <TabsContent value="health">
+          <HealthTab project={p} />
+        </TabsContent>
+        <TabsContent value="raid">
+          <RaidTab project={p} />
+        </TabsContent>
+        <TabsContent value="raci">
+          <RaciTab project={p} />
+        </TabsContent>
+        <TabsContent value="communication">
+          <CommunicationTab project={p} />
+        </TabsContent>
+        <TabsContent value="benefits">
+          <BenefitsTab project={p} />
         </TabsContent>
         <TabsContent value="monthly">
           <MonthlyTab project={p} />
@@ -490,6 +534,8 @@ function Overview({
         </p>
       </section>
       <div className="flex flex-col gap-4">
+        <MethodologyCard project={p} />
+        <PlanAssists project={p} options={options} />
         {p.status === 'active' && p.subState !== 'done' && (
           <section className="flex flex-col gap-2 rounded-lg border bg-card p-4" data-testid="project-gate">
             <h3 className="font-medium">{gateTitle}</h3>
@@ -511,8 +557,10 @@ function Overview({
                 </li>
               ))}
             </ul>
+            <GateChecklistPanel project={p} gate={gate === p.gates.charter ? 'charter' : 'planning'} />
           </section>
         )}
+        <GroupingCard project={p} />
         <section className="flex flex-col gap-2 rounded-lg border bg-card p-4">
           <h3 className="font-medium">{t('project.costs')}</h3>
           {(
@@ -851,5 +899,49 @@ function CharterDialog({
         </div>
       </DialogContent>
     </Dialog>
+  );
+}
+
+/** AI assists for planning (SPEC §1.15 B): the charter assistant and the plan generator — drafts the PM reviews before anything is saved. */
+function PlanAssists({ project: p, options }: { project: ProjectFull; options: PortfolioOptions }) {
+  const { t } = useTranslation('portfolio');
+  const charterAi = useAiAssist('portfolio-charter-assistant');
+  const planAi = useAiAssist('portfolio-plan-generator');
+  const [open, setOpen] = useState<'charter' | 'plan'>();
+  const showCharter = charterAi && p.permissions.canEditContent;
+  const showPlan = planAi && p.permissions.canPlanMilestones;
+  if (!showCharter && !showPlan) return null;
+  return (
+    <section className="flex flex-wrap gap-2 rounded-lg border bg-card p-4" data-testid="plan-assists">
+      {showCharter && (
+        <Button variant="outline" size="sm" onClick={() => setOpen('charter')} data-testid="ai-charter">
+          {t('project.assist.aiCharter')}
+        </Button>
+      )}
+      {showPlan && (
+        <Button variant="outline" size="sm" onClick={() => setOpen('plan')} data-testid="ai-plan">
+          {t('project.assist.aiPlan')}
+        </Button>
+      )}
+      {open === 'charter' && (
+        <CharterAssistantDialog
+          project={p}
+          options={options}
+          open
+          onOpenChange={(v) => {
+            if (!v) setOpen(undefined);
+          }}
+        />
+      )}
+      {open === 'plan' && (
+        <AiPlanDialog
+          project={p}
+          open
+          onOpenChange={(v) => {
+            if (!v) setOpen(undefined);
+          }}
+        />
+      )}
+    </section>
   );
 }

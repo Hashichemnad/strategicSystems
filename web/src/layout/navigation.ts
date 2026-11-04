@@ -2,6 +2,9 @@ import {
   Boxes,
   BriefcaseBusiness,
   FolderKanban,
+  FolderTree,
+  ChartGantt,
+  ChartPie,
   ListTodo,
   Gauge,
   Inbox,
@@ -35,6 +38,9 @@ export interface NavItem {
     | '/sample'
     | '/portfolio/requests'
     | '/portfolio/projects'
+    | '/portfolio/dashboard'
+    | '/portfolio/gantt'
+    | '/portfolio/portfolios'
     | '/ui-kit'
     | '/org/units'
     | '/org/chart'
@@ -60,6 +66,9 @@ export interface NavItem {
     | 'nav.sample'
     | 'nav.portfolioRequests'
     | 'nav.portfolioProjects'
+    | 'nav.portfolioDashboard'
+    | 'nav.portfolioGantt'
+    | 'nav.portfolioGroups'
     | 'nav.uiKit'
     | 'nav.units'
     | 'nav.chart'
@@ -174,6 +183,27 @@ export const navigation: readonly NavSection[] = [
         to: '/portfolio/projects',
         labelKey: 'nav.portfolioProjects',
         icon: FolderKanban,
+        system: 'portfolio',
+        permissions: ['portfolio.project.read'],
+      },
+      {
+        to: '/portfolio/dashboard',
+        labelKey: 'nav.portfolioDashboard',
+        icon: ChartPie,
+        system: 'portfolio',
+        permissions: ['portfolio.project.read'],
+      },
+      {
+        to: '/portfolio/gantt',
+        labelKey: 'nav.portfolioGantt',
+        icon: ChartGantt,
+        system: 'portfolio',
+        permissions: ['portfolio.project.read'],
+      },
+      {
+        to: '/portfolio/portfolios',
+        labelKey: 'nav.portfolioGroups',
+        icon: FolderTree,
         system: 'portfolio',
         permissions: ['portfolio.project.read'],
       },

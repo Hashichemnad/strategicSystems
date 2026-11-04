@@ -83,6 +83,7 @@ Tools: `dotnet-ef` (MIT), local tool in `dotnet-tools.json`.
 | clsx, tailwind-merge | MIT | class names |
 | lucide-react | ISC | icons |
 | @dnd-kit/core (+ @dnd-kit/accessibility, @dnd-kit/utilities) | MIT | Kanban drag and drop (Phase 6) |
+| echarts 5.6.0 (+ zrender BSD-3-Clause, tslib 0BSD) | Apache-2.0 | Portfolio dashboard and agile metrics charts (Phase 10, [ADR 0096](decisions/0096-gantt-and-echarts.md)) |
 | react-hook-form, @hookform/resolvers | MIT | forms |
 | zod | MIT | schemas (forms, search params) |
 | react-day-picker | MIT | date picker |

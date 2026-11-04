@@ -1,4 +1,5 @@
 import { Plus, Trash2, Upload } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ApiError } from '@/api/client';
@@ -21,12 +22,25 @@ import {
   useUploadTemplate,
   type PortfolioSettingsValue,
 } from './api';
+import { featureKeys, useFeature } from './featuresApi';
+import {
+  AgileSection,
+  CostSection,
+  FeaturesSection,
+  GateChecklistSection,
+  HealthSection,
+  featureOn,
+} from './views/SettingsSections';
+import { TemplatesEditor } from './views/TemplatesEditor';
 
 /** Settings → Portfolio (docs/design/portfolio.md §2.1): threshold, criteria and weights, bands, date windows, budget step, template. */
 export function PortfolioSettingsPage() {
   const { t } = useTranslation('portfolio');
   const { t: tc } = useTranslation();
+  const { t: tv } = useTranslation('portfolioViews');
   const toast = useToast();
+  const queryClient = useQueryClient();
+  const templatesOn = useFeature('templates');
   const settings = usePortfolioSettings();
   const save = useSavePortfolioSettings();
   const upload = useUploadTemplate();
@@ -42,6 +56,8 @@ export function PortfolioSettingsPage() {
   const errors = save.error instanceof ApiError ? (save.error.problem.errors ?? []) : [];
   const update = (patch: Partial<PortfolioSettingsValue>) =>
     setValue((current) => (current ? { ...current, ...patch } : current));
+  // Prioritisation off: the default criteria / bands apply and the editors are read-only (§32).
+  const prioritisationOn = featureOn(value, 'prioritisation');
 
   return (
     <div className="flex flex-col gap-6" data-testid="portfolio-settings">
@@ -160,7 +176,19 @@ export function PortfolioSettingsPage() {
           </FormField>
         </div>
       </section>
-      <section className="flex flex-col gap-3 rounded-lg border bg-card p-6">
+      <FeaturesSection value={value} update={update} />
+      {!prioritisationOn && (
+        <StatusBanner
+          tone="info"
+          title={tv('settings.prioritisationOff')}
+          description={tv('settings.prioritisationOffHint')}
+        />
+      )}
+      <fieldset
+        disabled={!prioritisationOn}
+        className="flex flex-col gap-3 rounded-lg border bg-card p-6 disabled:opacity-70"
+        data-testid="portfolio-settings-criteria"
+      >
         <h2 className="font-semibold">{t('settings.criteria')}</h2>
         {criteria.map((c, i) => (
           <div
@@ -246,8 +274,12 @@ export function PortfolioSettingsPage() {
             {t('settings.addCriterion')}
           </Button>
         </div>
-      </section>
-      <section className="flex flex-col gap-3 rounded-lg border bg-card p-6">
+      </fieldset>
+      <fieldset
+        disabled={!prioritisationOn}
+        className="flex flex-col gap-3 rounded-lg border bg-card p-6 disabled:opacity-70"
+        data-testid="portfolio-settings-bands"
+      >
         <h2 className="font-semibold">{t('settings.bands')}</h2>
         {bands.map((b, i) => (
           <div key={i} className="grid gap-2 md:grid-cols-[1fr_2fr_2fr_6rem_auto]" data-testid="band-row">
@@ -313,7 +345,11 @@ export function PortfolioSettingsPage() {
             {t('settings.addBand')}
           </Button>
         </div>
-      </section>
+      </fieldset>
+      <AgileSection value={value} update={update} />
+      <CostSection value={value} update={update} />
+      {featureOn(value, 'health') && <HealthSection value={value} update={update} />}
+      {featureOn(value, 'gateChecklists') && <GateChecklistSection value={value} update={update} />}
       <section className="flex flex-col gap-3 rounded-lg border bg-card p-6">
         <h2 className="font-semibold">{t('settings.template')}</h2>
         {value.projectScopeTemplateFileId ? (
@@ -360,13 +396,19 @@ export function PortfolioSettingsPage() {
           onClick={() =>
             save.mutate(
               { settings: value, version: settings.data.version },
-              { onSuccess: () => toast({ title: t('settings.saved') }) },
+              {
+                onSuccess: () => {
+                  toast({ title: t('settings.saved') });
+                  void queryClient.invalidateQueries({ queryKey: featureKeys.all });
+                },
+              },
             )
           }
         >
           {tc('actions.save')}
         </Button>
       </div>
+      {templatesOn && <TemplatesEditor />}
     </div>
   );
 }

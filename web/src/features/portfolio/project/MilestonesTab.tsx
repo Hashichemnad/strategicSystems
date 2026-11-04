@@ -1,6 +1,7 @@
-import { Pencil, Plus, TrendingUp, Upload, XCircle } from 'lucide-react';
+import { BadgeCheck, LayoutTemplate, Pencil, Plus, Save, TrendingUp, Upload, XCircle } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useMe } from '@/features/auth/session';
 import { contentUrl } from '@/features/files/api';
 import { formatDate, formatNumber, pickText } from '@/lib/format';
 import {
@@ -42,6 +43,9 @@ import {
   type MilestoneValues,
   type ProjectFull,
 } from '../projectApi';
+import { useFeature } from '../featuresApi';
+import { canSignOff, qualityTone } from '../standards/standardsLogic';
+import { ApplyTemplateDialog, SaveTemplateDialog, SignOffDialog } from '../standards/MilestoneStandards';
 import { FieldErrors } from './FieldErrors';
 
 type Tone = 'neutral' | 'info' | 'success' | 'warning' | 'danger';
@@ -74,12 +78,22 @@ export function MilestonesTab({
   const [editing, setEditing] = useState<{ row?: Milestone; highLevel: boolean } | null>(null);
   const [updating, setUpdating] = useState<Milestone | null>(null);
   const [cancelling, setCancelling] = useState<Milestone | null>(null);
+  const [signing, setSigning] = useState<Milestone | null>(null);
+  const [templateDialog, setTemplateDialog] = useState<'apply' | 'save' | null>(null);
+  const { t: ts } = useTranslation('pmStandards');
+  const me = useMe();
+  const qualityOn = useFeature('quality');
+  const templatesOn = useFeature('templates');
   const lang = i18n.language;
   if (plan.isPending) return <Skeleton className="h-64" />;
   if (!plan.data) return null;
   const rows = plan.data.milestones;
   const totals = weightTotals(rows);
   const canPlan = project.permissions.canPlanMilestones;
+  const maySignOff =
+    qualityOn &&
+    project.status === 'active' &&
+    canSignOff(project.permissions.canManage, project.owner?.id, me?.employee?.id);
   const pct = (ratio: number) => `${formatNumber(toPercent(ratio) ?? 0, lang)} %`;
   const section = (highLevel: boolean) => {
     const own = rows.filter((m) => m.highLevel === highLevel);
@@ -141,6 +155,18 @@ export function MilestonesTab({
                           {t('project.milestones.deliverable')}
                         </StatusChip>
                       )}
+                      {qualityOn && m.isDeliverable && (
+                        <span title={m.qualityComment ?? undefined} data-testid="quality-status">
+                          <StatusChip tone={qualityTone(m.qualityStatus)} className="ms-2">
+                            {ts(`quality.statuses.${qualityCode(m.qualityStatus)}`)}
+                          </StatusChip>
+                        </span>
+                      )}
+                      {m.deliveredInSprints && (
+                        <StatusChip tone="neutral" className="ms-2">
+                          {ts('quality.inSprints')}
+                        </StatusChip>
+                      )}
                     </TableCell>
                     <TableCell className="text-sm">
                       {m.plannedStart ? formatDate(m.plannedStart, lang) : '—'} –{' '}
@@ -195,6 +221,17 @@ export function MilestonesTab({
                             </Button>
                           </>
                         )}
+                        {maySignOff && m.isDeliverable && m.status !== 'cancelled' && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setSigning(m)}
+                            data-testid="milestone-sign-off"
+                          >
+                            <BadgeCheck aria-hidden />
+                            {ts('quality.signOff')}
+                          </Button>
+                        )}
                         {canUpdate &&
                           !m.isHeader &&
                           !m.highLevel &&
@@ -224,6 +261,22 @@ export function MilestonesTab({
   };
   return (
     <div className="flex flex-col gap-8">
+      {templatesOn && (canPlan || project.permissions.canManage) && (
+        <div className="flex flex-wrap justify-end gap-2" data-testid="milestone-templates">
+          {canPlan && (
+            <Button variant="outline" size="sm" onClick={() => setTemplateDialog('apply')}>
+              <LayoutTemplate aria-hidden />
+              {ts('templates.apply')}
+            </Button>
+          )}
+          {project.permissions.canManage && (
+            <Button variant="outline" size="sm" onClick={() => setTemplateDialog('save')}>
+              <Save aria-hidden />
+              {ts('templates.saveAs')}
+            </Button>
+          )}
+        </div>
+      )}
       {project.template.charter && section(true)}
       {section(false)}
       {editing && (
@@ -245,6 +298,13 @@ export function MilestonesTab({
       )}
       {cancelling && (
         <CancelMilestoneDialog project={project} milestone={cancelling} onClose={() => setCancelling(null)} />
+      )}
+      {signing && <SignOffDialog project={project} milestone={signing} onClose={() => setSigning(null)} />}
+      {templateDialog === 'apply' && (
+        <ApplyTemplateDialog project={project} onClose={() => setTemplateDialog(null)} />
+      )}
+      {templateDialog === 'save' && (
+        <SaveTemplateDialog project={project} onClose={() => setTemplateDialog(null)} />
       )}
     </div>
   );
@@ -283,7 +343,10 @@ function MilestoneDialog({
     qualityMet: row?.qualityMet ?? null,
     isInnovative: row?.isInnovative ?? false,
     innovativeReason: row?.innovativeReason ?? '',
+    deliveredInSprints: row?.deliveredInSprints ?? false,
   });
+  const { t: ts } = useTranslation('pmStandards');
+  const hybrid = project.delivery.methodology === 'hybrid';
   const phases = rows.filter(
     (m) => m.isHeader && m.highLevel === highLevel && m.status !== 'cancelled' && m.id !== row?.id,
   );
@@ -304,6 +367,7 @@ function MilestoneDialog({
     isInnovative: v.isInnovative,
     innovativeReason: v.innovativeReason.trim() || null,
     sort: row?.sort ?? 0,
+    deliveredInSprints: hybrid && !v.isHeader && v.deliveredInSprints,
   };
   const error = create.error ?? update.error;
   const save = () => {
@@ -398,6 +462,15 @@ function MilestoneDialog({
               checked={v.isInnovative}
               onChange={(e) => set({ isInnovative: e.target.checked })}
             />
+            {hybrid && !v.isHeader && (
+              <Checkbox
+                label={ts('quality.deliveredInSprints')}
+                description={ts('quality.deliveredInSprintsHint')}
+                checked={v.deliveredInSprints}
+                onChange={(e) => set({ deliveredInSprints: e.target.checked })}
+                data-testid="milestone-in-sprints"
+              />
+            )}
           </div>
           {v.isDeliverable && (
             <>
@@ -679,3 +752,5 @@ function CancelMilestoneDialog({
     </Dialog>
   );
 }
+
+const qualityCode = (s: string | null | undefined) => (s === 'accepted' || s === 'rejected' ? s : 'pending');

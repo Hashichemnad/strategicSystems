@@ -205,8 +205,8 @@ test.describe('as an administrator', () => {
     await expect(page.getByText(tr(language, 'jobs:toast.run'), { exact: true })).toBeVisible();
     await expect(verify.getByText(tr(language, 'jobs:statuses.succeeded'))).toBeVisible({ timeout: 20_000 });
     // Platform jobs, the three Task Management jobs, the two Teams jobs, the KPI windows, the Phase 14 jobs, the Portfolio monthly cycle and
-    // the Risk monitoring job (Phase 13).
-    await expect(page.getByTestId('job-row')).toHaveCount(18);
+    // the Risk monitoring job (Phase 13) and the Portfolio communication reminders (Phase 10).
+    await expect(page.getByTestId('job-row')).toHaveCount(19);
     await shot('job-dashboard', { fullPage: true });
   });
 });
@@ -233,6 +233,21 @@ test.describe('notifications', () => {
     });
     expect(shared.status()).toBe(200);
 
+    // Wait for this notification itself (the outbox delivers it): Ahmed may already hold unread notifications from earlier scenarios,
+    // so the badge alone does not prove it has arrived.
+    const sharedName = language === 'ar' ? `بند مشترك ${tag}` : `Shared item ${tag}`;
+    await expect
+      .poll(
+        async () =>
+          (await (await page.request.get('/api/v1/notifications/mine?page=1&pageSize=20')).text()).includes(
+            sharedName,
+          ),
+        {
+          timeout: 60_000,
+          intervals: [500, 1000, 2000],
+        },
+      )
+      .toBe(true);
     await page.goto('/');
     const bell = page.getByTestId('notification-bell');
     await expect(bell.locator('span').filter({ hasText: /\S/ })).toBeVisible({ timeout: 20_000 });

@@ -32,6 +32,8 @@ import {
   type MonthlyUpdate,
   type ProjectFull,
 } from '../projectApi';
+import { useFeature } from '../featuresApi';
+import { ChangeImpactPanel, MonthlyHistoryExtras, MonthlyNarrativePanel } from '../standards/StageStandards';
 import { FieldErrors } from './FieldErrors';
 import { LessonsTab } from './ProjectItemTabs';
 import type { PortfolioOptions } from '../api';
@@ -99,6 +101,11 @@ export function MonthlyTab({ project }: { project: ProjectFull }) {
               )}
             </div>
             <p className="text-sm">{t('project.monthly.pending', { count: pendingMilestones })}</p>
+            <MonthlyNarrativePanel
+              key={`${current.id}:${current.status}`}
+              project={project}
+              current={current}
+            />
             {canSubmit && (
               <div className="flex flex-col gap-2">
                 <FormField label={t('dialogs.submitComment')}>
@@ -149,6 +156,7 @@ export function MonthlyTab({ project }: { project: ProjectFull }) {
                   )}
                 </div>
                 <Snapshot items={m.items} />
+                <MonthlyHistoryExtras project={project} update={m} />
               </li>
             ))}
           </ul>
@@ -191,6 +199,10 @@ function Snapshot({ items }: { items: string }) {
     </ul>
   );
 }
+
+const methodologies = ['waterfall', 'agile', 'hybrid'] as const;
+const methodologyCode = (m: string | null | undefined) => (m === 'agile' || m === 'hybrid' ? m : 'waterfall');
+const isDetailsType = (type: string) => type === 'details' || type === 'postponement';
 
 const changeTone: Record<string, Tone> = {
   draft: 'neutral',
@@ -245,6 +257,7 @@ export function ChangesTab({ project }: { project: ProjectFull }) {
                 {c.reason}
               </p>
               <ProposedSummary change={c} project={project} />
+              <ChangeImpactPanel change={c} />
               {c.applied.length > 0 && (
                 <div className="text-sm">
                   <h3 className="font-medium">{t('project.change.appliedLog')}</h3>
@@ -302,6 +315,7 @@ export function ChangesTab({ project }: { project: ProjectFull }) {
 
 function ProposedSummary({ change: c, project }: { change: ChangeRequest; project: ProjectFull }) {
   const { t, i18n } = useTranslation('portfolio');
+  const { t: ts } = useTranslation('pmStandards');
   const lang = i18n.language;
   const rows: [string, string][] = [];
   if (c.proposedNameAr || c.proposedNameEn)
@@ -317,6 +331,12 @@ function ProposedSummary({ change: c, project }: { change: ChangeRequest; projec
   if (c.newOwner)
     rows.push([t('project.change.fields.owner'), pickText(lang, c.newOwner.nameAr, c.newOwner.nameEn)]);
   if (c.mergeIntoProjectNumber) rows.push([t('project.change.fields.mergedInto'), c.mergeIntoProjectNumber]);
+  if (c.proposedMethodology)
+    rows.push([
+      ts('change.methodology'),
+      ts(`change.methodologies.${methodologyCode(c.proposedMethodology)}`),
+    ]);
+  if (c.areas.includes('plan')) rows.push([ts('change.areas'), ts('change.replan')]);
   if (rows.length === 0) return null;
   return (
     <dl className="grid gap-1 text-sm md:grid-cols-2">
@@ -359,13 +379,19 @@ function ChangeDialog({
     costAffected: row?.costAffected ?? false,
     newPm: row?.newPm?.id ?? undefined,
     newOwner: row?.newOwner?.id ?? undefined,
+    replan: row?.areas.includes('plan') ?? false,
+    changeMethodology: Boolean(row?.proposedMethodology),
+    proposedMethodology: row?.proposedMethodology ?? undefined,
   });
+  const { t: ts } = useTranslation('pmStandards');
   const set = (patch: Partial<typeof v>) => setV((c) => ({ ...c, ...patch }));
   const details = v.type === 'details';
+  const otherAreas = (row?.areas ?? []).filter((a) => a !== 'plan' && a !== 'methodology');
+  const methodology = details && v.changeMethodology ? (v.proposedMethodology ?? null) : null;
   const dates = details || v.type === 'postponement';
   const values: ChangeRequestValues = {
     type: v.type,
-    areas: [],
+    areas: [...otherAreas, ...(details && v.replan ? ['plan'] : []), ...(methodology ? ['methodology'] : [])],
     reason: v.reason.trim() || null,
     impactOfNonResponse: v.impactOfNonResponse.trim() || null,
     proposedNameAr: details ? v.proposedNameAr.trim() || null : null,
@@ -380,6 +406,7 @@ function ChangeDialog({
     newOwnerEmployeeId: v.type === 'ownership' ? (v.newOwner ?? null) : null,
     mergeIntoProjectId: row?.mergeIntoProjectId ?? null,
     requestedDate: null,
+    proposedMethodology: methodology,
   };
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
@@ -459,6 +486,32 @@ function ChangeDialog({
                   data-testid="change-budget"
                 />
               </FormField>
+              <div className="md:col-span-2 flex flex-col gap-2 rounded-md border p-3">
+                <Checkbox
+                  label={ts('change.replan')}
+                  description={ts('change.replanHint')}
+                  checked={v.replan}
+                  onChange={(e) => set({ replan: e.target.checked })}
+                  data-testid="change-area-plan"
+                />
+                <Checkbox
+                  label={ts('change.changeMethodology')}
+                  checked={v.changeMethodology}
+                  onChange={(e) => set({ changeMethodology: e.target.checked })}
+                  data-testid="change-area-methodology"
+                />
+                {v.changeMethodology && (
+                  <FormField label={ts('change.methodology')} required>
+                    <Select
+                      value={v.proposedMethodology}
+                      onValueChange={(m) => set({ proposedMethodology: m })}
+                      options={methodologies
+                        .filter((m) => m !== project.delivery.methodology)
+                        .map((m) => ({ value: m, label: ts(`change.methodologies.${m}`) }))}
+                    />
+                  </FormField>
+                )}
+              </div>
             </>
           )}
           {dates && (
@@ -516,7 +569,11 @@ function ApplyDialog({
     budget: String(c.proposedBudget ?? project.budget ?? ''),
     newPm: c.newPm?.id ?? undefined,
     newOwner: c.newOwner?.id ?? undefined,
+    methodology: c.proposedMethodology ?? undefined,
+    rebaseline: false,
   });
+  const { t: ts } = useTranslation('pmStandards');
+  const baselinesOn = useFeature('baselines');
   const set = (patch: Partial<typeof v>) => setV((x) => ({ ...x, ...patch }));
   const values: ChangeApplyValues = {
     nameAr: v.nameAr.trim() || null,
@@ -528,6 +585,8 @@ function ApplyDialog({
     budget: v.budget.trim() === '' ? null : Number(v.budget),
     newPmEmployeeId: v.newPm ?? null,
     newOwnerEmployeeId: v.newOwner ?? null,
+    methodology: c.proposedMethodology ? (v.methodology ?? null) : null,
+    rebaseline: baselinesOn && isDetailsType(c.type) && v.rebaseline,
   };
   const was = (label: string, old: string) => (
     <p className="text-xs text-muted-foreground">
@@ -535,7 +594,7 @@ function ApplyDialog({
       <span className="sr-only">{label}</span>
     </p>
   );
-  const isDetails = c.type === 'details' || c.type === 'postponement';
+  const isDetails = isDetailsType(c.type);
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
       <DialogContent
@@ -604,6 +663,40 @@ function ApplyDialog({
                 </FormField>
                 {was('budget', project.budget !== null ? formatNumber(project.budget, lang) : '')}
               </div>
+              {c.proposedMethodology && (
+                <div>
+                  <FormField label={ts('change.methodology')}>
+                    <Select
+                      value={v.methodology}
+                      onValueChange={(m) => set({ methodology: m })}
+                      options={methodologies.map((m) => ({
+                        value: m,
+                        label: ts(`change.methodologies.${m}`),
+                      }))}
+                    />
+                  </FormField>
+                  {was(
+                    'methodology',
+                    ts(`change.methodologies.${methodologyCode(project.delivery.methodology)}`),
+                  )}
+                </div>
+              )}
+              {c.areas.includes('plan') && (
+                <div className="md:col-span-2">
+                  <StatusBanner tone="info" title={ts('change.replanOpen')} />
+                </div>
+              )}
+              {baselinesOn && (
+                <div className="md:col-span-2">
+                  <Checkbox
+                    label={ts('change.rebaseline')}
+                    description={ts('change.rebaselineHint')}
+                    checked={v.rebaseline}
+                    onChange={(e) => set({ rebaseline: e.target.checked })}
+                    data-testid="apply-rebaseline"
+                  />
+                </div>
+              )}
             </>
           )}
           {c.type === 'ownership' && (

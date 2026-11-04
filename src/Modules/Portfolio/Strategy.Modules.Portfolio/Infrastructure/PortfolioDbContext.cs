@@ -41,6 +41,32 @@ public sealed class PortfolioDbContext(DbContextOptions<PortfolioDbContext> opti
     public DbSet<Contract> Contracts => Set<Contract>();
 
     public DbSet<ChangeRequest> ChangeRequests => Set<ChangeRequest>();
+
+    public DbSet<Release> Releases => Set<Release>();
+
+    public DbSet<Epic> Epics => Set<Epic>();
+
+    public DbSet<UserStory> Stories => Set<UserStory>();
+
+    public DbSet<Sprint> Sprints => Set<Sprint>();
+
+    public DbSet<StoryEvent> StoryEvents => Set<StoryEvent>();
+
+    public DbSet<PortfolioGroup> Groups => Set<PortfolioGroup>();
+
+    public DbSet<RaidItem> RaidItems => Set<RaidItem>();
+
+    public DbSet<RaciEntry> RaciEntries => Set<RaciEntry>();
+
+    public DbSet<CommunicationItem> Communications => Set<CommunicationItem>();
+
+    public DbSet<Benefit> Benefits => Set<Benefit>();
+
+    public DbSet<ContractPayment> Payments => Set<ContractPayment>();
+
+    public DbSet<Baseline> Baselines => Set<Baseline>();
+
+    public DbSet<ProjectTemplate> Templates => Set<ProjectTemplate>();
 }
 
 internal sealed class ProgramRequestConfiguration : IEntityTypeConfiguration<ProgramRequest>
@@ -192,6 +218,14 @@ internal sealed class ProjectConfiguration : IEntityTypeConfiguration<Project>
         builder.HasIndex(x => x.SectionUnitId);
         builder.HasIndex(x => x.PmEmployeeId);
         builder.HasIndex(x => new { x.Status, x.SubState });
+        builder.Property(x => x.Methodology).HasMaxLength(20).HasDefaultValue(Methodologies.Waterfall);
+        builder.Property(x => x.AgileApprovalMode).HasMaxLength(20);
+        builder.Property(x => x.DefinitionOfDone).HasMaxLength(RequestRules.LongTextMaxLength);
+        builder.Property(x => x.Board).HasColumnType("jsonb");
+        builder.Property(x => x.HealthOverrides).HasColumnType("jsonb").HasDefaultValueSql("'{}'::jsonb");
+        builder.Property(x => x.Checklist).HasColumnType("jsonb").HasDefaultValueSql("'{}'::jsonb");
+        builder.HasIndex(x => x.PortfolioGroupId);
+        builder.HasIndex(x => x.ProgrammeId);
     }
 }
 
@@ -235,6 +269,8 @@ internal sealed class MilestoneConfiguration : IEntityTypeConfiguration<Mileston
         }
 
         builder.Property(x => x.Cost).HasPrecision(18, 2);
+        builder.Property(x => x.QualityStatus).HasMaxLength(20);
+        builder.Property(x => x.QualityComment).HasMaxLength(RequestRules.TextMaxLength);
         builder.Ignore(x => x.IsActive);
         builder.Ignore(x => x.HasPendingUpdate);
         builder.HasIndex(x => x.ProjectId);
@@ -253,6 +289,9 @@ internal sealed class MonthlyUpdateConfiguration : IEntityTypeConfiguration<Mont
         builder.Property(x => x.OpenedBy).HasMaxLength(60);
         builder.Property(x => x.SubmitComment).HasMaxLength(RequestRules.TextMaxLength);
         builder.Property(x => x.Items).HasColumnType("jsonb");
+        builder.Property(x => x.Sprints).HasColumnType("jsonb").HasDefaultValueSql("'[]'::jsonb");
+        builder.Property(x => x.NarrativeAr).HasMaxLength(RequestRules.LongTextMaxLength);
+        builder.Property(x => x.NarrativeEn).HasMaxLength(RequestRules.LongTextMaxLength);
         builder.Property(x => x.Sequence).HasDefaultValue(1);
         builder.HasIndex(x => new { x.ProjectId, x.Period, x.Sequence }).IsUnique();
         builder.HasIndex(x => x.Status);
@@ -361,6 +400,8 @@ internal sealed class ContractConfiguration : IEntityTypeConfiguration<Contract>
         ChildConfiguration.Texts(builder, 100, nameof(Contract.Number));
         ChildConfiguration.Texts(builder, RequestRules.NameMaxLength, nameof(Contract.Name), nameof(Contract.Supplier));
         builder.Property(x => x.Amount).HasPrecision(18, 2);
+        builder.Property(x => x.RatingComment).HasMaxLength(RequestRules.TextMaxLength);
+        builder.Ignore(x => x.RatingOverall);
     }
 }
 
@@ -379,7 +420,200 @@ internal sealed class ChangeRequestConfiguration : IEntityTypeConfiguration<Chan
         ChildConfiguration.Texts(builder, RequestRules.LongTextMaxLength, nameof(ChangeRequest.Reason), nameof(ChangeRequest.ImpactOfNonResponse),
             nameof(ChangeRequest.ProposedDescription), nameof(ChangeRequest.ProposedScope), nameof(ChangeRequest.CancelReason));
         builder.Property(x => x.ProposedBudget).HasPrecision(18, 2);
+        builder.Property(x => x.ProposedMethodology).HasMaxLength(20);
         builder.HasIndex(x => x.ProjectId);
         builder.HasIndex(x => x.Number).IsUnique();
+    }
+}
+
+internal sealed class ReleaseConfiguration : IEntityTypeConfiguration<Release>
+{
+    public void Configure(EntityTypeBuilder<Release> builder)
+    {
+        builder.ToTable("release");
+        builder.Property(x => x.Id).ValueGeneratedNever();
+        builder.Property(x => x.Status).HasMaxLength(20);
+        ChildConfiguration.Texts(builder, RequestRules.NameMaxLength, nameof(Release.NameAr), nameof(Release.NameEn));
+        ChildConfiguration.Texts(builder, RequestRules.TextMaxLength, nameof(Release.Goal));
+        builder.HasIndex(x => x.ProjectId);
+    }
+}
+
+internal sealed class EpicConfiguration : IEntityTypeConfiguration<Epic>
+{
+    public void Configure(EntityTypeBuilder<Epic> builder)
+    {
+        builder.ToTable("epic");
+        builder.Property(x => x.Id).ValueGeneratedNever();
+        builder.Property(x => x.Code).HasMaxLength(80);
+        builder.Property(x => x.Status).HasMaxLength(20);
+        ChildConfiguration.Texts(builder, RequestRules.NameMaxLength, nameof(Epic.TitleAr), nameof(Epic.TitleEn));
+        ChildConfiguration.Texts(builder, RequestRules.TextMaxLength, nameof(Epic.AcceptanceCriteria));
+        builder.Property(x => x.Weight).HasPrecision(9, 4);
+        builder.Ignore(x => x.IsActive);
+        builder.HasIndex(x => x.ProjectId);
+        builder.HasIndex(x => x.Code).IsUnique();
+    }
+}
+
+internal sealed class UserStoryConfiguration : IEntityTypeConfiguration<UserStory>
+{
+    public void Configure(EntityTypeBuilder<UserStory> builder)
+    {
+        builder.ToTable("user_story");
+        builder.Property(x => x.Id).ValueGeneratedNever();
+        builder.Property(x => x.Code).HasMaxLength(80);
+        ChildConfiguration.Texts(builder, 40, nameof(UserStory.ColumnCode), nameof(UserStory.Category), nameof(UserStory.Priority), nameof(UserStory.Status));
+        ChildConfiguration.Texts(builder, RequestRules.NameMaxLength, nameof(UserStory.Title), nameof(UserStory.AsA));
+        ChildConfiguration.Texts(builder, RequestRules.TextMaxLength, nameof(UserStory.IWant), nameof(UserStory.SoThat), nameof(UserStory.AcceptanceCriteria));
+        builder.Ignore(x => x.IsActive);
+        builder.Ignore(x => x.IsDone);
+        builder.HasIndex(x => x.ProjectId);
+        builder.HasIndex(x => x.EpicId);
+        builder.HasIndex(x => x.SprintId);
+        builder.HasIndex(x => x.Code).IsUnique();
+    }
+}
+
+internal sealed class SprintConfiguration : IEntityTypeConfiguration<Sprint>
+{
+    public void Configure(EntityTypeBuilder<Sprint> builder)
+    {
+        builder.ToTable("sprint");
+        builder.Property(x => x.Id).ValueGeneratedNever();
+        builder.Property(x => x.Status).HasMaxLength(20);
+        builder.Property(x => x.ApprovalPeriod).HasMaxLength(7);
+        builder.Property(x => x.CommittedStoryIds).HasColumnType("jsonb");
+        ChildConfiguration.Texts(builder, RequestRules.NameMaxLength, nameof(Sprint.Name));
+        ChildConfiguration.Texts(builder, RequestRules.TextMaxLength, nameof(Sprint.Goal), nameof(Sprint.DemoOutcome), nameof(Sprint.StakeholderFeedback),
+            nameof(Sprint.WentWell), nameof(Sprint.ToImprove), nameof(Sprint.Actions));
+        builder.HasIndex(x => new { x.ProjectId, x.Number }).IsUnique();
+    }
+}
+
+internal sealed class StoryEventConfiguration : IEntityTypeConfiguration<StoryEvent>
+{
+    public void Configure(EntityTypeBuilder<StoryEvent> builder)
+    {
+        builder.ToTable("story_event");
+        builder.Property(x => x.Id).ValueGeneratedNever();
+        ChildConfiguration.Texts(builder, 40, nameof(StoryEvent.FromColumn), nameof(StoryEvent.ToColumn), nameof(StoryEvent.Category));
+        builder.HasIndex(x => x.StoryId);
+        builder.HasIndex(x => x.ProjectId);
+    }
+}
+
+internal sealed class PortfolioGroupConfiguration : IEntityTypeConfiguration<PortfolioGroup>
+{
+    public void Configure(EntityTypeBuilder<PortfolioGroup> builder)
+    {
+        builder.ToTable("portfolio_group");
+        builder.Property(x => x.Id).ValueGeneratedNever();
+        ChildConfiguration.Texts(builder, 20, nameof(PortfolioGroup.Kind), nameof(PortfolioGroup.Status));
+        builder.Property(x => x.Code).HasMaxLength(60);
+        ChildConfiguration.Texts(builder, RequestRules.NameMaxLength, nameof(PortfolioGroup.NameAr), nameof(PortfolioGroup.NameEn));
+        ChildConfiguration.Texts(builder, RequestRules.TextMaxLength, nameof(PortfolioGroup.Description));
+        builder.HasIndex(x => x.Code).IsUnique();
+    }
+}
+
+internal sealed class RaidItemConfiguration : IEntityTypeConfiguration<RaidItem>
+{
+    public void Configure(EntityTypeBuilder<RaidItem> builder)
+    {
+        builder.ToTable("raid_item");
+        builder.Property(x => x.Id).ValueGeneratedNever();
+        builder.Property(x => x.Code).HasMaxLength(80);
+        ChildConfiguration.Texts(builder, 20, nameof(RaidItem.Type), nameof(RaidItem.Priority), nameof(RaidItem.Status), nameof(RaidItem.Source));
+        ChildConfiguration.Texts(builder, RequestRules.NameMaxLength, nameof(RaidItem.Title), nameof(RaidItem.DecidedBy));
+        ChildConfiguration.Texts(builder, RequestRules.TextMaxLength, nameof(RaidItem.Description), nameof(RaidItem.Resolution));
+        builder.HasIndex(x => x.ProjectId);
+        builder.HasIndex(x => x.DependsOnProjectId);
+        builder.HasIndex(x => x.Code).IsUnique();
+    }
+}
+
+internal sealed class RaciEntryConfiguration : IEntityTypeConfiguration<RaciEntry>
+{
+    public void Configure(EntityTypeBuilder<RaciEntry> builder)
+    {
+        ChildConfiguration.Child(builder, "raci_entry");
+        builder.Property(x => x.Role).HasMaxLength(2);
+        builder.Property(x => x.Area).HasMaxLength(RequestRules.NameMaxLength);
+    }
+}
+
+internal sealed class CommunicationItemConfiguration : IEntityTypeConfiguration<CommunicationItem>
+{
+    public void Configure(EntityTypeBuilder<CommunicationItem> builder)
+    {
+        ChildConfiguration.Child(builder, "communication_item");
+        builder.Property(x => x.Frequency).HasMaxLength(20);
+        ChildConfiguration.Texts(builder, RequestRules.NameMaxLength, nameof(CommunicationItem.Audience), nameof(CommunicationItem.Method));
+        ChildConfiguration.Texts(builder, RequestRules.TextMaxLength, nameof(CommunicationItem.Message));
+        builder.HasIndex(x => x.NextDue);
+    }
+}
+
+internal sealed class BenefitConfiguration : IEntityTypeConfiguration<Benefit>
+{
+    public void Configure(EntityTypeBuilder<Benefit> builder)
+    {
+        builder.ToTable("benefit");
+        builder.Property(x => x.Id).ValueGeneratedNever();
+        ChildConfiguration.Texts(builder, 20, nameof(Benefit.Status), nameof(Benefit.ItemStatus));
+        ChildConfiguration.Texts(builder, 60, nameof(Benefit.Unit));
+        ChildConfiguration.Texts(builder, RequestRules.NameMaxLength, nameof(Benefit.TitleAr), nameof(Benefit.TitleEn));
+        ChildConfiguration.Texts(builder, RequestRules.TextMaxLength, nameof(Benefit.Measure), nameof(Benefit.Note));
+        foreach (var name in new[] { nameof(Benefit.BaselineValue), nameof(Benefit.TargetValue), nameof(Benefit.ActualValue) })
+        {
+            builder.Property(name).HasPrecision(18, 4);
+        }
+
+        builder.Ignore(x => x.IsActive);
+        builder.Ignore(x => x.IsMeasured);
+        builder.HasIndex(x => x.RequestId);
+        builder.HasIndex(x => x.ProjectId);
+    }
+}
+
+internal sealed class ContractPaymentConfiguration : IEntityTypeConfiguration<ContractPayment>
+{
+    public void Configure(EntityTypeBuilder<ContractPayment> builder)
+    {
+        builder.ToTable("contract_payment");
+        builder.Property(x => x.Id).ValueGeneratedNever();
+        builder.Property(x => x.Status).HasMaxLength(20);
+        builder.Property(x => x.Title).HasMaxLength(RequestRules.NameMaxLength);
+        builder.Property(x => x.Amount).HasPrecision(18, 2);
+        builder.HasIndex(x => x.ContractId);
+        builder.HasIndex(x => x.ProjectId);
+    }
+}
+
+internal sealed class BaselineConfiguration : IEntityTypeConfiguration<Baseline>
+{
+    public void Configure(EntityTypeBuilder<Baseline> builder)
+    {
+        builder.ToTable("baseline");
+        builder.Property(x => x.Id).ValueGeneratedNever();
+        builder.Property(x => x.Reason).HasMaxLength(RequestRules.TextMaxLength);
+        builder.Property(x => x.Budget).HasPrecision(18, 2);
+        builder.Property(x => x.Items).HasColumnType("jsonb");
+        builder.HasIndex(x => new { x.ProjectId, x.VersionNo }).IsUnique();
+    }
+}
+
+internal sealed class ProjectTemplateConfiguration : IEntityTypeConfiguration<ProjectTemplate>
+{
+    public void Configure(EntityTypeBuilder<ProjectTemplate> builder)
+    {
+        builder.ToTable("project_template");
+        builder.Property(x => x.Id).ValueGeneratedNever();
+        builder.Property(x => x.Code).HasMaxLength(60);
+        ChildConfiguration.Texts(builder, 20, nameof(ProjectTemplate.Methodology), nameof(ProjectTemplate.Status));
+        ChildConfiguration.Texts(builder, RequestRules.NameMaxLength, nameof(ProjectTemplate.NameAr), nameof(ProjectTemplate.NameEn));
+        builder.Property(x => x.Content).HasColumnType("jsonb");
+        builder.HasIndex(x => x.Code).IsUnique();
     }
 }

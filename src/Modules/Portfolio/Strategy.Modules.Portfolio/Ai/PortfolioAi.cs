@@ -464,6 +464,48 @@ internal sealed class AssessmentService(
 }
 
 /// <summary>Request content for the approver brief, Ask and <c>get_record</c> (404 outside the read scope).</summary>
+/// <summary>A project for Ask / the approver brief / <c>get_record</c>; cost figures only when the caller may see them (ADR 0098).</summary>
+internal sealed class ProjectRecordSource(ProjectLoader loader, RequestReader reader, CostVisibility costs) : IAiRecordSource
+{
+    public string ResourceType => PortfolioPermissions.ProjectResource;
+
+    public async Task<AiRecordContent?> GetAsync(Guid id, ClaimsPrincipal user, CancellationToken cancellationToken)
+    {
+        var p = await loader.FindAsync(id, user, cancellationToken).ConfigureAwait(false);
+        if (p is null)
+        {
+            return null;
+        }
+
+        var show = await costs.CanSeeAsync(user, p, cancellationToken).ConfigureAwait(false);
+        var people = await reader.PeopleAsync([p.PmEmployeeId, p.OwnerEmployeeId], cancellationToken).ConfigureAwait(false);
+        string? D(DateOnly? d) => d?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+        var fields = new List<AiRecordField>
+        {
+            new(nameof(Project.NameAr), "اسم المشروع بالعربية", "Project name (Arabic)", p.NameAr),
+            new(nameof(Project.NameEn), "اسم المشروع بالإنجليزية", "Project name (English)", p.NameEn),
+            new(nameof(Project.Description), "الوصف", "Description", p.Description),
+            new(nameof(Project.ScopeOfWork), "نطاق العمل", "Scope of work", p.ScopeOfWork),
+            new(nameof(Project.Classification), "التصنيف", "Classification", p.Classification),
+            new(nameof(Project.Methodology), "المنهجية", "Methodology", p.Methodology),
+            new(nameof(Project.Stage), "المرحلة", "Stage", p.Stage),
+            new(nameof(Project.Status), "الحالة", "Status", p.Status),
+            new(nameof(Project.Performance), "نسبة الإنجاز", "Progress", (p.Performance * 100).ToString("0.##", CultureInfo.InvariantCulture) + "%"),
+            new(nameof(Project.PlannedProgress), "المخطط حتى تاريخه", "Planned to date", (p.PlannedProgress * 100).ToString("0.##", CultureInfo.InvariantCulture) + "%"),
+            new(nameof(Project.ProgressStatus), "حالة التقدم", "Progress status", p.ProgressStatus),
+            new(nameof(Project.PlannedStart), "تاريخ البدء", "Planned start", D(p.PlannedStart)),
+            new(nameof(Project.PlannedEnd), "تاريخ الانتهاء", "Planned end", D(p.PlannedEnd)),
+        };
+        if (show)
+        {
+            fields.Add(new(nameof(Project.Budget), "الميزانية", "Budget", p.Budget?.ToString("0.##", CultureInfo.InvariantCulture)));
+        }
+
+        return new AiRecordContent(ResourceType, p.Id, PortfolioPermissions.SystemCode, Project.EntityType, p.Number, p.NameAr, p.NameEn, $"/portfolio/projects/{p.Id}", fields,
+            people.Values.Select(x => x.NameEn ?? x.NameAr ?? string.Empty).Where(x => x.Length > 0).ToList());
+    }
+}
+
 internal sealed class RequestRecordSource(RequestReader reader, PortfolioDbContext db) : IAiRecordSource
 {
     public string ResourceType => PortfolioPermissions.RequestResource;

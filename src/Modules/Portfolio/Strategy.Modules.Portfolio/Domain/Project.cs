@@ -193,7 +193,33 @@ public sealed class Project : AuditableEntity
 
     public DateTimeOffset? CompletedAt { get; private set; }
 
-    public static Project FromRequest(string number, ProgramRequest request, Guid? ownerEmployeeId, StageTemplate? template = null)
+    /// <summary>Waterfall · agile · hybrid (SPEC §1.13, ADR 0090).</summary>
+    public string Methodology { get; private set; } = Methodologies.Waterfall;
+
+    /// <summary>Project override of the agile approval mode (null = the installation default, ADR 0091).</summary>
+    public string? AgileApprovalMode { get; private set; }
+
+    public int? SprintLengthDays { get; private set; }
+
+    public string? DefinitionOfDone { get; private set; }
+
+    /// <summary>jsonb <see cref="BoardConfig"/> (null = default board).</summary>
+    public string? Board { get; private set; }
+
+    /// <summary>jsonb: dimension → <see cref="HealthOverride"/> (ADR 0093).</summary>
+    public string HealthOverrides { get; private set; } = "{}";
+
+    /// <summary>jsonb: gate → item code → <see cref="ChecklistTick"/> (ADR 0095).</summary>
+    public string Checklist { get; private set; } = "{}";
+
+    public Guid? PortfolioGroupId { get; private set; }
+
+    public Guid? ProgrammeId { get; private set; }
+
+    /// <summary>An approved, not yet applied change request with the area <c>plan</c> re-opens planning (ADR 0094).</summary>
+    public Guid? ReplanChangeRequestId { get; private set; }
+
+    public static Project FromRequest(string number, ProgramRequest request, Guid? ownerEmployeeId, StageTemplate? template = null, string? methodology = null)
     {
         ArgumentNullException.ThrowIfNull(request);
         var classification = request.EffectiveClassification;
@@ -228,6 +254,7 @@ public sealed class Project : AuditableEntity
             OwnerEmployeeId = ownerEmployeeId,
             RequesterEmployeeId = request.RequesterEmployeeId,
             RequesterUserId = request.RequesterUserId,
+            Methodology = methodology is { } m && Methodologies.All.Contains(m) ? m : Methodologies.Waterfall,
         };
         if (template is not null)
         {
@@ -403,6 +430,36 @@ public sealed class Project : AuditableEntity
     }
 
     public void MergeInto(Guid target) => MergedIntoProjectId = target;
+
+    public void SetMethodology(string methodology, int? sprintLengthDays, string? definitionOfDone, string? approvalMode)
+    {
+        Methodology = methodology;
+        SprintLengthDays = Methodologies.UsesSprints(methodology) ? sprintLengthDays : null;
+        DefinitionOfDone = Methodologies.UsesSprints(methodology) ? Clean(definitionOfDone) : null;
+        AgileApprovalMode = methodology == Methodologies.Agile && approvalMode is { } a && AgileApprovalModes.All.Contains(a) ? a : null;
+    }
+
+    public void ChangeMethodology(string methodology) => Methodology = methodology;
+
+    public void SetBoard(BoardConfig board)
+    {
+        ArgumentNullException.ThrowIfNull(board);
+        Board = board.ToJson();
+    }
+
+    public BoardConfig BoardOrDefault() => BoardConfig.FromJson(Board);
+
+    public void SetHealthOverrides(string json) => HealthOverrides = json;
+
+    public void SetChecklist(string json) => Checklist = json;
+
+    public void SetGrouping(Guid? portfolioGroupId, Guid? programmeId)
+    {
+        PortfolioGroupId = portfolioGroupId;
+        ProgrammeId = programmeId;
+    }
+
+    public void OpenReplan(Guid? changeRequestId) => ReplanChangeRequestId = changeRequestId;
 
     private static string? Clean(string? value) => string.IsNullOrWhiteSpace(value) ? null : value.Trim();
 }

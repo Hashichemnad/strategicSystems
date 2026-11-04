@@ -321,9 +321,9 @@ Finish with the phase summary.
 ```
 
 **Acceptance checks**
-- [ ] An agile project runs two sprints with board, burndown and a monthly roll-up approval; it appears beside waterfall projects on the portfolio dashboard.
-- [ ] Gantt renders correctly in RTL and LTR for a 30-milestone project in under 5 s.
-- [ ] Monthly status report PDF generated in both languages.
+- [x] An agile project runs two sprints with board, burndown and a monthly roll-up approval; it appears beside waterfall projects on the portfolio dashboard.
+- [x] Gantt renders correctly in RTL and LTR for a 30-milestone project in under 5 s.
+- [x] Monthly status report PDF generated in both languages.
 
 ---
 
@@ -519,7 +519,7 @@ Implement, then run the full hardening review and fix findings, run performance 
 | 7 | Teams Management | ☑ built — awaiting owner acceptance | |
 | 8 | Portfolio A — Requests | ☑ built — awaiting owner acceptance | |
 | 9 | Portfolio B — Lifecycle & change | ☑ built — awaiting owner acceptance | |
-| 10 | Portfolio C — Agile, standards, Gantt | ☐ | |
+| 10 | Portfolio C — Agile, standards, Gantt | ☑ built — awaiting owner acceptance | |
 | 11 | Wasel vendor portal | ☐ | |
 | 12 | Performance Management | ☑ built — awaiting owner acceptance | |
 | 13 | Risk Management | ☑ built — awaiting owner acceptance | |

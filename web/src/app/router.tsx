@@ -344,6 +344,34 @@ export const portfolioProjectRoute = createRoute({
   component: lazyRouteComponent(() => import('@/features/portfolio/project/ProjectPage'), 'ProjectPage'),
 });
 
+// Portfolio views (Phase 10, docs/design/portfolio.md §36, §38, §35): dashboard, portfolio Gantt, portfolios & programmes.
+export const portfolioDashboardRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/portfolio/dashboard',
+  component: lazyRouteComponent(
+    () => import('@/features/portfolio/views/PortfolioDashboardPage'),
+    'PortfolioDashboardPage',
+  ),
+});
+
+export const portfolioGanttRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/portfolio/gantt',
+  component: lazyRouteComponent(
+    () => import('@/features/portfolio/views/PortfolioGanttPage'),
+    'PortfolioGanttPage',
+  ),
+});
+
+export const portfolioGroupsRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/portfolio/portfolios',
+  component: lazyRouteComponent(
+    () => import('@/features/portfolio/views/PortfolioGroupsPage'),
+    'PortfolioGroupsPage',
+  ),
+});
+
 // Performance Management (Phase 12, docs/design/kpi.md): dashboard, cards, new year, plans, results, approvals, scorecards, map, reports.
 export const kpiDashboardRoute = createRoute({
   getParentRoute: () => appLayout,
@@ -1060,6 +1088,9 @@ const routeTree = rootRoute.addChildren([
     portfolioRequestEditRoute,
     portfolioProjectsRoute,
     portfolioProjectRoute,
+    portfolioDashboardRoute,
+    portfolioGanttRoute,
+    portfolioGroupsRoute,
     kpiDashboardRoute,
     kpiCardsRoute,
     kpiCardNewRoute,

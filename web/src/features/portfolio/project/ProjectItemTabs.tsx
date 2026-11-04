@@ -7,6 +7,8 @@ import { LinkedTeamsPanel } from '@/features/teams/LinkedTeamsPanel';
 import { formatDate, formatDateTime, formatNumber, pickText } from '@/lib/format';
 import { Button, FileDrop, StatusBanner, StatusChip, useToast, type SelectOption } from '@/ui';
 import type { PortfolioOptions } from '../api';
+import { useFeature } from '../featuresApi';
+import { ContractExtrasSection } from '../standards/ContractExtrasPanel';
 import {
   projectApi,
   toPercent,
@@ -637,6 +639,7 @@ export function ContractsTab({ project }: TabProps) {
   const confirm = useProjectMutation(project.id, projectApi.lpoUploaded);
   const [file, setFile] = useState<File | null>(null);
   const canLpo = (project.permissions.canLpo || project.permissions.canEdit) && project.status === 'active';
+  const procurement = useFeature('procurement');
   const lpoFiles = (files.data ?? []).filter((f) => f.kind === 'lpo');
   return (
     <div className="flex flex-col gap-6">
@@ -771,6 +774,7 @@ export function ContractsTab({ project }: TabProps) {
           },
         ]}
       />
+      {procurement && <ContractExtrasSection project={project} canWrite={canLpo} />}
     </div>
   );
 }

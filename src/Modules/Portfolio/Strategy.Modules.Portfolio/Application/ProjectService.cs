@@ -83,7 +83,13 @@ public sealed record ProjectFullDto(
     ProjectCountsDto Counts,
     ProjectPermissionsDto Permissions,
     DateTimeOffset CreatedAt,
-    uint Version);
+    uint Version,
+    ProjectDeliveryDto Delivery);
+
+/// <summary>Phase 10 additions of the project record: methodology, grouping, re-plan, cost visibility (ADRs 0090, 0094, 0095, 0098).</summary>
+public sealed record ProjectDeliveryDto(
+    string Methodology, string ApprovalMode, int? SprintLengthDays, string? DefinitionOfDone, bool CanSetMethodology, Guid? PortfolioGroupId, Guid? ProgrammeId,
+    Guid? ReplanChangeRequestId, bool CostsHidden);
 
 public sealed record ProjectVersionInput(uint Version, string? Comment = null);
 
@@ -113,7 +119,9 @@ internal sealed class ProjectService(
     StrategicObjectives objectives,
     IIntegrationEventPublisher events,
     IRequestContext context,
-    IClock clock)
+    IClock clock,
+    AgileService agile,
+    CostVisibility costs)
 {
     public async Task<Result<ProjectFullDto>> GetAsync(Guid id, CancellationToken ct)
     {
@@ -360,12 +368,13 @@ internal sealed class ProjectService(
         }
 
         var facts = await loader.FactsAsync(project, ct).ConfigureAwait(false);
+        var settings = await reader.SettingsAsync(ct).ConfigureAwait(false);
         Error? gate = process switch
         {
-            ProjectApprovalProcesses.Charter => ProjectGates.Failure(ProjectGates.Charter(facts)),
-            ProjectApprovalProcesses.Planning => ProjectGates.Failure(ProjectGates.Planning(facts)),
-            ProjectApprovalProcesses.Closure => await ClosureGateAsync(project, ct).ConfigureAwait(false),
-            _ => ImpactGate(project),
+            ProjectApprovalProcesses.Charter => ProjectGates.Failure([.. ProjectGates.Charter(facts), .. ProjectExtrasService.GateChecklist(project, settings, Gates.Charter)]),
+            ProjectApprovalProcesses.Planning => ProjectGates.Failure([.. ProjectGates.Planning(facts), .. ProjectExtrasService.GateChecklist(project, settings, Gates.Planning)]),
+            ProjectApprovalProcesses.Closure => await ClosureGateAsync(project, settings, ct).ConfigureAwait(false),
+            _ => await ImpactGateAsync(project, settings, ct).ConfigureAwait(false),
         };
         if (gate is not null)
         {
@@ -392,9 +401,20 @@ internal sealed class ProjectService(
         return await ToDtoAsync(project, ct).ConfigureAwait(false);
     }
 
-    private async Task<Error?> ClosureGateAsync(Project project, CancellationToken ct)
+    private async Task<Error?> ClosureGateAsync(Project project, PortfolioSettings settings, CancellationToken ct)
     {
         var errors = new List<FieldError>();
+        foreach (var item in ProjectExtrasService.GateChecklist(project, settings, Gates.Closure).Where(i => !i.Met))
+        {
+            errors.Add(new FieldError($"gate.{item.Code}", item.MessageKey, item.MessageKey, item.Params));
+        }
+
+        if (settings.Features.Quality && await db.Milestones.AnyAsync(
+                m => m.ProjectId == project.Id && m.IsDeliverable && m.Status != MilestoneStatuses.Cancelled && m.QualityStatus != "accepted", ct).ConfigureAwait(false))
+        {
+            errors.Add(new FieldError("gate.quality", "portfolio.errors.gateQuality", "portfolio.errors.gateQuality"));
+        }
+
         if (string.IsNullOrWhiteSpace(project.SummaryOfAchievement))
         {
             errors.Add(new FieldError("summaryOfAchievement", "validation.notEmpty", "validation.notEmpty"));
@@ -413,9 +433,15 @@ internal sealed class ProjectService(
         return errors.Count == 0 ? null : Error.Validation(errors);
     }
 
-    private static Error? ImpactGate(Project project)
+    private async Task<Error?> ImpactGateAsync(Project project, PortfolioSettings settings, CancellationToken ct)
     {
         var errors = new List<FieldError>();
+        if (settings.Features.Benefits && await db.Benefits.AnyAsync(
+                b => b.ProjectId == project.Id && b.ItemStatus == ItemStatuses.Active && b.Status == BenefitStatuses.Planned, ct).ConfigureAwait(false))
+        {
+            errors.Add(new FieldError("gate.benefits", "portfolio.errors.gateBenefits", "portfolio.errors.gateBenefits"));
+        }
+
         foreach (var (field, missing) in new[]
                  {
                      ("costPerformance", project.CostPerformance is null), ("communitySatisfaction", project.CommunitySatisfaction is null),
@@ -632,6 +658,8 @@ internal sealed class ProjectService(
                         m.ReturnUpdate();
                     }
 
+                    await agile.ReturnCarriedAsync(project.Id, clock.UtcNow, ct).ConfigureAwait(false);
+
                     break;
                 }
 
@@ -641,6 +669,10 @@ internal sealed class ProjectService(
                     cr?.Move(ChangeActions.Return, clock.UtcNow);
                     break;
                 }
+
+            case ProjectApprovalProcesses.SprintReview:
+                await agile.ReturnCarriedAsync(project.Id, clock.UtcNow, ct).ConfigureAwait(false);
+                break;
 
             default:
                 {
@@ -822,8 +854,11 @@ internal sealed class ProjectService(
         var units = await reader.UnitsAsync([p.UnitId, p.SectionUnitId], ct).ConfigureAwait(false);
         var requestNumber = await db.Requests.AsNoTracking().Where(r => r.Id == p.RequestId).Select(r => r.Number).FirstOrDefaultAsync(ct).ConfigureAwait(false);
         var facts = await loader.FactsAsync(p, ct).ConfigureAwait(false);
-        var charter = ProjectGates.Charter(facts);
-        var planning = ProjectGates.Planning(facts);
+        var settings = await reader.SettingsAsync(ct).ConfigureAwait(false);
+        IReadOnlyList<GateItem> charter = [.. ProjectGates.Charter(facts), .. ProjectExtrasService.GateChecklist(p, settings, Gates.Charter)];
+        IReadOnlyList<GateItem> planning = [.. ProjectGates.Planning(facts), .. ProjectExtrasService.GateChecklist(p, settings, Gates.Planning)];
+        var showCosts = await costs.CanSeeAsync(user, p, ct).ConfigureAwait(false);
+        decimal? C(decimal? value) => showCosts ? value : null;
         var id = p.Id;
         var counts = new ProjectCountsDto(
             facts.ActiveKpis, facts.ActiveRisks, facts.ActiveStakeholders, facts.ProposedMembers,
@@ -846,7 +881,7 @@ internal sealed class ProjectService(
                 && (canManage || await loader.InSectionAsync(user, p, ct).ConfigureAwait(false)),
             canEdit && ProjectLifecycle.CanEditCharter(p.Status, p.SubState),
             canEdit && ProjectLifecycle.CanEditContent(p.Status, p.SubState),
-            canEdit && ProjectLifecycle.CanPlanMilestones(p.Status, p.SubState),
+            canEdit && AgileService.CanPlan(p),
             await CanRecallAsync(p, ct).ConfigureAwait(false));
         var themes = JsonSerializer.Deserialize<List<string>>(p.OperationalThemes) ?? [];
         return new ProjectFullDto(
@@ -854,16 +889,19 @@ internal sealed class ProjectService(
             p.UnitId is { } u ? units.GetValueOrDefault(u) : null, p.SectionUnitId is { } s ? units.GetValueOrDefault(s) : null, p.StrategicObjectiveCode, p.ProgramTypeCode,
             themes,
             new ProjectCharterValues(p.NameAr, p.NameEn, p.Description, p.ScopeOfWork, p.StrategicObjectiveCode, themes, p.StructuralChanges, p.ResourcesHuman,
-                p.ResourcesFinancial, p.ResourcesTechnical, p.ResourcesContract, p.ResourcesOther, p.PlannedStart, p.PlannedEnd, p.Year1ContractedCost, p.Year2ContractedCost,
-                p.Year3ContractedCost, p.Year4ContractedCost, p.Year1ActualCost, p.Year2ActualCost, p.Year3ActualCost, p.Year4ActualCost, p.ContractedInitialCost,
-                p.AnnualOperationCost, p.AnnualMaintenanceCost, p.AnnualLicenceCost, p.AnnualOtherCost, p.OperatingCostsFrom),
-            p.Budget, p.Year1PlannedCost, p.Year2PlannedCost, p.Year3PlannedCost, p.Year4PlannedCost, p.PlannedStart, p.PlannedEnd,
+                p.ResourcesFinancial, p.ResourcesTechnical, p.ResourcesContract, p.ResourcesOther, p.PlannedStart, p.PlannedEnd, C(p.Year1ContractedCost),
+                C(p.Year2ContractedCost), C(p.Year3ContractedCost), C(p.Year4ContractedCost), C(p.Year1ActualCost), C(p.Year2ActualCost), C(p.Year3ActualCost),
+                C(p.Year4ActualCost), C(p.ContractedInitialCost), C(p.AnnualOperationCost), C(p.AnnualMaintenanceCost), C(p.AnnualLicenceCost), C(p.AnnualOtherCost),
+                p.OperatingCostsFrom),
+            C(p.Budget), C(p.Year1PlannedCost), C(p.Year2PlannedCost), C(p.Year3PlannedCost), C(p.Year4PlannedCost), p.PlannedStart, p.PlannedEnd,
             p.OwnerEmployeeId is { } o ? people.GetValueOrDefault(o) : null, p.PmEmployeeId is { } pm ? people.GetValueOrDefault(pm) : null,
             p.RequesterEmployeeId is { } q ? people.GetValueOrDefault(q) : null, p.OwnershipTakenAt, p.LpoUploaded, p.TeamId, p.TeamFormedAt,
             new ProjectApprovalDto(p.ApprovalProcess, p.ApprovalStepCode, p.ApprovalStepNameAr, p.ApprovalStepNameEn, p.ApprovalResult),
             p.Performance, p.PlannedProgress, p.ProgressStatus, p.SummaryOfAchievement, p.MainDeliverables, p.CostPerformance, p.CommunitySatisfaction, p.EmployeeSatisfaction,
-            p.VendorSatisfaction, p.PreviousOperationalCost, p.ImpactNotes, p.UpdateOpenedAt, p.MonthlyApprovedAt, p.CancelReason, p.HoldReason, p.MergedIntoProjectId,
+            p.VendorSatisfaction, C(p.PreviousOperationalCost), p.ImpactNotes, p.UpdateOpenedAt, p.MonthlyApprovedAt, p.CancelReason, p.HoldReason, p.MergedIntoProjectId,
             p.CompletedAt, p.RequestId, requestNumber,
-            new ProjectGatesDto(charter, planning, charter.All(i => i.Met), planning.All(i => i.Met)), counts, permissions, p.CreatedAt, p.Version);
+            new ProjectGatesDto(charter, planning, charter.All(i => i.Met), planning.All(i => i.Met)), counts, permissions, p.CreatedAt, p.Version,
+            new ProjectDeliveryDto(p.Methodology, AgileApprovalModes.Effective(p.Methodology, p.AgileApprovalMode, settings.AgileApprovalMode), p.SprintLengthDays,
+                p.DefinitionOfDone, canEdit && AgileService.CanSetMethodology(p, template), p.PortfolioGroupId, p.ProgrammeId, p.ReplanChangeRequestId, !showCosts));
     }
 }

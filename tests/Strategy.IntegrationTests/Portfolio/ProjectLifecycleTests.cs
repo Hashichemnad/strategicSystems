@@ -268,6 +268,15 @@ public sealed class ProjectLifecycleTests(ProjectFixture fx) : IClassFixture<Pro
         history.History.ShouldAllBe(h => h.Status == MonthlyStatuses.Approved);
         history.History.Select(h => h.Sequence).ShouldBe([2, 1]);
 
+        // Phase 10 quality (ADR 0095): the owner (department director) signs off the deliverable before closure.
+        foreach (var deliverable in (await PlanAsync(w, project.Id)).Where(m => m.IsDeliverable))
+        {
+            (await w.C(w.Requester).PostAsJsonAsync($"{Base}/milestones/{deliverable.Id}/sign-off", new { decision = "accepted", version = deliverable.Version }))
+                .StatusCode.ShouldBe(HttpStatusCode.Forbidden, "the PM does not sign off quality");
+            var signed = await w.C(w.Director).PostAsJsonAsync($"{Base}/milestones/{deliverable.Id}/sign-off", new { decision = "accepted", comment = "Meets criteria", version = deliverable.Version });
+            signed.StatusCode.ShouldBe(HttpStatusCode.OK, await signed.Content.ReadAsStringAsync());
+        }
+
         // Closure: summary, deliverables and a lesson; approval publishes the event that opens the project team's evaluation.
         (await PortfolioWorld.ProblemFieldsAsync(await w.C(w.Requester).PostAsJsonAsync($"{Base}/projects/{project.Id}/submit-closure", new { version = project.Version })))
             .Select(f => f.Field).ShouldBe(["summaryOfAchievement", "mainDeliverables", "gate.lessons"], ignoreOrder: true);
@@ -812,7 +821,7 @@ public sealed class ProjectLifecycleTests(ProjectFixture fx) : IClassFixture<Pro
         await db.SaveChangesAsync();
     }
 
-    private static async Task FillCharterAsync(PortfolioWorld w, Guid projectId)
+    internal static async Task FillCharterAsync(PortfolioWorld w, Guid projectId)
     {
         var c = w.C(w.Requester);
         await PortfolioWorld.OkAsync<ProjectKpiDto>(c.PostAsJsonAsync($"{Base}/projects/{projectId}/kpis",
@@ -825,25 +834,25 @@ public sealed class ProjectLifecycleTests(ProjectFixture fx) : IClassFixture<Pro
         await MilestoneAsync(w, projectId, new { titleEn = "Whole delivery (high level)", isHeader = false, highLevel = true, plannedStart = today, plannedEnd = today.AddMonths(6), weight = 1 });
     }
 
-    private static async Task<MilestoneDto> MilestoneAsync(PortfolioWorld w, Guid projectId, object values) =>
+    internal static async Task<MilestoneDto> MilestoneAsync(PortfolioWorld w, Guid projectId, object values) =>
         await PortfolioWorld.OkAsync<MilestoneDto>(w.C(w.Requester).PostAsJsonAsync($"{Base}/projects/{projectId}/milestones", new { values }));
 
-    private static async Task<IReadOnlyList<MilestoneDto>> PlanAsync(PortfolioWorld w, Guid projectId) =>
+    internal static async Task<IReadOnlyList<MilestoneDto>> PlanAsync(PortfolioWorld w, Guid projectId) =>
         (await PortfolioWorld.OkAsync<MilestonePlanDto>(w.C(w.Requester).GetAsync($"{Base}/projects/{projectId}/milestones"))).Milestones;
 
-    private static object Progress(decimal achieve, uint version, DateOnly? start, DateOnly? end, string? causality = "Vendor late", string? corrective = "Extra shift") =>
+    internal static object Progress(decimal achieve, uint version, DateOnly? start, DateOnly? end, string? causality = "Vendor late", string? corrective = "Extra shift") =>
         new { values = new { achieve, actualStart = start, actualEnd = end, causality, correctiveActions = corrective }, version };
 
-    private static async Task<ProjectFullDto> Get(PortfolioWorld w, Guid id, TestUser? user = null) =>
+    internal static async Task<ProjectFullDto> Get(PortfolioWorld w, Guid id, TestUser? user = null) =>
         await PortfolioWorld.OkAsync<ProjectFullDto>(w.C(user ?? w.PmOffice).GetAsync($"{Base}/projects/{id}"));
 
-    private static async Task<CurrentStatus> StatusAsync(PortfolioWorld w, Guid id, TestUser user) =>
+    internal static async Task<CurrentStatus> StatusAsync(PortfolioWorld w, Guid id, TestUser user) =>
         await PortfolioWorld.OkAsync<CurrentStatus>(w.C(user).GetAsync($"/api/v1/workflow/status/{PortfolioPermissions.ProjectResource}/{id}"));
 
-    private static async Task ActAsync(PortfolioWorld w, TestUser approver, Guid projectId, string expectedStep) =>
+    internal static async Task ActAsync(PortfolioWorld w, TestUser approver, Guid projectId, string expectedStep) =>
         await ActOnProjectAsync(w.C(approver), projectId, expectedStep);
 
-    private static async Task ActOnProjectAsync(HttpClient client, Guid projectId, string expectedStep)
+    internal static async Task ActOnProjectAsync(HttpClient client, Guid projectId, string expectedStep)
     {
         var panel = await PortfolioWorld.OkAsync<SubjectApprovalsDto>(client.GetAsync($"/api/v1/workflow/subjects/{PortfolioPermissions.ProjectResource}/{projectId}"));
         var instance = panel.Instances.First(i => i.Status == ApprovalInstanceStatuses.InProgress);
@@ -888,7 +897,7 @@ public sealed class ProjectLifecycleTests(ProjectFixture fx) : IClassFixture<Pro
         return team.Id;
     }
 
-    private static async Task UploadAsync(HttpClient client, string url, string name)
+    internal static async Task UploadAsync(HttpClient client, string url, string name)
     {
         var form = new MultipartFormDataContent();
         var file = new ByteArrayContent(Encoding.ASCII.GetBytes("%PDF-1.4\n1 0 obj<<>>endobj\ntrailer<<>>\n%%EOF\n"));
@@ -898,7 +907,7 @@ public sealed class ProjectLifecycleTests(ProjectFixture fx) : IClassFixture<Pro
         response.StatusCode.ShouldBe(HttpStatusCode.OK, await response.Content.ReadAsStringAsync());
     }
 
-    private static async Task<T> EventuallyAsync<T>(Func<Task<T>> read, Func<T, bool> done, string what)
+    internal static async Task<T> EventuallyAsync<T>(Func<Task<T>> read, Func<T, bool> done, string what)
     {
         for (var attempt = 0; attempt < 80; attempt++)
         {
@@ -914,7 +923,7 @@ public sealed class ProjectLifecycleTests(ProjectFixture fx) : IClassFixture<Pro
         throw new ShouldAssertException($"Timed out waiting for {what}.");
     }
 
-    private static Task<System.Security.Claims.ClaimsPrincipal> PrincipalAsync(IServiceProvider services, TestUser user) =>
+    internal static Task<System.Security.Claims.ClaimsPrincipal> PrincipalAsync(IServiceProvider services, TestUser user) =>
         Task.FromResult(new System.Security.Claims.ClaimsPrincipal(new System.Security.Claims.ClaimsIdentity(
         [
             new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.NameIdentifier, user.Id.ToString()),

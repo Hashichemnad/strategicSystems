@@ -31,6 +31,8 @@ import {
   useToast,
 } from '@/ui';
 import { AssessmentPanel } from './AssessmentPanel';
+import { useFeature } from './featuresApi';
+import { RequestBenefitsPanel } from './standards/BenefitsTab';
 import {
   bandTone,
   requestApi,
@@ -105,6 +107,10 @@ export function RequestPage() {
   const options = usePortfolioOptions();
   const handOff = useRequestMutation(requestApi.handOff);
   const [dialog, setDialog] = useState<Dialogs>();
+  const benefitsOn = useFeature('benefits');
+  // The Benefits tab is local state: the route's search schema lists the Phase 8 tabs only.
+  const [benefitsTab, setBenefitsTab] = useState(false);
+  const { t: ts } = useTranslation('pmStandards');
   if (request.isPending || options.isPending) return <Skeleton className="h-96 rounded-lg" />;
   if (request.isError) return <StatusBanner tone="danger" title={errorMessage(tc, request.error)} />;
   if (options.isError) return <StatusBanner tone="danger" title={errorMessage(tc, options.error)} />;
@@ -227,13 +233,28 @@ export function RequestPage() {
             void go({ to: '/portfolio/projects/$projectId', params: { projectId: data.project.id } });
         }}
       />
-      <Tabs value={tab} onValueChange={(value) => void navigate({ search: { tab: value as 'overview' } })}>
+      <Tabs
+        value={benefitsOn && benefitsTab ? 'benefits' : tab}
+        onValueChange={(value) => {
+          if (value === 'benefits') {
+            setBenefitsTab(true);
+            return;
+          }
+          setBenefitsTab(false);
+          void navigate({ search: { tab: value as 'overview' } });
+        }}
+      >
         <TabsList className="flex-wrap">
           {requestTabs.map((key) => (
             <TabsTrigger key={key} value={key}>
               {t(`tabs.${key}`)}
             </TabsTrigger>
           ))}
+          {benefitsOn && (
+            <TabsTrigger value="benefits" data-testid="request-tab-benefits">
+              {ts('benefits.tab')}
+            </TabsTrigger>
+          )}
         </TabsList>
         <TabsContent value="overview">
           <Overview request={data} options={options.data} />
@@ -260,6 +281,11 @@ export function RequestPage() {
         <TabsContent value="history">
           <HistoryTab record="request" id={data.id} fieldLabels={fieldLabels} />
         </TabsContent>
+        {benefitsOn && (
+          <TabsContent value="benefits">
+            <RequestBenefitsPanel requestId={data.id} canEdit={data.can.edit && data.status === 'draft'} />
+          </TabsContent>
+        )}
       </Tabs>
       {dialog === 'submit' && <SubmitDialog request={data} onClose={() => setDialog(undefined)} />}
       {dialog === 'cancel' && <CancelDialog request={data} onClose={() => setDialog(undefined)} />}
