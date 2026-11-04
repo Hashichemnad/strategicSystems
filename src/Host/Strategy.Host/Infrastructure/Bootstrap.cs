@@ -143,7 +143,14 @@ internal static partial class Bootstrap
         {
             await provider.GetRequiredService<IUserRoleQuery>().GrantPlatformAdministratorAsync(adminUser.Id);
             await AccessGrants.AssignRoleAsync(provider, "sample.editor", AccessGrants.User, adminUser.Id);
+
+            // Phase 12 demo: Mariam is the Strategy Office (PMO) and the performance administrator.
+            await AccessGrants.AssignRoleAsync(provider, "kpi.strategy-office", AccessGrants.User, adminUser.Id);
+            await AccessGrants.AssignRoleAsync(provider, "kpi.administrator", AccessGrants.User, adminUser.Id);
         }
+
+        // Phase 12 demo: everyone may open Performance Management (each person sees the KPIs they are responsible for).
+        await AccessGrants.GrantSystemAccessAsync(provider, "kpi", AccessGrants.Everyone, null);
 
         // Demo: everyone may open the sample system; Ahmed edits his own items, his department sees them.
         await AccessGrants.GrantSystemAccessAsync(provider, "sample", AccessGrants.Everyone, null);

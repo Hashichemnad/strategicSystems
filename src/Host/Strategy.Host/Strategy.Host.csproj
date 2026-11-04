@@ -29,6 +29,7 @@
     <ProjectReference Include="..\..\Modules\Tasks\Strategy.Modules.Tasks\Strategy.Modules.Tasks.csproj" />
     <ProjectReference Include="..\..\Modules\Teams\Strategy.Modules.Teams\Strategy.Modules.Teams.csproj" />
     <ProjectReference Include="..\..\Modules\Portfolio\Strategy.Modules.Portfolio\Strategy.Modules.Portfolio.csproj" />
+    <ProjectReference Include="..\..\Modules\Kpi\Strategy.Modules.Kpi\Strategy.Modules.Kpi.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Serilog.AspNetCore" />

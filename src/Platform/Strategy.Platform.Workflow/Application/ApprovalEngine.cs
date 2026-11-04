@@ -219,6 +219,26 @@ internal sealed class ApprovalEngine(
 
     // ------------------------------------------------------------------ decisions
 
+    public async Task<Result<ApprovalDecisionResult>> DecideAsync(
+        string processKey, Guid resourceId, string action, string? comment, CancellationToken cancellationToken = default)
+    {
+        var view = await GetStatusViewAsync(processKey, resourceId, requestContext.User, cancellationToken).ConfigureAwait(false);
+        if (view is null)
+        {
+            return Error.NotFound();
+        }
+
+        if (view.MyTaskId is not { } taskId)
+        {
+            return Error.Forbidden("workflow.notAnApprover");
+        }
+
+        var acted = await ActAsync(taskId, new ActInput(action, comment, null, null), cancellationToken).ConfigureAwait(false);
+        return acted.IsSuccess
+            ? new ApprovalDecisionResult(acted.Value.InstanceId, acted.Value.TaskId, acted.Value.InstanceStatus, acted.Value.Outcome)
+            : acted.Error;
+    }
+
     public async Task<Result<ActResult>> ActAsync(Guid taskId, ActInput input, CancellationToken cancellationToken)
     {
         var task = await db.Tasks.Include(t => t.Assignees).FirstOrDefaultAsync(t => t.Id == taskId, cancellationToken).ConfigureAwait(false);

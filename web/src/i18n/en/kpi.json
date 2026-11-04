@@ -1,0 +1,625 @@
+{
+  "nav": {
+    "label": "Performance management",
+    "dashboard": "Dashboard",
+    "cards": "KPI cards",
+    "pending": "My pending updates",
+    "approvals": "KPI approval",
+    "scorecard": "Scorecard",
+    "strategyMap": "Strategy map",
+    "reports": "Reports",
+    "newYear": "New year"
+  },
+  "common": {
+    "year": "Year",
+    "yes": "Yes",
+    "no": "No",
+    "noData": "No data yet.",
+    "kpiCount": "KPIs: {{formatted}}",
+    "forbidden": "You do not have access to this page."
+  },
+  "actions": {
+    "edit": "Edit",
+    "activate": "Activate",
+    "deactivate": "Deactivate",
+    "submit": "Submit result",
+    "review": "Review and decide",
+    "recall": "Recall",
+    "reopen": "Reopen",
+    "openNow": "Open now",
+    "remove": "Remove"
+  },
+  "rag": {
+    "green": "On target",
+    "amber": "Near target",
+    "red": "Below target",
+    "none": "Not reported"
+  },
+  "performance": {
+    "actual": "actual {{value}}",
+    "cannotCalculate": "Cannot be calculated"
+  },
+  "resultStatus": {
+    "not_open": "Not open",
+    "open": "Open for update",
+    "pending_approval": "Waiting for approval",
+    "returned": "Returned for correction",
+    "approved": "Approved",
+    "locked": "Locked"
+  },
+  "cardStatus": {
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "planStatus": {
+    "draft": "Draft targets",
+    "confirmed": "Confirmed"
+  },
+  "changeStatus": {
+    "draft": "Draft",
+    "pending": "Waiting for approval",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "returned": "Returned",
+    "withdrawn": "Withdrawn"
+  },
+  "period": {
+    "q1": "Q1",
+    "q2": "Q2",
+    "q3": "Q3",
+    "q4": "Q4",
+    "h1": "First half",
+    "h2": "Second half",
+    "fy": "Full year",
+    "ty": "Two years"
+  },
+  "measuringPeriod": {
+    "quarterly": "Quarterly",
+    "half_yearly": "Half-yearly",
+    "annual": "Annual",
+    "two_year": "Two-year"
+  },
+  "direction": {
+    "increase": "Increase is better",
+    "decrease": "Decrease is better",
+    "matching": "Matching is better"
+  },
+  "targetType": {
+    "single": "Single value",
+    "range": "Range"
+  },
+  "nature": {
+    "quantitative": "Quantitative",
+    "qualitative": "Qualitative (scale)"
+  },
+  "level": {
+    "organisation": "Organisation",
+    "department": "Department",
+    "section": "Section"
+  },
+  "aggregation": {
+    "sum": "Cumulative (sum)",
+    "average": "Average"
+  },
+  "elementKind": {
+    "organisation": "Organisation",
+    "vision": "Vision",
+    "perspective": "Perspective",
+    "objective": "Objective",
+    "kpi": "KPI",
+    "unaligned": "Not aligned"
+  },
+  "anomaly": {
+    "jump": "Big jump versus the previous period",
+    "identical": "Same value as the previous period",
+    "negative": "Negative value",
+    "abovePercentage": "Percentage above 100 %",
+    "farBeyondTarget": "Far beyond the target"
+  },
+  "fields": {
+    "code": "KPI code",
+    "name": "KPI",
+    "nameAr": "Name (Arabic)",
+    "nameEn": "Name (English)",
+    "descriptionAr": "Description (Arabic)",
+    "descriptionEn": "Description (English)",
+    "measuringEquation": "Measuring equation",
+    "processName": "Process",
+    "status": "Status",
+    "initiatedOn": "Initiated on",
+    "closedOn": "Closed on",
+    "typeCode": "KPI type",
+    "indexClassificationCode": "Index classification",
+    "effectivenessCode": "Effectiveness / efficiency",
+    "nature": "Quantitative / descriptive",
+    "sourceCodes": "KPI sources",
+    "measuringMethodCode": "Measuring method",
+    "competitivenessIndicator": "Competitiveness indicator",
+    "isGlobalStar": "Global Star Rating",
+    "unitCode": "Measuring unit",
+    "measuringPeriod": "Measuring period",
+    "direction": "Measuring direction",
+    "targetType": "Target type",
+    "targetSettingMechanism": "Target setting mechanism",
+    "allowsNegative": "Negative values allowed",
+    "objectiveId": "Strategic objective",
+    "perspective": "Perspective",
+    "sectorGoal": "Sector goal",
+    "nationalGoalCode": "National goal",
+    "visionLinkCode": "Link to the vision",
+    "gemCriteriaCodes": "Excellence (GEM) criteria",
+    "criteriaText": "Criteria / sub-criteria",
+    "excellenceLink": "Link with the excellence system",
+    "departmentUnitId": "Department",
+    "responsibleUnitId": "Responsible unit",
+    "responsibleEmployeeId": "Responsible person",
+    "benchmarkDescription": "Benchmark",
+    "benchmarkResult": "Benchmark result",
+    "level": "Level",
+    "parentCardId": "Parent KPI (cascading)",
+    "weight": "Weight",
+    "baselineValue": "Baseline",
+    "baselineYear": "Baseline year",
+    "bands": "RAG bands (green / amber)",
+    "formula": "Formula (composite KPI)",
+    "dataElements": "Data elements",
+    "scale": "Scale levels",
+    "maxAchieved": "Best year (capped)",
+    "definitionVersion": "Definition version",
+    "target": "Target",
+    "rangeMin": "Range minimum",
+    "rangeMax": "Range maximum",
+    "achieve": "Achieved",
+    "period": "Period",
+    "causality": "Causality",
+    "correctiveActions": "Corrective actions",
+    "notes": "Notes"
+  },
+  "dashboard": {
+    "title": "Performance dashboard",
+    "description": "Approved results only; capped performance as the main figure.",
+    "totalCards": "Active / total KPIs",
+    "organisationScore": "Organisation score",
+    "pendingUpdates": "Pending updates",
+    "overdue": "Overdue",
+    "approvalBacklog": "Approval backlog",
+    "approvedResults": "Approved results",
+    "achievement": "Achievement distribution",
+    "achievementKeys": {
+      "onTarget": "On target",
+      "below": "Below target",
+      "notReported": "Not reported"
+    },
+    "byType": "KPIs by type",
+    "byDepartment": "By department",
+    "byObjective": "By strategic objective",
+    "top": "Top performers",
+    "bottom": "Bottom performers"
+  },
+  "cards": {
+    "title": "KPI cards",
+    "description": "The register of organisation-approved KPIs.",
+    "new": "New KPI card",
+    "search": "Search by code or name",
+    "allTypes": "All types",
+    "allObjectives": "All objectives",
+    "allStatuses": "All statuses",
+    "allGem": "All excellence criteria",
+    "allStar": "Global Star: any",
+    "empty": "No KPI cards match.",
+    "target": "Target {{year}}",
+    "achieved": "Achieved",
+    "performance": "Performance"
+  },
+  "card": {
+    "tabs": {
+      "details": "Details",
+      "measuring": "Measuring",
+      "alignment": "Alignment",
+      "plans": "Plans & results",
+      "performance": "Performance",
+      "documents": "Documents",
+      "linked": "Linked records",
+      "versions": "Versions & changes",
+      "tasks": "Tasks",
+      "history": "History"
+    },
+    "changeControlled": "Definition under change control",
+    "targets": "Multi-year targets",
+    "targetsHint": "Targets for the strategy cycle; the new-year run uses them as defaults.",
+    "addYear": "Add a year",
+    "defaultBands": "Installation defaults",
+    "cascade": "Cascaded KPIs",
+    "noPlans": "No annual plans yet.",
+    "yearlyPerformance": "Yearly performance",
+    "actualShort": "Actual",
+    "cappedShort": "Capped",
+    "targetVsAchieved": "Target vs achieved {{year}}",
+    "noLinked": "No linked records.",
+    "linkedHint": "Project KPIs and key risk indicators linked to this KPI appear here."
+  },
+  "changes": {
+    "title": "Definition changes",
+    "empty": "No change requests.",
+    "request": "Request a definition change",
+    "hint": "Target, equation, unit or direction changes after the year started need Strategy Office approval. Leave a field empty to keep it.",
+    "keep": "Keep as is",
+    "reason": "Reason",
+    "submit": "Submit for approval",
+    "withdraw": "Withdraw",
+    "fields": {
+      "measuringEquation": "Equation",
+      "formula": "Formula",
+      "unitCode": "Unit",
+      "direction": "Direction",
+      "targetType": "Target type",
+      "target": "Target",
+      "rangeMin": "Minimum",
+      "rangeMax": "Maximum"
+    }
+  },
+  "versions": {
+    "title": "Version history",
+    "version": "Version {{number}}",
+    "fromChange": "From an approved change"
+  },
+  "form": {
+    "newTitle": "New KPI card",
+    "editTitle": "Edit {{code}}",
+    "description": "Define the KPI once; targets and results follow each year.",
+    "sections": {
+      "identity": "Identity",
+      "classification": "Classification",
+      "measurement": "Measurement",
+      "composite": "Composite and qualitative KPIs",
+      "alignment": "Alignment",
+      "ownership": "Ownership",
+      "benchmark": "Benchmark"
+    },
+    "none": "— None —",
+    "codeHint": "Leave empty to number it automatically.",
+    "weightHint": "Weight within the objective; empty = equal.",
+    "greenFrom": "Green from (%)",
+    "amberFrom": "Amber from (%)",
+    "bandsHint": "Leave empty for the installation's bands.",
+    "compositeHint": "A composite KPI is calculated by the system from data elements entered by the owner.",
+    "formulaHint": "Use the element codes, e.g. served / total * 100",
+    "elementCode": "Element code",
+    "addElement": "Add a data element",
+    "levelValue": "Level value",
+    "addLevel": "Add a level",
+    "noGem": "No excellence criteria are configured (Settings → Lists).",
+    "benchmarkPercent": "Benchmark result (%)",
+    "reason": "Reason for the change (version history)"
+  },
+  "newYear": {
+    "title": "New measuring year",
+    "description": "Create the year's annual plans and period results for the active KPIs.",
+    "steps": {
+      "year": "Year",
+      "cards": "KPIs and targets",
+      "review": "Review"
+    },
+    "existing": "KPIs that already have a plan for this year: {{count}}",
+    "include": "Include",
+    "hasPlan": "Plan exists",
+    "source": {
+      "multi-year": "From the multi-year target",
+      "previous-year": "From last year's plan",
+      "none": "No target yet"
+    },
+    "reviewText": "{{count}} annual plans will be created for {{year}} with their period results and windows.",
+    "submit": "Create the year",
+    "done": "{{year}}: {{plans}} plans and {{results}} results created.",
+    "skipped": "{{count}} skipped (already planned or inactive).",
+    "plansOf": "Annual plans {{year}}",
+    "confirmSelected": "Confirm selected ({{count}})",
+    "confirmed": "{{count}} plans confirmed."
+  },
+  "plan": {
+    "title": "{{name}} — plan {{year}}",
+    "annualTarget": "Annual target",
+    "achieved": "Achieved to date",
+    "window": "Window",
+    "confirm": "Confirm targets",
+    "saved": "Plan saved."
+  },
+  "pending": {
+    "title": "My pending updates",
+    "description": "Results open for update, returned for correction or waiting for approval.",
+    "mine": "Mine",
+    "scope": "All I can submit",
+    "empty": "Nothing to update."
+  },
+  "result": {
+    "tabs": {
+      "result": "Result",
+      "review": "Review",
+      "approvals": "Approvals",
+      "tasks": "Tasks",
+      "history": "History"
+    },
+    "na": "Not applicable",
+    "naReason": "Not applicable reason",
+    "late": "Late",
+    "lateDays": "Late (days: {{count}})",
+    "overdue": "Overdue",
+    "anomalies": "Anomalies: {{count}}",
+    "noEvidence": "No evidence",
+    "dueOn": "Due on",
+    "submittedAt": "Submitted",
+    "owner": "Owner",
+    "statusReason": "Last comment",
+    "evidence": "Evidence",
+    "evidenceCount": "Files: {{count}}",
+    "trend": "Previous periods",
+    "draftFromMcp": "Draft saved by an AI client"
+  },
+  "submit": {
+    "title": "Submit result",
+    "steps": {
+      "value": "Achieved value",
+      "narrative": "Causality and actions",
+      "evidence": "Evidence"
+    },
+    "notApplicable": "Not applicable for this period",
+    "notApplicableHint": "Excluded from calculations once approved.",
+    "level": "Scale level",
+    "achieved": "Achieved value ({{unit}})",
+    "preview": "Performance",
+    "missedHint": "The target is missed: causality and corrective actions are required.",
+    "evidenceHint": "Upload the proof of the value (PDF, Excel, image).",
+    "comment": "Comment to the reviewer",
+    "submit": "Submit for approval",
+    "saved": "Draft saved.",
+    "submitted": "Result submitted for approval.",
+    "returnedTitle": "Returned for correction"
+  },
+  "review": {
+    "title": "Verification",
+    "checklist": "Verification checklist",
+    "comment": "Comment",
+    "commentHint": "Required to return or reject.",
+    "approve": "Approve",
+    "return": "Return for correction",
+    "reject": "Reject",
+    "checklistRequired": "Tick every required item to approve.",
+    "done": {
+      "approve": "Approved.",
+      "return": "Returned to the owner.",
+      "reject": "Rejected and returned to the owner."
+    }
+  },
+  "approvals": {
+    "title": "KPI approval",
+    "description": "Verify the evidence and approve results; only approved results reach the dashboards.",
+    "queue": "Approval queue",
+    "allPeriods": "All periods",
+    "department": "Department",
+    "mine": "Only results waiting for my decision",
+    "empty": "No results are waiting for approval.",
+    "yourDecision": "Your decision"
+  },
+  "bulk": {
+    "title": "Bulk approval",
+    "select": "Select",
+    "empty": "No results are waiting for your decision with these filters.",
+    "checklistIntro": "By approving the ticked results you confirm, for each of them:",
+    "confirmChecklist": "I confirm the verification checklist for the selected results",
+    "update": "Update ({{count}})",
+    "outcome": "{{approved}} approved, {{failed}} not approved."
+  },
+  "scorecard": {
+    "title": "Scorecard",
+    "description": "Weighted roll-up of capped performance: one over-achieving KPI cannot hide under-performers.",
+    "organisation": "Organisation",
+    "unaligned": "KPIs not aligned to an objective",
+    "departments": "Department scores",
+    "score": "Score",
+    "kpis": "KPIs",
+    "reported": "Reported",
+    "weight": "weight {{weight}}",
+    "expand": "Expand",
+    "collapse": "Collapse"
+  },
+  "map": {
+    "title": "Strategy map",
+    "description": "Objectives by perspective, coloured by capped performance.",
+    "empty": "Define the strategy hierarchy in Settings → Performance.",
+    "vision": "Vision"
+  },
+  "reports": {
+    "title": "Reports",
+    "description": "Bilingual exports, data quality per department and excellence reporting.",
+    "exports": "Exports",
+    "kinds": {
+      "cards": "KPI register",
+      "results": "Results of the year",
+      "scorecard": "Scorecard",
+      "data-quality": "Data quality"
+    },
+    "formats": {
+      "xlsx": "Excel",
+      "pdf": "PDF"
+    },
+    "exportScorecard": "Export scorecard",
+    "dataQuality": "Data quality per department",
+    "due": "Due",
+    "submitted": "Submitted",
+    "onTime": "On time",
+    "rejection": "Returned",
+    "evidence": "With evidence",
+    "score": "Score",
+    "excellence": "Excellence (GEM / Global Star) report",
+    "noExcellence": "No KPIs are tagged with excellence criteria."
+  },
+  "reopen": {
+    "hint": "The result opens for update again and its approval no longer counts.",
+    "reason": "Reason"
+  },
+  "ai": {
+    "draftLabel": "AI-generated draft",
+    "advisoryLabel": "AI advice — the reviewer decides",
+    "accept": "Use this draft",
+    "discard": "Discard",
+    "builder": {
+      "title": "Draft the card with AI",
+      "description": "Describe the KPI or paste text from a document…",
+      "fromText": "Draft from text",
+      "fromDocument": "Or drop a document"
+    },
+    "smart": {
+      "action": "SMART check",
+      "title": "SMART quality check",
+      "hint": "Is the KPI specific, measurable, and time-bound?",
+      "checks": {
+        "specific": "Specific name",
+        "measurable": "Measuring unit set",
+        "equation": "Equation present",
+        "unitConsistent": "Unit consistent with the equation",
+        "direction": "Direction set",
+        "timeBound": "Measuring period set",
+        "target": "Target present",
+        "owner": "Owner set"
+      }
+    },
+    "targets": {
+      "action": "Suggest a target",
+      "title": "Target suggestion",
+      "hint": "From the trend, baseline, benchmark and strategy-cycle target.",
+      "run": "Suggest",
+      "suggested": "Suggested target",
+      "trend": "Trend of past years points to {{value}}.",
+      "last": "Last achieved: {{value}} ({{year}}).",
+      "baseline": "Baseline: {{value}}.",
+      "benchmark": "Benchmark result: {{value}}.",
+      "cycle": "Strategy-cycle target for {{year}}: {{value}}.",
+      "notBelowLast": "Not weaker than what was achieved in {{year}} ({{value}})."
+    },
+    "causality": {
+      "action": "Draft causality with AI",
+      "weak": "The justification looks weak",
+      "review": "Review the draft before submitting."
+    },
+    "evidence": {
+      "title": "Evidence check (AI)",
+      "action": "Check evidence",
+      "valueFound": "Value found",
+      "periodMatches": "Period matches",
+      "unclear": "Unclear"
+    },
+    "anomalies": {
+      "title": "Anomaly flags",
+      "none": "Nothing unusual versus history."
+    },
+    "narrative": {
+      "title": "Performance narrative (AI)",
+      "action": "Draft the report"
+    }
+  },
+  "myWork": {
+    "title": "Performance (KPI)",
+    "all": "All my updates",
+    "empty": "No KPI results need you now.",
+    "counts": {
+      "open": "To submit",
+      "overdue": "Overdue",
+      "returned": "Returned",
+      "awaiting": "Awaiting my approval"
+    },
+    "open": "Result open for update",
+    "overdue": "Result overdue — submit now",
+    "returned": "Result returned for correction"
+  },
+  "currentStatus": {
+    "notOpen": "Not open yet: the window opens on {{date}}.",
+    "open": "Open for update — due on {{date}}.",
+    "returned": "Returned for correction — due on {{date}}.",
+    "approved": "Approved — counted in the dashboards.",
+    "locked": "Locked — the period is closed.",
+    "owner": "Owner"
+  },
+  "settings": {
+    "title": "Performance settings",
+    "description": "Windows, reminders, bands, checklist, measuring methods, strategy hierarchy and the windows of each year.",
+    "tabs": {
+      "general": "General",
+      "hierarchy": "Strategy hierarchy",
+      "windows": "Period windows"
+    },
+    "reminder": "Reminder (working days before due)",
+    "escalation": "Escalation (working days after due)",
+    "green": "Green from (%)",
+    "amber": "Amber from (%)",
+    "jump": "Anomaly: jump above (%)",
+    "requireEvidence": "Evidence required on submit",
+    "requireConfirmation": "Results open only for confirmed plans",
+    "manualCodes": "Manual KPI codes",
+    "missedAmber": "Amber results also count as missed targets",
+    "windowRules": "Period window rules",
+    "windowRulesHint": "A window opens N days after the period ends and is due M days after it opens.",
+    "opensAfter": "Opens (days after the period ends)",
+    "dueAfter": "Due (days after opening)",
+    "methods": "Measuring methods",
+    "rule": "Aggregation rule",
+    "addMethod": "Add a method",
+    "checklist": "Verification checklist",
+    "code": "Code",
+    "required": "Required",
+    "addItem": "Add an item",
+    "saved": "Saved.",
+    "add": {
+      "vision": "Add a vision",
+      "perspective": "Add a perspective",
+      "objective": "Add an objective"
+    },
+    "inactive": "Inactive",
+    "parent": "Parent",
+    "sort": "Order",
+    "cycleStart": "Strategy cycle from",
+    "cycleEnd": "Strategy cycle to",
+    "active": "Active",
+    "noWindows": "No windows yet: start the measuring year first.",
+    "opensOn": "Opens on",
+    "locked": "Locked",
+    "lockPeriod": "Lock period",
+    "reopenPeriod": "Reopen period"
+  },
+  "errors": {
+    "bands": "Amber must be below green (and both above zero).",
+    "causalityRequired": "Causality is required when the target is missed.",
+    "changeControlled": "The year has started: changes to the target, equation, unit or direction need a definition change request.",
+    "changePending": "A definition change is already waiting for approval.",
+    "checklist": "Each checklist item needs a unique code and both labels.",
+    "checklistRequired": "Complete the verification checklist before approving.",
+    "correctiveActionsRequired": "Corrective actions are required when the target is missed.",
+    "dataElements": "Data element codes must be unique letters / digits starting with a letter.",
+    "elementsRequired": "Enter every data element.",
+    "evidenceRequired": "Attach the evidence before submitting.",
+    "evidenceUnreadable": "The evidence could not be read.",
+    "formulaEvaluation": "The formula could not be calculated with these values (e.g. division by zero).",
+    "formulaInvalid": "The formula is not valid for the data elements.",
+    "invalidTransition": "This action is not possible while the result is {{status}}.",
+    "kindFixed": "The kind of a strategy element cannot change.",
+    "measuringMethods": "Each measuring method needs one aggregation rule.",
+    "naReasonRequired": "Give the reason the period is not applicable.",
+    "negative": "Negative values are not allowed for this KPI.",
+    "notAnObjective": "Choose a strategic objective.",
+    "notOpenForUpdate": "The result is not open for update.",
+    "nothingChanged": "Propose at least one change.",
+    "nothingSelected": "Select at least one item.",
+    "nothingToReport": "No KPIs to report on.",
+    "parentCycle": "The parent KPI would create a loop.",
+    "parentKind": "Choose a parent of the right kind (vision → perspective → objective).",
+    "rangeOrder": "The range minimum must not exceed the maximum.",
+    "rangeRequired": "Enter the range minimum and maximum.",
+    "scale": "A qualitative KPI needs at least two scale levels with distinct values and labels.",
+    "scaleLevel": "Choose a level of the KPI's scale.",
+    "target": "Check the target.",
+    "targetRequired": "Enter the target.",
+    "targetsMissing": "Every period needs a target before the plan is confirmed.",
+    "valueRequired": "Enter the achieved value.",
+    "windowDates": "The due date must not be before the opening date.",
+    "windowRule": "Each period needs one window rule."
+  }
+}

@@ -29,7 +29,8 @@
     "tasks": "My tasks",
     "teams": "Teams & committees",
     "portfolioRequests": "Program requests",
-    "portfolioProjects": "Projects & initiatives"
+    "portfolioProjects": "Projects & initiatives",
+    "kpi": "Performance"
   },
   "language": {
     "label": "Language",

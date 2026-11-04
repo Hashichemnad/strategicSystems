@@ -341,6 +341,116 @@ export const portfolioProjectRoute = createRoute({
   component: lazyRouteComponent(() => import('@/features/portfolio/ProjectPages'), 'ProjectPage'),
 });
 
+// Performance Management (Phase 12, docs/design/kpi.md): dashboard, cards, new year, plans, results, approvals, scorecards, map, reports.
+export const kpiDashboardRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/kpi',
+  component: lazyRouteComponent(() => import('@/features/kpi/DashboardPage'), 'KpiDashboardPage'),
+});
+
+export const kpiCardsRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/kpi/cards',
+  validateSearch: z.object({
+    page: z.coerce.number().int().min(1).optional().catch(undefined),
+    search: z.string().max(200).optional().catch(undefined),
+    unitId: z.uuid().optional().catch(undefined),
+    type: z.string().max(100).optional().catch(undefined),
+    objective: z.uuid().optional().catch(undefined),
+    status: z.string().max(20).optional().catch(undefined),
+    gem: z.string().max(100).optional().catch(undefined),
+    star: z.boolean().optional().catch(undefined),
+  }),
+  component: lazyRouteComponent(() => import('@/features/kpi/CardsPage'), 'KpiCardsPage'),
+});
+
+export const kpiCardNewRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/kpi/cards/new',
+  component: lazyRouteComponent(() => import('@/features/kpi/CardFormPage'), 'KpiCardFormPage'),
+});
+
+export const kpiCardRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/kpi/cards/$cardId',
+  validateSearch: z.object({
+    tab: z
+      .enum([
+        'details',
+        'measuring',
+        'alignment',
+        'plans',
+        'performance',
+        'documents',
+        'linked',
+        'versions',
+        'tasks',
+        'history',
+      ])
+      .optional()
+      .catch(undefined),
+  }),
+  component: lazyRouteComponent(() => import('@/features/kpi/CardPage'), 'KpiCardPage'),
+});
+
+export const kpiCardEditRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/kpi/cards/$cardId/edit',
+  component: lazyRouteComponent(() => import('@/features/kpi/CardFormPage'), 'KpiCardFormPage'),
+});
+
+export const kpiNewYearRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/kpi/new-year',
+  component: lazyRouteComponent(() => import('@/features/kpi/NewYearPage'), 'KpiNewYearPage'),
+});
+
+export const kpiPlanRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/kpi/plans/$planId',
+  component: lazyRouteComponent(() => import('@/features/kpi/PlanPage'), 'KpiPlanPage'),
+});
+
+export const kpiPendingRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/kpi/pending',
+  component: lazyRouteComponent(() => import('@/features/kpi/PendingPage'), 'KpiPendingPage'),
+});
+
+export const kpiResultRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/kpi/results/$resultId',
+  validateSearch: z.object({
+    tab: z.enum(['result', 'review', 'approvals', 'tasks', 'history']).optional().catch(undefined),
+  }),
+  component: lazyRouteComponent(() => import('@/features/kpi/ResultPage'), 'KpiResultPage'),
+});
+
+export const kpiApprovalsRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/kpi/approvals',
+  validateSearch: z.object({ tab: z.enum(['queue', 'bulk']).optional().catch(undefined) }),
+  component: lazyRouteComponent(() => import('@/features/kpi/ApprovalsPage'), 'KpiApprovalsPage'),
+});
+
+export const kpiScorecardRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/kpi/scorecard',
+  component: lazyRouteComponent(() => import('@/features/kpi/ScorecardPage'), 'KpiScorecardPage'),
+});
+
+export const kpiStrategyMapRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/kpi/strategy-map',
+  component: lazyRouteComponent(() => import('@/features/kpi/StrategyMapPage'), 'KpiStrategyMapPage'),
+});
+
+export const kpiReportsRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/kpi/reports',
+  component: lazyRouteComponent(() => import('@/features/kpi/ReportsPage'), 'KpiReportsPage'),
+});
+
 // Audit trail (CLAUDE.md §8): global log for administrators and auditors, and the chain verification screen.
 export const auditSearchSchema = z.object({
   page: z.coerce.number().int().min(1).catch(1),
@@ -612,6 +722,12 @@ const portfolioSettingsRoute = createRoute({
   ),
 });
 
+const kpiSettingsRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/kpi',
+  component: lazyRouteComponent(() => import('@/features/kpi/KpiSettingsPage'), 'KpiSettingsPage'),
+});
+
 const taskSettingsRoute = createRoute({
   getParentRoute: () => settingsLayout,
   path: '/tasks',
@@ -692,6 +808,19 @@ const routeTree = rootRoute.addChildren([
     portfolioRequestEditRoute,
     portfolioProjectsRoute,
     portfolioProjectRoute,
+    kpiDashboardRoute,
+    kpiCardsRoute,
+    kpiCardNewRoute,
+    kpiCardRoute,
+    kpiCardEditRoute,
+    kpiNewYearRoute,
+    kpiPlanRoute,
+    kpiPendingRoute,
+    kpiResultRoute,
+    kpiApprovalsRoute,
+    kpiScorecardRoute,
+    kpiStrategyMapRoute,
+    kpiReportsRoute,
     auditRoute,
     auditVerificationRoute,
     notificationsRoute,
@@ -728,6 +857,7 @@ const routeTree = rootRoute.addChildren([
       taskSettingsRoute,
       teamSettingsRoute,
       portfolioSettingsRoute,
+      kpiSettingsRoute,
       taskReassignRoute,
       rolesRoute,
       assignmentsRoute,

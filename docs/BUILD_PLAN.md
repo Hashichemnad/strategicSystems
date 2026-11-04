@@ -366,10 +366,10 @@ Finish with the phase summary.
 ```
 
 **Acceptance checks**
-- [ ] New measuring year generates plans and results; Q1 window opens per Appendix A; owners notified.
-- [ ] Owner submits with evidence; PMO uses the checklist and bulk-approves a department.
-- [ ] Scorecard and strategy map show capped performance; trend charts show actual.
-- [ ] Portfolio project KPIs can now link to KPI Cards; the KPI card shows linked projects.
+- [x] New measuring year generates plans and results; Q1 window opens per Appendix A; owners notified.
+- [x] Owner submits with evidence; PMO uses the checklist and bulk-approves a department.
+- [x] Scorecard and strategy map show capped performance; trend charts show actual.
+- [ ] Portfolio project KPIs can now link to KPI Cards; the KPI card shows linked projects. *(contracts and the card tab done, proven with a test double; Portfolio wires it in Phase 9)*
 
 ---
 
@@ -521,7 +521,7 @@ Implement, then run the full hardening review and fix findings, run performance 
 | 9 | Portfolio B — Lifecycle & change | ☐ | |
 | 10 | Portfolio C — Agile, standards, Gantt | ☐ | |
 | 11 | Wasel vendor portal | ☐ | |
-| 12 | Performance Management | ☐ | |
+| 12 | Performance Management | ☑ built — awaiting owner acceptance | |
 | 13 | Risk Management | ☐ | |
 | 14 | Requests, Document Registry, IP | ☐ | |
 | 15 | CAP & Benchmarking | ☐ | |

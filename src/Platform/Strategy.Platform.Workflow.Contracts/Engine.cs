@@ -79,7 +79,17 @@ public interface IApprovalEngine
 
     /// <summary>The step in progress for the record with its approvers and the current user's actions; null when nothing is in progress.</summary>
     Task<ApprovalStatusView?> GetStatusViewAsync(string processKey, Guid resourceId, ClaimsPrincipal user, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// The signed-in user's decision on the pending step of the record (their own task or a delegated one), with exactly the checks of the task
+    /// endpoint: used by module screens that decide on many records at once (KPI bulk approval, ADR 0064). Runs in its own transaction.
+    /// Not found when nothing is in progress or the user may not see it; forbidden when the user is not an approver of the current step.
+    /// </summary>
+    Task<Result<ApprovalDecisionResult>> DecideAsync(string processKey, Guid resourceId, string action, string? comment, CancellationToken cancellationToken = default);
 }
+
+/// <summary>Outcome of <see cref="IApprovalEngine.DecideAsync"/>.</summary>
+public sealed record ApprovalDecisionResult(Guid InstanceId, Guid TaskId, string InstanceStatus, string Outcome);
 
 public static class ApprovalEventKinds
 {

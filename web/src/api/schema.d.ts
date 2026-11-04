@@ -4692,6 +4692,790 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/kpi/strategy/elements': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListKpiStrategyElements'];
+    put?: never;
+    post: operations['SaveKpiStrategyElement'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/strategy/map': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetKpiStrategyMap'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/cards': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListKpiCards'];
+    put?: never;
+    post: operations['CreateKpiCard'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/options': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetKpiOptions'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/cards/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetKpiCard'];
+    put: operations['UpdateKpiCard'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/cards/{id}/activate': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ActivateKpiCard'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/cards/{id}/deactivate': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['DeactivateKpiCard'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/cards/{id}/targets': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['SetKpiCardTargets'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/cards/{id}/versions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListKpiCardVersions'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/cards/{id}/performance': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetKpiPerformance'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/cards/{id}/linked': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListKpiLinkedRecords'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/cards/{id}/changes': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RequestKpiDefinitionChange'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/changes': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListKpiDefinitionChanges'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/changes/{id}/withdraw': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['WithdrawKpiDefinitionChange'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/years/{year}/preview': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['PreviewKpiYear'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/years/{year}/start': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['StartKpiYear'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/years/{year}/windows': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListKpiWindows'];
+    put: operations['UpdateKpiWindows'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/years/{year}/periods/{period}/lock': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['LockKpiPeriod'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/years/{year}/periods/{period}/reopen': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ReopenKpiPeriod'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/plans': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListKpiPlans'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/plans/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetKpiPlan'];
+    put: operations['UpdateKpiPlan'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/plans/confirm': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ConfirmKpiPlans'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/results/pending': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListMyPendingKpiResults'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/results/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetKpiResult'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/results/{id}/draft': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['SaveKpiResultDraft'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/results/{id}/submit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SubmitKpiResult'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/results/{id}/recall': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RecallKpiResult'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/results/{id}/decide': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['DecideKpiResult'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/results/{id}/reopen': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ReopenKpiResult'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/results/{id}/open-now': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['OpenKpiResultNow'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/approvals': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListKpiApprovalQueue'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/approvals/bulk': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['BulkApproveKpiResults'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/scorecard': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetKpiScorecard'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/dashboard': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetKpiDashboard'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/data-quality': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetKpiDataQuality'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/export': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ExportKpi'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/settings': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetKpiSettings'];
+    put: operations['SaveKpiSettings'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/cards/{id}/audit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetKpiCardAuditTrail'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/cards/{id}/audit/as-of': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetKpiCardAsOf'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/results/{id}/audit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetKpiResultAuditTrail'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/results/{id}/audit/as-of': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetKpiResultAsOf'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/ai/results/{id}/evidence-check': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CheckKpiEvidenceWithAi'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/ai/anomalies': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['GetKpiAnomalies'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/ai/results/{id}/causality': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['DraftKpiCausalityWithAi'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/ai/card-builder': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['DraftKpiCardWithAi'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/ai/card-builder/document': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['DraftKpiCardFromDocumentWithAi'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/ai/cards/{id}/smart': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['CheckKpiCardSmart'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/ai/cards/{id}/target-suggestion': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['SuggestKpiTarget'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/ai/narrative': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['DraftKpiNarrativeWithAi'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -5327,6 +6111,66 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    /** @description Everything an author sets on a card (form / API / AI builder). */
+    CardValues: {
+      nameAr: null | string;
+      nameEn: null | string;
+      descriptionAr: null | string;
+      descriptionEn: null | string;
+      measuringEquation: null | string;
+      processName: null | string;
+      /** Format: date */
+      initiatedOn: null | string;
+      typeCode: null | string;
+      indexClassificationCode: null | string;
+      effectivenessCode: null | string;
+      nature: string;
+      sourceCodes: null | string[];
+      measuringMethodCode: null | string;
+      competitivenessIndicator: boolean;
+      isGlobalStar: boolean;
+      unitCode: string;
+      measuringPeriod: string;
+      direction: string;
+      targetType: string;
+      targetSettingMechanism: null | string;
+      allowsNegative: boolean;
+      /** Format: uuid */
+      objectiveId: null | string;
+      sectorGoal: null | string;
+      nationalGoalCode: null | string;
+      visionLinkCode: null | string;
+      gemCriteriaCodes: null | string[];
+      criteriaText: null | string;
+      excellenceLink: null | string;
+      /** Format: uuid */
+      departmentUnitId: null | string;
+      /** Format: uuid */
+      responsibleUnitId: null | string;
+      /** Format: uuid */
+      responsibleEmployeeId: null | string;
+      /** Format: uuid */
+      responsibleTeamId: null | string;
+      benchmarkDescription: null | string;
+      /** Format: double */
+      benchmarkResult: null | number;
+      level: string;
+      /** Format: uuid */
+      parentCardId: null | string;
+      /** Format: double */
+      weight: null | number;
+      /** Format: double */
+      baselineValue: null | number;
+      /** Format: int32 */
+      baselineYear: null | number;
+      /** Format: double */
+      greenFrom: null | number;
+      /** Format: double */
+      amberFrom: null | number;
+      formula: null | string;
+      dataElements: null | components['schemas']['DataElement'][];
+      scale: null | components['schemas']['ScaleLevel'][];
+    };
     ChangedFieldDto: {
       field: string;
       labelAr: string;
@@ -5345,6 +6189,14 @@ export interface components {
     };
     ChecklistInput: {
       text: null | string;
+    };
+    /** @description A verification checklist item (SPEC K4.3, ADR 0064). */
+    ChecklistItem: {
+      code: string;
+      labelAr: string;
+      labelEn: string;
+      /** @default true */
+      required: boolean;
     };
     ChecklistItemDto: {
       /** Format: uuid */
@@ -5524,6 +6376,12 @@ export interface components {
       labelAr: string;
       labelEn: string;
       outcome: string;
+    };
+    /** @description A data element of a composite KPI (e.g. numerator / denominator). */
+    DataElement: {
+      code: string;
+      nameAr: null | string;
+      nameEn: null | string;
     };
     DayDto: {
       /** Format: int32 */
@@ -6183,6 +7041,933 @@ export interface components {
     };
     JsonElement: unknown;
     JsonObject: Record<string, never>;
+    KpiAnomaliesInput: {
+      resultIds: string[];
+    };
+    KpiAnomalyDto: {
+      /** Format: uuid */
+      resultId: string;
+      flags: string[];
+      /** Format: double */
+      value: null | number;
+      /** Format: double */
+      previous: null | number;
+    };
+    KpiBuilderInput: {
+      description: null | string;
+    };
+    KpiBulkInput: {
+      resultIds: string[];
+      comment: null | string;
+      checklistConfirmed: boolean;
+    };
+    KpiBulkOutcomeDto: {
+      /** Format: uuid */
+      resultId: string;
+      success: boolean;
+      errorKey: null | string;
+    };
+    KpiBulkResultDto: {
+      /** Format: int32 */
+      approved: number;
+      /** Format: int32 */
+      failed: number;
+      outcomes: components['schemas']['KpiBulkOutcomeDto'][];
+    };
+    KpiCardBody: {
+      card: components['schemas']['KpiCardInput'];
+      /** Format: uint32 */
+      version: number;
+    };
+    KpiCardDraftDto: {
+      nameAr: null | string;
+      nameEn: null | string;
+      descriptionAr: null | string;
+      descriptionEn: null | string;
+      measuringEquation: null | string;
+      unitCode: null | string;
+      measuringPeriod: null | string;
+      direction: null | string;
+      targetType: null | string;
+      /** Format: double */
+      target: null | number;
+      suggestions: string[];
+      smart: components['schemas']['SmartCheck'][];
+      /** Format: uuid */
+      usageId: null | string;
+    };
+    KpiCardDto: {
+      /** Format: uuid */
+      id: string;
+      code: string;
+      values: components['schemas']['CardValues'];
+      status: string;
+      /** Format: date */
+      closedOn: null | string;
+      departmentUnit: null | components['schemas']['KpiUnitDto'];
+      responsibleUnit: null | components['schemas']['KpiUnitDto'];
+      responsiblePerson: null | components['schemas']['KpiPersonDto'];
+      objectiveNameAr: null | string;
+      objectiveNameEn: null | string;
+      /** Format: uuid */
+      perspectiveId: null | string;
+      perspectiveNameAr: null | string;
+      perspectiveNameEn: null | string;
+      parentCode: null | string;
+      targets: components['schemas']['KpiCardTargetDto'][];
+      children: components['schemas']['KpiChildCardDto'][];
+      /** Format: double */
+      cascadedScore: null | number;
+      /** Format: double */
+      maxAchieved: null | number;
+      /** Format: int32 */
+      definitionVersion: number;
+      yearStarted: boolean;
+      canManage: boolean;
+      changeControlled: boolean;
+      /** Format: uint32 */
+      version: number;
+    };
+    KpiCardInput: {
+      code: null | string;
+      values: components['schemas']['CardValues'];
+      reason?: null | string;
+    };
+    KpiCardListItemDto: {
+      /** Format: uuid */
+      id: string;
+      code: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      status: string;
+      typeCode: null | string;
+      unitCode: string;
+      measuringPeriod: string;
+      direction: string;
+      level: string;
+      responsibleUnit: null | components['schemas']['KpiUnitDto'];
+      responsiblePerson: null | components['schemas']['KpiPersonDto'];
+      /** Format: uuid */
+      objectiveId: null | string;
+      objectiveNameAr: null | string;
+      objectiveNameEn: null | string;
+      isGlobalStar: boolean;
+      gemCriteria: string[];
+      /** Format: int32 */
+      year: null | number;
+      targetType: null | string;
+      /** Format: double */
+      target: null | number;
+      /** Format: double */
+      rangeMin: null | number;
+      /** Format: double */
+      rangeMax: null | number;
+      /** Format: double */
+      achieved: null | number;
+      /** Format: double */
+      actual: null | number;
+      /** Format: double */
+      capped: null | number;
+      rag: string;
+    };
+    KpiCardOptionDto: {
+      /** Format: uuid */
+      id: string;
+      code: string;
+      nameAr: null | string;
+      nameEn: null | string;
+    };
+    KpiCardStatusInput: {
+      /** Format: uint32 */
+      version: number;
+    };
+    KpiCardTargetDto: {
+      /** Format: int32 */
+      year: number;
+      targetType: string;
+      /** Format: double */
+      target: null | number;
+      /** Format: double */
+      rangeMin: null | number;
+      /** Format: double */
+      rangeMax: null | number;
+    };
+    KpiCardVersionDto: {
+      /** Format: int32 */
+      versionNo: number;
+      snapshot: string;
+      reason: null | string;
+      /** Format: uuid */
+      changeRequestId: null | string;
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: uuid */
+      createdBy: null | string;
+    };
+    KpiCausalityDraftDto: {
+      causality: string;
+      correctiveActions: string;
+      weak: boolean;
+      weakReasons: string[];
+      /** Format: uuid */
+      usageId: string;
+    };
+    KpiCausalityInput: {
+      notes: null | string;
+    };
+    KpiChangeDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      cardId: string;
+      cardCode: string;
+      cardNameAr: null | string;
+      cardNameEn: null | string;
+      /** Format: int32 */
+      year: number;
+      proposed: components['schemas']['ProposedChange'];
+      current: components['schemas']['ProposedChange'];
+      reason: string;
+      status: string;
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: date-time */
+      decidedAt: null | string;
+      decisionComment: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
+    KpiChangeInput: {
+      proposed: components['schemas']['ProposedChange'];
+      reason: string;
+    };
+    KpiChildCardDto: {
+      /** Format: uuid */
+      id: string;
+      code: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      /** Format: double */
+      weight: null | number;
+      /** Format: double */
+      capped: null | number;
+      rag: string;
+    };
+    KpiConfirmInput: {
+      planIds: string[];
+    };
+    KpiCountDto: {
+      key: string;
+      labelAr: null | string;
+      labelEn: null | string;
+      /** Format: int32 */
+      count: number;
+      /** Format: double */
+      score: null | number;
+    };
+    KpiDashboardDto: {
+      /** Format: int32 */
+      year: number;
+      /** Format: int32 */
+      totalCards: number;
+      /** Format: int32 */
+      activeCards: number;
+      /** Format: int32 */
+      plansThisYear: number;
+      /** Format: double */
+      organisationScore: null | number;
+      organisationRag: string;
+      byType: components['schemas']['KpiCountDto'][];
+      byDepartment: components['schemas']['KpiCountDto'][];
+      byObjective: components['schemas']['KpiCountDto'][];
+      achievement: components['schemas']['KpiCountDto'][];
+      /** Format: int32 */
+      pendingUpdates: number;
+      /** Format: int32 */
+      overdue: number;
+      /** Format: int32 */
+      approvalBacklog: number;
+      /** Format: int32 */
+      approvedResults: number;
+      top: components['schemas']['KpiPerformerDto'][];
+      bottom: components['schemas']['KpiPerformerDto'][];
+      rag: components['schemas']['KpiCountDto'][];
+    };
+    KpiDataQualityDto: {
+      unit: components['schemas']['KpiUnitDto'];
+      /** Format: int32 */
+      due: number;
+      /** Format: int32 */
+      submitted: number;
+      /** Format: double */
+      onTimeRate: null | number;
+      /** Format: double */
+      rejectionRate: null | number;
+      /** Format: double */
+      evidenceCompleteness: null | number;
+      /** Format: double */
+      score: null | number;
+    };
+    KpiDecisionInput: {
+      action: string;
+      comment: null | string;
+      checklist: null | {
+        [key: string]: boolean;
+      };
+    };
+    KpiDepartmentScoreDto: {
+      unit: components['schemas']['KpiUnitDto'];
+      /** Format: double */
+      score: null | number;
+      rag: string;
+      /** Format: int32 */
+      kpiCount: number;
+      /** Format: int32 */
+      reported: number;
+    };
+    KpiDraftInput: {
+      entry: components['schemas']['KpiEntryInput'];
+      /** Format: uint32 */
+      version: number;
+    };
+    KpiElementDto: {
+      /** Format: uuid */
+      id: string;
+      kind: string;
+      code: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      descriptionAr: null | string;
+      descriptionEn: null | string;
+      /** Format: uuid */
+      parentId: null | string;
+      /** Format: double */
+      weight: null | number;
+      /** Format: int32 */
+      sort: number;
+      active: boolean;
+      /** Format: int32 */
+      cycleStartYear: null | number;
+      /** Format: int32 */
+      cycleEndYear: null | number;
+      /** Format: int32 */
+      cardCount: number;
+      /** Format: uint32 */
+      version: number;
+    };
+    KpiElementInput: {
+      /** Format: uuid */
+      id: null | string;
+      kind: string;
+      code: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      descriptionAr: null | string;
+      descriptionEn: null | string;
+      /** Format: uuid */
+      parentId: null | string;
+      /** Format: double */
+      weight: null | number;
+      /** Format: int32 */
+      sort: number;
+      active: boolean;
+      /** Format: int32 */
+      cycleStartYear: null | number;
+      /** Format: int32 */
+      cycleEndYear: null | number;
+      /** Format: uint32 */
+      version: null | number;
+    };
+    KpiElementOptionDto: {
+      /** Format: uuid */
+      id: string;
+      kind: string;
+      code: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      /** Format: uuid */
+      parentId: null | string;
+      active: boolean;
+    };
+    KpiEntryInput: {
+      /** Format: double */
+      achieve: null | number;
+      elementValues: null | {
+        [key: string]: null | number;
+      };
+      /** Format: double */
+      scaleValue: null | number;
+      causality: null | string;
+      correctiveActions: null | string;
+      notes: null | string;
+      notApplicable: boolean;
+      naReason: null | string;
+    };
+    KpiEvidenceCheckDto: {
+      valueFound: null | boolean;
+      periodMatches: null | boolean;
+      missing: string[];
+      summary: string;
+      /** Format: int32 */
+      documents: number;
+      /** Format: uuid */
+      usageId: string;
+    };
+    KpiLockInput: {
+      reason: null | string;
+    };
+    KpiMapObjectiveDto: {
+      /** Format: uuid */
+      id: string;
+      code: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      /** Format: double */
+      score: null | number;
+      rag: string;
+      /** Format: int32 */
+      kpiCount: number;
+    };
+    KpiMapPerspectiveDto: {
+      /** Format: uuid */
+      id: null | string;
+      code: null | string;
+      nameAr: null | string;
+      nameEn: null | string;
+      /** Format: double */
+      score: null | number;
+      rag: string;
+      objectives: components['schemas']['KpiMapObjectiveDto'][];
+    };
+    KpiNarrativeDto: {
+      reportAr: string;
+      reportEn: string;
+      /** Format: uuid */
+      usageId: string;
+    };
+    KpiNarrativeInput: {
+      /** Format: int32 */
+      year: null | number;
+      /** Format: uuid */
+      unitId: null | string;
+    };
+    KpiOptionDto: {
+      code: string;
+      labelAr: null | string;
+      labelEn: null | string;
+    };
+    KpiOptionsDto: {
+      lookups: {
+        [key: string]: components['schemas']['KpiOptionDto'][];
+      };
+      elements: components['schemas']['KpiElementOptionDto'][];
+      cards: components['schemas']['KpiCardOptionDto'][];
+      measuringPeriods: string[];
+      directions: string[];
+      targetTypes: string[];
+      natures: string[];
+      levels: string[];
+      manualCodes: boolean;
+      /** Format: double */
+      greenFrom: number;
+      /** Format: double */
+      amberFrom: number;
+      checklist: components['schemas']['ChecklistItem'][];
+      canManageCards: boolean;
+      canManagePlans: boolean;
+      canReview: boolean;
+      canManageStrategy: boolean;
+    };
+    KpiPerformanceDto: {
+      /** Format: uuid */
+      cardId: string;
+      years: components['schemas']['KpiYearPointDto'][];
+      periods: components['schemas']['KpiPeriodPointDto'][];
+      /** Format: double */
+      benchmarkResult: null | number;
+      /** Format: double */
+      baselineValue: null | number;
+      /** Format: int32 */
+      baselineYear: null | number;
+    };
+    KpiPerformerDto: {
+      /** Format: uuid */
+      cardId: string;
+      code: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      /** Format: double */
+      actual: null | number;
+      /** Format: double */
+      capped: null | number;
+      rag: string;
+    };
+    KpiPeriodPointDto: {
+      /** Format: uuid */
+      resultId: string;
+      /** Format: int32 */
+      year: number;
+      periodCode: string;
+      /** Format: double */
+      target: null | number;
+      /** Format: double */
+      rangeMin: null | number;
+      /** Format: double */
+      rangeMax: null | number;
+      /** Format: double */
+      achieve: null | number;
+      /** Format: double */
+      actual: null | number;
+      /** Format: double */
+      capped: null | number;
+      rag: string;
+      status: string;
+      notApplicable: boolean;
+    };
+    KpiPeriodTargetInput: {
+      /** Format: uuid */
+      resultId: string;
+      /** Format: double */
+      target: null | number;
+      /** Format: double */
+      rangeMin: null | number;
+      /** Format: double */
+      rangeMax: null | number;
+    };
+    KpiPersonDto: {
+      /** Format: uuid */
+      id: string;
+      nameAr: null | string;
+      nameEn: null | string;
+    };
+    KpiPlanDto: {
+      plan: components['schemas']['KpiPlanListItemDto'];
+      isAccumulated: boolean;
+      responsiblePerson: null | components['schemas']['KpiPersonDto'];
+      periods: components['schemas']['KpiPlanPeriodDto'][];
+      aggregationRule: string;
+      canManage: boolean;
+    };
+    KpiPlanInput: {
+      targetType: string;
+      /** Format: double */
+      target: null | number;
+      /** Format: double */
+      rangeMin: null | number;
+      /** Format: double */
+      rangeMax: null | number;
+      unitCode: string;
+      direction: string;
+      isAccumulated: boolean;
+      /** Format: uuid */
+      responsibleEmployeeId: null | string;
+      periods: null | components['schemas']['KpiPeriodTargetInput'][];
+      /** Format: uint32 */
+      version: number;
+    };
+    KpiPlanListItemDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      cardId: string;
+      cardCode: string;
+      cardNameAr: null | string;
+      cardNameEn: null | string;
+      /** Format: int32 */
+      year: number;
+      measuringPeriod: string;
+      unitCode: string;
+      direction: string;
+      targetType: string;
+      /** Format: double */
+      target: null | number;
+      /** Format: double */
+      rangeMin: null | number;
+      /** Format: double */
+      rangeMax: null | number;
+      status: string;
+      responsibleUnit: null | components['schemas']['KpiUnitDto'];
+      /** Format: double */
+      achieved: null | number;
+      /** Format: double */
+      actual: null | number;
+      /** Format: double */
+      capped: null | number;
+      rag: string;
+      /** Format: int32 */
+      approvedCount: number;
+      /** Format: int32 */
+      totalPeriods: number;
+      /** Format: uint32 */
+      version: number;
+    };
+    KpiPlanPeriodDto: {
+      /** Format: uuid */
+      resultId: string;
+      periodCode: string;
+      /** Format: date */
+      periodStart: string;
+      /** Format: date */
+      periodEnd: string;
+      /** Format: double */
+      target: null | number;
+      /** Format: double */
+      rangeMin: null | number;
+      /** Format: double */
+      rangeMax: null | number;
+      status: string;
+      /** Format: date */
+      opensOn: null | string;
+      /** Format: date */
+      dueOn: null | string;
+      /** Format: double */
+      achieve: null | number;
+      /** Format: double */
+      actual: null | number;
+      /** Format: double */
+      capped: null | number;
+      notApplicable: boolean;
+      late: boolean;
+    };
+    KpiReasonInput: {
+      reason: string;
+    };
+    KpiResultCardDto: {
+      /** Format: uuid */
+      id: string;
+      code: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      measuringEquation: null | string;
+      nature: string;
+      unitCode: string;
+      direction: string;
+      formula: null | string;
+      dataElements: components['schemas']['DataElement'][];
+      scale: components['schemas']['ScaleLevel'][];
+      allowsNegative: boolean;
+      measuringPeriod: string;
+    };
+    KpiResultDto: {
+      /** Format: uuid */
+      id: string;
+      card: components['schemas']['KpiResultCardDto'];
+      /** Format: uuid */
+      planId: string;
+      /** Format: int32 */
+      year: number;
+      periodCode: string;
+      /** Format: date */
+      periodStart: string;
+      /** Format: date */
+      periodEnd: string;
+      targetType: string;
+      /** Format: double */
+      target: null | number;
+      /** Format: double */
+      rangeMin: null | number;
+      /** Format: double */
+      rangeMax: null | number;
+      /** Format: double */
+      achieve: null | number;
+      elementValues: {
+        [key: string]: null | number;
+      };
+      /** Format: double */
+      scaleValue: null | number;
+      /** Format: double */
+      actual: null | number;
+      /** Format: double */
+      capped: null | number;
+      rag: string;
+      achieved: null | boolean;
+      causality: null | string;
+      correctiveActions: null | string;
+      notes: null | string;
+      notApplicable: boolean;
+      naReason: null | string;
+      status: string;
+      /** Format: date */
+      opensOn: null | string;
+      /** Format: date */
+      dueOn: null | string;
+      /** Format: date-time */
+      dueAt: null | string;
+      /** Format: date-time */
+      submittedAt: null | string;
+      owner: null | components['schemas']['KpiPersonDto'];
+      ownerUnit: null | components['schemas']['KpiUnitDto'];
+      late: boolean;
+      /** Format: int32 */
+      daysLate: number;
+      /** Format: date-time */
+      approvedAt: null | string;
+      /** Format: int32 */
+      returnCount: number;
+      /** Format: int32 */
+      reopenedCount: number;
+      statusReason: null | string;
+      checklist: {
+        [key: string]: boolean;
+      };
+      history: components['schemas']['KpiPeriodPointDto'][];
+      anomalies: string[];
+      /** Format: int32 */
+      evidenceCount: number;
+      draftFromMcp: boolean;
+      can: components['schemas']['KpiResultPermissionsDto'];
+      /** Format: uint32 */
+      version: number;
+    };
+    KpiResultListItemDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      cardId: string;
+      cardCode: string;
+      cardNameAr: null | string;
+      cardNameEn: null | string;
+      /** Format: int32 */
+      year: number;
+      periodCode: string;
+      targetType: string;
+      /** Format: double */
+      target: null | number;
+      /** Format: double */
+      rangeMin: null | number;
+      /** Format: double */
+      rangeMax: null | number;
+      unitCode: string;
+      /** Format: double */
+      achieve: null | number;
+      /** Format: double */
+      capped: null | number;
+      rag: string;
+      status: string;
+      /** Format: date */
+      dueOn: null | string;
+      overdue: boolean;
+      late: boolean;
+      /** Format: int32 */
+      daysLate: number;
+      ownerUnit: null | components['schemas']['KpiUnitDto'];
+      owner: null | components['schemas']['KpiPersonDto'];
+      /** Format: date-time */
+      submittedAt: null | string;
+      notApplicable: boolean;
+      /** Format: int32 */
+      evidenceCount: number;
+      anomalies: string[];
+      myDecision: boolean;
+      stepNameAr: null | string;
+      stepNameEn: null | string;
+    };
+    KpiResultPermissionsDto: {
+      submit: boolean;
+      recall: boolean;
+      review: boolean;
+      reopen: boolean;
+      openNow: boolean;
+      lock: boolean;
+    };
+    KpiScorecardDto: {
+      /** Format: int32 */
+      year: number;
+      unit: null | components['schemas']['KpiUnitDto'];
+      root: components['schemas']['KpiScoreNodeDto'];
+      departments: components['schemas']['KpiDepartmentScoreDto'][];
+    };
+    KpiScoreNodeDto: {
+      /** Format: uuid */
+      id: null | string;
+      kind: string;
+      code: null | string;
+      nameAr: null | string;
+      nameEn: null | string;
+      /** Format: double */
+      weight: null | number;
+      /** Format: double */
+      score: null | number;
+      rag: string;
+      /** Format: double */
+      actual: null | number;
+      /** Format: int32 */
+      kpiCount: number;
+      children: components['schemas']['KpiScoreNodeDto'][];
+    };
+    /** @description Settings → KPI (docs/design/kpi.md §4, §5, §7; ADR 0060 / 0064). */
+    KpiSettings: {
+      windowRules?: components['schemas']['WindowRule'][];
+      /** Format: int32 */
+      reminderWorkingDaysBefore?: number;
+      /** Format: int32 */
+      escalationWorkingDaysAfter?: number;
+      requireEvidence?: boolean;
+      requirePlanConfirmation?: boolean;
+      manualCodes?: boolean;
+      /** Format: double */
+      greenFrom?: number;
+      /** Format: double */
+      amberFrom?: number;
+      /** @description Publish `KpiTargetMissed` for amber results too (red always). */
+      missedIncludesAmber?: boolean;
+      /** Format: double */
+      anomalyJumpRatio?: number;
+      measuringMethods?: components['schemas']['MeasuringMethodRule'][];
+      checklist?: components['schemas']['ChecklistItem'][];
+    };
+    KpiSettingsInput: {
+      settings: components['schemas']['KpiSettings'];
+      /** Format: uint32 */
+      version: number;
+    };
+    KpiStrategyMapDto: {
+      /** Format: int32 */
+      year: number;
+      visionNameAr: null | string;
+      visionNameEn: null | string;
+      /** Format: double */
+      score: null | number;
+      rag: string;
+      perspectives: components['schemas']['KpiMapPerspectiveDto'][];
+    };
+    KpiSubmitInput: {
+      entry: components['schemas']['KpiEntryInput'];
+      comment: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
+    KpiTargetsInput: {
+      targets: components['schemas']['KpiCardTargetDto'][];
+    };
+    KpiTargetSuggestionDto: {
+      /** Format: uuid */
+      cardId: string;
+      /** Format: int32 */
+      year: number;
+      /** Format: double */
+      suggested: null | number;
+      /** Format: double */
+      trend: null | number;
+      reasons: components['schemas']['TargetReason'][];
+    };
+    KpiUnitDto: {
+      /** Format: uuid */
+      id: string;
+      code: null | string;
+      nameAr: null | string;
+      nameEn: null | string;
+    };
+    KpiVersionInput: {
+      /** Format: uint32 */
+      version: number;
+    };
+    KpiWindowDto: {
+      /** Format: int32 */
+      year: number;
+      periodCode: string;
+      /** Format: date */
+      opensOn: string;
+      /** Format: date */
+      dueOn: string;
+      locked: boolean;
+      /** Format: uint32 */
+      version: number;
+    };
+    KpiWindowInput: {
+      periodCode: string;
+      /** Format: date */
+      opensOn: string;
+      /** Format: date */
+      dueOn: string;
+    };
+    KpiWindowsInput: {
+      windows: components['schemas']['KpiWindowInput'][];
+    };
+    KpiWithdrawInput: {
+      reason: null | string;
+    };
+    KpiYearCardDto: {
+      /** Format: uuid */
+      cardId: string;
+      code: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      responsibleUnit: null | components['schemas']['KpiUnitDto'];
+      measuringPeriod: string;
+      unitCode: string;
+      direction: string;
+      targetType: string;
+      /** Format: double */
+      target: null | number;
+      /** Format: double */
+      rangeMin: null | number;
+      /** Format: double */
+      rangeMax: null | number;
+      isAccumulated: boolean;
+      targetSource: string;
+      hasPlan: boolean;
+    };
+    KpiYearItemInput: {
+      /** Format: uuid */
+      cardId: string;
+      include: boolean;
+      measuringPeriod: string;
+      unitCode: string;
+      direction: string;
+      targetType: string;
+      /** Format: double */
+      target: null | number;
+      /** Format: double */
+      rangeMin: null | number;
+      /** Format: double */
+      rangeMax: null | number;
+      isAccumulated: boolean;
+    };
+    KpiYearPointDto: {
+      /** Format: int32 */
+      year: number;
+      targetType: string;
+      /** Format: double */
+      target: null | number;
+      /** Format: double */
+      rangeMin: null | number;
+      /** Format: double */
+      rangeMax: null | number;
+      /** Format: double */
+      achieved: null | number;
+      /** Format: double */
+      actual: null | number;
+      /** Format: double */
+      capped: null | number;
+      rag: string;
+      /** Format: int32 */
+      approvedCount: number;
+      /** Format: int32 */
+      totalPeriods: number;
+    };
+    KpiYearPreviewDto: {
+      /** Format: int32 */
+      year: number;
+      cards: components['schemas']['KpiYearCardDto'][];
+      /** Format: int32 */
+      existingPlans: number;
+    };
+    KpiYearStartedDto: {
+      /** Format: int32 */
+      year: number;
+      /** Format: int32 */
+      plansCreated: number;
+      /** Format: int32 */
+      resultsCreated: number;
+      /** Format: int32 */
+      skipped: number;
+      /** Format: int32 */
+      windowsCreated: number;
+    };
+    KpiYearStartInput: {
+      items: components['schemas']['KpiYearItemInput'][];
+    };
     LevelInput: {
       code: null | string;
       nameAr: null | string;
@@ -6373,6 +8158,11 @@ export interface components {
       enabled?: null | boolean;
       /** Format: int32 */
       rateLimitPerMinute?: null | number;
+    };
+    /** @description A Measuring Method code mapped to its aggregation rule (SPEC K5). */
+    MeasuringMethodRule: {
+      code: string;
+      rule: string;
     };
     MeDto: {
       /** Format: uuid */
@@ -7040,6 +8830,18 @@ export interface components {
       totalPages?: number;
     };
     /** @description One page of items plus the total count across all pages. */
+    PagedResultOfKpiCardListItemDto: {
+      items: components['schemas']['KpiCardListItemDto'][];
+      /** Format: int32 */
+      page: number;
+      /** Format: int32 */
+      pageSize: number;
+      /** Format: int32 */
+      totalCount: number;
+      /** Format: int32 */
+      totalPages?: number;
+    };
+    /** @description One page of items plus the total count across all pages. */
     PagedResultOfProjectListItemDto: {
       items: components['schemas']['ProjectListItemDto'][];
       /** Format: int32 */
@@ -7411,6 +9213,20 @@ export interface components {
       id: string;
       number: string;
       classification: string;
+    };
+    /** @description What a definition change proposes (null = unchanged). */
+    ProposedChange: {
+      measuringEquation: null | string;
+      formula: null | string;
+      unitCode: null | string;
+      direction: null | string;
+      targetType: null | string;
+      /** Format: double */
+      target: null | number;
+      /** Format: double */
+      rangeMin: null | number;
+      /** Format: double */
+      rangeMax: null | number;
     };
     ProviderDto: {
       /** Format: uuid */
@@ -8055,6 +9871,13 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    /** @description A level of a qualitative KPI's scale. */
+    ScaleLevel: {
+      /** Format: double */
+      value: number;
+      labelAr: null | string;
+      labelEn: null | string;
+    };
     SecuritySettingsDto: {
       /** Format: int32 */
       passwordMinLength: number;
@@ -8106,6 +9929,11 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    SettingsDocumentOfKpiSettings: {
+      value: null | components['schemas']['KpiSettings'];
+      /** Format: uint32 */
+      version: number;
+    };
     SettingsDocumentOfPortfolioSettings: {
       value: null | components['schemas']['PortfolioSettings'];
       /** Format: uint32 */
@@ -8149,6 +9977,11 @@ export interface components {
       link: string;
       /** Format: double */
       score: number;
+    };
+    /** @description One check of the SMART quality review of a KPI card (SPEC §2.9 KPI card builder). */
+    SmartCheck: {
+      code: string;
+      passed: boolean;
     };
     SmtpSettingsDto: {
       enabled: boolean;
@@ -8296,6 +10129,14 @@ export interface components {
       owningUnitId: null | string;
       /** Format: uint32 */
       version: number;
+    };
+    /** @description A target proposal with the reasons behind it (message keys with parameters). */
+    TargetReason: {
+      key: string;
+      /** Format: double */
+      value?: null | number;
+      /** Format: int32 */
+      year?: null | number;
     };
     TaskActionInput: {
       /** Format: uint32 */
@@ -9223,6 +11064,14 @@ export interface components {
       createdByName: null | string;
       /** Format: int32 */
       stepCount: number;
+    };
+    /** @description A submission-window rule (ADR 0060). */
+    WindowRule: {
+      periodCode: string;
+      /** Format: int32 */
+      opensDaysAfterEnd: number;
+      /** Format: int32 */
+      dueDaysAfterOpen: number;
     };
     WorkloadDto: {
       employee: components['schemas']['PersonDto'];
@@ -20731,6 +22580,1836 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['SettingsDocumentOfPortfolioSettings'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListKpiStrategyElements: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiElementDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SaveKpiStrategyElement: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['KpiElementInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiElementDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetKpiStrategyMap: {
+    parameters: {
+      query?: {
+        year?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiStrategyMapDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListKpiCards: {
+    parameters: {
+      query?: {
+        page?: number;
+        pageSize?: number;
+        sort?: string;
+        search?: string;
+        unitId?: string;
+        typeCode?: string;
+        objectiveId?: string;
+        status?: string;
+        gem?: string;
+        globalStar?: boolean;
+        year?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PagedResultOfKpiCardListItemDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateKpiCard: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['KpiCardInput'];
+      };
+    };
+    responses: {
+      /** @description Created */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiCardDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetKpiOptions: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiOptionsDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetKpiCard: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiCardDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateKpiCard: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['KpiCardBody'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiCardDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ActivateKpiCard: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['KpiCardStatusInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiCardDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  DeactivateKpiCard: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['KpiCardStatusInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiCardDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SetKpiCardTargets: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['KpiTargetsInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiCardDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListKpiCardVersions: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiCardVersionDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetKpiPerformance: {
+    parameters: {
+      query?: {
+        year?: number;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiPerformanceDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListKpiLinkedRecords: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['LinkView'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RequestKpiDefinitionChange: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['KpiChangeInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiChangeDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListKpiDefinitionChanges: {
+    parameters: {
+      query?: {
+        cardId?: string;
+        status?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiChangeDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  WithdrawKpiDefinitionChange: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['KpiWithdrawInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiChangeDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  PreviewKpiYear: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        year: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiYearPreviewDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  StartKpiYear: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        year: number;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['KpiYearStartInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiYearStartedDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListKpiWindows: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        year: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiWindowDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateKpiWindows: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        year: number;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['KpiWindowsInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiWindowDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  LockKpiPeriod: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        year: number;
+        period: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['KpiLockInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiWindowDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ReopenKpiPeriod: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        year: number;
+        period: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['KpiLockInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiWindowDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListKpiPlans: {
+    parameters: {
+      query: {
+        year: number;
+        unitId?: string;
+        status?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiPlanListItemDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetKpiPlan: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiPlanDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateKpiPlan: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['KpiPlanInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiPlanDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ConfirmKpiPlans: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['KpiConfirmInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': number;
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListMyPendingKpiResults: {
+    parameters: {
+      query?: {
+        view?: string;
+        year?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiResultListItemDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetKpiResult: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiResultDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SaveKpiResultDraft: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['KpiDraftInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiResultDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SubmitKpiResult: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['KpiSubmitInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiResultDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RecallKpiResult: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['KpiVersionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiResultDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  DecideKpiResult: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['KpiDecisionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiResultDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ReopenKpiResult: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['KpiReasonInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiResultDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  OpenKpiResultNow: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiResultDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListKpiApprovalQueue: {
+    parameters: {
+      query?: {
+        year?: number;
+        period?: string;
+        unitId?: string;
+        mine?: boolean;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiResultListItemDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  BulkApproveKpiResults: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['KpiBulkInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiBulkResultDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetKpiScorecard: {
+    parameters: {
+      query?: {
+        year?: number;
+        unitId?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiScorecardDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetKpiDashboard: {
+    parameters: {
+      query?: {
+        year?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiDashboardDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetKpiDataQuality: {
+    parameters: {
+      query?: {
+        year?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiDataQualityDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ExportKpi: {
+    parameters: {
+      query: {
+        kind: string;
+        format: string;
+        year?: number;
+        language?: string;
+        gem?: string;
+        globalStar?: boolean;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetKpiSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SettingsDocumentOfKpiSettings'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SaveKpiSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['KpiSettingsInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SettingsDocumentOfKpiSettings'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetKpiCardAuditTrail: {
+    parameters: {
+      query?: {
+        page?: number;
+        pageSize?: number;
+        field?: string;
+        userId?: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PagedResultOfAuditEntryDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetKpiCardAsOf: {
+    parameters: {
+      query: {
+        at: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RecordSnapshotDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetKpiResultAuditTrail: {
+    parameters: {
+      query?: {
+        page?: number;
+        pageSize?: number;
+        field?: string;
+        userId?: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PagedResultOfAuditEntryDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetKpiResultAsOf: {
+    parameters: {
+      query: {
+        at: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RecordSnapshotDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CheckKpiEvidenceWithAi: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiEvidenceCheckDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetKpiAnomalies: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['KpiAnomaliesInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiAnomalyDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  DraftKpiCausalityWithAi: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['KpiCausalityInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiCausalityDraftDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  DraftKpiCardWithAi: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['KpiBuilderInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiCardDraftDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  DraftKpiCardFromDocumentWithAi: {
+    parameters: {
+      query?: {
+        description?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'multipart/form-data': {
+          file: components['schemas']['IFormFile'];
+        };
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiCardDraftDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CheckKpiCardSmart: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SmartCheck'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SuggestKpiTarget: {
+    parameters: {
+      query: {
+        year: number;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiTargetSuggestionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  DraftKpiNarrativeWithAi: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['KpiNarrativeInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiNarrativeDto'];
         };
       };
       /** @description Problem Details (RFC 9457) */

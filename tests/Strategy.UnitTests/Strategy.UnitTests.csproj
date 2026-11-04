@@ -12,6 +12,7 @@
     <ProjectReference Include="..\..\src\Modules\Tasks\Strategy.Modules.Tasks\Strategy.Modules.Tasks.csproj" />
     <ProjectReference Include="..\..\src\Modules\Teams\Strategy.Modules.Teams\Strategy.Modules.Teams.csproj" />
     <ProjectReference Include="..\..\src\Modules\Portfolio\Strategy.Modules.Portfolio\Strategy.Modules.Portfolio.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Kpi\Strategy.Modules.Kpi\Strategy.Modules.Kpi.csproj" />
     <ProjectReference Include="..\..\src\Platform\Strategy.Platform.Links\Strategy.Platform.Links.csproj" />
     <ProjectReference Include="..\..\src\Platform\Strategy.Platform.Access\Strategy.Platform.Access.csproj" />
     <ProjectReference Include="..\..\src\Platform\Strategy.Platform.Settings\Strategy.Platform.Settings.csproj" />

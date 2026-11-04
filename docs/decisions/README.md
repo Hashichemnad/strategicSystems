@@ -56,3 +56,9 @@ Write an ADR for every choice the SPEC or CLAUDE.md leaves open (CLAUDE.md §2 r
 | [0049](0049-project-auto-creation-and-numbering.md) | Automatic Project / Initiative creation and `PROJ-…` numbering | Accepted by the owner |
 | [0050](0050-proposal-assessment-and-dynamic-ai-choices.md) | Proposal Assessment versions and run-time choices for AI forms | Accepted by the owner |
 | [0051](0051-administration-quotation-hand-off.md) | Administration Dept quotation hand-off | Accepted by the owner |
+| [0060](0060-kpi-period-windows.md) | KPI period windows, reminders and the late flag | Accepted by the owner |
+| [0061](0061-kpi-result-lifecycle-and-values.md) | KPI result lifecycle, Not Applicable and value units | Accepted by the owner |
+| [0062](0062-kpi-strategy-hierarchy-and-scorecards.md) | Strategy hierarchy, cascading and weighted scorecards | Accepted by the owner |
+| [0063](0063-kpi-definition-change-control.md) | KPI definition change control | Accepted by the owner |
+| [0064](0064-kpi-approval-checklist-and-bulk.md) | KPI verification checklist and bulk approval | Accepted by the owner |
+| [0065](0065-kpi-contracts-and-integration-events.md) | KPI contracts for other systems and integration events | Accepted by the owner |
