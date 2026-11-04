@@ -618,9 +618,9 @@ public sealed class ProjectLifecycleTests(ProjectFixture fx) : IClassFixture<Pro
         });
         card.StatusCode.ShouldBe(HttpStatusCode.Created, await card.Content.ReadAsStringAsync());
         cardId = (await card.Content.ReadFromJsonAsync<System.Text.Json.JsonElement>()).GetProperty("id").GetGuid();
-        var found = (await w.C(w.Requester).GetFromJsonAsync<List<Strategy.Modules.Portfolio.Api.KpiCardOptionDto>>($"{Base}/kpi-cards?search={w.Suffix}"))!;
+        var found = (await w.C(w.Requester).GetFromJsonAsync<List<Strategy.Modules.Portfolio.Api.PortfolioKpiCardDto>>($"{Base}/kpi-cards?search={w.Suffix}"))!;
         found.Select(c => c.Id).ShouldContain(cardId);
-        (await w.C(w.OtherRequester).GetFromJsonAsync<List<Strategy.Modules.Portfolio.Api.KpiCardOptionDto>>($"{Base}/kpi-cards?search={w.Suffix}"))!
+        (await w.C(w.OtherRequester).GetFromJsonAsync<List<Strategy.Modules.Portfolio.Api.PortfolioKpiCardDto>>($"{Base}/kpi-cards?search={w.Suffix}"))!
             .ShouldBeEmpty("the catalog is scope-filtered");
         var existing = await PortfolioWorld.OkAsync<ProjectKpiDto>(w.C(w.Requester).PostAsJsonAsync($"{Base}/projects/{project.Id}/kpis",
             new { values = new { nature = "existing", kpiCardId = cardId, projectGoal = "More online licences" } }));

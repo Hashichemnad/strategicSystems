@@ -297,10 +297,10 @@ Finish with the phase summary.
 ```
 
 **Acceptance checks**
-- [ ] A full demo project runs from Take Ownership to Completed, in Arabic, with every approval and notification.
-- [ ] Monthly update cycle opens on the 1st (fake clock), reminders sent, update approved and locked.
-- [ ] Ownership change request, once approved and applied, transfers PM record roles.
-- [ ] Project closure automatically opens the project team's evaluation in Teams Management.
+- [x] A full demo project runs from Take Ownership to Completed, in Arabic, with every approval and notification.
+- [x] Monthly update cycle opens on the 1st (fake clock), reminders sent, update approved and locked.
+- [x] Ownership change request, once approved and applied, transfers PM record roles.
+- [x] Project closure automatically opens the project team's evaluation in Teams Management.
 
 ---
 
@@ -369,7 +369,7 @@ Finish with the phase summary.
 - [x] New measuring year generates plans and results; Q1 window opens per Appendix A; owners notified.
 - [x] Owner submits with evidence; PMO uses the checklist and bulk-approves a department.
 - [x] Scorecard and strategy map show capped performance; trend charts show actual.
-- [ ] Portfolio project KPIs can now link to KPI Cards; the KPI card shows linked projects. *(contracts and the card tab done, proven with a test double; Portfolio wires it in Phase 9)*
+- [ ] Portfolio project KPIs can now link to KPI Cards; the KPI card shows linked projects. *(contracts and the card tab done in Phase 12; wired by Portfolio in Phase 9 — `IKpiLinkedRecordSource`, Existing KPI picker)*
 
 ---
 
@@ -518,7 +518,7 @@ Implement, then run the full hardening review and fix findings, run performance 
 | 6 | Links & Task Management | ☑ built — awaiting owner acceptance | |
 | 7 | Teams Management | ☑ built — awaiting owner acceptance | |
 | 8 | Portfolio A — Requests | ☑ built — awaiting owner acceptance | |
-| 9 | Portfolio B — Lifecycle & change | ☐ | |
+| 9 | Portfolio B — Lifecycle & change | ☑ built — awaiting owner acceptance | |
 | 10 | Portfolio C — Agile, standards, Gantt | ☐ | |
 | 11 | Wasel vendor portal | ☐ | |
 | 12 | Performance Management | ☑ built — awaiting owner acceptance | |
