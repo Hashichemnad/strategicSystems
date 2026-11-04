@@ -24,3 +24,4 @@ deploy/.env
 !.vscode/extensions.json
 deploy/*.local.pem
 .data/
+.claude/worktrees/

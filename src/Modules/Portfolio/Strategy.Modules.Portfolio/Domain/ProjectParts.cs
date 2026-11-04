@@ -777,6 +777,9 @@ public sealed class MonthlyUpdate : AuditableEntity
     /// <summary><c>YYYY-MM</c>.</summary>
     public string Period { get; private set; } = string.Empty;
 
+    /// <summary>1 for the month's window (job); 2, 3… for additional windows the PM Office opens in the same month (ADR 0071).</summary>
+    public int Sequence { get; private set; } = 1;
+
     public string Status { get; private set; } = MonthlyStatuses.Open;
 
     public DateTimeOffset OpenedAt { get; private set; }
@@ -799,8 +802,8 @@ public sealed class MonthlyUpdate : AuditableEntity
     /// <summary>jsonb snapshot of the submitted milestone updates.</summary>
     public string Items { get; private set; } = "[]";
 
-    public static MonthlyUpdate Open(Guid projectId, string period, DateTimeOffset openedAt, DateTimeOffset? dueAt, string openedBy) =>
-        new() { ProjectId = projectId, Period = period, OpenedAt = openedAt, DueAt = dueAt, OpenedBy = openedBy };
+    public static MonthlyUpdate Open(Guid projectId, string period, int sequence, DateTimeOffset openedAt, DateTimeOffset? dueAt, string openedBy) =>
+        new() { ProjectId = projectId, Period = period, Sequence = sequence, OpenedAt = openedAt, DueAt = dueAt, OpenedBy = openedBy };
 
     public static string PeriodOf(DateOnly date) => $"{date.Year:D4}-{date.Month:D2}";
 

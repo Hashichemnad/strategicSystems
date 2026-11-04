@@ -715,6 +715,12 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("reminded_at");
 
+                    b.Property<int>("Sequence")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(1)
+                        .HasColumnName("sequence");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -750,9 +756,9 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                     b.HasIndex("Status")
                         .HasDatabaseName("ix_monthly_update_status");
 
-                    b.HasIndex("ProjectId", "Period")
+                    b.HasIndex("ProjectId", "Period", "Sequence")
                         .IsUnique()
-                        .HasDatabaseName("ix_monthly_update_project_id_period");
+                        .HasDatabaseName("ix_monthly_update_project_id_period_sequence");
 
                     b.ToTable("monthly_update", "portfolio");
                 });

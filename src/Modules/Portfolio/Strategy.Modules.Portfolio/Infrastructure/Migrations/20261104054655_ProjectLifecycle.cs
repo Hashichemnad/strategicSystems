@@ -615,6 +615,7 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     project_id = table.Column<Guid>(type: "uuid", nullable: false),
                     period = table.Column<string>(type: "character varying(7)", maxLength: 7, nullable: false),
+                    sequence = table.Column<int>(type: "integer", nullable: false, defaultValue: 1),
                     status = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
                     opened_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     due_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
@@ -851,10 +852,10 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                 column: "project_id");
 
             migrationBuilder.CreateIndex(
-                name: "ix_monthly_update_project_id_period",
+                name: "ix_monthly_update_project_id_period_sequence",
                 schema: "portfolio",
                 table: "monthly_update",
-                columns: new[] { "project_id", "period" },
+                columns: new[] { "project_id", "period", "sequence" },
                 unique: true);
 
             migrationBuilder.CreateIndex(

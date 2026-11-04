@@ -253,7 +253,8 @@ internal sealed class MonthlyUpdateConfiguration : IEntityTypeConfiguration<Mont
         builder.Property(x => x.OpenedBy).HasMaxLength(60);
         builder.Property(x => x.SubmitComment).HasMaxLength(RequestRules.TextMaxLength);
         builder.Property(x => x.Items).HasColumnType("jsonb");
-        builder.HasIndex(x => new { x.ProjectId, x.Period }).IsUnique();
+        builder.Property(x => x.Sequence).HasDefaultValue(1);
+        builder.HasIndex(x => new { x.ProjectId, x.Period, x.Sequence }).IsUnique();
         builder.HasIndex(x => x.Status);
     }
 }

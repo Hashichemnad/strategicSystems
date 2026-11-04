@@ -60,7 +60,7 @@ public sealed record MilestoneUpdateInput(MilestoneProgressValues Values, uint V
 public sealed record MilestoneProgressResult(MilestoneDto Milestone, IReadOnlyList<string> Warnings);
 
 public sealed record MonthlyUpdateDto(
-    Guid Id, string Period, string Status, DateTimeOffset OpenedAt, DateTimeOffset? DueAt, string OpenedBy, DateTimeOffset? SubmittedAt, DateTimeOffset? ApprovedAt,
+    Guid Id, string Period, int Sequence, string Status, DateTimeOffset OpenedAt, DateTimeOffset? DueAt, string OpenedBy, DateTimeOffset? SubmittedAt, DateTimeOffset? ApprovedAt,
     bool Overdue, string? SubmitComment, string Items);
 
 public sealed record MonthlyViewDto(MonthlyUpdateDto? Current, IReadOnlyList<MonthlyUpdateDto> History, bool CanUpdate, bool CanSubmit, bool CanOpen, int PendingMilestones);
@@ -293,7 +293,7 @@ internal sealed class MilestoneService(
             return Error.NotFound();
         }
 
-        var rows = await db.MonthlyUpdates.AsNoTracking().Where(m => m.ProjectId == projectId).OrderByDescending(m => m.Period).ToListAsync(ct).ConfigureAwait(false);
+        var rows = await db.MonthlyUpdates.AsNoTracking().Where(m => m.ProjectId == projectId).OrderByDescending(m => m.Period).ThenByDescending(m => m.Sequence).ToListAsync(ct).ConfigureAwait(false);
         var current = rows.FirstOrDefault(r => r.Status != MonthlyStatuses.Approved);
         var canEdit = await loader.CanAsync(context.User, PortfolioPermissions.ProjectEdit, project, ct).ConfigureAwait(false);
         var executing = project.Status == ProjectStatuses.Active && project.SubState == SubStates.Execution;
@@ -426,10 +426,10 @@ internal sealed class MilestoneService(
 
     private Task<MonthlyUpdate?> CurrentWindowAsync(Guid projectId, CancellationToken ct) =>
         db.MonthlyUpdates.AsNoTracking().Where(m => m.ProjectId == projectId && m.Status != MonthlyStatuses.Approved).OrderByDescending(m => m.Period)
-            .FirstOrDefaultAsync(ct);
+            .ThenByDescending(m => m.Sequence).FirstOrDefaultAsync(ct);
 
     private static MonthlyUpdateDto Dto(MonthlyUpdate m, DateTimeOffset now) =>
-        new(m.Id, m.Period, m.Status, m.OpenedAt, m.DueAt, m.OpenedBy, m.SubmittedAt, m.ApprovedAt,
+        new(m.Id, m.Period, m.Sequence, m.Status, m.OpenedAt, m.DueAt, m.OpenedBy, m.SubmittedAt, m.ApprovedAt,
             MonthlyStatuses.AcceptsUpdates(m.Status) && m.DueAt is { } due && now > due, m.SubmitComment, m.Items);
 
     private async Task<Error?> PlanDeniedAsync(Project project, CancellationToken ct)
@@ -601,7 +601,8 @@ internal sealed class MonthlyWindows(PortfolioDbContext db, RequestReader reader
         var unit = project.SectionUnitId ?? project.UnitId;
         var period = MonthlyUpdate.PeriodOf(await LocalDateAsync(unit, at, ct).ConfigureAwait(false));
         var due = await DueAtAsync(unit, at, settings.MonthlyDueWorkingDays, ct).ConfigureAwait(false);
-        var window = MonthlyUpdate.Open(project.Id, period, at, due, openedBy);
+        var sequence = (await db.MonthlyUpdates.Where(m => m.ProjectId == project.Id && m.Period == period).Select(m => (int?)m.Sequence).MaxAsync(ct).ConfigureAwait(false) ?? 0) + 1;
+        var window = MonthlyUpdate.Open(project.Id, period, sequence, at, due, openedBy);
         db.MonthlyUpdates.Add(window);
         project.MarkUpdateOpened(at);
         foreach (var milestone in await db.Milestones.Where(m => m.ProjectId == project.Id && m.UpdateState == UpdateStates.Approved).ToListAsync(ct).ConfigureAwait(false))
