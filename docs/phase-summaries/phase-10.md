@@ -43,18 +43,18 @@ Also asked for:
 - each switch hides / shows its UI and APIs (integration over all 15 switches: 404 `featureOff`, then 200; UI hides tabs and sections from `/features`);
 - a team member without cost permission sees no costs anywhere (integration covering project, list, milestones, change requests, baselines, EVM, dashboard and the Ask record source, then visible after the setting is turned on).
 
-## Quality gates run
+## Quality gates run (after the rebase on Phase 13)
 
 | Gate | Result |
 |---|---|
-| `dotnet build` · `dotnet format --verify-no-changes` | 0 warnings, 0 errors · clean |
-| `dotnet test --solution Strategy.slnx` | Full run: **3 225 / 3 235**. The 10 failures were 7 OCR unit tests (Tesseract was installed only after that run started), the job dashboard list (now includes `portfolio.communication-reminders`) and 2 authorization-matrix rows for a route with a `bool` route constraint (changed to a body). All 10 re-run green: OCR 14/14, job dashboard 2/2, authorization matrix 1 594/1 594. New: **Phase 10 unit** tests (the Portfolio unit namespace is 196 green) and **5 Phase 10 integration** tests; the Portfolio integration namespace (27) is green after the updates below |
-| `tools/check-api-client.sh` · `tools/check-vulnerable.sh` | client regenerated · no High / Critical |
-| `npm run lint` · `format:check` · `typecheck` · `npm test` | clean · **252 / 252** Vitest |
+| `dotnet build -c Release` · `dotnet format --verify-no-changes` | 0 warnings, 0 errors · clean |
+| `dotnet test --solution Strategy.slnx` | **3 559 / 3 559.** The first post-rebase run is void: PostgreSQL and Docker stopped during it (the session paused). After a restart, 3 541 passed and the 18 container-fixture tests were re-run green; the PDF layout snapshot passed on 3 more runs after one failure on a cold Gotenberg. Includes the Phase 10 unit tests (Portfolio unit namespace 196) and 5 Phase 10 integration tests |
+| `tools/check-api-client.sh` · `tools/check-vulnerable.sh` | OpenAPI document and TS client regenerated after the rebase · no High / Critical |
+| `npm run lint` · `format:check` · `typecheck` · `npm test` | clean · **288 / 288** Vitest (with Phase 13) |
 | `npm run build` · `npm audit --audit-level=high` · `npm run lint:licenses` | OK (ECharts adds a size warning for the main chunk) · no High / Critical · 617 packages allowed |
-| `npx playwright test` | `portfolio-phase10.spec.ts` ar + en and `ai.spec.ts` ar + en: **12 / 12**. The Phase 9 spec was updated (deliverable sign-off before closure) but the whole suite was **not** re-run in this session |
+| `npx playwright test` (whole suite, fresh database) | **92 / 92** in Arabic and English. The first run had 2 failures: the job dashboard expected 18 rows and there are now 19 (`portfolio.communication-reminders`); after updating the count, `platform.spec.ts` passes 7 / 7. Phase 10 screenshots refreshed from this run |
 
-Existing tests updated for Phase 10 facts: the Portfolio MCP tool list; the job dashboard list; the Phase 9 lifecycle test and E2E sign off the deliverable before closure (quality gate). Phase 9 helpers in `ProjectLifecycleTests` are now `internal` so the Phase 10 tests reuse them.
+Existing tests updated for Phase 10 facts: the Portfolio MCP tool list; the job dashboard list (integration and E2E, now 19 jobs with Phase 13); the Phase 9 lifecycle test and E2E sign off the deliverable before closure (quality gate). Phase 9 helpers in `ProjectLifecycleTests` are now `internal` so the Phase 10 tests reuse them.
 
 **Dependencies added:** `echarts` 5.6.0 (Apache-2.0; with zrender BSD-3-Clause, tslib 0BSD), recorded in `THIRD_PARTY_LICENSES.md`.
 
@@ -78,6 +78,11 @@ Existing tests updated for Phase 10 facts: the Portfolio MCP tool list; the job 
 - **Hybrid milestones delivered in sprints** are not validated for evidence or causality in the monthly update (the sprint reviews are their evidence); the PM cannot type their achievement.
 - **Overdue linked tasks** (SPEC §1.16) count towards the schedule colour only for project-level tasks, not for tasks under a milestone.
 - Project commands remain services called by the endpoints (as in Phase 9), not dispatcher handlers.
+
+## Rebase on Phase 13
+- Template risks are scored through the shared risk framework (`IProjectRiskScoring.ScoreAsync`, ADR 0101). The RAG risk dimension reads the residual band codes, which are the same in the framework's defaults (`low` / `medium` / `high` / `critical`); if an organisation renames its bands, the risk dimension does not recognise the new codes.
+- Two OpenAPI schema names clashed with Risk types: they are now `PortfolioHeatCellDto` and `CharterRiskSuggestionDto`.
+- Conflicts resolved: ADR index (both sets kept), job dashboard test (both jobs), generated client (regenerated). No chart-library conflict: Phase 13 draws its charts with CSS / SVG (ADR 0105).
 
 ## Platform / other modules (additive)
 - `Strategy.Platform.AI` demo adapter: one branch for the six portfolio assists (development / E2E only).
