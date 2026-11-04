@@ -1,7 +1,68 @@
 /**
  * Gantt export (docs/design/portfolio.md §36): PNG by drawing the serialized SVG on a canvas, PDF by embedding that canvas
  * as a JPEG (DCTDecode) in a one-page PDF written here by hand — no library.
+ * The product fonts (IBM Plex Sans Arabic / IBM Plex Sans, OFL, bundled through @fontsource) are embedded in the exported
+ * SVG as data-URL @font-face rules, so Arabic is shaped with the product font and not a system font (ADR 0117).
  */
+import plexArabic400 from '@fontsource/ibm-plex-sans-arabic/files/ibm-plex-sans-arabic-arabic-400-normal.woff2?url';
+import plexArabic600 from '@fontsource/ibm-plex-sans-arabic/files/ibm-plex-sans-arabic-arabic-600-normal.woff2?url';
+import plexLatin400 from '@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-400-normal.woff2?url';
+import plexLatin600 from '@fontsource/ibm-plex-sans/files/ibm-plex-sans-latin-600-normal.woff2?url';
+
+/** A font file to embed: family name as the Gantt uses it, weight and the woff2 bytes as base64. */
+export interface EmbeddedFont {
+  family: string;
+  weight: number;
+  base64: string;
+}
+
+const FONT_SOURCES: readonly { family: string; weight: number; url: string }[] = [
+  { family: 'IBM Plex Sans Arabic', weight: 400, url: plexArabic400 },
+  { family: 'IBM Plex Sans Arabic', weight: 600, url: plexArabic600 },
+  { family: 'IBM Plex Sans', weight: 400, url: plexLatin400 },
+  { family: 'IBM Plex Sans', weight: 600, url: plexLatin600 },
+];
+
+let fontCache: Promise<EmbeddedFont[]> | null = null;
+
+function toBase64(bytes: Uint8Array): string {
+  let binary = '';
+  const chunk = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunk) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunk));
+  }
+  return btoa(binary);
+}
+
+/** Loads the bundled fonts once; a font that fails to load is skipped (the export still works, with a fallback font). */
+export function loadExportFonts(fetcher: typeof fetch = fetch): Promise<EmbeddedFont[]> {
+  fontCache ??= Promise.all(
+    FONT_SOURCES.map(async (source) => {
+      try {
+        const response = await fetcher(source.url);
+        if (!response.ok) return null;
+        const bytes = new Uint8Array(await response.arrayBuffer());
+        return { family: source.family, weight: source.weight, base64: toBase64(bytes) };
+      } catch {
+        return null;
+      }
+    }),
+  ).then((fonts) => fonts.filter((f): f is EmbeddedFont => f !== null));
+  return fontCache;
+}
+
+/** Inserts the fonts as data-URL @font-face rules into the standalone SVG markup (right after the opening tag). */
+export function embedFonts(markup: string, fonts: readonly EmbeddedFont[]): string {
+  if (fonts.length === 0) return markup;
+  const rules = fonts
+    .map(
+      (f) =>
+        `@font-face{font-family:'${f.family}';font-style:normal;font-weight:${f.weight};` +
+        `src:url(data:font/woff2;base64,${f.base64}) format('woff2');}`,
+    )
+    .join('');
+  return markup.replace(/^<svg([^>]*)>/, `<svg$1><defs><style type="text/css">${rules}</style></defs>`);
+}
 
 /** Style properties copied inline so the standalone SVG keeps the theme colours (CSS variables do not travel). */
 const STYLE_PROPS = [
@@ -53,7 +114,9 @@ export function standaloneSvg(svg: SVGSVGElement): { markup: string; width: numb
 
 /** Draws the chart on a canvas (2× for sharp output). */
 export async function ganttCanvas(svg: SVGSVGElement, scale = 2): Promise<HTMLCanvasElement> {
-  const { markup, width, height } = standaloneSvg(svg);
+  const standalone = standaloneSvg(svg);
+  const { width, height } = standalone;
+  const markup = embedFonts(standalone.markup, await loadExportFonts());
   const url = URL.createObjectURL(new Blob([markup], { type: 'image/svg+xml;charset=utf-8' }));
   try {
     const image = new Image();

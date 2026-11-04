@@ -1,1 +1,75 @@
-{}
+{
+  "percent": "{{value}} %",
+  "capacity": {
+    "title": "Capacity",
+    "description": "Employee allocation across teams and projects. Allocations come from Teams Management and from the proposed members of projects that have no formed team yet.",
+    "unit": "Unit",
+    "myUnit": "My unit",
+    "below": "Include units below",
+    "overOnly": "Over-allocated only",
+    "threshold": "Over-allocation above {{value}}",
+    "summary": "{{employees}} employees · {{over}} over-allocated",
+    "employee": "Employee",
+    "unitColumn": "Unit",
+    "total": "Total allocation",
+    "allocations": "Allocations",
+    "overAllocated": "Over-allocated",
+    "notSet": "{{count}} without allocation",
+    "showAllocations": "Show allocations of {{name}}",
+    "hideAllocations": "Hide allocations of {{name}}",
+    "source": {
+      "team": "Team",
+      "project": "Project (proposed member)"
+    },
+    "forProject": "Project {{number}}",
+    "notSetValue": "Not set",
+    "empty": "No employees in this unit.",
+    "emptyOver": "No over-allocated employees in this unit."
+  },
+  "reviews": {
+    "title": "Portfolio reviews",
+    "description": "Quarterly portfolio reviews: a decision per project. Hold and cancel decisions start a change request — they never change a project directly.",
+    "new": "New review",
+    "period": "Quarter",
+    "titleField": "Title",
+    "reviewDate": "Review date",
+    "notes": "Notes",
+    "status": "Status",
+    "decisions": "Decisions",
+    "completedAt": "Completed on",
+    "statuses": {
+      "draft": "In progress",
+      "completed": "Completed"
+    },
+    "empty": "No portfolio reviews yet.",
+    "created": "Review created",
+    "open": "Open review {{period}}"
+  },
+  "review": {
+    "back": "Portfolio reviews",
+    "project": "Project",
+    "stage": "Stage",
+    "status": "Status",
+    "progress": "Progress",
+    "budget": "Budget",
+    "decision": "Decision",
+    "comment": "Comment",
+    "commentRequired": "A comment is required for this decision.",
+    "changeRequest": "Change request",
+    "noDecision": "Not decided",
+    "save": "Save decision",
+    "saved": "Decision saved",
+    "decisions": {
+      "continue": "Continue",
+      "re-scope": "Re-scope",
+      "hold": "Hold",
+      "cancel": "Cancel"
+    },
+    "complete": "Complete review",
+    "completeTitle": "Complete the review?",
+    "completeDescription": "Completing the review never changes a project directly. Hold and cancel decisions start change requests that go through the normal approval chain; re-scope opens a draft change request for the project manager.",
+    "completed": "Review completed",
+    "readOnly": "This review is completed and read-only.",
+    "empty": "No active projects in your scope."
+  }
+}
