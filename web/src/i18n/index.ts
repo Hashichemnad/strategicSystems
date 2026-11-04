@@ -72,6 +72,12 @@ import arPmStandards from './ar/pmStandards.json';
 import enPmStandards from './en/pmStandards.json';
 import arPortfolioViews from './ar/portfolioViews.json';
 import enPortfolioViews from './en/portfolioViews.json';
+import arWasel from './ar/wasel.json';
+import enWasel from './en/wasel.json';
+import arVendors from './ar/vendors.json';
+import enVendors from './en/vendors.json';
+import arPortfolioGov from './ar/portfolioGov.json';
+import enPortfolioGov from './en/portfolioGov.json';
 import { readPreference } from '@/lib/preferences';
 
 export const languages = ['ar', 'en'] as const;
@@ -109,6 +115,9 @@ export const resources = {
     agile: arAgile,
     pmStandards: arPmStandards,
     portfolioViews: arPortfolioViews,
+    wasel: arWasel,
+    vendors: arVendors,
+    portfolioGov: arPortfolioGov,
     links: arLinks,
     kpi: arKpi,
     risk: arRisk,
@@ -147,6 +156,9 @@ export const resources = {
     agile: enAgile,
     pmStandards: enPmStandards,
     portfolioViews: enPortfolioViews,
+    wasel: enWasel,
+    vendors: enVendors,
+    portfolioGov: enPortfolioGov,
     links: enLinks,
     kpi: enKpi,
     risk: enRisk,

@@ -372,6 +372,82 @@ export const portfolioGroupsRoute = createRoute({
   ),
 });
 
+// Phase 11 (docs/design/portfolio.md §58–§62): vendor register, capacity view, quarterly portfolio reviews.
+export const portfolioVendorsRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/portfolio/vendors',
+  component: lazyRouteComponent(() => import('@/features/portfolio/vendors/VendorsPage'), 'VendorsPage'),
+});
+
+export const portfolioVendorRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/portfolio/vendors/$vendorId',
+  component: lazyRouteComponent(() => import('@/features/portfolio/vendors/VendorPage'), 'VendorPage'),
+});
+
+export const portfolioCapacityRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/portfolio/capacity',
+  component: lazyRouteComponent(() => import('@/features/portfolio/governance/CapacityPage'), 'CapacityPage'),
+});
+
+export const portfolioReviewsRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/portfolio/reviews',
+  component: lazyRouteComponent(() => import('@/features/portfolio/governance/ReviewsPage'), 'ReviewsPage'),
+});
+
+export const portfolioReviewRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/portfolio/reviews/$reviewId',
+  component: lazyRouteComponent(() => import('@/features/portfolio/governance/ReviewPage'), 'ReviewPage'),
+});
+
+// Wasel vendor portal (Phase 11, ADR 0110): its own area, layout and session; never the internal app shell.
+const waselRoot = createRoute({
+  getParentRoute: () => rootRoute,
+  id: 'wasel',
+  component: lazyRouteComponent(() => import('@/features/wasel/WaselLayout'), 'WaselLayout'),
+});
+
+export const waselLoginRoute = createRoute({
+  getParentRoute: () => waselRoot,
+  path: '/wasel/login',
+  validateSearch: z.object({ redirect: redirectParam }),
+  component: lazyRouteComponent(() => import('@/features/wasel/WaselAuthPages'), 'WaselLoginPage'),
+});
+
+export const waselMfaRoute = createRoute({
+  getParentRoute: () => waselRoot,
+  path: '/wasel/login/mfa',
+  validateSearch: z.object({ redirect: redirectParam, methods: methodsParam, enrol: z.coerce.number().optional().catch(undefined) }),
+  component: lazyRouteComponent(() => import('@/features/wasel/WaselAuthPages'), 'WaselMfaPage'),
+});
+
+export const waselSetPasswordRoute = createRoute({
+  getParentRoute: () => waselRoot,
+  path: '/wasel/set-password',
+  validateSearch: z.object({
+    user: z.string().max(64).catch(''),
+    token: z.string().max(4096).catch(''),
+    invite: z.coerce.number().optional().catch(undefined),
+  }),
+  component: lazyRouteComponent(() => import('@/features/wasel/WaselAuthPages'), 'WaselSetPasswordPage'),
+});
+
+export const waselHomeRoute = createRoute({
+  getParentRoute: () => waselRoot,
+  path: '/wasel',
+  component: lazyRouteComponent(() => import('@/features/wasel/WaselPortalPages'), 'WaselHomePage'),
+});
+
+export const waselProjectRoute = createRoute({
+  getParentRoute: () => waselRoot,
+  path: '/wasel/projects/$projectId',
+  validateSearch: z.object({ tab: z.string().max(40).optional().catch(undefined) }),
+  component: lazyRouteComponent(() => import('@/features/wasel/WaselPortalPages'), 'WaselProjectPage'),
+});
+
 // Performance Management (Phase 12, docs/design/kpi.md): dashboard, cards, new year, plans, results, approvals, scorecards, map, reports.
 export const kpiDashboardRoute = createRoute({
   getParentRoute: () => appLayout,
@@ -1066,6 +1142,7 @@ const routeTree = rootRoute.addChildren([
   publicLayout.addChildren([loginRoute, mfaRoute, enrolRoute, forgotRoute, resetRoute]),
   consentLayout.addChildren([consentRoute]),
   embedLayout.addChildren([embedRequestRoute]),
+  waselRoot.addChildren([waselLoginRoute, waselMfaRoute, waselSetPasswordRoute, waselHomeRoute, waselProjectRoute]),
   appLayout.addChildren([
     homeRoute,
     sampleRoute,
@@ -1091,6 +1168,11 @@ const routeTree = rootRoute.addChildren([
     portfolioDashboardRoute,
     portfolioGanttRoute,
     portfolioGroupsRoute,
+    portfolioVendorsRoute,
+    portfolioVendorRoute,
+    portfolioCapacityRoute,
+    portfolioReviewsRoute,
+    portfolioReviewRoute,
     kpiDashboardRoute,
     kpiCardsRoute,
     kpiCardNewRoute,

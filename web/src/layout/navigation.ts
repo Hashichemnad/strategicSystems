@@ -3,6 +3,8 @@ import {
   BriefcaseBusiness,
   FolderKanban,
   FolderTree,
+  Handshake,
+  ClipboardCheck,
   ChartGantt,
   ChartPie,
   ListTodo,
@@ -41,6 +43,9 @@ export interface NavItem {
     | '/portfolio/dashboard'
     | '/portfolio/gantt'
     | '/portfolio/portfolios'
+    | '/portfolio/vendors'
+    | '/portfolio/capacity'
+    | '/portfolio/reviews'
     | '/ui-kit'
     | '/org/units'
     | '/org/chart'
@@ -69,6 +74,9 @@ export interface NavItem {
     | 'nav.portfolioDashboard'
     | 'nav.portfolioGantt'
     | 'nav.portfolioGroups'
+    | 'nav.portfolioVendors'
+    | 'nav.portfolioCapacity'
+    | 'nav.portfolioReviews'
     | 'nav.uiKit'
     | 'nav.units'
     | 'nav.chart'
@@ -206,6 +214,27 @@ export const navigation: readonly NavSection[] = [
         icon: FolderTree,
         system: 'portfolio',
         permissions: ['portfolio.project.read'],
+      },
+      {
+        to: '/portfolio/vendors',
+        labelKey: 'nav.portfolioVendors',
+        icon: Handshake,
+        system: 'portfolio',
+        permissions: ['portfolio.vendor.read'],
+      },
+      {
+        to: '/portfolio/capacity',
+        labelKey: 'nav.portfolioCapacity',
+        icon: UsersRound,
+        system: 'portfolio',
+        permissions: ['portfolio.capacity.read'],
+      },
+      {
+        to: '/portfolio/reviews',
+        labelKey: 'nav.portfolioReviews',
+        icon: ClipboardCheck,
+        system: 'portfolio',
+        permissions: ['portfolio.review.read'],
       },
       { to: '/kpi', labelKey: 'nav.kpi', icon: Gauge, system: 'kpi', permissions: ['kpi.card.read'] },
       {
