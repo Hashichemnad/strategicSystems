@@ -193,11 +193,11 @@ internal sealed class LibraryHandlers(BenchDbContext db, BenchReader reader, ILo
 
             comparator = found;
             db.Entry(comparator).Property(x => x.Version).OriginalValue = command.Version ?? 0;
-            comparator.Update(command.Values);
+            comparator.Update(command.Values!);
         }
         else
         {
-            comparator = Comparator.Create(command.Values);
+            comparator = Comparator.Create(command.Values!);
             db.Comparators.Add(comparator);
         }
 
