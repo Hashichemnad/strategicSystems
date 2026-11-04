@@ -276,8 +276,13 @@ public sealed class IpRegistryTests(IpFixture fixture) : IClassFixture<IpFixture
             new { filingDate = "2026-01-10", applicationNo = "A-1", version = record.Version }));
         var today = DateOnly.FromDateTime(fixture.Clock.UtcNow.UtcDateTime);
         record = await RequestWorld.OkAsync<IpRecordDto>(w.C(w.Office).PostAsJsonAsync($"{Ip}/records/{record.Id}/registration",
-            new { registrationNo = "R-1", registrationDate = today.AddYears(-1).ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture),
-                expiryDate = today.AddMonths(7).ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture), version = record.Version }));
+            new
+            {
+                registrationNo = "R-1",
+                registrationDate = today.AddYears(-1).ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture),
+                expiryDate = today.AddMonths(7).ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture),
+                version = record.Version
+            }));
 
         async Task<(int, int)> RunAsync()
         {

@@ -41,22 +41,22 @@ internal sealed class RequestCurrentStatus(RequestReader reader, RequestTypeCach
                 return new CurrentStatus("requests.currentStatus.returned", new Dictionary<string, BilingualText> { ["stage"] = stageName }, "warning",
                     "requests.currentStatus.requester", [], requester ? [new CurrentStatusAction("submit", "requests.actions.resubmit")] : [], request.Stage);
             case RequestStatuses.InReview:
-            {
-                var view = stage?.ProcessKey is { } key ? await engine.GetStatusViewAsync(key, request.Id, context.User, cancellationToken).ConfigureAwait(false) : null;
-                var step = new BilingualText(view?.Instance.CurrentStepNameAr ?? view?.Instance.CurrentStepNameEn, view?.Instance.CurrentStepNameEn ?? view?.Instance.CurrentStepNameAr);
-                IReadOnlyList<CurrentStatusAction> actions = view?.MyTaskId is { } task ? [new CurrentStatusAction("decide", "requests.actions.decide", "primary", task)] : [];
-                return new CurrentStatus("workflow.currentStatus.waitingStep", new Dictionary<string, BilingualText> { ["step"] = step }, "info",
-                    "workflow.currentStatus.approvers", view?.Approvers ?? [], actions, request.Stage);
-            }
+                {
+                    var view = stage?.ProcessKey is { } key ? await engine.GetStatusViewAsync(key, request.Id, context.User, cancellationToken).ConfigureAwait(false) : null;
+                    var step = new BilingualText(view?.Instance.CurrentStepNameAr ?? view?.Instance.CurrentStepNameEn, view?.Instance.CurrentStepNameEn ?? view?.Instance.CurrentStepNameAr);
+                    IReadOnlyList<CurrentStatusAction> actions = view?.MyTaskId is { } task ? [new CurrentStatusAction("decide", "requests.actions.decide", "primary", task)] : [];
+                    return new CurrentStatus("workflow.currentStatus.waitingStep", new Dictionary<string, BilingualText> { ["step"] = step }, "info",
+                        "workflow.currentStatus.approvers", view?.Approvers ?? [], actions, request.Stage);
+                }
 
             case RequestStatuses.InProgress when stage is not null:
-            {
-                var processors = await notifier.ProcessorUsersAsync(type, stage, cancellationToken).ConfigureAwait(false);
-                var mine = await reader.IsProcessorAsync(context.User, type, stage, cancellationToken).ConfigureAwait(false);
-                return new CurrentStatus("requests.currentStatus.processing", new Dictionary<string, BilingualText> { ["stage"] = stageName }, "info",
-                    "requests.currentStatus.processors", processors.Count > 0 ? [new PersonName(null, $"{processors.Count}", $"{processors.Count}")] : [],
-                    mine ? [new CurrentStatusAction("act", "requests.actions.act")] : [], request.Stage);
-            }
+                {
+                    var processors = await notifier.ProcessorUsersAsync(type, stage, cancellationToken).ConfigureAwait(false);
+                    var mine = await reader.IsProcessorAsync(context.User, type, stage, cancellationToken).ConfigureAwait(false);
+                    return new CurrentStatus("requests.currentStatus.processing", new Dictionary<string, BilingualText> { ["stage"] = stageName }, "info",
+                        "requests.currentStatus.processors", processors.Count > 0 ? [new PersonName(null, $"{processors.Count}", $"{processors.Count}")] : [],
+                        mine ? [new CurrentStatusAction("act", "requests.actions.act")] : [], request.Stage);
+                }
 
             case RequestStatuses.Completed:
                 return new CurrentStatus("requests.currentStatus.completed", new Dictionary<string, BilingualText>(), "success", null, [], [], request.Stage);

@@ -258,7 +258,9 @@ public class SecretValuesTests
         new FormField { Code = "eid", Type = FieldTypes.Secret, Format = SecretFormats.EmiratesId, LabelEn = "EID" },
         new FormField
         {
-            Code = "rows", Type = FieldTypes.Table, LabelEn = "Rows",
+            Code = "rows",
+            Type = FieldTypes.Table,
+            LabelEn = "Rows",
             Columns = [new FormField { Code = "eid", Type = FieldTypes.Secret, Format = SecretFormats.EmiratesId, LabelEn = "EID" }],
         });
 

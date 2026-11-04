@@ -172,11 +172,11 @@ internal sealed class RequestPdf(
                 return data.Flag("v") ? (ar ? "نعم" : "Yes") : (ar ? "لا" : "No");
             case FieldTypes.Picklist:
             case FieldTypes.MultiPicklist:
-            {
-                var codes = field.Type == FieldTypes.Picklist ? [data.Text("v")!] : data.Codes("v");
-                var labels = await lookups.GetValuesAsync(field.LookupType ?? string.Empty, true, ct).ConfigureAwait(false);
-                return string.Join(", ", codes.Select(c => labels.FirstOrDefault(l => l.Code == c) is { } l ? (ar ? l.LabelAr ?? l.LabelEn : l.LabelEn ?? l.LabelAr) ?? c : c));
-            }
+                {
+                    var codes = field.Type == FieldTypes.Picklist ? [data.Text("v")!] : data.Codes("v");
+                    var labels = await lookups.GetValuesAsync(field.LookupType ?? string.Empty, true, ct).ConfigureAwait(false);
+                    return string.Join(", ", codes.Select(c => labels.FirstOrDefault(l => l.Code == c) is { } l ? (ar ? l.LabelAr ?? l.LabelEn : l.LabelEn ?? l.LabelAr) ?? c : c));
+                }
 
             case FieldTypes.Employee:
                 return data.Id("v") is { } employee && await employees.GetAsync(employee, ct).ConfigureAwait(false) is { } emp ? (ar ? emp.NameAr ?? emp.NameEn : emp.NameEn ?? emp.NameAr) : null;

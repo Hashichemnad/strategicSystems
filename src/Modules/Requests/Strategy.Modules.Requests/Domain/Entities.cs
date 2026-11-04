@@ -245,17 +245,17 @@ public sealed class Request : AuditableEntity
 
     public static Request Create(Guid typeId, string typeCode, string systemCode, int schemaVersion, string number, Guid? userId, Guid? employeeId, Guid? unitId,
         string source) => new()
-    {
-        Number = number,
-        TypeId = typeId,
-        TypeCode = typeCode,
-        SystemCode = systemCode,
-        SchemaVersion = schemaVersion,
-        RequesterUserId = userId,
-        RequesterEmployeeId = employeeId,
-        UnitId = unitId,
-        Source = source,
-    };
+        {
+            Number = number,
+            TypeId = typeId,
+            TypeCode = typeCode,
+            SystemCode = systemCode,
+            SchemaVersion = schemaVersion,
+            RequesterUserId = userId,
+            RequesterEmployeeId = employeeId,
+            UnitId = unitId,
+            Source = source,
+        };
 
     public JsonObject Data => RequestJson.Object(DataJson);
 
@@ -364,18 +364,18 @@ public sealed class RequestEvent : Entity
 
     public static RequestEvent Create(Guid requestId, string action, string? fromStatus, string? toStatus, string? fromStage, string? toStage, Guid? actor,
         string? actorName, Guid? onBehalfOf, string? comment, JsonObject? data, DateTimeOffset at) => new()
-    {
-        RequestId = requestId,
-        Action = action,
-        FromStatus = fromStatus,
-        ToStatus = toStatus,
-        FromStage = fromStage,
-        ToStage = toStage,
-        ActorUserId = actor,
-        ActorName = actorName,
-        OnBehalfOfId = onBehalfOf,
-        Comment = string.IsNullOrWhiteSpace(comment) ? null : comment.Trim(),
-        DataJson = data is null || data.Count == 0 ? null : data.ToJsonString(RequestJson.Options),
-        At = at,
-    };
+        {
+            RequestId = requestId,
+            Action = action,
+            FromStatus = fromStatus,
+            ToStatus = toStatus,
+            FromStage = fromStage,
+            ToStage = toStage,
+            ActorUserId = actor,
+            ActorName = actorName,
+            OnBehalfOfId = onBehalfOf,
+            Comment = string.IsNullOrWhiteSpace(comment) ? null : comment.Trim(),
+            DataJson = data is null || data.Count == 0 ? null : data.ToJsonString(RequestJson.Options),
+            At = at,
+        };
 }

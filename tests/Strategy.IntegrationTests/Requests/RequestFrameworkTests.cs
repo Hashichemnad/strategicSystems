@@ -138,7 +138,10 @@ public sealed class RequestFrameworkTests(RequestsFixture fixture) : IClassFixtu
             version = draft.Version,
             data = new
             {
-                courseName = "Leadership", cost = 2500.5, startDate = "2030-03-01", external = true,
+                courseName = "Leadership",
+                cost = 2500.5,
+                startDate = "2030-03-01",
+                external = true,
                 attendees = new object[] { new { attendee = w.EmployeeA.EmployeeId, days = 3 } },
             },
         }));
@@ -153,7 +156,11 @@ public sealed class RequestFrameworkTests(RequestsFixture fixture) : IClassFixtu
             version = saved.Version,
             data = new
             {
-                courseName = "Leadership", cost = 2500.5, startDate = "2030-03-01", external = true, provider = "Academy",
+                courseName = "Leadership",
+                cost = 2500.5,
+                startDate = "2030-03-01",
+                external = true,
+                provider = "Academy",
                 attendees = new object[] { new { attendee = w.EmployeeA.EmployeeId, days = 3 } },
             },
         }));

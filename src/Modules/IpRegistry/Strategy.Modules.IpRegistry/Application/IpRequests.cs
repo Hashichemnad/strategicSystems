@@ -202,23 +202,23 @@ internal sealed class IpRegistrationHandler(IpDbContext db, INumberingService nu
                 return new RequestTransitionOutcome(IpRecord.EntityType, record.Id);
 
             case TransitionKinds.Approved when record is not null:
-            {
-                var values = transition.ActionValues;
-                var rule = (await settings.GetAsync<IpSettings>(cancellationToken).ConfigureAwait(false)).RuleFor(values.Text("protectionType"));
-                record.Classify(values.Text("propertyType")!, values.Text("protectionType")!, values.Text("notes"), rule.InternalOnly);
-                var sort = 0;
-                foreach (var row in data.Rows("contributors"))
                 {
-                    var contributor = Contributor.Create(record.Id, row.Id("employee"), row.Text("externalName"), row.Text("externalOrganisation"), row.Text("role"),
-                        (row.Number("share") ?? 0) / 100m, sort++);
-                    var (encrypted, last) = ids.Protect(row.Text("emiratesId"));
-                    contributor.SetEmiratesId(encrypted, last);
-                    db.Contributors.Add(contributor);
-                }
+                    var values = transition.ActionValues;
+                    var rule = (await settings.GetAsync<IpSettings>(cancellationToken).ConfigureAwait(false)).RuleFor(values.Text("protectionType"));
+                    record.Classify(values.Text("propertyType")!, values.Text("protectionType")!, values.Text("notes"), rule.InternalOnly);
+                    var sort = 0;
+                    foreach (var row in data.Rows("contributors"))
+                    {
+                        var contributor = Contributor.Create(record.Id, row.Id("employee"), row.Text("externalName"), row.Text("externalOrganisation"), row.Text("role"),
+                            (row.Number("share") ?? 0) / 100m, sort++);
+                        var (encrypted, last) = ids.Protect(row.Text("emiratesId"));
+                        contributor.SetEmiratesId(encrypted, last);
+                        db.Contributors.Add(contributor);
+                    }
 
-                await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-                return new RequestTransitionOutcome(Outcome: "approved");
-            }
+                    await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+                    return new RequestTransitionOutcome(Outcome: "approved");
+                }
 
             case TransitionKinds.Returned when record is not null:
                 record.SetStatus(IpStatuses.Returned);

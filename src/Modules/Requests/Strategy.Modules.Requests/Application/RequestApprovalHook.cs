@@ -50,52 +50,52 @@ internal sealed class RequestApprovalHook(
                 return Result.Success();
 
             case ApprovalEventKinds.Approved:
-            {
-                var stored = request.ProcessData[stage.Code] as JsonObject ?? [];
-                var plain = secrets.Plain(form, stored);
-                if (form.AllFields.Any(f => f.Required && FormDataValidator.IsEmpty(plain[f.Code])))
                 {
-                    // The generic approval screens cannot skip the approve form (classification, types…).
-                    return Error.Rule("requests.approveForm.required", "requests.errors.approveFormRequired");
-                }
+                    var stored = request.ProcessData[stage.Code] as JsonObject ?? [];
+                    var plain = secrets.Plain(form, stored);
+                    if (form.AllFields.Any(f => f.Required && FormDataValidator.IsEmpty(plain[f.Code])))
+                    {
+                        // The generic approval screens cannot skip the approve form (classification, types…).
+                        return Error.Rule("requests.approveForm.required", "requests.errors.approveFormRequired");
+                    }
 
-                var next = RequestLifecycle.After(type.Stages, stage.Code);
-                var handled = await engine.NotifyHandlerAsync(request, type, TransitionKinds.Approved, stage.Code, next?.Code, null, plain, approvalEvent.Comment,
-                    cancellationToken).ConfigureAwait(false);
-                if (handled.IsFailure)
-                {
-                    return handled.Error;
-                }
+                    var next = RequestLifecycle.After(type.Stages, stage.Code);
+                    var handled = await engine.NotifyHandlerAsync(request, type, TransitionKinds.Approved, stage.Code, next?.Code, null, plain, approvalEvent.Comment,
+                        cancellationToken).ConfigureAwait(false);
+                    if (handled.IsFailure)
+                    {
+                        return handled.Error;
+                    }
 
-                var target = handled.Value.NextStage is { } code ? type.Stage(code) : next;
-                var entered = await engine.EnterAsync(request, type, target, null, cancellationToken).ConfigureAwait(false);
-                if (entered.IsFailure)
-                {
-                    return entered.Error;
-                }
+                    var target = handled.Value.NextStage is { } code ? type.Stage(code) : next;
+                    var entered = await engine.EnterAsync(request, type, target, null, cancellationToken).ConfigureAwait(false);
+                    if (entered.IsFailure)
+                    {
+                        return entered.Error;
+                    }
 
-                await engine.AddEventAsync(request, "approved", fromStatus, fromStage, approvalEvent.Comment, FormSecrets.Masked(form, stored), cancellationToken)
-                    .ConfigureAwait(false);
-                break;
-            }
+                    await engine.AddEventAsync(request, "approved", fromStatus, fromStage, approvalEvent.Comment, FormSecrets.Masked(form, stored), cancellationToken)
+                        .ConfigureAwait(false);
+                    break;
+                }
 
             case ApprovalEventKinds.Rejected:
             case ApprovalEventKinds.Returned:
-            {
-                var rejected = approvalEvent.Kind == ApprovalEventKinds.Rejected;
-                request.MoveTo(rejected ? RequestStatuses.Rejected : RequestStatuses.Returned, stage.Code, clock.UtcNow);
-                var handled = await engine.NotifyHandlerAsync(request, type, rejected ? TransitionKinds.Rejected : TransitionKinds.Returned, stage.Code, null, null, null,
-                    approvalEvent.Comment, cancellationToken).ConfigureAwait(false);
-                if (handled.IsFailure)
                 {
-                    return handled.Error;
-                }
+                    var rejected = approvalEvent.Kind == ApprovalEventKinds.Rejected;
+                    request.MoveTo(rejected ? RequestStatuses.Rejected : RequestStatuses.Returned, stage.Code, clock.UtcNow);
+                    var handled = await engine.NotifyHandlerAsync(request, type, rejected ? TransitionKinds.Rejected : TransitionKinds.Returned, stage.Code, null, null, null,
+                        approvalEvent.Comment, cancellationToken).ConfigureAwait(false);
+                    if (handled.IsFailure)
+                    {
+                        return handled.Error;
+                    }
 
-                await engine.AddEventAsync(request, rejected ? "rejected" : "returned", fromStatus, fromStage, approvalEvent.Comment, null, cancellationToken)
-                    .ConfigureAwait(false);
-                // The approval engine tells the submitter (workflow.rejected / workflow.returned).
-                break;
-            }
+                    await engine.AddEventAsync(request, rejected ? "rejected" : "returned", fromStatus, fromStage, approvalEvent.Comment, null, cancellationToken)
+                        .ConfigureAwait(false);
+                    // The approval engine tells the submitter (workflow.rejected / workflow.returned).
+                    break;
+                }
         }
 
         await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);

@@ -356,18 +356,18 @@ internal sealed class RequestCommands(
                 await engine.NotifyRequesterAsync(RequestNotifications.Rejected, request, type, input.Comment, ct).ConfigureAwait(false);
                 break;
             default:
-            {
-                var next = handled.Value.NextStage ?? target;
-                var entered = await engine.EnterAsync(request, type, next is null ? null : type.Stage(next), input.Comment, ct).ConfigureAwait(false);
-                if (entered.IsFailure)
                 {
-                    return entered.Error;
-                }
+                    var next = handled.Value.NextStage ?? target;
+                    var entered = await engine.EnterAsync(request, type, next is null ? null : type.Stage(next), input.Comment, ct).ConfigureAwait(false);
+                    if (entered.IsFailure)
+                    {
+                        return entered.Error;
+                    }
 
-                await engine.AddEventAsync(request, action.Code, fromStatus, fromStage, input.Comment, FormSecrets.Masked(stageForm, secrets.Stored(stageForm, values)), ct)
-                    .ConfigureAwait(false);
-                break;
-            }
+                    await engine.AddEventAsync(request, action.Code, fromStatus, fromStage, input.Comment, FormSecrets.Masked(stageForm, secrets.Stored(stageForm, values)), ct)
+                        .ConfigureAwait(false);
+                    break;
+                }
         }
 
         await db.SaveChangesAsync(ct).ConfigureAwait(false);

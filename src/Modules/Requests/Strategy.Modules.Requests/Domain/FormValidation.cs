@@ -218,199 +218,199 @@ public static partial class FormDataValidator
             case FieldTypes.Text:
             case FieldTypes.Textarea:
             case FieldTypes.RichText:
-            {
-                if (StringOf(raw) is not { } text)
                 {
-                    return Fail(path, "requests.errors.type", errors);
-                }
+                    if (StringOf(raw) is not { } text)
+                    {
+                        return Fail(path, "requests.errors.type", errors);
+                    }
 
-                var max = field.MaxLength ?? (field.Type == FieldTypes.Text ? TextDefault : field.Type == FieldTypes.Textarea ? TextareaDefault : RichTextDefault);
-                if (text.Trim().Length > max)
-                {
-                    errors.Add(FormSchemaValidator.Error(path, "validation.maximumLength", new Dictionary<string, object?> { ["maxLength"] = max }));
-                    return null;
-                }
+                    var max = field.MaxLength ?? (field.Type == FieldTypes.Text ? TextDefault : field.Type == FieldTypes.Textarea ? TextareaDefault : RichTextDefault);
+                    if (text.Trim().Length > max)
+                    {
+                        errors.Add(FormSchemaValidator.Error(path, "validation.maximumLength", new Dictionary<string, object?> { ["maxLength"] = max }));
+                        return null;
+                    }
 
-                return JsonValue.Create(text.Trim());
-            }
+                    return JsonValue.Create(text.Trim());
+                }
 
             case FieldTypes.Secret:
-            {
-                if (StringOf(raw) is not { } secret || secret.Trim().Length > SecretMax)
                 {
-                    return Fail(path, "requests.errors.type", errors);
-                }
+                    if (StringOf(raw) is not { } secret || secret.Trim().Length > SecretMax)
+                    {
+                        return Fail(path, "requests.errors.type", errors);
+                    }
 
-                secret = secret.Trim();
-                if (field.Format == SecretFormats.EmiratesId && !EmiratesIdPattern().IsMatch(secret))
-                {
-                    return Fail(path, "requests.errors.emiratesId", errors);
-                }
+                    secret = secret.Trim();
+                    if (field.Format == SecretFormats.EmiratesId && !EmiratesIdPattern().IsMatch(secret))
+                    {
+                        return Fail(path, "requests.errors.emiratesId", errors);
+                    }
 
-                return JsonValue.Create(secret);
-            }
+                    return JsonValue.Create(secret);
+                }
 
             case FieldTypes.Number:
             case FieldTypes.Currency:
-            {
-                if (NumberOf(raw) is not { } number)
                 {
-                    return Fail(path, "requests.errors.number", errors);
-                }
+                    if (NumberOf(raw) is not { } number)
+                    {
+                        return Fail(path, "requests.errors.number", errors);
+                    }
 
-                var decimals = field.Decimals ?? (field.Type == FieldTypes.Currency ? 2 : 4);
-                if (decimal.Round(number, decimals) != number)
-                {
-                    return Fail(path, "requests.errors.decimals", errors, new Dictionary<string, object?> { ["decimals"] = decimals });
-                }
+                    var decimals = field.Decimals ?? (field.Type == FieldTypes.Currency ? 2 : 4);
+                    if (decimal.Round(number, decimals) != number)
+                    {
+                        return Fail(path, "requests.errors.decimals", errors, new Dictionary<string, object?> { ["decimals"] = decimals });
+                    }
 
-                if ((field.Min is { } min && number < min) || (field.Max is { } max && number > max))
-                {
-                    return Fail(path, "requests.errors.range", errors, new Dictionary<string, object?> { ["min"] = field.Min, ["max"] = field.Max });
-                }
+                    if ((field.Min is { } min && number < min) || (field.Max is { } max && number > max))
+                    {
+                        return Fail(path, "requests.errors.range", errors, new Dictionary<string, object?> { ["min"] = field.Min, ["max"] = field.Max });
+                    }
 
-                return JsonValue.Create(number);
-            }
+                    return JsonValue.Create(number);
+                }
 
             case FieldTypes.Date:
-            {
-                if (StringOf(raw) is not { } text || !DateOnly.TryParseExact(text, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date))
                 {
-                    return Fail(path, "requests.errors.date", errors);
-                }
+                    if (StringOf(raw) is not { } text || !DateOnly.TryParseExact(text, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date))
+                    {
+                        return Fail(path, "requests.errors.date", errors);
+                    }
 
-                return JsonValue.Create(date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
-            }
+                    return JsonValue.Create(date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture));
+                }
 
             case FieldTypes.Checkbox:
-            {
-                if (raw is not JsonValue v || v.GetValueKind() is not (JsonValueKind.True or JsonValueKind.False))
                 {
-                    return Fail(path, "requests.errors.type", errors);
-                }
+                    if (raw is not JsonValue v || v.GetValueKind() is not (JsonValueKind.True or JsonValueKind.False))
+                    {
+                        return Fail(path, "requests.errors.type", errors);
+                    }
 
-                var flag = v.GetValue<bool>();
-                if (required && !flag)
-                {
-                    return Fail(path, "requests.errors.mustConfirm", errors);
-                }
+                    var flag = v.GetValue<bool>();
+                    if (required && !flag)
+                    {
+                        return Fail(path, "requests.errors.mustConfirm", errors);
+                    }
 
-                return JsonValue.Create(flag);
-            }
+                    return JsonValue.Create(flag);
+                }
 
             case FieldTypes.Picklist:
-            {
-                if (StringOf(raw) is not { } code || !await resolver.IsActiveLookupAsync(field.LookupType ?? string.Empty, code, ct).ConfigureAwait(false))
                 {
-                    return Fail(path, "validation.unknownCode", errors);
-                }
-
-                return JsonValue.Create(code);
-            }
-
-            case FieldTypes.MultiPicklist:
-            {
-                if (raw is not JsonArray array)
-                {
-                    return Fail(path, "requests.errors.type", errors);
-                }
-
-                var codes = new JsonArray();
-                foreach (var item in array)
-                {
-                    if (StringOf(item) is not { } code || !await resolver.IsActiveLookupAsync(field.LookupType ?? string.Empty, code, ct).ConfigureAwait(false))
+                    if (StringOf(raw) is not { } code || !await resolver.IsActiveLookupAsync(field.LookupType ?? string.Empty, code, ct).ConfigureAwait(false))
                     {
                         return Fail(path, "validation.unknownCode", errors);
                     }
 
-                    if (!codes.Any(c => c!.GetValue<string>() == code))
-                    {
-                        codes.Add(code);
-                    }
+                    return JsonValue.Create(code);
                 }
 
-                if (required && codes.Count == 0)
+            case FieldTypes.MultiPicklist:
                 {
-                    return Fail(path, "validation.notEmpty", errors);
-                }
+                    if (raw is not JsonArray array)
+                    {
+                        return Fail(path, "requests.errors.type", errors);
+                    }
 
-                return codes;
-            }
+                    var codes = new JsonArray();
+                    foreach (var item in array)
+                    {
+                        if (StringOf(item) is not { } code || !await resolver.IsActiveLookupAsync(field.LookupType ?? string.Empty, code, ct).ConfigureAwait(false))
+                        {
+                            return Fail(path, "validation.unknownCode", errors);
+                        }
+
+                        if (!codes.Any(c => c!.GetValue<string>() == code))
+                        {
+                            codes.Add(code);
+                        }
+                    }
+
+                    if (required && codes.Count == 0)
+                    {
+                        return Fail(path, "validation.notEmpty", errors);
+                    }
+
+                    return codes;
+                }
 
             case FieldTypes.Employee:
             case FieldTypes.Unit:
-            {
-                if (!Guid.TryParse(StringOf(raw), out var id)
-                    || !(field.Type == FieldTypes.Employee
-                        ? await resolver.EmployeeExistsAsync(id, ct).ConfigureAwait(false)
-                        : await resolver.UnitExistsAsync(id, ct).ConfigureAwait(false)))
                 {
-                    return Fail(path, "validation.unknownCode", errors);
-                }
+                    if (!Guid.TryParse(StringOf(raw), out var id)
+                        || !(field.Type == FieldTypes.Employee
+                            ? await resolver.EmployeeExistsAsync(id, ct).ConfigureAwait(false)
+                            : await resolver.UnitExistsAsync(id, ct).ConfigureAwait(false)))
+                    {
+                        return Fail(path, "validation.unknownCode", errors);
+                    }
 
-                return JsonValue.Create(id.ToString("D"));
-            }
+                    return JsonValue.Create(id.ToString("D"));
+                }
 
             case FieldTypes.Record:
-            {
-                if (!Guid.TryParse(StringOf(raw), out var id) || !await resolver.CanReadRecordAsync(field.TargetType ?? string.Empty, id, ct).ConfigureAwait(false))
                 {
-                    return Fail(path, "requests.errors.record", errors);
-                }
+                    if (!Guid.TryParse(StringOf(raw), out var id) || !await resolver.CanReadRecordAsync(field.TargetType ?? string.Empty, id, ct).ConfigureAwait(false))
+                    {
+                        return Fail(path, "requests.errors.record", errors);
+                    }
 
-                return JsonValue.Create(id.ToString("D"));
-            }
+                    return JsonValue.Create(id.ToString("D"));
+                }
 
             case FieldTypes.File:
-            {
-                var items = raw is JsonArray list ? list.ToList() : [raw];
-                if (!field.Multiple && items.Count > 1)
                 {
-                    return Fail(path, "requests.errors.oneFile", errors);
-                }
-
-                var ids = new JsonArray();
-                foreach (var item in items)
-                {
-                    if (!Guid.TryParse(StringOf(item), out var id) || !await resolver.IsRequestFileAsync(id, ct).ConfigureAwait(false))
+                    var items = raw is JsonArray list ? list.ToList() : [raw];
+                    if (!field.Multiple && items.Count > 1)
                     {
-                        return Fail(path, "requests.errors.file", errors);
+                        return Fail(path, "requests.errors.oneFile", errors);
                     }
 
-                    ids.Add(id.ToString("D"));
-                }
+                    var ids = new JsonArray();
+                    foreach (var item in items)
+                    {
+                        if (!Guid.TryParse(StringOf(item), out var id) || !await resolver.IsRequestFileAsync(id, ct).ConfigureAwait(false))
+                        {
+                            return Fail(path, "requests.errors.file", errors);
+                        }
 
-                return field.Multiple ? ids : JsonValue.Create(ids[0]!.GetValue<string>());
-            }
+                        ids.Add(id.ToString("D"));
+                    }
+
+                    return field.Multiple ? ids : JsonValue.Create(ids[0]!.GetValue<string>());
+                }
 
             case FieldTypes.Table:
-            {
-                if (raw is not JsonArray rows)
                 {
-                    return Fail(path, "requests.errors.type", errors);
-                }
-
-                if ((required && rows.Count < Math.Max(1, field.MinRows ?? 1)) || (field.MaxRows is { } maxRows && rows.Count > maxRows))
-                {
-                    return Fail(path, "requests.errors.rows", errors, new Dictionary<string, object?> { ["min"] = field.MinRows ?? 1, ["max"] = field.MaxRows });
-                }
-
-                var columns = new FormSchema { Sections = [new FormSection { Code = "row", Fields = field.Columns ?? [] }] };
-                var output = new JsonArray();
-                for (var i = 0; i < rows.Count; i++)
-                {
-                    if (rows[i] is not JsonObject row)
+                    if (raw is not JsonArray rows)
                     {
-                        return Fail($"{path}[{i}]", "requests.errors.type", errors);
+                        return Fail(path, "requests.errors.type", errors);
                     }
 
-                    var result = await ValidateAsync(columns, row, submitting, resolver, ct, $"{path}[{i}]").ConfigureAwait(false);
-                    errors.AddRange(result.Errors);
-                    output.Add(result.Values);
-                }
+                    if ((required && rows.Count < Math.Max(1, field.MinRows ?? 1)) || (field.MaxRows is { } maxRows && rows.Count > maxRows))
+                    {
+                        return Fail(path, "requests.errors.rows", errors, new Dictionary<string, object?> { ["min"] = field.MinRows ?? 1, ["max"] = field.MaxRows });
+                    }
 
-                return output;
-            }
+                    var columns = new FormSchema { Sections = [new FormSection { Code = "row", Fields = field.Columns ?? [] }] };
+                    var output = new JsonArray();
+                    for (var i = 0; i < rows.Count; i++)
+                    {
+                        if (rows[i] is not JsonObject row)
+                        {
+                            return Fail($"{path}[{i}]", "requests.errors.type", errors);
+                        }
+
+                        var result = await ValidateAsync(columns, row, submitting, resolver, ct, $"{path}[{i}]").ConfigureAwait(false);
+                        errors.AddRange(result.Errors);
+                        output.Add(result.Values);
+                    }
+
+                    return output;
+                }
 
             default:
                 return Fail(path, "requests.errors.type", errors);
