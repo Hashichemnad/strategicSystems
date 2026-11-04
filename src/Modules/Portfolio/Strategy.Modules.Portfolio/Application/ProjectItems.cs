@@ -32,7 +32,7 @@ public sealed record ChallengeDto(
 
 public sealed record LessonDto(Guid Id, string? Stage, string? Lesson, string? TypeCode, string? Recommendation, string Status, uint Version);
 
-public sealed record MeetingDto(Guid Id, DateTimeOffset MeetingAt, string? Title, string? Notes, string Status, uint Version);
+public sealed record ProjectMeetingDto(Guid Id, DateTimeOffset MeetingAt, string? Title, string? Notes, string Status, uint Version);
 
 public sealed record ContractDto(
     Guid Id, string? Name, string? Number, string? Supplier, DateOnly? IssueDate, decimal? Amount, string ContractStatus, string Status, uint Version);
@@ -43,7 +43,7 @@ public sealed record RiskInput(ProjectRiskValues Values, uint? Version = null);
 
 public sealed record StakeholderInput(StakeholderValues Values, uint? Version = null);
 
-public sealed record MemberInput(TeamMemberValues Values, uint? Version = null);
+public sealed record ProposedMemberInput(TeamMemberValues Values, uint? Version = null);
 
 public sealed record PlanningItemInput(PlanningItemValues Values, uint? Version = null);
 
@@ -51,7 +51,7 @@ public sealed record ChallengeInput(ChallengeValues Values, uint? Version = null
 
 public sealed record LessonInput(LessonValues Values, uint? Version = null);
 
-public sealed record MeetingInput(MeetingValues Values, uint? Version = null);
+public sealed record ProjectMeetingInput(MeetingValues Values, uint? Version = null);
 
 public sealed record ContractInput(ContractValues Values, uint? Version = null);
 
@@ -122,8 +122,8 @@ internal sealed class ProjectItems(
     public async Task<Result<IReadOnlyList<LessonDto>>> LessonsAsync(Guid projectId, CancellationToken ct) =>
         await ListAsync<Lesson, LessonDto>(projectId, rows => Task.FromResult<IReadOnlyList<LessonDto>>(rows.Select(LessonDto).ToList()), ct).ConfigureAwait(false);
 
-    public async Task<Result<IReadOnlyList<MeetingDto>>> MeetingsAsync(Guid projectId, CancellationToken ct) =>
-        await ListAsync<Meeting, MeetingDto>(projectId, rows => Task.FromResult<IReadOnlyList<MeetingDto>>(rows.OrderByDescending(m => m.MeetingAt).Select(MeetingDto).ToList()), ct)
+    public async Task<Result<IReadOnlyList<ProjectMeetingDto>>> MeetingsAsync(Guid projectId, CancellationToken ct) =>
+        await ListAsync<Meeting, ProjectMeetingDto>(projectId, rows => Task.FromResult<IReadOnlyList<ProjectMeetingDto>>(rows.OrderByDescending(m => m.MeetingAt).Select(ProjectMeetingDto).ToList()), ct)
             .ConfigureAwait(false);
 
     public async Task<Result<IReadOnlyList<ContractDto>>> ContractsAsync(Guid projectId, CancellationToken ct) =>
@@ -223,7 +223,7 @@ internal sealed class ProjectItems(
             s => Task.FromResult(StakeholderDto(s)), ct).ConfigureAwait(false);
     }
 
-    public async Task<Result<ProposedMemberDto>> SaveMemberAsync(Guid projectId, Guid? itemId, MemberInput input, CancellationToken ct)
+    public async Task<Result<ProposedMemberDto>> SaveMemberAsync(Guid projectId, Guid? itemId, ProposedMemberInput input, CancellationToken ct)
     {
         var v = input.Values;
         var errors = new List<FieldError>();
@@ -298,7 +298,7 @@ internal sealed class ProjectItems(
             l => Task.FromResult(LessonDto(l)), ct).ConfigureAwait(false);
     }
 
-    public async Task<Result<MeetingDto>> SaveMeetingAsync(Guid projectId, Guid? itemId, MeetingInput input, CancellationToken ct)
+    public async Task<Result<ProjectMeetingDto>> SaveMeetingAsync(Guid projectId, Guid? itemId, ProjectMeetingInput input, CancellationToken ct)
     {
         var v = input.Values with { Notes = RichText.Sanitise(input.Values.Notes) };
         var errors = new List<FieldError>();
@@ -308,8 +308,8 @@ internal sealed class ProjectItems(
         }
 
         Lengths(errors, ("title", v.Title, RequestRules.NameMaxLength), ("notes", v.Notes, 20000));
-        return await SaveAsync<Meeting, MeetingDto>(projectId, itemId, input.Version, ItemRule.Contribution, errors, p => Meeting.Create(p.Id, v), m => m.Edit(v),
-            m => Task.FromResult(MeetingDto(m)), ct).ConfigureAwait(false);
+        return await SaveAsync<Meeting, ProjectMeetingDto>(projectId, itemId, input.Version, ItemRule.Contribution, errors, p => Meeting.Create(p.Id, v), m => m.Edit(v),
+            m => Task.FromResult(ProjectMeetingDto(m)), ct).ConfigureAwait(false);
     }
 
     public async Task<Result<ContractDto>> SaveContractAsync(Guid projectId, Guid? itemId, ContractInput input, CancellationToken ct)
@@ -545,7 +545,7 @@ internal sealed class ProjectItems(
 
     private static LessonDto LessonDto(Lesson l) => new(l.Id, l.Stage, l.Text, l.TypeCode, l.Recommendation, l.Status, l.Version);
 
-    private static MeetingDto MeetingDto(Meeting m) => new(m.Id, m.MeetingAt, m.Title, m.Notes, m.Status, m.Version);
+    private static ProjectMeetingDto ProjectMeetingDto(Meeting m) => new(m.Id, m.MeetingAt, m.Title, m.Notes, m.Status, m.Version);
 
     private static ContractDto ContractDto(Contract c) => new(c.Id, c.Name, c.Number, c.Supplier, c.IssueDate, c.Amount, c.ContractStatus, c.Status, c.Version);
 

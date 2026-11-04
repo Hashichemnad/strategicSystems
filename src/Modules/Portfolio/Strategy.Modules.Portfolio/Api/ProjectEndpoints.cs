@@ -13,7 +13,7 @@ using Strategy.Platform.Kernel.Results;
 
 namespace Strategy.Modules.Portfolio.Api;
 
-public sealed record KpiCardOptionDto(Guid Id, string Code, string? NameAr, string? NameEn, string UnitCode, string Direction, string Link);
+public sealed record PortfolioKpiCardDto(Guid Id, string Code, string? NameAr, string? NameEn, string UnitCode, string Direction, string Link);
 
 /// <summary>Phase 9 project endpoints (docs/design/portfolio.md §26). Endpoints declare the minimum permission; services check the record.</summary>
 internal static class ProjectEndpoints
@@ -81,7 +81,7 @@ internal static class ProjectEndpoints
             {
                 var catalog = services.GetService<IKpiCatalog>();
                 var cards = catalog is null ? [] : await catalog.SearchAsync(search, context.User, 20, ct);
-                return Result.Success<IReadOnlyList<KpiCardOptionDto>>(cards.Select(c => new KpiCardOptionDto(c.Id, c.Code, c.NameAr, c.NameEn, c.UnitCode, c.Direction, c.Link))
+                return Result.Success<IReadOnlyList<PortfolioKpiCardDto>>(cards.Select(c => new PortfolioKpiCardDto(c.Id, c.Code, c.NameAr, c.NameEn, c.UnitCode, c.Direction, c.Link))
                     .ToList()).ToOk();
             })
             .WithName("SearchPortfolioKpiCards").RequirePermission(PortfolioPermissions.ProjectRead);
@@ -116,9 +116,9 @@ internal static class ProjectEndpoints
 
         projects.MapGet("/{id:guid}/members", async (Guid id, ProjectItems s, CancellationToken ct) => (await s.MembersAsync(id, ct)).ToOk())
             .WithName("ListProjectMembers").RequirePermission(PortfolioPermissions.ProjectRead);
-        projects.MapPost("/{id:guid}/members", async (Guid id, MemberInput b, ProjectItems s, CancellationToken ct) => (await s.SaveMemberAsync(id, null, b, ct)).ToOk())
+        projects.MapPost("/{id:guid}/members", async (Guid id, ProposedMemberInput b, ProjectItems s, CancellationToken ct) => (await s.SaveMemberAsync(id, null, b, ct)).ToOk())
             .WithName("CreateProjectMember").RequirePermission(PortfolioPermissions.ProjectRead);
-        projects.MapPut("/{id:guid}/members/{itemId:guid}", async (Guid id, Guid itemId, MemberInput b, ProjectItems s, CancellationToken ct) =>
+        projects.MapPut("/{id:guid}/members/{itemId:guid}", async (Guid id, Guid itemId, ProposedMemberInput b, ProjectItems s, CancellationToken ct) =>
                 (await s.SaveMemberAsync(id, itemId, b, ct)).ToOk())
             .WithName("UpdateProjectMember").RequirePermission(PortfolioPermissions.ProjectRead);
 
@@ -150,9 +150,9 @@ internal static class ProjectEndpoints
 
         projects.MapGet("/{id:guid}/meetings", async (Guid id, ProjectItems s, CancellationToken ct) => (await s.MeetingsAsync(id, ct)).ToOk())
             .WithName("ListProjectMeetings").RequirePermission(PortfolioPermissions.ProjectRead);
-        projects.MapPost("/{id:guid}/meetings", async (Guid id, MeetingInput b, ProjectItems s, CancellationToken ct) => (await s.SaveMeetingAsync(id, null, b, ct)).ToOk())
+        projects.MapPost("/{id:guid}/meetings", async (Guid id, ProjectMeetingInput b, ProjectItems s, CancellationToken ct) => (await s.SaveMeetingAsync(id, null, b, ct)).ToOk())
             .WithName("CreateProjectMeeting").RequirePermission(PortfolioPermissions.ProjectRead);
-        projects.MapPut("/{id:guid}/meetings/{itemId:guid}", async (Guid id, Guid itemId, MeetingInput b, ProjectItems s, CancellationToken ct) =>
+        projects.MapPut("/{id:guid}/meetings/{itemId:guid}", async (Guid id, Guid itemId, ProjectMeetingInput b, ProjectItems s, CancellationToken ct) =>
                 (await s.SaveMeetingAsync(id, itemId, b, ct)).ToOk())
             .WithName("UpdateProjectMeeting").RequirePermission(PortfolioPermissions.ProjectRead);
 
