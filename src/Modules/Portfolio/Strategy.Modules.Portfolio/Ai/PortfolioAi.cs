@@ -97,7 +97,7 @@ public static class RequestAiForm
 }
 
 /// <summary>Active lookup values as choices and one 1–5 score field per active criterion (ADR 0050).</summary>
-internal sealed class RequestFormChoices(ILookupService lookups, ISettingsStore settings) : IAiFormChoiceSource
+internal sealed class RequestFormChoices(ILookupService lookups, ISettingsStore settings, StrategicObjectives objectives) : IAiFormChoiceSource
 {
     public string FormKey => RequestAiForm.Key;
 
@@ -112,7 +112,7 @@ internal sealed class RequestFormChoices(ILookupService lookups, ISettingsStore 
 
         return new Dictionary<string, AiFieldChoices>
         {
-            ["strategicObjectiveCode"] = await Of(PortfolioPermissions.ObjectiveLookup).ConfigureAwait(false),
+            ["strategicObjectiveCode"] = await objectives.ChoicesAsync(cancellationToken).ConfigureAwait(false),
             ["suggestionSourceCode"] = await Of(PortfolioPermissions.SourceLookup).ConfigureAwait(false),
             ["programTypeCode"] = await Of(PortfolioPermissions.ProgramTypeLookup).ConfigureAwait(false),
             ["mainOptionCode"] = await Of(PortfolioPermissions.DeliveryOptionLookup).ConfigureAwait(false),
@@ -154,7 +154,7 @@ public sealed record AssessmentDto(
 /// <summary>Generates and reads Proposal Assessment versions (ADR 0050). Every call goes through the gateway (switches, permission, limits, audit).</summary>
 internal sealed class AssessmentService(
     AiGateway gateway, PortfolioDbContext db, RequestReader reader, IFileService files, IOcrEngine ocr, IEnumerable<IRecordSearchSource> searchSources,
-    ILookupService lookups, IRequestContext context, IClock clock, IUserDirectory users)
+    StrategicObjectives strategicObjectives, IRequestContext context, IClock clock, IUserDirectory users)
 {
     public const int MaxDocumentCharacters = 60_000;
 
@@ -213,7 +213,7 @@ internal sealed class AssessmentService(
         }
 
         var settings = await reader.SettingsAsync(ct).ConfigureAwait(false);
-        var objectives = (await lookups.GetValuesAsync(PortfolioPermissions.ObjectiveLookup, cancellationToken: ct).ConfigureAwait(false)).Where(v => v.Active).ToList();
+        var objectives = await strategicObjectives.AsLookupValuesAsync(ct).ConfigureAwait(false);
         var (documents, names) = await DocumentsAsync(request, ready.Value.Settings, ct).ConfigureAwait(false);
         documents.Insert(0, new AiDocument("request", Describe(request, objectives, settings)));
         var call = await gateway.CompleteJsonAsync(new AiJsonRequest(

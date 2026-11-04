@@ -141,7 +141,8 @@ internal sealed class RequestApprovalHook(
         var number = await numbering.NextAsync(db, PortfolioPermissions.ProjectNumbering, new NumberingContext(today, unitCode ?? PortfolioPermissions.SystemCode.ToUpperInvariant()),
             ct).ConfigureAwait(false);
         var owner = await reader.DepartmentDirectorOfAsync(request.UnitId, ct).ConfigureAwait(false);
-        var project = Project.FromRequest(number, request, owner);
+        var settings = await reader.SettingsAsync(ct).ConfigureAwait(false);
+        var project = Project.FromRequest(number, request, owner, settings.TemplateFor(request.EffectiveClassification));
         db.Projects.Add(project);
         request.LinkProject(project.Id);
         await db.SaveChangesAsync(ct).ConfigureAwait(false);
@@ -304,22 +305,6 @@ internal sealed class RequestCurrentStatus(
         var found = await users.GetManyAsync(holders.UserIds, ct).ConfigureAwait(false);
         var employeeIds = found.Values.Where(u => u.EmployeeId != null).Select(u => (Guid?)u.EmployeeId).Take(5);
         return await PeopleAsync(employeeIds, ct).ConfigureAwait(false);
-    }
-}
-
-/// <summary>The project's banner in Phase 8: waiting for someone in the section to take ownership (Phase 9 adds the lifecycle).</summary>
-internal sealed class ProjectCurrentStatus(RequestReader reader, IRequestContext context) : ICurrentStatusProvider
-{
-    public string ResourceType => PortfolioPermissions.ProjectResource;
-
-    public async Task<CurrentStatus?> GetAsync(Guid resourceId, CancellationToken cancellationToken)
-    {
-        var project = await (await reader.VisibleProjectsAsync(context.User, cancellationToken).ConfigureAwait(false))
-            .FirstOrDefaultAsync(p => p.Id == resourceId, cancellationToken).ConfigureAwait(false);
-        return project is null
-            ? null
-            : new CurrentStatus("portfolio.currentStatus.takeOwnership", new Dictionary<string, BilingualText>(), "info", "portfolio.currentStatus.sectionEmployees", [], [],
-                project.Stage);
     }
 }
 

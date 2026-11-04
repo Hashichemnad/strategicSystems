@@ -166,14 +166,13 @@ internal sealed class RequestQueries(PortfolioDbContext db, RequestReader reader
 }
 
 /// <summary>Checks lookup codes against active values and computes classification / priority (every save).</summary>
-internal sealed class RequestEvaluator(RequestReader reader, ILookupService lookups)
+internal sealed class RequestEvaluator(RequestReader reader, ILookupService lookups, StrategicObjectives objectives)
 {
     public async Task<List<Platform.Kernel.Results.FieldError>> LookupErrorsAsync(RequestValues v, CancellationToken ct)
     {
         var errors = new List<Platform.Kernel.Results.FieldError>();
         foreach (var (field, type, code) in new[]
                  {
-                     ("strategicObjectiveCode", PortfolioPermissions.ObjectiveLookup, v.StrategicObjectiveCode),
                      ("suggestionSourceCode", PortfolioPermissions.SourceLookup, v.SuggestionSourceCode),
                      ("programTypeCode", PortfolioPermissions.ProgramTypeLookup, v.ProgramTypeCode),
                      ("mainOptionCode", PortfolioPermissions.DeliveryOptionLookup, v.MainOptionCode),
@@ -184,6 +183,11 @@ internal sealed class RequestEvaluator(RequestReader reader, ILookupService look
             {
                 errors.Add(new Platform.Kernel.Results.FieldError(field, "validation.unknownCode", "validation.unknownCode"));
             }
+        }
+
+        if (!string.IsNullOrWhiteSpace(v.StrategicObjectiveCode) && !await objectives.IsActiveAsync(v.StrategicObjectiveCode.Trim(), ct).ConfigureAwait(false))
+        {
+            errors.Add(new Platform.Kernel.Results.FieldError("strategicObjectiveCode", "validation.unknownCode", "validation.unknownCode"));
         }
 
         return errors;

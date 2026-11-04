@@ -23,6 +23,809 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("Strategy.Modules.Portfolio.Domain.Challenge", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<decimal?>("AchievedPct")
+                        .HasPrecision(9, 4)
+                        .HasColumnType("numeric(9,4)")
+                        .HasColumnName("achieved_pct");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<string>("Impact")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("impact");
+
+                    b.Property<string>("InactiveReason")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("inactive_reason");
+
+                    b.Property<Guid?>("MilestoneId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("milestone_id");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("project_id");
+
+                    b.Property<string>("Recommendation")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("recommendation");
+
+                    b.Property<DateOnly?>("ReportDate")
+                        .HasColumnType("date")
+                        .HasColumnName("report_date");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<string>("Text")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("text");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_challenge");
+
+                    b.HasIndex("ProjectId")
+                        .HasDatabaseName("ix_challenge_project_id");
+
+                    b.ToTable("challenge", "portfolio");
+                });
+
+            modelBuilder.Entity("Strategy.Modules.Portfolio.Domain.ChangeRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Applied")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("applied");
+
+                    b.Property<string>("Areas")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("areas");
+
+                    b.Property<string>("CancelReason")
+                        .HasMaxLength(5000)
+                        .HasColumnType("character varying(5000)")
+                        .HasColumnName("cancel_reason");
+
+                    b.Property<bool>("CostAffected")
+                        .HasColumnType("boolean")
+                        .HasColumnName("cost_affected");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<DateTimeOffset?>("DecidedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("decided_at");
+
+                    b.Property<string>("ImpactOfNonResponse")
+                        .HasMaxLength(5000)
+                        .HasColumnType("character varying(5000)")
+                        .HasColumnName("impact_of_non_response");
+
+                    b.Property<DateTimeOffset?>("ImplementedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("implemented_at");
+
+                    b.Property<Guid?>("MergeIntoProjectId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("merge_into_project_id");
+
+                    b.Property<Guid?>("NewOwnerEmployeeId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("new_owner_employee_id");
+
+                    b.Property<Guid?>("NewPmEmployeeId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("new_pm_employee_id");
+
+                    b.Property<string>("Number")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)")
+                        .HasColumnName("number");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("project_id");
+
+                    b.Property<decimal?>("ProposedBudget")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("proposed_budget");
+
+                    b.Property<string>("ProposedDescription")
+                        .HasMaxLength(5000)
+                        .HasColumnType("character varying(5000)")
+                        .HasColumnName("proposed_description");
+
+                    b.Property<DateOnly?>("ProposedEnd")
+                        .HasColumnType("date")
+                        .HasColumnName("proposed_end");
+
+                    b.Property<string>("ProposedNameAr")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("proposed_name_ar");
+
+                    b.Property<string>("ProposedNameEn")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("proposed_name_en");
+
+                    b.Property<string>("ProposedScope")
+                        .HasMaxLength(5000)
+                        .HasColumnType("character varying(5000)")
+                        .HasColumnName("proposed_scope");
+
+                    b.Property<DateOnly?>("ProposedStart")
+                        .HasColumnType("date")
+                        .HasColumnName("proposed_start");
+
+                    b.Property<string>("Reason")
+                        .HasMaxLength(5000)
+                        .HasColumnType("character varying(5000)")
+                        .HasColumnName("reason");
+
+                    b.Property<Guid?>("RequestedByEmployeeId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("requested_by_employee_id");
+
+                    b.Property<DateOnly?>("RequestedDate")
+                        .HasColumnType("date")
+                        .HasColumnName("requested_date");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("status");
+
+                    b.Property<DateTimeOffset?>("SubmittedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("submitted_at");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("type");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_change_request");
+
+                    b.HasIndex("Number")
+                        .IsUnique()
+                        .HasDatabaseName("ix_change_request_number");
+
+                    b.HasIndex("ProjectId")
+                        .HasDatabaseName("ix_change_request_project_id");
+
+                    b.ToTable("change_request", "portfolio");
+                });
+
+            modelBuilder.Entity("Strategy.Modules.Portfolio.Domain.Contract", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<decimal?>("Amount")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("amount");
+
+                    b.Property<string>("ContractStatus")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("contract_status");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<string>("InactiveReason")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("inactive_reason");
+
+                    b.Property<DateOnly?>("IssueDate")
+                        .HasColumnType("date")
+                        .HasColumnName("issue_date");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("Number")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("number");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("project_id");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<string>("Supplier")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("supplier");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_contract");
+
+                    b.HasIndex("ProjectId")
+                        .HasDatabaseName("ix_contract_project_id");
+
+                    b.ToTable("contract", "portfolio");
+                });
+
+            modelBuilder.Entity("Strategy.Modules.Portfolio.Domain.Lesson", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<string>("InactiveReason")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("inactive_reason");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("project_id");
+
+                    b.Property<string>("Recommendation")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("recommendation");
+
+                    b.Property<string>("Stage")
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("stage");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<string>("Text")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("text");
+
+                    b.Property<string>("TypeCode")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("type_code");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_lesson");
+
+                    b.HasIndex("ProjectId")
+                        .HasDatabaseName("ix_lesson_project_id");
+
+                    b.ToTable("lesson", "portfolio");
+                });
+
+            modelBuilder.Entity("Strategy.Modules.Portfolio.Domain.Meeting", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<string>("InactiveReason")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("inactive_reason");
+
+                    b.Property<DateTimeOffset>("MeetingAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("meeting_at");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(20000)
+                        .HasColumnType("character varying(20000)")
+                        .HasColumnName("notes");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("project_id");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("title");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_meeting");
+
+                    b.HasIndex("ProjectId")
+                        .HasDatabaseName("ix_meeting_project_id");
+
+                    b.ToTable("meeting", "portfolio");
+                });
+
+            modelBuilder.Entity("Strategy.Modules.Portfolio.Domain.Milestone", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("AcceptanceCriteria")
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)")
+                        .HasColumnName("acceptance_criteria");
+
+                    b.Property<DateOnly?>("ActualEnd")
+                        .HasColumnType("date")
+                        .HasColumnName("actual_end");
+
+                    b.Property<DateOnly?>("ActualStart")
+                        .HasColumnType("date")
+                        .HasColumnName("actual_start");
+
+                    b.Property<string>("CancelReason")
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)")
+                        .HasColumnName("cancel_reason");
+
+                    b.Property<string>("Causality")
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)")
+                        .HasColumnName("causality");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)")
+                        .HasColumnName("code");
+
+                    b.Property<string>("CorrectiveActions")
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)")
+                        .HasColumnName("corrective_actions");
+
+                    b.Property<decimal?>("Cost")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("cost");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<string>("EvidenceNote")
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)")
+                        .HasColumnName("evidence_note");
+
+                    b.Property<bool>("HighLevel")
+                        .HasColumnType("boolean")
+                        .HasColumnName("high_level");
+
+                    b.Property<string>("InnovativeReason")
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)")
+                        .HasColumnName("innovative_reason");
+
+                    b.Property<bool>("IsDeliverable")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_deliverable");
+
+                    b.Property<bool>("IsHeader")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_header");
+
+                    b.Property<bool>("IsInnovative")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_innovative");
+
+                    b.Property<string>("MainDeliverable")
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)")
+                        .HasColumnName("main_deliverable");
+
+                    b.Property<decimal>("MaxAchieved")
+                        .HasPrecision(9, 4)
+                        .HasColumnType("numeric(9,4)")
+                        .HasColumnName("max_achieved");
+
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("parent_id");
+
+                    b.Property<decimal?>("PendingAchieve")
+                        .HasPrecision(9, 4)
+                        .HasColumnType("numeric(9,4)")
+                        .HasColumnName("pending_achieve");
+
+                    b.Property<DateOnly?>("PendingActualEnd")
+                        .HasColumnType("date")
+                        .HasColumnName("pending_actual_end");
+
+                    b.Property<DateOnly?>("PendingActualStart")
+                        .HasColumnType("date")
+                        .HasColumnName("pending_actual_start");
+
+                    b.Property<DateOnly?>("PlannedEnd")
+                        .HasColumnType("date")
+                        .HasColumnName("planned_end");
+
+                    b.Property<DateOnly?>("PlannedStart")
+                        .HasColumnType("date")
+                        .HasColumnName("planned_start");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("project_id");
+
+                    b.Property<bool?>("QualityMet")
+                        .HasColumnType("boolean")
+                        .HasColumnName("quality_met");
+
+                    b.Property<int>("Sort")
+                        .HasColumnType("integer")
+                        .HasColumnName("sort");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("status");
+
+                    b.Property<string>("TitleAr")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("title_ar");
+
+                    b.Property<string>("TitleEn")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("title_en");
+
+                    b.Property<string>("UpdateState")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("update_state");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<decimal>("Weight")
+                        .HasPrecision(9, 4)
+                        .HasColumnType("numeric(9,4)")
+                        .HasColumnName("weight");
+
+                    b.HasKey("Id")
+                        .HasName("pk_milestone");
+
+                    b.HasIndex("Code")
+                        .IsUnique()
+                        .HasDatabaseName("ix_milestone_code");
+
+                    b.HasIndex("ProjectId")
+                        .HasDatabaseName("ix_milestone_project_id");
+
+                    b.ToTable("milestone", "portfolio");
+                });
+
+            modelBuilder.Entity("Strategy.Modules.Portfolio.Domain.MonthlyUpdate", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset?>("ApprovedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("approved_at");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<DateTimeOffset?>("DueAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("due_at");
+
+                    b.Property<string>("Items")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("items");
+
+                    b.Property<DateTimeOffset>("OpenedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("opened_at");
+
+                    b.Property<string>("OpenedBy")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("character varying(60)")
+                        .HasColumnName("opened_by");
+
+                    b.Property<DateTimeOffset?>("OverdueNotifiedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("overdue_notified_at");
+
+                    b.Property<string>("Period")
+                        .IsRequired()
+                        .HasMaxLength(7)
+                        .HasColumnType("character varying(7)")
+                        .HasColumnName("period");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("project_id");
+
+                    b.Property<DateTimeOffset?>("RemindedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("reminded_at");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<string>("SubmitComment")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("submit_comment");
+
+                    b.Property<DateTimeOffset?>("SubmittedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("submitted_at");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_monthly_update");
+
+                    b.HasIndex("Status")
+                        .HasDatabaseName("ix_monthly_update_status");
+
+                    b.HasIndex("ProjectId", "Period")
+                        .IsUnique()
+                        .HasDatabaseName("ix_monthly_update_project_id_period");
+
+                    b.ToTable("monthly_update", "portfolio");
+                });
+
+            modelBuilder.Entity("Strategy.Modules.Portfolio.Domain.PlanningItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("category");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<string>("CreatedStage")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("created_stage");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("description");
+
+                    b.Property<string>("InactiveReason")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("inactive_reason");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("project_id");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_planning_item");
+
+                    b.HasIndex("ProjectId")
+                        .HasDatabaseName("ix_planning_item_project_id");
+
+                    b.ToTable("planning_item", "portfolio");
+                });
+
             modelBuilder.Entity("Strategy.Modules.Portfolio.Domain.ProgramRequest", b =>
                 {
                     b.Property<Guid>("Id")
@@ -477,16 +1280,84 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<decimal?>("AnnualLicenceCost")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("annual_licence_cost");
+
+                    b.Property<decimal?>("AnnualMaintenanceCost")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("annual_maintenance_cost");
+
+                    b.Property<decimal?>("AnnualOperationCost")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("annual_operation_cost");
+
+                    b.Property<decimal?>("AnnualOtherCost")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("annual_other_cost");
+
+                    b.Property<string>("ApprovalProcess")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("approval_process");
+
+                    b.Property<string>("ApprovalResult")
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("approval_result");
+
+                    b.Property<string>("ApprovalStepCode")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("approval_step_code");
+
+                    b.Property<string>("ApprovalStepNameAr")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("approval_step_name_ar");
+
+                    b.Property<string>("ApprovalStepNameEn")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("approval_step_name_en");
+
                     b.Property<decimal?>("Budget")
                         .HasPrecision(18, 2)
                         .HasColumnType("numeric(18,2)")
                         .HasColumnName("budget");
+
+                    b.Property<string>("CancelReason")
+                        .HasMaxLength(5000)
+                        .HasColumnType("character varying(5000)")
+                        .HasColumnName("cancel_reason");
 
                     b.Property<string>("Classification")
                         .IsRequired()
                         .HasMaxLength(40)
                         .HasColumnType("character varying(40)")
                         .HasColumnName("classification");
+
+                    b.Property<int?>("CommunitySatisfaction")
+                        .HasColumnType("integer")
+                        .HasColumnName("community_satisfaction");
+
+                    b.Property<DateTimeOffset?>("CompletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("completed_at");
+
+                    b.Property<decimal?>("ContractedInitialCost")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("contracted_initial_cost");
+
+                    b.Property<decimal?>("CostPerformance")
+                        .HasPrecision(9, 4)
+                        .HasColumnType("numeric(9,4)")
+                        .HasColumnName("cost_performance");
 
                     b.Property<DateTimeOffset>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -500,6 +1371,37 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                         .HasMaxLength(5000)
                         .HasColumnType("character varying(5000)")
                         .HasColumnName("description");
+
+                    b.Property<int?>("EmployeeSatisfaction")
+                        .HasColumnType("integer")
+                        .HasColumnName("employee_satisfaction");
+
+                    b.Property<string>("HoldReason")
+                        .HasMaxLength(5000)
+                        .HasColumnType("character varying(5000)")
+                        .HasColumnName("hold_reason");
+
+                    b.Property<string>("ImpactNotes")
+                        .HasMaxLength(5000)
+                        .HasColumnType("character varying(5000)")
+                        .HasColumnName("impact_notes");
+
+                    b.Property<bool>("LpoUploaded")
+                        .HasColumnType("boolean")
+                        .HasColumnName("lpo_uploaded");
+
+                    b.Property<string>("MainDeliverables")
+                        .HasMaxLength(5000)
+                        .HasColumnType("character varying(5000)")
+                        .HasColumnName("main_deliverables");
+
+                    b.Property<Guid?>("MergedIntoProjectId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("merged_into_project_id");
+
+                    b.Property<DateTimeOffset?>("MonthlyApprovedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("monthly_approved_at");
 
                     b.Property<string>("NameAr")
                         .HasMaxLength(300)
@@ -517,22 +1419,64 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                         .HasColumnType("character varying(50)")
                         .HasColumnName("number");
 
+                    b.Property<DateOnly?>("OperatingCostsFrom")
+                        .HasColumnType("date")
+                        .HasColumnName("operating_costs_from");
+
+                    b.Property<string>("OperationalThemes")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("operational_themes")
+                        .HasDefaultValueSql("'[]'::jsonb");
+
                     b.Property<Guid?>("OwnerEmployeeId")
                         .HasColumnType("uuid")
                         .HasColumnName("owner_employee_id");
+
+                    b.Property<DateTimeOffset?>("OwnershipTakenAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("ownership_taken_at");
+
+                    b.Property<decimal>("Performance")
+                        .HasPrecision(9, 4)
+                        .HasColumnType("numeric(9,4)")
+                        .HasColumnName("performance");
 
                     b.Property<DateOnly?>("PlannedEnd")
                         .HasColumnType("date")
                         .HasColumnName("planned_end");
 
+                    b.Property<decimal>("PlannedProgress")
+                        .HasPrecision(9, 4)
+                        .HasColumnType("numeric(9,4)")
+                        .HasColumnName("planned_progress");
+
                     b.Property<DateOnly?>("PlannedStart")
                         .HasColumnType("date")
                         .HasColumnName("planned_start");
+
+                    b.Property<Guid?>("PmEmployeeId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("pm_employee_id");
+
+                    b.Property<decimal?>("PreviousOperationalCost")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("previous_operational_cost");
 
                     b.Property<string>("ProgramTypeCode")
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)")
                         .HasColumnName("program_type_code");
+
+                    b.Property<string>("ProgressStatus")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasDefaultValue("on-track")
+                        .HasColumnName("progress_status");
 
                     b.Property<Guid>("RequestId")
                         .HasColumnType("uuid")
@@ -545,6 +1489,31 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                     b.Property<Guid?>("RequesterUserId")
                         .HasColumnType("uuid")
                         .HasColumnName("requester_user_id");
+
+                    b.Property<string>("ResourcesContract")
+                        .HasMaxLength(5000)
+                        .HasColumnType("character varying(5000)")
+                        .HasColumnName("resources_contract");
+
+                    b.Property<string>("ResourcesFinancial")
+                        .HasMaxLength(5000)
+                        .HasColumnType("character varying(5000)")
+                        .HasColumnName("resources_financial");
+
+                    b.Property<string>("ResourcesHuman")
+                        .HasMaxLength(5000)
+                        .HasColumnType("character varying(5000)")
+                        .HasColumnName("resources_human");
+
+                    b.Property<string>("ResourcesOther")
+                        .HasMaxLength(5000)
+                        .HasColumnType("character varying(5000)")
+                        .HasColumnName("resources_other");
+
+                    b.Property<string>("ResourcesTechnical")
+                        .HasMaxLength(5000)
+                        .HasColumnType("character varying(5000)")
+                        .HasColumnName("resources_technical");
 
                     b.Property<string>("ScopeOfWork")
                         .HasMaxLength(5000)
@@ -572,9 +1541,236 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                         .HasColumnType("character varying(100)")
                         .HasColumnName("strategic_objective_code");
 
+                    b.Property<string>("StructuralChanges")
+                        .HasMaxLength(5000)
+                        .HasColumnType("character varying(5000)")
+                        .HasColumnName("structural_changes");
+
+                    b.Property<string>("SubState")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasDefaultValue("ownership")
+                        .HasColumnName("sub_state");
+
+                    b.Property<string>("SummaryOfAchievement")
+                        .HasMaxLength(5000)
+                        .HasColumnType("character varying(5000)")
+                        .HasColumnName("summary_of_achievement");
+
+                    b.Property<DateTimeOffset?>("TeamFormedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("team_formed_at");
+
+                    b.Property<Guid?>("TeamId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("team_id");
+
+                    b.Property<string>("Template")
+                        .HasColumnType("jsonb")
+                        .HasColumnName("template");
+
                     b.Property<Guid?>("UnitId")
                         .HasColumnType("uuid")
                         .HasColumnName("unit_id");
+
+                    b.Property<DateTimeOffset?>("UpdateOpenedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("update_opened_at");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.Property<int?>("VendorSatisfaction")
+                        .HasColumnType("integer")
+                        .HasColumnName("vendor_satisfaction");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<decimal?>("Year1ActualCost")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("year1actual_cost");
+
+                    b.Property<decimal?>("Year1ContractedCost")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("year1contracted_cost");
+
+                    b.Property<decimal?>("Year1PlannedCost")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("year1planned_cost");
+
+                    b.Property<decimal?>("Year2ActualCost")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("year2actual_cost");
+
+                    b.Property<decimal?>("Year2ContractedCost")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("year2contracted_cost");
+
+                    b.Property<decimal?>("Year2PlannedCost")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("year2planned_cost");
+
+                    b.Property<decimal?>("Year3ActualCost")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("year3actual_cost");
+
+                    b.Property<decimal?>("Year3ContractedCost")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("year3contracted_cost");
+
+                    b.Property<decimal?>("Year3PlannedCost")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("year3planned_cost");
+
+                    b.Property<decimal?>("Year4ActualCost")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("year4actual_cost");
+
+                    b.Property<decimal?>("Year4ContractedCost")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("year4contracted_cost");
+
+                    b.Property<decimal?>("Year4PlannedCost")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("numeric(18,2)")
+                        .HasColumnName("year4planned_cost");
+
+                    b.HasKey("Id")
+                        .HasName("pk_project");
+
+                    b.HasIndex("Number")
+                        .IsUnique()
+                        .HasDatabaseName("ix_project_number");
+
+                    b.HasIndex("PmEmployeeId")
+                        .HasDatabaseName("ix_project_pm_employee_id");
+
+                    b.HasIndex("RequestId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_project_request_id");
+
+                    b.HasIndex("SectionUnitId")
+                        .HasDatabaseName("ix_project_section_unit_id");
+
+                    b.HasIndex("UnitId")
+                        .HasDatabaseName("ix_project_unit_id");
+
+                    b.HasIndex("Status", "SubState")
+                        .HasDatabaseName("ix_project_status_sub_state");
+
+                    b.ToTable("project", "portfolio");
+                });
+
+            modelBuilder.Entity("Strategy.Modules.Portfolio.Domain.ProjectKpi", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<string>("CreatedStage")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("created_stage");
+
+                    b.Property<decimal?>("CurrentResult")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("numeric(18,4)")
+                        .HasColumnName("current_result");
+
+                    b.Property<string>("Direction")
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("direction");
+
+                    b.Property<string>("Equation")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("equation");
+
+                    b.Property<string>("InactiveReason")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("inactive_reason");
+
+                    b.Property<string>("IndexClassCode")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("index_class_code");
+
+                    b.Property<Guid?>("KpiCardId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("kpi_card_id");
+
+                    b.Property<string>("NameAr")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("name_ar");
+
+                    b.Property<string>("NameEn")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("name_en");
+
+                    b.Property<string>("Nature")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("nature");
+
+                    b.Property<string>("ProjectGoal")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("project_goal");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("project_id");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<decimal?>("Target")
+                        .HasPrecision(18, 4)
+                        .HasColumnType("numeric(18,4)")
+                        .HasColumnName("target");
+
+                    b.Property<int?>("TargetYear")
+                        .HasColumnType("integer")
+                        .HasColumnName("target_year");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -590,41 +1786,159 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                         .HasColumnType("xid")
                         .HasColumnName("xmin");
 
-                    b.Property<decimal?>("Year1PlannedCost")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,2)")
-                        .HasColumnName("year1planned_cost");
-
-                    b.Property<decimal?>("Year2PlannedCost")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,2)")
-                        .HasColumnName("year2planned_cost");
-
-                    b.Property<decimal?>("Year3PlannedCost")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,2)")
-                        .HasColumnName("year3planned_cost");
-
-                    b.Property<decimal?>("Year4PlannedCost")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("numeric(18,2)")
-                        .HasColumnName("year4planned_cost");
+                    b.Property<string>("WhenMeasured")
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("when_measured");
 
                     b.HasKey("Id")
-                        .HasName("pk_project");
+                        .HasName("pk_project_kpi");
 
-                    b.HasIndex("Number")
-                        .IsUnique()
-                        .HasDatabaseName("ix_project_number");
+                    b.HasIndex("KpiCardId")
+                        .HasDatabaseName("ix_project_kpi_kpi_card_id");
 
-                    b.HasIndex("RequestId")
-                        .IsUnique()
-                        .HasDatabaseName("ix_project_request_id");
+                    b.HasIndex("ProjectId")
+                        .HasDatabaseName("ix_project_kpi_project_id");
 
-                    b.HasIndex("UnitId")
-                        .HasDatabaseName("ix_project_unit_id");
+                    b.ToTable("project_kpi", "portfolio");
+                });
 
-                    b.ToTable("project", "portfolio");
+            modelBuilder.Entity("Strategy.Modules.Portfolio.Domain.ProjectRisk", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("CategoryCode")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("category_code");
+
+                    b.Property<int?>("ControlEvaluation")
+                        .HasColumnType("integer")
+                        .HasColumnName("control_evaluation");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<string>("CreatedStage")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("created_stage");
+
+                    b.Property<int>("Impact")
+                        .HasColumnType("integer")
+                        .HasColumnName("impact");
+
+                    b.Property<DateOnly?>("ImplementationEnd")
+                        .HasColumnType("date")
+                        .HasColumnName("implementation_end");
+
+                    b.Property<decimal?>("ImplementationPct")
+                        .HasPrecision(9, 4)
+                        .HasColumnType("numeric(9,4)")
+                        .HasColumnName("implementation_pct");
+
+                    b.Property<DateOnly?>("ImplementationStart")
+                        .HasColumnType("date")
+                        .HasColumnName("implementation_start");
+
+                    b.Property<string>("InactiveReason")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("inactive_reason");
+
+                    b.Property<string>("InherentBand")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("inherent_band");
+
+                    b.Property<int>("InherentScore")
+                        .HasColumnType("integer")
+                        .HasColumnName("inherent_score");
+
+                    b.Property<string>("MitigationActions")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("mitigation_actions");
+
+                    b.Property<Guid?>("OwnerEmployeeId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("owner_employee_id");
+
+                    b.Property<int>("Probability")
+                        .HasColumnType("integer")
+                        .HasColumnName("probability");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("project_id");
+
+                    b.Property<string>("ResidualBand")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("residual_band");
+
+                    b.Property<decimal>("ResidualScore")
+                        .HasPrecision(9, 2)
+                        .HasColumnType("numeric(9,2)")
+                        .HasColumnName("residual_score");
+
+                    b.Property<string>("Response")
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("response");
+
+                    b.Property<string>("RiskFactor")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("risk_factor");
+
+                    b.Property<string>("RmsStatus")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("rms_status");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("title");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_project_risk");
+
+                    b.HasIndex("ProjectId")
+                        .HasDatabaseName("ix_project_risk_project_id");
+
+                    b.ToTable("project_risk", "portfolio");
                 });
 
             modelBuilder.Entity("Strategy.Modules.Portfolio.Domain.ProposalAssessment", b =>
@@ -698,6 +2012,169 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                         .HasDatabaseName("ix_proposal_assessment_request_id_version_no");
 
                     b.ToTable("proposal_assessment", "portfolio");
+                });
+
+            modelBuilder.Entity("Strategy.Modules.Portfolio.Domain.ProposedMember", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("employee_id");
+
+                    b.Property<string>("InactiveReason")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("inactive_reason");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("project_id");
+
+                    b.Property<string>("Responsibilities")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("responsibilities");
+
+                    b.Property<string>("RoleAr")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("role_ar");
+
+                    b.Property<string>("RoleEn")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("role_en");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_team_member");
+
+                    b.HasIndex("ProjectId")
+                        .HasDatabaseName("ix_team_member_project_id");
+
+                    b.ToTable("team_member", "portfolio");
+                });
+
+            modelBuilder.Entity("Strategy.Modules.Portfolio.Domain.Stakeholder", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("ClassificationCode")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("classification_code");
+
+                    b.Property<string>("CommunicationFrequency")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("communication_frequency");
+
+                    b.Property<string>("CommunicationMethod")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("communication_method");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("email");
+
+                    b.Property<string>("ImpactLevel")
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("impact_level");
+
+                    b.Property<string>("InactiveReason")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("inactive_reason");
+
+                    b.Property<string>("InterestLevel")
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("interest_level");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("Phone")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("phone");
+
+                    b.Property<Guid>("ProjectId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("project_id");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_stakeholder");
+
+                    b.HasIndex("ProjectId")
+                        .HasDatabaseName("ix_stakeholder_project_id");
+
+                    b.ToTable("stakeholder", "portfolio");
                 });
 #pragma warning restore 612, 618
         }

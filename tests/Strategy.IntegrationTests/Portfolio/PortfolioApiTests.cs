@@ -36,7 +36,7 @@ public sealed class PortfolioApiTests(PortfolioFixture fx) : IClassFixture<Portf
         (await w.StepsAsync(noBudget.Id)).ShouldBe([RequestApprovalProcess.DepartmentDirectorStep, RequestApprovalProcess.PmOfficeStep]);
         approved.Project.ShouldNotBeNull();
         approved.Project.Classification.ShouldBe(Classifications.Initiative); // no budget → initiative (Q-P5)
-        var initiative = (await w.C(w.Requester).GetFromJsonAsync<ProjectDto>($"{Base}/projects/{approved.Project.Id}"))!;
+        var initiative = (await w.C(w.Requester).GetFromJsonAsync<ProjectFullDto>($"{Base}/projects/{approved.Project.Id}"))!;
         initiative.Stage.ShouldBe(ProjectStages.Planning); // Q-P2: an initiative starts at Planning
         initiative.Budget.ShouldBeNull();
 
@@ -78,7 +78,7 @@ public sealed class PortfolioApiTests(PortfolioFixture fx) : IClassFixture<Portf
 
         var done = await w.GetAsync(large.Id);
         done.Status.ShouldBe(RequestStatuses.Approved);
-        var project = (await w.C(w.Requester).GetFromJsonAsync<ProjectDto>($"{Base}/projects/{done.Project!.Id}"))!;
+        var project = (await w.C(w.Requester).GetFromJsonAsync<ProjectFullDto>($"{Base}/projects/{done.Project!.Id}"))!;
         project.Number.ShouldBe($"PROJ-DEP-{w.Suffix.ToUpperInvariant()}-{PortfolioWorld.Year}-002",
             "the request unit's code (no owning unit set), the approval year, the second project of that unit");
         project.Classification.ShouldBe(Classifications.Project);
@@ -378,8 +378,11 @@ public sealed class PortfolioApiTests(PortfolioFixture fx) : IClassFixture<Portf
         await using var scope = TestAccess.SystemScope(fx.Factory);
         var tools = scope.ServiceProvider.GetServices<IAppTool>().Where(t => t.Definition.SystemCode == PortfolioPermissions.SystemCode).ToList();
         tools.Select(t => t.Definition.Name).ShouldBe(
-            ["portfolio_search_requests", "portfolio_my_requests", "portfolio_get_request", "portfolio_get_project", "portfolio_create_draft_request"], ignoreOrder: true);
-        tools.Single(t => t.Definition.Kind == ToolKind.Write).Definition.DefaultEnabled.ShouldBeFalse();
+            [
+                "portfolio_search_requests", "portfolio_my_requests", "portfolio_get_request", "portfolio_get_project", "portfolio_create_draft_request",
+                "portfolio_my_projects", "portfolio_project_milestones", "portfolio_update_milestone_draft",
+            ], ignoreOrder: true);
+        tools.Where(t => t.Definition.Kind == ToolKind.Write).ShouldAllBe(t => !t.Definition.DefaultEnabled, "write tools are off by default (ADR 0031)");
         tools.ShouldNotContain(t => t.Definition.Kind == ToolKind.Approve);
     }
 }

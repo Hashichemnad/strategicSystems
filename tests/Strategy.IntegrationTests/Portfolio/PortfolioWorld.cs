@@ -6,13 +6,12 @@ using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Strategy.IntegrationTests.Infrastructure;
 using Strategy.IntegrationTests.Workflow;
+using Strategy.Modules.Kpi.Contracts;
 using Strategy.Modules.Portfolio.Application;
 using Strategy.Modules.Portfolio.Domain;
 using Strategy.Platform.Access.Application;
 using Strategy.Platform.Kernel.Messaging;
 using Strategy.Platform.Organisation.Application;
-using Strategy.Platform.Settings.Domain;
-using Strategy.Platform.Settings.Infrastructure;
 using Strategy.Platform.Workflow.Application;
 
 namespace Strategy.IntegrationTests.Portfolio;
@@ -93,14 +92,12 @@ internal sealed class PortfolioWorld
             section = (await dispatcher.SendAsync(new CreateUnit($"SEC-{suffix}", "قسم", $"Section {suffix}", "section", department, null, null, null, null))).Value.Id;
             other = (await dispatcher.SendAsync(new CreateUnit($"OTH-{suffix}", "إدارة أخرى", $"Other {suffix}", "department", organisation, null, null, null, null))).Value.Id;
 
-            // Strategic objectives are configuration (seeded empty, Q-P7): the organisation loads its own.
-            var settings = scope.ServiceProvider.GetRequiredService<SettingsDbContext>();
-            if (!settings.LookupValues.Any(v => v.TypeCode == PortfolioPermissions.ObjectiveLookup && v.Code == Objective))
-            {
-                settings.LookupValues.Add(LookupValue.Create(PortfolioPermissions.ObjectiveLookup, Objective, "خدمات رقمية", "Digital services", 10, null, null));
-                settings.LookupValues.Add(LookupValue.Create(PortfolioPermissions.ObjectiveLookup, "efficiency", "الكفاءة", "Efficiency", 20, null, null));
-                await settings.SaveChangesAsync();
-            }
+            // Strategic objectives are configuration (seeded empty, Q-P7) held by the KPI strategy hierarchy (ADR 0075).
+            await scope.ServiceProvider.GetRequiredService<IKpiStrategyCatalog>().EnsureObjectivesAsync(
+            [
+                new(Objective, "خدمات رقمية", "Digital services", true, 10),
+                new("efficiency", "الكفاءة", "Efficiency", true, 20),
+            ]);
 
             // Portfolio is a business system: everyone may open it (the requester role is everyone's).
             await AccessGrants.GrantSystemAccessAsync(scope.ServiceProvider, PortfolioPermissions.SystemCode, AccessGrants.Everyone, null);

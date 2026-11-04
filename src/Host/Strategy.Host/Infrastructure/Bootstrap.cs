@@ -14,8 +14,6 @@ using Strategy.Platform.Organisation.Application;
 using Strategy.Platform.Organisation.Infrastructure;
 using Strategy.Platform.Persistence;
 using Strategy.Platform.Settings;
-using Strategy.Platform.Settings.Domain;
-using Strategy.Platform.Settings.Infrastructure;
 
 namespace Strategy.Host.Infrastructure;
 
@@ -165,7 +163,11 @@ internal static partial class Bootstrap
         await AccessGrants.GrantSystemAccessAsync(provider, "portfolio", AccessGrants.Everyone, null);
         if (admin.Succeeded)
         {
-            foreach (var role in new[] { "portfolio.administrator", "portfolio.pm-office", "portfolio.dg-office", "portfolio.budget-section", "portfolio.administration" })
+            foreach (var role in new[]
+                     {
+                         "portfolio.administrator", "portfolio.pm-office", "portfolio.dg-office", "portfolio.budget-section", "portfolio.administration",
+                         "portfolio.finance-section", "portfolio.gm-office",
+                     })
             {
                 await AccessGrants.AssignRoleAsync(provider, role, AccessGrants.User, adminUser.Id);
             }
@@ -189,18 +191,16 @@ internal static partial class Bootstrap
             }
         }
 
-        var settingsDb = provider.GetRequiredService<SettingsDbContext>();
-        foreach (var (code, ar, en, sort) in new[]
-                 {
-                     ("digital-government", "حكومة رقمية استباقية", "Proactive digital government", 10),
-                     ("financial-sustainability", "استدامة مالية", "Financial sustainability", 20),
-                     ("institutional-excellence", "تميز مؤسسي", "Institutional excellence", 30),
-                 })
+        // Phase 9 (ADR 0075): strategic objectives live in the KPI strategy hierarchy, shared by Portfolio and Performance Management.
+        if (provider.GetService<Strategy.Modules.Kpi.Contracts.IKpiStrategyCatalog>() is { } strategyCatalog)
         {
-            settingsDb.LookupValues.Add(LookupValue.Create("portfolio.strategic-objective", code, ar, en, sort, null, null));
+            await strategyCatalog.EnsureObjectivesAsync(
+            [
+                new("digital-government", "حكومة رقمية استباقية", "Proactive digital government", true, 10),
+                new("financial-sustainability", "استدامة مالية", "Financial sustainability", true, 20),
+                new("institutional-excellence", "تميز مؤسسي", "Institutional excellence", true, 30),
+            ]);
         }
-
-        await settingsDb.SaveChangesAsync();
 
         if (configuration["Seed:AdminTotpKey"] is { Length: > 0 } totpKey && await users.FindByNameAsync("mariam@strategy.local") is { } seededAdmin)
         {
