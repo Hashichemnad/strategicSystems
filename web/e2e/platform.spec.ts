@@ -204,8 +204,8 @@ test.describe('as an administrator', () => {
     await verify.getByRole('button', { name: tr(language, 'jobs:runNow') }).click();
     await expect(page.getByText(tr(language, 'jobs:toast.run'), { exact: true })).toBeVisible();
     await expect(verify.getByText(tr(language, 'jobs:statuses.succeeded'))).toBeVisible({ timeout: 20_000 });
-    // Platform jobs, the three Task Management jobs and the two Teams jobs (evaluation triggers, periodic reports).
-    await expect(page.getByTestId('job-row')).toHaveCount(16);
+    // Platform jobs, the three Task Management jobs, the two Teams jobs, the KPI windows, the Phase 14 jobs and the Portfolio monthly cycle.
+    await expect(page.getByTestId('job-row')).toHaveCount(17);
     await shot('job-dashboard', { fullPage: true });
   });
 });

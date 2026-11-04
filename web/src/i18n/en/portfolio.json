@@ -196,7 +196,7 @@
     "filesAfterSave": "Save the draft first; then upload the cost estimation file or the project scope from the request page.",
     "dates": "The start date must be within this year or the next {{years}} years; the end date at most {{years}} years after this year.",
     "review": "Your answers are saved as a draft. Submit the request for approval from its page.",
-    "noObjectives": "No strategic objectives are configured yet: ask the PM Office (Settings → Lookups)."
+    "noObjectives": "No strategic objectives are configured yet: ask the Strategy Office (Settings → KPI → Strategy hierarchy)."
   },
   "actions": {
     "saveDraft": "Save draft",
@@ -217,7 +217,18 @@
     "openProject": "Open the project",
     "assess": "Generate assessment",
     "regenerate": "Regenerate",
-    "upload": "Upload"
+    "upload": "Upload",
+    "takeOwnership": "Take ownership",
+    "submitCharter": "Submit the charter",
+    "uploadLpo": "Upload the LPO",
+    "requestTeam": "Form the project team",
+    "submitPlanning": "Submit the planning",
+    "openWindow": "Open the update window now",
+    "monthlyUpdate": "Update milestones",
+    "confirmCompletion": "Confirm completion",
+    "closure": "Fill the closure form",
+    "impact": "Enter the impact",
+    "resume": "Resume"
   },
   "dialogs": {
     "submitTitle": "Submit for approval",
@@ -325,7 +336,24 @@
     "code": "Code",
     "labelAr": "Arabic label",
     "labelEn": "English label",
-    "saved": "Portfolio settings saved"
+    "saved": "Portfolio settings saved",
+    "lifecycle": "Project lifecycle",
+    "lifecycleHint": "Stage templates per classification (Q-P2 / Q-P3), the monthly update cycle and the change request threshold. New projects take the template at creation.",
+    "projectTemplate": "Projects",
+    "initiativeTemplate": "Initiatives",
+    "steps": {
+      "charter": "Charter and charter approval",
+      "lpo": "LPO by the Administration Dept",
+      "teamFormation": "Team formation through Teams Management",
+      "closure": "Closure form and approval",
+      "impact": "Impact stage after closure"
+    },
+    "monthlyDueWorkingDays": "Monthly update due after (working days)",
+    "monthlyReminderWorkingDays": "Reminder before due (working days)",
+    "progressTolerance": "Delay tolerance (percentage points)",
+    "progressToleranceHint": "Delayed when approved progress is more than this below plan.",
+    "gmThreshold": "GM Office threshold for change requests",
+    "gmThresholdHint": "Cost changes above this amount also go to the GM Office."
   },
   "currentStatus": {
     "draft": "Waiting for the requester to submit the request for approval",
@@ -342,12 +370,49 @@
     "requester": "Requester",
     "administration": "Administration Dept",
     "takeOwnership": "Waiting for an employee of the section to take ownership",
-    "sectionEmployees": "Employees of the section"
+    "sectionEmployees": "Employees of the section",
+    "pm": "Project manager",
+    "pmOffice": "PM Office",
+    "project": {
+      "takeOwnership": "Waiting for an employee of the section to take ownership",
+      "fillMinimums": "Fill at least 1 KPI, 1 risk, 1 stakeholder, 3 team members and the high-level plan",
+      "submitCharter": "Waiting for the project manager to submit the charter for approval",
+      "charterReturned": "The charter was returned: correct it and submit again",
+      "waitingApproval": "Waiting for {{step}} – {{process}}",
+      "waitingLpo": "Waiting for the Administration Dept to upload the LPO",
+      "waitingTeam": "Waiting for the PM Office to form the project team",
+      "updatePlanning": "Waiting for the project manager to update the planning details",
+      "addMilestones": "Waiting for the project manager to add all milestones (total weight 100 %)",
+      "submitPlanning": "Waiting for the project manager to submit the planning for approval",
+      "planningReturned": "The planning was returned: correct it and submit again",
+      "noWindow": "No monthly update window is open",
+      "monthlyOpen": "Monthly update {{period}} is open: update the milestones and submit",
+      "monthlyReturned": "Monthly update {{period}} was returned: correct it and submit again",
+      "confirmCompletion": "All work is achieved: waiting for the PM Office to confirm completion",
+      "submitClosure": "Waiting for the project manager to submit the project closure",
+      "closureReturned": "The closure was returned: correct it and submit again",
+      "enterImpact": "Waiting for the project manager to enter the impact",
+      "impactReturned": "The impact was returned: correct it and submit again",
+      "onHold": "On hold: {{reason}}",
+      "cancelled": "Cancelled: {{reason}}",
+      "completed": "Completed"
+    }
   },
   "myWork": {
     "returned": "Request returned for correction",
     "quotationsReady": "Quotations uploaded: complete and submit",
-    "uploadQuotations": "Upload quotations for this request"
+    "uploadQuotations": "Upload quotations for this request",
+    "takeOwnership": "Take ownership of this project",
+    "charter": "Complete and submit the charter",
+    "planning": "Complete and submit the planning",
+    "closure": "Submit the project closure",
+    "impact": "Enter and submit the impact",
+    "monthlyDue": "Monthly update due",
+    "monthlyReturned": "Monthly update returned for correction",
+    "applyChange": "Apply the approved change request",
+    "uploadLpo": "Upload the LPO and contract details",
+    "formTeam": "Form the project team",
+    "confirmCompletion": "Confirm the initiative's completion"
   },
   "errors": {
     "yearCostsMismatch": "Year 1–4 costs ({{total}}) must equal the estimated budget ({{budget}}).",
@@ -370,6 +435,455 @@
     "overrideReasonRequired": "Give the reason for the classification.",
     "notAllowedInStatus": "This action is not available at this stage of the request.",
     "criteriaRequired": "Keep at least one active criterion.",
-    "bandsStartAtZero": "The lowest band must start at 0 %."
+    "bandsStartAtZero": "The lowest band must start at 0 %.",
+    "achieveAboveWeight": "The achievement must be between 0 and the milestone weight ({{weight}} %).",
+    "achieveBelowApproved": "The achievement cannot be lower than the approved {{approved}} %.",
+    "actualEndInFuture": "The actual end date cannot be in the future.",
+    "actualEndRequired": "A completed milestone needs its actual end date.",
+    "actualStartRequired": "Enter the actual start date with the first achievement.",
+    "approvalInProgress": "An approval is already in progress for this project.",
+    "causalityRequired": "The milestone is delayed: explain the cause.",
+    "changeNothing": "The change request proposes no change.",
+    "correctiveActionsRequired": "The milestone is delayed: enter the corrective actions.",
+    "deliverableFields": "Deliverables need the main deliverable and the acceptance criteria.",
+    "evidenceRequired": "A completed milestone needs at least one evidence file.",
+    "gateHighLevelPlan": "The high-level plan must total 100 % (now {{total}} %).",
+    "gateKpi": "Add at least one KPI.",
+    "gateLessons": "Add at least one lesson learned.",
+    "gateMembers": "Add at least {{min}} team members ({{count}} now).",
+    "gatePm": "The project needs a project manager.",
+    "gateRisk": "Add at least one risk.",
+    "gateScope": "Add at least one in-scope item.",
+    "gateScopeText": "Fill the scope of work.",
+    "gateStakeholder": "Add at least one stakeholder.",
+    "headerChange": "This milestone cannot change between phase and milestone now.",
+    "headerHasChildren": "Cancel the phase's milestones first.",
+    "itemInactive": "This row is no longer active.",
+    "kpiCardUnknown": "Choose a KPI card you can see.",
+    "lpoMissing": "Upload the LPO first.",
+    "mergeTarget": "Choose another active project to merge into.",
+    "milestoneDates": "Every milestone needs planned start and end dates (end after start).",
+    "milestoneHasAchievement": "A milestone with approved achievement cannot be cancelled.",
+    "milestoneNotUpdatable": "This milestone cannot be updated now.",
+    "notAllowedInStage": "Not allowed at this stage of the project.",
+    "parentInvalid": "Choose an active phase of the same plan.",
+    "templateImpactNeedsClosure": "Impact needs the closure step.",
+    "templateNeedsCharter": "LPO and team formation need the charter step.",
+    "weightBelowAchieved": "The weight cannot be lower than the approved achievement.",
+    "weightRange": "The weight must be above 0 % and at most 100 %.",
+    "weightsNot100": "Milestone weights must total exactly 100 % (now {{total}} %).",
+    "weightsOver100": "Milestone weights would total {{total}} % (more than 100 %).",
+    "windowAlreadyOpen": "A monthly update window is already open.",
+    "windowClosed": "No monthly update window is open."
+  },
+  "warnings": {
+    "openTasks": "This milestone still has open tasks: close or cancel them."
+  },
+  "project": {
+    "add": "Add",
+    "remove": "Remove",
+    "removeTitle": "Remove this row",
+    "removeHint": "The row is kept in the history as inactive.",
+    "reason": "Reason",
+    "saved": "Saved",
+    "emptyRows": "Nothing here yet",
+    "actionsColumn": "Actions",
+    "pm": "Project manager",
+    "section": "Section",
+    "themes": "Operational themes",
+    "costs": "Budget and costs",
+    "planned": "Planned",
+    "contracted": "Contracted",
+    "actual": "Actual",
+    "createdStage": "Created at",
+    "holdReason": "On hold",
+    "toast": {
+      "owner": "You are now the project manager",
+      "completed": "Completed"
+    },
+    "actions": {
+      "hold": "Put on hold",
+      "cancel": "Cancel project"
+    },
+    "statusDialog": {
+      "hold": "Put on hold",
+      "holdHint": "Everything becomes read-only until the project is resumed.",
+      "resume": "Resume",
+      "resumeHint": "The project becomes active again.",
+      "cancel": "Cancel project",
+      "cancelHint": "Cancelling is final; any approval in progress stops."
+    },
+    "submit": {
+      "charter": "Submit the charter for approval",
+      "planning": "Submit the planning for approval",
+      "closure": "Submit the closure for approval",
+      "impact": "Submit the impact for approval"
+    },
+    "processes": {
+      "charter": "Charter",
+      "planning": "Planning",
+      "monthly-update": "Monthly update",
+      "closure": "Closure",
+      "impact": "Impact",
+      "change-request": "Change request"
+    },
+    "subStates": {
+      "ownership": "Waiting for a PM",
+      "charter-draft": "Charter",
+      "charter-approval": "Charter approval",
+      "lpo": "LPO",
+      "team-formation": "Team formation",
+      "planning-draft": "Planning",
+      "planning-approval": "Planning approval",
+      "execution": "Monthly cycle",
+      "completion": "Completion",
+      "closure-draft": "Closure form",
+      "closure-approval": "Closure approval",
+      "impact-draft": "Impact",
+      "impact-approval": "Impact approval",
+      "done": "Done"
+    },
+    "progress": {
+      "performance": "Performance (approved)",
+      "planned": "Planned to date",
+      "status": "Progress status",
+      "onTrack": "On track",
+      "delayed": "Delayed"
+    },
+    "gates": {
+      "charter": "Charter minimums",
+      "planning": "Planning readiness",
+      "met": "Met",
+      "missing": "Missing"
+    },
+    "tabs": {
+      "overview": "Overview",
+      "kpis": "KPIs",
+      "risks": "Risks",
+      "stakeholders": "Stakeholders",
+      "team": "Team",
+      "scope": "Scope",
+      "assumptions": "Assumptions & constraints",
+      "values": "Added values",
+      "milestones": "Milestones",
+      "monthly": "Monthly updates",
+      "tasks": "Tasks",
+      "challenges": "Challenges",
+      "meetings": "Meetings",
+      "lessons": "Lessons learned",
+      "contracts": "Contracts & LPO",
+      "changes": "Change requests",
+      "closure": "Closure",
+      "impact": "Impact",
+      "approvals": "Approvals",
+      "documents": "Documents",
+      "history": "History"
+    },
+    "list": {
+      "view": "View",
+      "views": {
+        "all": "All",
+        "mine": "I manage or own",
+        "unclaimed": "Waiting for a PM"
+      }
+    },
+    "charter": {
+      "title": "Charter",
+      "edit": "Edit charter",
+      "structuralChanges": "Structural changes",
+      "resourcesHuman": "Human resources",
+      "resourcesFinancial": "Financial resources",
+      "resourcesTechnical": "Technical resources",
+      "resourcesContract": "Contract resources",
+      "resourcesOther": "Other resources",
+      "contractedInitialCost": "Contracted initial cost"
+    },
+    "kpi": {
+      "hint": "New KPIs of the project, or existing KPI cards of Performance Management.",
+      "nature": "Nature",
+      "natures": {
+        "new": "New",
+        "existing": "Existing KPI card"
+      },
+      "card": "KPI card",
+      "goal": "Project goal",
+      "equation": "Measuring equation",
+      "direction": "Direction",
+      "directions": {
+        "increase": "Increase",
+        "decrease": "Decrease",
+        "matching": "Matching"
+      },
+      "indexClass": "Classification",
+      "target": "Target",
+      "targetYear": "Year of the target",
+      "whenMeasured": "When measured",
+      "during": "During the project",
+      "after": "After the project",
+      "currentResult": "Current result",
+      "performance": "Performance",
+      "goalStatus": "Goal status"
+    },
+    "rag": {
+      "green": "Achieved",
+      "amber": "Near target",
+      "red": "Below target",
+      "none": "Not measured"
+    },
+    "risk": {
+      "hint": "Probability × impact on 5 × 5; the existing control evaluation lowers the residual score.",
+      "title": "Risk",
+      "category": "Category",
+      "probability": "Probability (1–5)",
+      "impact": "Impact (1–5)",
+      "control": "Existing control evaluation (1–10)",
+      "factor": "Risk factor",
+      "response": "Response",
+      "responses": {
+        "accept": "Accept",
+        "avoid": "Avoid",
+        "mitigate": "Mitigate",
+        "transfer": "Transfer"
+      },
+      "owner": "Risk owner",
+      "mitigation": "Mitigation actions",
+      "implementation": "Implementation (%)",
+      "pxi": "P × I",
+      "inherent": "Inherent",
+      "residual": "Residual",
+      "bands": {
+        "low": "Low",
+        "medium": "Medium",
+        "high": "High",
+        "critical": "Critical"
+      }
+    },
+    "levels": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High"
+    },
+    "stakeholder": {
+      "name": "Name",
+      "classification": "Classification",
+      "interest": "Interest",
+      "impact": "Impact",
+      "method": "Communication method",
+      "frequency": "Frequency",
+      "email": "Email",
+      "phone": "Phone"
+    },
+    "team": {
+      "proposed": "Proposed team members",
+      "proposedHint": "The charter needs at least 3 members ({{count}} now). The formal team is formed in Teams Management.",
+      "employee": "Employee",
+      "role": "Role",
+      "roleAr": "Role (Arabic)",
+      "roleEn": "Role (English)",
+      "responsibilities": "Responsibilities",
+      "formation": "The project team is formed through Teams Management",
+      "formed": "The project team is formed",
+      "formationHint": "PM Office: request a team with this project linked. When the formation is approved, its members get access to the project and the project moves to Planning."
+    },
+    "planning": {
+      "hint": "Planning items of the project.",
+      "category": "Category",
+      "categories": {
+        "in-scope": "In scope",
+        "out-of-scope": "Out of scope",
+        "assumption": "Assumption",
+        "constraint": "Constraint",
+        "deliverable": "Deliverable",
+        "added-value": "Added value",
+        "resource-human": "Human resource",
+        "resource-technical": "Technical resource",
+        "resource-financial": "Financial resource",
+        "resource-contract": "Contract resource",
+        "resource-other": "Other resource"
+      }
+    },
+    "challenge": {
+      "challenge": "Challenge",
+      "impact": "Impact",
+      "recommendation": "Recommendation",
+      "achieved": "Achieved (%)",
+      "reportDate": "Report date"
+    },
+    "lesson": {
+      "lesson": "Lesson",
+      "type": "Type",
+      "recommendation": "Recommendation to improve"
+    },
+    "meeting": {
+      "title": "Subject",
+      "at": "Date and time",
+      "notes": "Minutes"
+    },
+    "contract": {
+      "name": "Name",
+      "number": "Number",
+      "supplier": "Supplier",
+      "issueDate": "Issue date",
+      "amount": "Amount",
+      "status": "Status",
+      "statuses": {
+        "active": "Active",
+        "closed": "Closed",
+        "cancelled": "Cancelled"
+      }
+    },
+    "lpo": {
+      "title": "Local purchase order (LPO)",
+      "waiting": "Waiting for the LPO",
+      "done": "LPO uploaded",
+      "file": "LPO file",
+      "confirm": "LPO uploaded — continue",
+      "confirmed": "LPO confirmed; the PM Office is notified"
+    },
+    "milestones": {
+      "highLevel": "High-level plan",
+      "highLevelHint": "Charter: the main phases, weights total 100 %.",
+      "detailed": "Detailed plan",
+      "detailedHint": "Planning: milestones and phases, leaf weights total exactly 100 %.",
+      "total": "Total {{value}}",
+      "add": "Add milestone",
+      "edit": "Edit milestone",
+      "cancel": "Cancel milestone",
+      "update": "Update",
+      "empty": "No milestones yet",
+      "code": "Code",
+      "title": "Title",
+      "dates": "Planned",
+      "weight": "Weight",
+      "achieved": "Approved",
+      "status": "Status",
+      "deliverable": "Deliverable",
+      "pending": "Pending {{value}}",
+      "statuses": {
+        "not-started": "Not started",
+        "active": "Active",
+        "completed": "Completed",
+        "cancelled": "Cancelled"
+      },
+      "updateStates": {
+        "waiting-update": "Waiting for update",
+        "draft": "Updated (draft)",
+        "pending-approval": "Pending approval",
+        "approved": "Approved",
+        "returned": "Returned"
+      },
+      "isPhase": "This is a phase (groups milestones)",
+      "phase": "Phase",
+      "noPhase": "No phase",
+      "weightPercent": "Weight (% of the project)",
+      "cost": "Cost",
+      "isDeliverable": "This is a deliverable",
+      "isInnovative": "Innovative",
+      "mainDeliverable": "Main deliverable",
+      "acceptance": "Acceptance criteria",
+      "qualityMet": "Output met the quality",
+      "innovativeReason": "Why innovative",
+      "achievePercent": "Achievement (% of the project)",
+      "achieveHint": "Between the approved {{approved}} % and the weight {{weight}} %.",
+      "completeHint": "Complete: actual end and evidence required",
+      "actualStart": "Actual start",
+      "actualEnd": "Actual end",
+      "causality": "Cause of the delay",
+      "corrective": "Corrective actions",
+      "evidence": "Evidence",
+      "evidenceFile": "Evidence file",
+      "uploadEvidence": "Upload evidence",
+      "evidenceNote": "Evidence note"
+    },
+    "monthly": {
+      "current": "Current window",
+      "none": "No window is open. The window opens on the first working day of each month.",
+      "opened": "The monthly update window is open",
+      "overdue": "Overdue",
+      "due": "Due {{date}}",
+      "pending": "{{count}} milestone update(s) ready to submit",
+      "submit": "Submit the monthly update",
+      "history": "History",
+      "noHistory": "No approved updates yet",
+      "snapshot": "{{from}} % → {{to}} %",
+      "statuses": {
+        "open": "Open",
+        "submitted": "In approval",
+        "returned": "Returned",
+        "approved": "Approved"
+      }
+    },
+    "change": {
+      "hint": "Details, postponement, ownership, cancellation or merge. Approved changes apply only when the PM confirms them.",
+      "new": "New change request",
+      "empty": "No change requests",
+      "type": "Change type",
+      "types": {
+        "details": "Details",
+        "postponement": "Postponement",
+        "ownership": "Ownership",
+        "cancellation": "Cancellation",
+        "merge": "Merge"
+      },
+      "statuses": {
+        "draft": "Draft",
+        "under-review": "Under review",
+        "approved": "Approved — to apply",
+        "rejected": "Rejected",
+        "cancelled": "Cancelled",
+        "completed": "Changes implemented"
+      },
+      "reason": "Reason",
+      "impactOfNonResponse": "Impact of not responding",
+      "costAffected": "Affects cost or budget",
+      "fields": {
+        "name": "Name",
+        "budget": "Budget",
+        "pm": "New project manager",
+        "owner": "New project owner",
+        "mergedInto": "Merge into",
+        "nameAr": "Name (Arabic)",
+        "nameEn": "Name (English)",
+        "description": "Description",
+        "scopeOfWork": "Scope",
+        "plannedStart": "Planned start",
+        "plannedEnd": "Planned end",
+        "status": "Status",
+        "milestones": "Milestones",
+        "mergedIntoProject": "Merged into"
+      },
+      "apply": "Apply changes",
+      "applyHint": "Pre-filled from the approved request. Check the values: they are applied and logged when you confirm.",
+      "confirmApply": "Confirm and apply",
+      "applied": "Changes implemented",
+      "appliedLog": "Applied changes",
+      "current": "Current",
+      "cancelsProject": "Applying this request cancels the project."
+    },
+    "closure": {
+      "title": "Project closure",
+      "summary": "Summary of achievement",
+      "deliverables": "Main deliverables",
+      "submit": "Submit the closure"
+    },
+    "impact": {
+      "title": "Project impact",
+      "hint": "After-project results; the PM Office approves and the project is completed.",
+      "cost": "Cost performance",
+      "costHint": "Ratio of planned to actual cost (1 = on budget).",
+      "previousCost": "Previous operational cost",
+      "community": "Community satisfaction",
+      "employee": "Employee satisfaction",
+      "vendor": "Vendor satisfaction",
+      "notes": "Notes",
+      "submit": "Submit the impact",
+      "scale": {
+        "1": "1 — Very low",
+        "2": "2 — Low",
+        "3": "3 — Medium",
+        "4": "4 — High",
+        "5": "5 — Very high"
+      }
+    }
   }
 }

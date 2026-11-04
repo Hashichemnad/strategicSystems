@@ -1,10 +1,9 @@
 import { getRouteApi, Link } from '@tanstack/react-router';
-import { ArrowLeft, FolderKanban, Search } from 'lucide-react';
+import { FolderKanban, Search } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { errorMessage } from '@/api/problem';
-import { CurrentStatusBanner } from '@/features/workflow/ApprovalPanel';
-import { formatDate, formatNumber, pickText } from '@/lib/format';
+import { formatNumber, pickText } from '@/lib/format';
 import {
   EmptyState,
   Input,
@@ -12,7 +11,6 @@ import {
   Pagination,
   Select,
   Skeleton,
-  StageStepper,
   StatusBanner,
   StatusChip,
   Table,
@@ -22,10 +20,11 @@ import {
   TableHeaderCell,
   TableRow,
 } from '@/ui';
-import { projectResource, usePortfolioOptions, useProject, useProjects } from './api';
+import { usePortfolioOptions, useProjects } from './api';
+import { toPercent } from './projectApi';
+import { projectStatusTone } from './project/ProjectPage';
 
 const listRoute = getRouteApi('/app/portfolio/projects');
-const projectRoute = getRouteApi('/app/portfolio/projects/$projectId');
 const PAGE_SIZE = 25;
 
 /** Projects and initiatives created from approved requests (Phase 8: the record; the lifecycle comes with Phase 9). */
@@ -49,11 +48,13 @@ export function ProjectsPage() {
     pageSize: PAGE_SIZE,
     ...(search.classification ? { classification: search.classification } : {}),
     ...(search.search ? { search: search.search } : {}),
+    ...(search.view && search.view !== 'all' ? { view: search.view } : {}),
+    ...(search.status ? { status: search.status } : {}),
   });
   return (
     <div className="flex flex-col gap-6">
       <PageHeader title={t('projectsTitle')} description={t('projectsDescription')} />
-      <div className="grid gap-3 md:grid-cols-3">
+      <div className="grid gap-3 md:grid-cols-5">
         <div className="relative md:col-span-2">
           <Search
             className="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
@@ -81,6 +82,31 @@ export function ProjectsPage() {
             { value: 'initiative', label: t('classification.initiative') },
           ]}
         />
+        <Select
+          aria-label={t('project.list.view')}
+          value={search.view ?? 'all'}
+          onValueChange={(value) =>
+            void navigate({ search: (p) => ({ ...p, view: value as 'all', page: 1 }) })
+          }
+          options={(['all', 'mine', 'unclaimed'] as const).map((v) => ({
+            value: v,
+            label: t(`project.list.views.${v}`),
+          }))}
+        />
+        <Select
+          aria-label={t('filters.status')}
+          value={search.status ?? '*'}
+          onValueChange={(value) =>
+            void navigate({ search: (p) => ({ ...p, status: value === '*' ? undefined : value, page: 1 }) })
+          }
+          options={[
+            { value: '*', label: t('filters.any') },
+            ...(['active', 'on-hold', 'cancelled', 'completed'] as const).map((s) => ({
+              value: s,
+              label: t(`projectStatus.${s}`),
+            })),
+          ]}
+        />
       </div>
       {projects.isPending ? (
         <Skeleton className="h-64 rounded-lg" />
@@ -98,9 +124,10 @@ export function ProjectsPage() {
                   <TableHeaderCell>{t('fields.name')}</TableHeaderCell>
                   <TableHeaderCell>{t('fields.classification')}</TableHeaderCell>
                   <TableHeaderCell>{t('fields.stage')}</TableHeaderCell>
+                  <TableHeaderCell>{t('project.pm')}</TableHeaderCell>
+                  <TableHeaderCell>{t('project.progress.performance')}</TableHeaderCell>
                   <TableHeaderCell>{t('fields.budget')}</TableHeaderCell>
                   <TableHeaderCell>{t('fields.unit')}</TableHeaderCell>
-                  <TableHeaderCell>{t('fields.plannedStart')}</TableHeaderCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -110,6 +137,7 @@ export function ProjectsPage() {
                       <Link
                         to="/portfolio/projects/$projectId"
                         params={{ projectId: p.id }}
+                        search={{}}
                         className="font-medium text-primary hover:underline"
                       >
                         <bdi>{p.number}</bdi>
@@ -118,7 +146,23 @@ export function ProjectsPage() {
                     <TableCell dir="auto">{pickText(i18n.language, p.nameAr, p.nameEn)}</TableCell>
                     <TableCell>{t(`classification.${p.classification as 'project'}`)}</TableCell>
                     <TableCell>
-                      <StatusChip tone="info">{t(`projectStages.${p.stage as 'planning'}`)}</StatusChip>
+                      <div className="flex flex-wrap gap-1">
+                        <StatusChip tone="info">{t(`projectStages.${p.stage as 'planning'}`)}</StatusChip>
+                        {p.status !== 'active' && (
+                          <StatusChip tone={projectStatusTone[p.status] ?? 'neutral'}>
+                            {t(`projectStatus.${p.status as 'active'}`)}
+                          </StatusChip>
+                        )}
+                        <span className="text-xs text-muted-foreground">
+                          {t(`project.subStates.${p.subState as 'execution'}`)}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>{p.pm ? pickText(i18n.language, p.pm.nameAr, p.pm.nameEn) : '—'}</TableCell>
+                    <TableCell className="tabular-nums">
+                      <StatusChip tone={p.progressStatus === 'delayed' ? 'danger' : 'success'}>
+                        {formatNumber(toPercent(p.performance) ?? 0, i18n.language)} %
+                      </StatusChip>
                     </TableCell>
                     <TableCell className="tabular-nums">
                       {p.budget !== null
@@ -128,7 +172,6 @@ export function ProjectsPage() {
                     <TableCell>
                       {p.unit ? pickText(i18n.language, p.unit.nameAr, p.unit.nameEn) : '—'}
                     </TableCell>
-                    <TableCell>{p.plannedStart ? formatDate(p.plannedStart, i18n.language) : '—'}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -142,114 +185,6 @@ export function ProjectsPage() {
           />
         </>
       )}
-    </div>
-  );
-}
-
-/** A project / initiative created from a request: header, stage path, current status, the copied data and the request link. */
-export function ProjectPage() {
-  const { t, i18n } = useTranslation('portfolio');
-  const { t: tc } = useTranslation();
-  const { projectId } = projectRoute.useParams();
-  const project = useProject(projectId);
-  const options = usePortfolioOptions();
-  if (project.isPending) return <Skeleton className="h-96 rounded-lg" />;
-  if (project.isError) return <StatusBanner tone="danger" title={errorMessage(tc, project.error)} />;
-  const p = project.data;
-  const lang = i18n.language;
-  const money = (value: number | null) =>
-    value === null ? '—' : `${formatNumber(value, lang)} ${options.data?.currencyCode ?? ''}`;
-  const objective = options.data?.objectives.find((o) => o.code === p.strategicObjectiveCode);
-  const rows: [string, string][] = [
-    [t('fields.classification'), t(`classification.${p.classification as 'project'}`)],
-    [t('fields.unit'), p.unit ? pickText(lang, p.unit.nameAr, p.unit.nameEn) : '—'],
-    [t('fields.owner'), p.owner ? pickText(lang, p.owner.nameAr, p.owner.nameEn) : '—'],
-    [t('fields.requester'), p.requester ? pickText(lang, p.requester.nameAr, p.requester.nameEn) : '—'],
-    [
-      t('fields.strategicObjectiveCode'),
-      objective ? pickText(lang, objective.labelAr, objective.labelEn) : (p.strategicObjectiveCode ?? '—'),
-    ],
-    [t('fields.budget'), money(p.budget)],
-    [t('fields.plannedStart'), p.plannedStart ? formatDate(p.plannedStart, lang) : '—'],
-    [t('fields.plannedEnd'), p.plannedEnd ? formatDate(p.plannedEnd, lang) : '—'],
-  ];
-  return (
-    <div className="flex flex-col gap-6" data-testid="project-page">
-      <Link
-        to="/portfolio/projects"
-        search={{ page: 1 }}
-        className="flex items-center gap-1 text-sm text-primary hover:underline"
-      >
-        <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden />
-        {t('projectsTitle')}
-      </Link>
-      <PageHeader
-        title={<span dir="auto">{pickText(lang, p.nameAr, p.nameEn)}</span>}
-        description={<bdi>{p.number}</bdi>}
-        meta={
-          <>
-            <StatusChip tone="success">{t(`projectStatus.${p.status as 'active'}`)}</StatusChip>
-            <StatusChip tone="info">{t(`classification.${p.classification as 'project'}`)}</StatusChip>
-          </>
-        }
-      />
-      <StageStepper
-        stages={p.stagePath.map((key) => ({ key, label: t(`projectStages.${key as 'planning'}`) }))}
-        current={p.stage}
-      />
-      <CurrentStatusBanner resourceType={projectResource} resourceId={p.id} onAction={() => undefined} />
-      <div className="grid gap-4 lg:grid-cols-[2fr_1fr]">
-        <section className="flex flex-col gap-4 rounded-lg border bg-card p-6">
-          <dl className="grid gap-4 md:grid-cols-2">
-            {rows.map(([label, value]) => (
-              <div key={label}>
-                <dt className="text-sm text-muted-foreground">{label}</dt>
-                <dd className="mt-1" dir="auto">
-                  {value}
-                </dd>
-              </div>
-            ))}
-          </dl>
-          {[
-            [t('fields.description'), p.description],
-            [t('fields.scopeOfWork'), p.scopeOfWork],
-          ].map(([label, value]) => (
-            <div key={label}>
-              <h3 className="text-sm text-muted-foreground">{label}</h3>
-              <p className="mt-1 whitespace-pre-line" dir="auto">
-                {value ?? '—'}
-              </p>
-            </div>
-          ))}
-          <p className="text-sm">
-            <Link
-              to="/portfolio/requests/$requestId"
-              params={{ requestId: p.requestId }}
-              search={{ tab: 'overview' }}
-              className="text-primary hover:underline"
-            >
-              {t('projects.fromRequest', { number: p.requestNumber ?? '' })}
-            </Link>
-          </p>
-        </section>
-        <section className="flex flex-col gap-2 rounded-lg border bg-card p-4">
-          <h3 className="font-medium">{t('projects.plannedCosts')}</h3>
-          {(
-            [
-              ['year1Cost', p.year1PlannedCost],
-              ['year2Cost', p.year2PlannedCost],
-              ['year3Cost', p.year3PlannedCost],
-              ['year4Cost', p.year4PlannedCost],
-            ] as const
-          ).map(([key, value]) => (
-            <div key={key} className="flex justify-between text-sm">
-              <span className="text-muted-foreground">{t(`fields.${key}`)}</span>
-              <span className="tabular-nums">{money(value)}</span>
-            </div>
-          ))}
-          <p className="mt-2 text-xs text-muted-foreground">{t('projects.nextPhase')}</p>
-        </section>
-      </div>
     </div>
   );
 }

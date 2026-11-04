@@ -18,6 +18,7 @@ export type AuditedRecord =
   | 'task'
   | 'team'
   | 'request'
+  | 'project'
   | 'kpiCard'
   | 'kpiResult'
   | 'serviceRequest'
@@ -48,6 +49,8 @@ async function fetchHistory(record: AuditedRecord, id: string, query: HistoryQue
       return unwrap(await api.GET('/api/v1/teams/{id}/audit', { params, signal }));
     case 'request':
       return unwrap(await api.GET('/api/v1/portfolio/requests/{id}/audit', { params, signal }));
+    case 'project':
+      return unwrap(await api.GET('/api/v1/portfolio/projects/{id}/audit', { params, signal }));
     case 'kpiCard':
       return unwrap(await api.GET('/api/v1/kpi/cards/{id}/audit', { params, signal }));
     case 'kpiResult':
@@ -78,6 +81,8 @@ async function fetchAsOf(record: AuditedRecord, id: string, at: string, signal: 
       return unwrap(await api.GET('/api/v1/teams/{id}/audit/as-of', { params, signal }));
     case 'request':
       return unwrap(await api.GET('/api/v1/portfolio/requests/{id}/audit/as-of', { params, signal }));
+    case 'project':
+      return unwrap(await api.GET('/api/v1/portfolio/projects/{id}/audit/as-of', { params, signal }));
     case 'kpiCard':
       return unwrap(await api.GET('/api/v1/kpi/cards/{id}/audit/as-of', { params, signal }));
     case 'kpiResult':

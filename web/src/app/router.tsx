@@ -331,6 +331,8 @@ export const portfolioProjectsRoute = createRoute({
     page: z.coerce.number().int().min(1).catch(1),
     classification: z.string().max(50).optional().catch(undefined),
     search: z.string().max(200).optional().catch(undefined),
+    view: z.enum(['all', 'mine', 'unclaimed']).optional().catch(undefined),
+    status: z.string().max(50).optional().catch(undefined),
   }),
   component: lazyRouteComponent(() => import('@/features/portfolio/ProjectPages'), 'ProjectsPage'),
 });
@@ -338,7 +340,8 @@ export const portfolioProjectsRoute = createRoute({
 export const portfolioProjectRoute = createRoute({
   getParentRoute: () => appLayout,
   path: '/portfolio/projects/$projectId',
-  component: lazyRouteComponent(() => import('@/features/portfolio/ProjectPages'), 'ProjectPage'),
+  validateSearch: z.object({ tab: z.string().max(40).optional().catch(undefined) }),
+  component: lazyRouteComponent(() => import('@/features/portfolio/project/ProjectPage'), 'ProjectPage'),
 });
 
 // Performance Management (Phase 12, docs/design/kpi.md): dashboard, cards, new year, plans, results, approvals, scorecards, map, reports.

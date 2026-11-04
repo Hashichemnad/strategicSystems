@@ -18,12 +18,38 @@ function serverKeys(): string[] {
       if (statSync(path).isDirectory()) walk(path);
       else if (name.endsWith('.cs'))
         for (const match of readFileSync(path, 'utf8').matchAll(
-          /"(portfolio\.(?:errors|currentStatus|myWork|actions)\.[A-Za-z]+)"/g,
+          /"(portfolio\.(?:errors|currentStatus|myWork|actions|warnings)\.[A-Za-z0-9.]+)"/g,
         ))
           if (match[1]) keys.add(match[1]);
     }
   };
   walk('../src/Modules/Portfolio/Strategy.Modules.Portfolio');
+  // Project banner keys are composed at run time ($"portfolio.currentStatus.project.{key}").
+  for (const key of [
+    'takeOwnership',
+    'fillMinimums',
+    'submitCharter',
+    'charterReturned',
+    'waitingApproval',
+    'waitingLpo',
+    'waitingTeam',
+    'updatePlanning',
+    'addMilestones',
+    'submitPlanning',
+    'planningReturned',
+    'noWindow',
+    'monthlyOpen',
+    'monthlyReturned',
+    'confirmCompletion',
+    'submitClosure',
+    'closureReturned',
+    'enterImpact',
+    'impactReturned',
+    'onHold',
+    'cancelled',
+    'completed',
+  ])
+    keys.add(`portfolio.currentStatus.project.${key}`);
   return [...keys].sort();
 }
 
@@ -39,6 +65,9 @@ describe('Portfolio message keys', () => {
     expect(keys).toContain('portfolio.errors.yearCostsMismatch');
     expect(keys).toContain('portfolio.currentStatus.waitingQuotations');
     expect(keys).toContain('portfolio.myWork.returned');
+    expect(keys).toContain('portfolio.errors.weightsNot100');
+    expect(keys).toContain('portfolio.warnings.openTasks');
+    expect(keys).toContain('portfolio.myWork.monthlyDue');
   });
 
   it.each(['en', 'ar'] as const)('are all translated in %s', async (language) => {
@@ -54,6 +83,12 @@ describe('Portfolio message keys', () => {
           step: 'x',
           project: 'P',
           reason: 'r',
+          weight: '20',
+          approved: '10',
+          min: 3,
+          count: 2,
+          period: '2027-03',
+          process: 'Charter',
         }) === fallback,
     );
     expect(missing).toEqual([]);
@@ -69,6 +104,15 @@ describe('Portfolio message keys', () => {
       expect(dynamicT(`portfolio:status.${status}`)).not.toContain('status.');
     for (const stage of ['initiation', 'planning', 'execution', 'closure', 'impact', 'completed'])
       expect(dynamicT(`portfolio:projectStages.${stage}`)).not.toContain('projectStages.');
+  });
+
+  it('translates the planning weight gate with its total in both languages', async () => {
+    await i18n.changeLanguage('en');
+    expect(translateMessageKey(i18n.t, 'portfolio.errors.weightsNot100', { total: 90 })).toBe(
+      'Milestone weights must total exactly 100 % (now 90 %).',
+    );
+    await i18n.changeLanguage('ar');
+    expect(translateMessageKey(i18n.t, 'portfolio.errors.weightsNot100', { total: 90 })).toContain('100 %');
   });
 
   it('translates the Year 1–4 mismatch with its totals in both languages', async () => {
