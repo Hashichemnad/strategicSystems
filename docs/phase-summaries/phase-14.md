@@ -41,7 +41,7 @@ Two points of the plan changed during the build and the design note was updated 
 | Gate | Result |
 |---|---|
 | `dotnet build Strategy.slnx -c Release` · `dotnet format --verify-no-changes` | 0 warnings, 0 errors · clean |
-| `dotnet test --solution Strategy.slnx` | See *Test run* below. New: **83** unit tests, **8** integration tests (the Phase 14 scenarios above) |
+| `dotnet test --solution Strategy.slnx` | **2 645** tests (unit, architecture, integration on real PostgreSQL with Mailpit / Gotenberg / Keycloak / OpenLDAP containers): 2 640 green in the full parallel run; the 5 `ExternalProviderTests` failed because the OpenLDAP container exited at start-up and passed when the class was re-run. New: **83** unit tests, **8** integration tests (the Phase 14 scenarios above) |
 | `tools/check-vulnerable.sh` · `tools/check-api-client.sh` | no High / Critical · OpenAPI document and TS client up to date |
 | `npm run lint` (incl. the RTL class check) · `format:check` · `typecheck` · `npm test` | clean · **174 / 174** Vitest (new: message keys of `requests`, `docreg`, `ip` in AR and EN, form logic, form renderer, IP logic, document helpers) |
 | `npm run build` · `npm audit --audit-level=high` · `npm run lint:licenses` | OK · no High / Critical (the same 14 moderate dev-tool advisories as earlier phases) · 613 packages allowed |
