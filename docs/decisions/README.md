@@ -78,3 +78,11 @@ Write an ADR for every choice the SPEC or CLAUDE.md leaves open (CLAUDE.md §2 r
 | [0086](0086-emirates-id-encryption-and-masking.md) | Emirates ID: encryption, masking and who may see it | Accepted by the owner |
 | [0087](0087-ip-from-documents-renewal-internal.md) | IP from published documents, expiry, renewal and internal-only protection | Accepted by the owner |
 | [0088](0088-request-pdf-templates-and-embedding.md) | Request PDF templates and the embeddable submit page | Accepted by the owner |
+| [0100](0100-risk-framework-versions-and-scoring.md) | Risk framework versions, shared scoring engine, band gaps, recalculation | Proposed |
+| [0101](0101-portfolio-project-risks-on-the-shared-framework.md) | Portfolio project risks scored by the shared risk framework | Proposed |
+| [0102](0102-risk-lifecycle-and-approvals.md) | Risk lifecycle, one pending process, approvals R1 / R3 / R5 | Proposed |
+| [0103](0103-project-risks-tab-live-read.md) | Project Risks tab: live, permission-filtered read; separate dashboard category | Proposed |
+| [0104](0104-kris-and-kpi-results.md) | Key risk indicators react to approved KPI results | Proposed |
+| [0105](0105-risk-screens-charts-reports.md) | Risk screens: CSS / SVG heat-maps and charts; reports through the platform renderers | Proposed |
+| [0106](0106-risk-ai-and-mcp.md) | Risk AI features and MCP tools | Proposed |
+| [0107](0107-risk-office-role-and-system-ownership.md) | Risk Office is a role; owning unit configurable | Proposed |
