@@ -618,9 +618,21 @@ internal sealed class ApprovalEngine(
         return _lastStamp;
     }
 
-    internal async Task<ProcessVersion?> LatestVersionAsync(string processKey, CancellationToken ct) =>
-        await db.Versions.Include(v => v.Steps).Where(v => v.ProcessKey == processKey).OrderByDescending(v => v.VersionNo)
+    internal async Task<ProcessVersion?> LatestVersionAsync(string processKey, CancellationToken ct)
+    {
+        var latest = await db.Versions.Include(v => v.Steps).Where(v => v.ProcessKey == processKey).OrderByDescending(v => v.VersionNo)
             .FirstOrDefaultAsync(ct).ConfigureAwait(false);
+        if (latest is not null || !registry.IsDynamic(processKey) || registry.Find(processKey) is not { DefaultSteps.Count: > 0 } process)
+        {
+            return latest;
+        }
+
+        // A process created at run time (ADR 0081) gets its version 1 on first use; the Approval Settings centre owns it from then on.
+        var seeded = ProcessVersion.Create(process.Key, 1, null, process.DefaultSteps);
+        db.Versions.Add(seeded);
+        await db.SaveChangesAsync(ct).ConfigureAwait(false);
+        return seeded;
+    }
 
     private void Raise(ApprovalProcessDefinition process, ApprovalInstance instance, string kind, string? stepCode, string? action, Guid? onBehalfOf, string? comment) =>
         _pendingEvents.Add(new ApprovalEvent(kind, process.Key, instance.Id, instance.ResourceType, instance.ResourceId, instance.Attempt, stepCode, action,

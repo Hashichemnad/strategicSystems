@@ -523,7 +523,7 @@ Implement, then run the full hardening review and fix findings, run performance 
 | 11 | Wasel vendor portal | ☐ | |
 | 12 | Performance Management | ☑ built — awaiting owner acceptance | |
 | 13 | Risk Management | ☐ | |
-| 14 | Requests, Document Registry, IP | ☐ | |
+| 14 | Requests, Document Registry, IP | ☑ built — awaiting owner acceptance | |
 | 15 | CAP & Benchmarking | ☐ | |
 | 16 | Audit Management | ☐ | |
 | 17 | Dashboards & reporting | ☐ | |

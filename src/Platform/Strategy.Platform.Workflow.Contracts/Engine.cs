@@ -173,6 +173,15 @@ public interface IMyWorkSource
     Task<IReadOnlyList<MyWorkItem>> GetItemsAsync(ClaimsPrincipal user, CancellationToken cancellationToken);
 }
 
+/// <summary>
+/// Approval processes created at run time (ADR 0081), e.g. one per custom request type. Registered as a singleton; must answer quickly
+/// (cached). Version 1 of a dynamic process is seeded from its default steps the first time it is used.
+/// </summary>
+public interface IApprovalProcessSource
+{
+    IReadOnlyCollection<ApprovalProcessDefinition> GetProcesses();
+}
+
 /// <summary>Resolves a team role (Teams module, Phase 7) to employees for <c>teamRole</c> approver rules.</summary>
 public interface ITeamRoleResolver
 {
@@ -187,6 +196,10 @@ public static class WorkflowServiceCollectionExtensions
         services.AddSingleton(definition);
         return services;
     }
+
+    public static IServiceCollection AddApprovalProcessSource<TSource>(this IServiceCollection services)
+        where TSource : class, IApprovalProcessSource =>
+        services.AddSingleton<IApprovalProcessSource, TSource>();
 
     public static IServiceCollection AddApprovalHook<THook>(this IServiceCollection services)
         where THook : class, IApprovalHook =>

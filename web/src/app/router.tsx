@@ -451,6 +451,117 @@ export const kpiReportsRoute = createRoute({
   component: lazyRouteComponent(() => import('@/features/kpi/ReportsPage'), 'KpiReportsPage'),
 });
 
+// Request Framework, Document Registry, IP Registry (Phase 14, docs/design/requests.md).
+export const requestCatalogueRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/requests',
+  component: lazyRouteComponent(() => import('@/features/requests/CataloguePage'), 'RequestCataloguePage'),
+});
+
+export const requestNewRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/requests/new/$typeCode',
+  /** <c>values</c>: JSON object of field values to prefill (e.g. the existing document of a new version). */
+  validateSearch: z.object({ values: z.string().max(4000).optional().catch(undefined) }),
+  component: lazyRouteComponent(() => import('@/features/requests/WizardPage'), 'RequestWizardPage'),
+});
+
+export const myRequestsRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/requests/mine',
+  component: lazyRouteComponent(() => import('@/features/requests/MyRequestsPage'), 'MyRequestsPage'),
+});
+
+export const requestQueueRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/requests/queue',
+  component: lazyRouteComponent(() => import('@/features/requests/QueuePage'), 'RequestQueuePage'),
+});
+
+export const requestRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/requests/$requestId',
+  validateSearch: z.object({
+    tab: z.enum(['overview', 'approvals', 'timeline', 'documents', 'tasks', 'history']).catch('overview'),
+  }),
+  component: lazyRouteComponent(() => import('@/features/requests/RequestPage'), 'RequestPage'),
+});
+
+export const requestEditRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/requests/$requestId/edit',
+  component: lazyRouteComponent(() => import('@/features/requests/WizardPage'), 'RequestEditPage'),
+});
+
+/** Chrome-less submit page for the intranet (ADR 0088): the same sign-in, no sidebar. */
+const embedLayout = createRoute({
+  getParentRoute: () => rootRoute,
+  id: 'embed',
+  component: Outlet,
+  beforeLoad: appLayout.options.beforeLoad,
+});
+
+export const embedRequestRoute = createRoute({
+  getParentRoute: () => embedLayout,
+  path: '/embed/requests/$typeCode',
+  validateSearch: z.object({ values: z.string().max(4000).optional().catch(undefined) }),
+  component: lazyRouteComponent(() => import('@/features/requests/EmbedPage'), 'EmbedRequestPage'),
+});
+
+export const documentLibraryRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/documents',
+  component: lazyRouteComponent(() => import('@/features/docreg/LibraryPage'), 'DocumentLibraryPage'),
+});
+
+export const documentDashboardRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/documents/dashboard',
+  component: lazyRouteComponent(() => import('@/features/docreg/DashboardPage'), 'DocumentDashboardPage'),
+});
+
+export const documentRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/documents/$documentId',
+  validateSearch: z.object({
+    tab: z.enum(['overview', 'versions', 'validity', 'linked', 'tasks', 'history']).catch('overview'),
+  }),
+  component: lazyRouteComponent(() => import('@/features/docreg/DocumentPage'), 'DocumentPage'),
+});
+
+export const documentCompareRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/documents/$documentId/compare',
+  validateSearch: z.object({
+    from: z.uuid().optional().catch(undefined),
+    to: z.uuid().optional().catch(undefined),
+  }),
+  component: lazyRouteComponent(() => import('@/features/docreg/ComparePage'), 'DocumentComparePage'),
+});
+
+export const ipRegisterRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/ip',
+  component: lazyRouteComponent(() => import('@/features/ip/RegisterPage'), 'IpRegisterPage'),
+});
+
+export const ipDashboardRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/ip/dashboard',
+  component: lazyRouteComponent(() => import('@/features/ip/DashboardPage'), 'IpDashboardPage'),
+});
+
+export const ipRecordRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/ip/records/$recordId',
+  validateSearch: z.object({
+    tab: z
+      .enum(['overview', 'contributors', 'registration', 'documents', 'linked', 'history'])
+      .catch('overview'),
+  }),
+  component: lazyRouteComponent(() => import('@/features/ip/RecordPage'), 'IpRecordPage'),
+});
+
 // Audit trail (CLAUDE.md §8): global log for administrators and auditors, and the chain verification screen.
 export const auditSearchSchema = z.object({
   page: z.coerce.number().int().min(1).catch(1),
@@ -728,6 +839,30 @@ const kpiSettingsRoute = createRoute({
   component: lazyRouteComponent(() => import('@/features/kpi/KpiSettingsPage'), 'KpiSettingsPage'),
 });
 
+const requestTypesRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/request-types',
+  component: lazyRouteComponent(() => import('@/features/requests/TypesPage'), 'RequestTypesPage'),
+});
+
+const requestTypeBuilderRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/request-types/$code',
+  component: lazyRouteComponent(() => import('@/features/requests/BuilderPage'), 'RequestTypeBuilderPage'),
+});
+
+const docregSettingsRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/docreg',
+  component: lazyRouteComponent(() => import('@/features/docreg/SettingsPage'), 'DocRegSettingsPage'),
+});
+
+const ipSettingsRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/ip',
+  component: lazyRouteComponent(() => import('@/features/ip/SettingsPage'), 'IpSettingsPage'),
+});
+
 const taskSettingsRoute = createRoute({
   getParentRoute: () => settingsLayout,
   path: '/tasks',
@@ -786,6 +921,7 @@ export const assignmentsRoute = createRoute({
 const routeTree = rootRoute.addChildren([
   publicLayout.addChildren([loginRoute, mfaRoute, enrolRoute, forgotRoute, resetRoute]),
   consentLayout.addChildren([consentRoute]),
+  embedLayout.addChildren([embedRequestRoute]),
   appLayout.addChildren([
     homeRoute,
     sampleRoute,
@@ -821,6 +957,19 @@ const routeTree = rootRoute.addChildren([
     kpiScorecardRoute,
     kpiStrategyMapRoute,
     kpiReportsRoute,
+    requestCatalogueRoute,
+    requestNewRoute,
+    myRequestsRoute,
+    requestQueueRoute,
+    requestRoute,
+    requestEditRoute,
+    documentLibraryRoute,
+    documentDashboardRoute,
+    documentRoute,
+    documentCompareRoute,
+    ipRegisterRoute,
+    ipDashboardRoute,
+    ipRecordRoute,
     auditRoute,
     auditVerificationRoute,
     notificationsRoute,
@@ -858,6 +1007,10 @@ const routeTree = rootRoute.addChildren([
       teamSettingsRoute,
       portfolioSettingsRoute,
       kpiSettingsRoute,
+      requestTypesRoute,
+      requestTypeBuilderRoute,
+      docregSettingsRoute,
+      ipSettingsRoute,
       taskReassignRoute,
       rolesRoute,
       assignmentsRoute,

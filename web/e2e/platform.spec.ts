@@ -205,7 +205,7 @@ test.describe('as an administrator', () => {
     await expect(page.getByText(tr(language, 'jobs:toast.run'), { exact: true })).toBeVisible();
     await expect(verify.getByText(tr(language, 'jobs:statuses.succeeded'))).toBeVisible({ timeout: 20_000 });
     // Platform jobs, the three Task Management jobs and the two Teams jobs (evaluation triggers, periodic reports).
-    await expect(page.getByTestId('job-row')).toHaveCount(13);
+    await expect(page.getByTestId('job-row')).toHaveCount(16);
     await shot('job-dashboard', { fullPage: true });
   });
 });

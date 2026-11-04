@@ -4,17 +4,45 @@ using Strategy.Platform.Organisation.Contracts;
 
 namespace Strategy.Platform.Workflow.Application;
 
-/// <summary>The registered processes (code), with the variables their conditions may use (built-in + the module's).</summary>
+/// <summary>
+/// The registered processes: code definitions plus the dynamic ones of <see cref="IApprovalProcessSource"/>s (ADR 0081), with the variables
+/// their conditions may use (built-in + the module's). A code definition wins over a dynamic one with the same key.
+/// </summary>
 internal sealed class ProcessRegistry
 {
     private readonly Dictionary<string, ApprovalProcessDefinition> _byKey;
+    private readonly List<IApprovalProcessSource> _sources;
 
-    public ProcessRegistry(IEnumerable<ApprovalProcessDefinition> definitions) =>
+    public ProcessRegistry(IEnumerable<ApprovalProcessDefinition> definitions, IEnumerable<IApprovalProcessSource> sources)
+    {
         _byKey = definitions.ToDictionary(d => d.Key, StringComparer.Ordinal);
+        _sources = sources.ToList();
+    }
 
-    public IReadOnlyCollection<ApprovalProcessDefinition> All => _byKey.Values;
+    public IReadOnlyCollection<ApprovalProcessDefinition> All
+    {
+        get
+        {
+            if (_sources.Count == 0)
+            {
+                return _byKey.Values;
+            }
 
-    public ApprovalProcessDefinition? Find(string key) => _byKey.GetValueOrDefault(key);
+            var all = new Dictionary<string, ApprovalProcessDefinition>(_byKey, StringComparer.Ordinal);
+            foreach (var definition in _sources.SelectMany(s => s.GetProcesses()))
+            {
+                all.TryAdd(definition.Key, definition);
+            }
+
+            return all.Values;
+        }
+    }
+
+    public ApprovalProcessDefinition? Find(string key) =>
+        _byKey.GetValueOrDefault(key) ?? _sources.SelectMany(s => s.GetProcesses()).FirstOrDefault(d => d.Key == key);
+
+    /// <summary>True when the process comes from a dynamic source (its version 1 is seeded on first use).</summary>
+    public bool IsDynamic(string key) => !_byKey.ContainsKey(key) && Find(key) is not null;
 
     public static IReadOnlyList<ExpressionVariable> VariablesOf(ApprovalProcessDefinition process) =>
         [.. BuiltInVariables.All, .. process.Variables.Where(v => BuiltInVariables.All.All(b => !string.Equals(b.Name, v.Name, StringComparison.OrdinalIgnoreCase)))];

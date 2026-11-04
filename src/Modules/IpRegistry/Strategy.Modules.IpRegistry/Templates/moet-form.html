@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"/>
+<style>
+  @page { size: A4; margin: 14mm 12mm; }
+  body { font-family: 'IBM Plex Sans Arabic', sans-serif; font-size: 10.5pt; color: #111; }
+  .header { display: flex; justify-content: space-between; border-bottom: 2px solid #0f766e; padding-bottom: 6px; margin-bottom: 10px; }
+  .header .ar { font-size: 14pt; font-weight: 700; }
+  .header .en { font-size: 12pt; font-weight: 700; direction: ltr; text-align: left; }
+  .meta { font-size: 9pt; color: #555; margin-bottom: 10px; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
+  th, td { border: 1px solid #999; padding: 5px 6px; vertical-align: top; text-align: start; }
+  th { background: #f0f5f4; width: 22%; }
+  .pair { display: flex; gap: 10px; }
+  .pair > div { flex: 1; }
+  .en { direction: ltr; text-align: left; display: block; color: #333; }
+  .ltr { direction: ltr; text-align: left; unicode-bidi: embed; white-space: nowrap; }
+  .sign { width: 18%; height: 34px; }
+  h2 { font-size: 11.5pt; margin: 12px 0 6px; color: #0f766e; }
+  .declaration { border: 1px solid #999; padding: 8px; font-size: 9.5pt; }
+</style>
+</head>
+<body>
+  <div class="header">
+    <div class="ar">{{headerAr}}<br/><span style="font-size:10pt;font-weight:400">{{orgAr}}</span></div>
+    <div class="en">{{headerEn}}<br/><span style="font-size:10pt;font-weight:400">{{orgEn}}</span></div>
+  </div>
+  <div class="meta">رقم السجل / Record no.: <span class="ltr">{{number}}</span> — تاريخ الإنشاء / Created: <span class="ltr">{{created}}</span></div>
+
+  <h2>بيانات المصنف / The work</h2>
+  <table>
+    <tr><th>اسم المصنف<span class="en">Title of the work</span></th><td>{{nameAr}}<span class="en">{{nameEn}}</span></td></tr>
+    <tr><th>نوع الملكية<span class="en">Property type</span></th><td>{{propertyAr}}<span class="en">{{propertyEn}}</span></td></tr>
+    <tr><th>نوع الحماية<span class="en">Protection type</span></th><td>{{protectionAr}}<span class="en">{{protectionEn}}</span></td></tr>
+    <tr><th>وصف المصنف<span class="en">Description of the work</span></th><td><div class="pair"><div>{{descriptionAr}}</div><div class="en">{{descriptionEn}}</div></div></td></tr>
+  </table>
+
+  <h2>المؤلفون / الأطراف المتنازلة — Authors / transferring parties</h2>
+  <table>
+    <tr>
+      <th style="width:4%">#</th><th>الاسم<span class="en">Name</span></th><th>الجهة<span class="en">Organisation</span></th>
+      <th>رقم الهوية الإماراتية<span class="en">Emirates ID</span></th><th>الدور<span class="en">Role</span></th><th style="width:9%">النسبة<span class="en">Share</span></th>
+      <th>التوقيع<span class="en">Signature</span></th>
+    </tr>
+    {{rows}}
+  </table>
+
+  <h2>إقرار / Declaration</h2>
+  <div class="declaration">
+    يقر الموقعون أعلاه بأنهم أعدوا المصنف لصالح {{orgAr}} وبتنازلهم عن حقوقهم المالية فيه للجهة.
+    <span class="en">The signatories declare that they created the work for {{orgEn}} and assign their economic rights in it to the organisation.</span>
+  </div>
+  <p class="meta">التاريخ / Date: <span class="ltr">{{today}}</span></p>
+</body>
+</html>

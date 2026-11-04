@@ -30,7 +30,10 @@
     "teams": "Teams & committees",
     "portfolioRequests": "Program requests",
     "portfolioProjects": "Projects & initiatives",
-    "kpi": "Performance"
+    "kpi": "Performance",
+    "requests": "Requests",
+    "documents": "Document library",
+    "ip": "Intellectual property"
   },
   "language": {
     "label": "Language",

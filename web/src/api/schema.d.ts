@@ -5476,6 +5476,886 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/requests/catalogue': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetRequestCatalogue'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/requests/types/{code}/form': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetRequestTypeForm'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/requests/types/{code}/ai-fill': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['FillRequestFormWithAi'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/requests/mine': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListMyRequests'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/requests/queue': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListRequestQueue'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/requests/queue/bulk-complete': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['BulkCompleteRequests'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/requests': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CreateRequestDraft'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/requests/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetRequest'];
+    put: operations['SaveRequestDraft'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/requests/{id}/submit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SubmitRequest'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/requests/{id}/cancel': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CancelRequest'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/requests/{id}/decide': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['DecideRequest'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/requests/{id}/actions/{action}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ActOnRequest'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/requests/{id}/pdf/{template}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetRequestPdf'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/requests/{id}/audit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetRequestAuditTrail'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/requests/{id}/audit/as-of': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetRequestAsOf'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/requests/admin/types': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListRequestTypes'];
+    put?: never;
+    post: operations['CreateRequestType'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/requests/admin/types/options': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetRequestTypeOptions'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/requests/admin/types/{code}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetRequestType'];
+    put: operations['UpdateRequestType'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/requests/admin/types/{code}/preview-pdf': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['PreviewRequestTypePdf'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/docreg/library': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetDocumentLibrary'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/docreg/dashboard': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetDocumentDashboard'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/docreg/documents/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetDocument'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/docreg/documents/{id}/compare': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['CompareDocumentVersions'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/docreg/documents/{id}/download': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['DownloadDocument'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/docreg/documents/{id}/confirm-valid': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ConfirmDocumentValid'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/docreg/documents/{id}/expiry': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['SetDocumentExpiry'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/docreg/documents/{id}/acknowledge': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['AcknowledgeDocument'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/docreg/documents/{id}/audit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetDocumentAuditTrail'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/docreg/documents/{id}/audit/as-of': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetDocumentAsOf'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/docreg/ai/requests/{requestId}/classify': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SuggestDocumentClassification'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/docreg/ai/requests/{requestId}/duplicates': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CheckDocumentDuplicates'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/docreg/ai/documents/{id}/summary': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SummariseDocument'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/docreg/ai/documents/{id}/what-changed': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ExplainDocumentChanges'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/docreg/ai/ask': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['AskDocuments'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/docreg/settings': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetDocRegSettings'];
+    put: operations['SaveDocRegSettings'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/ip/records': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListIpRecords'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/ip/dashboard': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetIpDashboard'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/ip/records/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetIpRecord'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/ip/records/{id}/filing': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RecordIpFiling'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/ip/records/{id}/register-internally': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RegisterIpInternally'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/ip/records/{id}/registration': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RecordIpRegistration'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/ip/records/{id}/moet-rejection': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RecordIpMoetRejection'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/ip/records/{id}/close': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CloseIpRecord'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/ip/records/{id}/renewal': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RenewIpRecord'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/ip/records/{id}/contributors': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['SetIpContributors'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/ip/records/{id}/moet-description': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['SetIpMoetDescription'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/ip/records/{id}/contributors/{contributorId}/emirates-id': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['RevealContributorEmiratesId'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/ip/records/{id}/moet-form': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetIpMoetForm'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/ip/records/{id}/certificate': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['DownloadIpCertificate'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/ip/records/{id}/audit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetIpRecordAuditTrail'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/ip/records/{id}/audit/as-of': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetIpRecordAsOf'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/ip/ai/suggest': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SuggestIpTypes'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/ip/ai/similar': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['FindSimilarIp'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/ip/ai/records/{id}/moet-description': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['DraftIpMoetDescription'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/ip/settings': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetIpSettings'];
+    put: operations['SaveIpSettings'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -5522,6 +6402,12 @@ export interface components {
       revokedAt: null | string;
       state: string;
     };
+    AckDto: {
+      required: boolean;
+      mine: boolean;
+      /** Format: int32 */
+      count: number;
+    };
     /** @description A decision on a task (API body). */
     ActInput: {
       action: null | string;
@@ -5530,6 +6416,12 @@ export interface components {
       onBehalfOfUserId: null | string;
       /** Format: uint32 */
       version: null | number;
+    };
+    ActionInput: {
+      /** Format: uint32 */
+      version: number;
+      comment: null | string;
+      form: null | components['schemas']['JsonObject'];
     };
     /** @description Outcome of a decision. */
     ActResult: {
@@ -5772,6 +6664,20 @@ export interface components {
       /** Format: double */
       amount: number;
     };
+    AnswerDto: {
+      answer: string;
+      sources: components['schemas']['AnswerSourceDto'][];
+      /** Format: uuid */
+      usageId: string;
+    };
+    AnswerSourceDto: {
+      /** Format: uuid */
+      documentId: string;
+      documentNo: null | string;
+      nameAr: null | string;
+      nameEn: null | string;
+      link: string;
+    };
     /** @description The token the SPA sends back in string AntiforgerySetup.HeaderName on every state-changing call. */
     AntiforgeryToken: {
       token: string;
@@ -5783,6 +6689,21 @@ export interface components {
       labelAr: null | string;
       labelEn: null | string;
       commentRequired: boolean;
+    };
+    ApprovalInstanceSummary: {
+      /** Format: uuid */
+      instanceId: string;
+      processKey: string;
+      status: string;
+      /** Format: int32 */
+      attempt: number;
+      currentStepCode: null | string;
+      currentStepNameAr: null | string;
+      currentStepNameEn: null | string;
+      /** Format: date-time */
+      submittedAt: string;
+      /** Format: date-time */
+      completedAt: null | string;
     };
     /** @description Settings → Approvals: which organisation levels the "section manager" and "department director" rules look for (ADR 0025). */
     ApprovalSettings: {
@@ -5802,6 +6723,16 @@ export interface components {
       departmentLevelCode: null | string;
       /** Format: uint32 */
       version: number;
+    };
+    /** @description The pending step of a record as the current user sees it (for current-status providers). */
+    ApprovalStatusView: {
+      instance: components['schemas']['ApprovalInstanceSummary'];
+      approvers: components['schemas']['PersonName'][];
+      /** Format: date-time */
+      dueAt: null | string;
+      /** Format: uuid */
+      myTaskId: null | string;
+      myActions: string[];
     };
     /** @description One step of a chain, as configured in the Approval Settings centre. */
     ApprovalStepDefinition: {
@@ -6051,6 +6982,20 @@ export interface components {
       emailFooterAr?: null | string;
       emailFooterEn?: null | string;
     };
+    BulkCompleteInput: {
+      ids: null | string[];
+      action: null | string;
+      comment: null | string;
+    };
+    BulkFailureDto: {
+      /** Format: uuid */
+      id: string;
+      code: string;
+    };
+    BulkResultDto: {
+      done: string[];
+      failed: components['schemas']['BulkFailureDto'][];
+    };
     BusinessHoursDto: {
       /** Format: uuid */
       id: string;
@@ -6171,6 +7116,26 @@ export interface components {
       dataElements: null | components['schemas']['DataElement'][];
       scale: null | components['schemas']['ScaleLevel'][];
     };
+    CatalogueDto: {
+      types: components['schemas']['CatalogueTypeDto'][];
+      categories: components['schemas']['CategoryDto'][];
+    };
+    CatalogueTypeDto: {
+      code: string;
+      systemCode: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      descriptionAr: null | string;
+      descriptionEn: null | string;
+      category: null | string;
+      icon: string;
+      embeddable: boolean;
+    };
+    CategoryDto: {
+      code: string;
+      labelAr: null | string;
+      labelEn: null | string;
+    };
     ChangedFieldDto: {
       field: string;
       labelAr: string;
@@ -6218,6 +7183,14 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    ClassificationSuggestionDto: {
+      level: null | string;
+      docType: null | string;
+      sensitivity: null | string;
+      reasons: string[];
+      /** Format: uuid */
+      usageId: string;
+    };
     CommentDto: {
       /** Format: uuid */
       id: string;
@@ -6234,6 +7207,19 @@ export interface components {
       mentions: null | string[];
       fileIds: null | string[];
     };
+    CompareDto: {
+      /** Format: uuid */
+      fromId: string;
+      fromLabel: null | string;
+      /** Format: uuid */
+      toId: string;
+      toLabel: null | string;
+      parts: components['schemas']['DiffPart'][];
+      /** Format: int32 */
+      added: number;
+      /** Format: int32 */
+      removed: number;
+    };
     ConditionCheckDto: {
       valid: boolean;
       errors: components['schemas']['FieldError'][];
@@ -6241,6 +7227,43 @@ export interface components {
     };
     ConditionInput: {
       condition: null | string;
+    };
+    ConfirmInput: {
+      comment: null | string;
+    };
+    /** @description A contributor as the API shows it: the Emirates ID is masked for everyone (reveal is a separate, audited call — ADR 0086). */
+    ContributorDto: {
+      /** Format: uuid */
+      id: string;
+      employee: null | components['schemas']['IpPersonDto'];
+      externalName: null | string;
+      externalOrganisation: null | string;
+      emiratesIdMasked: null | string;
+      hasEmiratesId: boolean;
+      role: null | string;
+      /** Format: double */
+      sharePercent: number;
+      signatureStatus: string;
+      /** Format: date-time */
+      certificateSentAt: null | string;
+    };
+    ContributorInput: {
+      /** Format: uuid */
+      id: null | string;
+      /** Format: uuid */
+      employeeId: null | string;
+      externalName: null | string;
+      externalOrganisation: null | string;
+      emiratesId: null | string;
+      role: null | string;
+      /** Format: double */
+      sharePercent: number;
+      signatureStatus: null | string;
+    };
+    ContributorsInput: {
+      contributors: null | components['schemas']['ContributorInput'][];
+      /** Format: uint32 */
+      version: number;
     };
     CountByDto: {
       key: string;
@@ -6377,6 +7400,23 @@ export interface components {
       labelEn: string;
       outcome: string;
     };
+    DashboardDto: {
+      /** Format: int32 */
+      published: number;
+      /** Format: int32 */
+      expired: number;
+      /** Format: int32 */
+      expiringSoon: number;
+      /** Format: int32 */
+      pendingReview: number;
+      /** Format: int32 */
+      awaitingPublication: number;
+      byLevel: components['schemas']['FacetDto'][];
+      byType: components['schemas']['FacetDto'][];
+      byUnit: components['schemas']['UnitFacetDto'][];
+      expiring: components['schemas']['DocumentListItemDto'][];
+      recentlyPublished: components['schemas']['DocumentListItemDto'][];
+    };
     /** @description A data element of a composite KPI (e.g. numerator / denominator). */
     DataElement: {
       code: string;
@@ -6389,6 +7429,11 @@ export interface components {
       mode: string;
       start: null | string;
       end: null | string;
+    };
+    DecideInput: {
+      action: null | string;
+      comment: null | string;
+      form: null | components['schemas']['JsonObject'];
     };
     DelegationDto: {
       /** Format: uuid */
@@ -6436,6 +7481,138 @@ export interface components {
     DependencyInput: {
       /** Format: uuid */
       dependsOnTaskId: null | string;
+    };
+    /** @description A run of the comparison: `same`, `added` or `removed` text. */
+    DiffPart: {
+      kind: string;
+      text: string;
+    };
+    DocPersonDto: {
+      /** Format: uuid */
+      id: string;
+      nameAr: null | string;
+      nameEn: null | string;
+    };
+    /** @description Settings → Document Registry (docs/design/requests.md §3.1). */
+    DocRegSettings: {
+      organisationCode?: string;
+      types?: components['schemas']['DocTypeRule'][];
+      sensitivities?: components['schemas']['SensitivityRule'][];
+      reminderDays?: number[];
+      watermark?: boolean;
+      watermarkAr?: string;
+      watermarkEn?: string;
+      publicLinks?: boolean;
+    };
+    DocRegSettingsInput: {
+      settings: components['schemas']['DocRegSettings'];
+      /** Format: uint32 */
+      version: number;
+    };
+    /** @description Validity and behaviour of a document type (ADR 0084, 0087). */
+    DocTypeRule: {
+      /** @description Lookup code of `docreg.type`. */
+      code: string;
+      /** @description Value of `{TYPE}` in the Document ID. */
+      numberCode: string;
+      /**
+       * Format: int32
+       * @description Null: valid until superseded.
+       */
+      validityMonths: null | number;
+      /**
+       * @description "Creates IP register entry" (SPEC §0.0).
+       * @default false
+       */
+      createsIp: boolean;
+      /**
+       * @description Read acknowledgement required by default on publish.
+       * @default false
+       */
+      ackRequired: boolean;
+    };
+    DocumentCapabilities: {
+      confirmValid: boolean;
+      newVersion: boolean;
+      withdraw: boolean;
+      editExpiry: boolean;
+      acknowledge: boolean;
+      download: boolean;
+      manage: boolean;
+    };
+    DocumentDto: {
+      /** Format: uuid */
+      id: string;
+      documentNo: null | string;
+      nameAr: null | string;
+      nameEn: null | string;
+      description: null | string;
+      level: null | string;
+      docType: null | string;
+      sensitivity: null | string;
+      ownerUnit: null | components['schemas']['DocUnitDto'];
+      owner: null | components['schemas']['DocPersonDto'];
+      status: string;
+      currentVersion: null | string;
+      /** Format: uuid */
+      currentVersionId: null | string;
+      /** Format: date */
+      effectiveDate: null | string;
+      /** Format: date */
+      expiryDate: null | string;
+      /** Format: int32 */
+      validityMonths: null | number;
+      shareToAll: boolean;
+      underRevision: boolean;
+      withdrawnReason: null | string;
+      linked: components['schemas']['LinkView'][];
+      versions: components['schemas']['VersionDto'][];
+      validity: components['schemas']['ValidityEventDto'][];
+      acknowledgements: components['schemas']['AckDto'];
+      can: components['schemas']['DocumentCapabilities'];
+      /** Format: uint32 */
+      version: number;
+    };
+    DocumentListItemDto: {
+      /** Format: uuid */
+      id: string;
+      documentNo: null | string;
+      nameAr: null | string;
+      nameEn: null | string;
+      level: null | string;
+      docType: null | string;
+      sensitivity: null | string;
+      ownerUnit: null | components['schemas']['DocUnitDto'];
+      status: string;
+      currentVersion: null | string;
+      /** Format: date */
+      effectiveDate: null | string;
+      /** Format: date */
+      expiryDate: null | string;
+      expiringSoon: boolean;
+      shareToAll: boolean;
+      underRevision: boolean;
+      /** Format: date-time */
+      publishedAt: null | string;
+    };
+    DocUnitDto: {
+      /** Format: uuid */
+      id: string;
+      code: string;
+      nameAr: null | string;
+      nameEn: null | string;
+    };
+    DraftInput: {
+      typeCode: null | string;
+      data: null | components['schemas']['JsonObject'];
+      source?: null | string;
+    };
+    DuplicateCheckDto: {
+      findings: components['schemas']['OverlapDto'][];
+      /** Format: int32 */
+      compared: number;
+      /** Format: uuid */
+      usageId: null | string;
     };
     EditorInput: {
       /** Format: uuid */
@@ -6690,6 +7867,13 @@ export interface components {
       /** Format: uint32 */
       version: null | number;
     };
+    ExpiryInput: {
+      /** Format: date */
+      expiryDate: null | string;
+      comment: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
     /**
      * @description One proposed value: never saved by the server; the review UI shows it as a draft (docs/design/ai.md §4.1). Where the source was found:
      *     `LocationKind``page` / `slide` / `image` with its number, and `FromScan` when the text came from OCR (ADR 0033).
@@ -6722,6 +7906,11 @@ export interface components {
        */
       scannedPages: number;
     };
+    FacetDto: {
+      code: string;
+      /** Format: int32 */
+      count: number;
+    };
     FeatureFlagDto: {
       code: string;
       systemCode: string;
@@ -6735,6 +7924,15 @@ export interface components {
       enabled: boolean;
       /** Format: uint32 */
       version: number;
+    };
+    /** @description Condition on another field of the same form (visibility / required). */
+    FieldCondition: {
+      /** @description Code of an earlier field. */
+      field: string;
+      /** @description `eq`, `ne`, `in`, `filled`, `empty`. */
+      op: string;
+      /** @description Compared value (`in`: an array). */
+      value?: unknown;
     };
     /** @description A validation failure on one field. */
     FieldError: {
@@ -6804,6 +8002,13 @@ export interface components {
       uploadedBy: null | string;
       comment: null | string;
     };
+    FilingInput: {
+      /** Format: date */
+      filingDate: null | string;
+      applicationNo: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
     FollowUpDto: {
       /** Format: uuid */
       employeeId: string;
@@ -6838,6 +8043,68 @@ export interface components {
       memoEn: null | string;
       /** Format: uuid */
       usageId: string;
+    };
+    /** @description One field of a form, mini-form or table (column). */
+    FormField: {
+      code?: string;
+      type?: string;
+      labelAr?: null | string;
+      labelEn?: null | string;
+      helpAr?: null | string;
+      helpEn?: null | string;
+      required?: boolean;
+      /** @description Defined in code by the owning module: the builder cannot remove or retype it. */
+      system?: boolean;
+      /** Format: int32 */
+      maxLength?: null | number;
+      /** Format: double */
+      min?: null | number;
+      /** Format: double */
+      max?: null | number;
+      /** Format: int32 */
+      decimals?: null | number;
+      /** @description Lookup type code of picklists. */
+      lookupType?: null | string;
+      /** @description Linkable type of string FieldTypes.Record fields (Links registry). */
+      targetType?: null | string;
+      /** @description Columns of a table. */
+      columns?: null | components['schemas']['FormField'][];
+      /** Format: int32 */
+      minRows?: null | number;
+      /** Format: int32 */
+      maxRows?: null | number;
+      /** @description Secret format (SecretFormats). */
+      format?: null | string;
+      /** @description File fields: more than one file. */
+      multiple?: boolean;
+      /** @description File fields: allowed kinds (`pdf`, …); empty = any document kind. */
+      accept?: null | string[];
+      /** @description `ar` / `en`: the value is the request's title in that language. */
+      titleOf?: null | string;
+      /** @description A unit field whose value is the request's unit (approver resolution). */
+      requestUnit?: boolean;
+      visibleWhen?: null | components['schemas']['FieldCondition'];
+      requiredWhen?: null | components['schemas']['FieldCondition'];
+    };
+    /** @description Values proposed by AI for the wizard: drafts only, never saved by the server (CLAUDE.md rule 6). */
+    FormFillDto: {
+      values: components['schemas']['JsonObject'];
+      skipped: string[];
+      /** Format: uuid */
+      usageId: string;
+    };
+    /** @description A form: sections of fields (request form, approve form or action mini-form). */
+    FormSchema: {
+      sections?: components['schemas']['FormSection'][];
+      allFields?: null | components['schemas']['FormField'][];
+      isEmpty?: boolean;
+    };
+    FormSection: {
+      code?: string;
+      titleAr?: null | string;
+      titleEn?: null | string;
+      system?: boolean;
+      fields?: components['schemas']['FormField'][];
     };
     FromTextInput: {
       text: null | string;
@@ -7007,6 +8274,139 @@ export interface components {
       steps: components['schemas']['StepStateDto'][];
       history: components['schemas']['HistoryDto'][];
       myTask: null | components['schemas']['MyTaskDto'];
+    };
+    InternalInput: {
+      notes: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
+    IpCapabilities: {
+      file: boolean;
+      registerInternally: boolean;
+      register: boolean;
+      moetRejection: boolean;
+      renew: boolean;
+      editContributors: boolean;
+      sensitive: boolean;
+      close: boolean;
+    };
+    IpCountDto: {
+      code: string;
+      /** Format: int32 */
+      count: number;
+    };
+    IpDashboardDto: {
+      /** Format: int32 */
+      total: number;
+      /** Format: int32 */
+      registered: number;
+      /** Format: int32 */
+      pending: number;
+      /** Format: int32 */
+      expiringSoon: number;
+      /** Format: int32 */
+      expired: number;
+      byType: components['schemas']['IpCountDto'][];
+      byProtection: components['schemas']['IpCountDto'][];
+      byYear: components['schemas']['IpCountDto'][];
+      byUnit: components['schemas']['UnitCountDto'][];
+      upcomingExpiries: components['schemas']['IpListItemDto'][];
+    };
+    IpListItemDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      propertyType: null | string;
+      protectionType: null | string;
+      source: string;
+      status: string;
+      ownerUnit: null | components['schemas']['IpUnitDto'];
+      /** Format: date */
+      registrationDate: null | string;
+      /** Format: date */
+      expiryDate: null | string;
+      expiringSoon: boolean;
+      /** Format: int32 */
+      year: number;
+      /** Format: date-time */
+      createdAt: string;
+    };
+    IpPersonDto: {
+      /** Format: uuid */
+      id: string;
+      nameAr: null | string;
+      nameEn: null | string;
+    };
+    IpRecordDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      description: null | string;
+      descriptionAr: null | string;
+      descriptionEn: null | string;
+      propertyType: null | string;
+      protectionType: null | string;
+      source: string;
+      /** Format: uuid */
+      requestId: null | string;
+      /** Format: uuid */
+      documentId: null | string;
+      documentNo: null | string;
+      ownerUnit: null | components['schemas']['IpUnitDto'];
+      requester: null | components['schemas']['IpPersonDto'];
+      status: string;
+      /** Format: date */
+      filingDate: null | string;
+      applicationNo: null | string;
+      registrationNo: null | string;
+      /** Format: date */
+      registrationDate: null | string;
+      /** Format: date */
+      expiryDate: null | string;
+      /** Format: date */
+      firstPublicationDate: null | string;
+      /** Format: date */
+      proposedExpiry: null | string;
+      /** Format: int32 */
+      termYears: null | number;
+      termFrom: string;
+      /** Format: uuid */
+      certificateFileId: null | string;
+      internal: boolean;
+      notes: null | string;
+      moetRejectionReason: null | string;
+      contributors: components['schemas']['ContributorDto'][];
+      periods: components['schemas']['PeriodDto'][];
+      can: components['schemas']['IpCapabilities'];
+      /** Format: uint32 */
+      version: number;
+    };
+    /** @description Settings → IP (docs/design/requests.md §4.1). */
+    IpSettings: {
+      protections?: components['schemas']['ProtectionRule'][];
+      reminderMonths?: number[];
+      moetHeaderAr?: null | string;
+      moetHeaderEn?: null | string;
+    };
+    IpSettingsInput: {
+      settings: components['schemas']['IpSettings'];
+      /** Format: uint32 */
+      version: number;
+    };
+    IpSuggestInput: {
+      title: null | string;
+      description: null | string;
+    };
+    IpUnitDto: {
+      /** Format: uuid */
+      id: string;
+      code: string;
+      nameAr: null | string;
+      nameEn: null | string;
     };
     JobDto: {
       key: string;
@@ -7975,6 +9375,12 @@ export interface components {
       /** Format: int32 */
       sort: number;
     };
+    LibraryDto: {
+      page: components['schemas']['PagedResultOfDocumentListItemDto'];
+      levels: components['schemas']['FacetDto'][];
+      types: components['schemas']['FacetDto'][];
+      units: components['schemas']['UnitFacetDto'][];
+    };
     LinkableTypeDto: {
       resourceType: string;
       systemCode: string;
@@ -8462,6 +9868,23 @@ export interface components {
       /** Format: date */
       dueDate: null | string;
     };
+    MoetDescriptionInput: {
+      descriptionAr: null | string;
+      descriptionEn: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
+    MoetDraftDto: {
+      descriptionAr: string;
+      descriptionEn: string;
+      /** Format: uuid */
+      usageId: string;
+    };
+    MoetRejectionInput: {
+      reason: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
     MoveUnitInput: {
       /** Format: uuid */
       newParentId: null | string;
@@ -8769,6 +10192,15 @@ export interface components {
       oldestPendingAt: null | string;
       deadMessages: components['schemas']['OutboxMessageDto'][];
     };
+    OverlapDto: {
+      /** Format: uuid */
+      documentId: string;
+      documentNo: null | string;
+      nameAr: null | string;
+      nameEn: null | string;
+      kind: string;
+      explanation: string;
+    };
     /** @description One page of items plus the total count across all pages. */
     PagedResultOfAiUsageRowDto: {
       items: components['schemas']['AiUsageRowDto'][];
@@ -8818,8 +10250,32 @@ export interface components {
       totalPages?: number;
     };
     /** @description One page of items plus the total count across all pages. */
+    PagedResultOfDocumentListItemDto: {
+      items: components['schemas']['DocumentListItemDto'][];
+      /** Format: int32 */
+      page: number;
+      /** Format: int32 */
+      pageSize: number;
+      /** Format: int32 */
+      totalCount: number;
+      /** Format: int32 */
+      totalPages?: number;
+    };
+    /** @description One page of items plus the total count across all pages. */
     PagedResultOfEmployeeListItemDto: {
       items: components['schemas']['EmployeeListItemDto'][];
+      /** Format: int32 */
+      page: number;
+      /** Format: int32 */
+      pageSize: number;
+      /** Format: int32 */
+      totalCount: number;
+      /** Format: int32 */
+      totalPages?: number;
+    };
+    /** @description One page of items plus the total count across all pages. */
+    PagedResultOfIpListItemDto: {
+      items: components['schemas']['IpListItemDto'][];
       /** Format: int32 */
       page: number;
       /** Format: int32 */
@@ -8856,6 +10312,18 @@ export interface components {
     /** @description One page of items plus the total count across all pages. */
     PagedResultOfRequestListItemDto: {
       items: components['schemas']['RequestListItemDto'][];
+      /** Format: int32 */
+      page: number;
+      /** Format: int32 */
+      pageSize: number;
+      /** Format: int32 */
+      totalCount: number;
+      /** Format: int32 */
+      totalPages?: number;
+    };
+    /** @description One page of items plus the total count across all pages. */
+    PagedResultOfRequestRowDto: {
+      items: components['schemas']['RequestRowDto'][];
       /** Format: int32 */
       page: number;
       /** Format: int32 */
@@ -8923,6 +10391,16 @@ export interface components {
       /** Format: int32 */
       history: number;
     };
+    /** @description A bilingual HTML template with merge fields (ADR 0088). */
+    PdfTemplate: {
+      code?: string;
+      nameAr?: null | string;
+      nameEn?: null | string;
+      htmlAr?: null | string;
+      htmlEn?: null | string;
+      /** @description `requester`, `processor` or `admin`. */
+      audience?: string;
+    };
     PerformanceDto: {
       employee: components['schemas']['PersonDto'];
       /** Format: int32 */
@@ -8937,6 +10415,18 @@ export interface components {
       averageFeedback: null | number;
       /** Format: int32 */
       feedbackCount: number;
+    };
+    PeriodDto: {
+      /** Format: uuid */
+      id: string;
+      kind: string;
+      /** Format: date */
+      from: string;
+      /** Format: date */
+      to: null | string;
+      registrationNo: string;
+      /** Format: uuid */
+      certificateFileId: null | string;
     };
     PermissionDto: {
       code: string;
@@ -9228,6 +10718,15 @@ export interface components {
       /** Format: double */
       rangeMax: null | number;
     };
+    /** @description Term and handling per protection type (ADR 0087): years (null: no expiry), the date the term counts from, internal-only. */
+    ProtectionRule: {
+      code: string;
+      /** Format: int32 */
+      termYears: null | number;
+      internalOnly: boolean;
+      /** @default registration */
+      termFrom: string;
+    };
     ProviderDto: {
       /** Format: uuid */
       id: string;
@@ -9305,6 +10804,9 @@ export interface components {
       regional: components['schemas']['RegionalSettings'];
       /** Format: int64 */
       translationsVersion: number;
+    };
+    QuestionInput: {
+      question: null | string;
     };
     /**
      * @description "Reassign open tasks of an employee" (ADR 0040). `TaskIds` narrows the preview (null = all open tasks). In `to-creators` mode the
@@ -9477,6 +10979,30 @@ export interface components {
       /** @default dd/MM/yyyy */
       dateFormat: string;
     };
+    RegistrationInput: {
+      registrationNo: null | string;
+      /** Format: date */
+      registrationDate: null | string;
+      /** Format: date */
+      expiryDate: null | string;
+      /** Format: uuid */
+      certificateFileId: null | string;
+      /** Format: uint32 */
+      version: number;
+      /** Format: date */
+      firstPublicationDate?: null | string;
+    };
+    RenewalInput: {
+      registrationNo: null | string;
+      /** Format: date */
+      from: null | string;
+      /** Format: date */
+      to: null | string;
+      /** Format: uuid */
+      certificateFileId: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
     ReportDto: {
       /** Format: uuid */
       id: string;
@@ -9502,6 +11028,21 @@ export interface components {
     };
     ReportInput: {
       summary: string;
+      /** Format: uint32 */
+      version: number;
+    };
+    RequestActionsDto: {
+      edit: boolean;
+      submit: boolean;
+      cancel: boolean;
+      decide: boolean;
+      decideActions: string[];
+      approveForm: null | components['schemas']['FormSchema'];
+      actions: components['schemas']['StageActionDto'][];
+      upload: boolean;
+    };
+    RequestCancelInput: {
+      reason: null | string;
       /** Format: uint32 */
       version: number;
     };
@@ -9567,6 +11108,20 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    RequestEventDto: {
+      /** Format: uuid */
+      id: string;
+      action: string;
+      fromStatus: null | string;
+      toStatus: null | string;
+      fromStage: null | string;
+      toStage: null | string;
+      actorName: null | string;
+      comment: null | string;
+      data: null | components['schemas']['JsonObject'];
+      /** Format: date-time */
+      at: string;
+    };
     /** @description A file on a request with its kind (`document`, `cost-estimation`, `project-scope`, `quotation`). */
     RequestFileDto: {
       kind: string;
@@ -9600,6 +11155,99 @@ export interface components {
       /** Format: date-time */
       updatedAt: string;
       projectNumber: null | string;
+    };
+    RequestOptionDto: {
+      code: string;
+      labelAr: null | string;
+      labelEn: null | string;
+    };
+    RequestPersonDto: {
+      /** Format: uuid */
+      id: null | string;
+      nameAr: null | string;
+      nameEn: null | string;
+    };
+    RequestRecordDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      typeCode: string;
+      typeNameAr: null | string;
+      typeNameEn: null | string;
+      systemCode: string;
+      titleAr: null | string;
+      titleEn: null | string;
+      status: string;
+      stage: null | string;
+      stages: components['schemas']['StageStepDto'][];
+      requester: components['schemas']['RequestPersonDto'];
+      unit: null | components['schemas']['RequestUnitDto'];
+      form: components['schemas']['FormSchema'];
+      data: components['schemas']['JsonObject'];
+      processData: components['schemas']['JsonObject'];
+      stageForms: {
+        [key: string]: components['schemas']['FormSchema'];
+      };
+      outcome: null | string;
+      subjectType: null | string;
+      /** Format: uuid */
+      subjectId: null | string;
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: date-time */
+      submittedAt: null | string;
+      /** Format: date-time */
+      stageDueAt: null | string;
+      overdue: boolean;
+      /** Format: date-time */
+      completedAt: null | string;
+      cancelReason: null | string;
+      source: string;
+      can: components['schemas']['RequestActionsDto'];
+      approval: null | components['schemas']['ApprovalStatusView'];
+      events: components['schemas']['RequestEventDto'][];
+      templates: components['schemas']['RequestTemplateDto'][];
+      /** Format: uint32 */
+      version: number;
+    };
+    RequestRowDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      typeCode: string;
+      typeNameAr: null | string;
+      typeNameEn: null | string;
+      titleAr: null | string;
+      titleEn: null | string;
+      status: string;
+      stage: null | string;
+      stageNameAr: null | string;
+      stageNameEn: null | string;
+      requester: components['schemas']['RequestPersonDto'];
+      /** Format: date-time */
+      submittedAt: null | string;
+      /** Format: date-time */
+      stageDueAt: null | string;
+      overdue: boolean;
+      /** Format: date-time */
+      updatedAt: string;
+    };
+    RequestSubmitInput: {
+      /** Format: uint32 */
+      version: number;
+      comment?: null | string;
+    };
+    RequestTemplateDto: {
+      code: string;
+      nameAr: null | string;
+      nameEn: null | string;
+    };
+    RequestUnitDto: {
+      /** Format: uuid */
+      id: string;
+      code: string;
+      nameAr: null | string;
+      nameEn: null | string;
     };
     RequestUpdateInput: {
       values: components['schemas']['RequestValues'];
@@ -9714,6 +11362,11 @@ export interface components {
       token: null | string;
       newPassword: null | string;
       invitation: boolean;
+    };
+    RevealDto: {
+      /** Format: uuid */
+      contributorId: string;
+      emiratesId: string;
     };
     RewardBudgetDto: {
       /** Format: int32 */
@@ -9860,6 +11513,11 @@ export interface components {
       /** Format: double */
       amount?: null | number;
     };
+    SaveInput: {
+      data: null | components['schemas']['JsonObject'];
+      /** Format: uint32 */
+      version: number;
+    };
     SaveProcessInput: {
       steps: null | components['schemas']['ApprovalStepDefinition'][];
       note: null | string;
@@ -9906,6 +11564,15 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    /** @description Who is cleared for a sensitivity level (ADR 0083). */
+    SensitivityRule: {
+      code: string;
+      allEmployees: boolean;
+      ownerUnit: boolean;
+      roleKeys: string[];
+      /** @default true */
+      allowShareToAll: boolean;
+    };
     SessionDto: {
       /** Format: uuid */
       id: string;
@@ -9924,8 +11591,18 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    SettingsDocumentOfDocRegSettings: {
+      value: null | components['schemas']['DocRegSettings'];
+      /** Format: uint32 */
+      version: number;
+    };
     SettingsDocumentOfFilesSettings: {
       value: null | components['schemas']['FilesSettings'];
+      /** Format: uint32 */
+      version: number;
+    };
+    SettingsDocumentOfIpSettings: {
+      value: null | components['schemas']['IpSettings'];
       /** Format: uint32 */
       version: number;
     };
@@ -9966,6 +11643,20 @@ export interface components {
       /** Format: uuid */
       excludeId: null | string;
     };
+    SimilarItemDto: {
+      resourceType: string;
+      /** Format: uuid */
+      id: string;
+      number: null | string;
+      titleAr: null | string;
+      titleEn: null | string;
+      link: string;
+      /** Format: double */
+      score: number;
+    };
+    SimilarityDto: {
+      items: components['schemas']['SimilarItemDto'][];
+    };
     SimilarRecordDto: {
       resourceType: string;
       /** Format: uuid */
@@ -9977,6 +11668,25 @@ export interface components {
       link: string;
       /** Format: double */
       score: number;
+    };
+    /** @description The simple stage template of custom types (ADR 0080): approval and / or processing. */
+    SimpleStagesInput: {
+      /** @default true */
+      approval: boolean;
+      approvalNameAr?: null | string;
+      approvalNameEn?: null | string;
+      /** @default false */
+      processing: boolean;
+      processingNameAr?: null | string;
+      processingNameEn?: null | string;
+      processorRoleKeys?: null | string[];
+      /** Format: int32 */
+      slaHours?: null | number;
+      completionForm?: null | components['schemas']['FormSchema'];
+      /** @default true */
+      allowReturn: boolean;
+      /** @default true */
+      allowReject: boolean;
     };
     /** @description One check of the SMART quality review of a KPI card (SPEC §2.9 KPI card builder). */
     SmartCheck: {
@@ -10019,6 +11729,55 @@ export interface components {
       to: null | string;
       settings: null | components['schemas']['SmtpSettingsInput'];
     };
+    /** @description An action of a processing stage, with an optional mini-form. */
+    StageAction: {
+      code?: string;
+      kind?: string;
+      labelAr?: null | string;
+      labelEn?: null | string;
+      /** @description Target stage code; null completes the request (for complete / custom). */
+      toStage?: null | string;
+      form?: null | components['schemas']['FormSchema'];
+      requiresComment?: boolean;
+      /** @description Visual tone: primary, secondary, danger. */
+      tone?: string;
+    };
+    StageActionDto: {
+      code: string;
+      kind: string;
+      labelAr: null | string;
+      labelEn: null | string;
+      form: null | components['schemas']['FormSchema'];
+      requiresComment: boolean;
+      tone: string;
+    };
+    /** @description One stage of a request type. */
+    StageDefinition: {
+      code?: string;
+      kind?: string;
+      nameAr?: null | string;
+      nameEn?: null | string;
+      /** @description Approval stages: the engine's process key. */
+      processKey?: null | string;
+      approveForm?: null | components['schemas']['FormSchema'];
+      /** @description Processing stages: role keys whose holders process (empty: the system's office role). */
+      processorRoleKeys?: string[];
+      /**
+       * Format: int32
+       * @description Processing stages: working hours to act (null: no SLA).
+       */
+      slaHours?: null | number;
+      actions?: components['schemas']['StageAction'][];
+      /** @description Built-in stage defined in code (cannot be removed in the builder). */
+      system?: boolean;
+    };
+    StageStepDto: {
+      code: string;
+      kind: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      state: string;
+    };
     StepStateDto: {
       /** Format: int32 */
       sort: number;
@@ -10050,6 +11809,13 @@ export interface components {
       /** Format: uint32 */
       version: number;
       comment: null | string;
+    };
+    /** @description Who may submit a type: everyone, or holders of roles, or members of units (and below). */
+    SubmitterRule: {
+      /** @default true */
+      everyone: boolean;
+      roleKeys?: null | string[];
+      unitIds?: null | string[];
     };
     SubtaskInput: {
       titleAr: null | string;
@@ -10091,6 +11857,12 @@ export interface components {
       count: number;
       /** Format: int32 */
       total: number;
+    };
+    SummaryDraftDto: {
+      summaryAr: string;
+      summaryEn: string;
+      /** Format: uuid */
+      usageId: string;
     };
     SummaryInput: {
       mode: null | string;
@@ -10748,6 +12520,10 @@ export interface components {
       subject: string;
       html: string;
     };
+    TemplatePreviewInput: {
+      template: null | components['schemas']['PdfTemplate'];
+      language: null | string;
+    };
     TimelineDto: {
       events: components['schemas']['TaskEventDto'][];
       timesheet: components['schemas']['TimesheetDto'];
@@ -10830,6 +12606,119 @@ export interface components {
       /** Format: int64 */
       version: number;
     };
+    TypeDetailDto: {
+      /** Format: uuid */
+      id: string;
+      code: string;
+      systemCode: string;
+      kind: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      descriptionAr: null | string;
+      descriptionEn: null | string;
+      category: null | string;
+      icon: string;
+      numberPrefix: string;
+      /** Format: uuid */
+      owningUnitId: null | string;
+      submitters: components['schemas']['SubmitterRule'];
+      form: components['schemas']['FormSchema'];
+      stages: components['schemas']['StageDefinition'][];
+      templates: components['schemas']['PdfTemplate'][];
+      active: boolean;
+      showInCatalogue: boolean;
+      embeddable: boolean;
+      /** Format: int32 */
+      schemaVersion: number;
+      /** Format: int32 */
+      sort: number;
+      /** Format: uint32 */
+      version: number;
+      simple: null | components['schemas']['SimpleStagesInput'];
+      options: components['schemas']['TypeOptionsDto'];
+    };
+    TypeFormDto: {
+      code: string;
+      systemCode: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      descriptionAr: null | string;
+      descriptionEn: null | string;
+      icon: string;
+      form: components['schemas']['FormSchema'];
+      stages: components['schemas']['StageStepDto'][];
+      canSubmit: boolean;
+    };
+    /** @description The form builder's input. Custom types: everything; built-in types: labels, extra fields, catalogue / submitter settings, SLA. */
+    TypeInput: {
+      code: null | string;
+      nameAr: null | string;
+      nameEn: null | string;
+      descriptionAr: null | string;
+      descriptionEn: null | string;
+      category: null | string;
+      icon: null | string;
+      numberPrefix: null | string;
+      /** Format: uuid */
+      owningUnitId: null | string;
+      submitters: null | components['schemas']['SubmitterRule'];
+      form: null | components['schemas']['FormSchema'];
+      stages: null | components['schemas']['SimpleStagesInput'];
+      builtInStages: null | components['schemas']['StageDefinition'][];
+      templates: null | components['schemas']['PdfTemplate'][];
+      /** @default true */
+      active: boolean;
+      /** @default true */
+      showInCatalogue: boolean;
+      /** @default false */
+      embeddable: boolean;
+      /**
+       * Format: int32
+       * @default 100
+       */
+      sort: number;
+      /**
+       * Format: uint32
+       * @default 0
+       */
+      version: number;
+    };
+    TypeOptionsDto: {
+      fieldTypes: string[];
+      lookupTypes: components['schemas']['RequestOptionDto'][];
+      recordTypes: components['schemas']['RequestOptionDto'][];
+      roles: components['schemas']['RequestOptionDto'][];
+      categories: components['schemas']['RequestOptionDto'][];
+    };
+    TypeSuggestionDto: {
+      propertyType: null | string;
+      protectionType: null | string;
+      reasons: string[];
+      /** Format: uuid */
+      usageId: string;
+    };
+    TypeSummaryDto: {
+      /** Format: uuid */
+      id: string;
+      code: string;
+      systemCode: string;
+      kind: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      category: null | string;
+      icon: string;
+      active: boolean;
+      showInCatalogue: boolean;
+      embeddable: boolean;
+      /** Format: int32 */
+      fields: number;
+      /** Format: int32 */
+      stages: number;
+      /** Format: int32 */
+      requests: number;
+      /** Format: uint32 */
+      version: number;
+    };
     UnitAssignmentDto: {
       /** Format: uuid */
       unitId: string;
@@ -10845,11 +12734,27 @@ export interface components {
       /** Format: uuid */
       businessHoursId: null | string;
     };
+    UnitCountDto: {
+      /** Format: uuid */
+      id: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      /** Format: int32 */
+      count: number;
+    };
     UnitDto: {
       /** Format: uuid */
       id: string;
       nameAr: null | string;
       nameEn: null | string;
+    };
+    UnitFacetDto: {
+      /** Format: uuid */
+      id: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      /** Format: int32 */
+      count: number;
     };
     UnitInput: {
       code: null | string;
@@ -10996,6 +12901,18 @@ export interface components {
       nameEn: null | string;
       status: string;
     };
+    ValidityEventDto: {
+      kind: string;
+      /** Format: int32 */
+      days: null | number;
+      /** Format: date */
+      oldExpiry: null | string;
+      /** Format: date */
+      newExpiry: null | string;
+      comment: null | string;
+      /** Format: date-time */
+      at: string;
+    };
     VariableDto: {
       name: string;
       type: string;
@@ -11038,6 +12955,27 @@ export interface components {
     VersionBody: {
       /** Format: uint32 */
       version: number;
+    };
+    VersionDto: {
+      /** Format: uuid */
+      id: string;
+      label: null | string;
+      status: string;
+      changeSummary: null | string;
+      /** Format: uuid */
+      requestId: string;
+      requestNo: null | string;
+      requestedBy: null | components['schemas']['DocPersonDto'];
+      /** Format: date-time */
+      approvedAt: null | string;
+      /** Format: date-time */
+      publishedAt: null | string;
+      /** Format: uuid */
+      finalFileId: null | string;
+      finalFileName: null | string;
+      hasText: boolean;
+      summaryAr: null | string;
+      summaryEn: null | string;
     };
     VersionedInputOfBrandingSettings: {
       value: null | components['schemas']['BrandingSettings'];
@@ -24410,6 +26348,1995 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['KpiNarrativeDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetRequestCatalogue: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CatalogueDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetRequestTypeForm: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        code: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TypeFormDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  FillRequestFormWithAi: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        code: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'multipart/form-data': {
+          file: components['schemas']['IFormFile'];
+        };
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['FormFillDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListMyRequests: {
+    parameters: {
+      query?: {
+        page?: number;
+        pageSize?: number;
+        status?: string;
+        type?: string;
+        search?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PagedResultOfRequestRowDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListRequestQueue: {
+    parameters: {
+      query?: {
+        page?: number;
+        pageSize?: number;
+        status?: string;
+        type?: string;
+        stage?: string;
+        search?: string;
+        overdue?: boolean;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PagedResultOfRequestRowDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  BulkCompleteRequests: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['BulkCompleteInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BulkResultDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateRequestDraft: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['DraftInput'];
+      };
+    };
+    responses: {
+      /** @description Created */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RequestRecordDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetRequest: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RequestRecordDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SaveRequestDraft: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SaveInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RequestRecordDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SubmitRequest: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RequestSubmitInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RequestRecordDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CancelRequest: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RequestCancelInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RequestRecordDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  DecideRequest: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['DecideInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RequestRecordDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ActOnRequest: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        action: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ActionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RequestRecordDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetRequestPdf: {
+    parameters: {
+      query?: {
+        language?: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+        template: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetRequestAuditTrail: {
+    parameters: {
+      query?: {
+        page?: number;
+        pageSize?: number;
+        field?: string;
+        userId?: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PagedResultOfAuditEntryDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetRequestAsOf: {
+    parameters: {
+      query: {
+        at: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RecordSnapshotDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListRequestTypes: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TypeSummaryDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateRequestType: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['TypeInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TypeDetailDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetRequestTypeOptions: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TypeOptionsDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetRequestType: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        code: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TypeDetailDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateRequestType: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        code: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['TypeInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TypeDetailDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  PreviewRequestTypePdf: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        code: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['TemplatePreviewInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetDocumentLibrary: {
+    parameters: {
+      query?: {
+        page?: number;
+        pageSize?: number;
+        level?: string;
+        type?: string;
+        unitId?: string;
+        sensitivity?: string;
+        status?: string;
+        expiringWithin?: number;
+        search?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['LibraryDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetDocumentDashboard: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DashboardDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetDocument: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DocumentDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CompareDocumentVersions: {
+    parameters: {
+      query: {
+        from: string;
+        to: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CompareDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  DownloadDocument: {
+    parameters: {
+      query?: {
+        versionId?: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ConfirmDocumentValid: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ConfirmInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DocumentDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SetDocumentExpiry: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ExpiryInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DocumentDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  AcknowledgeDocument: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DocumentDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetDocumentAuditTrail: {
+    parameters: {
+      query?: {
+        page?: number;
+        pageSize?: number;
+        field?: string;
+        userId?: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PagedResultOfAuditEntryDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetDocumentAsOf: {
+    parameters: {
+      query: {
+        at: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RecordSnapshotDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SuggestDocumentClassification: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        requestId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ClassificationSuggestionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CheckDocumentDuplicates: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        requestId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DuplicateCheckDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SummariseDocument: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SummaryDraftDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ExplainDocumentChanges: {
+    parameters: {
+      query: {
+        from: string;
+        to: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SummaryDraftDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  AskDocuments: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['QuestionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AnswerDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetDocRegSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SettingsDocumentOfDocRegSettings'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SaveDocRegSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['DocRegSettingsInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SettingsDocumentOfDocRegSettings'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListIpRecords: {
+    parameters: {
+      query?: {
+        page?: number;
+        pageSize?: number;
+        propertyType?: string;
+        protectionType?: string;
+        status?: string;
+        unitId?: string;
+        year?: number;
+        expiringWithin?: number;
+        mine?: boolean;
+        search?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PagedResultOfIpListItemDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetIpDashboard: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['IpDashboardDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetIpRecord: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['IpRecordDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RecordIpFiling: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['FilingInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['IpRecordDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RegisterIpInternally: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['InternalInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['IpRecordDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RecordIpRegistration: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RegistrationInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['IpRecordDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RecordIpMoetRejection: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['MoetRejectionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['IpRecordDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CloseIpRecord: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['InternalInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['IpRecordDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RenewIpRecord: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RenewalInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['IpRecordDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SetIpContributors: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ContributorsInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['IpRecordDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SetIpMoetDescription: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['MoetDescriptionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['IpRecordDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RevealContributorEmiratesId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        contributorId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RevealDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetIpMoetForm: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  DownloadIpCertificate: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetIpRecordAuditTrail: {
+    parameters: {
+      query?: {
+        page?: number;
+        pageSize?: number;
+        field?: string;
+        userId?: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PagedResultOfAuditEntryDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetIpRecordAsOf: {
+    parameters: {
+      query: {
+        at: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RecordSnapshotDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SuggestIpTypes: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['IpSuggestInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TypeSuggestionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  FindSimilarIp: {
+    parameters: {
+      query?: {
+        excludeId?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['IpSuggestInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SimilarityDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  DraftIpMoetDescription: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MoetDraftDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetIpSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SettingsDocumentOfIpSettings'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SaveIpSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['IpSettingsInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SettingsDocumentOfIpSettings'];
         };
       };
       /** @description Problem Details (RFC 9457) */

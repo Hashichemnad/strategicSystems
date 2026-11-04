@@ -349,6 +349,13 @@ internal sealed partial class SettingsAdministration(SettingsDbContext db, Setti
             return Error.Validation([new FieldError("pattern", "settings.errors.patternUnit", "settings.errors.patternUnit")]);
         }
 
+        if ((NumberingPattern.UsesType(pattern!) && !NumberingPattern.UsesType(format.DefaultPattern))
+            || (NumberingPattern.UsesOrg(pattern!) && !NumberingPattern.UsesOrg(format.DefaultPattern)))
+        {
+            // {TYPE} / {ORG} values exist only where the default pattern uses them (ADR 0082).
+            return Error.Validation([new FieldError("pattern", "settings.errors.patternToken", "settings.errors.patternToken")]);
+        }
+
         format.SetPattern(pattern!.Trim());
         db.Entry(format).Property(f => f.Version).OriginalValue = version;
         await SaveChangesAsync(ct).ConfigureAwait(false);
@@ -362,7 +369,7 @@ internal sealed partial class SettingsAdministration(SettingsDbContext db, Setti
             return Error.Validation([new FieldError("pattern", problem, problem)]);
         }
 
-        return new NumberingPreviewDto(pattern!, NumberingPattern.Render(pattern!, new NumberingContext(clock.Today, "UNIT"), 1));
+        return new NumberingPreviewDto(pattern!, NumberingPattern.Render(pattern!, new NumberingContext(clock.Today, "UNIT", "TYPE", "ORG"), 1));
     }
 
     // ---- Feature flags ----
@@ -484,7 +491,7 @@ internal sealed partial class SettingsAdministration(SettingsDbContext db, Setti
 
     private NumberingFormatDto ToDto(NumberingFormat f) => new(
         f.Key, f.SystemCode, f.NameAr, f.NameEn, f.Pattern, f.DefaultPattern,
-        NumberingPattern.Render(f.Pattern, new NumberingContext(clock.Today, "UNIT"), 1), NumberingPattern.UsesUnit(f.Pattern), f.Version);
+        NumberingPattern.Render(f.Pattern, new NumberingContext(clock.Today, "UNIT", "TYPE", "ORG"), 1), NumberingPattern.UsesUnit(f.Pattern), f.Version);
 
     private static LookupValueDto ToDto(LookupValue v) =>
         new(v.Id, v.TypeCode, v.Code, v.LabelAr, v.LabelEn, v.Sort, v.Active, v.ParentValueId, v.Metadata, v.Version);

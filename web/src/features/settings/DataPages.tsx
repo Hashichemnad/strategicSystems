@@ -414,7 +414,7 @@ export function NumberingPage() {
       <div className="rounded-lg border bg-muted/40 p-4 text-sm">
         <p className="font-medium">{t('numbering.tokens')}</p>
         <ul className="mt-2 grid gap-1 sm:grid-cols-2">
-          {(['YYYY', 'YY', 'MM', 'UNIT', 'SEQ'] as const).map((token) => (
+          {(['YYYY', 'YY', 'MM', 'UNIT', 'TYPE', 'ORG', 'SEQ'] as const).map((token) => (
             <li key={token}>
               <code
                 dir="ltr"

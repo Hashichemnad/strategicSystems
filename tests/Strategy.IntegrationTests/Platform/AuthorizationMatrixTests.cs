@@ -128,7 +128,8 @@ public partial class AuthorizationMatrixTests(ApiFixture api) : IClassFixture<Ap
             var form = new MultipartFormDataContent();
             if (route.Contains("photo", StringComparison.Ordinal) || route.Contains("import", StringComparison.Ordinal)
                 || route.Contains("logo", StringComparison.Ordinal) || route.EndsWith("/files/{kind}", StringComparison.Ordinal)
-                || route.EndsWith("/template", StringComparison.Ordinal) || route.EndsWith("/document", StringComparison.Ordinal))
+                || route.EndsWith("/template", StringComparison.Ordinal) || route.EndsWith("/document", StringComparison.Ordinal)
+                || route.EndsWith("/ai-fill", StringComparison.Ordinal))
             {
                 var file = new ByteArrayContent(Encoding.UTF8.GetBytes("x"));
                 file.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");

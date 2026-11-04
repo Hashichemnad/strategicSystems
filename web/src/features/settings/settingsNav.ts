@@ -9,11 +9,14 @@ import {
   ClipboardCheck,
   FileSpreadsheet,
   Flag,
+  FormInput,
   Gauge,
   Hash,
   KeyRound,
   Languages,
   Layers,
+  Library,
+  Lightbulb,
   ListChecks,
   ListTodo,
   Mail,
@@ -36,6 +39,9 @@ export type SettingsPageKey =
   | 'teams'
   | 'portfolio'
   | 'kpi'
+  | 'requestTypes'
+  | 'docreg'
+  | 'ip'
   | 'regional'
   | 'branding'
   | 'systems'
@@ -83,6 +89,9 @@ export type SettingsPath =
   | '/settings/teams'
   | '/settings/portfolio'
   | '/settings/kpi'
+  | '/settings/request-types'
+  | '/settings/docreg'
+  | '/settings/ip'
   | '/settings/tasks/reassign'
   | '/settings/business-hours'
   | '/settings/holidays'
@@ -197,6 +206,14 @@ export const settingsGroups: readonly SettingsGroup[] = [
         icon: Gauge,
         permissions: ['kpi.settings.manage', 'kpi.strategy.manage', 'kpi.plan.manage'],
       },
+      {
+        key: 'requestTypes',
+        to: '/settings/request-types',
+        icon: FormInput,
+        permissions: ['requests.type.manage'],
+      },
+      { key: 'docreg', to: '/settings/docreg', icon: Library, permissions: ['docreg.settings.manage'] },
+      { key: 'ip', to: '/settings/ip', icon: Lightbulb, permissions: ['ip.settings.manage'] },
     ],
   },
   {

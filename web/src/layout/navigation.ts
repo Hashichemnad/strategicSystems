@@ -4,6 +4,9 @@ import {
   FolderKanban,
   ListTodo,
   Gauge,
+  Inbox,
+  Library,
+  Lightbulb,
   Building2,
   FileSpreadsheet,
   Layers,
@@ -24,6 +27,9 @@ export interface NavItem {
     | '/tasks'
     | '/teams'
     | '/kpi'
+    | '/requests'
+    | '/documents'
+    | '/ip'
     | '/sample'
     | '/portfolio/requests'
     | '/portfolio/projects'
@@ -45,6 +51,9 @@ export interface NavItem {
     | 'nav.tasks'
     | 'nav.teams'
     | 'nav.kpi'
+    | 'nav.requests'
+    | 'nav.documents'
+    | 'nav.ip'
     | 'nav.sample'
     | 'nav.portfolioRequests'
     | 'nav.portfolioProjects'
@@ -106,6 +115,9 @@ export const settingsPermissions = [
   'kpi.settings.manage',
   'kpi.strategy.manage',
   'kpi.plan.manage',
+  'requests.type.manage',
+  'docreg.settings.manage',
+  'ip.settings.manage',
 ] as const;
 
 /**
@@ -162,6 +174,21 @@ export const navigation: readonly NavSection[] = [
         permissions: ['portfolio.project.read'],
       },
       { to: '/kpi', labelKey: 'nav.kpi', icon: Gauge, system: 'kpi', permissions: ['kpi.card.read'] },
+      {
+        to: '/requests',
+        labelKey: 'nav.requests',
+        icon: Inbox,
+        system: 'requests',
+        permissions: ['requests.request.submit', 'requests.request.read'],
+      },
+      {
+        to: '/documents',
+        labelKey: 'nav.documents',
+        icon: Library,
+        system: 'docreg',
+        permissions: ['docreg.document.read'],
+      },
+      { to: '/ip', labelKey: 'nav.ip', icon: Lightbulb, system: 'ip', permissions: ['ip.record.read'] },
       { to: '/sample', labelKey: 'nav.sample', icon: Boxes, system: 'sample' },
     ],
   },

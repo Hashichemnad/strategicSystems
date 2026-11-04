@@ -39,14 +39,18 @@ internal static class SpaHosting
             return;
         }
 
-        app.MapFallbackToFile(
-            "{*path:nonfile:regex(^(?!(api|mcp|health|openapi)(/|$)).*$)}",
-            "index.html",
-            new StaticFileOptions
-            {
-                FileProvider = files,
-                OnPrepareResponse = context => context.Context.Response.Headers[HeaderNames.CacheControl] = "no-cache",
-            });
+        var options = new StaticFileOptions
+        {
+            FileProvider = files,
+            OnPrepareResponse = context => context.Context.Response.Headers[HeaderNames.CacheControl] = "no-cache",
+        };
+        app.MapFallbackToFile("{*path:nonfile:regex(^(?!(api|mcp|health|openapi)(/|$)).*$)}", "index.html", options);
+
+        // SPA routes whose last segment is a dotted code (built-in request types such as docreg.document) look like file names.
+        foreach (var pattern in new[] { "requests/new/{code}", "embed/requests/{code}", "settings/request-types/{code}" })
+        {
+            app.MapFallbackToFile(pattern, "index.html", options);
+        }
     }
 
     private static PhysicalFileProvider? GetFileProvider(WebApplication app)

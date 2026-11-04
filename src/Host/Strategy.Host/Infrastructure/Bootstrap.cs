@@ -171,6 +171,24 @@ internal static partial class Bootstrap
             }
         }
 
+        // Phase 14 demo: everyone may open Requests, the Document Registry and IP; Mariam is the Strategy Office of all three, the request types
+        // and Document Registry administrator and the IP administrator (Emirates IDs, MOET form).
+        foreach (var system in new[] { "requests", "docreg", "ip" })
+        {
+            await AccessGrants.GrantSystemAccessAsync(provider, system, AccessGrants.Everyone, null);
+        }
+
+        if (admin.Succeeded)
+        {
+            foreach (var role in new[]
+                     {
+                         "requests.office", "requests.type-administrator", "docreg.office", "docreg.administrator", "ip.office", "ip.administrator",
+                     })
+            {
+                await AccessGrants.AssignRoleAsync(provider, role, AccessGrants.User, adminUser.Id);
+            }
+        }
+
         var settingsDb = provider.GetRequiredService<SettingsDbContext>();
         foreach (var (code, ar, en, sort) in new[]
                  {

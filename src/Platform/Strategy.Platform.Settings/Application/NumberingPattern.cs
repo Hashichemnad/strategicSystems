@@ -6,7 +6,7 @@ namespace Strategy.Platform.Settings.Application;
 
 /// <summary>
 /// Numbering pattern (docs/design/settings.md): literal text <c>A–Z a–z 0–9 - _ / .</c> and tokens <c>{YYYY}</c>, <c>{YY}</c>,
-/// <c>{MM}</c>, <c>{UNIT}</c>, <c>{SEQ:n}</c> (exactly one, the last token). The counter partition is the rendered prefix.
+/// <c>{MM}</c>, <c>{UNIT}</c>, <c>{TYPE}</c>, <c>{ORG}</c> (ADR 0082), <c>{SEQ:n}</c> (exactly one, the last token). The counter partition is the rendered prefix.
 /// </summary>
 public static partial class NumberingPattern
 {
@@ -42,6 +42,10 @@ public static partial class NumberingPattern
 
     public static bool UsesUnit(string pattern) => pattern.Contains("{UNIT}", StringComparison.Ordinal);
 
+    public static bool UsesType(string pattern) => pattern.Contains("{TYPE}", StringComparison.Ordinal);
+
+    public static bool UsesOrg(string pattern) => pattern.Contains("{ORG}", StringComparison.Ordinal);
+
     /// <summary>The pattern with every token but the sequence filled in: the counter partition.</summary>
     public static string Partition(string pattern, NumberingContext context) =>
         Token().Replace(pattern, match => match.Groups["name"].Value switch
@@ -52,6 +56,12 @@ public static partial class NumberingPattern
             "UNIT" => context.UnitCode is { Length: > 0 } unit
                 ? unit.ToUpperInvariant()
                 : throw new InvalidOperationException("The numbering pattern uses {UNIT}; pass the unit code."),
+            "TYPE" => context.TypeCode is { Length: > 0 } type
+                ? type.ToUpperInvariant()
+                : throw new InvalidOperationException("The numbering pattern uses {TYPE}; pass the type code."),
+            "ORG" => context.OrgCode is { Length: > 0 } org
+                ? org.ToUpperInvariant()
+                : throw new InvalidOperationException("The numbering pattern uses {ORG}; pass the organisation code."),
             _ => SeqMarker,
         });
 
@@ -63,7 +73,7 @@ public static partial class NumberingPattern
         return Partition(pattern, context).Replace(SeqMarker, number, StringComparison.Ordinal);
     }
 
-    [GeneratedRegex(@"\{(?<name>YYYY|YY|MM|UNIT|SEQ)(:(?<digits>[1-9]))?\}")]
+    [GeneratedRegex(@"\{(?<name>YYYY|YY|MM|UNIT|TYPE|ORG|SEQ)(:(?<digits>[1-9]))?\}")]
     private static partial Regex Token();
 
     [GeneratedRegex(@"^[A-Za-z0-9\-_/.]*$")]
