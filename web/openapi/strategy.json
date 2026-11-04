@@ -18578,6 +18578,1071 @@
           }
         }
       }
+    },
+    "/api/v1/requests/catalogue": {
+      "get": {
+        "tags": [
+          "requests"
+        ],
+        "operationId": "GetRequestCatalogue",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CatalogueDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/requests/types/{code}/form": {
+      "get": {
+        "tags": [
+          "requests"
+        ],
+        "operationId": "GetRequestTypeForm",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypeFormDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/requests/types/{code}/ai-fill": {
+      "post": {
+        "tags": [
+          "requests"
+        ],
+        "operationId": "FillRequestFormWithAi",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "file"
+                ],
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "$ref": "#/components/schemas/IFormFile"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FormFillDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/requests/mine": {
+      "get": {
+        "tags": [
+          "requests"
+        ],
+        "operationId": "ListMyRequests",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResultOfRequestListItemDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/requests/queue": {
+      "get": {
+        "tags": [
+          "requests"
+        ],
+        "operationId": "ListRequestQueue",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "stage",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "overdue",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResultOfRequestListItemDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/requests/queue/bulk-complete": {
+      "post": {
+        "tags": [
+          "requests"
+        ],
+        "operationId": "BulkCompleteRequests",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkCompleteInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BulkResultDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/requests": {
+      "post": {
+        "tags": [
+          "requests"
+        ],
+        "operationId": "CreateRequestDraft",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DraftInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/requests/{id}": {
+      "get": {
+        "tags": [
+          "requests"
+        ],
+        "operationId": "GetRequest",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "requests"
+        ],
+        "operationId": "SaveRequestDraft",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/requests/{id}/submit": {
+      "post": {
+        "tags": [
+          "requests"
+        ],
+        "operationId": "SubmitRequest",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/requests/{id}/cancel": {
+      "post": {
+        "tags": [
+          "requests"
+        ],
+        "operationId": "CancelRequest",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CancelInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/requests/{id}/decide": {
+      "post": {
+        "tags": [
+          "requests"
+        ],
+        "operationId": "DecideRequest",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecideInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/requests/{id}/actions/{action}": {
+      "post": {
+        "tags": [
+          "requests"
+        ],
+        "operationId": "ActOnRequest",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "action",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RequestDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/requests/{id}/pdf/{template}": {
+      "get": {
+        "tags": [
+          "requests"
+        ],
+        "operationId": "GetRequestPdf",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "template",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/requests/{id}/audit": {
+      "get": {
+        "tags": [
+          "requests"
+        ],
+        "operationId": "GetRequestAuditTrail",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "field",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResultOfAuditEntryDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/requests/{id}/audit/as-of": {
+      "get": {
+        "tags": [
+          "requests"
+        ],
+        "operationId": "GetRequestAsOf",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "at",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecordSnapshotDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/requests/admin/types": {
+      "get": {
+        "tags": [
+          "requests"
+        ],
+        "operationId": "ListRequestTypes",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TypeSummaryDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "requests"
+        ],
+        "operationId": "CreateRequestType",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TypeInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypeDetailDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/requests/admin/types/options": {
+      "get": {
+        "tags": [
+          "requests"
+        ],
+        "operationId": "GetRequestTypeOptions",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypeOptionsDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/requests/admin/types/{code}": {
+      "get": {
+        "tags": [
+          "requests"
+        ],
+        "operationId": "GetRequestType",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypeDetailDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "requests"
+        ],
+        "operationId": "UpdateRequestType",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TypeInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TypeDetailDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/requests/admin/types/{code}/preview-pdf": {
+      "post": {
+        "tags": [
+          "requests"
+        ],
+        "operationId": "PreviewRequestTypePdf",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TemplatePreviewInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -18796,6 +19861,36 @@
           }
         },
         "description": "A decision on a task (API body)."
+      },
+      "ActionInput": {
+        "required": [
+          "version",
+          "comment",
+          "form"
+        ],
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "comment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "form": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/JsonObject"
+              }
+            ]
+          }
+        }
       },
       "ActResult": {
         "required": [
@@ -20836,6 +21931,76 @@
         },
         "description": "Branding per installation (SPEC §0.2): names, colour, email header / footer. Logos are separate assets."
       },
+      "BulkCompleteInput": {
+        "required": [
+          "ids",
+          "action",
+          "comment"
+        ],
+        "type": "object",
+        "properties": {
+          "ids": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "action": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "comment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "BulkFailureDto": {
+        "required": [
+          "id",
+          "code"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          }
+        }
+      },
+      "BulkResultDto": {
+        "required": [
+          "done",
+          "failed"
+        ],
+        "type": "object",
+        "properties": {
+          "done": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "failed": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BulkFailureDto"
+            }
+          }
+        }
+      },
       "BusinessHoursDto": {
         "required": [
           "id",
@@ -21373,6 +22538,110 @@
           }
         },
         "description": "Everything an author sets on a card (form / API / AI builder)."
+      },
+      "CatalogueDto": {
+        "required": [
+          "types",
+          "categories"
+        ],
+        "type": "object",
+        "properties": {
+          "types": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CatalogueTypeDto"
+            }
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CategoryDto"
+            }
+          }
+        }
+      },
+      "CatalogueTypeDto": {
+        "required": [
+          "code",
+          "systemCode",
+          "nameAr",
+          "nameEn",
+          "descriptionAr",
+          "descriptionEn",
+          "category",
+          "icon",
+          "embeddable"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "systemCode": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "descriptionAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "descriptionEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "category": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "icon": {
+            "type": "string"
+          },
+          "embeddable": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CategoryDto": {
+        "required": [
+          "code",
+          "labelAr",
+          "labelEn"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "labelAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "labelEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
       },
       "ChangedFieldDto": {
         "required": [
@@ -22308,6 +23577,38 @@
           }
         }
       },
+      "DecideInput": {
+        "required": [
+          "action",
+          "comment",
+          "form"
+        ],
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "comment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "form": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/JsonObject"
+              }
+            ]
+          }
+        }
+      },
       "DelegationDto": {
         "required": [
           "id",
@@ -22491,6 +23792,37 @@
               "string"
             ],
             "format": "uuid"
+          }
+        }
+      },
+      "DraftInput": {
+        "required": [
+          "typeCode",
+          "data"
+        ],
+        "type": "object",
+        "properties": {
+          "typeCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "data": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/JsonObject"
+              }
+            ]
+          },
+          "source": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
@@ -23746,6 +25078,27 @@
           }
         }
       },
+      "FieldCondition": {
+        "required": [
+          "field",
+          "op"
+        ],
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string",
+            "description": "Code of an earlier field."
+          },
+          "op": {
+            "type": "string",
+            "description": "`eq`, `ne`, `in`, `filled`, `empty`."
+          },
+          "value": {
+            "description": "Compared value (`in`: an array)."
+          }
+        },
+        "description": "Condition on another field of the same form (visibility / required)."
+      },
       "FieldError": {
         "required": [
           "field",
@@ -24100,6 +25453,244 @@
           "usageId": {
             "type": "string",
             "format": "uuid"
+          }
+        }
+      },
+      "FormField": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "labelAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "labelEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "helpAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "helpEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "system": {
+            "type": "boolean",
+            "description": "Defined in code by the owning module: the builder cannot remove or retype it."
+          },
+          "maxLength": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "min": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "max": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "decimals": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "lookupType": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Lookup type code of picklists."
+          },
+          "targetType": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Linkable type of string FieldTypes.Record fields (Links registry)."
+          },
+          "columns": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/FormField"
+            },
+            "description": "Columns of a table."
+          },
+          "minRows": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "maxRows": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "format": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Secret format (SecretFormats)."
+          },
+          "multiple": {
+            "type": "boolean",
+            "description": "File fields: more than one file."
+          },
+          "accept": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "description": "File fields: allowed kinds (`pdf`, …); empty = any document kind."
+          },
+          "titleOf": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "`ar` / `en`: the value is the request's title in that language."
+          },
+          "requestUnit": {
+            "type": "boolean",
+            "description": "A unit field whose value is the request's unit (approver resolution)."
+          },
+          "visibleWhen": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/FieldCondition"
+              }
+            ]
+          },
+          "requiredWhen": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/FieldCondition"
+              }
+            ]
+          }
+        },
+        "description": "One field of a form, mini-form or table (column)."
+      },
+      "FormFillDto": {
+        "required": [
+          "values",
+          "skipped",
+          "usageId"
+        ],
+        "type": "object",
+        "properties": {
+          "values": {
+            "$ref": "#/components/schemas/JsonObject"
+          },
+          "skipped": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "usageId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "description": "Values proposed by AI for the wizard: drafts only, never saved by the server (CLAUDE.md rule 6)."
+      },
+      "FormSchema": {
+        "type": "object",
+        "properties": {
+          "sections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FormSection"
+            }
+          },
+          "allFields": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/FormField"
+            }
+          },
+          "isEmpty": {
+            "type": "boolean"
+          }
+        },
+        "description": "A form: sections of fields (request form, approve form or action mini-form)."
+      },
+      "FormSection": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "system": {
+            "type": "boolean"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FormField"
+            }
           }
         }
       },
@@ -32458,6 +34049,43 @@
           }
         }
       },
+      "PdfTemplate": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "htmlAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "htmlEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "audience": {
+            "type": "string",
+            "description": "`requester`, `processor` or `admin`."
+          }
+        },
+        "description": "A bilingual HTML template with merge fields (ADR 0088)."
+      },
       "PerformanceDto": {
         "required": [
           "employee",
@@ -36297,6 +37925,29 @@
           }
         }
       },
+      "SaveInput": {
+        "required": [
+          "data",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "data": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/JsonObject"
+              }
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
       "SaveProcessInput": {
         "required": [
           "steps",
@@ -36765,6 +38416,78 @@
           }
         }
       },
+      "SimpleStagesInput": {
+        "type": "object",
+        "properties": {
+          "approval": {
+            "type": "boolean",
+            "default": true
+          },
+          "approvalNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "approvalNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "processing": {
+            "type": "boolean",
+            "default": false
+          },
+          "processingNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "processingNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "processorRoleKeys": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "slaHours": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "completionForm": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/FormSchema"
+              }
+            ]
+          },
+          "allowReturn": {
+            "type": "boolean",
+            "default": true
+          },
+          "allowReject": {
+            "type": "boolean",
+            "default": true
+          }
+        },
+        "description": "The simple stage template of custom types (ADR 0080): approval and / or processing."
+      },
       "SmartCheck": {
         "required": [
           "code",
@@ -36956,6 +38679,154 @@
           }
         }
       },
+      "StageAction": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "labelAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "labelEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "toStage": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Target stage code; null completes the request (for complete / custom)."
+          },
+          "form": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/FormSchema"
+              }
+            ]
+          },
+          "requiresComment": {
+            "type": "boolean"
+          },
+          "tone": {
+            "type": "string",
+            "description": "Visual tone: primary, secondary, danger."
+          }
+        },
+        "description": "An action of a processing stage, with an optional mini-form."
+      },
+      "StageDefinition": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "processKey": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Approval stages: the engine's process key."
+          },
+          "approveForm": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "description": "Approval stages: fields the approver completes before the approval can complete (ADR 0081).",
+                "$ref": "#/components/schemas/FormSchema"
+              }
+            ]
+          },
+          "processorRoleKeys": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Processing stages: role keys whose holders process (empty: the system's office role)."
+          },
+          "slaHours": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "description": "Processing stages: working hours to act (null: no SLA).",
+            "format": "int32"
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StageAction"
+            }
+          },
+          "system": {
+            "type": "boolean",
+            "description": "Built-in stage defined in code (cannot be removed in the builder)."
+          }
+        },
+        "description": "One stage of a request type."
+      },
+      "StageStepDto": {
+        "required": [
+          "code",
+          "kind",
+          "nameAr",
+          "nameEn",
+          "state"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "state": {
+            "type": "string"
+          }
+        }
+      },
       "StepStateDto": {
         "required": [
           "sort",
@@ -37115,6 +38986,35 @@
             ]
           }
         }
+      },
+      "SubmitterRule": {
+        "type": "object",
+        "properties": {
+          "everyone": {
+            "type": "boolean",
+            "default": true
+          },
+          "roleKeys": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "unitIds": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        },
+        "description": "Who may submit a type: everyone, or holders of roles, or members of units (and below)."
       },
       "SubtaskInput": {
         "required": [
@@ -39940,6 +41840,31 @@
           }
         }
       },
+      "TemplatePreviewInput": {
+        "required": [
+          "template",
+          "language"
+        ],
+        "type": "object",
+        "properties": {
+          "template": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/PdfTemplate"
+              }
+            ]
+          },
+          "language": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "TimelineDto": {
         "required": [
           "events",
@@ -40272,6 +42197,477 @@
           "version": {
             "type": "integer",
             "format": "int64"
+          }
+        }
+      },
+      "TypeDetailDto": {
+        "required": [
+          "id",
+          "code",
+          "systemCode",
+          "kind",
+          "nameAr",
+          "nameEn",
+          "descriptionAr",
+          "descriptionEn",
+          "category",
+          "icon",
+          "numberPrefix",
+          "owningUnitId",
+          "submitters",
+          "form",
+          "stages",
+          "templates",
+          "active",
+          "showInCatalogue",
+          "embeddable",
+          "schemaVersion",
+          "sort",
+          "version",
+          "simple",
+          "options"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "systemCode": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "descriptionAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "descriptionEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "category": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "icon": {
+            "type": "string"
+          },
+          "numberPrefix": {
+            "type": "string"
+          },
+          "owningUnitId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "submitters": {
+            "$ref": "#/components/schemas/SubmitterRule"
+          },
+          "form": {
+            "$ref": "#/components/schemas/FormSchema"
+          },
+          "stages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StageDefinition"
+            }
+          },
+          "templates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PdfTemplate"
+            }
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "showInCatalogue": {
+            "type": "boolean"
+          },
+          "embeddable": {
+            "type": "boolean"
+          },
+          "schemaVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sort": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "simple": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/SimpleStagesInput"
+              }
+            ]
+          },
+          "options": {
+            "$ref": "#/components/schemas/TypeOptionsDto"
+          }
+        }
+      },
+      "TypeFormDto": {
+        "required": [
+          "code",
+          "systemCode",
+          "nameAr",
+          "nameEn",
+          "descriptionAr",
+          "descriptionEn",
+          "icon",
+          "form",
+          "stages",
+          "canSubmit"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "systemCode": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "descriptionAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "descriptionEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "icon": {
+            "type": "string"
+          },
+          "form": {
+            "$ref": "#/components/schemas/FormSchema"
+          },
+          "stages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StageStepDto"
+            }
+          },
+          "canSubmit": {
+            "type": "boolean"
+          }
+        }
+      },
+      "TypeInput": {
+        "required": [
+          "code",
+          "nameAr",
+          "nameEn",
+          "descriptionAr",
+          "descriptionEn",
+          "category",
+          "icon",
+          "numberPrefix",
+          "owningUnitId",
+          "submitters",
+          "form",
+          "stages",
+          "builtInStages",
+          "templates"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "descriptionAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "descriptionEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "category": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "icon": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "numberPrefix": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "owningUnitId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "submitters": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/SubmitterRule"
+              }
+            ]
+          },
+          "form": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/FormSchema"
+              }
+            ]
+          },
+          "stages": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/SimpleStagesInput"
+              }
+            ]
+          },
+          "builtInStages": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/StageDefinition"
+            }
+          },
+          "templates": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/PdfTemplate"
+            }
+          },
+          "active": {
+            "type": "boolean",
+            "default": true
+          },
+          "showInCatalogue": {
+            "type": "boolean",
+            "default": true
+          },
+          "embeddable": {
+            "type": "boolean",
+            "default": false
+          },
+          "sort": {
+            "type": "integer",
+            "format": "int32",
+            "default": 100
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32",
+            "default": 0
+          }
+        },
+        "description": "The form builder's input. Custom types: everything; built-in types: labels, extra fields, catalogue / submitter settings, SLA."
+      },
+      "TypeOptionsDto": {
+        "required": [
+          "fieldTypes",
+          "lookupTypes",
+          "recordTypes",
+          "roles",
+          "categories"
+        ],
+        "type": "object",
+        "properties": {
+          "fieldTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "lookupTypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OptionDto"
+            }
+          },
+          "recordTypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OptionDto"
+            }
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OptionDto"
+            }
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OptionDto"
+            }
+          }
+        }
+      },
+      "TypeSummaryDto": {
+        "required": [
+          "id",
+          "code",
+          "systemCode",
+          "kind",
+          "nameAr",
+          "nameEn",
+          "category",
+          "icon",
+          "active",
+          "showInCatalogue",
+          "embeddable",
+          "fields",
+          "stages",
+          "requests",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "systemCode": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "category": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "icon": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "showInCatalogue": {
+            "type": "boolean"
+          },
+          "embeddable": {
+            "type": "boolean"
+          },
+          "fields": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "stages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "requests": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
           }
         }
       },
@@ -41434,6 +43830,9 @@
     },
     {
       "name": "kpi"
+    },
+    {
+      "name": "requests"
     }
   ]
 }

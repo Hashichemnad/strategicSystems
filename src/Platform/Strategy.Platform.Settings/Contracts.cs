@@ -79,8 +79,11 @@ public interface ILookupBackfillSource
 /// <summary>A numbering format declared in code with its default pattern (editable in Settings → Numbering).</summary>
 public sealed record NumberingDefinition(string Key, string SystemCode, string NameAr, string NameEn, string DefaultPattern);
 
-/// <summary>Values for the pattern tokens: the date (<c>{YYYY}</c>, <c>{YY}</c>, <c>{MM}</c>) and the unit code (<c>{UNIT}</c>).</summary>
-public sealed record NumberingContext(DateOnly Date, string? UnitCode = null);
+/// <summary>
+/// Values for the pattern tokens: the date (<c>{YYYY}</c>, <c>{YY}</c>, <c>{MM}</c>), the unit code (<c>{UNIT}</c>), a type code
+/// (<c>{TYPE}</c>, e.g. a document type) and the organisation code (<c>{ORG}</c>) — ADR 0082.
+/// </summary>
+public sealed record NumberingContext(DateOnly Date, string? UnitCode = null, string? TypeCode = null, string? OrgCode = null);
 
 /// <summary>Human-readable numbers (CLAUDE.md §6), generated in the caller's transaction (ADR 0017).</summary>
 public interface INumberingService

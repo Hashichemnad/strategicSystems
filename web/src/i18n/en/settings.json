@@ -211,6 +211,8 @@
       "YY": "Two-digit year",
       "MM": "Month",
       "UNIT": "Unit code",
+      "TYPE": "Type code (e.g. document type)",
+      "ORG": "Organisation code",
       "SEQ": "Sequence with the given number of digits (last token)"
     },
     "pattern": "Pattern",
@@ -237,6 +239,7 @@
     "patternInvalid": "Invalid pattern. Use letters, digits, - _ / . and the known tokens only.",
     "patternSequence": "The pattern needs {SEQ} exactly once, as the last token.",
     "patternUnit": "{UNIT} cannot be added or removed: the system passes a unit code according to its default pattern.",
+    "patternToken": "{TYPE} and {ORG} can be used only where the default pattern uses them.",
     "colour": "Enter a colour as #RRGGBB.",
     "logoSize": "The logo is larger than {{maxKb}} KB.",
     "logoType": "The logo must be PNG, JPEG or WebP.",
