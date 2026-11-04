@@ -50046,6 +50046,8 @@
           "projectNameEn",
           "title",
           "categoryCode",
+          "categoryLabelAr",
+          "categoryLabelEn",
           "probability",
           "impact",
           "controlEvaluation",
@@ -50090,6 +50092,18 @@
             ]
           },
           "categoryCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "categoryLabelAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "categoryLabelEn": {
             "type": [
               "null",
               "string"

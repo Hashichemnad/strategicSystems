@@ -1,6 +1,6 @@
 # 0106 — Risk AI features and MCP tools
 
-- **Status:** Proposed (Phase 13) — awaiting owner acceptance
+- **Status:** Accepted by the owner (Phase 13, before the pull request)
 - **Context:** SPEC §3.9; CLAUDE.md §12 (drafts only, untrusted text as data) and §13 (read tools on, write tools off, no approve tool).
 
 ## Decision

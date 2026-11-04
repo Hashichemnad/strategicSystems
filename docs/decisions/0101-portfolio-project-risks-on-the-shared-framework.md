@@ -1,6 +1,6 @@
 # 0101 — Portfolio project risks scored by the shared risk framework
 
-- **Status:** Proposed (Phase 13) — awaiting owner acceptance
+- **Status:** Accepted by the owner (Phase 13, before the pull request)
 - **Context:** Q-P6 / SPEC §3.3: project risks use the shared framework so a project risk and an enterprise risk with the same ratings
   always score the same. ADR 0074 left `IProjectRiskScoring` in Portfolio with the Phase 9 default and stored scores with their inputs.
   Modules may only reference other modules' Contracts; Phase 10 (Portfolio Agile) is built in parallel, so Portfolio changes must stay small.

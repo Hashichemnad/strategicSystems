@@ -1,6 +1,6 @@
 # 0103 — Project Risks tab: live, permission-filtered read; separate dashboard category
 
-- **Status:** Proposed (Phase 13) — awaiting owner acceptance
+- **Status:** Accepted by the owner (Phase 13, before the pull request)
 - **Context:** SPEC §0.0 / §3.4 G: read-only, live view of Portfolio project risks; each row opens the risk inside its project; included
   in heat-maps and dashboards as a separate filterable category; **never copied** into the enterprise register.
 

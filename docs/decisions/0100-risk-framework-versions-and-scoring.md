@@ -1,6 +1,6 @@
 # 0100 — Risk framework: versions, shared scoring engine, band gaps, recalculation
 
-- **Status:** Proposed (Phase 13) — awaiting owner acceptance
+- **Status:** Accepted by the owner (Phase 13, before the pull request)
 - **Context:** SPEC §3.3: configurable scales with impact-area criteria, scoring method (multiplicative default, additive, custom formula
   with `L`, `I`, optional `C`), live matrix preview and the count of risks that would change rating, a new framework version on save, and
   the admin's choice to recalculate now or keep risks on the old version until their next review. Default bands Low 1–4, Medium 5–9,

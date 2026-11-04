@@ -5,7 +5,7 @@
 **Planning:** the plan is the design note [`docs/design/risk.md`](../design/risk.md), written and committed before the code (commit
 `docs(risk): Phase 13 design note…`). This session ran without an interactive approval step (as Phases 5–14), so the plan was written first and
 then implemented; its open choices are ADRs **0100–0107** (numbered from 0100 so Phase 10 — Portfolio Agile, built in a parallel session — keeps
-its range). They are **proposed** and need the owner's acceptance.
+its range). All eight were **accepted by the owner** before the pull request.
 
 ## What was built
 
@@ -18,7 +18,7 @@ its range). They are **proposed** and need the owner's acceptance.
 | **Workflows R1–R5** (ADR 0102) | Explicit lifecycle (draft · under review · active · closed · rejected), one pending process at a time. `risk.review` (R1) and `risk.periodic-review` (R3) default Risk Office; `risk.closure` (R5) Risk Office then **Risk Committee when `residualBand == "critical"`** — all editable in the Approval Settings centre. Return / reject / recall, Risk Office adjustments while under review, reopen with reason, committee decisions, manual and automatic escalation (Critical / outside appetite) |
 | **Treatment & monitoring** | Controls separate from actions; action progress with history, evidence files, **convert completed action to control** (rating chosen, risk flagged for reassessment), task-able actions (Task Management through the Links registry). Review wizard with per-control ratings and residual L / I. Hourly job **`risk.monitor`**: review reminders N working days before due and overdue notice; action reminders and escalation to the risk owner / coordinator. **Review due dates** = last review + months by rating, rolled to the next working day of the unit's business hours, due at the end of working time |
 | **KRIs** (ADR 0104) | Risk ↔ KPI card links with basis (value / capped performance), direction and warning / breach thresholds. Subscribes to **`KpiResultApproved`** (ADR 0065): the reading is stored; a breach flags the risk for reassessment, notifies owner, coordinator and Risk Office and publishes `RiskKriBreached`. The KPI card lists its linked risks (`IKpiLinkedRecordSource`) |
-| **Project Risks** (ADR 0103) | Live, permission-filtered read of Portfolio project risks through `IProjectRiskDirectory` (Phase 9 contract) — never copied; each row opens the risk inside its project; on the dashboard as the separate category `project` (inherent heat-map + rating counts) behind *Include project risks* |
+| **Project Risks** (ADR 0103) | Live, permission-filtered read of Portfolio project risks through `IProjectRiskDirectory` (Phase 9 contract) — never copied; each row opens the risk inside its project; the Portfolio **risk category is shown by its label in the user's language** (resolved server-side through the shared lookups, type code `PortfolioLookupTypes.RiskCategory` in Portfolio.Contracts; fallback to the other language, then the code); on the dashboard as the separate category `project` (inherent heat-map + rating counts) behind *Include project risks* |
 | **Portfolio on the shared framework** (ADR 0101) | Portfolio references `Risk.Contracts`; `IProjectRiskScoring` became async and uses `IRiskScoring` (same scorer as enterprise risks); Portfolio subscribes to `RiskFrameworkChanged` and re-rates active project risks through EF (one audit entry per change). No data migration. Changes in Portfolio are minimal and additive |
 | **CAP / Audit hooks** (Phase 15 / 16) | Events `RiskEventLogged`, `RiskControlRatedIneffective`; `IRiskDirectory` (risk / event summaries, `LinkCapRemarkAsync`, `FlagForReassessmentAsync`); risks are remark sources and task-able |
 | **Access** (SPEC §3.7, ADR 0107) | Roles *Risk Office* (All, MFA, approval role `risk.risk-office`), *Department risk coordinator* (unit and below), *Risk owner* (everyone, own), *Department risk viewer*, *Risk Committee / leadership* (`risk.risk-committee`), *Internal Audit (viewer)*; record roles action-owner / control-owner / approver granted by the module; 20 permissions with AR / EN labels; 404 outside scope, 403 for visible-but-forbidden. Risk Office is a role; the owning unit is configuration (ADoF: Internal Audit Office now, Strategy Office later by reassignment) |
@@ -45,6 +45,7 @@ its range). They are **proposed** and need the owner's acceptance.
 | Review due dates by rating in working time | Integration `Review_due_dates_follow_the_rating_and_roll_to_the_next_working_day` (Thu 10 Sep + 1 month = Sat → Mon 12 Oct, due 15:30 Dubai; 3 and 6 months) and the approval test (next review = framework months from approval) |
 | Numbering unique for units sharing a code | Integration `Register_submit_and_approve…` (`RAxxxx26-R001`, then `R002` for the unit whose code renders the same; `27-R001` next year) |
 | Project Risks tab shows only project risks the user may see; none copied | `RiskProjectTests` (requester sees their project's risk, another department none, outsider 403, `risk.risk` row count unchanged) |
+| Project risk category shown as a label, not a code | `RiskProjectTests` (`vendor` → `المورّد` / `Vendor` on the row); Vitest `projectRiskLabels.test` (user language, fallback, no category); E2E `project-risks` (row shows the label, not `vendor`) |
 | Project risks scored by the shared framework | `RiskProjectTests` (same score as the shared service; framework change re-rates the project risk with an audit entry) |
 | Critical closure needs the Risk Committee step | Integration `Closure_of_a_critical_risk_needs_the_risk_committee_step_and_a_medium_one_does_not` |
 | Every transition | Unit `RiskLifecycleTests` (5 statuses × 10 actions) |
@@ -57,7 +58,7 @@ its range). They are **proposed** and need the owner's acceptance.
 | `dotnet build Strategy.slnx -c Release` · `dotnet format --verify-no-changes` | 0 warnings, 0 errors · clean |
 | `dotnet test --solution Strategy.slnx` | **3 268** tests on real PostgreSQL (local server, `STRATEGY_TEST_POSTGRES`): 3 251 green in the full run. The 17 others: 4 Phase 13 facts fixed and re-run green (job dashboard lists `risk.monitor`, everyone holds `risk.owner`, the heat-map route in the authorization matrix — now query parameters); **13 need Docker sidecars not available in this sandbox** (Gotenberg PDF snapshot ×2, Mailpit ×1, external identity providers ×5 + class cleanups ×5) — unchanged code, green in earlier phases with Docker. New: **119** risk unit tests, **8** risk integration tests |
 | `tools/check-api-client.sh` · `tools/check-vulnerable.sh` | OpenAPI document and TS client up to date · no High / Critical |
-| `npm run lint` (incl. RTL class check) · `format:check` · `typecheck` · `npm test` | clean · **218 / 218** Vitest (new: risk message keys AR / EN, client score / band helper, heat-map component) |
+| `npm run lint` (incl. RTL class check) · `format:check` · `typecheck` · `npm test` | clean · **221 / 221** Vitest (new: risk message keys AR / EN, client score / band helper, heat-map component, project risk category label) |
 | `npm run build` · `npm audit --audit-level=high` · `npm run lint:licenses` | OK · no High / Critical · allowed |
 | `npx playwright test e2e/risk.spec.ts` | **2 / 2** (ar + en), screenshots in [`docs/screenshots/phase-13`](../screenshots/phase-13) with `E2E_SCREENSHOTS=phase-13`. No Docker here: PostgreSQL ran locally and the PDF sidecar was replaced by a local Chromium renderer speaking the Gotenberg HTTP API (not committed); the rest of the E2E suite was not re-run (only `platform.spec.ts`'s job count changed: 18 jobs) |
 
@@ -66,7 +67,7 @@ include `risk.owner`; `ProjectLifecycleTests.ApprovedProjectAsync` is `internal`
 
 **Dependencies added:** none (NuGet or npm). `THIRD_PARTY_LICENSES.md` unchanged.
 
-## Decisions (ADRs) — proposed, awaiting the owner
+## Decisions (ADRs) — all **accepted by the owner** before the pull request
 - [0100](../decisions/0100-risk-framework-versions-and-scoring.md) Framework versions, one scoring engine, band gaps → higher band, recalculation now / at next review.
 - [0101](../decisions/0101-portfolio-project-risks-on-the-shared-framework.md) Portfolio project risks on the shared framework; re-rating on `RiskFrameworkChanged`; inherent stays an integer column.
 - [0102](../decisions/0102-risk-lifecycle-and-approvals.md) Lifecycle, one pending process, number on first save, approvals R1 / R3 / R5.
@@ -81,11 +82,10 @@ None without an ADR. Interpretations recorded: overall control effectiveness = l
 take the higher band; project risks (no residual L / I) are not placed on the residual heat-map.
 
 ## Known gaps
-- The Project Risks table shows the Portfolio risk *category* code (the `portfolio.risk-category` lookup is not yet returned by `/risk/options`).
 - The full E2E suite and the Docker-dependent integration tests were not run in this sandbox (no Docker); run them in CI.
 - CAP (Phase 15) and Audit (Phase 16) consume the contracts; until then the CAP remark on an event shows as a chip only.
 - Shared files touched additively for the parallel Phase 10: solution, host references / module catalog / appsettings / dev seed, Portfolio
-  (one reference, async scoring, one handler), the demo AI provider, router / sidebar / settings navigation / home page / i18n index, audit and AI
+  (one reference, async scoring, one handler) and Portfolio.Contracts (the `PortfolioLookupTypes.RiskCategory` constant), the demo AI provider, router / sidebar / settings navigation / home page / i18n index, audit and AI
   feature key lists in the web, `validation.required` / `expressions.errors.invalid` translations.
 
 ## How to demo

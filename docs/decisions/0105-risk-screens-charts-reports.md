@@ -1,6 +1,6 @@
 # 0105 — Risk screens: CSS / SVG heat-maps and charts; reports through the platform renderers
 
-- **Status:** Proposed (Phase 13) — awaiting owner acceptance
+- **Status:** Accepted by the owner (Phase 13, before the pull request)
 - **Context:** The prompt allows introducing Apache ECharts for heat-maps if Phase 10 has not; Phase 10 is built in parallel and may add
   charting to the shared web folder. Heat-maps are 5 × 5 clickable grids that must mirror correctly in RTL and be keyboard operable.
 

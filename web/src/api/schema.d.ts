@@ -13513,6 +13513,8 @@ export interface components {
       projectNameEn: null | string;
       title: null | string;
       categoryCode: null | string;
+      categoryLabelAr: null | string;
+      categoryLabelEn: null | string;
       /** Format: int32 */
       probability: number;
       /** Format: int32 */

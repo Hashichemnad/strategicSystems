@@ -1,6 +1,6 @@
 # 0104 — Key risk indicators react to approved KPI results
 
-- **Status:** Proposed (Phase 13) — awaiting owner acceptance
+- **Status:** Accepted by the owner (Phase 13, before the pull request)
 - **Context:** SPEC §3.4 D: risk ↔ KPI card links with warning / breach thresholds and direction; an **approved** KPI result crossing the
   threshold notifies the risk owner and Risk Office and flags the risk for reassessment. ADR 0065 publishes `KpiResultApproved`.
 

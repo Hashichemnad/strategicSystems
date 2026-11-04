@@ -482,6 +482,9 @@ test.describe('risk management', () => {
     await expect(page.getByTestId('risk-project-risks-table')).toBeVisible();
     await page.getByTestId('risk-project-risks-search').fill(tag);
     await expect(page.getByTestId('risk-project-risk-row')).toHaveCount(1);
+    // The Portfolio category is shown with its label in the user's language, not the raw code.
+    await expect(page.getByTestId('risk-project-risk-row')).toContainText(arabic ? 'المورّد' : 'Vendor');
+    await expect(page.getByTestId('risk-project-risk-row')).not.toContainText('vendor');
     await shot('project-risks');
 
     // ---- 7. The generated Risk Assessment Mechanism page --------------------------------------------------------------------------

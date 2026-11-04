@@ -1,6 +1,6 @@
 # 0107 — Risk Office is a role; owning unit configurable
 
-- **Status:** Proposed (Phase 13) — awaiting owner acceptance
+- **Status:** Accepted by the owner (Phase 13, before the pull request)
 - **Context:** SPEC §3.2 / §3.10: the Risk Office is a role held by the Internal Audit Office now and by the Strategy Office later, moved by
   role reassignment (§0.2 system ownership).
 

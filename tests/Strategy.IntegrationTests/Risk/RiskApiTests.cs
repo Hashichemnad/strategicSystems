@@ -575,7 +575,7 @@ public sealed class RiskProjectTests(RiskFixture fx) : IClassFixture<RiskFixture
         var project = await ProjectLifecycleTests.ApprovedProjectAsync(p, "Risky project");
         await TakeOwnershipAsync(project.Id, p.Requester);
         var projectRisk = await PortfolioWorld.OkAsync<ProjectRiskDto>(p.C(p.PmOffice).PostAsJsonAsync($"/api/v1/portfolio/projects/{project.Id}/risks",
-            new { values = new { title = "Vendor delay", probability = 4, impact = 5, controlEvaluation = 6, response = "mitigate" } }));
+            new { values = new { title = "Vendor delay", categoryCode = "vendor", probability = 4, impact = 5, controlEvaluation = 6, response = "mitigate" } }));
         (projectRisk.InherentScore, projectRisk.InherentBand, projectRisk.ResidualScore, projectRisk.ResidualBand).ShouldBe((20, "critical", 10m, "high"));
 
         // Same ratings, same score: an enterprise risk 4 × 5 is Critical too.
@@ -599,6 +599,7 @@ public sealed class RiskProjectTests(RiskFixture fx) : IClassFixture<RiskFixture
         var mine = await RiskWorld.OkAsync<List<ProjectRiskRowDto>>(requester.GetAsync($"{RiskWorld.Base}/project-risks?projectId={project.Id}"));
         var row = mine.Single();
         (row.Id, row.Title, row.ResidualBand, row.Link).ShouldBe((projectRisk.Id, "Vendor delay", "high", $"/portfolio/projects/{project.Id}?tab=risks"));
+        (row.CategoryCode, row.CategoryLabelAr, row.CategoryLabelEn).ShouldBe(("vendor", "المورّد", "Vendor"), "the Portfolio category label, not the raw code");
         var other = await fx.Factory.SignInAsync(p.OtherRequester);
         (await RiskWorld.OkAsync<List<ProjectRiskRowDto>>(other.GetAsync($"{RiskWorld.Base}/project-risks"))).ShouldNotContain(r => r.Id == projectRisk.Id);
         (await p.C(p.Outsider).GetAsync($"{RiskWorld.Base}/project-risks")).StatusCode.ShouldBe(HttpStatusCode.Forbidden);

@@ -1,6 +1,6 @@
 # 0102 — Risk lifecycle, one pending process, approvals R1 / R3 / R5
 
-- **Status:** Proposed (Phase 13) — awaiting owner acceptance
+- **Status:** Accepted by the owner (Phase 13, before the pull request)
 - **Context:** SPEC §3.4 A statuses Draft · Under Review · Active · Closed · Rejected; §3.5 R1 review, R3 periodic review, R5 closure
   (default Risk Office; Critical also Risk Committee); all approvals configurable.
 

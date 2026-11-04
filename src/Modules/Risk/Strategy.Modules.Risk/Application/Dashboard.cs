@@ -37,7 +37,8 @@ public sealed record RiskDashboardDto(
     IReadOnlyList<KriBreachDto> KriBreaches, IReadOnlyList<RatingBand> Bands, IReadOnlyDictionary<Guid, RiskUnitDto> Units);
 
 public sealed record ProjectRiskRowDto(
-    Guid Id, Guid ProjectId, string ProjectNumber, string? ProjectNameAr, string? ProjectNameEn, string? Title, string? CategoryCode, int Probability, int Impact,
+    Guid Id, Guid ProjectId, string ProjectNumber, string? ProjectNameAr, string? ProjectNameEn, string? Title, string? CategoryCode, string? CategoryLabelAr,
+    string? CategoryLabelEn, int Probability, int Impact,
     int? ControlEvaluation, decimal InherentScore, string InherentBand, decimal ResidualScore, string ResidualBand, string? Response, decimal? ImplementationPct,
     RiskPersonDto? Owner, string Link);
 
@@ -238,7 +239,14 @@ internal sealed class DashboardHandlers(
     private async Task<IReadOnlyList<ProjectRiskRowDto>> ProjectRowsAsync(IReadOnlyList<ProjectRiskSummary> rows, CancellationToken ct)
     {
         var people = await reader.PeopleAsync(rows.Select(r => r.OwnerEmployeeId), ct).ConfigureAwait(false);
-        return rows.Select(r => new ProjectRiskRowDto(r.Id, r.ProjectId, r.ProjectNumber, r.ProjectNameAr, r.ProjectNameEn, r.Title, r.CategoryCode, r.Probability, r.Impact,
+
+        // Category labels from the shared lookups (Portfolio owns the list, its type code is in Portfolio.Contracts); inactive values still label stored codes.
+        var categories = rows.Any(r => r.CategoryCode is not null)
+            ? (await lookups.GetValuesAsync(PortfolioLookupTypes.RiskCategory, includeInactive: true, ct).ConfigureAwait(false)).ToDictionary(v => v.Code)
+            : [];
+        return rows.Select(r => new ProjectRiskRowDto(r.Id, r.ProjectId, r.ProjectNumber, r.ProjectNameAr, r.ProjectNameEn, r.Title, r.CategoryCode,
+            r.CategoryCode is { } c && categories.GetValueOrDefault(c) is { } v ? v.LabelAr ?? v.LabelEn : null,
+            r.CategoryCode is { } c2 && categories.GetValueOrDefault(c2) is { } v2 ? v2.LabelEn ?? v2.LabelAr : null, r.Probability, r.Impact,
             r.ControlEvaluation, r.InherentScore, r.InherentBand, r.ResidualScore, r.ResidualBand, r.Response, r.ImplementationPct, RiskReader.Person(r.OwnerEmployeeId, people),
             r.Link)).ToList();
     }

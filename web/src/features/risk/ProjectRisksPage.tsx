@@ -17,25 +17,17 @@ import {
   TableRow,
 } from '@/ui';
 import { useProjectRisks } from './api';
-import {
-  ProgressBar,
-  RatingChip,
-  RiskPageLayout,
-  useBands,
-  useNames,
-  useNum,
-  useRiskLabels,
-} from './components';
+import { projectRiskCategoryLabel } from './projectRiskLabels';
+import { ProgressBar, RatingChip, RiskPageLayout, useBands, useNames, useNum } from './components';
 
 const ALL = '__all';
 
 /** Project Risks (docs/design/risk.md §8, ADR 0103): live, read-only rows from Portfolio scored by the shared framework. */
 export function RiskProjectRisksPage() {
-  const { t } = useTranslation('risk');
+  const { t, i18n } = useTranslation('risk');
   const { t: tc } = useTranslation();
   const names = useNames();
   const num = useNum();
-  const labels = useRiskLabels();
   const { bands } = useBands();
   const [band, setBand] = useState<string>();
   const [text, setText] = useState('');
@@ -111,9 +103,7 @@ export function RiskProjectRisksPage() {
                     {r.title ?? '—'}
                   </a>
                 </TableCell>
-                <TableCell>
-                  {r.categoryCode ? labels.lookup('portfolio.risk-category', r.categoryCode) : '—'}
-                </TableCell>
+                <TableCell>{projectRiskCategoryLabel(i18n.language, r)}</TableCell>
                 <TableCell className="tabular-nums">
                   <bdi>
                     {num(r.probability)} × {num(r.impact)}

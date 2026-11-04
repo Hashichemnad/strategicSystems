@@ -49,7 +49,7 @@ public static class PortfolioPermissions
     public const string ProgramTypeLookup = "portfolio.program-type";
     public const string DeliveryOptionLookup = "portfolio.delivery-option";
     public const string ThemeLookup = "portfolio.operational-theme";
-    public const string RiskCategoryLookup = "portfolio.risk-category";
+    public const string RiskCategoryLookup = Contracts.PortfolioLookupTypes.RiskCategory;
     public const string StakeholderClassLookup = "portfolio.stakeholder-class";
     public const string LessonTypeLookup = "portfolio.lesson-type";
     public const string KpiIndexClassLookup = "portfolio.kpi-index-class";
