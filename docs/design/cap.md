@@ -249,3 +249,11 @@ confirmation when switched on; one action linked to two remarks (both complete w
 KPI target missed (one-click) and a risk event (automatic) each raise a remark linked to their source (and the event back-link); workshop
 flow source → remarks → accept → actions → validation → monthly updates → extension → evidence → completion; scope rules (remark owner,
 assignee, department manager, PM Office, outsider 404); MCP tools; authorization matrix entries for every endpoint.
+
+## 16. As built (Phase 15)
+- Office permission `cap.office.manage` (three-part code); API DTOs are prefixed `Cap*` (no OpenAPI collisions with Risk).
+- Risk ineffective-control suggestions are keyed per control id (one open suggestion per control).
+- Screens: `/cap` dashboard (exports, AI summary), `/cap/sources`, `/cap/sources/{id}` (remarks, AI extraction), `/cap/remarks`,
+  `/cap/remarks/{id}` (stepper, current status, overview with KPI trend, root cause, actions + validation, tasks, documents, history),
+  `/cap/my-actions` (views), `/cap/actions/{id}` (achievement history, evidence, extensions, approvals, tasks, history),
+  `/cap/suggestions`, Settings → Corrective action plan. A risk event's CAP chip links to the remark.

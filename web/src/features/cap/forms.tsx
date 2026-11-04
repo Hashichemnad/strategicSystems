@@ -258,7 +258,7 @@ export function ActionFields({
         />
       </FormField>
       <div className="grid gap-3 md:grid-cols-2">
-        <FormField label={t('fields.actionType')}>
+        <FormField label={t('fields.actionType')} hint={t('action.typeHint')}>
           <Select
             value={v.typeCode ?? '-'}
             onValueChange={(c) => set({ typeCode: c === '-' ? null : c })}

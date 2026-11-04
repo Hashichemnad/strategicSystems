@@ -11,7 +11,7 @@ Written before the code with [`cap.md`](cap.md); open choices are ADRs **0126–
 | `Strategy.Modules.Benchmarking.Contracts` | link type and system code constants (no consumer yet) |
 | `Strategy.Modules.Benchmarking` | `Domain/` (study, topic, comparator, study entity + outreach, visit, practice row, indicator row, development-plan item, best practice, impact review, plan circulation, stage machine) · `Application/` · `Infrastructure/` (`BenchDbContext`, schema `bench`) · `Api/` · `Jobs/` · `Ai/` · `Mcp/` |
 
-System code `bench` (`Modules:Benchmarking:Enabled`). References the Contracts of Requests (built-in request type), CAP (development plan →
+System code `bench` (`Modules:Bench:Enabled`). References the Contracts of Requests (built-in request type), CAP (development plan →
 remarks), KPI (indicator links, benchmark fields) and Teams (team link). **Additive** change in KPI: `IKpiBenchmarkWriter` in KPI.Contracts and
 its implementation (ADR 0128).
 
@@ -50,7 +50,7 @@ The stage machine is an explicit table (unit-tested):
 | analysis (approved) | request-closure → closure-approved | completed |
 | any open | cancel (PMO, reason) | — status `cancelled` |
 
-## 3. Data model (schema `bench`; audited, `xmin`, no hard deletes)
+## 3. Data model (schema `bench`; audited, `xmin`, no hard deletes — form rows removed by the coordinator (topics, entities, visits, practice / indicator rows, plan items) are flagged `removed`, never deleted)
 
 | Table | Columns (main) |
 |---|---|
@@ -103,14 +103,14 @@ adds a new comparator. Library: full-text (ILIKE + trigram) search on titles, de
 everyone with `bench.practice.read` reads it; PMO manages manual entries and deactivates.
 
 ## 7. Access (ADR 0126)
-Permissions: `bench.study.read`, `bench.study.edit` (search / visit / analysis forms, outreach), `bench.office` (gates via approvals,
+Permissions: `bench.study.read`, `bench.study.edit` (search / visit / analysis forms, outreach), `bench.office.manage` (gates via approvals,
 cancel, circulate, edit any, closure request, KPI benchmark apply), `bench.plan.read` (not scoped — the plan is circulated to all units),
 `bench.comparator.read`, `bench.comparator.manage`, `bench.practice.read`, `bench.practice.manage`, `bench.dashboard.read`,
 `bench.settings.manage`, AI `bench.ai.comparators / questionnaire / analysis / summary / search`.
 
 | Role | Scope | Grants |
 |---|---|---|
-| `bench-office` (PMO, MFA, approval role key `bench.bench-office`) | All | everything |
+| `bench-office` (PMO, MFA, approval role key `bench.bench-office`) | All | everything — the office also holds `requests.office` to decide the plan request on the Request Framework (ADR 0126 note) |
 | `coordinator` | Unit and below | read, edit, closure request, dashboard, comparators manage, AI |
 | `participant` (everyone) | Own (responsible employee) | read, plan read, comparator / practice read, AI search |
 | `viewer` | Unit and below | read, dashboard |
@@ -149,3 +149,11 @@ reject; search form → approval; visit → analysis; **analysis approval create
 action, best practices and the KPI benchmark update**; closure refused while actions are open and approved once all are completed with
 evidence; the **30-day pre-quarter notification with the fake clock** (none before, once at the moment, not twice); scope (coordinator,
 topic owner, other unit 404, PMO); comparator register and library search; MCP.
+
+## 13. As built (Phase 15)
+- Configuration key `Modules:Bench:Enabled`; office permission `bench.office.manage` (permission codes have three parts).
+- Removed form rows are soft-flagged (`removed`) because the audit interceptor refuses hard deletes of audited rows.
+- Best-practice `tags` is a text column (JSON array) searched with ILIKE together with the titles.
+- Screens: `/bench` dashboard, `/bench/plan` (by quarter, circulate), `/bench/studies`, `/bench/studies/{id}` (overview, search, visit,
+  analysis, linked CAP actions, impact, approvals, tasks, documents, history), `/bench/comparators`, `/bench/practices`,
+  Settings → Benchmarking. A new study starts from the request catalogue (`/requests/new/bench.request`).

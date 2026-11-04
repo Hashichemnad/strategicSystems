@@ -123,7 +123,7 @@ export function CapActionsPage() {
                     <Link
                       to="/cap/actions/$actionId"
                       params={{ actionId: a.id }}
-                      className="font-medium text-primary hover:underline"
+                      className="whitespace-nowrap font-medium text-primary hover:underline"
                     >
                       <bdi>{a.number}</bdi>
                     </Link>

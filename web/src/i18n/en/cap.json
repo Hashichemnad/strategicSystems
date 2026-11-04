@@ -267,7 +267,8 @@
     "cancel": "Cancel action",
     "revised": "extended",
     "remarks": "Remarks this action serves",
-    "home": "home remark"
+    "home": "home remark",
+    "typeHint": "Needed before the actions are submitted for validation."
   },
   "actionStatus": {
     "not_started": "Not started",

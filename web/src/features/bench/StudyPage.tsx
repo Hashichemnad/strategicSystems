@@ -360,7 +360,7 @@ function LinkedActions({ study: s, onClosure }: { study: BenchStudy; onClosure: 
             <Link
               to="/cap/remarks/$remarkId"
               params={{ remarkId: r.remarkId }}
-              className="font-medium text-primary hover:underline"
+              className="whitespace-nowrap font-medium text-primary hover:underline"
             >
               <bdi>{r.number}</bdi> {names.text(r.textAr, r.textEn)}
             </Link>
@@ -387,7 +387,7 @@ function LinkedActions({ study: s, onClosure }: { study: BenchStudy; onClosure: 
                       <Link
                         to="/cap/actions/$actionId"
                         params={{ actionId: a.actionId }}
-                        className="text-primary hover:underline"
+                        className="whitespace-nowrap text-primary hover:underline"
                       >
                         <bdi>{a.number}</bdi>
                       </Link>

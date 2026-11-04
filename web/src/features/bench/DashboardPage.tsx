@@ -37,19 +37,20 @@ export function BenchDashboardPage() {
       label={name}
       height={220}
       option={{
-        grid: { left: 8, right: 16, top: 8, bottom: 8, containLabel: true },
-        xAxis: { type: 'value', minInterval: 1, inverse: rtl },
-        yAxis: {
+        grid: { left: 8, right: 8, top: 24, bottom: 8, containLabel: true },
+        xAxis: {
           type: 'category',
           data: rows.map((r) => label(r.code)),
-          inverse: true,
-          position: rtl ? 'right' : 'left',
+          inverse: rtl,
+          axisLabel: { interval: 0, width: 72, overflow: 'break' },
         },
+        yAxis: { type: 'value', minInterval: 1, position: rtl ? 'right' : 'left' },
         series: [
           {
             type: 'bar',
             data: rows.map((r) => r.count),
-            label: { show: true, position: rtl ? 'left' : 'right' },
+            label: { show: true, position: 'top' },
+            barMaxWidth: 40,
           },
         ],
         tooltip: { trigger: 'axis' },

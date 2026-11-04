@@ -38,7 +38,7 @@ export function RemarksTable({
               <Link
                 to="/cap/remarks/$remarkId"
                 params={{ remarkId: r.id }}
-                className="font-medium text-primary hover:underline"
+                className="whitespace-nowrap font-medium text-primary hover:underline"
               >
                 <bdi>{r.number}</bdi>
               </Link>

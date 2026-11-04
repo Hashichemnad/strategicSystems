@@ -205,8 +205,9 @@ test.describe('as an administrator', () => {
     await expect(page.getByText(tr(language, 'jobs:toast.run'), { exact: true })).toBeVisible();
     await expect(verify.getByText(tr(language, 'jobs:statuses.succeeded'))).toBeVisible({ timeout: 20_000 });
     // Platform jobs, the three Task Management jobs, the two Teams jobs, the KPI windows, the Phase 14 jobs, the Portfolio monthly cycle and
-    // the Risk monitoring job (Phase 13) and the Portfolio communication reminders (Phase 10).
-    await expect(page.getByTestId('job-row')).toHaveCount(20);
+    // the Risk monitoring job (Phase 13), the Portfolio communication reminders (Phase 10), the Wasel access job (Phase 11) and the CAP
+    // and Benchmarking monitors (Phase 15).
+    await expect(page.getByTestId('job-row')).toHaveCount(22);
     await shot('job-dashboard', { fullPage: true });
   });
 });
