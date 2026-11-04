@@ -50,19 +50,22 @@ const extraction: ExtractionResult = {
 };
 
 /** The POST spy, typed loosely: the generated paths type is too deep for vitest's MockInstance inference. */
+/** The generated paths type is too deep for vitest's MockInstance inference: spy on a loosely typed view of the client. */
+type LooseApi = { POST: (...args: unknown[]) => Promise<unknown> };
+
 function mockApi(capabilities: AiCapabilities): { mock: { calls: unknown[][] } } {
   vi.spyOn(api, 'GET').mockResolvedValue({
     data: capabilities,
     response: new Response(null, { status: 200 }),
   } as never);
   return vi
-    .spyOn(api, 'POST')
+    .spyOn(api as unknown as LooseApi, 'POST')
     .mockImplementation(((path: string) =>
       Promise.resolve(
         path === '/api/v1/ai/forms/{formKey}/extract'
           ? { data: extraction, response: new Response(null, { status: 200 }) }
           : { data: { id: 'new', version: 1 }, response: new Response(null, { status: 201 }) },
-      )) as never) as unknown as { mock: { calls: unknown[][] } };
+      )) as never);
 }
 
 async function renderDialog(language: 'ar' | 'en' = 'en') {
@@ -127,7 +130,7 @@ describe('SampleItemDialog with AI', () => {
       data: on,
       response: new Response(null, { status: 200 }),
     } as never);
-    vi.spyOn(api, 'POST').mockResolvedValue({
+    vi.spyOn(api as unknown as LooseApi, 'POST').mockResolvedValue({
       data: { translation: 'الأرشيف الرقمي', from: 'en', to: 'ar', usageId: 'u' },
       response: new Response(null, { status: 200 }),
     });

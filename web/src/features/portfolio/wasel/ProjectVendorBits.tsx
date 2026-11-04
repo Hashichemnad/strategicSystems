@@ -2,7 +2,16 @@ import { Share2 } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { pickText } from '@/lib/format';
-import { Button, Dialog, DialogClose, DialogContent, FormField, Select, StatusChip, type SelectOption } from '@/ui';
+import {
+  Button,
+  Dialog,
+  DialogClose,
+  DialogContent,
+  FormField,
+  Select,
+  StatusChip,
+  type SelectOption,
+} from '@/ui';
 import { FieldErrors } from '../project/FieldErrors';
 import { usePanelMutation, useVendors, useWaselPanel, waselApi } from './waselApi';
 
@@ -10,7 +19,10 @@ import { usePanelMutation, useVendors, useWaselPanel, waselApi } from './waselAp
 export function useVendorOptions(): SelectOption[] {
   const { i18n } = useTranslation();
   const vendors = useVendors('', 'active');
-  return (vendors.data ?? []).map((v) => ({ value: v.id, label: `${v.number} · ${pickText(i18n.language, v.nameAr, v.nameEn)}` }));
+  return (vendors.data ?? []).map((v) => ({
+    value: v.id,
+    label: `${v.number} · ${pickText(i18n.language, v.nameAr, v.nameEn)}`,
+  }));
 }
 
 /** Meeting row cell: which vendor attends (sees the minutes) and whether it confirmed; the PM shares it (SPEC §1.18 "Meetings"). */
@@ -35,15 +47,26 @@ export function MeetingVendorCell({
   const [choice, setChoice] = useState(vendorId ?? '*');
   const assignments = (panel.data?.assignments ?? []).filter((a) => a.status === 'active');
   const current = (panel.data?.assignments ?? []).find((a) => a.vendorId === vendorId);
-  if (!vendorId && (!canShare || assignments.length === 0)) return <span className="text-muted-foreground">—</span>;
+  if (!vendorId && (!canShare || assignments.length === 0))
+    return <span className="text-muted-foreground">—</span>;
   return (
     <span className="inline-flex flex-wrap items-center gap-1" data-testid="meeting-vendor">
-      {current && <bdi className="text-sm">{pickText(i18n.language, current.vendorNameAr, current.vendorNameEn)}</bdi>}
+      {current && (
+        <bdi className="text-sm">{pickText(i18n.language, current.vendorNameAr, current.vendorNameEn)}</bdi>
+      )}
       {vendorId && (
-        <StatusChip tone={confirmedAt ? 'success' : 'info'}>{confirmedAt ? t('meetings.confirmed') : t('meetings.shared')}</StatusChip>
+        <StatusChip tone={confirmedAt ? 'success' : 'info'}>
+          {confirmedAt ? t('meetings.confirmed') : t('meetings.shared')}
+        </StatusChip>
       )}
       {canShare && assignments.length > 0 && (
-        <Button size="sm" variant="ghost" aria-label={t('meetings.share')} onClick={() => setOpen(true)} data-testid="meeting-share-vendor">
+        <Button
+          size="sm"
+          variant="ghost"
+          aria-label={t('meetings.share')}
+          onClick={() => setOpen(true)}
+          data-testid="meeting-share-vendor"
+        >
           <Share2 aria-hidden />
         </Button>
       )}
@@ -61,7 +84,10 @@ export function MeetingVendorCell({
                   loading={share.isPending}
                   data-testid="meeting-share-save"
                   onClick={() =>
-                    share.mutate({ meetingId, vendorId: choice === '*' ? null : choice }, { onSuccess: () => setOpen(false) })
+                    share.mutate(
+                      { meetingId, vendorId: choice === '*' ? null : choice },
+                      { onSuccess: () => setOpen(false) },
+                    )
                   }
                 >
                   {tc('actions.save')}
@@ -75,7 +101,10 @@ export function MeetingVendorCell({
                 onValueChange={setChoice}
                 options={[
                   { value: '*', label: t('meetings.notShared') },
-                  ...assignments.map((a) => ({ value: a.vendorId, label: pickText(i18n.language, a.vendorNameAr, a.vendorNameEn) })),
+                  ...assignments.map((a) => ({
+                    value: a.vendorId,
+                    label: pickText(i18n.language, a.vendorNameAr, a.vendorNameEn),
+                  })),
                 ]}
               />
             </FormField>

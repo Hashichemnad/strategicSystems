@@ -7,7 +7,15 @@ import { expiryRules, updateModes } from './waselApi';
 type WaselSettings = components['schemas']['WaselSettings'];
 type VisibleFields = components['schemas']['VendorVisibleFields'];
 
-const visibleKeys = ['description', 'progress', 'owner', 'budget', 'approvalStatus', 'milestoneWeight', 'milestoneCost'] as const;
+const visibleKeys = [
+  'description',
+  'progress',
+  'owner',
+  'budget',
+  'approvalStatus',
+  'milestoneWeight',
+  'milestoneCost',
+] as const;
 const visibleDefaults: Record<(typeof visibleKeys)[number], boolean> = {
   description: true,
   progress: true,
@@ -30,9 +38,13 @@ export function WaselSettingsSection({
   const w: WaselSettings = value.wasel ?? {};
   const set = (patch: Partial<WaselSettings>) => update({ wasel: { ...w, ...patch } });
   const fields: VisibleFields = w.visibleFields ?? {};
-  const setField = (key: (typeof visibleKeys)[number], checked: boolean) => set({ visibleFields: { ...fields, [key]: checked } });
+  const setField = (key: (typeof visibleKeys)[number], checked: boolean) =>
+    set({ visibleFields: { ...fields, [key]: checked } });
   return (
-    <section className="flex flex-col gap-4 rounded-lg border bg-card p-6" data-testid="portfolio-settings-wasel">
+    <section
+      className="flex flex-col gap-4 rounded-lg border bg-card p-6"
+      data-testid="portfolio-settings-wasel"
+    >
       <div>
         <h2 className="font-semibold">{t('settings.title')}</h2>
         <p className="text-sm text-muted-foreground">{t('settings.hint')}</p>

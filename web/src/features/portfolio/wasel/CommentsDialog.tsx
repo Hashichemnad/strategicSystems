@@ -2,7 +2,17 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { errorMessage } from '@/api/problem';
 import { formatDateTime } from '@/lib/format';
-import { Button, Dialog, DialogClose, DialogContent, FormField, Skeleton, StatusBanner, StatusChip, Textarea } from '@/ui';
+import {
+  Button,
+  Dialog,
+  DialogClose,
+  DialogContent,
+  FormField,
+  Skeleton,
+  StatusBanner,
+  StatusChip,
+  Textarea,
+} from '@/ui';
 import { FieldErrors } from '../project/FieldErrors';
 import { useAddWaselComment, useWaselComments } from './waselApi';
 

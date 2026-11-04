@@ -6,7 +6,15 @@ import { DatePicker } from '@/ui/date-picker';
 import { FieldErrors } from '../project/FieldErrors';
 import { type VendorDetail, type VendorValues, useVendorMutation, vendorApi } from '../wasel/waselApi';
 
-const textFields = ['nameAr', 'nameEn', 'tradeLicenceNo', 'countryCode', 'contactPerson', 'email', 'phone'] as const;
+const textFields = [
+  'nameAr',
+  'nameEn',
+  'tradeLicenceNo',
+  'countryCode',
+  'contactPerson',
+  'email',
+  'phone',
+] as const;
 
 /** Create or edit a vendor of the register (PM Office, `portfolio.vendor.manage`). */
 export function VendorDialog({ vendor, onClose }: { vendor?: VendorDetail; onClose: () => void }) {
@@ -47,7 +55,8 @@ export function VendorDialog({ vendor, onClose }: { vendor?: VendorDetail; onClo
                     onSuccess: (saved) => {
                       toast({ title: t('register.saved') });
                       onClose();
-                      if (!vendor) void navigate({ to: '/portfolio/vendors/$vendorId', params: { vendorId: saved.id } });
+                      if (!vendor)
+                        void navigate({ to: '/portfolio/vendors/$vendorId', params: { vendorId: saved.id } });
                     },
                   },
                 )
@@ -60,9 +69,19 @@ export function VendorDialog({ vendor, onClose }: { vendor?: VendorDetail; onClo
       >
         <div className="grid gap-3 sm:grid-cols-2" data-testid="vendor-dialog">
           {textFields.map((field) => (
-            <FormField key={field} label={t(`fields.${field}`)} required={field === 'nameEn' || field === 'nameAr'}>
+            <FormField
+              key={field}
+              label={t(`fields.${field}`)}
+              required={field === 'nameEn' || field === 'nameAr'}
+            >
               <Input
-                dir={field === 'nameAr' ? 'rtl' : field === 'nameEn' || field === 'email' || field === 'phone' ? 'ltr' : 'auto'}
+                dir={
+                  field === 'nameAr'
+                    ? 'rtl'
+                    : field === 'nameEn' || field === 'email' || field === 'phone'
+                      ? 'ltr'
+                      : 'auto'
+                }
                 type={field === 'email' ? 'email' : 'text'}
                 value={v[field] ?? ''}
                 data-testid={`vendor-${field}`}
@@ -71,13 +90,24 @@ export function VendorDialog({ vendor, onClose }: { vendor?: VendorDetail; onClo
             </FormField>
           ))}
           <FormField label={t('fields.licenceExpiry')}>
-            <DatePicker value={v.licenceExpiry ?? undefined} onChange={(d) => set({ licenceExpiry: d ?? null })} />
+            <DatePicker
+              value={v.licenceExpiry ?? undefined}
+              onChange={(d) => set({ licenceExpiry: d ?? null })}
+            />
           </FormField>
           <FormField label={t('fields.address')} className="sm:col-span-2">
-            <Textarea dir="auto" value={v.address ?? ''} onChange={(e) => set({ address: e.target.value || null })} />
+            <Textarea
+              dir="auto"
+              value={v.address ?? ''}
+              onChange={(e) => set({ address: e.target.value || null })}
+            />
           </FormField>
           <FormField label={t('fields.notes')} className="sm:col-span-2">
-            <Textarea dir="auto" value={v.notes ?? ''} onChange={(e) => set({ notes: e.target.value || null })} />
+            <Textarea
+              dir="auto"
+              value={v.notes ?? ''}
+              onChange={(e) => set({ notes: e.target.value || null })}
+            />
           </FormField>
           {save.error && (
             <div className="sm:col-span-2">

@@ -79,7 +79,9 @@ export function WaselTab({ project }: { project: ProjectFull }) {
   if (panel.isPending) return <Skeleton className="h-48" />;
   if (panel.isError) return <StatusBanner tone="danger" title={errorMessage(tc, panel.error)} />;
   const p = panel.data;
-  const names = new Map(p.assignments.map((a) => [a.vendorId, pickText(i18n.language, a.vendorNameAr, a.vendorNameEn)]));
+  const names = new Map(
+    p.assignments.map((a) => [a.vendorId, pickText(i18n.language, a.vendorNameAr, a.vendorNameEn)]),
+  );
   const openComments = (subject: CommentSubject) => setComments(subject);
   return (
     <section className="flex flex-col gap-6" data-testid="wasel-panel">
@@ -100,7 +102,11 @@ export function WaselTab({ project }: { project: ProjectFull }) {
               proposal={proposal}
               canManage={p.canManage}
               onComments={() =>
-                openComments({ type: 'proposal', id: proposal.id, label: t('proposal.number', { n: proposal.sequence }) })
+                openComments({
+                  type: 'proposal',
+                  id: proposal.id,
+                  label: t('proposal.number', { n: proposal.sequence }),
+                })
               }
             />
           ))
@@ -120,7 +126,11 @@ export function WaselTab({ project }: { project: ProjectFull }) {
               submission={submission}
               canManage={p.canManage}
               onComments={() =>
-                openComments({ type: 'submission', id: submission.id, label: t('submission.period', { period: submission.period }) })
+                openComments({
+                  type: 'submission',
+                  id: submission.id,
+                  label: t('submission.period', { period: submission.period }),
+                })
               }
             />
           ))
@@ -130,7 +140,12 @@ export function WaselTab({ project }: { project: ProjectFull }) {
       <ItemsSection project={project} panel={p} names={names} />
       <RatingsSection project={project} panel={p} />
       {comments && (
-        <CommentsDialog projectId={project.id} subject={comments} canWrite={p.canManage} onClose={() => setComments(null)} />
+        <CommentsDialog
+          projectId={project.id}
+          subject={comments}
+          canWrite={p.canManage}
+          onClose={() => setComments(null)}
+        />
       )}
     </section>
   );
@@ -202,13 +217,18 @@ function AssignmentsSection({ project, panel }: { project: ProjectFull; panel: W
                 >
                   {a.vendorNumber} · {pickText(lang, a.vendorNameAr, a.vendorNameEn)}
                 </Link>
-                <StatusChip tone={statusTone[a.status] ?? 'neutral'}>{t(`assignmentStatus.${a.status}`, a.status)}</StatusChip>
+                <StatusChip tone={statusTone[a.status] ?? 'neutral'}>
+                  {t(`assignmentStatus.${a.status}`, a.status)}
+                </StatusChip>
                 {a.vendorStatus !== 'active' && (
-                  <StatusChip tone={statusTone[a.vendorStatus] ?? 'warning'}>{t(`status.${a.vendorStatus}`, a.vendorStatus)}</StatusChip>
+                  <StatusChip tone={statusTone[a.vendorStatus] ?? 'warning'}>
+                    {t(`status.${a.vendorStatus}`, a.vendorStatus)}
+                  </StatusChip>
                 )}
               </div>
               <p className="text-sm text-muted-foreground">
-                {t('panel.accessUntil')}: {a.accessUntil ? formatDate(a.accessUntil, lang) : t('panel.untilClosure')} ·{' '}
+                {t('panel.accessUntil')}:{' '}
+                {a.accessUntil ? formatDate(a.accessUntil, lang) : t('panel.untilClosure')} ·{' '}
                 {t(`expiry.${a.expiryRule}`, a.expiryRule)}
               </p>
               {panel.canManage && a.status === 'active' && (
@@ -217,7 +237,11 @@ function AssignmentsSection({ project, panel }: { project: ProjectFull; panel: W
                     <UserPlus aria-hidden />
                     {t('panel.invite')}
                   </Button>
-                  <Button size="sm" variant="outline" onClick={() => setRevoking({ kind: 'assignment', id: a.id })}>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setRevoking({ kind: 'assignment', id: a.id })}
+                  >
                     {t('panel.revokeAssignment')}
                   </Button>
                 </div>
@@ -247,14 +271,24 @@ function AssignmentsSection({ project, panel }: { project: ProjectFull; panel: W
                         </TableCell>
                         <TableCell>{t(`roles.${m.role}`, m.role)}</TableCell>
                         <TableCell>
-                          <StatusChip tone={statusTone[m.status] ?? 'neutral'}>{t(`memberStatus.${m.status}`, m.status)}</StatusChip>{' '}
-                          <StatusChip tone={statusTone[m.userStatus] ?? 'neutral'}>{t(`userStatus.${m.userStatus}`, m.userStatus)}</StatusChip>
+                          <StatusChip tone={statusTone[m.status] ?? 'neutral'}>
+                            {t(`memberStatus.${m.status}`, m.status)}
+                          </StatusChip>{' '}
+                          <StatusChip tone={statusTone[m.userStatus] ?? 'neutral'}>
+                            {t(`userStatus.${m.userStatus}`, m.userStatus)}
+                          </StatusChip>
                         </TableCell>
                         <TableCell>{m.validTo ? formatDateTime(m.validTo, lang) : '—'}</TableCell>
-                        <TableCell>{m.lastSignInAt ? formatDateTime(m.lastSignInAt, lang) : t('detail.never')}</TableCell>
+                        <TableCell>
+                          {m.lastSignInAt ? formatDateTime(m.lastSignInAt, lang) : t('detail.never')}
+                        </TableCell>
                         <TableCell>
                           {panel.canManage && m.status === 'active' && (
-                            <Button size="sm" variant="ghost" onClick={() => setRevoking({ kind: 'member', id: m.id })}>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() => setRevoking({ kind: 'member', id: m.id })}
+                            >
                               {t('panel.revoke')}
                             </Button>
                           )}
@@ -347,7 +381,10 @@ function AssignDialog({ project, onClose }: { project: ProjectFull; onClose: () 
                 { value: '*', label: t('panel.noContract') },
                 ...(contracts.data ?? [])
                   .filter((c) => c.status === 'active')
-                  .map((c) => ({ value: c.id, label: [c.number, c.name].filter(Boolean).join(' · ') || c.id })),
+                  .map((c) => ({
+                    value: c.id,
+                    label: [c.number, c.name].filter(Boolean).join(' · ') || c.id,
+                  })),
               ]}
             />
           </FormField>
@@ -361,7 +398,15 @@ function AssignDialog({ project, onClose }: { project: ProjectFull; onClose: () 
   );
 }
 
-function InviteDialog({ project, assignment, onClose }: { project: ProjectFull; assignment: WaselAssignment; onClose: () => void }) {
+function InviteDialog({
+  project,
+  assignment,
+  onClose,
+}: {
+  project: ProjectFull;
+  assignment: WaselAssignment;
+  onClose: () => void;
+}) {
   const { t } = useTranslation('vendors');
   const { t: tc } = useTranslation();
   const toast = useToast();
@@ -408,7 +453,13 @@ function InviteDialog({ project, assignment, onClose }: { project: ProjectFull; 
       >
         <div className="flex flex-col gap-3" data-testid="wasel-invite-dialog">
           <FormField label={t('panel.email')} required>
-            <Input type="email" dir="ltr" value={v.email} onChange={(e) => set({ email: e.target.value })} data-testid="wasel-invite-email" />
+            <Input
+              type="email"
+              dir="ltr"
+              value={v.email}
+              onChange={(e) => set({ email: e.target.value })}
+              data-testid="wasel-invite-email"
+            />
           </FormField>
           <FormField label={t('panel.name')}>
             <Input dir="auto" value={v.name} onChange={(e) => set({ name: e.target.value })} />
@@ -469,7 +520,10 @@ function RevokeDialog({
               onClick={() =>
                 target.kind === 'member'
                   ? member.mutate({ memberId: target.id, reason: reason.trim() }, { onSuccess: onClose })
-                  : assignment.mutate({ assignmentId: target.id, reason: reason.trim() }, { onSuccess: onClose })
+                  : assignment.mutate(
+                      { assignmentId: target.id, reason: reason.trim() },
+                      { onSuccess: onClose },
+                    )
               }
             >
               {t('panel.revoke')}
@@ -545,7 +599,10 @@ function MilestoneVendorsSection({
                       }
                       options={[
                         { value: '*', label: t('panel.pmOnly') },
-                        ...vendors.map((a) => ({ value: a.vendorId, label: names.get(a.vendorId) ?? a.vendorNumber })),
+                        ...vendors.map((a) => ({
+                          value: a.vendorId,
+                          label: names.get(a.vendorId) ?? a.vendorNumber,
+                        })),
                       ]}
                     />
                   ) : m.vendorId ? (
@@ -622,23 +679,37 @@ function DeliverablesSection({
                     <span dir="auto" className="font-medium">
                       {d.title}
                     </span>
-                    {d.description && <span className="block text-xs text-muted-foreground">{d.description}</span>}
+                    {d.description && (
+                      <span className="block text-xs text-muted-foreground">{d.description}</span>
+                    )}
                     {d.pmComment && <span className="block text-xs">{d.pmComment}</span>}
                   </TableCell>
-                  <TableCell>{names.get(d.vendorId) ?? pickText(i18n.language, d.vendorNameAr, d.vendorNameEn)}</TableCell>
+                  <TableCell>
+                    {names.get(d.vendorId) ?? pickText(i18n.language, d.vendorNameAr, d.vendorNameEn)}
+                  </TableCell>
                   <TableCell>
                     <EvidenceLinks files={d.files} />
                   </TableCell>
                   <TableCell>
-                    <StatusChip tone={statusTone[d.status] ?? 'neutral'}>{t(`itemStatus.${d.status}`, d.status)}</StatusChip>
+                    <StatusChip tone={statusTone[d.status] ?? 'neutral'}>
+                      {t(`itemStatus.${d.status}`, d.status)}
+                    </StatusChip>
                   </TableCell>
                   <TableCell className="whitespace-nowrap">
                     {panel.canManage && d.status === 'submitted' && (
                       <>
-                        <Button size="sm" onClick={() => setDeciding({ row: d, accept: true })} data-testid="wasel-deliverable-accept">
+                        <Button
+                          size="sm"
+                          onClick={() => setDeciding({ row: d, accept: true })}
+                          data-testid="wasel-deliverable-accept"
+                        >
                           {t('actions.accept')}
                         </Button>{' '}
-                        <Button size="sm" variant="outline" onClick={() => setDeciding({ row: d, accept: false })}>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setDeciding({ row: d, accept: false })}
+                        >
                           {t('actions.return')}
                         </Button>
                       </>
@@ -664,7 +735,12 @@ function DeliverablesSection({
           title={deciding.row.title}
           accept={deciding.accept}
           onConfirm={(comment) =>
-            waselApi.decideDeliverable({ id: deciding.row.id, accept: deciding.accept, comment, version: deciding.row.version })
+            waselApi.decideDeliverable({
+              id: deciding.row.id,
+              accept: deciding.accept,
+              comment,
+              version: deciding.row.version,
+            })
           }
           onClose={() => setDeciding(null)}
         />
@@ -673,7 +749,15 @@ function DeliverablesSection({
   );
 }
 
-function ItemsSection({ project, panel, names }: { project: ProjectFull; panel: WaselPanel; names: Map<string, string> }) {
+function ItemsSection({
+  project,
+  panel,
+  names,
+}: {
+  project: ProjectFull;
+  panel: WaselPanel;
+  names: Map<string, string>;
+}) {
   const { t } = useTranslation('vendors');
   const [deciding, setDeciding] = useState<{ row: PmVendorItem; accept: boolean } | null>(null);
   return (
@@ -689,14 +773,20 @@ function ItemsSection({ project, panel, names }: { project: ProjectFull; panel: 
       ) : (
         <ul className="flex flex-col gap-2">
           {panel.items.map((item) => (
-            <li key={item.id} className="flex flex-wrap items-start justify-between gap-2 rounded-lg border bg-card p-3" data-testid="wasel-item">
+            <li
+              key={item.id}
+              className="flex flex-wrap items-start justify-between gap-2 rounded-lg border bg-card p-3"
+              data-testid="wasel-item"
+            >
               <div>
                 <p className="flex flex-wrap items-center gap-2">
                   <StatusChip tone="info">{t(`items.kinds.${item.kind}`, item.kind)}</StatusChip>
                   <span dir="auto" className="font-medium">
                     {item.title}
                   </span>
-                  <StatusChip tone={statusTone[item.status] ?? 'neutral'}>{t(`itemStatus.${item.status}`, item.status)}</StatusChip>
+                  <StatusChip tone={statusTone[item.status] ?? 'neutral'}>
+                    {t(`itemStatus.${item.status}`, item.status)}
+                  </StatusChip>
                 </p>
                 {item.description && (
                   <p dir="auto" className="text-sm text-muted-foreground">
@@ -712,10 +802,18 @@ function ItemsSection({ project, panel, names }: { project: ProjectFull; panel: 
               </div>
               {panel.canManage && item.status === 'proposed' && (
                 <div className="flex gap-2">
-                  <Button size="sm" onClick={() => setDeciding({ row: item, accept: true })} data-testid="wasel-item-accept">
+                  <Button
+                    size="sm"
+                    onClick={() => setDeciding({ row: item, accept: true })}
+                    data-testid="wasel-item-accept"
+                  >
                     {t('actions.accept')}
                   </Button>
-                  <Button size="sm" variant="outline" onClick={() => setDeciding({ row: item, accept: false })}>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setDeciding({ row: item, accept: false })}
+                  >
                     {t('actions.reject')}
                   </Button>
                 </div>
@@ -730,7 +828,14 @@ function ItemsSection({ project, panel, names }: { project: ProjectFull; panel: 
           title={deciding.row.title}
           accept={deciding.accept}
           rejectLabel={t('actions.reject')}
-          onConfirm={(comment) => waselApi.decideItem({ id: deciding.row.id, accept: deciding.accept, comment, version: deciding.row.version })}
+          onConfirm={(comment) =>
+            waselApi.decideItem({
+              id: deciding.row.id,
+              accept: deciding.accept,
+              comment,
+              version: deciding.row.version,
+            })
+          }
           onClose={() => setDeciding(null)}
         />
       )}
@@ -816,7 +921,9 @@ function RatingsSection({ project, panel }: { project: ProjectFull; panel: Wasel
           <RatingsTable ratings={panel.ratings} lang={lang} showProject={false} />
         </div>
       )}
-      {rating && <RatingDialog project={project} panel={panel} closing={closing} onClose={() => setRating(false)} />}
+      {rating && (
+        <RatingDialog project={project} panel={panel} closing={closing} onClose={() => setRating(false)} />
+      )}
     </section>
   );
 }
@@ -857,10 +964,14 @@ export function RatingsTable({
             <TableCell>{r.quality}</TableCell>
             <TableCell>{r.responsiveness}</TableCell>
             <TableCell>{r.reporting}</TableCell>
-            <TableCell className="font-medium">{new Intl.NumberFormat(lang, { maximumFractionDigits: 2 }).format(r.overall)}</TableCell>
+            <TableCell className="font-medium">
+              {new Intl.NumberFormat(lang, { maximumFractionDigits: 2 }).format(r.overall)}
+            </TableCell>
             <TableCell dir="auto">
               {r.comment}
-              {r.milestoneId && <span className="block text-xs text-muted-foreground">{t('rating.perMilestone')}</span>}
+              {r.milestoneId && (
+                <span className="block text-xs text-muted-foreground">{t('rating.perMilestone')}</span>
+              )}
             </TableCell>
             <TableCell>{formatDate(r.ratedAt, lang)}</TableCell>
           </TableRow>
@@ -888,7 +999,9 @@ function RatingDialog({
   const toast = useToast();
   const rate = usePanelMutation(project.id, waselApi.rate);
   const [vendorId, setVendorId] = useState(panel.assignments[0]?.vendorId ?? '');
-  const [milestoneId, setMilestoneId] = useState(closing ? '' : (panel.milestones.find((m) => !m.isHeader)?.id ?? ''));
+  const [milestoneId, setMilestoneId] = useState(
+    closing ? '' : (panel.milestones.find((m) => !m.isHeader)?.id ?? ''),
+  );
   const [scores, setScores] = useState<Record<(typeof criteria)[number], number>>({
     timeliness: 4,
     quality: 4,
@@ -951,7 +1064,10 @@ function RatingDialog({
                 ...(closing ? [{ value: '*', label: t('rating.wholeProject') }] : []),
                 ...panel.milestones
                   .filter((m) => !m.isHeader && m.vendorId === vendorId)
-                  .map((m) => ({ value: m.id, label: `${m.code} · ${pickText(i18n.language, m.titleAr, m.titleEn)}` })),
+                  .map((m) => ({
+                    value: m.id,
+                    label: `${m.code} · ${pickText(i18n.language, m.titleAr, m.titleEn)}`,
+                  })),
               ]}
             />
           </FormField>

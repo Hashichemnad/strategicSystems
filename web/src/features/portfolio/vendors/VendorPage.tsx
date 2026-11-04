@@ -27,7 +27,13 @@ import {
   useToast,
 } from '@/ui';
 import { FieldErrors } from '../project/FieldErrors';
-import { type VendorDetail, useVendor, useVendorMutation, vendorApi, vendorStatuses } from '../wasel/waselApi';
+import {
+  type VendorDetail,
+  useVendor,
+  useVendorMutation,
+  vendorApi,
+  vendorStatuses,
+} from '../wasel/waselApi';
 import { RatingsTable, statusTone } from '../wasel/WaselTab';
 import { VendorDialog } from './VendorDialog';
 
@@ -69,7 +75,11 @@ export function VendorPage() {
       </Link>
       <PageHeader
         title={`${v.number} · ${pickText(lang, v.nameAr, v.nameEn)}`}
-        description={<StatusChip tone={statusTone[v.status] ?? 'neutral'}>{t(`status.${v.status}`, v.status)}</StatusChip>}
+        description={
+          <StatusChip tone={statusTone[v.status] ?? 'neutral'}>
+            {t(`status.${v.status}`, v.status)}
+          </StatusChip>
+        }
         actions={
           canManage ? (
             <div className="flex gap-2">
@@ -84,7 +94,9 @@ export function VendorPage() {
           ) : undefined
         }
       />
-      {v.statusReason && <StatusBanner tone="warning" title={t('detail.statusReason')} description={v.statusReason} />}
+      {v.statusReason && (
+        <StatusBanner tone="warning" title={t('detail.statusReason')} description={v.statusReason} />
+      )}
       <dl className="grid gap-3 rounded-lg border bg-card p-4 sm:grid-cols-2">
         {details.map(([label, value]) => (
           <div key={label}>
@@ -123,13 +135,21 @@ export function VendorPage() {
                       {u.name && <span className="block text-xs text-muted-foreground">{u.name}</span>}
                     </TableCell>
                     <TableCell>
-                      <StatusChip tone={statusTone[u.status] ?? 'neutral'}>{t(`userStatus.${u.status}`, u.status)}</StatusChip>
-                      {u.disabledReason && <span className="block text-xs text-muted-foreground">{u.disabledReason}</span>}
+                      <StatusChip tone={statusTone[u.status] ?? 'neutral'}>
+                        {t(`userStatus.${u.status}`, u.status)}
+                      </StatusChip>
+                      {u.disabledReason && (
+                        <span className="block text-xs text-muted-foreground">{u.disabledReason}</span>
+                      )}
                     </TableCell>
                     <TableCell>{formatDateTime(u.invitedAt, lang)}</TableCell>
-                    <TableCell>{u.lastSignInAt ? formatDateTime(u.lastSignInAt, lang) : t('detail.never')}</TableCell>
                     <TableCell>
-                      <StatusChip tone={u.mfaEnabled ? 'success' : 'warning'}>{u.mfaEnabled ? t('detail.mfaOn') : t('detail.mfaOff')}</StatusChip>
+                      {u.lastSignInAt ? formatDateTime(u.lastSignInAt, lang) : t('detail.never')}
+                    </TableCell>
+                    <TableCell>
+                      <StatusChip tone={u.mfaEnabled ? 'success' : 'warning'}>
+                        {u.mfaEnabled ? t('detail.mfaOn') : t('detail.mfaOff')}
+                      </StatusChip>
                     </TableCell>
                     <TableCell>{formatNumber(u.activeProjects, lang)}</TableCell>
                     <TableCell>
@@ -165,7 +185,10 @@ export function VendorPage() {
         <h2 id="vendor-performance" className="font-semibold">
           {t('detail.performance')}
         </h2>
-        <dl className="grid grid-cols-2 gap-3 rounded-lg border bg-card p-4 sm:grid-cols-6" data-testid="vendor-performance">
+        <dl
+          className="grid grid-cols-2 gap-3 rounded-lg border bg-card p-4 sm:grid-cols-6"
+          data-testid="vendor-performance"
+        >
           <div>
             <dt className="text-xs text-muted-foreground">{t('detail.count')}</dt>
             <dd className="text-lg font-semibold">{formatNumber(perf.count, lang)}</dd>
@@ -187,7 +210,9 @@ export function VendorPage() {
       </section>
       {dialog === 'edit' && <VendorDialog vendor={v} onClose={() => setDialog(null)} />}
       {dialog === 'status' && <StatusDialog vendor={v} onClose={() => setDialog(null)} />}
-      {dialog !== null && typeof dialog === 'object' && <DeactivateDialog userId={dialog.deactivate} onClose={() => setDialog(null)} />}
+      {dialog !== null && typeof dialog === 'object' && (
+        <DeactivateDialog userId={dialog.deactivate} onClose={() => setDialog(null)} />
+      )}
     </div>
   );
 }
@@ -214,7 +239,9 @@ function StatusDialog({ vendor, onClose }: { vendor: VendorDetail; onClose: () =
               disabled={needsReason && reason.trim() === ''}
               loading={save.isPending}
               data-testid="vendor-status-save"
-              onClick={() => save.mutate({ id: vendor.id, status, reason: reason.trim() || null }, { onSuccess: onClose })}
+              onClick={() =>
+                save.mutate({ id: vendor.id, status, reason: reason.trim() || null }, { onSuccess: onClose })
+              }
             >
               {tc('actions.save')}
             </Button>
@@ -223,7 +250,11 @@ function StatusDialog({ vendor, onClose }: { vendor: VendorDetail; onClose: () =
       >
         <div className="flex flex-col gap-3">
           <FormField label={t('register.statusCol')}>
-            <Select value={status} onValueChange={setStatus} options={vendorStatuses.map((s) => ({ value: s, label: t(`status.${s}`) }))} />
+            <Select
+              value={status}
+              onValueChange={setStatus}
+              options={vendorStatuses.map((s) => ({ value: s, label: t(`status.${s}`) }))}
+            />
           </FormField>
           {needsReason && (
             <FormField label={t('panel.reason')} required>

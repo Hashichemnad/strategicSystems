@@ -95,7 +95,11 @@ export function VendorsPage() {
               {vendors.data.map((v) => (
                 <TableRow key={v.id} data-testid="vendor-row">
                   <TableCell>
-                    <Link to="/portfolio/vendors/$vendorId" params={{ vendorId: v.id }} className="text-primary hover:underline">
+                    <Link
+                      to="/portfolio/vendors/$vendorId"
+                      params={{ vendorId: v.id }}
+                      className="text-primary hover:underline"
+                    >
                       {v.number}
                     </Link>
                   </TableCell>
@@ -103,11 +107,15 @@ export function VendorsPage() {
                   <TableCell>{v.tradeLicenceNo ?? '—'}</TableCell>
                   <TableCell>{v.licenceExpiry ? formatDate(v.licenceExpiry, lang) : '—'}</TableCell>
                   <TableCell>
-                    <StatusChip tone={statusTone[v.status] ?? 'neutral'}>{t(`status.${v.status}`, v.status)}</StatusChip>
+                    <StatusChip tone={statusTone[v.status] ?? 'neutral'}>
+                      {t(`status.${v.status}`, v.status)}
+                    </StatusChip>
                   </TableCell>
                   <TableCell>{formatNumber(v.users, lang)}</TableCell>
                   <TableCell>{formatNumber(v.activeProjects, lang)}</TableCell>
-                  <TableCell>{v.averageRating === null ? '—' : formatNumber(v.averageRating, lang)}</TableCell>
+                  <TableCell>
+                    {v.averageRating === null ? '—' : formatNumber(v.averageRating, lang)}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

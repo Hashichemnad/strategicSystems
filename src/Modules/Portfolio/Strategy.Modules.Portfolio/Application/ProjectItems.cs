@@ -23,7 +23,7 @@ public sealed record StakeholderDto(
     Guid Id, string? Name, string? ClassificationCode, string? InterestLevel, string? ImpactLevel, string? CommunicationMethod, string? CommunicationFrequency,
     string? Email, string? Phone, string Status, uint Version);
 
-public sealed record ProposedMemberDto(Guid Id, PortfolioPersonDto? Employee, string? RoleAr, string? RoleEn, string? Responsibilities, string Status, uint Version);
+public sealed record ProposedMemberDto(Guid Id, PortfolioPersonDto? Employee, string? RoleAr, string? RoleEn, string? Responsibilities, string Status, uint Version, decimal? AllocationPercent = null);
 
 public sealed record PlanningItemDto(Guid Id, string Category, string? Description, string CreatedStage, string Status, uint Version);
 
@@ -32,10 +32,12 @@ public sealed record ChallengeDto(
 
 public sealed record LessonDto(Guid Id, string? Stage, string? Lesson, string? TypeCode, string? Recommendation, string Status, uint Version);
 
-public sealed record ProjectMeetingDto(Guid Id, DateTimeOffset MeetingAt, string? Title, string? Notes, string Status, uint Version);
+public sealed record ProjectMeetingDto(
+    Guid Id, DateTimeOffset MeetingAt, string? Title, string? Notes, string Status, uint Version, Guid? VendorId = null, DateTimeOffset? VendorConfirmedAt = null);
 
 public sealed record ContractDto(
-    Guid Id, string? Name, string? Number, string? Supplier, DateOnly? IssueDate, decimal? Amount, string ContractStatus, string Status, uint Version);
+    Guid Id, string? Name, string? Number, string? Supplier, DateOnly? IssueDate, decimal? Amount, string ContractStatus, string Status, uint Version, Guid? VendorId = null,
+    DateOnly? EndDate = null);
 
 public sealed record KpiInput(ProjectKpiValues Values, uint? Version = null);
 
@@ -546,7 +548,7 @@ internal sealed class ProjectItems(
         new(s.Id, s.Name, s.ClassificationCode, s.InterestLevel, s.ImpactLevel, s.CommunicationMethod, s.CommunicationFrequency, s.Email, s.Phone, s.Status, s.Version);
 
     private static ProposedMemberDto MemberDto(ProposedMember m, Dictionary<Guid, PortfolioPersonDto> people) =>
-        new(m.Id, people.GetValueOrDefault(m.EmployeeId), m.RoleAr, m.RoleEn, m.Responsibilities, m.Status, m.Version);
+        new(m.Id, people.GetValueOrDefault(m.EmployeeId), m.RoleAr, m.RoleEn, m.Responsibilities, m.Status, m.Version, m.AllocationPercent);
 
     private static PlanningItemDto PlanningDto(PlanningItem i) => new(i.Id, i.Category, i.Description, i.CreatedStage, i.Status, i.Version);
 
@@ -555,9 +557,9 @@ internal sealed class ProjectItems(
 
     private static LessonDto LessonDto(Lesson l) => new(l.Id, l.Stage, l.Text, l.TypeCode, l.Recommendation, l.Status, l.Version);
 
-    private static ProjectMeetingDto ProjectMeetingDto(Meeting m) => new(m.Id, m.MeetingAt, m.Title, m.Notes, m.Status, m.Version);
+    private static ProjectMeetingDto ProjectMeetingDto(Meeting m) => new(m.Id, m.MeetingAt, m.Title, m.Notes, m.Status, m.Version, m.VendorId, m.VendorConfirmedAt);
 
-    private static ContractDto ContractDto(Contract c) => new(c.Id, c.Name, c.Number, c.Supplier, c.IssueDate, c.Amount, c.ContractStatus, c.Status, c.Version);
+    private static ContractDto ContractDto(Contract c) => new(c.Id, c.Name, c.Number, c.Supplier, c.IssueDate, c.Amount, c.ContractStatus, c.Status, c.Version, c.VendorId, c.EndDate);
 
     private static void Add(List<FieldError> errors, string field, string key) => errors.Add(new FieldError(field, key, key));
 

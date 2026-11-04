@@ -47,8 +47,12 @@ export function ProposalReviewDialog({
       <header className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex flex-wrap items-center gap-2">
           <h3 className="font-medium">{t('proposal.number', { n: proposal.sequence })}</h3>
-          <StatusChip tone={statusTone[proposal.status] ?? 'neutral'}>{t(`proposal.status.${proposal.status}`, proposal.status)}</StatusChip>
-          <span className="text-sm text-muted-foreground">{pickText(lang, proposal.vendorNameAr, proposal.vendorNameEn)}</span>
+          <StatusChip tone={statusTone[proposal.status] ?? 'neutral'}>
+            {t(`proposal.status.${proposal.status}`, proposal.status)}
+          </StatusChip>
+          <span className="text-sm text-muted-foreground">
+            {pickText(lang, proposal.vendorNameAr, proposal.vendorNameEn)}
+          </span>
           {proposal.submittedAt && (
             <span className="text-xs text-muted-foreground">
               {t('proposal.submittedAt', { at: formatDateTime(proposal.submittedAt, lang) })}
@@ -61,7 +65,12 @@ export function ProposalReviewDialog({
               <Button size="sm" onClick={() => setOpen('review')} data-testid="wasel-proposal-review">
                 {t('proposal.review')}
               </Button>
-              <Button size="sm" variant="outline" onClick={() => setOpen('return')} data-testid="wasel-proposal-return">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setOpen('return')}
+                data-testid="wasel-proposal-return"
+              >
                 {t('actions.return')}
               </Button>
             </>
@@ -86,11 +95,17 @@ export function ProposalReviewDialog({
       {proposal.diff.length > 0 && (
         <div className="mt-3">
           <h4 className="text-sm font-medium">{t('proposal.diff')}</h4>
-          <DiffList entries={proposal.diff.map((d) => ({ key: d.key, field: d.field, vendor: d.vendor, pm: d.pm }))} />
+          <DiffList
+            entries={proposal.diff.map((d) => ({ key: d.key, field: d.field, vendor: d.vendor, pm: d.pm }))}
+          />
         </div>
       )}
-      {open === 'review' && <AcceptDialog project={project} proposal={proposal} onClose={() => setOpen(null)} />}
-      {open === 'return' && <ReturnDialog project={project} proposal={proposal} onClose={() => setOpen(null)} />}
+      {open === 'review' && (
+        <AcceptDialog project={project} proposal={proposal} onClose={() => setOpen(null)} />
+      )}
+      {open === 'return' && (
+        <ReturnDialog project={project} proposal={proposal} onClose={() => setOpen(null)} />
+      )}
     </article>
   );
 }
@@ -117,12 +132,15 @@ function ProposalTable({ items, lang }: { items: ProposalItem[]; lang: string })
                 {pickText(lang, item.titleAr, item.titleEn)}
               </TableCell>
               <TableCell>
-                {item.plannedStart ? formatDate(item.plannedStart, lang) : '—'} – {item.plannedEnd ? formatDate(item.plannedEnd, lang) : '—'}
+                {item.plannedStart ? formatDate(item.plannedStart, lang) : '—'} –{' '}
+                {item.plannedEnd ? formatDate(item.plannedEnd, lang) : '—'}
               </TableCell>
-              <TableCell>{item.weight === null || item.weight === undefined ? '—' : percent(item.weight, lang)}</TableCell>
+              <TableCell>{percent(item.weight, lang)}</TableCell>
               <TableCell dir="auto">
                 {(item.tasks ?? []).join('، ')}
-                {item.storyPoints !== null && item.storyPoints !== undefined && t('proposal.points', { n: item.storyPoints })}
+                {item.storyPoints !== null &&
+                  item.storyPoints !== undefined &&
+                  t('proposal.points', { n: item.storyPoints })}
               </TableCell>
             </TableRow>
           ))}
@@ -133,7 +151,15 @@ function ProposalTable({ items, lang }: { items: ProposalItem[]; lang: string })
 }
 
 /** The PM's editable copy: titles, dates, weights (and parent through the vendor's order). Accepting records the diff. */
-function AcceptDialog({ project, proposal, onClose }: { project: ProjectFull; proposal: PmProposal; onClose: () => void }) {
+function AcceptDialog({
+  project,
+  proposal,
+  onClose,
+}: {
+  project: ProjectFull;
+  proposal: PmProposal;
+  onClose: () => void;
+}) {
   const { t } = useTranslation('vendors');
   const { t: tc } = useTranslation();
   const toast = useToast();
@@ -143,7 +169,9 @@ function AcceptDialog({ project, proposal, onClose }: { project: ProjectFull; pr
   const update = (key: string, patch: Partial<ProposalItem>) =>
     setItems((list) => list.map((i) => (i.key === key ? { ...i, ...patch } : i)));
   const parents = items.filter((i) => i.type === 'phase' || i.type === 'epic');
-  const total = items.filter((i) => i.type === 'milestone' || i.type === 'epic').reduce((sum, i) => sum + (i.weight ?? 0), 0);
+  const total = items
+    .filter((i) => i.type === 'milestone' || i.type === 'epic')
+    .reduce((sum, i) => sum + (i.weight ?? 0), 0);
   return (
     <Dialog open onOpenChange={(o) => !o && onClose()}>
       <DialogContent
@@ -160,7 +188,12 @@ function AcceptDialog({ project, proposal, onClose }: { project: ProjectFull; pr
               data-testid="wasel-proposal-accept"
               onClick={() =>
                 accept.mutate(
-                  { proposalId: proposal.id, items, comment: comment.trim() || null, version: proposal.version },
+                  {
+                    proposalId: proposal.id,
+                    items,
+                    comment: comment.trim() || null,
+                    version: proposal.version,
+                  },
                   {
                     onSuccess: () => {
                       toast({ title: t('proposal.accepted') });
@@ -197,7 +230,11 @@ function AcceptDialog({ project, proposal, onClose }: { project: ProjectFull; pr
                     <TableRow key={item.key} data-testid="wasel-proposal-edit-row">
                       <TableCell>{t(`proposal.types.${item.type}`, item.type)}</TableCell>
                       <TableCell>
-                        <Input dir="rtl" value={item.titleAr ?? ''} onChange={(e) => update(item.key, { titleAr: e.target.value || null })} />
+                        <Input
+                          dir="rtl"
+                          value={item.titleAr ?? ''}
+                          onChange={(e) => update(item.key, { titleAr: e.target.value || null })}
+                        />
                       </TableCell>
                       <TableCell>
                         <Input
@@ -227,10 +264,18 @@ function AcceptDialog({ project, proposal, onClose }: { project: ProjectFull; pr
                         )}
                       </TableCell>
                       <TableCell>
-                        <Input type="date" value={item.plannedStart ?? ''} onChange={(e) => update(item.key, { plannedStart: e.target.value || null })} />
+                        <Input
+                          type="date"
+                          value={item.plannedStart ?? ''}
+                          onChange={(e) => update(item.key, { plannedStart: e.target.value || null })}
+                        />
                       </TableCell>
                       <TableCell>
-                        <Input type="date" value={item.plannedEnd ?? ''} onChange={(e) => update(item.key, { plannedEnd: e.target.value || null })} />
+                        <Input
+                          type="date"
+                          value={item.plannedEnd ?? ''}
+                          onChange={(e) => update(item.key, { plannedEnd: e.target.value || null })}
+                        />
                       </TableCell>
                       <TableCell>
                         {weighted ? (
@@ -264,7 +309,15 @@ function AcceptDialog({ project, proposal, onClose }: { project: ProjectFull; pr
   );
 }
 
-function ReturnDialog({ project, proposal, onClose }: { project: ProjectFull; proposal: PmProposal; onClose: () => void }) {
+function ReturnDialog({
+  project,
+  proposal,
+  onClose,
+}: {
+  project: ProjectFull;
+  proposal: PmProposal;
+  onClose: () => void;
+}) {
   const { t } = useTranslation('vendors');
   const { t: tc } = useTranslation();
   const back = usePanelMutation(project.id, waselApi.returnProposal);
@@ -284,7 +337,10 @@ function ReturnDialog({ project, proposal, onClose }: { project: ProjectFull; pr
               loading={back.isPending}
               data-testid="wasel-proposal-return-confirm"
               onClick={() =>
-                back.mutate({ proposalId: proposal.id, comment: comment.trim(), version: proposal.version }, { onSuccess: onClose })
+                back.mutate(
+                  { proposalId: proposal.id, comment: comment.trim(), version: proposal.version },
+                  { onSuccess: onClose },
+                )
               }
             >
               {t('actions.return')}

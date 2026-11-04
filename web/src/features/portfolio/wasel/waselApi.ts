@@ -37,7 +37,12 @@ export function useWaselPanel(projectId: string) {
   return useQuery({
     queryKey: waselKeys.panel(projectId),
     queryFn: async ({ signal }) =>
-      unwrap(await api.GET('/api/v1/portfolio/projects/{id}/wasel', { params: { path: { id: projectId } }, signal })),
+      unwrap(
+        await api.GET('/api/v1/portfolio/projects/{id}/wasel', {
+          params: { path: { id: projectId } },
+          signal,
+        }),
+      ),
   });
 }
 
@@ -75,7 +80,12 @@ export const waselApi = {
     unwrap(
       await api.POST('/api/v1/portfolio/projects/{id}/wasel/assignments', {
         params: { path: { id: a.projectId } },
-        body: { vendorId: a.vendorId, contractId: a.contractId, accessUntil: a.accessUntil, expiryRule: a.expiryRule },
+        body: {
+          vendorId: a.vendorId,
+          contractId: a.contractId,
+          accessUntil: a.accessUntil,
+          expiryRule: a.expiryRule,
+        },
       }),
     ),
   invite: async (a: {
@@ -113,7 +123,12 @@ export const waselApi = {
         body: { vendorId: a.vendorId },
       }),
     ),
-  acceptProposal: async (a: { proposalId: string; items: ProposalItem[]; comment: string | null; version: number }) =>
+  acceptProposal: async (a: {
+    proposalId: string;
+    items: ProposalItem[];
+    comment: string | null;
+    version: number;
+  }) =>
     unwrap(
       await api.POST('/api/v1/portfolio/proposals/{pid}/accept', {
         params: { path: { pid: a.proposalId } },
@@ -231,7 +246,8 @@ export function useAddWaselComment(projectId: string, subjectType: string, subje
           body: { subjectType, subjectId, body, vendorId: null },
         }),
       ),
-    onSuccess: (list) => queryClient.setQueryData(waselKeys.comments(projectId, subjectType, subjectId), list),
+    onSuccess: (list) =>
+      queryClient.setQueryData(waselKeys.comments(projectId, subjectType, subjectId), list),
   });
 }
 

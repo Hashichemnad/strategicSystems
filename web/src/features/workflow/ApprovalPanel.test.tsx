@@ -7,6 +7,9 @@ import { renderWithProviders } from '@/test/render';
 import type { Instance, SubjectApprovals } from './api';
 import { ApprovalPanel } from './ApprovalPanel';
 
+/** The generated paths type is too deep for vitest's MockInstance inference: spy on a loosely typed view of the client. */
+type LooseApi = { POST: (...args: unknown[]) => Promise<unknown> };
+
 const director = { userId: 'u-director', nameAr: 'مريم الحمادي', nameEn: 'Mariam Al Hammadi' };
 const submitter = { userId: 'u-ahmed', nameAr: 'أحمد السويدي', nameEn: 'Ahmed Al Suwaidi' };
 
@@ -112,7 +115,7 @@ function stub(data: SubjectApprovals) {
     error: undefined,
     response: new Response(null, { status: 200 }),
   } as never);
-  return vi.spyOn(api, 'POST').mockResolvedValue({
+  return vi.spyOn(api as unknown as LooseApi, 'POST').mockResolvedValue({
     data: {
       instanceId: 'i-2',
       instanceStatus: 'returned',

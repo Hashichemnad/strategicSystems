@@ -200,11 +200,16 @@ function Snapshot({ items }: { items: string }) {
             to: formatNumber(toPercent(r.achieve) ?? 0, i18n.language),
           })}
           {(r.source === 'vendor' || r.source === 'vendor-edited') && (
-            <span className="ms-2 inline-flex flex-wrap items-center gap-1" data-testid="monthly-vendor-origin">
+            <span
+              className="ms-2 inline-flex flex-wrap items-center gap-1"
+              data-testid="monthly-vendor-origin"
+            >
               <StatusChip tone={r.source === 'vendor' ? 'info' : 'warning'}>
                 {r.source === 'vendor' ? t('project.monthly.fromVendor') : t('project.monthly.editedByPm')}
               </StatusChip>
-              <bdi className="text-xs text-muted-foreground">{pickText(i18n.language, r.vendorNameAr ?? null, r.vendorNameEn ?? null)}</bdi>
+              <bdi className="text-xs text-muted-foreground">
+                {pickText(i18n.language, r.vendorNameAr ?? null, r.vendorNameEn ?? null)}
+              </bdi>
               {r.source === 'vendor-edited' && r.vendorValues && (
                 <span className="text-xs text-muted-foreground">
                   {t('project.monthly.vendorValue', {

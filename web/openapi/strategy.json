@@ -41122,6 +41122,20 @@
           "version": {
             "type": "integer",
             "format": "uint32"
+          },
+          "vendorId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "endDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
           }
         }
       },
@@ -61280,6 +61294,20 @@
           "version": {
             "type": "integer",
             "format": "uint32"
+          },
+          "vendorId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "vendorConfirmedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
           }
         }
       },
@@ -62193,6 +62221,13 @@
           "version": {
             "type": "integer",
             "format": "uint32"
+          },
+          "allocationPercent": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
           }
         }
       },

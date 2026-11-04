@@ -76,7 +76,9 @@ export function SubmissionReview({
           <StatusChip tone={statusTone[submission.status] ?? 'neutral'}>
             {t(`submission.status.${submission.status}`, submission.status)}
           </StatusChip>
-          <span className="text-sm text-muted-foreground">{pickText(lang, submission.vendorNameAr, submission.vendorNameEn)}</span>
+          <span className="text-sm text-muted-foreground">
+            {pickText(lang, submission.vendorNameAr, submission.vendorNameEn)}
+          </span>
           {submission.submittedAt && (
             <span className="text-xs text-muted-foreground">
               {t('proposal.submittedAt', { at: formatDateTime(submission.submittedAt, lang) })}
@@ -85,13 +87,24 @@ export function SubmissionReview({
         </div>
         <div className="flex flex-wrap gap-2">
           {canManage && (
-            <Button size="sm" variant="outline" loading={aiLoading} onClick={() => void runAi()} data-testid="wasel-ai-review">
+            <Button
+              size="sm"
+              variant="outline"
+              loading={aiLoading}
+              onClick={() => void runAi()}
+              data-testid="wasel-ai-review"
+            >
               <Sparkles aria-hidden />
               {t('submission.aiReview')}
             </Button>
           )}
           {canManage && submission.status !== 'submitted' && submission.status !== 'draft' && (
-            <Button size="sm" variant="outline" onClick={() => setSharing(true)} data-testid="wasel-share-outcome">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setSharing(true)}
+              data-testid="wasel-share-outcome"
+            >
               {t('submission.share')}
             </Button>
           )}
@@ -135,7 +148,10 @@ function AiPanel({
 }) {
   const { t, i18n } = useTranslation('vendors');
   const code = (id: string) => submission.items.find((i) => i.milestoneId === id)?.code ?? '';
-  const comment = i18n.language === 'ar' ? (ai.returnCommentAr ?? ai.returnCommentEn) : (ai.returnCommentEn ?? ai.returnCommentAr);
+  const comment =
+    i18n.language === 'ar'
+      ? (ai.returnCommentAr ?? ai.returnCommentEn)
+      : (ai.returnCommentEn ?? ai.returnCommentAr);
   return (
     <section className="mt-3 rounded-lg border border-dashed p-3" data-testid="wasel-ai-panel">
       <p className="text-xs font-medium text-muted-foreground">{t('submission.aiDraft')}</p>
@@ -160,7 +176,12 @@ function AiPanel({
           <p dir="auto" className="flex-1 text-sm italic">
             {comment}
           </p>
-          <Button size="sm" variant="outline" onClick={() => onUseComment(comment)} data-testid="wasel-ai-use-comment">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => onUseComment(comment)}
+            data-testid="wasel-ai-use-comment"
+          >
             {t('submission.useComment')}
           </Button>
         </div>
@@ -193,7 +214,13 @@ function ItemReview({
   const rows = compareRows(item, pm);
   const edited = isEdited(item, pm);
   const show = (field: string, value: string | number | null) =>
-    value === null || value === '' ? '—' : field === 'achieve' ? percent(Number(value), lang) : field.startsWith('actual') ? formatDate(String(value), lang) : String(value);
+    value === null || value === ''
+      ? '—'
+      : field === 'achieve'
+        ? percent(Number(value), lang)
+        : field.startsWith('actual')
+          ? formatDate(String(value), lang)
+          : String(value);
   return (
     <section className="rounded-md border p-3" data-testid="wasel-review-item">
       <header className="flex flex-wrap items-center justify-between gap-2">
@@ -205,7 +232,9 @@ function ItemReview({
             {item.plannedEnd && ` · ${t('submission.plannedEnd')} ${formatDate(item.plannedEnd, lang)}`}
           </span>
         </p>
-        <StatusChip tone={statusTone[item.reviewStatus] ?? 'neutral'}>{t(`submission.itemStatus.${item.reviewStatus}`, item.reviewStatus)}</StatusChip>
+        <StatusChip tone={statusTone[item.reviewStatus] ?? 'neutral'}>
+          {t(`submission.itemStatus.${item.reviewStatus}`, item.reviewStatus)}
+        </StatusChip>
       </header>
       {item.flags.length > 0 && (
         <p className="mt-1 flex flex-wrap gap-1">
@@ -228,13 +257,21 @@ function ItemReview({
           </TableHead>
           <TableBody>
             {rows.map((r) => (
-              <TableRow key={r.field} data-testid={`wasel-compare-${r.field}`} data-changed={r.changed ? 'true' : 'false'}>
+              <TableRow
+                key={r.field}
+                data-testid={`wasel-compare-${r.field}`}
+                data-changed={r.changed ? 'true' : 'false'}
+              >
                 <TableCell className="font-medium">{t(`diffFields.${r.field}`)}</TableCell>
                 <TableCell>{show(r.field, r.previous)}</TableCell>
                 <TableCell dir="auto">{show(r.field, r.vendor)}</TableCell>
                 <TableCell dir="auto" className={r.changed ? 'bg-warning-soft' : undefined}>
                   {pending ? (
-                    <PmField field={r.field} value={pm} onChange={(patch) => setPm((c) => ({ ...c, ...patch }))} />
+                    <PmField
+                      field={r.field}
+                      value={pm}
+                      onChange={(patch) => setPm((c) => ({ ...c, ...patch }))}
+                    />
                   ) : (
                     show(r.field, r.pm)
                   )}
@@ -261,7 +298,12 @@ function ItemReview({
         </div>
       )}
       {item.pmComment && (
-        <StatusBanner tone="warning" title={t('submission.returnedWith')} description={item.pmComment} className="mt-2" />
+        <StatusBanner
+          tone="warning"
+          title={t('submission.returnedWith')}
+          description={item.pmComment}
+          className="mt-2"
+        />
       )}
       {pending && (
         <div className="mt-3 flex flex-wrap gap-2">
@@ -270,8 +312,16 @@ function ItemReview({
             data-testid={edited ? 'wasel-item-edit-accept' : 'wasel-item-accept'}
             onClick={() =>
               accept.mutate(
-                { submissionId: submission.id, itemId: item.id, values: edited ? pm : null, version: item.version },
-                { onSuccess: () => toast({ title: edited ? t('submission.editedAccepted') : t('submission.accepted') }) },
+                {
+                  submissionId: submission.id,
+                  itemId: item.id,
+                  values: edited ? pm : null,
+                  version: item.version,
+                },
+                {
+                  onSuccess: () =>
+                    toast({ title: edited ? t('submission.editedAccepted') : t('submission.accepted') }),
+                },
               )
             }
           >
@@ -335,7 +385,14 @@ function PmField({
         />
       );
     default:
-      return <Textarea dir="auto" aria-label={label} value={value[field] ?? ''} onChange={(e) => onChange({ [field]: e.target.value || null })} />;
+      return (
+        <Textarea
+          dir="auto"
+          aria-label={label}
+          value={value[field] ?? ''}
+          onChange={(e) => onChange({ [field]: e.target.value || null })}
+        />
+      );
   }
 }
 
@@ -373,7 +430,12 @@ function ReturnItemDialog({
               data-testid="wasel-item-return-confirm"
               onClick={() =>
                 back.mutate(
-                  { submissionId: submission.id, itemId: item.id, comment: comment.trim(), version: item.version },
+                  {
+                    submissionId: submission.id,
+                    itemId: item.id,
+                    comment: comment.trim(),
+                    version: item.version,
+                  },
                   { onSuccess: onClose },
                 )
               }
@@ -392,7 +454,15 @@ function ReturnItemDialog({
   );
 }
 
-function ShareDialog({ project, submission, onClose }: { project: ProjectFull; submission: PmSubmission; onClose: () => void }) {
+function ShareDialog({
+  project,
+  submission,
+  onClose,
+}: {
+  project: ProjectFull;
+  submission: PmSubmission;
+  onClose: () => void;
+}) {
   const { t } = useTranslation('vendors');
   const { t: tc } = useTranslation();
   const share = usePanelMutation(project.id, waselApi.share);
@@ -411,7 +481,9 @@ function ShareDialog({ project, submission, onClose }: { project: ProjectFull; s
               disabled={note.trim() === ''}
               loading={share.isPending}
               data-testid="wasel-share-confirm"
-              onClick={() => share.mutate({ submissionId: submission.id, note: note.trim() }, { onSuccess: onClose })}
+              onClick={() =>
+                share.mutate({ submissionId: submission.id, note: note.trim() }, { onSuccess: onClose })
+              }
             >
               {t('submission.share')}
             </Button>
