@@ -60,7 +60,7 @@ public sealed record ExportRiskReport(string Kind, string Format, Guid? UnitId, 
 /// <summary>Dashboard, heat-maps, Top-10, movement, KRI breaches, Project Risks (live, ADR 0103), mechanism page and reports (design §12).</summary>
 internal sealed class DashboardHandlers(
     RiskDbContext db, RiskReader reader, RiskViews views, FrameworkStore frameworks, RiskDeadlines deadlines, IRequestContext context, IClock clock,
-    ISettingsStore settings, IPdfRenderer pdf, IAuditLog audit, IServiceProvider services)
+    ISettingsStore settings, IPdfRenderer pdf, IAuditLog audit, ILookupService lookups, IServiceProvider services)
     : IQueryHandler<GetRiskDashboard, RiskDashboardDto>, IQueryHandler<GetHeatCellRisks, HeatCellRisksDto>, IQueryHandler<ListProjectRisks, IReadOnlyList<ProjectRiskRowDto>>,
         IQueryHandler<GetRiskMechanism, MechanismDto>, IQueryHandler<ExportRiskReport, RiskExportedFile>
 {
@@ -289,6 +289,9 @@ internal sealed class DashboardHandlers(
         string Person(Guid? id) => id is { } i && people.GetValueOrDefault(i) is { } p ? (arabic ? p.NameAr : p.NameEn) ?? string.Empty : string.Empty;
         string Title(string? ar, string? en) => (arabic ? ar ?? en : en ?? ar) ?? string.Empty;
         string N(decimal value) => value.ToString("0.##", CultureInfo.InvariantCulture);
+        var responses = (await lookups.GetValuesAsync(RiskPermissions.ResponseLookup, true, cancellationToken).ConfigureAwait(false))
+            .ToDictionary(v => v.Code, v => (arabic ? v.LabelAr ?? v.LabelEn : v.LabelEn ?? v.LabelAr) ?? v.Code);
+        string Response(string? code) => code is null ? string.Empty : responses.GetValueOrDefault(code) ?? code;
         List<(string Ar, string En)> headers;
         List<string?[]> rows;
         var paragraphs = new List<(string Ar, string En)>();
@@ -335,7 +338,7 @@ internal sealed class DashboardHandlers(
                 rows = risks.Select(r => new string?[]
                 {
                     r.Number, Title(r.TitleAr, r.TitleEn), Unit(r.UnitId), Person(r.OwnerEmployeeId), $"{N(r.InherentScore)} · {Band(r.InherentBand)}",
-                    $"{N(r.ResidualScore)} · {Band(r.ResidualBand)}", r.TargetScore is { } t ? $"{N(t)} · {Band(r.TargetBand)}" : null, r.ResponseCode,
+                    $"{N(r.ResidualScore)} · {Band(r.ResidualBand)}", r.TargetScore is { } t ? $"{N(t)} · {Band(r.TargetBand)}" : null, Response(r.ResponseCode),
                     RiskDeadlines.Date(r.NextReviewOn),
                 }).ToList();
                 if (query.Kind == "top10")

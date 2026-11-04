@@ -136,7 +136,8 @@ internal sealed class RiskAiService(
         var scorer = await frameworks.ScorerAsync(ct).ConfigureAwait(false);
         var call = await gateway.CompleteJsonAsync(new AiJsonRequest(RiskAiFeatures.Identify, new Dictionary<string, string>
         {
-            ["categories"] = string.Join(", ", categories), ["max"] = scorer.MaxLikelihood.ToString(CultureInfo.InvariantCulture),
+            ["categories"] = string.Join(", ", categories),
+            ["max"] = scorer.MaxLikelihood.ToString(CultureInfo.InvariantCulture),
         }, [new AiDocument("risk-source", text)], IdentifySchema, RiskPermissions.SystemCode, IsUpload: document is not null,
             AuditDetail: new { characters = text.Length }), ct).ConfigureAwait(false);
         if (call.IsFailure)

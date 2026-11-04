@@ -412,7 +412,9 @@ public static class FrameworkRules
                         errors.Add(new FieldError("formula", "risk.errors.formulaCell", "risk.errors.formulaCell",
                             new Dictionary<string, object?>
                             {
-                                ["likelihood"] = l.Value, ["impact"] = i.Value, ["c"] = factor.ToString(CultureInfo.InvariantCulture),
+                                ["likelihood"] = l.Value,
+                                ["impact"] = i.Value,
+                                ["c"] = factor.ToString(CultureInfo.InvariantCulture),
                             }));
                         return;
                     }

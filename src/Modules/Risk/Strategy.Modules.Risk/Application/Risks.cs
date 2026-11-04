@@ -642,8 +642,11 @@ internal sealed class RiskCommands(
         new ApprovalSubject(RiskRecord.EntityType, risk.Id, risk.Number, risk.TitleAr, risk.TitleEn, risk.OwnerEmployeeId, null, risk.UnitId),
         new Dictionary<string, object?>
         {
-            ["inherentBand"] = risk.InherentBand, ["residualBand"] = risk.ResidualBand, ["residualScore"] = risk.ResidualScore,
-            ["withinAppetite"] = risk.WithinAppetite ?? true, ["top10"] = risk.Top10,
+            ["inherentBand"] = risk.InherentBand,
+            ["residualBand"] = risk.ResidualBand,
+            ["residualScore"] = risk.ResidualScore,
+            ["withinAppetite"] = risk.WithinAppetite ?? true,
+            ["top10"] = risk.Top10,
         },
         comment);
 

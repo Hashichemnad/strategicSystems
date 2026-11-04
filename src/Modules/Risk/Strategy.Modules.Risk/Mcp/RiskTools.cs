@@ -136,7 +136,14 @@ internal sealed class MyRiskActionsTool(IDispatcher dispatcher) : IAppTool
             total = items.Count,
             actions = items.Select(a => new
             {
-                actionId = a.Id, a.Number, title = a.Values.TitleEn ?? a.Values.TitleAr, risk = a.RiskNumber, a.Values.PlannedEnd, a.CompletionPct, a.Status, a.Overdue,
+                actionId = a.Id,
+                a.Number,
+                title = a.Values.TitleEn ?? a.Values.TitleAr,
+                risk = a.RiskNumber,
+                a.Values.PlannedEnd,
+                a.CompletionPct,
+                a.Status,
+                a.Overdue,
                 link = $"/risk/my-actions?action={a.Id:D}",
             }),
         });
