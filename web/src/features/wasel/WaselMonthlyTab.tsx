@@ -198,7 +198,7 @@ function ItemCard({
       unwrap(
         await waselApi.POST('/api/wasel/v1/projects/{id}/submission/items/{milestoneId}/evidence', {
           params: { path: { id: projectId, milestoneId: item.milestoneId } },
-          ...formBody<{ file: string }>({ file }),
+          ...formBody({ file }),
         }),
       );
       setFile(null);

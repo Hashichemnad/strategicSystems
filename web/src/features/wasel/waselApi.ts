@@ -196,12 +196,12 @@ export function useVendorComments(id: string, subjectType: string, subjectId: st
 }
 
 /** Multipart body for openapi-fetch (the generated type describes the fields; the browser builds the boundary). */
-export function formBody<T>(fields: Record<string, string | File | undefined>) {
+export function formBody(fields: Record<string, string | File | undefined>) {
   const form = new FormData();
   for (const [key, value] of Object.entries(fields)) {
     if (value !== undefined && value !== '') form.append(key, value);
   }
-  return { body: form as unknown as T, bodySerializer: (body: unknown) => body as FormData };
+  return { body: form as never, bodySerializer: (body: unknown) => body as FormData };
 }
 
 export function fileUrl(projectId: string, fileId: string): string {

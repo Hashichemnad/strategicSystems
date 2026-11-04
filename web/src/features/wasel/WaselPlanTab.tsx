@@ -404,7 +404,7 @@ function ProposalCard({ proposal }: { proposal: VendorProposal }) {
         {rows.map((row) => (
           <li key={row.key} className={row.type === 'phase' || row.type === 'epic' ? 'font-medium' : 'ps-4'}>
             {row.titleEn ?? row.titleAr ?? row.key}
-            {row.weight !== null && row.weight !== undefined && row.weight > 0 && (
+            {(row.weight ?? 0) > 0 && (
               <span className="text-muted-foreground"> · {formatPercent(row.weight, i18n.language)}</span>
             )}
           </li>

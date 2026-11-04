@@ -73,7 +73,7 @@ export function WaselDeliverablesTab({ project }: { project: VendorProject }) {
         unwrap(
           await waselApi.POST('/api/wasel/v1/projects/{id}/deliverables', {
             params: { path: { id: project.id } },
-            ...formBody<{ file: string; title?: string; description?: string; milestoneId?: string }>({
+            ...formBody({
               file,
               title,
               description,
