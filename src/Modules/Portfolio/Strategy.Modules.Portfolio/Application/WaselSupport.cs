@@ -341,9 +341,11 @@ public static class ProposalRules
             return errors;
         }
 
-        if (items.Count > 300 || items.Select(i => i.Key).Distinct(StringComparer.Ordinal).Count() != items.Count)
+        if (items.Count > 300 || items.Any(i => string.IsNullOrWhiteSpace(i.Key) || i.Key.Length > 64)
+            || items.Select(i => i.Key).Distinct(StringComparer.Ordinal).Count() != items.Count)
         {
             Add("items", "portfolio.errors.proposalKeys");
+            return errors;
         }
 
         var keys = items.ToDictionary(i => i.Key, StringComparer.Ordinal);
@@ -428,7 +430,7 @@ public static class ProposalRules
         ArgumentNullException.ThrowIfNull(vendor);
         ArgumentNullException.ThrowIfNull(pm);
         var diff = new List<ProposalDiffEntry>();
-        var mine = pm.ToDictionary(i => i.Key, StringComparer.Ordinal);
+        var mine = pm.GroupBy(i => i.Key, StringComparer.Ordinal).ToDictionary(g => g.Key, g => g.First(), StringComparer.Ordinal);
         foreach (var v in vendor)
         {
             if (!mine.TryGetValue(v.Key, out var p))
