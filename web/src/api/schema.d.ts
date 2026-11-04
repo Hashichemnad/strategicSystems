@@ -4420,6 +4420,22 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/portfolio/kpi-cards': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['SearchPortfolioKpiCards'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/portfolio/requests': {
     parameters: {
       query?: never;
@@ -4654,6 +4670,822 @@ export interface paths {
     get: operations['GetPortfolioProject'];
     put?: never;
     post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/take-ownership': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['TakeProjectOwnership'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/assign-pm': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['AssignProjectManager'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/charter': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateProjectCharter'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/closure': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateProjectClosure'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/impact': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateProjectImpact'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/submit-charter': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SubmitProjectCharter'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/submit-planning': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SubmitProjectPlanning'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/submit-closure': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SubmitProjectClosure'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/submit-impact': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SubmitProjectImpact'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/lpo-uploaded': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ConfirmProjectLpo'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/confirm-completion': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ConfirmProjectCompletion'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/hold': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['HoldProject'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/resume': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ResumeProject'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/cancel': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CancelProject'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/recall': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RecallProjectApproval'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/files': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListProjectFiles'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/files/{kind}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['UploadProjectFile'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/audit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetPortfolioProjectAuditTrail'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/audit/as-of': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetPortfolioProjectAsOf'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/kpis': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListProjectKpis'];
+    put?: never;
+    post: operations['CreateProjectKpi'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/kpis/{itemId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateProjectKpi'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/risks': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListProjectRisks'];
+    put?: never;
+    post: operations['CreateProjectRisk'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/risks/{itemId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateProjectRisk'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/stakeholders': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListProjectStakeholders'];
+    put?: never;
+    post: operations['CreateProjectStakeholder'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/stakeholders/{itemId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateProjectStakeholder'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/members': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListProjectMembers'];
+    put?: never;
+    post: operations['CreateProjectMember'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/members/{itemId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateProjectMember'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/planning-items': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListProjectPlanningItems'];
+    put?: never;
+    post: operations['CreateProjectPlanningItem'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/planning-items/{itemId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateProjectPlanningItem'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/challenges': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListProjectChallenges'];
+    put?: never;
+    post: operations['CreateProjectChallenge'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/challenges/{itemId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateProjectChallenge'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/lessons': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListProjectLessons'];
+    put?: never;
+    post: operations['CreateProjectLesson'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/lessons/{itemId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateProjectLesson'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/meetings': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListProjectMeetings'];
+    put?: never;
+    post: operations['CreateProjectMeeting'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/meetings/{itemId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateProjectMeeting'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/contracts': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListProjectContracts'];
+    put?: never;
+    post: operations['CreateProjectContract'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/contracts/{itemId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateProjectContract'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/{kind}/{itemId}/deactivate': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['DeactivateProjectItem'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/milestones': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListProjectMilestones'];
+    put?: never;
+    post: operations['CreateProjectMilestone'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/monthly': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetProjectMonthly'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/monthly/open': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['OpenProjectMonthlyWindow'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/monthly/submit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SubmitProjectMonthlyUpdate'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/change-requests': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListProjectChangeRequests'];
+    put?: never;
+    post: operations['CreateProjectChangeRequest'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/milestones/{mid}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateProjectMilestone'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/milestones/{mid}/cancel': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CancelProjectMilestone'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/milestones/{mid}/progress': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RecordMilestoneProgress'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/milestones/{mid}/evidence': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListMilestoneEvidence'];
+    put?: never;
+    post: operations['UploadMilestoneEvidence'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/change-requests/{cid}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetProjectChangeRequest'];
+    put: operations['UpdateProjectChangeRequest'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/change-requests/{cid}/submit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SubmitProjectChangeRequest'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/change-requests/{cid}/cancel': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CancelProjectChangeRequest'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/change-requests/{cid}/apply': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ApplyProjectChangeRequest'];
     delete?: never;
     options?: never;
     head?: never;
@@ -6898,6 +7730,12 @@ export interface components {
       validTo: null | string;
       note: null | string;
     };
+    AssignPmInput: {
+      /** Format: uuid */
+      employeeId: string;
+      /** Format: uint32 */
+      version: number;
+    };
     AttendanceDto: {
       /** Format: uuid */
       memberId: string;
@@ -7136,6 +7974,60 @@ export interface components {
       labelAr: null | string;
       labelEn: null | string;
     };
+    ChallengeDto: {
+      /** Format: uuid */
+      id: string;
+      challenge: null | string;
+      impact: null | string;
+      /** Format: double */
+      achievedPct: null | number;
+      recommendation: null | string;
+      /** Format: date */
+      reportDate: null | string;
+      /** Format: uuid */
+      milestoneId: null | string;
+      status: string;
+      /** Format: uint32 */
+      version: number;
+    };
+    ChallengeInput: {
+      values: components['schemas']['ChallengeValues'];
+      /** Format: uint32 */
+      version?: null | number;
+    };
+    ChallengeValues: {
+      challenge: null | string;
+      impact: null | string;
+      /** Format: double */
+      achievedPct: null | number;
+      recommendation: null | string;
+      /** Format: date */
+      reportDate: null | string;
+      /** Format: uuid */
+      milestoneId: null | string;
+    };
+    ChangeApplyInput: {
+      values: components['schemas']['ChangeApplyValues'];
+      /** Format: uint32 */
+      version: number;
+    };
+    /** @description What the PM confirms in "Apply changes" (pre-filled from the request; only the fields of the type are used). */
+    ChangeApplyValues: {
+      nameAr?: null | string;
+      nameEn?: null | string;
+      description?: null | string;
+      scope?: null | string;
+      /** Format: date */
+      plannedStart?: null | string;
+      /** Format: date */
+      plannedEnd?: null | string;
+      /** Format: double */
+      budget?: null | number;
+      /** Format: uuid */
+      newPmEmployeeId?: null | string;
+      /** Format: uuid */
+      newOwnerEmployeeId?: null | string;
+    };
     ChangedFieldDto: {
       field: string;
       labelAr: string;
@@ -7143,12 +8035,97 @@ export interface components {
       before: null | string;
       after: null | string;
     };
+    ChangeLogEntry: {
+      field: string;
+      old: null | string;
+      new: null | string;
+    };
     ChangePasswordInput: {
       currentPassword: null | string;
       newPassword: null | string;
     };
+    ChangeRequestDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      projectId: string;
+      number: string;
+      type: string;
+      areas: string[];
+      reason: null | string;
+      impactOfNonResponse: null | string;
+      proposedNameAr: null | string;
+      proposedNameEn: null | string;
+      proposedDescription: null | string;
+      proposedScope: null | string;
+      /** Format: date */
+      proposedStart: null | string;
+      /** Format: date */
+      proposedEnd: null | string;
+      /** Format: double */
+      proposedBudget: null | number;
+      costAffected: boolean;
+      newPm: null | components['schemas']['PortfolioPersonDto'];
+      newOwner: null | components['schemas']['PortfolioPersonDto'];
+      /** Format: uuid */
+      mergeIntoProjectId: null | string;
+      mergeIntoProjectNumber: null | string;
+      /** Format: date */
+      requestedDate: null | string;
+      status: string;
+      requestedBy: null | components['schemas']['PortfolioPersonDto'];
+      /** Format: date-time */
+      submittedAt: null | string;
+      /** Format: date-time */
+      decidedAt: null | string;
+      /** Format: date-time */
+      implementedAt: null | string;
+      applied: components['schemas']['ChangeLogEntry'][];
+      cancelReason: null | string;
+      canEdit: boolean;
+      canApply: boolean;
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: uint32 */
+      version: number;
+    };
+    ChangeRequestInput: {
+      values: components['schemas']['ChangeRequestValues'];
+      /** Format: uint32 */
+      version?: null | number;
+    };
+    ChangeRequestValues: {
+      type: string;
+      areas: null | string[];
+      reason: null | string;
+      impactOfNonResponse: null | string;
+      proposedNameAr: null | string;
+      proposedNameEn: null | string;
+      proposedDescription: null | string;
+      proposedScope: null | string;
+      /** Format: date */
+      proposedStart: null | string;
+      /** Format: date */
+      proposedEnd: null | string;
+      /** Format: double */
+      proposedBudget: null | number;
+      costAffected: boolean;
+      /** Format: uuid */
+      newPmEmployeeId: null | string;
+      /** Format: uuid */
+      newOwnerEmployeeId: null | string;
+      /** Format: uuid */
+      mergeIntoProjectId: null | string;
+      /** Format: date */
+      requestedDate: null | string;
+    };
     ChangeStatusInput: {
       status: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
+    CharterInput: {
+      values: components['schemas']['ProjectCharterValues'];
       /** Format: uint32 */
       version: number;
     };
@@ -7191,6 +8168,12 @@ export interface components {
       /** Format: uuid */
       usageId: string;
     };
+    ClosureInput: {
+      summaryOfAchievement: null | string;
+      mainDeliverables: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
     CommentDto: {
       /** Format: uuid */
       id: string;
@@ -7230,6 +8213,36 @@ export interface components {
     };
     ConfirmInput: {
       comment: null | string;
+    };
+    ContractDto: {
+      /** Format: uuid */
+      id: string;
+      name: null | string;
+      number: null | string;
+      supplier: null | string;
+      /** Format: date */
+      issueDate: null | string;
+      /** Format: double */
+      amount: null | number;
+      contractStatus: string;
+      status: string;
+      /** Format: uint32 */
+      version: number;
+    };
+    ContractInput: {
+      values: components['schemas']['ContractValues'];
+      /** Format: uint32 */
+      version?: null | number;
+    };
+    ContractValues: {
+      name: null | string;
+      number: null | string;
+      supplier: null | string;
+      /** Format: date */
+      issueDate: null | string;
+      /** Format: double */
+      amount: null | number;
+      contractStatus: null | string;
     };
     /** @description A contributor as the API shows it: the Emirates ID is masked for everyone (reveal is a separate, audited call — ADR 0086). */
     ContributorDto: {
@@ -7429,6 +8442,11 @@ export interface components {
       mode: string;
       start: null | string;
       end: null | string;
+    };
+    DeactivateInput: {
+      reason: null | string;
+      /** Format: uint32 */
+      version: number;
     };
     DecideInput: {
       action: null | string;
@@ -8109,6 +9127,13 @@ export interface components {
     FromTextInput: {
       text: null | string;
     };
+    /** @description A gate item as the record page shows it (live checklist). */
+    GateItem: {
+      code: string;
+      messageKey: string;
+      met: boolean;
+      params?: null | Record<string, never>;
+    };
     GradeBand: {
       code: string;
       nameAr: string;
@@ -8236,6 +9261,21 @@ export interface components {
     };
     /** Format: binary */
     IFormFile: string;
+    ImpactInput: {
+      /** Format: double */
+      costPerformance: null | number;
+      /** Format: int32 */
+      communitySatisfaction: null | number;
+      /** Format: int32 */
+      employeeSatisfaction: null | number;
+      /** Format: int32 */
+      vendorSatisfaction: null | number;
+      /** Format: double */
+      previousOperationalCost: null | number;
+      impactNotes: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
     /** @description One problem found in an uploaded file. int ImportIssue.Row is the sheet row number; string? ImportIssue.Column a column key. */
     ImportIssue: {
       /** Format: int32 */
@@ -8813,6 +9853,11 @@ export interface components {
       /** Format: uuid */
       usageId: string;
     };
+    KpiInput: {
+      values: components['schemas']['ProjectKpiValues'];
+      /** Format: uint32 */
+      version?: null | number;
+    };
     KpiLockInput: {
       reason: null | string;
     };
@@ -9368,6 +10413,28 @@ export interface components {
     KpiYearStartInput: {
       items: components['schemas']['KpiYearItemInput'][];
     };
+    LessonDto: {
+      /** Format: uuid */
+      id: string;
+      stage: null | string;
+      lesson: null | string;
+      typeCode: null | string;
+      recommendation: null | string;
+      status: string;
+      /** Format: uint32 */
+      version: number;
+    };
+    LessonInput: {
+      values: components['schemas']['LessonValues'];
+      /** Format: uint32 */
+      version?: null | number;
+    };
+    LessonValues: {
+      stage: null | string;
+      lesson: null | string;
+      typeCode: null | string;
+      recommendation: null | string;
+    };
     LevelInput: {
       code: null | string;
       nameAr: null | string;
@@ -9636,6 +10703,12 @@ export interface components {
        */
       version: number;
     };
+    MeetingValues: {
+      /** Format: date-time */
+      meetingAt: string;
+      title: null | string;
+      notes: null | string;
+    };
     MemberAnswersInput: {
       /** Format: uuid */
       id: string;
@@ -9843,6 +10916,122 @@ export interface components {
     MfaDisableInput: {
       method: null | string;
     };
+    MilestoneDto: {
+      /** Format: uuid */
+      id: string;
+      code: string;
+      /** Format: uuid */
+      parentId: null | string;
+      isHeader: boolean;
+      highLevel: boolean;
+      titleAr: null | string;
+      titleEn: null | string;
+      /** Format: date */
+      plannedStart: null | string;
+      /** Format: date */
+      plannedEnd: null | string;
+      /** Format: double */
+      weight: number;
+      /** Format: double */
+      maxAchieved: number;
+      /** Format: double */
+      pendingAchieve: null | number;
+      /** Format: double */
+      completionRate: number;
+      /** Format: date */
+      actualStart: null | string;
+      /** Format: date */
+      actualEnd: null | string;
+      /** Format: date */
+      pendingActualStart: null | string;
+      /** Format: date */
+      pendingActualEnd: null | string;
+      /** Format: double */
+      cost: null | number;
+      status: string;
+      updateState: string;
+      delayed: boolean;
+      causality: null | string;
+      correctiveActions: null | string;
+      evidenceNote: null | string;
+      /** Format: int32 */
+      evidenceFiles: number;
+      isDeliverable: boolean;
+      mainDeliverable: null | string;
+      acceptanceCriteria: null | string;
+      qualityMet: null | boolean;
+      isInnovative: boolean;
+      innovativeReason: null | string;
+      /** Format: int32 */
+      sort: number;
+      /** Format: uint32 */
+      version: number;
+    };
+    MilestoneInput: {
+      values: components['schemas']['MilestoneValues'];
+      /** Format: uint32 */
+      version?: null | number;
+    };
+    MilestonePlanDto: {
+      milestones: components['schemas']['MilestoneDto'][];
+      /** Format: double */
+      detailedWeight: number;
+      /** Format: double */
+      highLevelWeight: number;
+      /** Format: double */
+      performance: number;
+      /** Format: double */
+      plannedProgress: number;
+      progressStatus: string;
+    };
+    MilestoneProgressResult: {
+      milestone: components['schemas']['MilestoneDto'];
+      warnings: string[];
+    };
+    /** @description A milestone progress update as the PM enters it in the monthly window (ADR 0071). */
+    MilestoneProgressValues: {
+      /** Format: double */
+      achieve: number;
+      /** Format: date */
+      actualStart: null | string;
+      /** Format: date */
+      actualEnd: null | string;
+      causality: null | string;
+      correctiveActions: null | string;
+      evidenceNote: null | string;
+    };
+    MilestoneUpdateInput: {
+      values: components['schemas']['MilestoneProgressValues'];
+      /** Format: uint32 */
+      version: number;
+    };
+    MilestoneValues: {
+      titleAr: null | string;
+      titleEn: null | string;
+      /** Format: uuid */
+      parentId: null | string;
+      isHeader: boolean;
+      highLevel: boolean;
+      /** Format: date */
+      plannedStart: null | string;
+      /** Format: date */
+      plannedEnd: null | string;
+      /** Format: double */
+      weight: number;
+      /** Format: double */
+      cost: null | number;
+      isDeliverable: boolean;
+      mainDeliverable: null | string;
+      acceptanceCriteria: null | string;
+      qualityMet: null | boolean;
+      isInnovative: boolean;
+      innovativeReason: null | string;
+      /**
+       * Format: int32
+       * @default 0
+       */
+      sort: number;
+    };
     MinutesAiInput: {
       notes: null | string;
     };
@@ -9884,6 +11073,35 @@ export interface components {
       reason: null | string;
       /** Format: uint32 */
       version: number;
+    };
+    MonthlyUpdateDto: {
+      /** Format: uuid */
+      id: string;
+      period: string;
+      /** Format: int32 */
+      sequence: number;
+      status: string;
+      /** Format: date-time */
+      openedAt: string;
+      /** Format: date-time */
+      dueAt: null | string;
+      openedBy: string;
+      /** Format: date-time */
+      submittedAt: null | string;
+      /** Format: date-time */
+      approvedAt: null | string;
+      overdue: boolean;
+      submitComment: null | string;
+      items: string;
+    };
+    MonthlyViewDto: {
+      current: null | components['schemas']['MonthlyUpdateDto'];
+      history: components['schemas']['MonthlyUpdateDto'][];
+      canUpdate: boolean;
+      canSubmit: boolean;
+      canOpen: boolean;
+      /** Format: int32 */
+      pendingMilestones: number;
     };
     MoveUnitInput: {
       /** Format: uuid */
@@ -10455,6 +11673,35 @@ export interface components {
       nameAr: null | string;
       nameEn: null | string;
     };
+    PlanningItemDto: {
+      /** Format: uuid */
+      id: string;
+      category: string;
+      description: null | string;
+      createdStage: string;
+      status: string;
+      /** Format: uint32 */
+      version: number;
+    };
+    PlanningItemInput: {
+      values: components['schemas']['PlanningItemValues'];
+      /** Format: uint32 */
+      version?: null | number;
+    };
+    PlanningItemValues: {
+      category: string;
+      description: null | string;
+    };
+    PortfolioKpiCardDto: {
+      /** Format: uuid */
+      id: string;
+      code: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      unitCode: string;
+      direction: string;
+      link: string;
+    };
     PortfolioOptionDto: {
       code: string;
       labelAr: null | string;
@@ -10482,6 +11729,15 @@ export interface components {
       assessmentOnCreate: boolean;
       canCreate: boolean;
       canManageSettings: boolean;
+      themes: components['schemas']['PortfolioOptionDto'][];
+      riskCategories: components['schemas']['PortfolioOptionDto'][];
+      stakeholderClasses: components['schemas']['PortfolioOptionDto'][];
+      lessonTypes: components['schemas']['PortfolioOptionDto'][];
+      kpiIndexClasses: components['schemas']['PortfolioOptionDto'][];
+      projectTemplate: components['schemas']['StageTemplate'];
+      initiativeTemplate: components['schemas']['StageTemplate'];
+      /** Format: double */
+      progressTolerance: number;
     };
     PortfolioPersonDto: {
       /** Format: uuid */
@@ -10503,6 +11759,26 @@ export interface components {
       /** Format: uuid */
       projectScopeTemplateFileId?: null | string;
       assessmentOnCreate?: boolean;
+      /** @description Q-P2 / Q-P3, ADR 0070: the stage template of projects (Impact switch included). */
+      projectTemplate?: components['schemas']['StageTemplate'];
+      initiativeTemplate?: components['schemas']['StageTemplate'];
+      /**
+       * Format: int32
+       * @description ADR 0071: working days after the window opens until the monthly update is due.
+       */
+      monthlyDueWorkingDays?: number;
+      /** Format: int32 */
+      monthlyReminderWorkingDays?: number;
+      /**
+       * Format: double
+       * @description Q-P6: Delayed when approved progress is more than this below planned-to-date (ratio, 0.05 = 5 points).
+       */
+      progressTolerance?: number;
+      /**
+       * Format: double
+       * @description Q-P4: change requests with a cost change above this amount go to the GM Office.
+       */
+      gmThreshold?: number;
     };
     PortfolioSettingsInput: {
       settings: components['schemas']['PortfolioSettings'];
@@ -10639,7 +11915,98 @@ export interface components {
       /** Format: int32 */
       inProgress: number;
     };
-    ProjectDto: {
+    ProjectApprovalDto: {
+      process: null | string;
+      stepCode: null | string;
+      stepNameAr: null | string;
+      stepNameEn: null | string;
+      result: null | string;
+    };
+    /** @description Charter details the PM edits (SPEC §1.4 B identity, budget &amp; cost, charter resources). */
+    ProjectCharterValues: {
+      nameAr?: null | string;
+      nameEn?: null | string;
+      description?: null | string;
+      scopeOfWork?: null | string;
+      strategicObjectiveCode?: null | string;
+      operationalThemes?: null | string[];
+      structuralChanges?: null | string;
+      resourcesHuman?: null | string;
+      resourcesFinancial?: null | string;
+      resourcesTechnical?: null | string;
+      resourcesContract?: null | string;
+      resourcesOther?: null | string;
+      /** Format: date */
+      plannedStart?: null | string;
+      /** Format: date */
+      plannedEnd?: null | string;
+      /** Format: double */
+      year1ContractedCost?: null | number;
+      /** Format: double */
+      year2ContractedCost?: null | number;
+      /** Format: double */
+      year3ContractedCost?: null | number;
+      /** Format: double */
+      year4ContractedCost?: null | number;
+      /** Format: double */
+      year1ActualCost?: null | number;
+      /** Format: double */
+      year2ActualCost?: null | number;
+      /** Format: double */
+      year3ActualCost?: null | number;
+      /** Format: double */
+      year4ActualCost?: null | number;
+      /** Format: double */
+      contractedInitialCost?: null | number;
+      /** Format: double */
+      annualOperationCost?: null | number;
+      /** Format: double */
+      annualMaintenanceCost?: null | number;
+      /** Format: double */
+      annualLicenceCost?: null | number;
+      /** Format: double */
+      annualOtherCost?: null | number;
+      /** Format: date */
+      operatingCostsFrom?: null | string;
+    };
+    ProjectCountsDto: {
+      /** Format: int32 */
+      kpis: number;
+      /** Format: int32 */
+      risks: number;
+      /** Format: int32 */
+      stakeholders: number;
+      /** Format: int32 */
+      members: number;
+      /** Format: int32 */
+      planningItems: number;
+      /** Format: int32 */
+      milestones: number;
+      /** Format: int32 */
+      challenges: number;
+      /** Format: int32 */
+      lessons: number;
+      /** Format: int32 */
+      meetings: number;
+      /** Format: int32 */
+      contracts: number;
+      /** Format: int32 */
+      changeRequests: number;
+    };
+    ProjectFileDto: {
+      /** Format: uuid */
+      id: string;
+      kind: string;
+      name: string;
+      contentType: string;
+      /** Format: int64 */
+      sizeBytes: number;
+      /** Format: int32 */
+      versionNo: number;
+      /** Format: date-time */
+      updatedAt: string;
+    };
+    ProjectFullDto: {
       /** Format: uuid */
       id: string;
       number: string;
@@ -10649,11 +12016,16 @@ export interface components {
       description: null | string;
       scopeOfWork: null | string;
       stage: string;
+      subState: string;
       status: string;
+      template: components['schemas']['StageTemplate'];
+      stagePath: string[];
       unit: null | components['schemas']['PortfolioUnitDto'];
       sectionUnit: null | components['schemas']['PortfolioUnitDto'];
       strategicObjectiveCode: null | string;
       programTypeCode: null | string;
+      operationalThemes: string[];
+      charter: components['schemas']['ProjectCharterValues'];
       /** Format: double */
       budget: null | number;
       /** Format: double */
@@ -10669,15 +12041,108 @@ export interface components {
       /** Format: date */
       plannedEnd: null | string;
       owner: null | components['schemas']['PortfolioPersonDto'];
+      pm: null | components['schemas']['PortfolioPersonDto'];
       requester: null | components['schemas']['PortfolioPersonDto'];
+      /** Format: date-time */
+      ownershipTakenAt: null | string;
+      lpoUploaded: boolean;
+      /** Format: uuid */
+      teamId: null | string;
+      /** Format: date-time */
+      teamFormedAt: null | string;
+      approval: components['schemas']['ProjectApprovalDto'];
+      /** Format: double */
+      performance: number;
+      /** Format: double */
+      plannedProgress: number;
+      progressStatus: string;
+      summaryOfAchievement: null | string;
+      mainDeliverables: null | string;
+      /** Format: double */
+      costPerformance: null | number;
+      /** Format: int32 */
+      communitySatisfaction: null | number;
+      /** Format: int32 */
+      employeeSatisfaction: null | number;
+      /** Format: int32 */
+      vendorSatisfaction: null | number;
+      /** Format: double */
+      previousOperationalCost: null | number;
+      impactNotes: null | string;
+      /** Format: date-time */
+      updateOpenedAt: null | string;
+      /** Format: date-time */
+      monthlyApprovedAt: null | string;
+      cancelReason: null | string;
+      holdReason: null | string;
+      /** Format: uuid */
+      mergedIntoProjectId: null | string;
+      /** Format: date-time */
+      completedAt: null | string;
       /** Format: uuid */
       requestId: string;
       requestNumber: null | string;
-      stagePath: string[];
+      gates: components['schemas']['ProjectGatesDto'];
+      counts: components['schemas']['ProjectCountsDto'];
+      permissions: components['schemas']['ProjectPermissionsDto'];
       /** Format: date-time */
       createdAt: string;
       /** Format: uint32 */
       version: number;
+    };
+    ProjectGatesDto: {
+      charter: components['schemas']['GateItem'][];
+      planning: components['schemas']['GateItem'][];
+      charterMandatoryDone: boolean;
+      planningMandatoryDone: boolean;
+    };
+    ProjectKpiDto: {
+      /** Format: uuid */
+      id: string;
+      nature: string;
+      /** Format: uuid */
+      kpiCardId: null | string;
+      kpiCardCode: null | string;
+      projectGoal: null | string;
+      nameAr: null | string;
+      nameEn: null | string;
+      equation: null | string;
+      direction: null | string;
+      indexClassCode: null | string;
+      /** Format: double */
+      target: null | number;
+      /** Format: int32 */
+      targetYear: null | number;
+      whenMeasured: null | string;
+      /** Format: double */
+      currentResult: null | number;
+      /** Format: double */
+      performance: null | number;
+      /** Format: double */
+      cappedPerformance: null | number;
+      goalStatus: string;
+      createdStage: string;
+      status: string;
+      /** Format: uint32 */
+      version: number;
+    };
+    ProjectKpiValues: {
+      nature: string;
+      /** Format: uuid */
+      kpiCardId: null | string;
+      projectGoal: null | string;
+      nameAr: null | string;
+      nameEn: null | string;
+      equation: null | string;
+      direction: null | string;
+      indexClassCode: null | string;
+      /** Format: double */
+      target: null | number;
+      /** Format: int32 */
+      targetYear: null | number;
+      whenMeasured: null | string;
+      /** Format: double */
+      currentResult: null | number;
     };
     ProjectListItemDto: {
       /** Format: uuid */
@@ -10697,12 +12162,112 @@ export interface components {
       plannedEnd: null | string;
       /** Format: date-time */
       createdAt: string;
+      subState: string;
+      pm: null | components['schemas']['PortfolioPersonDto'];
+      /** Format: double */
+      performance: number;
+      /** Format: double */
+      plannedProgress: number;
+      progressStatus: string;
+    };
+    ProjectMeetingDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: date-time */
+      meetingAt: string;
+      title: null | string;
+      notes: null | string;
+      status: string;
+      /** Format: uint32 */
+      version: number;
+    };
+    ProjectMeetingInput: {
+      values: components['schemas']['MeetingValues'];
+      /** Format: uint32 */
+      version?: null | number;
+    };
+    ProjectPermissionsDto: {
+      canEdit: boolean;
+      canContribute: boolean;
+      canChange: boolean;
+      canManage: boolean;
+      canLpo: boolean;
+      canTakeOwnership: boolean;
+      canEditCharter: boolean;
+      canEditContent: boolean;
+      canPlanMilestones: boolean;
+      canRecall: boolean;
+    };
+    ProjectReasonInput: {
+      reason: null | string;
+      /** Format: uint32 */
+      version: number;
     };
     ProjectRefDto: {
       /** Format: uuid */
       id: string;
       number: string;
       classification: string;
+    };
+    ProjectRiskDto: {
+      /** Format: uuid */
+      id: string;
+      title: null | string;
+      categoryCode: null | string;
+      /** Format: int32 */
+      probability: number;
+      /** Format: int32 */
+      impact: number;
+      riskFactor: null | string;
+      /** Format: int32 */
+      controlEvaluation: null | number;
+      /** Format: int32 */
+      inherentScore: number;
+      inherentBand: string;
+      /** Format: double */
+      residualScore: number;
+      residualBand: string;
+      response: null | string;
+      mitigationActions: null | string;
+      /** Format: double */
+      implementationPct: null | number;
+      /** Format: date */
+      implementationStart: null | string;
+      /** Format: date */
+      implementationEnd: null | string;
+      owner: null | components['schemas']['PortfolioPersonDto'];
+      rmsStatus: null | string;
+      createdStage: string;
+      status: string;
+      /** Format: uint32 */
+      version: number;
+    };
+    ProjectRiskValues: {
+      title: null | string;
+      categoryCode: null | string;
+      /** Format: int32 */
+      probability: number;
+      /** Format: int32 */
+      impact: number;
+      riskFactor: null | string;
+      /** Format: int32 */
+      controlEvaluation: null | number;
+      response: null | string;
+      mitigationActions: null | string;
+      /** Format: double */
+      implementationPct: null | number;
+      /** Format: date */
+      implementationStart: null | string;
+      /** Format: date */
+      implementationEnd: null | string;
+      /** Format: uuid */
+      ownerEmployeeId: null | string;
+      rmsStatus: null | string;
+    };
+    ProjectVersionInput: {
+      /** Format: uint32 */
+      version: number;
+      comment?: null | string;
     };
     /** @description What a definition change proposes (null = unchanged). */
     ProposedChange: {
@@ -10717,6 +12282,22 @@ export interface components {
       rangeMin: null | number;
       /** Format: double */
       rangeMax: null | number;
+    };
+    ProposedMemberDto: {
+      /** Format: uuid */
+      id: string;
+      employee: null | components['schemas']['PortfolioPersonDto'];
+      roleAr: null | string;
+      roleEn: null | string;
+      responsibilities: null | string;
+      status: string;
+      /** Format: uint32 */
+      version: number;
+    };
+    ProposedMemberInput: {
+      values: components['schemas']['TeamMemberValues'];
+      /** Format: uint32 */
+      version?: null | number;
     };
     /** @description Term and handling per protection type (ADR 0087): years (null: no expiry), the date the term counts from, internal-only. */
     ProtectionRule: {
@@ -11435,6 +13016,11 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    RiskInput: {
+      values: components['schemas']['ProjectRiskValues'];
+      /** Format: uint32 */
+      version?: null | number;
+    };
     RoleDto: {
       /** Format: uuid */
       id: string;
@@ -11777,6 +13363,44 @@ export interface components {
       nameAr: null | string;
       nameEn: null | string;
       state: string;
+    };
+    /** @description The stage template of a classification (Q-P2 / Q-P3, ADR 0070): which optional steps run. Snapshotted on the project when its lifecycle starts. */
+    StageTemplate: {
+      charter: boolean;
+      lpo: boolean;
+      teamFormation: boolean;
+      closure: boolean;
+      impact: boolean;
+    };
+    StakeholderDto: {
+      /** Format: uuid */
+      id: string;
+      name: null | string;
+      classificationCode: null | string;
+      interestLevel: null | string;
+      impactLevel: null | string;
+      communicationMethod: null | string;
+      communicationFrequency: null | string;
+      email: null | string;
+      phone: null | string;
+      status: string;
+      /** Format: uint32 */
+      version: number;
+    };
+    StakeholderInput: {
+      values: components['schemas']['StakeholderValues'];
+      /** Format: uint32 */
+      version?: null | number;
+    };
+    StakeholderValues: {
+      name: null | string;
+      classificationCode: null | string;
+      interestLevel: null | string;
+      impactLevel: null | string;
+      communicationMethod: null | string;
+      communicationFrequency: null | string;
+      email: null | string;
+      phone: null | string;
     };
     StepStateDto: {
       /** Format: int32 */
@@ -12335,6 +13959,13 @@ export interface components {
       /** Format: double */
       lastScore: null | number;
       myMembership: boolean;
+    };
+    TeamMemberValues: {
+      /** Format: uuid */
+      employeeId: string;
+      roleAr: null | string;
+      roleEn: null | string;
+      responsibilities: null | string;
     };
     /** @description What the formation wizard and team pages need (any signed-in user): active types and roles, the published template's grades. */
     TeamOptionsDto: {
@@ -23816,6 +25447,37 @@ export interface operations {
       };
     };
   };
+  SearchPortfolioKpiCards: {
+    parameters: {
+      query?: {
+        search?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PortfolioKpiCardDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
   ListProgramRequests: {
     parameters: {
       query?: {
@@ -24376,6 +26038,9 @@ export interface operations {
         stage?: string;
         unitId?: string;
         search?: string;
+        status?: string;
+        view?: string;
+        progressStatus?: string;
       };
       header?: never;
       path?: never;
@@ -24420,7 +26085,2200 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          'application/json': components['schemas']['ProjectDto'];
+          'application/json': components['schemas']['ProjectFullDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  TakeProjectOwnership: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ProjectVersionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProjectFullDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  AssignProjectManager: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AssignPmInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProjectFullDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateProjectCharter: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CharterInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProjectFullDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateProjectClosure: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ClosureInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProjectFullDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateProjectImpact: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ImpactInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProjectFullDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SubmitProjectCharter: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ProjectVersionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProjectFullDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SubmitProjectPlanning: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ProjectVersionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProjectFullDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SubmitProjectClosure: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ProjectVersionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProjectFullDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SubmitProjectImpact: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ProjectVersionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProjectFullDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ConfirmProjectLpo: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ProjectVersionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProjectFullDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ConfirmProjectCompletion: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ProjectVersionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProjectFullDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  HoldProject: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ProjectReasonInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProjectFullDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ResumeProject: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ProjectReasonInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProjectFullDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CancelProject: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ProjectReasonInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProjectFullDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RecallProjectApproval: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ProjectReasonInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProjectFullDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListProjectFiles: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProjectFileDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UploadProjectFile: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        kind: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'multipart/form-data': {
+          file: components['schemas']['IFormFile'];
+        } & {
+          comment?: string;
+        };
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProjectFileDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetPortfolioProjectAuditTrail: {
+    parameters: {
+      query?: {
+        page?: number;
+        pageSize?: number;
+        field?: string;
+        userId?: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PagedResultOfAuditEntryDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetPortfolioProjectAsOf: {
+    parameters: {
+      query: {
+        at: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RecordSnapshotDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListProjectKpis: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProjectKpiDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateProjectKpi: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['KpiInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProjectKpiDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateProjectKpi: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        itemId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['KpiInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProjectKpiDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListProjectRisks: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProjectRiskDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateProjectRisk: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RiskInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProjectRiskDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateProjectRisk: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        itemId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RiskInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProjectRiskDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListProjectStakeholders: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['StakeholderDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateProjectStakeholder: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['StakeholderInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['StakeholderDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateProjectStakeholder: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        itemId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['StakeholderInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['StakeholderDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListProjectMembers: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProposedMemberDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateProjectMember: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ProposedMemberInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProposedMemberDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateProjectMember: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        itemId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ProposedMemberInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProposedMemberDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListProjectPlanningItems: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PlanningItemDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateProjectPlanningItem: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['PlanningItemInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PlanningItemDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateProjectPlanningItem: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        itemId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['PlanningItemInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PlanningItemDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListProjectChallenges: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ChallengeDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateProjectChallenge: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ChallengeInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ChallengeDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateProjectChallenge: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        itemId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ChallengeInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ChallengeDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListProjectLessons: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['LessonDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateProjectLesson: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['LessonInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['LessonDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateProjectLesson: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        itemId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['LessonInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['LessonDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListProjectMeetings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProjectMeetingDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateProjectMeeting: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ProjectMeetingInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProjectMeetingDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateProjectMeeting: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        itemId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ProjectMeetingInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProjectMeetingDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListProjectContracts: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ContractDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateProjectContract: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ContractInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ContractDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateProjectContract: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        itemId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ContractInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ContractDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  DeactivateProjectItem: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        kind: string;
+        itemId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['DeactivateInput'];
+      };
+    };
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListProjectMilestones: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MilestonePlanDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateProjectMilestone: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['MilestoneInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MilestoneDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetProjectMonthly: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MonthlyViewDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  OpenProjectMonthlyWindow: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MonthlyViewDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SubmitProjectMonthlyUpdate: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ProjectVersionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MonthlyViewDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListProjectChangeRequests: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ChangeRequestDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateProjectChangeRequest: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ChangeRequestInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ChangeRequestDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateProjectMilestone: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        mid: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['MilestoneInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MilestoneDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CancelProjectMilestone: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        mid: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['DeactivateInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MilestoneDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RecordMilestoneProgress: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        mid: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['MilestoneUpdateInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MilestoneProgressResult'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListMilestoneEvidence: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        mid: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProjectFileDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UploadMilestoneEvidence: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        mid: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'multipart/form-data': {
+          file: components['schemas']['IFormFile'];
+        } & {
+          comment?: string;
+        };
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MilestoneDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetProjectChangeRequest: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        cid: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ChangeRequestDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateProjectChangeRequest: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        cid: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ChangeRequestInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ChangeRequestDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SubmitProjectChangeRequest: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        cid: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ProjectVersionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ChangeRequestDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CancelProjectChangeRequest: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        cid: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ProjectReasonInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ChangeRequestDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ApplyProjectChangeRequest: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        cid: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ChangeApplyInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ChangeRequestDto'];
         };
       };
       /** @description Problem Details (RFC 9457) */
