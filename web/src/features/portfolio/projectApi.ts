@@ -456,6 +456,7 @@ export const allProjectTabs = [
   'meetings',
   'lessons',
   'contracts',
+  'vendors',
   'changes',
   'closure',
   'impact',

@@ -32,6 +32,7 @@ import {
   featureOn,
 } from './views/SettingsSections';
 import { TemplatesEditor } from './views/TemplatesEditor';
+import { WaselSettingsSection } from './wasel/WaselSettingsSection';
 
 /** Settings → Portfolio (docs/design/portfolio.md §2.1): threshold, criteria and weights, bands, date windows, budget step, template. */
 export function PortfolioSettingsPage() {
@@ -348,6 +349,7 @@ export function PortfolioSettingsPage() {
       </fieldset>
       <AgileSection value={value} update={update} />
       <CostSection value={value} update={update} />
+      <WaselSettingsSection value={value} update={update} />
       {featureOn(value, 'health') && <HealthSection value={value} update={update} />}
       {featureOn(value, 'gateChecklists') && <GateChecklistSection value={value} update={update} />}
       <section className="flex flex-col gap-3 rounded-lg border bg-card p-6">

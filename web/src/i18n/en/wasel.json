@@ -1,1 +1,283 @@
-{}
+{
+  "portal": {
+    "title": "Wasel — vendor portal",
+    "signOut": "Sign out"
+  },
+  "login": {
+    "title": "Sign in to Wasel",
+    "intro": "The vendor portal for the projects you deliver.",
+    "email": "E-mail",
+    "password": "Password",
+    "submit": "Sign in",
+    "mfaNotice": "Two-step verification is required for every vendor account."
+  },
+  "mfa": {
+    "enrolTitle": "Set up two-step verification",
+    "enrolIntro": "Vendor accounts must use an authenticator app or e-mail codes. Choose a method to continue.",
+    "enrolledTitle": "Two-step verification is on",
+    "continue": "Continue to the portal"
+  },
+  "setPassword": {
+    "title": "Reset your password",
+    "inviteTitle": "Welcome to Wasel — set your password",
+    "intro": "Choose a password for your vendor account. You will set up two-step verification at your first sign-in.",
+    "password": "New password",
+    "confirm": "Confirm the password",
+    "submit": "Save password",
+    "mismatch": "The two passwords are different.",
+    "invalidLink": "This link is incomplete. Open the link from your e-mail again."
+  },
+  "home": {
+    "title": "My projects",
+    "empty": "No assigned projects",
+    "emptyHint": "When a project manager assigns you to a project, it appears here.",
+    "openActions": "{{count}} to act on",
+    "accessUntil": "Access until {{date}}"
+  },
+  "project": {
+    "back": "Back to my projects"
+  },
+  "tabs": {
+    "overview": "Overview",
+    "plan": "Plan proposal",
+    "monthly": "Monthly update",
+    "deliverables": "Deliverables",
+    "items": "Issues & risks",
+    "meetings": "Meetings",
+    "comments": "Comments"
+  },
+  "stage": {
+    "initiation": "Initiation",
+    "planning": "Planning",
+    "execution": "Execution",
+    "closure": "Closure",
+    "impact": "Impact",
+    "completed": "Completed"
+  },
+  "status": {
+    "active": "Active",
+    "on-hold": "On hold",
+    "cancelled": "Cancelled",
+    "completed": "Completed"
+  },
+  "role": {
+    "vendor-lead": "Vendor project lead",
+    "vendor-contributor": "Vendor contributor"
+  },
+  "mode": {
+    "pm-only": "Updates by the PM",
+    "vendor-then-pm": "Vendor then PM"
+  },
+  "methodology": {
+    "waterfall": "Waterfall",
+    "agile": "Agile",
+    "hybrid": "Hybrid"
+  },
+  "overview": {
+    "number": "Project number",
+    "nameAr": "Name (Arabic)",
+    "nameEn": "Name (English)",
+    "plannedStart": "Planned start",
+    "plannedEnd": "Planned end",
+    "methodology": "Methodology",
+    "status": "Status",
+    "accessUntil": "Your access until",
+    "progress": "Progress",
+    "budget": "Budget",
+    "approvalStatus": "Approval status",
+    "window": "Open monthly window",
+    "scope": "Scope",
+    "description": "Description",
+    "contacts": "Contacts",
+    "projectManager": "Project manager",
+    "owner": "Project owner"
+  },
+  "plan": {
+    "notPlanning": "The project is not in planning: a plan can be proposed only while the project manager is planning.",
+    "current": "Proposal #{{sequence}}",
+    "returnedTitle": "Returned by the project manager",
+    "editor": "Proposed plan",
+    "weightTotal": "Proposed weight {{total}} of {{available}} available",
+    "empty": "Add phases and milestones to start.",
+    "type": "Type",
+    "parent": "Parent",
+    "titleAr": "Title (Arabic)",
+    "titleEn": "Title (English)",
+    "start": "Start",
+    "end": "End",
+    "weight": "Weight %",
+    "weightOrPoints": "Weight % / points",
+    "points": "Story points",
+    "tasks": "Tasks (comma separated)",
+    "story": "I want…",
+    "remove": "Remove row",
+    "add": {
+      "phase": "Add phase",
+      "milestone": "Add milestone",
+      "epic": "Add epic",
+      "story": "Add story"
+    },
+    "note": "Note to the project manager",
+    "save": "Save draft",
+    "submit": "Submit to the project manager",
+    "withdraw": "Withdraw",
+    "contributorHint": "Only the vendor project lead can submit the proposal.",
+    "history": "Proposals",
+    "none": "No proposal yet.",
+    "pmComment": "Project manager's comment",
+    "saved": "Proposal saved.",
+    "submitted": "Proposal submitted to the project manager.",
+    "withdrawn": "Proposal withdrawn."
+  },
+  "itemType": {
+    "phase": "Phase",
+    "milestone": "Milestone",
+    "epic": "Epic",
+    "story": "Story"
+  },
+  "proposalStatus": {
+    "draft": "Draft",
+    "submitted": "Submitted",
+    "returned": "Returned",
+    "accepted": "Accepted",
+    "withdrawn": "Withdrawn"
+  },
+  "diff": {
+    "pmChanges": "Changes made by the project manager",
+    "pmEdited": "The project manager edited your values before accepting",
+    "added": "added: {{value}}",
+    "removed": "removed: {{value}}",
+    "yours": "your value",
+    "pm": "PM value",
+    "field": {
+      "achieve": "Achievement",
+      "actualStart": "Actual start",
+      "actualEnd": "Actual end",
+      "causality": "Causes of delay",
+      "correctiveActions": "Corrective actions",
+      "titleAr": "Title (Arabic)",
+      "titleEn": "Title (English)",
+      "parentKey": "Parent",
+      "plannedStart": "Start",
+      "plannedEnd": "End",
+      "weight": "Weight",
+      "storyPoints": "Story points",
+      "tasks": "Tasks"
+    }
+  },
+  "monthly": {
+    "pmOnly": "The project manager updates the milestones of this project (mode: PM only).",
+    "window": "Monthly window {{period}}",
+    "due": "Due {{date}}",
+    "noWindow": "No monthly window is open.",
+    "submit": "Submit to the project manager",
+    "submittedToast": "Update submitted to the project manager.",
+    "noMilestones": "No milestones are assigned to your company.",
+    "history": "Previous submissions",
+    "itemsCount": "{{count}} milestones",
+    "noHistory": "No submission yet.",
+    "delayed": "Delayed",
+    "weight": "Weight",
+    "approved": "Last approved",
+    "plannedEnd": "Planned end",
+    "pmComment": "Returned by the project manager",
+    "achieve": "Achievement (% of the project)",
+    "achieveHint": "Up to the milestone's weight; not below the approved value.",
+    "actualStart": "Actual start",
+    "actualEnd": "Actual end (required at 100 %)",
+    "progressNote": "Progress note",
+    "causality": "Causes of delay",
+    "corrective": "Corrective actions",
+    "evidence": "Evidence",
+    "evidenceHint": "Evidence is required when the milestone reaches 100 %.",
+    "upload": "Upload evidence",
+    "uploaded": "Evidence uploaded.",
+    "save": "Save",
+    "saved": "Milestone update saved."
+  },
+  "submissionStatus": {
+    "draft": "Draft",
+    "submitted": "Submitted",
+    "returned": "Returned",
+    "accepted": "Accepted by PM",
+    "included": "Included in approved update"
+  },
+  "reviewStatus": {
+    "not-started": "Not updated",
+    "pending": "Waiting for review",
+    "accepted": "Accepted",
+    "edited": "Accepted with changes",
+    "returned": "Returned"
+  },
+  "outcome": {
+    "approved": "The monthly update was approved",
+    "returned": "The monthly update was returned",
+    "rejected": "The monthly update was rejected"
+  },
+  "deliverables": {
+    "new": "Upload a deliverable",
+    "title": "Title",
+    "milestone": "Milestone",
+    "description": "Description",
+    "file": "File",
+    "upload": "Upload",
+    "uploaded": "Deliverable uploaded.",
+    "empty": "No deliverable yet.",
+    "pmComment": "Project manager's comment"
+  },
+  "deliverableStatus": {
+    "submitted": "Submitted",
+    "accepted": "Accepted",
+    "returned": "Returned"
+  },
+  "items": {
+    "new": "Raise an issue, challenge or risk",
+    "hint": "It is a draft until the project manager accepts it.",
+    "kind": "Type",
+    "title": "Title",
+    "description": "Description",
+    "impact": "Impact",
+    "probability": "Probability (1–5)",
+    "impactLevel": "Impact (1–5)",
+    "submit": "Send to the project manager",
+    "proposed": "Sent to the project manager.",
+    "empty": "Nothing raised yet.",
+    "pmComment": "Project manager's comment"
+  },
+  "itemKind": {
+    "issue": "Issue",
+    "challenge": "Challenge",
+    "risk": "Risk"
+  },
+  "itemStatus": {
+    "proposed": "Proposed",
+    "accepted": "Accepted",
+    "rejected": "Rejected"
+  },
+  "meetings": {
+    "empty": "No meeting shared with your company.",
+    "untitled": "Meeting",
+    "confirm": "Confirm the actions",
+    "confirmed": "Actions confirmed.",
+    "confirmedOn": "Confirmed on {{date}}"
+  },
+  "comments": {
+    "subjectType": "About",
+    "subject": "Item",
+    "pick": "Choose an item to see its comments.",
+    "empty": "No comment yet.",
+    "body": "Comment",
+    "add": "Add comment",
+    "added": "Comment added."
+  },
+  "subject": {
+    "milestone": "Milestone",
+    "submission": "Monthly submission",
+    "proposal": "Plan proposal",
+    "deliverable": "Deliverable"
+  },
+  "author": {
+    "vendor": "Vendor",
+    "internal": "Project team"
+  }
+}

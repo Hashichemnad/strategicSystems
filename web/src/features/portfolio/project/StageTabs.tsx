@@ -101,6 +101,7 @@ export function MonthlyTab({ project }: { project: ProjectFull }) {
               )}
             </div>
             <p className="text-sm">{t('project.monthly.pending', { count: pendingMilestones })}</p>
+            {current.status !== 'open' && <Snapshot items={current.items} />}
             <MonthlyNarrativePanel
               key={`${current.id}:${current.status}`}
               project={project}
@@ -173,6 +174,11 @@ interface SnapshotItem {
   achieve: number | null;
   approved: number;
   causality: string | null;
+  /** Wasel (ADR 0114): where the value came from — pm, vendor or vendor-edited — so approvers see the vendor origin. */
+  source?: string | null;
+  vendorNameAr?: string | null;
+  vendorNameEn?: string | null;
+  vendorValues?: { achieve: number } | null;
 }
 
 function Snapshot({ items }: { items: string }) {
@@ -193,6 +199,21 @@ function Snapshot({ items }: { items: string }) {
             from: formatNumber(toPercent(r.approved) ?? 0, i18n.language),
             to: formatNumber(toPercent(r.achieve) ?? 0, i18n.language),
           })}
+          {(r.source === 'vendor' || r.source === 'vendor-edited') && (
+            <span className="ms-2 inline-flex flex-wrap items-center gap-1" data-testid="monthly-vendor-origin">
+              <StatusChip tone={r.source === 'vendor' ? 'info' : 'warning'}>
+                {r.source === 'vendor' ? t('project.monthly.fromVendor') : t('project.monthly.editedByPm')}
+              </StatusChip>
+              <bdi className="text-xs text-muted-foreground">{pickText(i18n.language, r.vendorNameAr ?? null, r.vendorNameEn ?? null)}</bdi>
+              {r.source === 'vendor-edited' && r.vendorValues && (
+                <span className="text-xs text-muted-foreground">
+                  {t('project.monthly.vendorValue', {
+                    value: formatNumber(toPercent(r.vendorValues.achieve) ?? 0, i18n.language),
+                  })}
+                </span>
+              )}
+            </span>
+          )}
           {r.causality && <span className="block text-muted-foreground">{r.causality}</span>}
         </li>
       ))}
@@ -436,7 +457,7 @@ function ChangeDialog({
             <Select
               value={v.type}
               onValueChange={(type) => set({ type })}
-              options={['details', 'postponement', 'ownership', 'cancellation', 'merge'].map((x) => ({
+              options={['details', 'postponement', 'ownership', 'cancellation', 'merge', 'hold'].map((x) => ({
                 value: x,
                 label: t(`project.change.types.${x as 'details'}`),
               }))}
