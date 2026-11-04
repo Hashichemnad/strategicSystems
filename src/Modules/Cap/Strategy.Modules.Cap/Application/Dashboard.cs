@@ -35,7 +35,7 @@ public sealed record CapDashboardDto(
     IReadOnlyList<CapCountDto> ActionsByStatus,
     IReadOnlyList<CapCountDto> Ageing,
     IReadOnlyList<CapUnitCountDto> ByDepartment,
-    IReadOnlyList<ActionListItemDto> BudgetDependent,
+    IReadOnlyList<CapActionListItemDto> BudgetDependent,
     int Effective,
     int NotEffective,
     int AwaitingVerification);

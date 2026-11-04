@@ -18,7 +18,7 @@ internal sealed class CapService(
     CapDbContext db, CapReader reader, CapDeadlines deadlines, CapNotifier notifier, INumberingService numbering, IRecordRoleService recordRoles,
     IIntegrationEventPublisher events, IClock clock)
 {
-    public async Task<CapSource> CreateSourceAsync(SourceValues values, string origin, string? linkedType, Guid? linkedId, CancellationToken ct)
+    public async Task<CapSource> CreateSourceAsync(CapSourceValues values, string origin, string? linkedType, Guid? linkedId, CancellationToken ct)
     {
         var number = await numbering.NextAsync(db, CapPermissions.SourceNumbering, new NumberingContext(values.ReceivedOn), ct).ConfigureAwait(false);
         var source = CapSource.Create(number, values, origin, linkedType, linkedId);
@@ -28,7 +28,7 @@ internal sealed class CapService(
     }
 
     /// <summary>Validation of remark values; field paths for the dialog.</summary>
-    public async Task<List<FieldError>> ValidateRemarkAsync(RemarkValues v, ILookupService lookups, CancellationToken ct)
+    public async Task<List<FieldError>> ValidateRemarkAsync(CapRemarkValues v, ILookupService lookups, CancellationToken ct)
     {
         var errors = new List<FieldError>();
         void Add(string field, string key, Dictionary<string, object?>? p = null) => errors.Add(new FieldError(field, key, key, p));
@@ -50,7 +50,7 @@ internal sealed class CapService(
             Add("priority", "validation.invalid");
         }
 
-        if (!await lookups.IsActiveCodeAsync(CapPermissions.RemarkTypeLookup, v.TypeCode, ct).ConfigureAwait(false))
+        if (v.TypeCode is null || !await lookups.IsActiveCodeAsync(CapPermissions.RemarkTypeLookup, v.TypeCode, ct).ConfigureAwait(false))
         {
             Add("typeCode", "validation.invalid");
         }
@@ -80,7 +80,7 @@ internal sealed class CapService(
 
     /// <summary>Creates a remark under the source: number from the department code, owner default, due date by priority, roles, notification.</summary>
     public async Task<Remark> CreateRemarkAsync(
-        CapSource source, RemarkValues values, DateOnly assignedOn, string? externalKey, string? linkedType, Guid? linkedId, CancellationToken ct)
+        CapSource source, CapRemarkValues values, DateOnly assignedOn, string? externalKey, string? linkedType, Guid? linkedId, CancellationToken ct)
     {
         var settings = await reader.SettingsAsync(ct).ConfigureAwait(false);
         if (values.OwnerEmployeeId is null)
@@ -110,7 +110,7 @@ internal sealed class CapService(
         remark.SetDue(dueOn, dueAt);
     }
 
-    public async Task<CapAction> NewActionAsync(Remark home, ActionValues values, string? externalKey, CancellationToken ct)
+    public async Task<CapAction> NewActionAsync(Remark home, CapActionValues values, string? externalKey, CancellationToken ct)
     {
         var action = CapAction.Create($"{home.Number}-{home.NextActionNo()}", home.Id, values, externalKey);
         db.Actions.Add(action);
@@ -120,7 +120,7 @@ internal sealed class CapService(
     }
 
     /// <summary>Validation of action values (field paths for the dialog).</summary>
-    public static async Task<List<FieldError>> ValidateActionAsync(ActionValues v, ILookupService lookups, CapReader reader, bool submitting, CancellationToken ct)
+    public static async Task<List<FieldError>> ValidateActionAsync(CapActionValues v, ILookupService lookups, CapReader reader, bool submitting, CancellationToken ct)
     {
         var errors = new List<FieldError>();
         void Add(string field, string key) => errors.Add(new FieldError(field, key, key));

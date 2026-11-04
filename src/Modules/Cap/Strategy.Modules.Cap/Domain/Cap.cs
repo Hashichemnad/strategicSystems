@@ -206,7 +206,7 @@ public static class ActionQuality
     public const string NoCost = "budget-without-cost";
     public const string TooShort = "too-short";
 
-    public static IReadOnlyList<string> Flags(ActionValues v, DateOnly today, DateOnly? remarkDue)
+    public static IReadOnlyList<string> Flags(CapActionValues v, DateOnly today, DateOnly? remarkDue)
     {
         ArgumentNullException.ThrowIfNull(v);
         var flags = new List<string>();
@@ -303,14 +303,14 @@ public sealed class CapSource : AuditableEntity
 
     public IReadOnlyList<Guid> ViewerEmployeeIds => JsonSerializer.Deserialize<List<Guid>>(ViewerEmployeeIdsJson, Json) ?? [];
 
-    public static CapSource Create(string number, SourceValues values, string origin, string? linkedType, Guid? linkedId)
+    public static CapSource Create(string number, CapSourceValues values, string origin, string? linkedType, Guid? linkedId)
     {
         var source = new CapSource { Number = number, Origin = origin, LinkedType = linkedType, LinkedId = linkedId };
         source.Edit(values);
         return source;
     }
 
-    public void Edit(SourceValues v)
+    public void Edit(CapSourceValues v)
     {
         ArgumentNullException.ThrowIfNull(v);
         TitleAr = Clean(v.TitleAr);
@@ -329,18 +329,18 @@ public sealed class CapSource : AuditableEntity
 
     public void Reopen() => Status = "active";
 
-    public SourceValues Values() => new(TitleAr, TitleEn, SourceTypeCode, Description, ReceivedOn, OwnerEmployeeId, UnitId, TeamId);
+    public CapSourceValues Values() => new(TitleAr, TitleEn, SourceTypeCode, Description, ReceivedOn, OwnerEmployeeId, UnitId, TeamId);
 
     internal static string? Clean(string? value) => string.IsNullOrWhiteSpace(value) ? null : value.Trim();
 }
 
-public sealed record SourceValues(
+public sealed record CapSourceValues(
     string? TitleAr, string? TitleEn, string SourceTypeCode, string? Description, DateOnly ReceivedOn, Guid? OwnerEmployeeId, Guid? UnitId, Guid? TeamId);
 
-public sealed record RemarkValues(
+public sealed record CapRemarkValues(
     string? TextAr, string? TextEn, string? CriterionCode, string TypeCode, string Priority, Guid DepartmentUnitId, Guid? SectionUnitId, Guid? OwnerEmployeeId);
 
-public sealed record RootCauseValues(string Method, IReadOnlyList<string>? Whys, IReadOnlyDictionary<string, IReadOnlyList<string>>? Fishbone, string? Text);
+public sealed record CapRootCauseValues(string Method, IReadOnlyList<string>? Whys, IReadOnlyDictionary<string, IReadOnlyList<string>>? Fishbone, string? Text);
 
 /// <summary>A remark — finding, observation or improvement opportunity (SPEC §9.3 B).</summary>
 [Audited(EntityType)]
@@ -425,7 +425,7 @@ public sealed class Remark : AuditableEntity
     public bool HasRootCause => RootCauseMethod is not null
         && (!string.IsNullOrWhiteSpace(RootCauseText) || RootCause().Whys.Count > 0 || RootCause().Fishbone.Values.Any(v => v.Count > 0));
 
-    public static Remark Create(string number, Guid sourceId, RemarkValues values, DateOnly assignedOn, DateOnly dueOn, DateTimeOffset dueAt, string? externalKey,
+    public static Remark Create(string number, Guid sourceId, CapRemarkValues values, DateOnly assignedOn, DateOnly dueOn, DateTimeOffset dueAt, string? externalKey,
         string? linkedType, Guid? linkedId)
     {
         var remark = new Remark
@@ -437,7 +437,7 @@ public sealed class Remark : AuditableEntity
         return remark;
     }
 
-    public void Edit(RemarkValues v)
+    public void Edit(CapRemarkValues v)
     {
         ArgumentNullException.ThrowIfNull(v);
         TextAr = CapSource.Clean(v.TextAr);
@@ -450,7 +450,7 @@ public sealed class Remark : AuditableEntity
         OwnerEmployeeId = v.OwnerEmployeeId;
     }
 
-    public RemarkValues Values() => new(TextAr, TextEn, CriterionCode, TypeCode, Priority, DepartmentUnitId, SectionUnitId, OwnerEmployeeId);
+    public CapRemarkValues Values() => new(TextAr, TextEn, CriterionCode, TypeCode, Priority, DepartmentUnitId, SectionUnitId, OwnerEmployeeId);
 
     public void SetDue(DateOnly dueOn, DateTimeOffset dueAt)
     {
@@ -473,7 +473,7 @@ public sealed class Remark : AuditableEntity
         return (doc.Whys ?? [], doc.Fishbone ?? []);
     }
 
-    public void SetRootCause(RootCauseValues v)
+    public void SetRootCause(CapRootCauseValues v)
     {
         ArgumentNullException.ThrowIfNull(v);
         RootCauseMethod = v.Method;
@@ -547,7 +547,7 @@ public sealed class Remark : AuditableEntity
     }
 }
 
-public sealed record ActionValues(
+public sealed record CapActionValues(
     string? DetailsAr,
     string? DetailsEn,
     string? TypeCode,
@@ -639,14 +639,14 @@ public sealed class CapAction : AuditableEntity
     /// <summary>Editable by the owner while not submitted or returned.</summary>
     public bool IsEditable => ValidationStatus is ValidationStatuses.Draft or ValidationStatuses.Returned && Status != ActionStatuses.Cancelled;
 
-    public static CapAction Create(string number, Guid homeRemarkId, ActionValues values, string? externalKey = null)
+    public static CapAction Create(string number, Guid homeRemarkId, CapActionValues values, string? externalKey = null)
     {
         var action = new CapAction { Number = number, HomeRemarkId = homeRemarkId, ExternalKey = externalKey };
         action.Edit(values);
         return action;
     }
 
-    public void Edit(ActionValues v)
+    public void Edit(CapActionValues v)
     {
         ArgumentNullException.ThrowIfNull(v);
         DetailsAr = CapSource.Clean(v.DetailsAr);
@@ -667,7 +667,7 @@ public sealed class CapAction : AuditableEntity
         PlannedEnd = v.PlannedEnd;
     }
 
-    public ActionValues Values() => new(DetailsAr, DetailsEn, TypeCode, BudgetRequired, BudgetAvailable, EstimatedCost, RelatedProcess, AssignedEmployeeId, PlannedStart,
+    public CapActionValues Values() => new(DetailsAr, DetailsEn, TypeCode, BudgetRequired, BudgetAvailable, EstimatedCost, RelatedProcess, AssignedEmployeeId, PlannedStart,
         PlannedEnd);
 
     public void SubmitForValidation()

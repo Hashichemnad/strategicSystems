@@ -24,7 +24,7 @@ internal static class CapToolResults
                 : result.Error.MessageKey),
         };
 
-    public static object Remark(RemarkListItemDto r) => new
+    public static object Remark(CapRemarkListItemDto r) => new
     {
         remarkId = r.Id,
         number = r.Number,
@@ -43,7 +43,7 @@ internal static class CapToolResults
         link = $"/cap/remarks/{r.Id:D}",
     };
 
-    public static object Action(ActionListItemDto a) => new
+    public static object Action(CapActionListItemDto a) => new
     {
         actionId = a.Id,
         number = a.Number,
@@ -88,7 +88,7 @@ internal sealed class CapMyActionsTool(IDispatcher dispatcher) : IAppTool
 
     public async Task<ToolResult> InvokeAsync(JsonElement arguments, ToolContext context, CancellationToken cancellationToken)
     {
-        var result = await dispatcher.SendAsync(new ListActions(new PageRequest(1, CapToolResults.Size(arguments)), "mine", null, null, null), cancellationToken).ConfigureAwait(false);
+        var result = await dispatcher.SendAsync(new ListCapActions(new PageRequest(1, CapToolResults.Size(arguments)), "mine", null, null, null), cancellationToken).ConfigureAwait(false);
         return CapToolResults.From(result, page => new { total = page.TotalCount, actions = page.Items.Select(CapToolResults.Action) });
     }
 }
@@ -122,7 +122,7 @@ internal sealed class CapOverdueActionsTool(IDispatcher dispatcher) : IAppTool
 
     public async Task<ToolResult> InvokeAsync(JsonElement arguments, ToolContext context, CancellationToken cancellationToken)
     {
-        var result = await dispatcher.SendAsync(new ListActions(new PageRequest(1, CapToolResults.Size(arguments)), "late", null, null, null), cancellationToken).ConfigureAwait(false);
+        var result = await dispatcher.SendAsync(new ListCapActions(new PageRequest(1, CapToolResults.Size(arguments)), "late", null, null, null), cancellationToken).ConfigureAwait(false);
         return CapToolResults.From(result, page => new { total = page.TotalCount, actions = page.Items.Select(CapToolResults.Action) });
     }
 }
@@ -153,7 +153,7 @@ internal sealed class CapUpdateAchievementDraftTool(IDispatcher dispatcher) : IA
         }
 
         var pct = arguments.TryGetProperty("achievedPercent", out var p) && p.ValueKind == JsonValueKind.Number ? Math.Clamp(p.GetDecimal(), 0, 100) / 100m : action.Value.AchievedPct;
-        var saved = await dispatcher.SendAsync(new UpdateAchievement(id, new ProgressInput(pct, arguments.Text("note"), null, null, action.Value.Version, FromMcp: true)),
+        var saved = await dispatcher.SendAsync(new UpdateAchievement(id, new CapProgressInput(pct, arguments.Text("note"), null, null, action.Value.Version, FromMcp: true)),
             cancellationToken).ConfigureAwait(false);
         return CapToolResults.From(saved, a => new { actionId = a.Id, a.Number, draft = true, proposedPercent = pct * 100, link = $"/cap/actions/{a.Id:D}" });
     }

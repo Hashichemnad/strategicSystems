@@ -15,29 +15,29 @@ using Strategy.Platform.Settings;
 
 namespace Strategy.Modules.Cap.Application;
 
-public sealed record SourcePermissionsDto(bool Edit, bool AddRemark, bool Close);
+public sealed record CapSourcePermissionsDto(bool Edit, bool AddRemark, bool Close);
 
-public sealed record SourceListItemDto(
+public sealed record CapSourceListItemDto(
     Guid Id, string Number, string? TitleAr, string? TitleEn, string SourceTypeCode, DateOnly ReceivedOn, CapUnitDto? Unit, string Origin, string Status, int Remarks,
     int OpenRemarks, int CompletedRemarks);
 
-public sealed record SourceDto(
-    Guid Id, string Number, SourceValues Values, string Origin, string? LinkedType, Guid? LinkedId, LinkView? Linked, CapPersonDto? Owner, CapUnitDto? Unit, string Status,
-    IReadOnlyList<CapPersonDto> Viewers, SourcePermissionsDto Can, uint Version);
+public sealed record CapSourceDto(
+    Guid Id, string Number, CapSourceValues Values, string Origin, string? LinkedType, Guid? LinkedId, LinkView? Linked, CapPersonDto? Owner, CapUnitDto? Unit, string Status,
+    IReadOnlyList<CapPersonDto> Viewers, CapSourcePermissionsDto Can, uint Version);
 
-public sealed record RemarkPermissionsDto(
+public sealed record CapRemarkPermissionsDto(
     bool Respond, bool Reassign, bool RootCause, bool ManageActions, bool Submit, bool ConfirmRejection, bool Edit, bool Cancel, bool Verify, bool Validate);
 
-public sealed record RemarkListItemDto(
+public sealed record CapRemarkListItemDto(
     Guid Id, string Number, string? TextAr, string? TextEn, Guid SourceId, string SourceNumber, string SourceTypeCode, string TypeCode, string Priority, string? CriterionCode,
     CapUnitDto? Department, CapUnitDto? Section, CapPersonDto? Owner, string Status, string Stage, DateOnly DueOn, bool Overdue, int Actions, int CompletedActions);
 
-public sealed record RootCauseDto(string? Method, IReadOnlyList<string> Whys, IReadOnlyDictionary<string, List<string>> Fishbone, string? Text, bool Required);
+public sealed record CapRootCauseDto(string? Method, IReadOnlyList<string> Whys, IReadOnlyDictionary<string, List<string>> Fishbone, string? Text, bool Required);
 
-public sealed record RemarkDto(
+public sealed record CapRemarkDto(
     Guid Id,
     string Number,
-    RemarkValues Values,
+    CapRemarkValues Values,
     Guid SourceId,
     string SourceNumber,
     string? SourceTitleAr,
@@ -58,13 +58,13 @@ public sealed record RemarkDto(
     string? RejectionReason,
     string? PmoDecision,
     string? PmoDecisionNote,
-    RootCauseDto RootCause,
+    CapRootCauseDto RootCause,
     bool AllRejected,
     int ReopenedCount,
     DateTimeOffset? CompletedAt,
     DateOnly? VerificationDueOn,
     string? CancelReason,
-    RemarkPermissionsDto Can,
+    CapRemarkPermissionsDto Can,
     uint Version);
 
 public sealed record CapOptionDto(string Code, string? LabelAr, string? LabelEn);
@@ -73,57 +73,57 @@ public sealed record CapOptionsDto(
     IReadOnlyDictionary<string, IReadOnlyList<CapOptionDto>> Lookups, IReadOnlyList<string> FishboneCategories, bool CanManageSources, bool CanOffice, bool CanDashboard,
     bool CanExport, bool CanSettings, bool RejectionNeedsPmoConfirmation, bool EffectivenessVerification);
 
-public sealed record KpiTrendDto(Guid CardId, string? Code, string? NameAr, string? NameEn, int Year, decimal? Achieved, decimal? Capped, string Rag, int ApprovedPeriods,
+public sealed record CapKpiTrendDto(Guid CardId, string? Code, string? NameAr, string? NameEn, int Year, decimal? Achieved, decimal? Capped, string Rag, int ApprovedPeriods,
     int TotalPeriods);
 
-public sealed record SourceBody(SourceValues Values, uint Version);
+public sealed record CapSourceBody(CapSourceValues Values, uint Version);
 
-public sealed record RemarkBody(RemarkValues Values, uint Version);
+public sealed record CapRemarkBody(CapRemarkValues Values, uint Version);
 
-public sealed record ListSources(PageRequest Page, string? Search, string? SourceTypeCode, string? Status) : IQuery<PagedResult<SourceListItemDto>>;
+public sealed record ListSources(PageRequest Page, string? Search, string? SourceTypeCode, string? Status) : IQuery<PagedResult<CapSourceListItemDto>>;
 
-public sealed record GetSource(Guid Id) : IQuery<SourceDto>;
+public sealed record GetSource(Guid Id) : IQuery<CapSourceDto>;
 
-public sealed record CreateSource(SourceValues Values) : ICommand<SourceDto>;
+public sealed record CreateSource(CapSourceValues Values) : ICommand<CapSourceDto>;
 
-public sealed record UpdateSource(Guid Id, SourceValues Values, uint Version) : ICommand<SourceDto>;
+public sealed record UpdateSource(Guid Id, CapSourceValues Values, uint Version) : ICommand<CapSourceDto>;
 
-public sealed record CloseSource(Guid Id, bool Close) : ICommand<SourceDto>;
+public sealed record CloseSource(Guid Id, bool Close) : ICommand<CapSourceDto>;
 
 public sealed record ListRemarks(
     PageRequest Page, string? View, string? Search, Guid? SourceId, string? Status, string? Priority, Guid? UnitId, string? SourceTypeCode)
-    : IQuery<PagedResult<RemarkListItemDto>>;
+    : IQuery<PagedResult<CapRemarkListItemDto>>;
 
-public sealed record GetRemark(Guid Id) : IQuery<RemarkDto>;
+public sealed record GetRemark(Guid Id) : IQuery<CapRemarkDto>;
 
 public sealed record GetCapOptions : IQuery<CapOptionsDto>;
 
-public sealed record GetRemarkKpiTrend(Guid Id) : IQuery<KpiTrendDto?>;
+public sealed record GetRemarkKpiTrend(Guid Id) : IQuery<CapKpiTrendDto?>;
 
-public sealed record CreateRemark(Guid SourceId, RemarkValues Values) : ICommand<RemarkDto>;
+public sealed record CreateRemark(Guid SourceId, CapRemarkValues Values) : ICommand<CapRemarkDto>;
 
-public sealed record UpdateRemark(Guid Id, RemarkValues Values, uint Version) : ICommand<RemarkDto>;
+public sealed record UpdateRemark(Guid Id, CapRemarkValues Values, uint Version) : ICommand<CapRemarkDto>;
 
-public sealed record AcceptRemark(Guid Id) : ICommand<RemarkDto>;
+public sealed record AcceptRemark(Guid Id) : ICommand<CapRemarkDto>;
 
-public sealed record RejectRemark(Guid Id, string? Reason) : ICommand<RemarkDto>;
+public sealed record RejectRemark(Guid Id, string? Reason) : ICommand<CapRemarkDto>;
 
-public sealed record ConfirmRemarkRejection(Guid Id, bool Confirm, string? Note) : ICommand<RemarkDto>;
+public sealed record ConfirmRemarkRejection(Guid Id, bool Confirm, string? Note) : ICommand<CapRemarkDto>;
 
-public sealed record ReassignRemark(Guid Id, Guid OwnerEmployeeId) : ICommand<RemarkDto>;
+public sealed record ReassignRemark(Guid Id, Guid OwnerEmployeeId) : ICommand<CapRemarkDto>;
 
-public sealed record SaveRootCause(Guid Id, RootCauseValues Values, uint Version) : ICommand<RemarkDto>;
+public sealed record SaveRootCause(Guid Id, CapRootCauseValues Values, uint Version) : ICommand<CapRemarkDto>;
 
-public sealed record SubmitRemarkActions(Guid Id, string? Comment) : ICommand<RemarkDto>;
+public sealed record SubmitRemarkActions(Guid Id, string? Comment) : ICommand<CapRemarkDto>;
 
-public sealed record CancelRemark(Guid Id, string? Reason) : ICommand<RemarkDto>;
+public sealed record CancelRemark(Guid Id, string? Reason) : ICommand<CapRemarkDto>;
 
-public sealed record VerifyRemark(Guid Id, bool Effective, string? Comment) : ICommand<RemarkDto>;
+public sealed record VerifyRemark(Guid Id, bool Effective, string? Comment) : ICommand<CapRemarkDto>;
 
 /// <summary>Maps remarks and sources for the API and works out what the caller may do (docs/design/cap.md §7).</summary>
 internal sealed class CapViews(CapDbContext db, CapReader reader, ILinkRegistry links, IRequestContext context, IClock clock, ISettingsStore settings)
 {
-    public async Task<RemarkDto> ToDtoAsync(Remark r, CancellationToken ct)
+    public async Task<CapRemarkDto> ToDtoAsync(Remark r, CancellationToken ct)
     {
         var user = context.User;
         var source = await db.Sources.AsNoTracking().FirstAsync(s => s.Id == r.SourceId, ct).ConfigureAwait(false);
@@ -145,17 +145,17 @@ internal sealed class CapViews(CapDbContext db, CapReader reader, ILinkRegistry 
         var resolved = refs.Count == 0 ? [] : await links.ResolveAsync(refs, user, ct).ConfigureAwait(false);
         var (whys, fishbone) = r.RootCause();
         var required = cap.RootCauseRequired(r.Priority, r.TypeCode, source.SourceTypeCode, r.CriterionCode);
-        return new RemarkDto(r.Id, r.Number, r.Values(), source.Id, source.Number, source.TitleAr, source.TitleEn, source.SourceTypeCode,
+        return new CapRemarkDto(r.Id, r.Number, r.Values(), source.Id, source.Number, source.TitleAr, source.TitleEn, source.SourceTypeCode,
             resolved.FirstOrDefault(l => l.Type == source.LinkedType && l.Id == source.LinkedId),
             resolved.FirstOrDefault(l => l.Type == r.LinkedType && l.Id == r.LinkedId), CapReader.Unit(r.DepartmentUnitId, units), CapReader.Unit(r.SectionUnitId, units),
             CapReader.Person(r.OwnerEmployeeId, people), r.AssignedOn, r.DueOn, r.DueAt, Overdue(r), r.RespondedAt, r.Status, r.Stage, r.RejectionReason, r.PmoDecision,
-            r.PmoDecisionNote, new RootCauseDto(r.RootCauseMethod, whys, fishbone, r.RootCauseText, required), r.AllRejected, r.ReopenedCount, r.CompletedAt,
+            r.PmoDecisionNote, new CapRootCauseDto(r.RootCauseMethod, whys, fishbone, r.RootCauseText, required), r.AllRejected, r.ReopenedCount, r.CompletedAt,
             r.VerificationDueOn, r.CancelReason, can, r.Version);
     }
 
     public bool Overdue(Remark r) => r.IsOpen && r.Status != CapRemarkStatuses.Verification && r.DueAt < clock.UtcNow;
 
-    public async Task<RemarkPermissionsDto> PermissionsAsync(Remark r, ClaimsPrincipal user, CancellationToken ct)
+    public async Task<CapRemarkPermissionsDto> PermissionsAsync(Remark r, ClaimsPrincipal user, CancellationToken ct)
     {
         var me = user.EmployeeIdOf();
         var office = await reader.CanAsync(user, CapPermissions.Office, r, ct).ConfigureAwait(false);
@@ -164,7 +164,7 @@ internal sealed class CapViews(CapDbContext db, CapReader reader, ILinkRegistry 
             && (me is not null && r.OwnerEmployeeId == me || office);
         var planning = r.Status is CapRemarkStatuses.Planning or CapRemarkStatuses.Correction or CapRemarkStatuses.Implementation;
         var cap = await settings.GetAsync<CapSettings>(ct).ConfigureAwait(false);
-        return new RemarkPermissionsDto(
+        return new CapRemarkPermissionsDto(
             respond && r.Status == CapRemarkStatuses.Assigned,
             (respond || manage) && r.IsOpen && r.Status != CapRemarkStatuses.Validation,
             respond && r.IsOpen && r.Status != CapRemarkStatuses.Validation,
@@ -177,7 +177,7 @@ internal sealed class CapViews(CapDbContext db, CapReader reader, ILinkRegistry 
             office && r.Status == CapRemarkStatuses.Validation);
     }
 
-    public async Task<IReadOnlyList<RemarkListItemDto>> ListItemsAsync(IReadOnlyList<Remark> remarks, CancellationToken ct)
+    public async Task<IReadOnlyList<CapRemarkListItemDto>> ListItemsAsync(IReadOnlyList<Remark> remarks, CancellationToken ct)
     {
         var people = await reader.PeopleAsync(remarks.Select(r => r.OwnerEmployeeId), ct).ConfigureAwait(false);
         var units = await reader.UnitsAsync(remarks.SelectMany(r => new[] { (Guid?)r.DepartmentUnitId, r.SectionUnitId }), ct).ConfigureAwait(false);
@@ -189,12 +189,12 @@ internal sealed class CapViews(CapDbContext db, CapReader reader, ILinkRegistry 
             .Where(x => x.Status != ActionStatuses.Cancelled)
             .GroupBy(x => x.RemarkId).Select(g => new { g.Key, Total = g.Count(), Done = g.Count(x => x.Status == ActionStatuses.Completed) })
             .ToDictionaryAsync(x => x.Key, ct).ConfigureAwait(false);
-        return remarks.Select(r => new RemarkListItemDto(r.Id, r.Number, r.TextAr, r.TextEn, r.SourceId, sources[r.SourceId].Number, sources[r.SourceId].SourceTypeCode,
+        return remarks.Select(r => new CapRemarkListItemDto(r.Id, r.Number, r.TextAr, r.TextEn, r.SourceId, sources[r.SourceId].Number, sources[r.SourceId].SourceTypeCode,
             r.TypeCode, r.Priority, r.CriterionCode, CapReader.Unit(r.DepartmentUnitId, units), CapReader.Unit(r.SectionUnitId, units), CapReader.Person(r.OwnerEmployeeId, people),
             r.Status, r.Stage, r.DueOn, Overdue(r), counts.GetValueOrDefault(r.Id)?.Total ?? 0, counts.GetValueOrDefault(r.Id)?.Done ?? 0)).ToList();
     }
 
-    public async Task<SourceDto> ToDtoAsync(CapSource s, CancellationToken ct)
+    public async Task<CapSourceDto> ToDtoAsync(CapSource s, CancellationToken ct)
     {
         var user = context.User;
         var people = await reader.PeopleAsync([s.OwnerEmployeeId, .. s.ViewerEmployeeIds.Select(v => (Guid?)v)], ct).ConfigureAwait(false);
@@ -206,17 +206,17 @@ internal sealed class CapViews(CapDbContext db, CapReader reader, ILinkRegistry 
             linked = (await links.ResolveAsync([new LinkRef(type, id)], user, ct).ConfigureAwait(false)) is [var first, ..] ? first : null;
         }
 
-        return new SourceDto(s.Id, s.Number, s.Values(), s.Origin, s.LinkedType, s.LinkedId, linked, CapReader.Person(s.OwnerEmployeeId, people),
+        return new CapSourceDto(s.Id, s.Number, s.Values(), s.Origin, s.LinkedType, s.LinkedId, linked, CapReader.Person(s.OwnerEmployeeId, people),
             CapReader.Unit(s.UnitId, units), s.Status, s.ViewerEmployeeIds.Select(v => CapReader.Person(v, people)!).ToList(),
-            new SourcePermissionsDto(manage && s.Origin == "manual", manage && s.Status == "active", manage), s.Version);
+            new CapSourcePermissionsDto(manage && s.Origin == "manual", manage && s.Status == "active", manage), s.Version);
     }
 }
 
 internal sealed class RemarkQueries(CapDbContext db, CapReader reader, CapViews views, ILookupService lookups, IRequestContext context, IClock clock, IServiceProvider services)
-    : IQueryHandler<ListSources, PagedResult<SourceListItemDto>>, IQueryHandler<GetSource, SourceDto>, IQueryHandler<ListRemarks, PagedResult<RemarkListItemDto>>,
-        IQueryHandler<GetRemark, RemarkDto>, IQueryHandler<GetCapOptions, CapOptionsDto>, IQueryHandler<GetRemarkKpiTrend, KpiTrendDto?>
+    : IQueryHandler<ListSources, PagedResult<CapSourceListItemDto>>, IQueryHandler<GetSource, CapSourceDto>, IQueryHandler<ListRemarks, PagedResult<CapRemarkListItemDto>>,
+        IQueryHandler<GetRemark, CapRemarkDto>, IQueryHandler<GetCapOptions, CapOptionsDto>, IQueryHandler<GetRemarkKpiTrend, CapKpiTrendDto?>
 {
-    public async Task<Result<PagedResult<SourceListItemDto>>> HandleAsync(ListSources query, CancellationToken cancellationToken)
+    public async Task<Result<PagedResult<CapSourceListItemDto>>> HandleAsync(ListSources query, CancellationToken cancellationToken)
     {
         var source = await reader.SourcesAsync(context.User, cancellationToken).ConfigureAwait(false);
         if (!string.IsNullOrWhiteSpace(query.Search))
@@ -250,19 +250,19 @@ internal sealed class RemarkQueries(CapDbContext db, CapReader reader, CapViews 
             Open = g.Count(r => r.Status != CapRemarkStatuses.Completed && r.Status != CapRemarkStatuses.Rejected && r.Status != CapRemarkStatuses.Cancelled),
         }).ToDictionaryAsync(x => x.Key, cancellationToken).ConfigureAwait(false);
         var units = await reader.UnitsAsync(rows.Select(r => r.UnitId), cancellationToken).ConfigureAwait(false);
-        return new PagedResult<SourceListItemDto>(rows.Select(s => new SourceListItemDto(s.Id, s.Number, s.TitleAr, s.TitleEn, s.SourceTypeCode, s.ReceivedOn,
+        return new PagedResult<CapSourceListItemDto>(rows.Select(s => new CapSourceListItemDto(s.Id, s.Number, s.TitleAr, s.TitleEn, s.SourceTypeCode, s.ReceivedOn,
             CapReader.Unit(s.UnitId, units), s.Origin, s.Status, counts.GetValueOrDefault(s.Id)?.Total ?? 0, counts.GetValueOrDefault(s.Id)?.Open ?? 0,
             counts.GetValueOrDefault(s.Id)?.Completed ?? 0)).ToList(), page.Page, page.PageSize, total);
     }
 
-    public async Task<Result<SourceDto>> HandleAsync(GetSource query, CancellationToken cancellationToken) =>
+    public async Task<Result<CapSourceDto>> HandleAsync(GetSource query, CancellationToken cancellationToken) =>
         await reader.SourceAsync(query.Id, context.User, cancellationToken).ConfigureAwait(false) is { } s
             ? await views.ToDtoAsync(s, cancellationToken).ConfigureAwait(false)
             : Error.NotFound();
 
     public static readonly IReadOnlyList<string> Views = ["all", "mine", "to-accept", "my-unit", "overdue", "to-confirm", "open"];
 
-    public async Task<Result<PagedResult<RemarkListItemDto>>> HandleAsync(ListRemarks query, CancellationToken cancellationToken)
+    public async Task<Result<PagedResult<CapRemarkListItemDto>>> HandleAsync(ListRemarks query, CancellationToken cancellationToken)
     {
         var user = context.User;
         var source = await reader.RemarksAsync(user, cancellationToken).ConfigureAwait(false);
@@ -344,10 +344,10 @@ internal sealed class RemarkQueries(CapDbContext db, CapReader reader, CapViews 
             _ => source.OrderBy(r => r.DueOn).ThenBy(r => r.Number),
         };
         var rows = await ordered.Skip((page.Page - 1) * page.PageSize).Take(page.PageSize).ToListAsync(cancellationToken).ConfigureAwait(false);
-        return new PagedResult<RemarkListItemDto>(await views.ListItemsAsync(rows, cancellationToken).ConfigureAwait(false), page.Page, page.PageSize, total);
+        return new PagedResult<CapRemarkListItemDto>(await views.ListItemsAsync(rows, cancellationToken).ConfigureAwait(false), page.Page, page.PageSize, total);
     }
 
-    public async Task<Result<RemarkDto>> HandleAsync(GetRemark query, CancellationToken cancellationToken) =>
+    public async Task<Result<CapRemarkDto>> HandleAsync(GetRemark query, CancellationToken cancellationToken) =>
         await reader.RemarkAsync(query.Id, context.User, cancellationToken).ConfigureAwait(false) is { } r
             ? await views.ToDtoAsync(r, cancellationToken).ConfigureAwait(false)
             : Error.NotFound();
@@ -372,7 +372,7 @@ internal sealed class RemarkQueries(CapDbContext db, CapReader reader, CapViews 
     }
 
     /// <summary>"The remark shows the KPI trend" (SPEC §9.5): year performance of the source's KPI card for the remark's year.</summary>
-    public async Task<Result<KpiTrendDto?>> HandleAsync(GetRemarkKpiTrend query, CancellationToken cancellationToken)
+    public async Task<Result<CapKpiTrendDto?>> HandleAsync(GetRemarkKpiTrend query, CancellationToken cancellationToken)
     {
         var remark = await reader.RemarkAsync(query.Id, context.User, cancellationToken).ConfigureAwait(false);
         if (remark is null)
@@ -383,17 +383,17 @@ internal sealed class RemarkQueries(CapDbContext db, CapReader reader, CapViews 
         var source = await db.Sources.AsNoTracking().FirstAsync(s => s.Id == remark.SourceId, cancellationToken).ConfigureAwait(false);
         if (source.LinkedType != "kpi.card" || source.LinkedId is not { } cardId || services.GetService(typeof(IKpiCatalog)) is not IKpiCatalog catalog)
         {
-            return (KpiTrendDto?)null;
+            return (CapKpiTrendDto?)null;
         }
 
         var card = await catalog.GetAsync(cardId, context.User, cancellationToken).ConfigureAwait(false);
         var performance = await catalog.GetPerformanceAsync(cardId, remark.AssignedOn.Year, context.User, cancellationToken).ConfigureAwait(false);
         if (card is null || performance is null)
         {
-            return (KpiTrendDto?)null;
+            return (CapKpiTrendDto?)null;
         }
 
-        return new KpiTrendDto(cardId, card.Code, card.NameAr, card.NameEn, performance.Year, performance.Achieved, performance.Capped, performance.Rag,
+        return new CapKpiTrendDto(cardId, card.Code, card.NameAr, card.NameEn, performance.Year, performance.Achieved, performance.Capped, performance.Rag,
             performance.ApprovedPeriods, performance.TotalPeriods);
     }
 }
@@ -402,12 +402,12 @@ internal sealed class RemarkQueries(CapDbContext db, CapReader reader, CapViews 
 internal sealed class RemarkCommands(
     CapDbContext db, CapReader reader, CapViews views, CapService service, CapNotifier notifier, CapDeadlines deadlines, ILookupService lookups, IRequestContext context,
     IClock clock, CapApprovals approvals)
-    : ICommandHandler<CreateSource, SourceDto>, ICommandHandler<UpdateSource, SourceDto>, ICommandHandler<CloseSource, SourceDto>, ICommandHandler<CreateRemark, RemarkDto>,
-        ICommandHandler<UpdateRemark, RemarkDto>, ICommandHandler<AcceptRemark, RemarkDto>, ICommandHandler<RejectRemark, RemarkDto>,
-        ICommandHandler<ConfirmRemarkRejection, RemarkDto>, ICommandHandler<ReassignRemark, RemarkDto>, ICommandHandler<SaveRootCause, RemarkDto>,
-        ICommandHandler<SubmitRemarkActions, RemarkDto>, ICommandHandler<CancelRemark, RemarkDto>, ICommandHandler<VerifyRemark, RemarkDto>
+    : ICommandHandler<CreateSource, CapSourceDto>, ICommandHandler<UpdateSource, CapSourceDto>, ICommandHandler<CloseSource, CapSourceDto>, ICommandHandler<CreateRemark, CapRemarkDto>,
+        ICommandHandler<UpdateRemark, CapRemarkDto>, ICommandHandler<AcceptRemark, CapRemarkDto>, ICommandHandler<RejectRemark, CapRemarkDto>,
+        ICommandHandler<ConfirmRemarkRejection, CapRemarkDto>, ICommandHandler<ReassignRemark, CapRemarkDto>, ICommandHandler<SaveRootCause, CapRemarkDto>,
+        ICommandHandler<SubmitRemarkActions, CapRemarkDto>, ICommandHandler<CancelRemark, CapRemarkDto>, ICommandHandler<VerifyRemark, CapRemarkDto>
 {
-    public async Task<Result<SourceDto>> HandleAsync(CreateSource command, CancellationToken cancellationToken)
+    public async Task<Result<CapSourceDto>> HandleAsync(CreateSource command, CancellationToken cancellationToken)
     {
         if (!await reader.CanAllAsync(context.User, CapPermissions.SourceManage, cancellationToken).ConfigureAwait(false))
         {
@@ -426,7 +426,7 @@ internal sealed class RemarkCommands(
         return await views.ToDtoAsync(source, cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task<Result<SourceDto>> HandleAsync(UpdateSource command, CancellationToken cancellationToken)
+    public async Task<Result<CapSourceDto>> HandleAsync(UpdateSource command, CancellationToken cancellationToken)
     {
         var source = await reader.SourceAsync(command.Id, context.User, cancellationToken, tracked: true).ConfigureAwait(false);
         if (source is null)
@@ -458,7 +458,7 @@ internal sealed class RemarkCommands(
         return await views.ToDtoAsync(source, cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task<Result<SourceDto>> HandleAsync(CloseSource command, CancellationToken cancellationToken)
+    public async Task<Result<CapSourceDto>> HandleAsync(CloseSource command, CancellationToken cancellationToken)
     {
         var source = await reader.SourceAsync(command.Id, context.User, cancellationToken, tracked: true).ConfigureAwait(false);
         if (source is null)
@@ -484,7 +484,7 @@ internal sealed class RemarkCommands(
         return await views.ToDtoAsync(source, cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task<Result<RemarkDto>> HandleAsync(CreateRemark command, CancellationToken cancellationToken)
+    public async Task<Result<CapRemarkDto>> HandleAsync(CreateRemark command, CancellationToken cancellationToken)
     {
         var source = await reader.SourceAsync(command.SourceId, context.User, cancellationToken, tracked: true).ConfigureAwait(false);
         if (source is null)
@@ -515,7 +515,7 @@ internal sealed class RemarkCommands(
         return await views.ToDtoAsync(remark, cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task<Result<RemarkDto>> HandleAsync(UpdateRemark command, CancellationToken cancellationToken)
+    public async Task<Result<CapRemarkDto>> HandleAsync(UpdateRemark command, CancellationToken cancellationToken)
     {
         var (remark, error) = await LoadAsync(command.Id, cancellationToken).ConfigureAwait(false);
         if (remark is null)
@@ -561,7 +561,7 @@ internal sealed class RemarkCommands(
         return await views.ToDtoAsync(remark, cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task<Result<RemarkDto>> HandleAsync(AcceptRemark command, CancellationToken cancellationToken)
+    public async Task<Result<CapRemarkDto>> HandleAsync(AcceptRemark command, CancellationToken cancellationToken)
     {
         var (remark, error) = await LoadAsync(command.Id, cancellationToken).ConfigureAwait(false);
         if (remark is null)
@@ -577,7 +577,7 @@ internal sealed class RemarkCommands(
         return await TransitionAsync(remark, RemarkActions.Accept, null, cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task<Result<RemarkDto>> HandleAsync(RejectRemark command, CancellationToken cancellationToken)
+    public async Task<Result<CapRemarkDto>> HandleAsync(RejectRemark command, CancellationToken cancellationToken)
     {
         var (remark, error) = await LoadAsync(command.Id, cancellationToken).ConfigureAwait(false);
         if (remark is null)
@@ -606,7 +606,7 @@ internal sealed class RemarkCommands(
         return result;
     }
 
-    public async Task<Result<RemarkDto>> HandleAsync(ConfirmRemarkRejection command, CancellationToken cancellationToken)
+    public async Task<Result<CapRemarkDto>> HandleAsync(ConfirmRemarkRejection command, CancellationToken cancellationToken)
     {
         var (remark, error) = await LoadAsync(command.Id, cancellationToken).ConfigureAwait(false);
         if (remark is null)
@@ -634,7 +634,7 @@ internal sealed class RemarkCommands(
         }).ConfigureAwait(false);
     }
 
-    public async Task<Result<RemarkDto>> HandleAsync(ReassignRemark command, CancellationToken cancellationToken)
+    public async Task<Result<CapRemarkDto>> HandleAsync(ReassignRemark command, CancellationToken cancellationToken)
     {
         var (remark, error) = await LoadAsync(command.Id, cancellationToken).ConfigureAwait(false);
         if (remark is null)
@@ -674,7 +674,7 @@ internal sealed class RemarkCommands(
         return await views.ToDtoAsync(remark, cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task<Result<RemarkDto>> HandleAsync(SaveRootCause command, CancellationToken cancellationToken)
+    public async Task<Result<CapRemarkDto>> HandleAsync(SaveRootCause command, CancellationToken cancellationToken)
     {
         var (remark, error) = await LoadAsync(command.Id, cancellationToken).ConfigureAwait(false);
         if (remark is null)
@@ -716,7 +716,7 @@ internal sealed class RemarkCommands(
         return await views.ToDtoAsync(remark, cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task<Result<RemarkDto>> HandleAsync(SubmitRemarkActions command, CancellationToken cancellationToken)
+    public async Task<Result<CapRemarkDto>> HandleAsync(SubmitRemarkActions command, CancellationToken cancellationToken)
     {
         var (remark, error) = await LoadAsync(command.Id, cancellationToken).ConfigureAwait(false);
         if (remark is null)
@@ -799,7 +799,7 @@ internal sealed class RemarkCommands(
         return await views.ToDtoAsync(remark, cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task<Result<RemarkDto>> HandleAsync(CancelRemark command, CancellationToken cancellationToken)
+    public async Task<Result<CapRemarkDto>> HandleAsync(CancelRemark command, CancellationToken cancellationToken)
     {
         var (remark, error) = await LoadAsync(command.Id, cancellationToken).ConfigureAwait(false);
         if (remark is null)
@@ -844,7 +844,7 @@ internal sealed class RemarkCommands(
         return await views.ToDtoAsync(remark, cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task<Result<RemarkDto>> HandleAsync(VerifyRemark command, CancellationToken cancellationToken)
+    public async Task<Result<CapRemarkDto>> HandleAsync(VerifyRemark command, CancellationToken cancellationToken)
     {
         var (remark, error) = await LoadAsync(command.Id, cancellationToken).ConfigureAwait(false);
         if (remark is null)
@@ -882,7 +882,7 @@ internal sealed class RemarkCommands(
         return await views.ToDtoAsync(remark, cancellationToken).ConfigureAwait(false);
     }
 
-    private async Task<Result<RemarkDto>> TransitionAsync(Remark remark, string action, string? reason, CancellationToken ct, Func<Task>? after = null)
+    private async Task<Result<CapRemarkDto>> TransitionAsync(Remark remark, string action, string? reason, CancellationToken ct, Func<Task>? after = null)
     {
         await using var transaction = await db.Database.BeginTransactionAsync(ct).ConfigureAwait(false);
         var applied = remark.Apply(action, clock.UtcNow, reason);
@@ -920,7 +920,7 @@ internal sealed class RemarkCommands(
         return string.Empty;
     }
 
-    private async Task<List<FieldError>> ValidateSourceAsync(SourceValues v, CancellationToken ct)
+    private async Task<List<FieldError>> ValidateSourceAsync(CapSourceValues v, CancellationToken ct)
     {
         var errors = new List<FieldError>();
         if (string.IsNullOrWhiteSpace(v.TitleAr) && string.IsNullOrWhiteSpace(v.TitleEn))
@@ -938,7 +938,7 @@ internal sealed class RemarkCommands(
             errors.Add(new FieldError("description", "validation.maximumLength", "validation.maximumLength"));
         }
 
-        if (!await lookups.IsActiveCodeAsync(CapPermissions.SourceTypeLookup, v.SourceTypeCode, ct).ConfigureAwait(false))
+        if (v.SourceTypeCode is null || !await lookups.IsActiveCodeAsync(CapPermissions.SourceTypeLookup, v.SourceTypeCode, ct).ConfigureAwait(false))
         {
             errors.Add(new FieldError("sourceTypeCode", "validation.invalid", "validation.invalid"));
         }

@@ -43,7 +43,7 @@ internal sealed class CapRemarkSources(CapDbContext db, CapService service, CapD
             var type = await lookups.IsActiveCodeAsync(CapPermissions.SourceTypeLookup, request.SourceTypeCode, cancellationToken).ConfigureAwait(false)
                 ? request.SourceTypeCode
                 : CapSourceTypes.Other;
-            var source = await service.CreateSourceAsync(new SourceValues(Cut(request.TitleAr, CapSource.TitleMaxLength), Cut(request.TitleEn, CapSource.TitleMaxLength), type,
+            var source = await service.CreateSourceAsync(new CapSourceValues(Cut(request.TitleAr, CapSource.TitleMaxLength), Cut(request.TitleEn, CapSource.TitleMaxLength), type,
                 Cut(request.Description, CapSource.TextMaxLength), request.ReceivedOn, request.OwnerEmployeeId, request.UnitId, request.TeamId), "system", request.LinkedType,
                 request.LinkedId, cancellationToken).ConfigureAwait(false);
             source.SetViewers(request.ViewerEmployeeIds ?? []);
@@ -78,7 +78,7 @@ internal sealed class CapRemarkSources(CapDbContext db, CapService service, CapD
                 return new CapRemarkRef(existing.Id, existing.Number, false);
             }
 
-            var values = new RemarkValues(Cut(request.TextAr, CapSource.TextMaxLength), Cut(request.TextEn, CapSource.TextMaxLength), request.CriterionCode,
+            var values = new CapRemarkValues(Cut(request.TextAr, CapSource.TextMaxLength), Cut(request.TextEn, CapSource.TextMaxLength), request.CriterionCode,
                 CapRemarkTypes.All.Contains(request.TypeCode) ? request.TypeCode : CapRemarkTypes.Observation,
                 CapPriorities.All.Contains(request.Priority) ? request.Priority : CapPriorities.Medium, request.DepartmentUnitId, request.SectionUnitId, request.OwnerEmployeeId);
             var errors = await service.ValidateRemarkAsync(values, lookups, cancellationToken).ConfigureAwait(false);
@@ -93,7 +93,7 @@ internal sealed class CapRemarkSources(CapDbContext db, CapService service, CapD
             var n = 0;
             foreach (var proposed in request.ProposedActions ?? [])
             {
-                await service.NewActionAsync(remark, new ActionValues(Cut(proposed.DetailsAr, CapSource.TextMaxLength), Cut(proposed.DetailsEn, CapSource.TextMaxLength),
+                await service.NewActionAsync(remark, new CapActionValues(Cut(proposed.DetailsAr, CapSource.TextMaxLength), Cut(proposed.DetailsEn, CapSource.TextMaxLength),
                     proposed.TypeCode is { } t && CapActionTypes.All.Contains(t) ? t : CapActionTypes.Improvement, proposed.BudgetRequired, proposed.BudgetAvailable,
                     proposed.EstimatedCost, null, proposed.AssignedEmployeeId, proposed.PlannedStart, proposed.PlannedEnd), $"{request.ExternalKey}#{++n}", cancellationToken)
                     .ConfigureAwait(false);
@@ -189,10 +189,10 @@ internal sealed class SuggestionRaiser(CapDbContext db, CapService service, CapD
             _ => (CapSourceTypes.RiskEvent, "الخطر", "Risk"),
         };
         var source = await db.Sources.FirstOrDefaultAsync(s => s.LinkedType == suggestion.ParentType && s.LinkedId == suggestion.ParentId, ct).ConfigureAwait(false)
-            ?? await service.CreateSourceAsync(new SourceValues($"{typeAr}: {suggestion.ParentNumber}", $"{typeEn}: {suggestion.ParentNumber}", type, null, today, null, unit,
+            ?? await service.CreateSourceAsync(new CapSourceValues($"{typeAr}: {suggestion.ParentNumber}", $"{typeEn}: {suggestion.ParentNumber}", type, null, today, null, unit,
                 null), "system", suggestion.ParentType, suggestion.ParentId, ct).ConfigureAwait(false);
         var existing = await db.Remarks.FirstOrDefaultAsync(r => r.SourceId == source.Id && r.ExternalKey == suggestion.ResourceId.ToString("D"), ct).ConfigureAwait(false);
-        var remark = existing ?? await service.CreateRemarkAsync(source, new RemarkValues(suggestion.TitleAr, suggestion.TitleEn, null,
+        var remark = existing ?? await service.CreateRemarkAsync(source, new CapRemarkValues(suggestion.TitleAr, suggestion.TitleEn, null,
                 suggestion.Kind == SuggestionKinds.KpiMiss ? CapRemarkTypes.Nonconformity : CapRemarkTypes.Observation, suggestion.Priority, unit.Value, null,
                 suggestion.OwnerEmployeeId), today, suggestion.ResourceId.ToString("D"), suggestion.ResourceType, suggestion.ResourceId, ct).ConfigureAwait(false);
         suggestion.Raised(remark.Id);
@@ -313,21 +313,21 @@ internal sealed class RiskControlIneffectiveHandler(IServiceScopeFactory scopes)
     }
 }
 
-public sealed record SuggestionDto(
+public sealed record CapSuggestionDto(
     Guid Id, string Kind, string ResourceType, Guid ResourceId, string ParentType, Guid ParentId, string? ParentNumber, string? TitleAr, string? TitleEn,
     JsonElement Details, CapUnitDto? Unit, string Priority, string Status, Guid? RemarkId, string? DismissReason, DateTimeOffset CreatedAt);
 
-public sealed record ListSuggestions(PageRequest Page, string? Status, string? Kind) : IQuery<PagedResult<SuggestionDto>>;
+public sealed record ListSuggestions(PageRequest Page, string? Status, string? Kind) : IQuery<PagedResult<CapSuggestionDto>>;
 
-public sealed record RaiseSuggestion(Guid Id, Guid? UnitId) : ICommand<SuggestionDto>;
+public sealed record RaiseSuggestion(Guid Id, Guid? UnitId) : ICommand<CapSuggestionDto>;
 
-public sealed record DismissSuggestion(Guid Id, string? Reason) : ICommand<SuggestionDto>;
+public sealed record DismissSuggestion(Guid Id, string? Reason) : ICommand<CapSuggestionDto>;
 
 /// <summary>Suggestions inbox (PM Office): one-click raise or dismiss with a reason.</summary>
 internal sealed class SuggestionHandlers(CapDbContext db, CapReader reader, SuggestionRaiser raiser, IRequestContext context)
-    : IQueryHandler<ListSuggestions, PagedResult<SuggestionDto>>, ICommandHandler<RaiseSuggestion, SuggestionDto>, ICommandHandler<DismissSuggestion, SuggestionDto>
+    : IQueryHandler<ListSuggestions, PagedResult<CapSuggestionDto>>, ICommandHandler<RaiseSuggestion, CapSuggestionDto>, ICommandHandler<DismissSuggestion, CapSuggestionDto>
 {
-    public async Task<Result<PagedResult<SuggestionDto>>> HandleAsync(ListSuggestions query, CancellationToken cancellationToken)
+    public async Task<Result<PagedResult<CapSuggestionDto>>> HandleAsync(ListSuggestions query, CancellationToken cancellationToken)
     {
         if (!await reader.CanAllAsync(context.User, CapPermissions.Office, cancellationToken).ConfigureAwait(false))
         {
@@ -345,10 +345,10 @@ internal sealed class SuggestionHandlers(CapDbContext db, CapReader reader, Sugg
         var total = await source.CountAsync(cancellationToken).ConfigureAwait(false);
         var rows = await source.OrderByDescending(s => s.CreatedAt).Skip((page.Page - 1) * page.PageSize).Take(page.PageSize).ToListAsync(cancellationToken).ConfigureAwait(false);
         var units = await reader.UnitsAsync(rows.Select(r => r.UnitId), cancellationToken).ConfigureAwait(false);
-        return new PagedResult<SuggestionDto>(rows.Select(s => ToDto(s, units)).ToList(), page.Page, page.PageSize, total);
+        return new PagedResult<CapSuggestionDto>(rows.Select(s => ToDto(s, units)).ToList(), page.Page, page.PageSize, total);
     }
 
-    public async Task<Result<SuggestionDto>> HandleAsync(RaiseSuggestion command, CancellationToken cancellationToken)
+    public async Task<Result<CapSuggestionDto>> HandleAsync(RaiseSuggestion command, CancellationToken cancellationToken)
     {
         if (!await reader.CanAllAsync(context.User, CapPermissions.Office, cancellationToken).ConfigureAwait(false))
         {
@@ -381,7 +381,7 @@ internal sealed class SuggestionHandlers(CapDbContext db, CapReader reader, Sugg
         return ToDto(suggestion, await reader.UnitsAsync([suggestion.UnitId], cancellationToken).ConfigureAwait(false));
     }
 
-    public async Task<Result<SuggestionDto>> HandleAsync(DismissSuggestion command, CancellationToken cancellationToken)
+    public async Task<Result<CapSuggestionDto>> HandleAsync(DismissSuggestion command, CancellationToken cancellationToken)
     {
         if (!await reader.CanAllAsync(context.User, CapPermissions.Office, cancellationToken).ConfigureAwait(false))
         {
@@ -409,7 +409,7 @@ internal sealed class SuggestionHandlers(CapDbContext db, CapReader reader, Sugg
         return ToDto(suggestion, await reader.UnitsAsync([suggestion.UnitId], cancellationToken).ConfigureAwait(false));
     }
 
-    private static SuggestionDto ToDto(Suggestion s, IReadOnlyDictionary<Guid, CapUnitDto> units) => new(s.Id, s.Kind, s.ResourceType, s.ResourceId, s.ParentType, s.ParentId,
+    private static CapSuggestionDto ToDto(Suggestion s, IReadOnlyDictionary<Guid, CapUnitDto> units) => new(s.Id, s.Kind, s.ResourceType, s.ResourceId, s.ParentType, s.ParentId,
         s.ParentNumber, s.TitleAr, s.TitleEn, JsonDocument.Parse(s.DetailsJson).RootElement.Clone(), CapReader.Unit(s.UnitId, units), s.Priority, s.Status, s.RemarkId,
         s.DismissReason, s.CreatedAt);
 }

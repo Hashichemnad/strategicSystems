@@ -16,15 +16,15 @@ using Strategy.Platform.Workflow;
 
 namespace Strategy.Modules.Cap.Application;
 
-public sealed record ActionPermissionsDto(bool Edit, bool Progress, bool RequestCompletion, bool RequestExtension, bool Cancel, bool LinkProject, bool Validate, bool Unlink);
+public sealed record CapActionPermissionsDto(bool Edit, bool Progress, bool RequestCompletion, bool RequestExtension, bool Cancel, bool LinkProject, bool Validate, bool Unlink);
 
-public sealed record ActionRemarkRefDto(Guid Id, string Number, bool Home);
+public sealed record CapActionRemarkRefDto(Guid Id, string Number, bool Home);
 
-public sealed record ActionDto(
+public sealed record CapActionDto(
     Guid Id,
     string Number,
     Guid HomeRemarkId,
-    ActionValues Values,
+    CapActionValues Values,
     string ValidationStatus,
     string? ValidationNote,
     string Status,
@@ -34,7 +34,7 @@ public sealed record ActionDto(
     DateOnly? RevisedEnd,
     DateOnly? EffectiveEnd,
     CapPersonDto? Assignee,
-    IReadOnlyList<ActionRemarkRefDto> Remarks,
+    IReadOnlyList<CapActionRemarkRefDto> Remarks,
     Guid? ProjectId,
     PortfolioRecordBadge? Project,
     Guid? ProgramRequestId,
@@ -46,69 +46,69 @@ public sealed record ActionDto(
     string? CancelReason,
     int EvidenceCount,
     IReadOnlyList<string> QualityFlags,
-    ActionPermissionsDto Can,
+    CapActionPermissionsDto Can,
     uint Version);
 
-public sealed record ActionListItemDto(
+public sealed record CapActionListItemDto(
     Guid Id, string Number, string? DetailsAr, string? DetailsEn, Guid HomeRemarkId, string HomeRemarkNumber, string ValidationStatus, string Status, decimal AchievedPct,
     DateOnly? EffectiveEnd, CapPersonDto? Assignee, bool BudgetRequired, bool? BudgetAvailable, string? ProgramRequestNumber, Guid? ProgramRequestId, string? PendingProcess,
     uint Version);
 
-public sealed record AchievementUpdateDto(Guid Id, decimal Pct, string? Note, DateOnly? ActualStart, DateOnly? ActualEnd, DateTimeOffset At, Guid? By, bool Draft);
+public sealed record CapAchievementUpdateDto(Guid Id, decimal Pct, string? Note, DateOnly? ActualStart, DateOnly? ActualEnd, DateTimeOffset At, Guid? By, bool Draft);
 
-public sealed record ExtensionDto(Guid Id, DateOnly? PreviousEnd, DateOnly RequestedEnd, string Justification, string Status, DateTimeOffset? DecidedAt, string? DecisionNote,
+public sealed record CapExtensionDto(Guid Id, DateOnly? PreviousEnd, DateOnly RequestedEnd, string Justification, string Status, DateTimeOffset? DecidedAt, string? DecisionNote,
     DateTimeOffset CreatedAt);
 
-public sealed record ValidationViewDto(RemarkDto Remark, IReadOnlyList<ActionDto> Actions);
+public sealed record CapValidationViewDto(CapRemarkDto Remark, IReadOnlyList<CapActionDto> Actions);
 
-public sealed record ActionBody(ActionValues Values, uint? Version);
+public sealed record CapActionBody(CapActionValues Values, uint? Version);
 
-public sealed record ProgressInput(decimal Pct, string? Note, DateOnly? ActualStart, DateOnly? ActualEnd, uint Version, bool FromMcp = false);
+public sealed record CapProgressInput(decimal Pct, string? Note, DateOnly? ActualStart, DateOnly? ActualEnd, uint Version, bool FromMcp = false);
 
-public sealed record ValidateInput(string Decision, string? Comment, Guid? ProjectId);
+public sealed record CapValidateInput(string Decision, string? Comment, Guid? ProjectId);
 
-public sealed record ExtensionInput(DateOnly RequestedEnd, string? Justification);
+public sealed record CapExtensionInput(DateOnly RequestedEnd, string? Justification);
 
-public sealed record ListRemarkActions(Guid RemarkId) : IQuery<IReadOnlyList<ActionDto>>;
+public sealed record ListRemarkActions(Guid RemarkId) : IQuery<IReadOnlyList<CapActionDto>>;
 
-public sealed record ListActions(PageRequest Page, string? View, string? Search, string? Status, Guid? UnitId) : IQuery<PagedResult<ActionListItemDto>>;
+public sealed record ListCapActions(PageRequest Page, string? View, string? Search, string? Status, Guid? UnitId) : IQuery<PagedResult<CapActionListItemDto>>;
 
-public sealed record SearchLinkableActions(Guid RemarkId, string? Text) : IQuery<IReadOnlyList<ActionListItemDto>>;
+public sealed record SearchLinkableActions(Guid RemarkId, string? Text) : IQuery<IReadOnlyList<CapActionListItemDto>>;
 
-public sealed record GetAction(Guid Id) : IQuery<ActionDto>;
+public sealed record GetAction(Guid Id) : IQuery<CapActionDto>;
 
-public sealed record GetValidationView(Guid RemarkId) : IQuery<ValidationViewDto>;
+public sealed record GetValidationView(Guid RemarkId) : IQuery<CapValidationViewDto>;
 
-public sealed record ListAchievementUpdates(Guid Id) : IQuery<IReadOnlyList<AchievementUpdateDto>>;
+public sealed record ListAchievementUpdates(Guid Id) : IQuery<IReadOnlyList<CapAchievementUpdateDto>>;
 
-public sealed record ListExtensions(Guid Id) : IQuery<IReadOnlyList<ExtensionDto>>;
+public sealed record ListExtensions(Guid Id) : IQuery<IReadOnlyList<CapExtensionDto>>;
 
-public sealed record CreateAction(Guid RemarkId, ActionValues Values) : ICommand<ActionDto>;
+public sealed record CreateAction(Guid RemarkId, CapActionValues Values) : ICommand<CapActionDto>;
 
-public sealed record UpdateAction(Guid Id, ActionValues Values, uint Version) : ICommand<ActionDto>;
+public sealed record UpdateAction(Guid Id, CapActionValues Values, uint Version) : ICommand<CapActionDto>;
 
-public sealed record LinkAction(Guid RemarkId, Guid ActionId) : ICommand<ActionDto>;
+public sealed record LinkAction(Guid RemarkId, Guid ActionId) : ICommand<CapActionDto>;
 
 public sealed record UnlinkAction(Guid RemarkId, Guid ActionId) : ICommand<bool>;
 
-public sealed record ValidateAction(Guid Id, ValidateInput Input) : ICommand<ActionDto>;
+public sealed record ValidateAction(Guid Id, CapValidateInput Input) : ICommand<CapActionDto>;
 
-public sealed record LinkActionProject(Guid Id, Guid? ProjectId) : ICommand<ActionDto>;
+public sealed record LinkActionProject(Guid Id, Guid? ProjectId) : ICommand<CapActionDto>;
 
-public sealed record UpdateAchievement(Guid Id, ProgressInput Input) : ICommand<ActionDto>;
+public sealed record UpdateAchievement(Guid Id, CapProgressInput Input) : ICommand<CapActionDto>;
 
-public sealed record ConfirmAchievementDraft(Guid Id, Guid UpdateId) : ICommand<ActionDto>;
+public sealed record ConfirmAchievementDraft(Guid Id, Guid UpdateId) : ICommand<CapActionDto>;
 
-public sealed record RequestActionCompletion(Guid Id, string? Note) : ICommand<ActionDto>;
+public sealed record RequestActionCompletion(Guid Id, string? Note) : ICommand<CapActionDto>;
 
-public sealed record RequestActionExtension(Guid Id, ExtensionInput Input) : ICommand<ActionDto>;
+public sealed record RequestActionExtension(Guid Id, CapExtensionInput Input) : ICommand<CapActionDto>;
 
-public sealed record CancelAction(Guid Id, string? Reason) : ICommand<ActionDto>;
+public sealed record CancelCapAction(Guid Id, string? Reason) : ICommand<CapActionDto>;
 
 /// <summary>Maps actions for the API (badges of linked Portfolio records, evidence count, quality flags, what the caller may do).</summary>
 internal sealed class ActionViews(CapDbContext db, CapReader reader, IFileService files, CapDeadlines deadlines, IRequestContext context, IServiceProvider services)
 {
-    public async Task<ActionDto> ToDtoAsync(CapAction a, CancellationToken ct, Guid? remarkContext = null)
+    public async Task<CapActionDto> ToDtoAsync(CapAction a, CancellationToken ct, Guid? remarkContext = null)
     {
         var user = context.User;
         var people = await reader.PeopleAsync([a.AssignedEmployeeId], ct).ConfigureAwait(false);
@@ -124,13 +124,13 @@ internal sealed class ActionViews(CapDbContext db, CapReader reader, IFileServic
         var flags = can.Validate || a.ValidationStatus is ValidationStatuses.Draft or ValidationStatuses.Returned or ValidationStatuses.Pending
             ? ActionQuality.Flags(a.Values(), today, home?.DueOn)
             : [];
-        return new ActionDto(a.Id, a.Number, a.HomeRemarkId, a.Values(), a.ValidationStatus, a.ValidationNote, a.Status, a.AchievedPct, a.ActualStart, a.ActualEnd,
-            a.RevisedEnd, a.EffectiveEnd, CapReader.Person(a.AssignedEmployeeId, people), links.Select(l => new ActionRemarkRefDto(l.Id, l.Number, l.Id == a.HomeRemarkId)).ToList(),
+        return new CapActionDto(a.Id, a.Number, a.HomeRemarkId, a.Values(), a.ValidationStatus, a.ValidationNote, a.Status, a.AchievedPct, a.ActualStart, a.ActualEnd,
+            a.RevisedEnd, a.EffectiveEnd, CapReader.Person(a.AssignedEmployeeId, people), links.Select(l => new CapActionRemarkRefDto(l.Id, l.Number, l.Id == a.HomeRemarkId)).ToList(),
             a.ProjectId, project, a.ProgramRequestId, a.ProgramRequestNumber, request, a.PendingProcess, a.CompletionNote, a.CompletedAt, a.CancelReason, evidence, flags, can,
             a.Version);
     }
 
-    public async Task<ActionPermissionsDto> PermissionsAsync(CapAction a, IReadOnlyList<Remark> remarks, ClaimsPrincipal user, CancellationToken ct, Guid? remarkContext = null)
+    public async Task<CapActionPermissionsDto> PermissionsAsync(CapAction a, IReadOnlyList<Remark> remarks, ClaimsPrincipal user, CancellationToken ct, Guid? remarkContext = null)
     {
         var me = user.EmployeeIdOf();
         var home = remarks.FirstOrDefault(r => r.Id == a.HomeRemarkId) ?? (remarks.Count > 0 ? remarks[0] : null);
@@ -151,7 +151,7 @@ internal sealed class ActionViews(CapDbContext db, CapReader reader, IFileServic
         var context = remarkContext is { } rc ? remarks.FirstOrDefault(r => r.Id == rc) : null;
         var unlink = context is not null && context.Id != a.HomeRemarkId && context.OwnerEmployeeId == me
             && context.Status is CapRemarkStatuses.Planning or CapRemarkStatuses.Correction;
-        return new ActionPermissionsDto(
+        return new CapActionPermissionsDto(
             (homeRespond || office) && a.IsEditable && homeOpen,
             (assignee || office) && approved,
             (assignee || office) && approved && a.AchievedPct >= 1m,
@@ -162,12 +162,12 @@ internal sealed class ActionViews(CapDbContext db, CapReader reader, IFileServic
             unlink);
     }
 
-    public async Task<IReadOnlyList<ActionListItemDto>> ListItemsAsync(IReadOnlyList<CapAction> actions, CancellationToken ct)
+    public async Task<IReadOnlyList<CapActionListItemDto>> ListItemsAsync(IReadOnlyList<CapAction> actions, CancellationToken ct)
     {
         var people = await reader.PeopleAsync(actions.Select(a => a.AssignedEmployeeId), ct).ConfigureAwait(false);
         var homeIds = actions.Select(a => a.HomeRemarkId).Distinct().ToList();
         var homes = await db.Remarks.AsNoTracking().Where(r => homeIds.Contains(r.Id)).ToDictionaryAsync(r => r.Id, r => r.Number, ct).ConfigureAwait(false);
-        return actions.Select(a => new ActionListItemDto(a.Id, a.Number, a.DetailsAr, a.DetailsEn, a.HomeRemarkId, homes.GetValueOrDefault(a.HomeRemarkId) ?? string.Empty,
+        return actions.Select(a => new CapActionListItemDto(a.Id, a.Number, a.DetailsAr, a.DetailsEn, a.HomeRemarkId, homes.GetValueOrDefault(a.HomeRemarkId) ?? string.Empty,
             a.ValidationStatus, a.Status, a.AchievedPct, a.EffectiveEnd, CapReader.Person(a.AssignedEmployeeId, people), a.BudgetRequired, a.BudgetAvailable,
             a.ProgramRequestNumber, a.ProgramRequestId, a.PendingProcess, a.Version)).ToList();
     }
@@ -187,11 +187,11 @@ internal sealed class ActionViews(CapDbContext db, CapReader reader, IFileServic
 }
 
 internal sealed class ActionQueries(CapDbContext db, CapReader reader, CapViews views, ActionViews actionViews, IRequestContext context)
-    : IQueryHandler<ListRemarkActions, IReadOnlyList<ActionDto>>, IQueryHandler<ListActions, PagedResult<ActionListItemDto>>,
-        IQueryHandler<SearchLinkableActions, IReadOnlyList<ActionListItemDto>>, IQueryHandler<GetAction, ActionDto>, IQueryHandler<GetValidationView, ValidationViewDto>,
-        IQueryHandler<ListAchievementUpdates, IReadOnlyList<AchievementUpdateDto>>, IQueryHandler<ListExtensions, IReadOnlyList<ExtensionDto>>
+    : IQueryHandler<ListRemarkActions, IReadOnlyList<CapActionDto>>, IQueryHandler<ListCapActions, PagedResult<CapActionListItemDto>>,
+        IQueryHandler<SearchLinkableActions, IReadOnlyList<CapActionListItemDto>>, IQueryHandler<GetAction, CapActionDto>, IQueryHandler<GetValidationView, CapValidationViewDto>,
+        IQueryHandler<ListAchievementUpdates, IReadOnlyList<CapAchievementUpdateDto>>, IQueryHandler<ListExtensions, IReadOnlyList<CapExtensionDto>>
 {
-    public async Task<Result<IReadOnlyList<ActionDto>>> HandleAsync(ListRemarkActions query, CancellationToken cancellationToken)
+    public async Task<Result<IReadOnlyList<CapActionDto>>> HandleAsync(ListRemarkActions query, CancellationToken cancellationToken)
     {
         if (await reader.RemarkAsync(query.RemarkId, context.User, cancellationToken).ConfigureAwait(false) is null)
         {
@@ -200,7 +200,7 @@ internal sealed class ActionQueries(CapDbContext db, CapReader reader, CapViews 
 
         var ids = db.RemarkActions.Where(l => l.RemarkId == query.RemarkId).Select(l => l.ActionId);
         var actions = await db.Actions.AsNoTracking().Where(a => ids.Contains(a.Id)).OrderBy(a => a.Number).ToListAsync(cancellationToken).ConfigureAwait(false);
-        var result = new List<ActionDto>();
+        var result = new List<CapActionDto>();
         foreach (var a in actions)
         {
             result.Add(await actionViews.ToDtoAsync(a, cancellationToken, query.RemarkId).ConfigureAwait(false));
@@ -211,7 +211,7 @@ internal sealed class ActionQueries(CapDbContext db, CapReader reader, CapViews 
 
     public static readonly IReadOnlyList<string> Views = ["mine", "all", "to-validate", "late", "budget", "pending-completion", "open"];
 
-    public async Task<Result<PagedResult<ActionListItemDto>>> HandleAsync(ListActions query, CancellationToken cancellationToken)
+    public async Task<Result<PagedResult<CapActionListItemDto>>> HandleAsync(ListCapActions query, CancellationToken cancellationToken)
     {
         var user = context.User;
         var source = await reader.ActionsAsync(user, cancellationToken).ConfigureAwait(false);
@@ -249,11 +249,11 @@ internal sealed class ActionQueries(CapDbContext db, CapReader reader, CapViews 
         var total = await source.CountAsync(cancellationToken).ConfigureAwait(false);
         var rows = await source.OrderBy(a => a.RevisedEnd ?? a.PlannedEnd).ThenBy(a => a.Number).Skip((page.Page - 1) * page.PageSize).Take(page.PageSize)
             .ToListAsync(cancellationToken).ConfigureAwait(false);
-        return new PagedResult<ActionListItemDto>(await actionViews.ListItemsAsync(rows, cancellationToken).ConfigureAwait(false), page.Page, page.PageSize, total);
+        return new PagedResult<CapActionListItemDto>(await actionViews.ListItemsAsync(rows, cancellationToken).ConfigureAwait(false), page.Page, page.PageSize, total);
     }
 
     /// <summary>Open actions of other remarks the user may see, to link instead of duplicating (SPEC §9.3 C).</summary>
-    public async Task<Result<IReadOnlyList<ActionListItemDto>>> HandleAsync(SearchLinkableActions query, CancellationToken cancellationToken)
+    public async Task<Result<IReadOnlyList<CapActionListItemDto>>> HandleAsync(SearchLinkableActions query, CancellationToken cancellationToken)
     {
         if (await reader.RemarkAsync(query.RemarkId, context.User, cancellationToken).ConfigureAwait(false) is null)
         {
@@ -272,15 +272,15 @@ internal sealed class ActionQueries(CapDbContext db, CapReader reader, CapViews 
         }
 
         var rows = await source.OrderBy(a => a.Number).Take(30).ToListAsync(cancellationToken).ConfigureAwait(false);
-        return Result<IReadOnlyList<ActionListItemDto>>.Success(await actionViews.ListItemsAsync(rows, cancellationToken).ConfigureAwait(false));
+        return Result<IReadOnlyList<CapActionListItemDto>>.Success(await actionViews.ListItemsAsync(rows, cancellationToken).ConfigureAwait(false));
     }
 
-    public async Task<Result<ActionDto>> HandleAsync(GetAction query, CancellationToken cancellationToken) =>
+    public async Task<Result<CapActionDto>> HandleAsync(GetAction query, CancellationToken cancellationToken) =>
         await reader.ActionAsync(query.Id, context.User, cancellationToken).ConfigureAwait(false) is { } a
             ? await actionViews.ToDtoAsync(a, cancellationToken).ConfigureAwait(false)
             : Error.NotFound();
 
-    public async Task<Result<ValidationViewDto>> HandleAsync(GetValidationView query, CancellationToken cancellationToken)
+    public async Task<Result<CapValidationViewDto>> HandleAsync(GetValidationView query, CancellationToken cancellationToken)
     {
         var remark = await reader.RemarkAsync(query.RemarkId, context.User, cancellationToken).ConfigureAwait(false);
         if (remark is null)
@@ -295,16 +295,16 @@ internal sealed class ActionQueries(CapDbContext db, CapReader reader, CapViews 
 
         var ids = db.RemarkActions.Where(l => l.RemarkId == remark.Id).Select(l => l.ActionId);
         var actions = await db.Actions.AsNoTracking().Where(a => ids.Contains(a.Id)).OrderBy(a => a.Number).ToListAsync(cancellationToken).ConfigureAwait(false);
-        var list = new List<ActionDto>();
+        var list = new List<CapActionDto>();
         foreach (var a in actions)
         {
             list.Add(await actionViews.ToDtoAsync(a, cancellationToken, remark.Id).ConfigureAwait(false));
         }
 
-        return new ValidationViewDto(await views.ToDtoAsync(remark, cancellationToken).ConfigureAwait(false), list);
+        return new CapValidationViewDto(await views.ToDtoAsync(remark, cancellationToken).ConfigureAwait(false), list);
     }
 
-    public async Task<Result<IReadOnlyList<AchievementUpdateDto>>> HandleAsync(ListAchievementUpdates query, CancellationToken cancellationToken)
+    public async Task<Result<IReadOnlyList<CapAchievementUpdateDto>>> HandleAsync(ListAchievementUpdates query, CancellationToken cancellationToken)
     {
         if (await reader.ActionAsync(query.Id, context.User, cancellationToken).ConfigureAwait(false) is null)
         {
@@ -312,10 +312,10 @@ internal sealed class ActionQueries(CapDbContext db, CapReader reader, CapViews 
         }
 
         return await db.Updates.AsNoTracking().Where(u => u.ActionId == query.Id).OrderByDescending(u => u.At)
-            .Select(u => new AchievementUpdateDto(u.Id, u.Pct, u.Note, u.ActualStart, u.ActualEnd, u.At, u.By, u.Draft)).ToListAsync(cancellationToken).ConfigureAwait(false);
+            .Select(u => new CapAchievementUpdateDto(u.Id, u.Pct, u.Note, u.ActualStart, u.ActualEnd, u.At, u.By, u.Draft)).ToListAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task<Result<IReadOnlyList<ExtensionDto>>> HandleAsync(ListExtensions query, CancellationToken cancellationToken)
+    public async Task<Result<IReadOnlyList<CapExtensionDto>>> HandleAsync(ListExtensions query, CancellationToken cancellationToken)
     {
         if (await reader.ActionAsync(query.Id, context.User, cancellationToken).ConfigureAwait(false) is null)
         {
@@ -323,7 +323,7 @@ internal sealed class ActionQueries(CapDbContext db, CapReader reader, CapViews 
         }
 
         return await db.Extensions.AsNoTracking().Where(e => e.ActionId == query.Id).OrderByDescending(e => e.CreatedAt)
-            .Select(e => new ExtensionDto(e.Id, e.PreviousEnd, e.RequestedEnd, e.Justification, e.Status, e.DecidedAt, e.DecisionNote, e.CreatedAt))
+            .Select(e => new CapExtensionDto(e.Id, e.PreviousEnd, e.RequestedEnd, e.Justification, e.Status, e.DecidedAt, e.DecisionNote, e.CreatedAt))
             .ToListAsync(cancellationToken).ConfigureAwait(false);
     }
 }
@@ -332,12 +332,12 @@ internal sealed class ActionQueries(CapDbContext db, CapReader reader, CapViews 
 internal sealed class ActionCommands(
     CapDbContext db, CapReader reader, ActionViews views, CapService service, CapApprovals approvals, CapDeadlines deadlines, ILookupService lookups,
     IFileService files, IApprovalEngine engine, CapViews remarkViews, IRequestContext context, IClock clock, IServiceProvider services)
-    : ICommandHandler<CreateAction, ActionDto>, ICommandHandler<UpdateAction, ActionDto>, ICommandHandler<LinkAction, ActionDto>, ICommandHandler<UnlinkAction, bool>,
-        ICommandHandler<ValidateAction, ActionDto>, ICommandHandler<LinkActionProject, ActionDto>, ICommandHandler<UpdateAchievement, ActionDto>,
-        ICommandHandler<ConfirmAchievementDraft, ActionDto>, ICommandHandler<RequestActionCompletion, ActionDto>, ICommandHandler<RequestActionExtension, ActionDto>,
-        ICommandHandler<CancelAction, ActionDto>
+    : ICommandHandler<CreateAction, CapActionDto>, ICommandHandler<UpdateAction, CapActionDto>, ICommandHandler<LinkAction, CapActionDto>, ICommandHandler<UnlinkAction, bool>,
+        ICommandHandler<ValidateAction, CapActionDto>, ICommandHandler<LinkActionProject, CapActionDto>, ICommandHandler<UpdateAchievement, CapActionDto>,
+        ICommandHandler<ConfirmAchievementDraft, CapActionDto>, ICommandHandler<RequestActionCompletion, CapActionDto>, ICommandHandler<RequestActionExtension, CapActionDto>,
+        ICommandHandler<CancelCapAction, CapActionDto>
 {
-    public async Task<Result<ActionDto>> HandleAsync(CreateAction command, CancellationToken cancellationToken)
+    public async Task<Result<CapActionDto>> HandleAsync(CreateAction command, CancellationToken cancellationToken)
     {
         var remark = await reader.RemarkAsync(command.RemarkId, context.User, cancellationToken, tracked: true).ConfigureAwait(false);
         if (remark is null)
@@ -370,7 +370,7 @@ internal sealed class ActionCommands(
         return await views.ToDtoAsync(action, cancellationToken, remark.Id).ConfigureAwait(false);
     }
 
-    public async Task<Result<ActionDto>> HandleAsync(UpdateAction command, CancellationToken cancellationToken)
+    public async Task<Result<CapActionDto>> HandleAsync(UpdateAction command, CancellationToken cancellationToken)
     {
         var (action, remarks) = await LoadAsync(command.Id, cancellationToken).ConfigureAwait(false);
         if (action is null)
@@ -403,7 +403,7 @@ internal sealed class ActionCommands(
         return await views.ToDtoAsync(action, cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task<Result<ActionDto>> HandleAsync(LinkAction command, CancellationToken cancellationToken)
+    public async Task<Result<CapActionDto>> HandleAsync(LinkAction command, CancellationToken cancellationToken)
     {
         var remark = await reader.RemarkAsync(command.RemarkId, context.User, cancellationToken, tracked: true).ConfigureAwait(false);
         if (remark is null)
@@ -469,7 +469,7 @@ internal sealed class ActionCommands(
     }
 
     /// <summary>PMO decision on one action (Validate Actions screen) through the engine's own checks (ADR 0121).</summary>
-    public async Task<Result<ActionDto>> HandleAsync(ValidateAction command, CancellationToken cancellationToken)
+    public async Task<Result<CapActionDto>> HandleAsync(ValidateAction command, CancellationToken cancellationToken)
     {
         var (action, remarks) = await LoadAsync(command.Id, cancellationToken).ConfigureAwait(false);
         if (action is null)
@@ -508,11 +508,12 @@ internal sealed class ActionCommands(
             return decided.Error;
         }
 
-        await db.Entry(action).ReloadAsync(cancellationToken).ConfigureAwait(false);
-        return await views.ToDtoAsync(action, cancellationToken).ConfigureAwait(false);
+        db.ChangeTracker.Clear();
+        var fresh = await db.Actions.AsNoTracking().FirstAsync(a => a.Id == command.Id, cancellationToken).ConfigureAwait(false);
+        return await views.ToDtoAsync(fresh, cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task<Result<ActionDto>> HandleAsync(LinkActionProject command, CancellationToken cancellationToken)
+    public async Task<Result<CapActionDto>> HandleAsync(LinkActionProject command, CancellationToken cancellationToken)
     {
         var (action, remarks) = await LoadAsync(command.Id, cancellationToken).ConfigureAwait(false);
         if (action is null)
@@ -529,7 +530,7 @@ internal sealed class ActionCommands(
         return linked.IsFailure ? linked.Error : await views.ToDtoAsync(action, cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task<Result<ActionDto>> HandleAsync(UpdateAchievement command, CancellationToken cancellationToken)
+    public async Task<Result<CapActionDto>> HandleAsync(UpdateAchievement command, CancellationToken cancellationToken)
     {
         var (action, remarks) = await LoadAsync(command.Id, cancellationToken).ConfigureAwait(false);
         if (action is null)
@@ -588,7 +589,7 @@ internal sealed class ActionCommands(
         return await views.ToDtoAsync(action, cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task<Result<ActionDto>> HandleAsync(ConfirmAchievementDraft command, CancellationToken cancellationToken)
+    public async Task<Result<CapActionDto>> HandleAsync(ConfirmAchievementDraft command, CancellationToken cancellationToken)
     {
         var (action, remarks) = await LoadAsync(command.Id, cancellationToken).ConfigureAwait(false);
         var update = await db.Updates.FirstOrDefaultAsync(u => u.Id == command.UpdateId && u.ActionId == command.Id && u.Draft, cancellationToken).ConfigureAwait(false);
@@ -609,7 +610,7 @@ internal sealed class ActionCommands(
         return await views.ToDtoAsync(action, cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task<Result<ActionDto>> HandleAsync(RequestActionCompletion command, CancellationToken cancellationToken)
+    public async Task<Result<CapActionDto>> HandleAsync(RequestActionCompletion command, CancellationToken cancellationToken)
     {
         var (action, remarks) = await LoadAsync(command.Id, cancellationToken).ConfigureAwait(false);
         if (action is null)
@@ -641,7 +642,7 @@ internal sealed class ActionCommands(
         return await views.ToDtoAsync(action, cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task<Result<ActionDto>> HandleAsync(RequestActionExtension command, CancellationToken cancellationToken)
+    public async Task<Result<CapActionDto>> HandleAsync(RequestActionExtension command, CancellationToken cancellationToken)
     {
         var (action, remarks) = await LoadAsync(command.Id, cancellationToken).ConfigureAwait(false);
         if (action is null)
@@ -690,7 +691,7 @@ internal sealed class ActionCommands(
         return await views.ToDtoAsync(action, cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task<Result<ActionDto>> HandleAsync(CancelAction command, CancellationToken cancellationToken)
+    public async Task<Result<CapActionDto>> HandleAsync(CancelCapAction command, CancellationToken cancellationToken)
     {
         var (action, remarks) = await LoadAsync(command.Id, cancellationToken).ConfigureAwait(false);
         if (action is null)
@@ -754,6 +755,6 @@ internal sealed class ActionCommands(
         return (action, remarks);
     }
 
-    private async Task<RemarkPermissionsDto> RemarkPermissionsAsync(Remark remark, CancellationToken ct) =>
+    private async Task<CapRemarkPermissionsDto> RemarkPermissionsAsync(Remark remark, CancellationToken ct) =>
         await remarkViews.PermissionsAsync(remark, context.User, ct).ConfigureAwait(false);
 }

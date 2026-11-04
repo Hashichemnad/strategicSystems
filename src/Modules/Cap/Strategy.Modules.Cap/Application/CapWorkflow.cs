@@ -343,7 +343,7 @@ internal sealed class ActionCurrentStatus(CapReader reader, CapService service, 
         };
     }
 
-    private static CurrentStatusAction[] Actions(ActionPermissionsDto can)
+    private static CurrentStatusAction[] Actions(CapActionPermissionsDto can)
     {
         var list = new List<CurrentStatusAction>();
         if (can.Progress)

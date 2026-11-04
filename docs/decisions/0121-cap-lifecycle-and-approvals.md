@@ -9,7 +9,7 @@
 - Remark statuses `assigned · rejection_pending · rejected · planning · validation · correction · implementation · verification · completed
   · cancelled`, mapped to the SPEC stages Analysis › Corrective Action › Implementation › Verification › Closed. Explicit transition table.
 - Accept / reject / reassign are module commands (not approvals). With `rejectionNeedsPmoConfirmation` on, a rejection waits in
-  `rejection_pending` for the PM Office (`cap.office`) to confirm (final) or send back (owner responds again).
+  `rejection_pending` for the PM Office (`cap.office.manage`) to confirm (final) or send back (owner responds again).
 - *Submit for validation* starts **one approval instance per action** (`cap.action-validation`, resource `cap.action`). The Validate
   Actions screen decides per action through `IApprovalEngine.DecideAsync` (same checks as the task screen, delegation included). The remark
   status is derived from its actions after every decision (any pending → validation; draft / returned → correction; all rejected →

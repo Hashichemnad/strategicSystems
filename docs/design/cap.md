@@ -155,7 +155,7 @@ Approver record role `approver` on `cap.action`. Hooks run in the engine transac
 ## 7. Access (SPEC §9.7 — seeded, editable — ADR 0125)
 Permissions: `cap.remark.read`, `cap.source.manage` (sources and remarks: create / edit / assign / cancel), `cap.remark.respond`
 (accept / reject / reassign / root cause / actions / submit), `cap.action.update` (achievement, evidence, extension, completion request),
-`cap.office` (validation screen, confirm rejection, link project, cancel actions, verify effectiveness, raise suggestions),
+`cap.office.manage` (validation screen, confirm rejection, link project, cancel actions, verify effectiveness, raise suggestions),
 `cap.dashboard.read`, `cap.report.export`, `cap.settings.manage`, AI `cap.ai.extract / root-cause / suggest / quality / summary`.
 
 | Role | Scope | Grants |

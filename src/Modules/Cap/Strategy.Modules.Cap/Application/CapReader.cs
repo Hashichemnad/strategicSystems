@@ -28,7 +28,8 @@ internal sealed class CapReader(CapDbContext db, IAccessService access, IEmploye
     /// <summary>Actions readable through any readable remark, or as their assignee.</summary>
     public async Task<IQueryable<CapAction>> ActionsAsync(ClaimsPrincipal user, CancellationToken ct, bool tracked = false)
     {
-        var remarks = (await RemarksAsync(user, ct).ConfigureAwait(false)).Select(r => r.Id);
+        // The sub-query must not carry AsNoTracking: EF applies it to the whole query, and tracked loads would come back detached.
+        var remarks = (await RemarksAsync(user, ct, tracked: true).ConfigureAwait(false)).Select(r => r.Id);
         var linked = db.RemarkActions.Where(l => remarks.Contains(l.RemarkId)).Select(l => l.ActionId);
         var me = user.EmployeeIdOf();
         var source = tracked ? db.Actions : db.Actions.AsNoTracking();
@@ -48,7 +49,7 @@ internal sealed class CapReader(CapDbContext db, IAccessService access, IEmploye
             return source;
         }
 
-        var remarks = (await RemarksAsync(user, ct).ConfigureAwait(false)).Select(r => r.SourceId);
+        var remarks = (await RemarksAsync(user, ct, tracked: true).ConfigureAwait(false)).Select(r => r.SourceId);
         return source.Where(s => remarks.Contains(s.Id));
     }
 

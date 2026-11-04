@@ -19,7 +19,7 @@ public static class CapPermissions
     public const string SourceManage = "cap.source.manage";
     public const string Respond = "cap.remark.respond";
     public const string ActionUpdate = "cap.action.update";
-    public const string Office = "cap.office";
+    public const string Office = "cap.office.manage";
     public const string DashboardRead = "cap.dashboard.read";
     public const string Export = "cap.report.export";
     public const string SettingsManage = "cap.settings.manage";
