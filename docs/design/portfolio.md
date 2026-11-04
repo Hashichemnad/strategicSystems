@@ -6,7 +6,7 @@
 |---|---|---|
 | **8** | Program Requests up to the automatic creation of the Project / Initiative record (SPEC §1.1–§1.4 A, §1.5 W1, §1.6–§1.9 for requests, §1.15 A, §1.19, Appendix A Q-P4 / Q-P5 / Q-P6) | **Detailed below — the Phase 8 plan** |
 | **9** | Project / Initiative lifecycle (charter, planning, monthly cycle, closure, impact, change control) — SPEC §1.3, §1.4 B–D, §1.5 W2–W8, §1.6–§1.9, §1.16, §1.17, Q-P1/P2/P3/P9 | **Detailed in §15–§28 — the Phase 9 plan** (ADRs 0070–0076) |
-| 10 | Agile / Hybrid, PM standards, Gantt, portfolio views | Outline (§12) |
+| **10** | Agile / Hybrid, PM standards, Gantt, portfolio views — SPEC §1.12, §1.13, §1.15 B, §1.16, §0.4 | **Detailed in §29–§45 — the Phase 10 plan** (ADRs 0090–0099) |
 | 11 | Wasel vendor portal | Outline (§12) |
 
 Reuses Phase 1 (organisation, employees, delegation), Phase 2 (access: system access, roles with scopes, record roles), Phase 3 (audit,
@@ -575,3 +575,238 @@ monthly cycle values, progress tolerance, GM threshold.
   records; authorization (outsider 404, team member 403 on edit, procurement only LPO); MCP tools.
 - **E2E (ar + en):** take ownership, charter tabs and gate, team formation, planning items, milestones with weights, monthly update with evidence
   and delay, closure, impact, change request apply, record page with stage stepper — screenshots `docs/screenshots/phase-9/`.
+
+---
+
+# Phase 10 — Agile / Hybrid, PM standards, Gantt, portfolio views (detailed plan)
+
+Reuses everything above. Decisions: **0090** (methodologies and the agile model), **0091** (agile progress and the sprint / monthly roll-up
+approval modes; hybrid), **0092** (feature switches of the standards enhancements), **0093** (RAG health), **0094** (baselines, re-baseline
+through a change request, variance, earned value), **0095** (RAID, RACI, communication plan, benefits, quality, payments, checklists,
+templates, portfolios / programmes — data choices), **0096** (in-house SVG Gantt, exports, Apache ECharts), **0097** (monthly status report
+PDF), **0098** (cost / budget visibility for team members), **0099** (Phase 10 AI assists and MCP tools). As in earlier phases the session
+runs without an interactive approval step: this plan is committed first, then implemented as written; open choices are the ADRs.
+
+## 29. Methodology (SPEC §1.13, ADR 0090)
+
+`project.methodology` = `waterfall` · `agile` · `hybrid`. Set when the project is created from the request: the **suggestion** of
+Settings → Portfolio `methodologySuggestions` (program type code → methodology; default empty → `waterfall`). The PM **chooses** it while
+the charter is drafted (`charter-draft`; for templates without a charter — initiatives — in `planning-draft` before the first planning
+submission): `PUT /projects/{id}/methodology {methodology, sprintLengthDays, definitionOfDone, agileApprovalMode?, version}`. After that it
+changes **only through an approved change request** (type `details`, area `methodology`, proposed methodology; applied by *Apply changes*).
+Governance is identical for all methods (request, charter, closure, impact, change control); only planning and execution differ:
+
+| Area | Waterfall | Agile | Hybrid |
+|---|---|---|---|
+| Plan | phases → milestones, leaf weights = 100 % | releases → epics (weights = 100 %) → user stories → tasks (Task Management) | waterfall phases / milestones = 100 %; a milestone flagged **delivered in sprints** has epics whose weights = 100 % *of that milestone* |
+| Planning gate adds | — | ≥ 1 release, ≥ 1 epic, epic weights exactly 100 %, sprint length 1–28 days (default from settings, 14), Definition of Done | both, per sprint-delivered milestone its epics = 100 % |
+| Execution | monthly update | sprints; approval per sprint **or** monthly roll-up (§31) | monthly roll-up |
+| Progress | Σ approved leaf achievement | Σ epic weight × approved-done points ÷ epic points | Σ leaf achievement where a sprint-delivered leaf's achievement = weight × Σ epic weight × approved-done fraction |
+| Views | Gantt / quarter plan | board, burndown, burnup, velocity, cumulative flow, cycle time | Gantt + board |
+
+## 30. Agile data model (schema `portfolio`; audited, `xmin`, no hard deletes)
+
+| Table | Columns |
+|---|---|
+| `project` (+) | `methodology`, `agile_approval_mode` (null = installation default · `sprint` · `monthly`), `sprint_length_days`, `definition_of_done`, `board` (jsonb: columns `{code, labelAr, labelEn, category: todo|doing|done, wipLimit?}`, `swimlane`: `none`/`epic`/`assignee`) |
+| `release` | `project_id`, `name_ar/en`, `goal`, `target_date`, `sort`, `status` (`planned` · `released` · `cancelled`) |
+| `epic` | `project_id`, `release_id?`, `milestone_id?` (hybrid), `code` (`<Number>-E<n>`), `title_ar/en`, `weight` (ratio), `acceptance_criteria`, `sort`, `status` (`open` · `done` · `cancelled`) |
+| `user_story` | `project_id`, `epic_id`, `sprint_id?`, `code` (`<Number>-US<n>`), `title`, `as_a`, `i_want`, `so_that`, `acceptance_criteria`, `story_points` (0–100), `priority` (MoSCoW `must`/`should`/`could`/`wont`), `assignee_employee_id`, `column_code`, `rank`, `started_at`, `done_at`, `accepted` (sprint review), `approved_done` (**locked** by the approval that counted it), `status` (`active` · `cancelled`) |
+| `sprint` | `project_id`, `number`, `name`, `goal`, `start_date`, `end_date`, `capacity_points`, `status` (`planned` · `active` · `closed` · `in-approval` · `approved`), `committed_points` (snapshot at start), `completed_points` (snapshot at close), review (`demo_outcome`, `stakeholder_feedback`), retrospective (`went_well`, `to_improve`, `actions`), `approval_period` (monthly roll-up period that carried it), `approved_at` |
+| `story_event` | `story_id`, `sprint_id?`, `from_column`, `to_column`, `category`, `points`, `at` — append-only history for burndown / CFD / cycle time |
+
+**Board.** Default columns *To Do › In Progress › Review › Done* (categories todo / doing / review→doing / done), editable per project by the
+PM (`PUT /projects/{id}/board`), WIP limit per column (null = none), swimlanes `none` / `epic` / `assignee`. Moving a story
+(`POST /stories/{sid}/move {column, rank, version}`) refuses a full column (`portfolio.errors.wipLimit`, 422) and moving an
+`approved_done` story out of a done column (`portfolio.errors.storyLocked`). First move into *doing* sets `started_at`; into *done* sets
+`done_at` (leaving done clears it). Every move appends a `story_event`.
+
+**Story lifecycle** = the board column (category). **Sprint lifecycle** (`SprintLifecycle`, unit-tested table):
+
+| From | Action (who) | Guard | To |
+|---|---|---|---|
+| planned | edit, add / remove stories (PM) | — | planned |
+| planned | `start` (PM) | project in Execution, no other active sprint, ≥ 1 story | active (`committed_points` snapshot; events for the committed stories) |
+| active | `close` (PM) with review + retrospective | demo outcome filled | closed: `completed_points` = done stories; unfinished stories go back to the backlog (or to the next planned sprint); retrospective *went well / to improve* become **lessons learned**; done stories `accepted` as ticked |
+| closed | `submit` (PM, sprint mode) | — | in-approval (`portfolio.sprint-review`) |
+| closed | monthly submit (monthly mode) | sprint closed in / before the window's period | in-approval (carried by `portfolio.monthly-update`, `approval_period`) |
+| in-approval | approved (engine) | — | approved: accepted done stories → `approved_done`, progress recalculated |
+| in-approval | returned / rejected / recalled | — | closed (review editable, resubmit) |
+
+**Impediments** (`POST /sprints/{id}/impediments`) become **RAID issues** with source `sprint` (§35) — or project challenges when RAID is
+switched off. **User story tasks** use Task Management: `portfolio.story` is a task-able linkable type (shared `LinkedTasksPanel`).
+**Permissions:** epics, releases, sprints, board: `portfolio.project.edit` (PM). Stories: PM; team members too when Settings
+`teamMembersCreateStories` (default **off**, SPEC §1.9 "configurable"). Moving a story: PM, or a team member (`contribute`) on a story
+assigned to them.
+
+## 31. Agile progress and approval modes (ADR 0091)
+
+`AgileProgressCalculator` (pure): epic fraction = Σ points of **approved-done** active stories ÷ Σ points of active stories (0 when none);
+**agile progress = Σ epic weight × fraction** (capped 1). The *pending* figure (done but not yet approved) is shown beside it. Planned-to-date
+for agile = linear over the project's planned dates (or the last release target date); progress status uses the Q-P6 rule with that plan.
+Hybrid: each sprint-delivered leaf milestone's pending achievement = weight × Σ(epic weight × done fraction), written into the monthly
+update (the PM may not type it), locked like other milestones on approval; the project progress is the waterfall formula.
+
+**Approval mode** = project `agile_approval_mode` ?? Settings `agileApprovalMode` (default **`monthly`**; hybrid is always monthly):
+- **sprint**: each closed sprint is submitted on its own → process **`portfolio.sprint-review`** (seeded: Department Director → PM Office,
+  variables `sprint`, `completedPoints`); the monthly job does not open windows for the project.
+- **monthly**: the monthly window opens as for waterfall; *Submit monthly update* carries every closed, unapproved sprint (and hybrid
+  milestones); one `portfolio.monthly-update` approval approves them all.
+The common progress % (`project.performance`) is what every portfolio view uses, whatever the method.
+
+## 32. Feature switches (ADR 0092)
+
+Settings → Portfolio `features` (each bool; defaults in brackets): `portfolios` [on], `prioritisation` [on], `health` [on], `baselines` [on],
+`earnedValue` [**off** — "optional"], `raid` [on], `riskMatrix` [on], `raci` [on], `communicationPlan` [on], `benefits` [on], `quality` [on],
+`procurement` [on — payment milestones + supplier rating], `statusReport` [on], `gateChecklists` [on], `templates` [on].
+A switch **off** hides the UI (the SPA reads `GET /portfolio/features`) **and** the APIs: endpoints of the feature answer **404** with
+`portfolio.errors.featureOff` (an endpoint filter), MCP tools and AI assists of the feature refuse, gates / jobs of the feature do nothing.
+Data stays and reappears when switched back on. `prioritisation` off = the four default criteria with equal weights and the default bands
+are used and the editor is read-only.
+
+## 33. RAG health (ADR 0093)
+
+`HealthCalculator` (pure) per project, from facts loaded in bulk (one query set for any number of projects). Thresholds in Settings
+`health` (defaults):
+
+| Dimension | Green | Amber | Red | Grey |
+|---|---|---|---|---|
+| Schedule | gap (planned − progress) ≤ 0.05 and no leaf past due | gap ≤ 0.15, or a leaf past due ≤ 30 days, or overdue linked tasks | otherwise | not started (no plan) |
+| Cost | cost variance ≤ 0.05 | ≤ 0.15 | > 0.15 | no budget or no actual cost | 
+| Scope | no scope change | 1 approved scope / details change in 180 days, or one under review | ≥ 2 approved scope changes in 180 days | — |
+| Risk | no active High / Critical residual risk | a High | a Critical | no risks |
+
+Cost variance = (actual cost − budget × progress) ÷ budget. **Overall** = the worst of the four (grey ignored). Each dimension and overall may
+be **overridden** by the PM or PM Office with a **justification** (`PUT /projects/{id}/health/{dimension}`; null clears); effective =
+override ?? auto, shown with an *overridden* chip, history in the audit trail. Calculated on read; dashboards use the same calculator.
+
+## 34. Baselines, variance, earned value (ADR 0094)
+
+`baseline`: `project_id`, `version_no`, `taken_at`, `taken_by`, `reason`, `change_request_id?`, `budget`, `planned_start/end`, `items`
+(jsonb: milestone / epic id, code, titles, start, end, weight, cost). **v1** is taken automatically at **planning approval**. A new version
+is taken **only** when an approved change request is applied with **Re-baseline** ticked (Q-P9) — there is no other endpoint. An approved
+(not yet applied) change request with area **`plan`** re-opens milestone / epic planning (`CanPlanMilestones`) until it is applied; applying
+with re-baseline requires the plan gate (weights = 100 %). **Variance** (`GET /projects/{id}/baselines/variance?version=`): per item
+start / end variance in days (current planned − baseline; actual end − baseline end), weight delta, cost delta, added / removed items;
+project budget and end-date variance.
+
+**Earned value** (switch `earnedValue`), `EarnedValueCalculator` (pure), as of today: BAC = baseline budget (else budget); PV = BAC ×
+planned-to-date (baseline plan); EV = BAC × progress; AC = Σ actual yearly costs; SV = EV − PV; CV = EV − AC; SPI = EV ÷ PV; CPI = EV ÷ AC;
+EAC = BAC ÷ CPI; ETC = EAC − AC; VAC = BAC − EAC; TCPI = (BAC − EV) ÷ (BAC − AC). Ratios null when the divisor is 0. Worked example
+(unit test): BAC 1 000 000, planned 40 %, progress 30 %, AC 400 000 → PV 400 000, EV 300 000, SV −100 000, CV −100 000, SPI 0.75,
+CPI 0.75, EAC 1 333 333.33, ETC 933 333.33, VAC −333 333.33, TCPI 1.1667.
+
+## 35. Other standards items (ADR 0095)
+
+| Item (switch) | Model / behaviour |
+|---|---|
+| Portfolios & programmes (`portfolios`) | `portfolio_group` (`kind` portfolio / programme, `parent_id` programme → portfolio, `code`, `name_ar/en`, `description`, `owner_employee_id`, `status`); project `programme_id`, `portfolio_group_id`. Managed by `portfolio.portfolio.manage` (PM Office); list page with project counts, progress and health; dashboards and Gantt filter by portfolio / programme |
+| Prioritisation (`prioritisation`) | the Phase 8 weighted model (criteria, weights, 1–5, bands) editable; off → defaults |
+| RAID (`raid`) | `raid_item` (`type` issue / assumption / dependency / decision, `code` `<Number>-<I|A|D|C><n>`, `title`, `description`, `owner_employee_id`, `priority`, `due_date`, `status` proposed / open / resolved / closed, `resolution`, `milestone_id`, `depends_on_project_id`, `depends_on_milestone_id`, `decided_on`, `decided_by`, `source` manual / sprint / task). Risks show in the same log (read). Team members' entries start **proposed** — the PM accepts (SPEC §1.9). Milestone-to-milestone dependencies draw arrows on the Gantt |
+| Risk matrix (`riskMatrix`) | `GET /projects/{id}/risk-matrix`: 5 × 5 counts (probability × impact, inherent or residual) with the risks of each cell, owner, review date (`review_date` added to project risks) |
+| RACI (`raci`) | `raci_entry` (`area`, `milestone_id?`, `employee_id`, `role` R / A / C / I); one **A** per area (`portfolio.errors.raciOneAccountable`); matrix view areas × people |
+| Communication plan (`communicationPlan`) | `communication_item` (`stakeholder_id?`, `audience`, `message`, `method`, `frequency` weekly / biweekly / monthly / quarterly / once, `owner_employee_id`, `next_due`, `last_done`, `reminded_for`); *Generate from stakeholders*; *Mark done* moves `next_due`; daily job `portfolio.communication-reminders` notifies the owner once per due date (`portfolio.communicationDue`) |
+| Benefits (`benefits`) | `benefit` (`request_id`, `project_id`, `title_ar/en`, `measure`, `baseline_value`, `target_value`, `unit`, `owner_employee_id`, `measurement_date`, `actual_value`, `measured_at`, `status` planned / realised / partly / not-realised, `note`). Defined on the request (draft), carried to the project at creation; measured in Impact (impact gate: every active benefit measured) |
+| Quality (`quality`) | milestone `quality_status` (pending / accepted / rejected), `quality_by_employee_id`, `quality_at`, `quality_comment`; owner or PM Office signs off a deliverable (`POST /milestones/{mid}/sign-off`); closure gate: every deliverable accepted |
+| Procurement (`procurement`) | `contract_payment` (`contract_id`, `title`, `due_date`, `amount`, `milestone_id?`, `status` planned / paid / cancelled, `paid_on`); contract supplier rating (quality, timeliness, communication 1–5, comment, rated by / at; overall = average) |
+| Status report (`statusReport`) | §37 |
+| Stage-gate checklists (`gateChecklists`) | Settings `gateChecklists` {charter, planning, closure: [{code, labelAr, labelEn, required}]}; project `checklist` jsonb (gate → code → checked, by, at, note); `PUT /projects/{id}/checklist/{gate}/{code}`; required items join the hard minimums in the gate (`portfolio.errors.gateChecklist`) |
+| Templates (`templates`) | `project_template` (`code`, `name_ar/en`, `methodology`, `content` jsonb: milestones with offsets / durations / weights and phases, planning items, risks, epics, checklist ticks), managed in Settings → Portfolio → Templates; *Apply template* on a project in charter / planning draft creates the items; *Save as template* (PM Office) from a project |
+
+## 36. Gantt (ADR 0096)
+
+In-house, read-only **SVG** component `web/src/ui/gantt/` (no dependency): rows = phases (collapsible) → milestones (→ tasks optional);
+time axis with **quarter grouping** (quarter band over month ticks), today line; per row **planned bar**, **actual bar** (actual start →
+actual end or today), **baseline bar** (thin, when baselines on), achievement % fill and label, delayed colouring, milestone diamonds for
+zero-length items, finish-to-start **dependency arrows**; agile projects show releases and sprints as bars. **RTL**: the time axis is
+mirrored (x = width − x) and the label column sits on the right; text uses logical alignment. Keyboard: rows focusable, tooltip on focus.
+Data: `GET /projects/{id}/gantt` and portfolio-wide `GET /gantt?portfolioGroupId&programmeId&unitId&year` (projects as groups with their
+high-level / phase rows, scope-filtered). **Export**: PNG (SVG → canvas) and PDF (the PNG embedded in a one-page PDF written in the browser,
+no library). Performance budget: 30 milestones render < 5 s (target < 300 ms; Vitest + E2E check).
+
+## 37. Monthly status report (ADR 0097)
+
+`GET /projects/{id}/status-report?period=YYYY-MM&lang=ar|en` (switch `statusReport`; read permission) renders a bilingual PDF through
+Gotenberg from the **approved** monthly update of the period (latest sequence) — deterministic, so "auto-generated" on demand: header
+(project number, names, PM, owner, period, methodology), progress (performance, planned, status, health RAG), narrative (AR / EN, see
+below), milestones table from the approval snapshot (weight, achieved, planned / actual end, delayed causality), sprints of the period
+(agile), top risks, open issues, budget / actual (only when the caller may see costs, §39), next period. The month's **narrative**
+(`monthly_update.narrative_ar/en`) is typed by the PM while the window is open or drafted by the **status report writer** (§40) and
+accepted by the PM.
+
+## 38. Portfolio dashboard (system level, SPEC §0.4 / §1.12)
+
+`GET /dashboard?portfolioGroupId&programmeId&unitId` (project read scope, SQL-filtered; numbers differ per viewer):
+health **heat-map** (department × schedule / cost / scope / risk / overall — counts of R / A / G), **bubble chart** (x = value: request
+evaluation score; y = complexity: the request's `complexity` criterion score; size = budget; colour = overall RAG), **budget vs actual by
+department**, projects **by stage**, **delayed** projects, **upcoming milestones** (next 60 days), **pipeline funnel** (requests submitted →
+approved → active projects → completed; request counts from the request read scope), and the projects table with methodology and the
+common progress % (agile and waterfall together). Charts with **Apache ECharts** (Apache-2.0, RTL-tested). Optional AI **portfolio insights**.
+
+## 39. Cost / budget visibility (ADR 0098, closes the Phase 9 gap)
+
+New permission `portfolio.project.costs` (scopable) — roles requester (Own), department viewer, viewer, PM Office, administrator; record
+roles owner, PM, requester, approver, procurement. Record role **team-member** sees costs **only** when Settings `teamMembersSeeCosts`
+(default **off**). One service `CostVisibility` (`CanSeeAsync(user, project)`, `VisibleSetAsync(user, projectIds)`) is used by **every read
+path**: project DTO (budget, planned / contracted / actual costs, operating costs, impact cost figures → null + `costsHidden`), milestones
+(cost), contracts (amount, payments), change requests (proposed budget, cost change), baselines (budget, item cost), EVM (403), status
+report PDF (cost section omitted), dashboards (budget aggregates only over cost-visible projects; bubble size hidden), global search /
+Ask / approver brief record source, MCP tools, list export.
+
+## 40. AI assists (SPEC §1.15 B, ADR 0099 — drafts only, nothing saved by the AI)
+
+| Feature (key) | Where | Output (validated JSON) → what the user accepts |
+|---|---|---|
+| Charter assistant (`portfolio-charter-assistant`) | Charter (PM) | suggested KPIs, risks (probability / impact 1–5), stakeholders, planning items + **relevant lessons** (found by the server, not the model) → user ticks rows → created through the normal endpoints |
+| Plan generator (`portfolio-plan-generator`) | Milestones (waterfall / hybrid) or Backlog (agile) | phases / milestones with weights and durations, or epics with weights and user stories; server normalises weights to exactly 100 % → review dialog, edit, *Add selected* |
+| Update assistant (`portfolio-update-assistant`) | Monthly update / sprint review | narrative, corrective actions; **at-risk milestones flagged by the server** (behind plan, past end) → narrative / corrective actions fields |
+| Status report writer (`portfolio-status-report`) | Monthly update | bilingual narrative AR + EN → stored on the update when accepted |
+| Change impact (`portfolio-change-impact`) | Change request | summary of the effect on dates, cost, weights and **dependent projects** (RAID dependencies, server) → shown, copy to the CR's impact text |
+| Lessons search (no model) | Charter / planning | `GET /lessons/search?q=` over lessons of projects the caller may read |
+| Portfolio insights (`portfolio-insights`) | Dashboard | narrative: top risks, delays, budget variance, recommendations (budget figures only when visible) |
+Permission `portfolio.ai.assist` (everyone with system access) plus the record check (edit for writing assists, read for insights / impact).
+Every call logged in `ai.usage_log` and audited (channel `ai`). The demo provider answers each prompt deterministically (E2E).
+
+## 41. MCP tools (ADR 0099; read on, write off)
+`portfolio_project_backlog` (epics, stories by column, sprint), `portfolio_sprint_summary` (sprints, committed / completed, burndown
+remaining), `portfolio_summary` (dashboard counts, health, delayed projects, costs only when visible), `portfolio_create_story_draft`
+(**write, off**: adds a backlog story, never starts / approves). `portfolio_get_project` hides costs when not visible.
+
+## 42. Access additions
+`portfolio.project.costs` (§39), `portfolio.portfolio.manage` (PM Office, administrator: portfolios / programmes), `portfolio.ai.assist`.
+Health override: `project.edit` (PM) or `project.manage`. Quality sign-off: record role owner or `project.manage`. Templates: `settings.manage`.
+
+## 43. API additions (`/api/v1/portfolio`)
+`GET /features` · `PUT /projects/{id}/methodology` · `PUT /projects/{id}/board` · releases / epics / stories / sprints CRUD
+(`/projects/{id}/{releases|epics|stories|sprints}`, `PUT /{kind}/{itemId}`, story `move`, sprint `start|close|submit|impediments`) ·
+`GET /projects/{id}/agile` (backlog + board + metrics) · `GET /sprints/{sid}/burndown` · `GET /projects/{id}/health`, `PUT …/health/{dim}` ·
+baselines `GET /projects/{id}/baselines`, `…/baselines/variance` · `GET /projects/{id}/evm` · RAID, RACI, communication, benefits CRUD ·
+`POST /milestones/{mid}/sign-off` · `…/contracts/{cid}/payments`, `…/contracts/{cid}/rating` · `GET /projects/{id}/risk-matrix` ·
+`PUT /projects/{id}/checklist/{gate}/{code}` · templates CRUD + `POST /projects/{id}/apply-template` · `GET /projects/{id}/gantt`, `GET /gantt` ·
+`GET /dashboard` · `GET /projects/{id}/status-report` · portfolio groups CRUD + `PUT /projects/{id}/grouping` · AI `POST /projects/{id}/ai/{feature}`,
+`POST /ai/insights` · `GET /lessons/search`. Change request apply input gains `rebaseline`; CR areas gain `plan`, `methodology`.
+
+## 44. Screens (AR + EN, RTL / LTR)
+Project page: methodology card on Overview (choice dialog), **Backlog** (releases, epics with weights, stories), **Board** (columns, WIP,
+swimlanes, drag-and-drop with dnd-kit), **Sprints** (sprint card, burndown, velocity, burnup, cumulative flow, cycle time, review /
+retrospective dialog, impediments), **Gantt**, **Health** (RAG with override, baseline variance, EVM panel), **RAID**, **RACI**,
+**Communication**, **Benefits**, gate checklist items in the gate panel, template button, quality sign-off on deliverables, payments and rating
+on contracts, status report download and narrative on Monthly updates, AI buttons. Portfolio: **Dashboard**, **Portfolio Gantt**, **Portfolios
+& programmes**. Settings → Portfolio: feature switches, methodology suggestion, sprint length, approval mode, cost visibility, story
+creation, health thresholds, gate checklists, templates.
+
+## 45. Tests (Phase 10)
+- **Unit:** `AgileProgressCalculatorTests` (epic weights × approved-done points, cancelled stories, zero points, hybrid milestone),
+  `SprintLifecycleTests` (every allowed / forbidden pair), `AgileMetricsTests` (velocity, burndown from events, burnup, CFD, cycle time),
+  `HealthCalculatorTests` (each dimension at its boundaries, overall worst, override), `EarnedValueCalculatorTests` (worked example, zero
+  divisors), `BaselineVarianceTests`, `BoardRulesTests` (WIP, lock), feature settings validation, Gantt-free.
+- **Integration:** agile project — methodology, planning with epics = 100 %, two sprints with board moves, burndown, **monthly roll-up
+  approval** locking the stories, then progress on the dashboard beside a waterfall project; **sprint mode** approval per sprint (no monthly
+  window); re-baseline only after an approved change request (refused otherwise; v2 after apply with variance); EVM endpoint on the worked
+  figures; RAG auto + override with justification; **each switch** hides its API (404 `featureOff`) and the features endpoint; status report
+  PDF in **ar** and **en** (Gotenberg); a **team member without cost permission** sees no costs in the project, milestones, contracts, change
+  requests, baselines, EVM, dashboard, search, Ask record source, MCP and the status report — and sees them after the setting is turned on.
+- **Vitest:** Gantt geometry (LTR / RTL mirroring, quarters), 30-milestone render time, board WIP rule, message keys AR / EN.
+- **E2E (ar + en):** screenshots in `docs/screenshots/phase-10/`: methodology choice, agile board, sprint with burndown, monthly roll-up
+  approval, Gantt (project and portfolio), RAG health, baseline variance, EVM panel, RAID log, RACI, status report PDF, portfolio dashboard,
+  AI plan generator review; Gantt of a 30-milestone project rendered < 5 s in both directions.

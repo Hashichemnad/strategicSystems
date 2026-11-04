@@ -78,6 +78,16 @@ Write an ADR for every choice the SPEC or CLAUDE.md leaves open (CLAUDE.md §2 r
 | [0086](0086-emirates-id-encryption-and-masking.md) | Emirates ID: encryption, masking and who may see it | Accepted by the owner |
 | [0087](0087-ip-from-documents-renewal-internal.md) | IP from published documents, expiry, renewal and internal-only protection | Accepted by the owner |
 | [0088](0088-request-pdf-templates-and-embedding.md) | Request PDF templates and the embeddable submit page | Accepted by the owner |
+| [0090](0090-methodologies-and-agile-model.md) | Delivery methodologies and the agile data model | Proposed |
+| [0091](0091-agile-progress-and-approval-modes.md) | Agile progress formula; sprint / monthly roll-up approval modes; hybrid | Proposed |
+| [0092](0092-standards-feature-switches.md) | Feature switches for the standards enhancements | Proposed |
+| [0093](0093-rag-health.md) | Project health (RAG): calculation and override | Proposed |
+| [0094](0094-baselines-and-earned-value.md) | Baselines, re-baseline through a change request, variance, earned value | Proposed |
+| [0095](0095-standards-data-model.md) | RAID, RACI, communication plan, benefits, quality, payments, checklists, templates, portfolios | Proposed |
+| [0096](0096-gantt-and-echarts.md) | In-house SVG Gantt, exports, Apache ECharts | Proposed |
+| [0097](0097-monthly-status-report-pdf.md) | Bilingual monthly status report PDF | Proposed |
+| [0098](0098-cost-visibility.md) | Cost / budget visibility for team members | Proposed |
+| [0099](0099-phase-10-ai-and-mcp.md) | Phase 10 AI assists and MCP tools | Proposed |
 | [0100](0100-risk-framework-versions-and-scoring.md) | Risk framework versions, shared scoring engine, band gaps, recalculation | Accepted by the owner |
 | [0101](0101-portfolio-project-risks-on-the-shared-framework.md) | Portfolio project risks scored by the shared risk framework | Accepted by the owner |
 | [0102](0102-risk-lifecycle-and-approvals.md) | Risk lifecycle, one pending process, approvals R1 / R3 / R5 | Accepted by the owner |
