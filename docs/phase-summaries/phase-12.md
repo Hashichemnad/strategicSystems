@@ -1,7 +1,7 @@
 # Phase 12 — Performance Management (KPI): summary
 
 **Status:** built and verified in the build session · awaiting owner acceptance
-**Branch:** `claude/admiring-noether-cz1pbd`
+**Branch:** `claude/admiring-noether-cz1pbd` (rebased on `main` after Phase 8 — Portfolio — was merged)
 **Planning:** the plan is the design note [`docs/design/kpi.md`](../design/kpi.md), written and committed before the code (commit
 `docs(kpi): Phase 12 design note…`). This session ran without an interactive approval step (as Phases 5–7), so the plan was written first and
 then implemented as it stands; its open choices are ADRs 0060–0065 (numbered from 0060 so the Portfolio phase built in parallel keeps 0047+).
@@ -59,11 +59,13 @@ then implemented as it stands; its open choices are ADRs 0060–0065 (numbered f
 | Gate | Result |
 |---|---|
 | `dotnet build Strategy.slnx -c Release` · `dotnet format --verify-no-changes` | 0 warnings, 0 errors · clean |
-| `dotnet test --solution Strategy.slnx` | **2 241** tests (2 240 + 1 after the fix) (unit, architecture and integration on real PostgreSQL); the full run had one failure, an expected Phase 12 fact (everyone now also holds `kpi.owner`), fixed and re-run green. New: **61** KPI unit tests, **9** KPI integration tests |
+| `dotnet test --solution Strategy.slnx` | After the rebase on Phase 8: **2 374** tests (unit, architecture and integration on real PostgreSQL), 2 372 green in the full parallel run; the two Gotenberg PDF tests failed while the sidecar container was still starting (as noted in Phases 4–7) and passed when re-run. New: **61** KPI unit tests, **9** KPI integration tests |
 | `tools/check-api-client.sh` · `tools/check-vulnerable.sh` | OpenAPI document and TS client up to date · no High / Critical |
-| `npm run lint` · `format:check` · `typecheck` · `npm test` | clean · **102 / 102** Vitest |
+| `npm run lint` · `format:check` · `typecheck` · `npm test` | clean · **115 / 115** Vitest (after the rebase) |
 | `npm run build` · `npm audit --audit-level=high` · `npm run lint:licenses` | OK · no High / Critical (the same 14 moderate dev-tool advisories as earlier phases) · 613 packages allowed |
-| `npx playwright test` | KPI scenario **2 / 2** (ar + en) with screenshots (`E2E_SCREENSHOTS=phase-12`). Whole suite **80 / 80** in Arabic and English on a fresh database (Phase 12 adds 1 scenario × ar + en; the job dashboard spec expects 13 jobs). |
+| `npx playwright test` | Whole suite after the rebase: **84 / 84** in Arabic and English on a fresh database (Phases 0–8 and 12; Phase 12 adds 1 scenario × ar + en, screenshots with `E2E_SCREENSHOTS=phase-12`; the job dashboard spec expects 13 jobs) |
+
+Rebase on Phase 8: both phases added entries to the same lists (solution, host references, module catalog, `Modules:*` settings, test factory, sidebar, settings navigation, router, shell / settings translations, AI feature keys, audited record types, ADR index, authorization-matrix upload routes, the roles everyone holds); every conflict kept both sides, and the OpenAPI document and TS client were regenerated.
 
 Existing tests updated for Phase 12 facts: the job dashboard lists `kpi.period-windows` (API test and E2E: 13 jobs); the authorization matrix fills
 `{year}` / `{period}` route parameters and sends a file to `/document` uploads; the effective roles of a new user include `kpi.owner`.
