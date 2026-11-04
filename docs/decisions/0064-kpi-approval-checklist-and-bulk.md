@@ -1,6 +1,6 @@
 # 0064 — KPI verification checklist and bulk approval
 
-- **Status:** Proposed (Phase 12) — awaiting owner acceptance
+- **Status:** Accepted by the owner (Phase 12, before the pull request)
 - **Context:** SPEC §2.4 K4: configurable verification checklist, bulk approval by year + department, chain configured in the approval
   engine (default single PMO step).
 

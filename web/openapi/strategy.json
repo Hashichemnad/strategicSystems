@@ -15886,6 +15886,2698 @@
           }
         }
       }
+    },
+    "/api/v1/kpi/strategy/elements": {
+      "get": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "ListKpiStrategyElements",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/KpiElementDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "SaveKpiStrategyElement",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KpiElementInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KpiElementDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/strategy/map": {
+      "get": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "GetKpiStrategyMap",
+        "parameters": [
+          {
+            "name": "year",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KpiStrategyMapDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/cards": {
+      "get": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "ListKpiCards",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "unitId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "typeCode",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "objectiveId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "gem",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "globalStar",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "year",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResultOfKpiCardListItemDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "CreateKpiCard",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KpiCardInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KpiCardDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/options": {
+      "get": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "GetKpiOptions",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KpiOptionsDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/cards/{id}": {
+      "get": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "GetKpiCard",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KpiCardDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "UpdateKpiCard",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KpiCardBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KpiCardDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/cards/{id}/activate": {
+      "post": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "ActivateKpiCard",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KpiCardStatusInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KpiCardDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/cards/{id}/deactivate": {
+      "post": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "DeactivateKpiCard",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KpiCardStatusInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KpiCardDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/cards/{id}/targets": {
+      "put": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "SetKpiCardTargets",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KpiTargetsInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KpiCardDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/cards/{id}/versions": {
+      "get": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "ListKpiCardVersions",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/KpiCardVersionDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/cards/{id}/performance": {
+      "get": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "GetKpiPerformance",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "year",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KpiPerformanceDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/cards/{id}/linked": {
+      "get": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "ListKpiLinkedRecords",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LinkView"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/cards/{id}/changes": {
+      "post": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "RequestKpiDefinitionChange",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KpiChangeInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KpiChangeDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/changes": {
+      "get": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "ListKpiDefinitionChanges",
+        "parameters": [
+          {
+            "name": "cardId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/KpiChangeDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/changes/{id}/withdraw": {
+      "post": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "WithdrawKpiDefinitionChange",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KpiWithdrawInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KpiChangeDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/years/{year}/preview": {
+      "get": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "PreviewKpiYear",
+        "parameters": [
+          {
+            "name": "year",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KpiYearPreviewDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/years/{year}/start": {
+      "post": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "StartKpiYear",
+        "parameters": [
+          {
+            "name": "year",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KpiYearStartInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KpiYearStartedDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/years/{year}/windows": {
+      "get": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "ListKpiWindows",
+        "parameters": [
+          {
+            "name": "year",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/KpiWindowDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "UpdateKpiWindows",
+        "parameters": [
+          {
+            "name": "year",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KpiWindowsInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/KpiWindowDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/years/{year}/periods/{period}/lock": {
+      "post": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "LockKpiPeriod",
+        "parameters": [
+          {
+            "name": "year",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "period",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KpiLockInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KpiWindowDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/years/{year}/periods/{period}/reopen": {
+      "post": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "ReopenKpiPeriod",
+        "parameters": [
+          {
+            "name": "year",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "period",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KpiLockInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KpiWindowDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/plans": {
+      "get": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "ListKpiPlans",
+        "parameters": [
+          {
+            "name": "year",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "unitId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/KpiPlanListItemDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/plans/{id}": {
+      "get": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "GetKpiPlan",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KpiPlanDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "UpdateKpiPlan",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KpiPlanInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KpiPlanDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/plans/confirm": {
+      "post": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "ConfirmKpiPlans",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KpiConfirmInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/results/pending": {
+      "get": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "ListMyPendingKpiResults",
+        "parameters": [
+          {
+            "name": "view",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "year",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/KpiResultListItemDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/results/{id}": {
+      "get": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "GetKpiResult",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KpiResultDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/results/{id}/draft": {
+      "put": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "SaveKpiResultDraft",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KpiDraftInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KpiResultDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/results/{id}/submit": {
+      "post": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "SubmitKpiResult",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KpiSubmitInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KpiResultDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/results/{id}/recall": {
+      "post": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "RecallKpiResult",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KpiVersionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KpiResultDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/results/{id}/decide": {
+      "post": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "DecideKpiResult",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KpiDecisionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KpiResultDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/results/{id}/reopen": {
+      "post": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "ReopenKpiResult",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KpiReasonInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KpiResultDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/results/{id}/open-now": {
+      "post": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "OpenKpiResultNow",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KpiResultDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/approvals": {
+      "get": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "ListKpiApprovalQueue",
+        "parameters": [
+          {
+            "name": "year",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "period",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "unitId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "mine",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/KpiResultListItemDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/approvals/bulk": {
+      "post": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "BulkApproveKpiResults",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KpiBulkInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KpiBulkResultDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/scorecard": {
+      "get": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "GetKpiScorecard",
+        "parameters": [
+          {
+            "name": "year",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "unitId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KpiScorecardDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/dashboard": {
+      "get": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "GetKpiDashboard",
+        "parameters": [
+          {
+            "name": "year",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KpiDashboardDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/data-quality": {
+      "get": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "GetKpiDataQuality",
+        "parameters": [
+          {
+            "name": "year",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/KpiDataQualityDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/export": {
+      "get": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "ExportKpi",
+        "parameters": [
+          {
+            "name": "kind",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "year",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "gem",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "globalStar",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/settings": {
+      "get": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "GetKpiSettings",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingsDocumentOfKpiSettings"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "SaveKpiSettings",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KpiSettingsInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingsDocumentOfKpiSettings"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/cards/{id}/audit": {
+      "get": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "GetKpiCardAuditTrail",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "field",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResultOfAuditEntryDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/cards/{id}/audit/as-of": {
+      "get": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "GetKpiCardAsOf",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "at",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecordSnapshotDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/results/{id}/audit": {
+      "get": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "GetKpiResultAuditTrail",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "field",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResultOfAuditEntryDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/results/{id}/audit/as-of": {
+      "get": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "GetKpiResultAsOf",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "at",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecordSnapshotDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/ai/results/{id}/evidence-check": {
+      "post": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "CheckKpiEvidenceWithAi",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KpiEvidenceCheckDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/ai/anomalies": {
+      "post": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "GetKpiAnomalies",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KpiAnomaliesInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/KpiAnomalyDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/ai/results/{id}/causality": {
+      "post": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "DraftKpiCausalityWithAi",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KpiCausalityInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KpiCausalityDraftDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/ai/card-builder": {
+      "post": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "DraftKpiCardWithAi",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KpiBuilderInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KpiCardDraftDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/ai/card-builder/document": {
+      "post": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "DraftKpiCardFromDocumentWithAi",
+        "parameters": [
+          {
+            "name": "description",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "file"
+                ],
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "$ref": "#/components/schemas/IFormFile"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KpiCardDraftDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/ai/cards/{id}/smart": {
+      "get": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "CheckKpiCardSmart",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SmartCheck"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/ai/cards/{id}/target-suggestion": {
+      "get": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "SuggestKpiTarget",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "year",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KpiTargetSuggestionDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/ai/narrative": {
+      "post": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "DraftKpiNarrativeWithAi",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KpiNarrativeInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KpiNarrativeDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -18368,6 +21060,320 @@
           }
         }
       },
+      "CardValues": {
+        "required": [
+          "nameAr",
+          "nameEn",
+          "descriptionAr",
+          "descriptionEn",
+          "measuringEquation",
+          "processName",
+          "initiatedOn",
+          "typeCode",
+          "indexClassificationCode",
+          "effectivenessCode",
+          "nature",
+          "sourceCodes",
+          "measuringMethodCode",
+          "competitivenessIndicator",
+          "isGlobalStar",
+          "unitCode",
+          "measuringPeriod",
+          "direction",
+          "targetType",
+          "targetSettingMechanism",
+          "allowsNegative",
+          "objectiveId",
+          "sectorGoal",
+          "nationalGoalCode",
+          "visionLinkCode",
+          "gemCriteriaCodes",
+          "criteriaText",
+          "excellenceLink",
+          "departmentUnitId",
+          "responsibleUnitId",
+          "responsibleEmployeeId",
+          "responsibleTeamId",
+          "benchmarkDescription",
+          "benchmarkResult",
+          "level",
+          "parentCardId",
+          "weight",
+          "baselineValue",
+          "baselineYear",
+          "greenFrom",
+          "amberFrom",
+          "formula",
+          "dataElements",
+          "scale"
+        ],
+        "type": "object",
+        "properties": {
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "descriptionAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "descriptionEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "measuringEquation": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "processName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "initiatedOn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "typeCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "indexClassificationCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "effectivenessCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nature": {
+            "type": "string"
+          },
+          "sourceCodes": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "measuringMethodCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "competitivenessIndicator": {
+            "type": "boolean"
+          },
+          "isGlobalStar": {
+            "type": "boolean"
+          },
+          "unitCode": {
+            "type": "string"
+          },
+          "measuringPeriod": {
+            "type": "string"
+          },
+          "direction": {
+            "type": "string"
+          },
+          "targetType": {
+            "type": "string"
+          },
+          "targetSettingMechanism": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "allowsNegative": {
+            "type": "boolean"
+          },
+          "objectiveId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "sectorGoal": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nationalGoalCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "visionLinkCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "gemCriteriaCodes": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "criteriaText": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "excellenceLink": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "departmentUnitId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "responsibleUnitId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "responsibleEmployeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "responsibleTeamId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "benchmarkDescription": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "benchmarkResult": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "level": {
+            "type": "string"
+          },
+          "parentCardId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "weight": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "baselineValue": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "baselineYear": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "greenFrom": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "amberFrom": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "formula": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "dataElements": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/DataElement"
+            }
+          },
+          "scale": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/ScaleLevel"
+            }
+          }
+        },
+        "description": "Everything an author sets on a card (form / API / AI builder)."
+      },
       "ChangedFieldDto": {
         "required": [
           "field",
@@ -18454,6 +21460,30 @@
             ]
           }
         }
+      },
+      "ChecklistItem": {
+        "required": [
+          "code",
+          "labelAr",
+          "labelEn"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "labelAr": {
+            "type": "string"
+          },
+          "labelEn": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean",
+            "default": true
+          }
+        },
+        "description": "A verification checklist item (SPEC K4.3, ADR 0064)."
       },
       "ChecklistItemDto": {
         "required": [
@@ -19221,6 +22251,32 @@
           }
         },
         "description": "A labelled extra button, e.g. \"Approve with conditions\" (outcome approve)."
+      },
+      "DataElement": {
+        "required": [
+          "code",
+          "nameAr",
+          "nameEn"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "description": "A data element of a composite KPI (e.g. numerator / denominator)."
       },
       "DayDto": {
         "required": [
@@ -21866,6 +24922,3796 @@
       "JsonObject": {
         "type": "object"
       },
+      "KpiAnomaliesInput": {
+        "required": [
+          "resultIds"
+        ],
+        "type": "object",
+        "properties": {
+          "resultIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        }
+      },
+      "KpiAnomalyDto": {
+        "required": [
+          "resultId",
+          "flags",
+          "value",
+          "previous"
+        ],
+        "type": "object",
+        "properties": {
+          "resultId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "flags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "value": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "previous": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          }
+        }
+      },
+      "KpiBuilderInput": {
+        "required": [
+          "description"
+        ],
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "KpiBulkInput": {
+        "required": [
+          "resultIds",
+          "comment",
+          "checklistConfirmed"
+        ],
+        "type": "object",
+        "properties": {
+          "resultIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "comment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "checklistConfirmed": {
+            "type": "boolean"
+          }
+        }
+      },
+      "KpiBulkOutcomeDto": {
+        "required": [
+          "resultId",
+          "success",
+          "errorKey"
+        ],
+        "type": "object",
+        "properties": {
+          "resultId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "success": {
+            "type": "boolean"
+          },
+          "errorKey": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "KpiBulkResultDto": {
+        "required": [
+          "approved",
+          "failed",
+          "outcomes"
+        ],
+        "type": "object",
+        "properties": {
+          "approved": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "failed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "outcomes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KpiBulkOutcomeDto"
+            }
+          }
+        }
+      },
+      "KpiCardBody": {
+        "required": [
+          "card",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "card": {
+            "$ref": "#/components/schemas/KpiCardInput"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "KpiCardDraftDto": {
+        "required": [
+          "nameAr",
+          "nameEn",
+          "descriptionAr",
+          "descriptionEn",
+          "measuringEquation",
+          "unitCode",
+          "measuringPeriod",
+          "direction",
+          "targetType",
+          "target",
+          "suggestions",
+          "smart",
+          "usageId"
+        ],
+        "type": "object",
+        "properties": {
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "descriptionAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "descriptionEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "measuringEquation": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "unitCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "measuringPeriod": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "direction": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "targetType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "target": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "suggestions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "smart": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SmartCheck"
+            }
+          },
+          "usageId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          }
+        }
+      },
+      "KpiCardDto": {
+        "required": [
+          "id",
+          "code",
+          "values",
+          "status",
+          "closedOn",
+          "departmentUnit",
+          "responsibleUnit",
+          "responsiblePerson",
+          "objectiveNameAr",
+          "objectiveNameEn",
+          "perspectiveId",
+          "perspectiveNameAr",
+          "perspectiveNameEn",
+          "parentCode",
+          "targets",
+          "children",
+          "cascadedScore",
+          "maxAchieved",
+          "definitionVersion",
+          "yearStarted",
+          "canManage",
+          "changeControlled",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "values": {
+            "$ref": "#/components/schemas/CardValues"
+          },
+          "status": {
+            "type": "string"
+          },
+          "closedOn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "departmentUnit": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/KpiUnitDto"
+              }
+            ]
+          },
+          "responsibleUnit": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/KpiUnitDto"
+              }
+            ]
+          },
+          "responsiblePerson": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/KpiPersonDto"
+              }
+            ]
+          },
+          "objectiveNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "objectiveNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "perspectiveId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "perspectiveNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "perspectiveNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "parentCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "targets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KpiCardTargetDto"
+            }
+          },
+          "children": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KpiChildCardDto"
+            }
+          },
+          "cascadedScore": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "maxAchieved": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "definitionVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "yearStarted": {
+            "type": "boolean"
+          },
+          "canManage": {
+            "type": "boolean"
+          },
+          "changeControlled": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "KpiCardInput": {
+        "required": [
+          "code",
+          "values"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "values": {
+            "$ref": "#/components/schemas/CardValues"
+          },
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "KpiCardListItemDto": {
+        "required": [
+          "id",
+          "code",
+          "nameAr",
+          "nameEn",
+          "status",
+          "typeCode",
+          "unitCode",
+          "measuringPeriod",
+          "direction",
+          "level",
+          "responsibleUnit",
+          "responsiblePerson",
+          "objectiveId",
+          "objectiveNameAr",
+          "objectiveNameEn",
+          "isGlobalStar",
+          "gemCriteria",
+          "year",
+          "targetType",
+          "target",
+          "rangeMin",
+          "rangeMax",
+          "achieved",
+          "actual",
+          "capped",
+          "rag"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "typeCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "unitCode": {
+            "type": "string"
+          },
+          "measuringPeriod": {
+            "type": "string"
+          },
+          "direction": {
+            "type": "string"
+          },
+          "level": {
+            "type": "string"
+          },
+          "responsibleUnit": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/KpiUnitDto"
+              }
+            ]
+          },
+          "responsiblePerson": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/KpiPersonDto"
+              }
+            ]
+          },
+          "objectiveId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "objectiveNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "objectiveNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "isGlobalStar": {
+            "type": "boolean"
+          },
+          "gemCriteria": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "year": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "targetType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "target": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rangeMin": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rangeMax": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "achieved": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "actual": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "capped": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rag": {
+            "type": "string"
+          }
+        }
+      },
+      "KpiCardOptionDto": {
+        "required": [
+          "id",
+          "code",
+          "nameAr",
+          "nameEn"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "KpiCardStatusInput": {
+        "required": [
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "KpiCardTargetDto": {
+        "required": [
+          "year",
+          "targetType",
+          "target",
+          "rangeMin",
+          "rangeMax"
+        ],
+        "type": "object",
+        "properties": {
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "targetType": {
+            "type": "string"
+          },
+          "target": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rangeMin": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rangeMax": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          }
+        }
+      },
+      "KpiCardVersionDto": {
+        "required": [
+          "versionNo",
+          "snapshot",
+          "reason",
+          "changeRequestId",
+          "createdAt",
+          "createdBy"
+        ],
+        "type": "object",
+        "properties": {
+          "versionNo": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "snapshot": {
+            "type": "string"
+          },
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "changeRequestId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "createdBy": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          }
+        }
+      },
+      "KpiCausalityDraftDto": {
+        "required": [
+          "causality",
+          "correctiveActions",
+          "weak",
+          "weakReasons",
+          "usageId"
+        ],
+        "type": "object",
+        "properties": {
+          "causality": {
+            "type": "string"
+          },
+          "correctiveActions": {
+            "type": "string"
+          },
+          "weak": {
+            "type": "boolean"
+          },
+          "weakReasons": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "usageId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "KpiCausalityInput": {
+        "required": [
+          "notes"
+        ],
+        "type": "object",
+        "properties": {
+          "notes": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "KpiChangeDto": {
+        "required": [
+          "id",
+          "cardId",
+          "cardCode",
+          "cardNameAr",
+          "cardNameEn",
+          "year",
+          "proposed",
+          "current",
+          "reason",
+          "status",
+          "createdAt",
+          "decidedAt",
+          "decisionComment",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "cardId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "cardCode": {
+            "type": "string"
+          },
+          "cardNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "cardNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "proposed": {
+            "$ref": "#/components/schemas/ProposedChange"
+          },
+          "current": {
+            "$ref": "#/components/schemas/ProposedChange"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "decidedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "decisionComment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "KpiChangeInput": {
+        "required": [
+          "proposed",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "proposed": {
+            "$ref": "#/components/schemas/ProposedChange"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      },
+      "KpiChildCardDto": {
+        "required": [
+          "id",
+          "code",
+          "nameAr",
+          "nameEn",
+          "weight",
+          "capped",
+          "rag"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "weight": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "capped": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rag": {
+            "type": "string"
+          }
+        }
+      },
+      "KpiConfirmInput": {
+        "required": [
+          "planIds"
+        ],
+        "type": "object",
+        "properties": {
+          "planIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        }
+      },
+      "KpiCountDto": {
+        "required": [
+          "key",
+          "labelAr",
+          "labelEn",
+          "count",
+          "score"
+        ],
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "labelAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "labelEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "score": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          }
+        }
+      },
+      "KpiDashboardDto": {
+        "required": [
+          "year",
+          "totalCards",
+          "activeCards",
+          "plansThisYear",
+          "organisationScore",
+          "organisationRag",
+          "byType",
+          "byDepartment",
+          "byObjective",
+          "achievement",
+          "pendingUpdates",
+          "overdue",
+          "approvalBacklog",
+          "approvedResults",
+          "top",
+          "bottom",
+          "rag"
+        ],
+        "type": "object",
+        "properties": {
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalCards": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "activeCards": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "plansThisYear": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "organisationScore": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "organisationRag": {
+            "type": "string"
+          },
+          "byType": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KpiCountDto"
+            }
+          },
+          "byDepartment": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KpiCountDto"
+            }
+          },
+          "byObjective": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KpiCountDto"
+            }
+          },
+          "achievement": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KpiCountDto"
+            }
+          },
+          "pendingUpdates": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "overdue": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "approvalBacklog": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "approvedResults": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "top": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KpiPerformerDto"
+            }
+          },
+          "bottom": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KpiPerformerDto"
+            }
+          },
+          "rag": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KpiCountDto"
+            }
+          }
+        }
+      },
+      "KpiDataQualityDto": {
+        "required": [
+          "unit",
+          "due",
+          "submitted",
+          "onTimeRate",
+          "rejectionRate",
+          "evidenceCompleteness",
+          "score"
+        ],
+        "type": "object",
+        "properties": {
+          "unit": {
+            "$ref": "#/components/schemas/KpiUnitDto"
+          },
+          "due": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "submitted": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "onTimeRate": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rejectionRate": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "evidenceCompleteness": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "score": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          }
+        }
+      },
+      "KpiDecisionInput": {
+        "required": [
+          "action",
+          "comment",
+          "checklist"
+        ],
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string"
+          },
+          "comment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "checklist": {
+            "type": [
+              "null",
+              "object"
+            ],
+            "additionalProperties": {
+              "type": "boolean"
+            }
+          }
+        }
+      },
+      "KpiDepartmentScoreDto": {
+        "required": [
+          "unit",
+          "score",
+          "rag",
+          "kpiCount",
+          "reported"
+        ],
+        "type": "object",
+        "properties": {
+          "unit": {
+            "$ref": "#/components/schemas/KpiUnitDto"
+          },
+          "score": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rag": {
+            "type": "string"
+          },
+          "kpiCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "reported": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "KpiDraftInput": {
+        "required": [
+          "entry",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "entry": {
+            "$ref": "#/components/schemas/KpiEntryInput"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "KpiElementDto": {
+        "required": [
+          "id",
+          "kind",
+          "code",
+          "nameAr",
+          "nameEn",
+          "descriptionAr",
+          "descriptionEn",
+          "parentId",
+          "weight",
+          "sort",
+          "active",
+          "cycleStartYear",
+          "cycleEndYear",
+          "cardCount",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "descriptionAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "descriptionEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "parentId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "weight": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "sort": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "cycleStartYear": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "cycleEndYear": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "cardCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "KpiElementInput": {
+        "required": [
+          "id",
+          "kind",
+          "code",
+          "nameAr",
+          "nameEn",
+          "descriptionAr",
+          "descriptionEn",
+          "parentId",
+          "weight",
+          "sort",
+          "active",
+          "cycleStartYear",
+          "cycleEndYear",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "descriptionAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "descriptionEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "parentId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "weight": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "sort": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "cycleStartYear": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "cycleEndYear": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "version": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          }
+        }
+      },
+      "KpiElementOptionDto": {
+        "required": [
+          "id",
+          "kind",
+          "code",
+          "nameAr",
+          "nameEn",
+          "parentId",
+          "active"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "parentId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "active": {
+            "type": "boolean"
+          }
+        }
+      },
+      "KpiEntryInput": {
+        "required": [
+          "achieve",
+          "elementValues",
+          "scaleValue",
+          "causality",
+          "correctiveActions",
+          "notes",
+          "notApplicable",
+          "naReason"
+        ],
+        "type": "object",
+        "properties": {
+          "achieve": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "elementValues": {
+            "type": [
+              "null",
+              "object"
+            ],
+            "additionalProperties": {
+              "type": [
+                "null",
+                "number"
+              ],
+              "format": "double"
+            }
+          },
+          "scaleValue": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "causality": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "correctiveActions": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "notes": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "notApplicable": {
+            "type": "boolean"
+          },
+          "naReason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "KpiEvidenceCheckDto": {
+        "required": [
+          "valueFound",
+          "periodMatches",
+          "missing",
+          "summary",
+          "documents",
+          "usageId"
+        ],
+        "type": "object",
+        "properties": {
+          "valueFound": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          },
+          "periodMatches": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          },
+          "missing": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "summary": {
+            "type": "string"
+          },
+          "documents": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "usageId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "KpiLockInput": {
+        "required": [
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "KpiMapObjectiveDto": {
+        "required": [
+          "id",
+          "code",
+          "nameAr",
+          "nameEn",
+          "score",
+          "rag",
+          "kpiCount"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "score": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rag": {
+            "type": "string"
+          },
+          "kpiCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "KpiMapPerspectiveDto": {
+        "required": [
+          "id",
+          "code",
+          "nameAr",
+          "nameEn",
+          "score",
+          "rag",
+          "objectives"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "code": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "score": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rag": {
+            "type": "string"
+          },
+          "objectives": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KpiMapObjectiveDto"
+            }
+          }
+        }
+      },
+      "KpiNarrativeDto": {
+        "required": [
+          "reportAr",
+          "reportEn",
+          "usageId"
+        ],
+        "type": "object",
+        "properties": {
+          "reportAr": {
+            "type": "string"
+          },
+          "reportEn": {
+            "type": "string"
+          },
+          "usageId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "KpiNarrativeInput": {
+        "required": [
+          "year",
+          "unitId"
+        ],
+        "type": "object",
+        "properties": {
+          "year": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "unitId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          }
+        }
+      },
+      "KpiOptionDto": {
+        "required": [
+          "code",
+          "labelAr",
+          "labelEn"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "labelAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "labelEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "KpiOptionsDto": {
+        "required": [
+          "lookups",
+          "elements",
+          "cards",
+          "measuringPeriods",
+          "directions",
+          "targetTypes",
+          "natures",
+          "levels",
+          "manualCodes",
+          "greenFrom",
+          "amberFrom",
+          "checklist",
+          "canManageCards",
+          "canManagePlans",
+          "canReview",
+          "canManageStrategy"
+        ],
+        "type": "object",
+        "properties": {
+          "lookups": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/KpiOptionDto"
+              }
+            }
+          },
+          "elements": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KpiElementOptionDto"
+            }
+          },
+          "cards": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KpiCardOptionDto"
+            }
+          },
+          "measuringPeriods": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "directions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "targetTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "natures": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "levels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "manualCodes": {
+            "type": "boolean"
+          },
+          "greenFrom": {
+            "type": "number",
+            "format": "double"
+          },
+          "amberFrom": {
+            "type": "number",
+            "format": "double"
+          },
+          "checklist": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChecklistItem"
+            }
+          },
+          "canManageCards": {
+            "type": "boolean"
+          },
+          "canManagePlans": {
+            "type": "boolean"
+          },
+          "canReview": {
+            "type": "boolean"
+          },
+          "canManageStrategy": {
+            "type": "boolean"
+          }
+        }
+      },
+      "KpiPerformanceDto": {
+        "required": [
+          "cardId",
+          "years",
+          "periods",
+          "benchmarkResult",
+          "baselineValue",
+          "baselineYear"
+        ],
+        "type": "object",
+        "properties": {
+          "cardId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "years": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KpiYearPointDto"
+            }
+          },
+          "periods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KpiPeriodPointDto"
+            }
+          },
+          "benchmarkResult": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "baselineValue": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "baselineYear": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          }
+        }
+      },
+      "KpiPerformerDto": {
+        "required": [
+          "cardId",
+          "code",
+          "nameAr",
+          "nameEn",
+          "actual",
+          "capped",
+          "rag"
+        ],
+        "type": "object",
+        "properties": {
+          "cardId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "actual": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "capped": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rag": {
+            "type": "string"
+          }
+        }
+      },
+      "KpiPeriodPointDto": {
+        "required": [
+          "resultId",
+          "year",
+          "periodCode",
+          "target",
+          "rangeMin",
+          "rangeMax",
+          "achieve",
+          "actual",
+          "capped",
+          "rag",
+          "status",
+          "notApplicable"
+        ],
+        "type": "object",
+        "properties": {
+          "resultId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "periodCode": {
+            "type": "string"
+          },
+          "target": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rangeMin": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rangeMax": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "achieve": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "actual": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "capped": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rag": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "notApplicable": {
+            "type": "boolean"
+          }
+        }
+      },
+      "KpiPeriodTargetInput": {
+        "required": [
+          "resultId",
+          "target",
+          "rangeMin",
+          "rangeMax"
+        ],
+        "type": "object",
+        "properties": {
+          "resultId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "target": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rangeMin": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rangeMax": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          }
+        }
+      },
+      "KpiPersonDto": {
+        "required": [
+          "id",
+          "nameAr",
+          "nameEn"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "KpiPlanDto": {
+        "required": [
+          "plan",
+          "isAccumulated",
+          "responsiblePerson",
+          "periods",
+          "aggregationRule",
+          "canManage"
+        ],
+        "type": "object",
+        "properties": {
+          "plan": {
+            "$ref": "#/components/schemas/KpiPlanListItemDto"
+          },
+          "isAccumulated": {
+            "type": "boolean"
+          },
+          "responsiblePerson": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/KpiPersonDto"
+              }
+            ]
+          },
+          "periods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KpiPlanPeriodDto"
+            }
+          },
+          "aggregationRule": {
+            "type": "string"
+          },
+          "canManage": {
+            "type": "boolean"
+          }
+        }
+      },
+      "KpiPlanInput": {
+        "required": [
+          "targetType",
+          "target",
+          "rangeMin",
+          "rangeMax",
+          "unitCode",
+          "direction",
+          "isAccumulated",
+          "responsibleEmployeeId",
+          "periods",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "targetType": {
+            "type": "string"
+          },
+          "target": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rangeMin": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rangeMax": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "unitCode": {
+            "type": "string"
+          },
+          "direction": {
+            "type": "string"
+          },
+          "isAccumulated": {
+            "type": "boolean"
+          },
+          "responsibleEmployeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "periods": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/KpiPeriodTargetInput"
+            }
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "KpiPlanListItemDto": {
+        "required": [
+          "id",
+          "cardId",
+          "cardCode",
+          "cardNameAr",
+          "cardNameEn",
+          "year",
+          "measuringPeriod",
+          "unitCode",
+          "direction",
+          "targetType",
+          "target",
+          "rangeMin",
+          "rangeMax",
+          "status",
+          "responsibleUnit",
+          "achieved",
+          "actual",
+          "capped",
+          "rag",
+          "approvedCount",
+          "totalPeriods",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "cardId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "cardCode": {
+            "type": "string"
+          },
+          "cardNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "cardNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "measuringPeriod": {
+            "type": "string"
+          },
+          "unitCode": {
+            "type": "string"
+          },
+          "direction": {
+            "type": "string"
+          },
+          "targetType": {
+            "type": "string"
+          },
+          "target": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rangeMin": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rangeMax": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "status": {
+            "type": "string"
+          },
+          "responsibleUnit": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/KpiUnitDto"
+              }
+            ]
+          },
+          "achieved": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "actual": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "capped": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rag": {
+            "type": "string"
+          },
+          "approvedCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPeriods": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "KpiPlanPeriodDto": {
+        "required": [
+          "resultId",
+          "periodCode",
+          "periodStart",
+          "periodEnd",
+          "target",
+          "rangeMin",
+          "rangeMax",
+          "status",
+          "opensOn",
+          "dueOn",
+          "achieve",
+          "actual",
+          "capped",
+          "notApplicable",
+          "late"
+        ],
+        "type": "object",
+        "properties": {
+          "resultId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "periodCode": {
+            "type": "string"
+          },
+          "periodStart": {
+            "type": "string",
+            "format": "date"
+          },
+          "periodEnd": {
+            "type": "string",
+            "format": "date"
+          },
+          "target": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rangeMin": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rangeMax": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "status": {
+            "type": "string"
+          },
+          "opensOn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "dueOn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "achieve": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "actual": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "capped": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "notApplicable": {
+            "type": "boolean"
+          },
+          "late": {
+            "type": "boolean"
+          }
+        }
+      },
+      "KpiReasonInput": {
+        "required": [
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string"
+          }
+        }
+      },
+      "KpiResultCardDto": {
+        "required": [
+          "id",
+          "code",
+          "nameAr",
+          "nameEn",
+          "measuringEquation",
+          "nature",
+          "unitCode",
+          "direction",
+          "formula",
+          "dataElements",
+          "scale",
+          "allowsNegative",
+          "measuringPeriod"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "measuringEquation": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nature": {
+            "type": "string"
+          },
+          "unitCode": {
+            "type": "string"
+          },
+          "direction": {
+            "type": "string"
+          },
+          "formula": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "dataElements": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DataElement"
+            }
+          },
+          "scale": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ScaleLevel"
+            }
+          },
+          "allowsNegative": {
+            "type": "boolean"
+          },
+          "measuringPeriod": {
+            "type": "string"
+          }
+        }
+      },
+      "KpiResultDto": {
+        "required": [
+          "id",
+          "card",
+          "planId",
+          "year",
+          "periodCode",
+          "periodStart",
+          "periodEnd",
+          "targetType",
+          "target",
+          "rangeMin",
+          "rangeMax",
+          "achieve",
+          "elementValues",
+          "scaleValue",
+          "actual",
+          "capped",
+          "rag",
+          "achieved",
+          "causality",
+          "correctiveActions",
+          "notes",
+          "notApplicable",
+          "naReason",
+          "status",
+          "opensOn",
+          "dueOn",
+          "dueAt",
+          "submittedAt",
+          "owner",
+          "ownerUnit",
+          "late",
+          "daysLate",
+          "approvedAt",
+          "returnCount",
+          "reopenedCount",
+          "statusReason",
+          "checklist",
+          "history",
+          "anomalies",
+          "evidenceCount",
+          "draftFromMcp",
+          "can",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "card": {
+            "$ref": "#/components/schemas/KpiResultCardDto"
+          },
+          "planId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "periodCode": {
+            "type": "string"
+          },
+          "periodStart": {
+            "type": "string",
+            "format": "date"
+          },
+          "periodEnd": {
+            "type": "string",
+            "format": "date"
+          },
+          "targetType": {
+            "type": "string"
+          },
+          "target": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rangeMin": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rangeMax": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "achieve": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "elementValues": {
+            "type": "object",
+            "additionalProperties": {
+              "type": [
+                "null",
+                "number"
+              ],
+              "format": "double"
+            }
+          },
+          "scaleValue": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "actual": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "capped": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rag": {
+            "type": "string"
+          },
+          "achieved": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          },
+          "causality": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "correctiveActions": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "notes": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "notApplicable": {
+            "type": "boolean"
+          },
+          "naReason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "opensOn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "dueOn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "dueAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "submittedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "owner": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/KpiPersonDto"
+              }
+            ]
+          },
+          "ownerUnit": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/KpiUnitDto"
+              }
+            ]
+          },
+          "late": {
+            "type": "boolean"
+          },
+          "daysLate": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "approvedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "returnCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "reopenedCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "statusReason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "checklist": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "boolean"
+            }
+          },
+          "history": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KpiPeriodPointDto"
+            }
+          },
+          "anomalies": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "evidenceCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "draftFromMcp": {
+            "type": "boolean"
+          },
+          "can": {
+            "$ref": "#/components/schemas/KpiResultPermissionsDto"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "KpiResultListItemDto": {
+        "required": [
+          "id",
+          "cardId",
+          "cardCode",
+          "cardNameAr",
+          "cardNameEn",
+          "year",
+          "periodCode",
+          "targetType",
+          "target",
+          "rangeMin",
+          "rangeMax",
+          "unitCode",
+          "achieve",
+          "capped",
+          "rag",
+          "status",
+          "dueOn",
+          "overdue",
+          "late",
+          "daysLate",
+          "ownerUnit",
+          "owner",
+          "submittedAt",
+          "notApplicable",
+          "evidenceCount",
+          "anomalies",
+          "myDecision",
+          "stepNameAr",
+          "stepNameEn"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "cardId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "cardCode": {
+            "type": "string"
+          },
+          "cardNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "cardNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "periodCode": {
+            "type": "string"
+          },
+          "targetType": {
+            "type": "string"
+          },
+          "target": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rangeMin": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rangeMax": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "unitCode": {
+            "type": "string"
+          },
+          "achieve": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "capped": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rag": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "dueOn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "overdue": {
+            "type": "boolean"
+          },
+          "late": {
+            "type": "boolean"
+          },
+          "daysLate": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ownerUnit": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/KpiUnitDto"
+              }
+            ]
+          },
+          "owner": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/KpiPersonDto"
+              }
+            ]
+          },
+          "submittedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "notApplicable": {
+            "type": "boolean"
+          },
+          "evidenceCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "anomalies": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "myDecision": {
+            "type": "boolean"
+          },
+          "stepNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "stepNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "KpiResultPermissionsDto": {
+        "required": [
+          "submit",
+          "recall",
+          "review",
+          "reopen",
+          "openNow",
+          "lock"
+        ],
+        "type": "object",
+        "properties": {
+          "submit": {
+            "type": "boolean"
+          },
+          "recall": {
+            "type": "boolean"
+          },
+          "review": {
+            "type": "boolean"
+          },
+          "reopen": {
+            "type": "boolean"
+          },
+          "openNow": {
+            "type": "boolean"
+          },
+          "lock": {
+            "type": "boolean"
+          }
+        }
+      },
+      "KpiScorecardDto": {
+        "required": [
+          "year",
+          "unit",
+          "root",
+          "departments"
+        ],
+        "type": "object",
+        "properties": {
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unit": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/KpiUnitDto"
+              }
+            ]
+          },
+          "root": {
+            "$ref": "#/components/schemas/KpiScoreNodeDto"
+          },
+          "departments": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KpiDepartmentScoreDto"
+            }
+          }
+        }
+      },
+      "KpiScoreNodeDto": {
+        "required": [
+          "id",
+          "kind",
+          "code",
+          "nameAr",
+          "nameEn",
+          "weight",
+          "score",
+          "rag",
+          "actual",
+          "kpiCount",
+          "children"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "code": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "weight": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "score": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rag": {
+            "type": "string"
+          },
+          "actual": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "kpiCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "children": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KpiScoreNodeDto"
+            }
+          }
+        }
+      },
+      "KpiSettings": {
+        "type": "object",
+        "properties": {
+          "windowRules": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WindowRule"
+            }
+          },
+          "reminderWorkingDaysBefore": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "escalationWorkingDaysAfter": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "requireEvidence": {
+            "type": "boolean"
+          },
+          "requirePlanConfirmation": {
+            "type": "boolean"
+          },
+          "manualCodes": {
+            "type": "boolean"
+          },
+          "greenFrom": {
+            "type": "number",
+            "format": "double"
+          },
+          "amberFrom": {
+            "type": "number",
+            "format": "double"
+          },
+          "missedIncludesAmber": {
+            "type": "boolean",
+            "description": "Publish `KpiTargetMissed` for amber results too (red always)."
+          },
+          "anomalyJumpRatio": {
+            "type": "number",
+            "format": "double"
+          },
+          "measuringMethods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MeasuringMethodRule"
+            }
+          },
+          "checklist": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChecklistItem"
+            }
+          }
+        },
+        "description": "Settings → KPI (docs/design/kpi.md §4, §5, §7; ADR 0060 / 0064)."
+      },
+      "KpiSettingsInput": {
+        "required": [
+          "settings",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "settings": {
+            "$ref": "#/components/schemas/KpiSettings"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "KpiStrategyMapDto": {
+        "required": [
+          "year",
+          "visionNameAr",
+          "visionNameEn",
+          "score",
+          "rag",
+          "perspectives"
+        ],
+        "type": "object",
+        "properties": {
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "visionNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "visionNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "score": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rag": {
+            "type": "string"
+          },
+          "perspectives": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KpiMapPerspectiveDto"
+            }
+          }
+        }
+      },
+      "KpiSubmitInput": {
+        "required": [
+          "entry",
+          "comment",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "entry": {
+            "$ref": "#/components/schemas/KpiEntryInput"
+          },
+          "comment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "KpiTargetsInput": {
+        "required": [
+          "targets"
+        ],
+        "type": "object",
+        "properties": {
+          "targets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KpiCardTargetDto"
+            }
+          }
+        }
+      },
+      "KpiTargetSuggestionDto": {
+        "required": [
+          "cardId",
+          "year",
+          "suggested",
+          "trend",
+          "reasons"
+        ],
+        "type": "object",
+        "properties": {
+          "cardId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "suggested": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "trend": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "reasons": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TargetReason"
+            }
+          }
+        }
+      },
+      "KpiUnitDto": {
+        "required": [
+          "id",
+          "code",
+          "nameAr",
+          "nameEn"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "KpiVersionInput": {
+        "required": [
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "KpiWindowDto": {
+        "required": [
+          "year",
+          "periodCode",
+          "opensOn",
+          "dueOn",
+          "locked",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "periodCode": {
+            "type": "string"
+          },
+          "opensOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "dueOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "locked": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "KpiWindowInput": {
+        "required": [
+          "periodCode",
+          "opensOn",
+          "dueOn"
+        ],
+        "type": "object",
+        "properties": {
+          "periodCode": {
+            "type": "string"
+          },
+          "opensOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "dueOn": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      },
+      "KpiWindowsInput": {
+        "required": [
+          "windows"
+        ],
+        "type": "object",
+        "properties": {
+          "windows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KpiWindowInput"
+            }
+          }
+        }
+      },
+      "KpiWithdrawInput": {
+        "required": [
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "KpiYearCardDto": {
+        "required": [
+          "cardId",
+          "code",
+          "nameAr",
+          "nameEn",
+          "responsibleUnit",
+          "measuringPeriod",
+          "unitCode",
+          "direction",
+          "targetType",
+          "target",
+          "rangeMin",
+          "rangeMax",
+          "isAccumulated",
+          "targetSource",
+          "hasPlan"
+        ],
+        "type": "object",
+        "properties": {
+          "cardId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "responsibleUnit": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/KpiUnitDto"
+              }
+            ]
+          },
+          "measuringPeriod": {
+            "type": "string"
+          },
+          "unitCode": {
+            "type": "string"
+          },
+          "direction": {
+            "type": "string"
+          },
+          "targetType": {
+            "type": "string"
+          },
+          "target": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rangeMin": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rangeMax": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "isAccumulated": {
+            "type": "boolean"
+          },
+          "targetSource": {
+            "type": "string"
+          },
+          "hasPlan": {
+            "type": "boolean"
+          }
+        }
+      },
+      "KpiYearItemInput": {
+        "required": [
+          "cardId",
+          "include",
+          "measuringPeriod",
+          "unitCode",
+          "direction",
+          "targetType",
+          "target",
+          "rangeMin",
+          "rangeMax",
+          "isAccumulated"
+        ],
+        "type": "object",
+        "properties": {
+          "cardId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "include": {
+            "type": "boolean"
+          },
+          "measuringPeriod": {
+            "type": "string"
+          },
+          "unitCode": {
+            "type": "string"
+          },
+          "direction": {
+            "type": "string"
+          },
+          "targetType": {
+            "type": "string"
+          },
+          "target": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rangeMin": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rangeMax": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "isAccumulated": {
+            "type": "boolean"
+          }
+        }
+      },
+      "KpiYearPointDto": {
+        "required": [
+          "year",
+          "targetType",
+          "target",
+          "rangeMin",
+          "rangeMax",
+          "achieved",
+          "actual",
+          "capped",
+          "rag",
+          "approvedCount",
+          "totalPeriods"
+        ],
+        "type": "object",
+        "properties": {
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "targetType": {
+            "type": "string"
+          },
+          "target": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rangeMin": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rangeMax": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "achieved": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "actual": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "capped": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rag": {
+            "type": "string"
+          },
+          "approvedCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPeriods": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "KpiYearPreviewDto": {
+        "required": [
+          "year",
+          "cards",
+          "existingPlans"
+        ],
+        "type": "object",
+        "properties": {
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cards": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KpiYearCardDto"
+            }
+          },
+          "existingPlans": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "KpiYearStartedDto": {
+        "required": [
+          "year",
+          "plansCreated",
+          "resultsCreated",
+          "skipped",
+          "windowsCreated"
+        ],
+        "type": "object",
+        "properties": {
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "plansCreated": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "resultsCreated": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "skipped": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "windowsCreated": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "KpiYearStartInput": {
+        "required": [
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KpiYearItemInput"
+            }
+          }
+        }
+      },
       "LevelInput": {
         "required": [
           "code",
@@ -22642,6 +29488,22 @@
           }
         },
         "description": "Per tool: null keeps the tool's default (read on, write and approve off)."
+      },
+      "MeasuringMethodRule": {
+        "required": [
+          "code",
+          "rule"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "rule": {
+            "type": "string"
+          }
+        },
+        "description": "A Measuring Method code mapped to its aggregation rule (SPEC K5)."
       },
       "MeDto": {
         "required": [
@@ -25325,6 +32187,40 @@
         },
         "description": "One page of items plus the total count across all pages."
       },
+      "PagedResultOfKpiCardListItemDto": {
+        "required": [
+          "items",
+          "page",
+          "pageSize",
+          "totalCount"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KpiCardListItemDto"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "description": "One page of items plus the total count across all pages."
+      },
       "PagedResultOfProjectListItemDto": {
         "required": [
           "items",
@@ -26790,6 +33686,73 @@
             "type": "string"
           }
         }
+      },
+      "ProposedChange": {
+        "required": [
+          "measuringEquation",
+          "formula",
+          "unitCode",
+          "direction",
+          "targetType",
+          "target",
+          "rangeMin",
+          "rangeMax"
+        ],
+        "type": "object",
+        "properties": {
+          "measuringEquation": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "formula": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "unitCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "direction": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "targetType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "target": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rangeMin": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rangeMax": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          }
+        },
+        "description": "What a definition change proposes (null = unchanged)."
       },
       "ProviderDto": {
         "required": [
@@ -29382,6 +36345,33 @@
           }
         }
       },
+      "ScaleLevel": {
+        "required": [
+          "value",
+          "labelAr",
+          "labelEn"
+        ],
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "number",
+            "format": "double"
+          },
+          "labelAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "labelEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "description": "A level of a qualitative KPI's scale."
+      },
       "SecuritySettingsDto": {
         "required": [
           "passwordMinLength",
@@ -29554,6 +36544,29 @@
               },
               {
                 "$ref": "#/components/schemas/FilesSettings"
+              }
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "SettingsDocumentOfKpiSettings": {
+        "required": [
+          "value",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "value": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/KpiSettings"
               }
             ]
           },
@@ -29751,6 +36764,22 @@
             "format": "double"
           }
         }
+      },
+      "SmartCheck": {
+        "required": [
+          "code",
+          "passed"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "passed": {
+            "type": "boolean"
+          }
+        },
+        "description": "One check of the SMART quality review of a KPI card (SPEC §2.9 KPI card builder)."
       },
       "SmtpSettingsDto": {
         "required": [
@@ -30406,6 +37435,32 @@
             "format": "uint32"
           }
         }
+      },
+      "TargetReason": {
+        "required": [
+          "key"
+        ],
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "value": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "year": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          }
+        },
+        "description": "A target proposal with the reasons behind it (message keys with parameters)."
       },
       "TaskActionInput": {
         "required": [
@@ -34229,6 +41284,28 @@
           }
         }
       },
+      "WindowRule": {
+        "required": [
+          "periodCode",
+          "opensDaysAfterEnd",
+          "dueDaysAfterOpen"
+        ],
+        "type": "object",
+        "properties": {
+          "periodCode": {
+            "type": "string"
+          },
+          "opensDaysAfterEnd": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "dueDaysAfterOpen": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "description": "A submission-window rule (ADR 0060)."
+      },
       "WorkloadDto": {
         "required": [
           "employee",
@@ -34354,6 +41431,9 @@
     },
     {
       "name": "portfolio"
+    },
+    {
+      "name": "kpi"
     }
   ]
 }

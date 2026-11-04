@@ -1,6 +1,6 @@
 # 0063 — KPI definition change control
 
-- **Status:** Proposed (Phase 12) — awaiting owner acceptance
+- **Status:** Accepted by the owner (Phase 12, before the pull request)
 - **Context:** SPEC §2.7: changes to target, equation, unit or direction after the year starts require Strategy Office approval; full
   version history.
 

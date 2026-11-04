@@ -1,6 +1,6 @@
 # 0060 — KPI period windows, reminders and the late flag
 
-- **Status:** Proposed (Phase 12) — awaiting owner acceptance
+- **Status:** Accepted by the owner (Phase 12, before the pull request)
 - **Context:** SPEC §2.4 K2 and Appendix A Q-K2: windows open the day after the period ends and are due on the 15th day; H2 / Full Year
   open 1 January of the following year and are due 31 January. Late submission is allowed and flagged. Q4 and Two Year are not named.
 

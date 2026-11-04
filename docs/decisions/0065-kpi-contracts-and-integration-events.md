@@ -1,6 +1,6 @@
 # 0065 — KPI contracts for other systems and integration events
 
-- **Status:** Proposed (Phase 12) — awaiting owner acceptance
+- **Status:** Accepted by the owner (Phase 12, before the pull request)
 - **Context:** SPEC §2.3 D, §2.8, Appendix A Q-P6; BUILD_PLAN Phase 12: contracts now, consumers later (Portfolio Phase 9, Risk Phase 13,
   CAP Phase 15).
 

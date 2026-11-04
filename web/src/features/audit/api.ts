@@ -11,15 +11,7 @@ export type AuditSearch = NonNullable<operations['SearchAuditEntries']['paramete
 
 /** Records that have a History tab. Each maps to its owner's audit endpoint, which checks access to the record first. */
 export type AuditedRecord =
-  | 'sample'
-  | 'employee'
-  | 'unit'
-  | 'role'
-  | 'task'
-  | 'team'
-  | 'request'
-  | 'kpiCard'
-  | 'kpiResult';
+  'sample' | 'employee' | 'unit' | 'role' | 'task' | 'team' | 'request' | 'kpiCard' | 'kpiResult';
 
 interface HistoryQuery {
   page?: number;

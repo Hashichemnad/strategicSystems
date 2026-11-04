@@ -70,7 +70,8 @@ Existing tests updated for Phase 12 facts: the job dashboard lists `kpi.period-w
 
 **Dependencies added:** none (NuGet or npm).
 
-## Decisions (ADRs) — proposed, awaiting the owner
+## Decisions (ADRs)
+All six were **accepted by the owner** as proposed before the pull request.
 - [0060](../decisions/0060-kpi-period-windows.md) Window rules (Q-K2), Q4 due 31 January with the year-end periods, due moment in working
   time, reminders / escalation, late flag.
 - [0061](../decisions/0061-kpi-result-lifecycle-and-values.md) Result lifecycle; reject and return both unlock; **N/A is a verified

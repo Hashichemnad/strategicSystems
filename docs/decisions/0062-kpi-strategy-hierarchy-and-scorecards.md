@@ -1,6 +1,6 @@
 # 0062 — Strategy hierarchy, cascading and weighted scorecards
 
-- **Status:** Proposed (Phase 12) — awaiting owner acceptance
+- **Status:** Accepted by the owner (Phase 12, before the pull request)
 - **Context:** SPEC §2.7: Vision → Pillars / Perspectives → Objectives → KPIs, strategy map, cascading organisation → department → section
   KPIs with roll-up, weighted scorecards using capped performance.
 

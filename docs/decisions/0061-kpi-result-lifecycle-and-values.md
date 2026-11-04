@@ -1,6 +1,6 @@
 # 0061 — KPI result lifecycle, Not Applicable and value units
 
-- **Status:** Proposed (Phase 12) — awaiting owner acceptance
+- **Status:** Accepted by the owner (Phase 12, before the pull request)
 - **Context:** SPEC §2.4 K3/K4: submit locks the result, the owner can recall while pending, reject / return unlock it with mandatory
   comments, the Strategy Office reopens a result or a period, the PMO can lock a period at year end; N/A excludes a period from calculations.
 
