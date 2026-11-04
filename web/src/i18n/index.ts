@@ -58,6 +58,12 @@ import arLinks from './ar/links.json';
 import enLinks from './en/links.json';
 import arKpi from './ar/kpi.json';
 import enKpi from './en/kpi.json';
+import arRequests from './ar/requests.json';
+import enRequests from './en/requests.json';
+import arDocreg from './ar/docreg.json';
+import enDocreg from './en/docreg.json';
+import arIp from './ar/ip.json';
+import enIp from './en/ip.json';
 import { readPreference } from '@/lib/preferences';
 
 export const languages = ['ar', 'en'] as const;
@@ -94,6 +100,9 @@ export const resources = {
     portfolio: arPortfolio,
     links: arLinks,
     kpi: arKpi,
+    requests: arRequests,
+    docreg: arDocreg,
+    ip: arIp,
   },
   en: {
     common: enCommon,
@@ -125,6 +134,9 @@ export const resources = {
     portfolio: enPortfolio,
     links: enLinks,
     kpi: enKpi,
+    requests: enRequests,
+    docreg: enDocreg,
+    ip: enIp,
   },
 } as const;
 

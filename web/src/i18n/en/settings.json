@@ -123,6 +123,18 @@
     "kpi": {
       "title": "Performance (KPI)",
       "description": "Period windows, reminders, RAG bands, verification checklist, measuring methods, the strategy hierarchy and the windows of each year."
+    },
+    "requestTypes": {
+      "title": "Request types",
+      "description": "Form builder: request types, fields, stages, PDF templates and intranet links."
+    },
+    "docreg": {
+      "title": "Document Registry",
+      "description": "Document types and validity, sensitivity clearance, reminders, the watermark and the organisation code."
+    },
+    "ip": {
+      "title": "Intellectual property",
+      "description": "Protection terms, internal-only protection, renewal reminders and the MOET form header."
     }
   },
   "title": "Settings",
