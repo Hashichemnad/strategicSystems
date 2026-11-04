@@ -1,6 +1,6 @@
 # 0094 — Baselines, re-baselining through a change request, variance and earned value
 
-- **Status:** Proposed (Phase 10)
+- **Status:** Accepted by the owner (Phase 10)
 - **Context:** SPEC §1.12: plan baselined at planning approval, re-baselined only through an approved change request, variance on dates,
   cost, weights; EVM (PV, EV, AC, SPI, CPI, EAC). Q-P9: the apply dialog is pre-filled incl. re-baseline. Phase 9 kept the milestone plan
   frozen after planning approval.

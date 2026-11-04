@@ -38,14 +38,14 @@ public sealed record LessonHitDto(Guid Id, Guid ProjectId, string ProjectNumber,
 
 public sealed record SuggestedKpiDto(string? NameAr, string? NameEn, string? Equation, decimal? Target);
 
-public sealed record SuggestedRiskDto(string Title, int Probability, int Impact, string? Mitigation);
+public sealed record CharterRiskSuggestionDto(string Title, int Probability, int Impact, string? Mitigation);
 
 public sealed record SuggestedStakeholderDto(string Name, string Classification, string Interest, string Impact);
 
 public sealed record SuggestedPlanningItemDto(string Category, string Description);
 
 public sealed record CharterSuggestionsDto(
-    IReadOnlyList<SuggestedKpiDto> Kpis, IReadOnlyList<SuggestedRiskDto> Risks, IReadOnlyList<SuggestedStakeholderDto> Stakeholders,
+    IReadOnlyList<SuggestedKpiDto> Kpis, IReadOnlyList<CharterRiskSuggestionDto> Risks, IReadOnlyList<SuggestedStakeholderDto> Stakeholders,
     IReadOnlyList<SuggestedPlanningItemDto> PlanningItems, IReadOnlyList<LessonHitDto> Lessons);
 
 public sealed record DraftMilestoneDto(string? Phase, string? TitleAr, string? TitleEn, decimal Weight, DateOnly PlannedStart, DateOnly PlannedEnd);
@@ -158,7 +158,7 @@ internal sealed class ProjectAssistService(
             Items(o, "kpis").Select(k => new SuggestedKpiDto(Str(k, "nameAr"), Str(k, "nameEn"), Str(k, "equation"), Num(k, "target"))).Where(k => k.NameAr is not null || k.NameEn is not null)
                 .ToList(),
             Items(o, "risks").Where(r => Str(r, "title") is not null)
-                .Select(r => new SuggestedRiskDto(Str(r, "title")!, Clamp(Int(r, "probability")), Clamp(Int(r, "impact")), Str(r, "mitigation"))).ToList(),
+                .Select(r => new CharterRiskSuggestionDto(Str(r, "title")!, Clamp(Int(r, "probability")), Clamp(Int(r, "impact")), Str(r, "mitigation"))).ToList(),
             Items(o, "stakeholders").Where(s => Str(s, "name") is not null)
                 .Select(s => new SuggestedStakeholderDto(Str(s, "name")!, OneOf(Str(s, "classification"), ["internal", "external", "government", "contractor", "customer"], "internal"),
                     OneOf(Str(s, "interest"), Levels.All, "medium"), OneOf(Str(s, "impact"), Levels.All, "medium"))).ToList(),

@@ -1,9 +1,9 @@
 # Phase 10 — Portfolio Management C: Agile / Hybrid, PM standards, Gantt, portfolio views: summary
 
-**Status:** built and verified · ADRs 0090–0099 *Proposed* (for the owner)
+**Status:** built and verified · ADRs 0090–0099 accepted by the owner · rebased on Phase 13 (`main` after PR #13)
 **Branch:** `claude/happy-ramanujan-mujm5q`
 **Planning:** the plan is the Phase 10 part of [`docs/design/portfolio.md`](../design/portfolio.md) (§29–§45), committed before the code. As in earlier
-phases the session ran without an interactive approval step; open choices are recorded in ADRs 0090–0099.
+phases the session ran without an interactive approval step; open choices were recorded in ADRs 0090–0099, since accepted by the owner.
 
 ## What was built
 
@@ -16,7 +16,7 @@ phases the session ran without an interactive approval step; open choices are re
 | **Metrics** | Velocity, sprint burndown (with ideal line), release burnup, cumulative flow, cycle time (Apache ECharts, with data tables) |
 | **Feature switches** (ADR 0092) | Settings → Portfolio `features`: portfolios, prioritisation, health, baselines, earnedValue (**off** by default), raid, riskMatrix, raci, communicationPlan, benefits, quality, procurement, statusReport, gateChecklists, templates. When a switch is off, the UI hides the feature and its endpoints answer 404 `portfolio.errors.featureOff`; its gates and job do nothing |
 | **RAG health** (ADR 0093) | Schedule / cost / scope / risk / overall, calculated on read from facts loaded in bulk; thresholds in settings. Each dimension can be overridden with a justification (required); clearing the override returns to the calculated value |
-| **Baselines, variance, EVM** (ADR 0094) | v1 is taken at planning approval. A new version is taken **only** by *Apply changes* of an approved change request with *Re-baseline* ticked; there is no other endpoint. A change request with area `plan` re-opens planning until it is applied. The variance view compares baseline, current and actual (days, weight, cost, added / removed). EVM: PV, EV, AC, SV, CV, SPI, CPI, EAC, ETC, VAC, TCPI |
+| **Baselines, variance, EVM** (ADR 0094) | v1 is taken **automatically** in the planning-approval hook (when the baselines switch is on and the project has none yet; asserted by the agile and waterfall integration tests). A new version is taken **only** by *Apply changes* of an approved change request with *Re-baseline* ticked; there is no other endpoint. A change request with area `plan` re-opens planning until it is applied. The variance view compares baseline, current and actual (days, weight, cost, added / removed). EVM: PV, EV, AC, SV, CV, SPI, CPI, EAC, ETC, VAC, TCPI |
 | **Other standards** (ADR 0095) | Portfolios → programmes → projects; RAID log (team members' entries are *proposed* until the PM accepts them; milestone dependencies draw Gantt arrows); 5×5 risk matrix; RACI (one A per area); communication plan generated from stakeholders, with a daily reminder job `portfolio.communication-reminders`; benefits defined on the request, carried to the project and measured at Impact (impact gate); deliverable quality sign-off by the owner or PM Office (closure gate); contract payment milestones and supplier rating; configurable gate checklists (seeded items are optional); project templates (apply, save as) |
 | **Status report** (ADR 0097) | `GET /projects/{id}/status-report?period&language`: a bilingual PDF (Gotenberg) built from the approved monthly update's snapshot. It shows the narrative AR/EN (typed or accepted from the AI writer), milestones, sprints, top risks, open issues, and the budget only for callers who may see costs |
 | **Gantt** (ADR 0096) | In-house SVG (`web/src/ui/gantt`): phases collapsible, quarter bands over month ticks, planned / actual / baseline bars, achievement %, delayed rows (marked without relying on colour), milestone diamonds, dependency arrows, today line, mirrored in RTL, keyboard tooltips, PNG and PDF export (the PDF is written in the browser, with no library). Shown per project (with sprints and releases for agile) and portfolio-wide |
@@ -58,7 +58,7 @@ Existing tests updated for Phase 10 facts: the Portfolio MCP tool list; the job 
 
 **Dependencies added:** `echarts` 5.6.0 (Apache-2.0; with zrender BSD-3-Clause, tslib 0BSD), recorded in `THIRD_PARTY_LICENSES.md`.
 
-## Decisions (ADRs — Proposed)
+## Decisions (ADRs — accepted by the owner)
 - [0090](../decisions/0090-methodologies-and-agile-model.md) Methodology choice and change; agile model; board rules; who may create / move stories.
 - [0091](../decisions/0091-agile-progress-and-approval-modes.md) Progress counts approved work only; **monthly roll-up is the default**; hybrid always monthly.
 - [0092](../decisions/0092-standards-feature-switches.md) Switches, defaults (EVM off), 404 when off; capacity view and quarterly portfolio review not built (not in the Phase 10 build plan).

@@ -1,6 +1,6 @@
 # 0093 — Project health (RAG): calculation and override
 
-- **Status:** Proposed (Phase 10)
+- **Status:** Accepted by the owner (Phase 10)
 - **Context:** SPEC §1.12: RAG on schedule, cost, scope, risk and overall, auto-calculated with manual override + justification; §1.16:
   overdue tasks feed the health RAG. No thresholds are given.
 

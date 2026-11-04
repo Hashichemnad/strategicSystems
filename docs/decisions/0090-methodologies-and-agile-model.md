@@ -1,6 +1,6 @@
 # 0090 — Delivery methodologies and the agile data model
 
-- **Status:** Proposed (Phase 10)
+- **Status:** Accepted by the owner (Phase 10)
 - **Context:** SPEC §1.13: methodology chosen at charter (Take Ownership), suggested by the request type, changed only through an approved
   change request; agile objects (releases, epics with weights, user stories, sprints, review, retrospective, impediments), configurable
   boards. The SPEC does not say what "request type" means for the suggestion, nor how stories move.

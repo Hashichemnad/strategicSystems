@@ -1,6 +1,6 @@
 # 0097 — Auto-generated bilingual monthly status report (PDF)
 
-- **Status:** Proposed (Phase 10)
+- **Status:** Accepted by the owner (Phase 10)
 - **Context:** SPEC §1.12: "auto-generated bilingual project status report (PDF) from the approved monthly update"; §1.15 B: status
   report writer drafts it.
 

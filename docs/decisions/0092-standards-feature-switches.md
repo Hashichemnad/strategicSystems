@@ -1,6 +1,6 @@
 # 0092 — Feature switches for the project / portfolio standards enhancements
 
-- **Status:** Proposed (Phase 10)
+- **Status:** Accepted by the owner (Phase 10)
 - **Context:** SPEC §1.12: each enhancement "can be switched on/off per installation". Defaults are not stated.
 
 ## Decision

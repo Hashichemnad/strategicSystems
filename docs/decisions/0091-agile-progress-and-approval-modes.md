@@ -1,6 +1,6 @@
 # 0091 — Agile progress formula and the sprint / monthly roll-up approval modes
 
-- **Status:** Proposed (Phase 10)
+- **Status:** Accepted by the owner (Phase 10)
 - **Context:** SPEC §1.13: agile progress = Σ (epic weight × % story points done); hybrid = weighted mix; "Agile progress approval
   (decided): configurable per installation, overridable per project — approval after every sprint, or one monthly roll-up of all sprints in
   that month, following the same approval chain and rhythm as waterfall monthly updates". The default is not stated.

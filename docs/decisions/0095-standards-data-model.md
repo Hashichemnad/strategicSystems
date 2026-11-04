@@ -1,6 +1,6 @@
 # 0095 — RAID, RACI, communication plan, benefits, quality, payments, checklists, templates, portfolios and programmes
 
-- **Status:** Proposed (Phase 10)
+- **Status:** Accepted by the owner (Phase 10)
 - **Context:** SPEC §1.12 lists the items without data details.
 
 ## Decision

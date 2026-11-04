@@ -173,7 +173,7 @@ internal sealed class TemplateService(
         {
             var values = new ProjectRiskValues(r.Title, r.CategoryCode, Math.Clamp(r.Probability, 1, 5), Math.Clamp(r.Impact, 1, 5), null, null, "mitigate", null, null, null, null,
                 project.PmEmployeeId, null);
-            db.Risks.Add(ProjectRisk.Create(projectId, project.Stage, values, scoring.Score(values.Probability, values.Impact, null)));
+            db.Risks.Add(ProjectRisk.Create(projectId, project.Stage, values, await scoring.ScoreAsync(values.Probability, values.Impact, null, ct).ConfigureAwait(false)));
         }
 
         var epics = 0;
@@ -478,7 +478,7 @@ public sealed record DashboardProjectDto(
     Guid Id, string Number, string? NameAr, string? NameEn, string Classification, string Methodology, string Stage, string Status, string ProgressStatus, decimal Performance,
     decimal Planned, PortfolioUnitDto? Unit, decimal? Budget, decimal? Actual, ProjectHealth? Health, DateOnly? PlannedEnd, decimal? Value, int? Complexity);
 
-public sealed record HeatCellDto(Guid? UnitId, string? UnitAr, string? UnitEn, string Dimension, int Green, int Amber, int Red, int Grey);
+public sealed record PortfolioHeatCellDto(Guid? UnitId, string? UnitAr, string? UnitEn, string Dimension, int Green, int Amber, int Red, int Grey);
 
 public sealed record BudgetRowDto(Guid? UnitId, string? UnitAr, string? UnitEn, decimal Budget, decimal Actual, int Projects);
 
@@ -491,7 +491,7 @@ public sealed record UpcomingMilestoneDto(
 public sealed record FunnelDto(int Submitted, int InApproval, int Approved, int Active, int Completed);
 
 public sealed record PortfolioDashboardDto(
-    int Total, int Active, int Delayed, decimal AverageProgress, IReadOnlyList<StageCountDto> ByStage, IReadOnlyList<HeatCellDto> Heat, IReadOnlyList<BudgetRowDto> Budget,
+    int Total, int Active, int Delayed, decimal AverageProgress, IReadOnlyList<StageCountDto> ByStage, IReadOnlyList<PortfolioHeatCellDto> Heat, IReadOnlyList<BudgetRowDto> Budget,
     IReadOnlyList<DashboardProjectDto> Projects, IReadOnlyList<DashboardProjectDto> DelayedProjects, IReadOnlyList<UpcomingMilestoneDto> Upcoming, FunnelDto Funnel,
     bool HealthOn, int CostsHidden);
 
@@ -609,7 +609,7 @@ internal sealed class PortfolioViewService(
                 p.PlannedEnd, request?.EvaluationScore, complexity);
         }).ToList();
         var active = rows.Where(r => r.Status == ProjectStatuses.Active).ToList();
-        var heat = new List<HeatCellDto>();
+        var heat = new List<PortfolioHeatCellDto>();
         if (settings.Features.Health)
         {
             foreach (var unit in active.GroupBy(r => r.Unit?.Id))
@@ -618,7 +618,7 @@ internal sealed class PortfolioViewService(
                 {
                     var colours = unit.Select(r => Colour(r.Health!, dimension)).ToList();
                     var first = unit.First().Unit;
-                    heat.Add(new HeatCellDto(unit.Key, first?.NameAr, first?.NameEn, dimension, colours.Count(c => c == Rag.Green), colours.Count(c => c == Rag.Amber),
+                    heat.Add(new PortfolioHeatCellDto(unit.Key, first?.NameAr, first?.NameEn, dimension, colours.Count(c => c == Rag.Green), colours.Count(c => c == Rag.Amber),
                         colours.Count(c => c == Rag.Red), colours.Count(c => c == Rag.Grey)));
                 }
             }

@@ -1,6 +1,6 @@
 # 0098 — "View costs / budget" for project team members
 
-- **Status:** Proposed (Phase 10)
+- **Status:** Accepted by the owner (Phase 10)
 - **Context:** SPEC §1.9: costs / budget visible to owner and PM, "Configurable" for team members, not to stakeholders. Phase 9 showed
   costs to everyone who could read the project (known gap).
 

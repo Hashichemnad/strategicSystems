@@ -1,6 +1,6 @@
 # 0099 — Phase 10 AI assists and MCP tools
 
-- **Status:** Proposed (Phase 10)
+- **Status:** Accepted by the owner (Phase 10)
 - **Context:** SPEC §1.15 B; CLAUDE.md rule 6 (AI drafts, people decide); ADR 0031 (read tools on, write tools off, no approve tool).
 
 ## Decision

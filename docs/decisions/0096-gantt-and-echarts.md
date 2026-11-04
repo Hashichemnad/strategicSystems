@@ -1,6 +1,6 @@
 # 0096 — In-house SVG Gantt, its exports, and Apache ECharts for dashboards
 
-- **Status:** Proposed (Phase 10)
+- **Status:** Accepted by the owner (Phase 10)
 - **Context:** CLAUDE.md §4.2: read-only in-house SVG Gantt (milestones, phases, quarters, planned vs actual, RTL mirrored), no commercial
   Gantt; Apache ECharts for charts. SPEC §1.11: Gantt export to PDF / image; §1.10: < 5 s for 30 milestones.
 
