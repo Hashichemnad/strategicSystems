@@ -49,7 +49,8 @@ const extraction: ExtractionResult = {
   scannedPages: 1,
 };
 
-function mockApi(capabilities: AiCapabilities) {
+/** The POST spy, typed loosely: the generated paths type is too deep for vitest's MockInstance inference. */
+function mockApi(capabilities: AiCapabilities): { mock: { calls: unknown[][] } } {
   vi.spyOn(api, 'GET').mockResolvedValue({
     data: capabilities,
     response: new Response(null, { status: 200 }),
@@ -61,7 +62,7 @@ function mockApi(capabilities: AiCapabilities) {
         path === '/api/v1/ai/forms/{formKey}/extract'
           ? { data: extraction, response: new Response(null, { status: 200 }) }
           : { data: { id: 'new', version: 1 }, response: new Response(null, { status: 201 }) },
-      )) as never);
+      )) as never) as unknown as { mock: { calls: unknown[][] } };
 }
 
 async function renderDialog(language: 'ar' | 'en' = 'en') {

@@ -1,1 +1,325 @@
-{}
+{
+  "register": {
+    "title": "Vendors (Wasel)",
+    "description": "The shared supplier register: vendors, their Wasel portal users and their performance history.",
+    "new": "New vendor",
+    "search": "Search vendors",
+    "allStatuses": "All statuses",
+    "empty": "No vendors yet.",
+    "number": "Number",
+    "name": "Vendor",
+    "statusCol": "Status",
+    "users": "Users",
+    "activeProjects": "Active projects",
+    "saved": "Vendor saved."
+  },
+  "fields": {
+    "nameAr": "Name (Arabic)",
+    "nameEn": "Name (English)",
+    "tradeLicenceNo": "Trade licence no.",
+    "licenceExpiry": "Licence expiry",
+    "countryCode": "Country",
+    "address": "Address",
+    "contactPerson": "Contact person",
+    "email": "E-mail",
+    "phone": "Phone",
+    "notes": "Notes"
+  },
+  "status": {
+    "active": "Active",
+    "suspended": "Suspended",
+    "blacklisted": "Blacklisted"
+  },
+  "userStatus": {
+    "invited": "Invited",
+    "active": "Active",
+    "disabled": "Disabled",
+    "dormant": "Dormant"
+  },
+  "memberStatus": {
+    "active": "Active",
+    "revoked": "Revoked",
+    "expired": "Expired"
+  },
+  "assignmentStatus": {
+    "active": "Active",
+    "ended": "Ended",
+    "revoked": "Revoked"
+  },
+  "itemStatus": {
+    "submitted": "Submitted",
+    "accepted": "Accepted",
+    "returned": "Returned",
+    "proposed": "Proposed",
+    "rejected": "Rejected"
+  },
+  "roles": {
+    "vendor-lead": "Vendor Project Lead",
+    "vendor-contributor": "Vendor Contributor"
+  },
+  "modes": {
+    "pm-only": "PM only",
+    "vendor-then-pm": "Vendor then PM"
+  },
+  "expiry": {
+    "contract-end": "At the contract end",
+    "project-closure": "At project closure",
+    "date": "On a set date"
+  },
+  "actions": {
+    "accept": "Accept",
+    "reject": "Reject",
+    "return": "Return",
+    "returnToVendor": "Return to vendor"
+  },
+  "panel": {
+    "title": "Vendors (Wasel)",
+    "hint": "Vendors working on this project through the Wasel portal: access, plan proposals, monthly updates and deliverables.",
+    "mode": "Milestone update mode",
+    "modeHint": "“Vendor then PM”: the vendor updates its milestones and you review them before the monthly approval.",
+    "modeChanged": "Update mode changed.",
+    "assignments": "Assigned vendors",
+    "assign": "Assign a vendor",
+    "assigned": "Vendor assigned.",
+    "noAssignments": "No vendor is assigned to this project.",
+    "vendor": "Vendor",
+    "pickVendor": "Choose a vendor",
+    "contract": "Contract",
+    "noContract": "No contract",
+    "accessUntil": "Access until",
+    "accessUntilHint": "Leave empty to use the contract's end date.",
+    "untilClosure": "project closure",
+    "expiryRule": "Access ends",
+    "expiryHint": "When the vendor's portal access ends by itself.",
+    "invite": "Invite a user",
+    "inviteHint": "The person receives a bilingual e-mail to set a password; two-step verification is required at the first sign-in.",
+    "invited": "Invitation sent.",
+    "send": "Send invitation",
+    "email": "E-mail",
+    "name": "Name",
+    "role": "Role",
+    "roleHint": "The Lead submits updates; a Contributor prepares them.",
+    "language": "E-mail language",
+    "memberStatus": "Status",
+    "validTo": "Access until",
+    "actions": "Actions",
+    "revoke": "Revoke access",
+    "revokeAssignment": "End the assignment",
+    "revokeHint": "Access ends at once and the vendor is told.",
+    "reason": "Reason",
+    "milestones": "Milestones per vendor",
+    "milestonesHint": "Vendors see and update only the detailed milestones assigned to them.",
+    "milestone": "Milestone",
+    "weight": "Weight",
+    "pmOnly": "PM only",
+    "comment": "Comment"
+  },
+  "proposal": {
+    "title": "Plan proposals",
+    "empty": "No plan proposal yet.",
+    "number": "Proposal {{n}}",
+    "submittedAt": "Submitted {{at}}",
+    "review": "Review and accept",
+    "reviewHint": "Edit titles, dates, weights or parents before accepting: the vendor sees what you changed.",
+    "acceptIntoPlan": "Accept into the plan",
+    "accepted": "Plan accepted into the project.",
+    "returnTitle": "Return the proposal",
+    "pmComment": "Project manager's comment",
+    "diff": "Changes made by the project manager",
+    "type": "Type",
+    "titleCol": "Title",
+    "titleAr": "Title (Arabic)",
+    "titleEn": "Title (English)",
+    "parent": "Phase / epic",
+    "noParent": "None",
+    "dates": "Dates",
+    "start": "Start",
+    "end": "End",
+    "tasks": "Tasks / points",
+    "points": "{{n}} points",
+    "total": "Weighted items total {{total}} %.",
+    "status": {
+      "draft": "Draft",
+      "submitted": "Submitted",
+      "returned": "Returned",
+      "accepted": "Accepted",
+      "withdrawn": "Withdrawn"
+    },
+    "types": {
+      "phase": "Phase",
+      "milestone": "Milestone",
+      "epic": "Epic",
+      "story": "User story"
+    }
+  },
+  "submission": {
+    "title": "Monthly updates from vendors",
+    "empty": "No vendor update submitted yet.",
+    "period": "Update {{period}}",
+    "aiReview": "Review with AI",
+    "aiDraft": "AI draft — check before using",
+    "noFlags": "No inconsistencies found.",
+    "aiUnavailable": "The AI summary is not available; the checks above were made by the system.",
+    "useComment": "Use as return comment",
+    "share": "Share outcome with vendor",
+    "shareHint": "Only this note is shown to the vendor; approval comments stay internal.",
+    "sharedNote": "Note shared with the vendor",
+    "plannedEnd": "planned end",
+    "field": "Field",
+    "previous": "Last approved",
+    "vendorValues": "Vendor",
+    "pmValues": "Project manager",
+    "progressNote": "Vendor's progress note",
+    "evidence": "Evidence",
+    "pmChanges": "Changes made by the project manager",
+    "returnedWith": "Returned with comment",
+    "editAccept": "Edit then accept",
+    "accepted": "Vendor value accepted.",
+    "editedAccepted": "Accepted with your changes; the vendor sees the difference.",
+    "resetToVendor": "Reset to vendor values",
+    "returnHint": "The vendor sees this comment and corrects the milestone.",
+    "scan": "Scan: {{status}}",
+    "status": {
+      "draft": "Draft",
+      "submitted": "Waiting for review",
+      "returned": "Returned",
+      "accepted": "Accepted by PM",
+      "included": "Included in approved update"
+    },
+    "itemStatus": {
+      "pending": "To review",
+      "accepted": "Accepted",
+      "edited": "Edited then accepted",
+      "returned": "Returned",
+      "not-started": "Not started"
+    }
+  },
+  "diffFields": {
+    "achieve": "Achievement",
+    "actualStart": "Actual start",
+    "actualEnd": "Actual end",
+    "causality": "Delay cause",
+    "correctiveActions": "Corrective actions",
+    "progressNote": "Progress note",
+    "titleAr": "Title (Arabic)",
+    "titleEn": "Title (English)",
+    "parentKey": "Phase / epic",
+    "plannedStart": "Planned start",
+    "plannedEnd": "Planned end",
+    "weight": "Weight",
+    "storyPoints": "Story points",
+    "tasks": "Tasks",
+    "added": "Added",
+    "removed": "Removed"
+  },
+  "diff": {
+    "vendorValue": "Vendor value",
+    "pmValue": "Project manager value"
+  },
+  "flags": {
+    "completeWithoutEvidence": "100 % without evidence",
+    "progressJump": "Large progress jump since last month",
+    "dateOutsideContract": "Date outside the contract / access period",
+    "endBeforeStart": "End before start",
+    "startBeforePlan": "Started long before the plan",
+    "delayedWithoutCausality": "Delayed without a cause",
+    "endInFuture": "End date in the future"
+  },
+  "deliverables": {
+    "title": "Deliverables",
+    "empty": "No deliverable uploaded.",
+    "deliverable": "Deliverable",
+    "files": "Files"
+  },
+  "items": {
+    "title": "Issues, challenges and risks proposed by vendors",
+    "hint": "Accepting creates the record in the project (RAID issue, challenge or risk).",
+    "empty": "No proposals from vendors.",
+    "score": "Probability {{probability}} × impact {{impact}}",
+    "kinds": {
+      "issue": "Issue",
+      "challenge": "Challenge",
+      "risk": "Risk"
+    }
+  },
+  "comments": {
+    "title": "Comments with the vendor",
+    "open": "Open comments",
+    "empty": "No comments yet.",
+    "new": "New comment",
+    "send": "Send",
+    "vendor": "Vendor",
+    "internal": "Project team"
+  },
+  "meetings": {
+    "share": "Share with vendor",
+    "shareHint": "The attending vendor sees this meeting and its minutes and can confirm its actions.",
+    "shared": "Shared",
+    "confirmed": "Confirmed by vendor",
+    "notShared": "Not shared"
+  },
+  "rating": {
+    "title": "Vendor rating",
+    "hint": "Rate the vendor per milestone at any time, and overall at closure; ratings build the vendor's history and the Impact vendor satisfaction.",
+    "rate": "Rate vendor",
+    "saved": "Rating saved.",
+    "timeliness": "Timeliness",
+    "quality": "Quality of deliverables",
+    "responsiveness": "Responsiveness",
+    "reporting": "Compliance with reporting",
+    "overall": "Overall",
+    "ratedAt": "Rated",
+    "perMilestone": "Milestone rating",
+    "wholeProject": "Whole project (closure)",
+    "scopeHint": "A milestone, or the whole project at closure.",
+    "closureHint": "The overall rating feeds the Impact vendor satisfaction.",
+    "milestoneHint": "Before closure you can rate the vendor on a milestone."
+  },
+  "detail": {
+    "edit": "Edit vendor",
+    "changeStatus": "Change status",
+    "statusHint": "A suspended or blacklisted vendor loses portal access at once.",
+    "statusReason": "Status reason",
+    "users": "Wasel users",
+    "noUsers": "No portal users yet.",
+    "invitedAt": "Invited",
+    "lastSignIn": "Last sign-in",
+    "never": "Never",
+    "mfa": "Two-step verification",
+    "mfaOn": "On",
+    "mfaOff": "Not set",
+    "deactivate": "Deactivate",
+    "deactivateHint": "The user can no longer sign in; sessions end at once.",
+    "reactivate": "Reactivate",
+    "reactivated": "User reactivated.",
+    "performance": "Performance history",
+    "count": "Ratings",
+    "noRatings": "No ratings yet.",
+    "project": "Project"
+  },
+  "settings": {
+    "title": "Wasel vendor portal",
+    "hint": "Defaults for vendors working on projects through Wasel.",
+    "defaultUpdateMode": "Default milestone update mode",
+    "expiryRule": "Vendor access ends",
+    "dormantDays": "Disable dormant accounts after (days)",
+    "dormantDaysHint": "0 keeps dormant accounts active.",
+    "capacityThreshold": "Over-allocation above (%)",
+    "capacityThresholdHint": "Capacity view: employees allocated above this total get a warning.",
+    "endAtClosure": "End vendor access at project closure",
+    "endAtClosureHint": "Also when the project is completed or cancelled.",
+    "uaePass": "Allow UAE Pass for vendors",
+    "uaePassHint": "Two-step verification is still required.",
+    "visibleFields": "Fields vendors may see",
+    "visibleFieldsHint": "Always visible: number, name, scope, dates, stage, PM contact and the vendor's milestones.",
+    "visible": {
+      "description": "Project description",
+      "progress": "Project progress",
+      "owner": "Project owner",
+      "budget": "Project budget",
+      "approvalStatus": "Approval status",
+      "milestoneWeight": "Milestone weights",
+      "milestoneCost": "Milestone costs"
+    }
+  }
+}

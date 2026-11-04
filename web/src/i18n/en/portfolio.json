@@ -644,7 +644,8 @@
       "raid": "RAID log",
       "raci": "RACI",
       "communication": "Communication",
-      "benefits": "Benefits"
+      "benefits": "Benefits",
+      "vendors": "Vendors (Wasel)"
     },
     "list": {
       "view": "View",
@@ -750,7 +751,8 @@
       "responsibilities": "Responsibilities",
       "formation": "The project team is formed through Teams Management",
       "formed": "The project team is formed",
-      "formationHint": "PM Office: request a team with this project linked. When the formation is approved, its members get access to the project and the project moves to Planning."
+      "formationHint": "PM Office: request a team with this project linked. When the formation is approved, its members get access to the project and the project moves to Planning.",
+      "allocation": "Allocation (%)"
     },
     "planning": {
       "hint": "Planning items of the project.",
@@ -784,7 +786,8 @@
     "meeting": {
       "title": "Subject",
       "at": "Date and time",
-      "notes": "Minutes"
+      "notes": "Minutes",
+      "vendor": "Vendor"
     },
     "contract": {
       "name": "Name",
@@ -797,7 +800,10 @@
         "active": "Active",
         "closed": "Closed",
         "cancelled": "Cancelled"
-      }
+      },
+      "vendor": "Vendor (register)",
+      "noVendor": "Not from the register",
+      "endDate": "End date"
     },
     "lpo": {
       "title": "Local purchase order (LPO)",
@@ -878,7 +884,10 @@
         "submitted": "In approval",
         "returned": "Returned",
         "approved": "Approved"
-      }
+      },
+      "fromVendor": "From vendor",
+      "editedByPm": "Edited by PM",
+      "vendorValue": "vendor sent {{value}} %"
     },
     "change": {
       "hint": "Details, postponement, ownership, cancellation or merge. Approved changes apply only when the PM confirms them.",
@@ -890,7 +899,8 @@
         "postponement": "Postponement",
         "ownership": "Ownership",
         "cancellation": "Cancellation",
-        "merge": "Merge"
+        "merge": "Merge",
+        "hold": "Put on hold"
       },
       "statuses": {
         "draft": "Draft",

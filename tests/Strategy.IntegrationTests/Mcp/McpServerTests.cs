@@ -70,7 +70,8 @@ public sealed class McpServerTests(ApiFixture api) : IClassFixture<ApiFixture>
         }
 
         var token = await TokenAsync(vendor.Id, TokenScopes.Mcp, TokenScopes.ApiWrite);
-        await (await Post(api.Factory.CreateTokenClient(token))).ShouldBeProblemAsync(HttpStatusCode.Forbidden, "mcp.vendorRefused");
+        // Phase 11 (ADR 0110): the principal-type wall refuses a vendor outside /api/wasel before the MCP gate is reached.
+        await (await Post(api.Factory.CreateTokenClient(token))).ShouldBeProblemAsync(HttpStatusCode.Forbidden, "auth.principalRefused");
         var ai = await api.Factory.CreateTokenClient(token).PostAsJsonAsync("/api/v1/ai/translate", new { text = "x", from = "en", to = "ar" });
         ai.StatusCode.ShouldBe(HttpStatusCode.Forbidden);
     }
