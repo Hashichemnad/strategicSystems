@@ -233,6 +233,21 @@ test.describe('notifications', () => {
     });
     expect(shared.status()).toBe(200);
 
+    // Wait for this notification itself (the outbox delivers it): Ahmed may already hold unread notifications from earlier scenarios,
+    // so the badge alone does not prove it has arrived.
+    const sharedName = language === 'ar' ? `بند مشترك ${tag}` : `Shared item ${tag}`;
+    await expect
+      .poll(
+        async () =>
+          (await (await page.request.get('/api/v1/notifications/mine?page=1&pageSize=20')).text()).includes(
+            sharedName,
+          ),
+        {
+          timeout: 60_000,
+          intervals: [500, 1000, 2000],
+        },
+      )
+      .toBe(true);
     await page.goto('/');
     const bell = page.getByTestId('notification-bell');
     await expect(bell.locator('span').filter({ hasText: /\S/ })).toBeVisible({ timeout: 20_000 });
