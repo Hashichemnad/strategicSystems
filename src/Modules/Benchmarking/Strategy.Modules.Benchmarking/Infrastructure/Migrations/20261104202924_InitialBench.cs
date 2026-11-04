@@ -24,7 +24,7 @@ namespace Strategy.Modules.Benchmarking.Infrastructure.Migrations
                     title_en = table.Column<string>(type: "character varying(400)", maxLength: 400, nullable: true),
                     description = table.Column<string>(type: "character varying(4000)", maxLength: 4000, nullable: true),
                     topic = table.Column<string>(type: "character varying(400)", maxLength: 400, nullable: true),
-                    tags = table.Column<string>(type: "jsonb", nullable: false),
+                    tags = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: false),
                     applicability = table.Column<string>(type: "character varying(4000)", maxLength: 4000, nullable: true),
                     sector_code = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     study_id = table.Column<Guid>(type: "uuid", nullable: true),
@@ -102,6 +102,7 @@ namespace Strategy.Modules.Benchmarking.Infrastructure.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     study_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    removed = table.Column<bool>(type: "boolean", nullable: false),
                     kpi_card_id = table.Column<Guid>(type: "uuid", nullable: true),
                     kpi_card_code = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     indicator = table.Column<string>(type: "character varying(400)", maxLength: 400, nullable: false),
@@ -173,6 +174,7 @@ namespace Strategy.Modules.Benchmarking.Infrastructure.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     study_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    removed = table.Column<bool>(type: "boolean", nullable: false),
                     topic_id = table.Column<Guid>(type: "uuid", nullable: true),
                     title_ar = table.Column<string>(type: "character varying(400)", maxLength: 400, nullable: true),
                     title_en = table.Column<string>(type: "character varying(400)", maxLength: 400, nullable: true),
@@ -203,6 +205,7 @@ namespace Strategy.Modules.Benchmarking.Infrastructure.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     study_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    removed = table.Column<bool>(type: "boolean", nullable: false),
                     topic_id = table.Column<Guid>(type: "uuid", nullable: true),
                     subject = table.Column<string>(type: "character varying(400)", maxLength: 400, nullable: false),
                     our_practice = table.Column<string>(type: "character varying(4000)", maxLength: 4000, nullable: true),
@@ -276,6 +279,7 @@ namespace Strategy.Modules.Benchmarking.Infrastructure.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     study_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    removed = table.Column<bool>(type: "boolean", nullable: false),
                     comparator_id = table.Column<Guid>(type: "uuid", nullable: false),
                     selected = table.Column<bool>(type: "boolean", nullable: false),
                     reason = table.Column<string>(type: "character varying(4000)", maxLength: 4000, nullable: true),
@@ -302,6 +306,7 @@ namespace Strategy.Modules.Benchmarking.Infrastructure.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     study_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    removed = table.Column<bool>(type: "boolean", nullable: false),
                     title = table.Column<string>(type: "character varying(400)", maxLength: 400, nullable: false),
                     owner_employee_id = table.Column<Guid>(type: "uuid", nullable: true),
                     description = table.Column<string>(type: "character varying(4000)", maxLength: 4000, nullable: true),
@@ -324,6 +329,7 @@ namespace Strategy.Modules.Benchmarking.Infrastructure.Migrations
                 {
                     id = table.Column<Guid>(type: "uuid", nullable: false),
                     study_id = table.Column<Guid>(type: "uuid", nullable: false),
+                    removed = table.Column<bool>(type: "boolean", nullable: false),
                     comparator_id = table.Column<Guid>(type: "uuid", nullable: false),
                     agreed_on = table.Column<DateOnly>(type: "date", nullable: true),
                     method = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),

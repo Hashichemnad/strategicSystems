@@ -15,3 +15,5 @@
 
 ## Consequences
 New study requests appear in the same catalogue as documents and IP; extra plan fields are configuration.
+- The office that decides the Plan also holds the Requests office role (`requests.office`), as for the Document Registry and IP: the
+  approver record role on a request ends with the task, and the office keeps reading the benchmarking requests afterwards.

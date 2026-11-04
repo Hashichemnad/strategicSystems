@@ -202,7 +202,7 @@ internal sealed class BestPracticeConfiguration : IEntityTypeConfiguration<BestP
         builder.Property(x => x.TitleEn).HasMaxLength(Study.TitleMaxLength);
         builder.Property(x => x.Topic).HasMaxLength(Study.TitleMaxLength);
         builder.Texts(nameof(BestPractice.Description), nameof(BestPractice.Applicability));
-        builder.Property(x => x.TagsJson).HasColumnName("tags").HasColumnType("jsonb");
+        builder.Property(x => x.TagsJson).HasColumnName("tags").HasMaxLength(2000); // text: searched with ILIKE together with the titles
         builder.Codes(nameof(BestPractice.SectorCode), nameof(BestPractice.Origin));
         builder.HasIndex(x => x.StudyId);
         builder.HasIndex(x => x.PracticeRowId).IsUnique().HasFilter("practice_row_id IS NOT NULL");

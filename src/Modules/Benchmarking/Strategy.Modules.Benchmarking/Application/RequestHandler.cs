@@ -15,9 +15,9 @@ internal sealed class BenchRoles(BenchDbContext db, IRecordRoleService recordRol
 {
     public async Task SyncAsync(Study study, CancellationToken ct)
     {
-        var topicOwners = await db.Topics.AsNoTracking().Where(t => t.StudyId == study.Id && t.OwnerEmployeeId != null).Select(t => t.OwnerEmployeeId!.Value)
+        var topicOwners = await db.Topics.AsNoTracking().Where(t => t.StudyId == study.Id && !t.Removed && t.OwnerEmployeeId != null).Select(t => t.OwnerEmployeeId!.Value)
             .Distinct().ToListAsync(ct).ConfigureAwait(false);
-        var participants = (await db.Visits.AsNoTracking().Where(v => v.StudyId == study.Id).ToListAsync(ct).ConfigureAwait(false))
+        var participants = (await db.Visits.AsNoTracking().Where(v => v.StudyId == study.Id && !v.Removed).ToListAsync(ct).ConfigureAwait(false))
             .SelectMany(v => v.ParticipantIds).Distinct().ToList();
         var holders = await recordRoles.GetHoldersAsync(Study.EntityType, study.Id, ct).ConfigureAwait(false);
         await SyncRoleAsync(study.Id, BenchPermissions.CoordinatorRole, study.ResponsibleEmployeeId is { } c ? [c] : [], holders, ct).ConfigureAwait(false);
@@ -144,7 +144,7 @@ internal sealed class BenchRequestHandler(
     private async Task SyncTopicsAsync(Study study, FormValues data, CancellationToken ct)
     {
         var rows = data.Rows("topics");
-        var topics = await db.Topics.Where(t => t.StudyId == study.Id).OrderBy(t => t.Sort).ToListAsync(ct).ConfigureAwait(false);
+        var topics = await db.Topics.Where(t => t.StudyId == study.Id && !t.Removed).OrderBy(t => t.Sort).ToListAsync(ct).ConfigureAwait(false);
         for (var i = 0; i < rows.Count; i++)
         {
             var title = rows[i].Text("topic") ?? $"#{i + 1}";
@@ -160,7 +160,7 @@ internal sealed class BenchRequestHandler(
 
         foreach (var extra in topics.Skip(rows.Count))
         {
-            db.Topics.Remove(extra);
+            extra.Remove();
         }
 
         await db.SaveChangesAsync(ct).ConfigureAwait(false);

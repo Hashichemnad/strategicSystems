@@ -173,7 +173,7 @@ internal sealed class BenchViews(BenchDbContext db, BenchReader reader, BenchCal
     public async Task<BenchStudyDto> ToDtoAsync(Study s, CancellationToken ct)
     {
         var user = context.User;
-        var topics = await db.Topics.AsNoTracking().Where(t => t.StudyId == s.Id).OrderBy(t => t.Sort).ToListAsync(ct).ConfigureAwait(false);
+        var topics = await db.Topics.AsNoTracking().Where(t => t.StudyId == s.Id && !t.Removed).OrderBy(t => t.Sort).ToListAsync(ct).ConfigureAwait(false);
         var people = await reader.PeopleAsync([s.ResponsibleEmployeeId, s.RequesterEmployeeId, .. topics.Select(t => t.OwnerEmployeeId)], ct).ConfigureAwait(false);
         var units = await reader.UnitsAsync([s.ResponsibleUnitId, s.SectionUnitId], ct).ConfigureAwait(false);
         var settings = await reader.SettingsAsync(ct).ConfigureAwait(false);
@@ -239,7 +239,7 @@ internal sealed class BenchViews(BenchDbContext db, BenchReader reader, BenchCal
 
     public async Task<IReadOnlyList<BenchCandidateDto>> CandidatesAsync(Guid studyId, CancellationToken ct)
     {
-        var rows = await db.StudyEntities.AsNoTracking().Where(e => e.StudyId == studyId)
+        var rows = await db.StudyEntities.AsNoTracking().Where(e => e.StudyId == studyId && !e.Removed)
             .Join(db.Comparators.AsNoTracking(), e => e.ComparatorId, c => c.Id, (e, c) => new { e, c }).ToListAsync(ct).ConfigureAwait(false);
         var ids = rows.Select(r => r.e.Id).ToList();
         var outreach = await db.Outreach.AsNoTracking().Where(o => ids.Contains(o.StudyEntityId)).OrderBy(o => o.On).ThenBy(o => o.CreatedAt).ToListAsync(ct).ConfigureAwait(false);
@@ -250,7 +250,7 @@ internal sealed class BenchViews(BenchDbContext db, BenchReader reader, BenchCal
 
     public async Task<IReadOnlyList<BenchVisitDto>> VisitsAsync(Guid studyId, CancellationToken ct)
     {
-        var visits = await db.Visits.AsNoTracking().Where(v => v.StudyId == studyId).OrderBy(v => v.AgreedOn).ToListAsync(ct).ConfigureAwait(false);
+        var visits = await db.Visits.AsNoTracking().Where(v => v.StudyId == studyId && !v.Removed).OrderBy(v => v.AgreedOn).ToListAsync(ct).ConfigureAwait(false);
         var comparatorIds = visits.Select(v => v.ComparatorId).Distinct().ToList();
         var comparators = await db.Comparators.AsNoTracking().Where(c => comparatorIds.Contains(c.Id)).ToDictionaryAsync(c => c.Id, ct).ConfigureAwait(false);
         var people = await reader.PeopleAsync(visits.SelectMany(v => v.ParticipantIds).Select(p => (Guid?)p), ct).ConfigureAwait(false);
@@ -260,9 +260,9 @@ internal sealed class BenchViews(BenchDbContext db, BenchReader reader, BenchCal
 
     public async Task<BenchAnalysisDto> AnalysisAsync(Guid studyId, CancellationToken ct)
     {
-        var practices = await db.Practices.AsNoTracking().Where(p => p.StudyId == studyId).OrderBy(p => p.Sort).ToListAsync(ct).ConfigureAwait(false);
-        var indicators = await db.Indicators.AsNoTracking().Where(p => p.StudyId == studyId).OrderBy(p => p.Sort).ToListAsync(ct).ConfigureAwait(false);
-        var items = await db.PlanItems.AsNoTracking().Where(p => p.StudyId == studyId).OrderBy(p => p.Sort).ToListAsync(ct).ConfigureAwait(false);
+        var practices = await db.Practices.AsNoTracking().Where(p => p.StudyId == studyId && !p.Removed).OrderBy(p => p.Sort).ToListAsync(ct).ConfigureAwait(false);
+        var indicators = await db.Indicators.AsNoTracking().Where(p => p.StudyId == studyId && !p.Removed).OrderBy(p => p.Sort).ToListAsync(ct).ConfigureAwait(false);
+        var items = await db.PlanItems.AsNoTracking().Where(p => p.StudyId == studyId && !p.Removed).OrderBy(p => p.Sort).ToListAsync(ct).ConfigureAwait(false);
         var people = await reader.PeopleAsync(items.Select(i => i.OwnerEmployeeId), ct).ConfigureAwait(false);
         var units = await reader.UnitsAsync(items.Select(i => i.UnitId), ct).ConfigureAwait(false);
         return new BenchAnalysisDto(
@@ -287,7 +287,7 @@ internal sealed class StudyQueries(BenchDbContext db, BenchReader reader, BenchV
         switch (query.View)
         {
             case "mine":
-                var topicStudies = db.Topics.Where(t => t.OwnerEmployeeId == me).Select(t => t.StudyId);
+                var topicStudies = db.Topics.Where(t => t.OwnerEmployeeId == me && !t.Removed).Select(t => t.StudyId);
                 source = source.Where(s => s.ResponsibleEmployeeId == me || s.RequesterEmployeeId == me || topicStudies.Contains(s.Id));
                 break;
             case "my-unit":
@@ -510,7 +510,7 @@ internal sealed class StudyCommands(
         // The search form is a draft until it is approved: removed candidates are deleted (audited).
         foreach (var removed in existing.Where(e => !kept.Contains(e.Id)))
         {
-            db.StudyEntities.Remove(removed);
+            removed.Remove();
         }
 
         await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
@@ -531,7 +531,7 @@ internal sealed class StudyCommands(
             return Forbidden(study);
         }
 
-        var selected = await db.StudyEntities.AsNoTracking().Where(e => e.StudyId == study.Id && e.Selected).ToListAsync(cancellationToken).ConfigureAwait(false);
+        var selected = await db.StudyEntities.AsNoTracking().Where(e => e.StudyId == study.Id && e.Selected && !e.Removed).ToListAsync(cancellationToken).ConfigureAwait(false);
         if (selected.Count == 0)
         {
             return Error.Rule("bench.noCandidate", "bench.errors.noCandidate");
@@ -559,7 +559,7 @@ internal sealed class StudyCommands(
         }
 
         var input = command.Input;
-        var entity = await db.StudyEntities.AsNoTracking().FirstOrDefaultAsync(e => e.Id == input.StudyEntityId && e.StudyId == study.Id && e.Selected, cancellationToken)
+        var entity = await db.StudyEntities.AsNoTracking().FirstOrDefaultAsync(e => e.Id == input.StudyEntityId && e.StudyId == study.Id && e.Selected && !e.Removed, cancellationToken)
             .ConfigureAwait(false);
         var errors = new List<FieldError>();
         if (entity is null)
@@ -629,7 +629,7 @@ internal sealed class StudyCommands(
             return Forbidden(study);
         }
 
-        var selected = await db.StudyEntities.AsNoTracking().Where(e => e.StudyId == study.Id && e.Selected).Select(e => e.ComparatorId).ToListAsync(cancellationToken)
+        var selected = await db.StudyEntities.AsNoTracking().Where(e => e.StudyId == study.Id && e.Selected && !e.Removed).Select(e => e.ComparatorId).ToListAsync(cancellationToken)
             .ConfigureAwait(false);
         var errors = new List<FieldError>();
         var visits = command.Visits ?? [];
@@ -664,7 +664,7 @@ internal sealed class StudyCommands(
         }
 
         await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
-        var existing = await db.Visits.Where(v => v.StudyId == study.Id).ToListAsync(cancellationToken).ConfigureAwait(false);
+        var existing = await db.Visits.Where(v => v.StudyId == study.Id && !v.Removed).ToListAsync(cancellationToken).ConfigureAwait(false);
         var kept = new HashSet<Guid>();
         foreach (var v in visits)
         {
@@ -681,7 +681,7 @@ internal sealed class StudyCommands(
 
         foreach (var removed in existing.Where(x => !kept.Contains(x.Id)))
         {
-            db.Visits.Remove(removed);
+            removed.Remove();
         }
 
         await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
@@ -703,7 +703,7 @@ internal sealed class StudyCommands(
             return Forbidden(study);
         }
 
-        if (!await db.Visits.AnyAsync(v => v.StudyId == study.Id && v.AgreedOn != null, cancellationToken).ConfigureAwait(false))
+        if (!await db.Visits.AnyAsync(v => v.StudyId == study.Id && !v.Removed && v.AgreedOn != null, cancellationToken).ConfigureAwait(false))
         {
             return Error.Rule("bench.noVisit", "bench.errors.noVisit");
         }
@@ -732,7 +732,7 @@ internal sealed class StudyCommands(
         }
 
         var input = command.Input;
-        var topics = await db.Topics.AsNoTracking().Where(t => t.StudyId == study.Id).Select(t => t.Id).ToListAsync(cancellationToken).ConfigureAwait(false);
+        var topics = await db.Topics.AsNoTracking().Where(t => t.StudyId == study.Id && !t.Removed).Select(t => t.Id).ToListAsync(cancellationToken).ConfigureAwait(false);
         var errors = new List<FieldError>();
         var kpi = services.GetService(typeof(IKpiCatalog)) as IKpiCatalog;
         var cardCodes = new Dictionary<Guid, string>();
@@ -821,7 +821,7 @@ internal sealed class StudyCommands(
         }
 
         await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
-        var practices = await db.Practices.Where(p => p.StudyId == study.Id).ToListAsync(cancellationToken).ConfigureAwait(false);
+        var practices = await db.Practices.Where(p => p.StudyId == study.Id && !p.Removed).ToListAsync(cancellationToken).ConfigureAwait(false);
         var keep = new HashSet<Guid>();
         var sort = 0;
         foreach (var p in input.Practices ?? [])
@@ -837,8 +837,12 @@ internal sealed class StudyCommands(
             keep.Add(row.Id);
         }
 
-        db.Practices.RemoveRange(practices.Where(x => !keep.Contains(x.Id)));
-        var indicators = await db.Indicators.Where(p => p.StudyId == study.Id).ToListAsync(cancellationToken).ConfigureAwait(false);
+        foreach (var removed in practices.Where(x => !keep.Contains(x.Id)))
+        {
+            removed.Remove();
+        }
+
+        var indicators = await db.Indicators.Where(p => p.StudyId == study.Id && !p.Removed).ToListAsync(cancellationToken).ConfigureAwait(false);
         keep.Clear();
         sort = 0;
         foreach (var r in input.Indicators ?? [])
@@ -856,8 +860,12 @@ internal sealed class StudyCommands(
             keep.Add(row.Id);
         }
 
-        db.Indicators.RemoveRange(indicators.Where(x => !keep.Contains(x.Id)));
-        var items = await db.PlanItems.Where(p => p.StudyId == study.Id).ToListAsync(cancellationToken).ConfigureAwait(false);
+        foreach (var removed in indicators.Where(x => !keep.Contains(x.Id)))
+        {
+            removed.Remove();
+        }
+
+        var items = await db.PlanItems.Where(p => p.StudyId == study.Id && !p.Removed).ToListAsync(cancellationToken).ConfigureAwait(false);
         keep.Clear();
         sort = 0;
         foreach (var i in input.PlanItems ?? [])
@@ -874,7 +882,11 @@ internal sealed class StudyCommands(
             keep.Add(row.Id);
         }
 
-        db.PlanItems.RemoveRange(items.Where(x => !keep.Contains(x.Id)));
+        foreach (var removed in items.Where(x => !keep.Contains(x.Id)))
+        {
+            removed.Remove();
+        }
+
         await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
         return await views.AnalysisAsync(study.Id, cancellationToken).ConfigureAwait(false);
@@ -893,7 +905,7 @@ internal sealed class StudyCommands(
             return Forbidden(study);
         }
 
-        var items = await db.PlanItems.AsNoTracking().Where(p => p.StudyId == study.Id).ToListAsync(cancellationToken).ConfigureAwait(false);
+        var items = await db.PlanItems.AsNoTracking().Where(p => p.StudyId == study.Id && !p.Removed).ToListAsync(cancellationToken).ConfigureAwait(false);
         if (items.Count == 0)
         {
             return Error.Rule("bench.noPlanItem", "bench.errors.noPlanItem");

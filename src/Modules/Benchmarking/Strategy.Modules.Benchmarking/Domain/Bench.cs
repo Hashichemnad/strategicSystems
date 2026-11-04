@@ -299,6 +299,11 @@ public sealed class Topic : AuditableEntity
 
     public Guid StudyId { get; private set; }
 
+    /// <summary>Removed from the stage form while it was a draft (no hard delete, CLAUDE.md §6).</summary>
+    public bool Removed { get; private set; }
+
+    public void Remove() => Removed = true;
+
     public string Title { get; private set; } = string.Empty;
 
     public Guid? OwnerEmployeeId { get; private set; }
@@ -312,6 +317,7 @@ public sealed class Topic : AuditableEntity
 
     public void Update(string title, Guid? owner, string? description, int sort)
     {
+        Removed = false;
         Title = title.Trim();
         OwnerEmployeeId = owner;
         Description = Study.Clean(description);
@@ -393,6 +399,11 @@ public sealed class StudyEntity : AuditableEntity
 
     public Guid StudyId { get; private set; }
 
+    /// <summary>Removed from the stage form while it was a draft (no hard delete, CLAUDE.md §6).</summary>
+    public bool Removed { get; private set; }
+
+    public void Remove() => Removed = true;
+
     public Guid ComparatorId { get; private set; }
 
     public bool Selected { get; private set; }
@@ -413,6 +424,7 @@ public sealed class StudyEntity : AuditableEntity
 
     public void Update(bool selected, string? reason, string? availableInfo, string? contact, bool codeOfConduct)
     {
+        Removed = false;
         Selected = selected;
         Reason = Study.Clean(reason);
         AvailableInfo = Study.Clean(availableInfo);
@@ -465,6 +477,11 @@ public sealed class Visit : AuditableEntity
 
     public Guid StudyId { get; private set; }
 
+    /// <summary>Removed from the stage form while it was a draft (no hard delete, CLAUDE.md §6).</summary>
+    public bool Removed { get; private set; }
+
+    public void Remove() => Removed = true;
+
     public Guid ComparatorId { get; private set; }
 
     public DateOnly? AgreedOn { get; private set; }
@@ -511,6 +528,11 @@ public sealed class PracticeRow : AuditableEntity
 
     public Guid StudyId { get; private set; }
 
+    /// <summary>Removed from the stage form while it was a draft (no hard delete, CLAUDE.md §6).</summary>
+    public bool Removed { get; private set; }
+
+    public void Remove() => Removed = true;
+
     public Guid? TopicId { get; private set; }
 
     public string Subject { get; private set; } = string.Empty;
@@ -553,6 +575,11 @@ public sealed class IndicatorRow : AuditableEntity
     }
 
     public Guid StudyId { get; private set; }
+
+    /// <summary>Removed from the stage form while it was a draft (no hard delete, CLAUDE.md §6).</summary>
+    public bool Removed { get; private set; }
+
+    public void Remove() => Removed = true;
 
     public Guid? KpiCardId { get; private set; }
 
@@ -599,6 +626,11 @@ public sealed class PlanItem : AuditableEntity
     }
 
     public Guid StudyId { get; private set; }
+
+    /// <summary>Removed from the stage form while it was a draft (no hard delete, CLAUDE.md §6).</summary>
+    public bool Removed { get; private set; }
+
+    public void Remove() => Removed = true;
 
     public Guid? TopicId { get; private set; }
 

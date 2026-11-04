@@ -12,7 +12,7 @@ using Strategy.Modules.Benchmarking.Infrastructure;
 namespace Strategy.Modules.Benchmarking.Infrastructure.Migrations
 {
     [DbContext(typeof(BenchDbContext))]
-    [Migration("20261104201009_InitialBench")]
+    [Migration("20261104202924_InitialBench")]
     partial class InitialBench
     {
         /// <inheritdoc />
@@ -79,7 +79,8 @@ namespace Strategy.Modules.Benchmarking.Infrastructure.Migrations
 
                     b.Property<string>("TagsJson")
                         .IsRequired()
-                        .HasColumnType("jsonb")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
                         .HasColumnName("tags");
 
                     b.Property<string>("TitleAr")
@@ -319,6 +320,10 @@ namespace Strategy.Modules.Benchmarking.Infrastructure.Migrations
                         .HasColumnType("character varying(100)")
                         .HasColumnName("period");
 
+                    b.Property<bool>("Removed")
+                        .HasColumnType("boolean")
+                        .HasColumnName("removed");
+
                     b.Property<int>("Sort")
                         .HasColumnType("integer")
                         .HasColumnName("sort");
@@ -529,6 +534,10 @@ namespace Strategy.Modules.Benchmarking.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("remark_id");
 
+                    b.Property<bool>("Removed")
+                        .HasColumnType("boolean")
+                        .HasColumnName("removed");
+
                     b.Property<int>("Sort")
                         .HasColumnType("integer")
                         .HasColumnName("sort");
@@ -610,6 +619,10 @@ namespace Strategy.Modules.Benchmarking.Infrastructure.Migrations
                         .HasMaxLength(4000)
                         .HasColumnType("character varying(4000)")
                         .HasColumnName("our_practice");
+
+                    b.Property<bool>("Removed")
+                        .HasColumnType("boolean")
+                        .HasColumnName("removed");
 
                     b.Property<int>("Sort")
                         .HasColumnType("integer")
@@ -886,6 +899,10 @@ namespace Strategy.Modules.Benchmarking.Infrastructure.Migrations
                         .HasColumnType("character varying(4000)")
                         .HasColumnName("reason");
 
+                    b.Property<bool>("Removed")
+                        .HasColumnType("boolean")
+                        .HasColumnName("removed");
+
                     b.Property<bool>("Selected")
                         .HasColumnType("boolean")
                         .HasColumnName("selected");
@@ -943,6 +960,10 @@ namespace Strategy.Modules.Benchmarking.Infrastructure.Migrations
                     b.Property<Guid?>("OwnerEmployeeId")
                         .HasColumnType("uuid")
                         .HasColumnName("owner_employee_id");
+
+                    b.Property<bool>("Removed")
+                        .HasColumnType("boolean")
+                        .HasColumnName("removed");
 
                     b.Property<int>("Sort")
                         .HasColumnType("integer")
@@ -1027,6 +1048,10 @@ namespace Strategy.Modules.Benchmarking.Infrastructure.Migrations
                     b.Property<DateOnly?>("QuestionnaireSentOn")
                         .HasColumnType("date")
                         .HasColumnName("questionnaire_sent_on");
+
+                    b.Property<bool>("Removed")
+                        .HasColumnType("boolean")
+                        .HasColumnName("removed");
 
                     b.Property<Guid>("StudyId")
                         .HasColumnType("uuid")

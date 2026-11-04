@@ -118,8 +118,8 @@ internal sealed class BenchApprovalHook(
     /// </summary>
     private async Task<Result> HandOffAsync(Study study, object transactionContext, CancellationToken ct)
     {
-        var topics = await db.Topics.AsNoTracking().Where(t => t.StudyId == study.Id).ToListAsync(ct).ConfigureAwait(false);
-        var items = await db.PlanItems.Where(p => p.StudyId == study.Id).OrderBy(p => p.Sort).ToListAsync(ct).ConfigureAwait(false);
+        var topics = await db.Topics.AsNoTracking().Where(t => t.StudyId == study.Id && !t.Removed).ToListAsync(ct).ConfigureAwait(false);
+        var items = await db.PlanItems.Where(p => p.StudyId == study.Id && !p.Removed).OrderBy(p => p.Sort).ToListAsync(ct).ConfigureAwait(false);
         if (services.GetService(typeof(ICapRemarkSources)) is ICapRemarkSources cap)
         {
             var viewers = topics.Where(t => t.OwnerEmployeeId is not null).Select(t => t.OwnerEmployeeId!.Value).ToList();
@@ -153,9 +153,9 @@ internal sealed class BenchApprovalHook(
             }
         }
 
-        var practices = await db.Practices.AsNoTracking().Where(p => p.StudyId == study.Id && p.AddToLibrary).ToListAsync(ct).ConfigureAwait(false);
+        var practices = await db.Practices.AsNoTracking().Where(p => p.StudyId == study.Id && p.AddToLibrary && !p.Removed).ToListAsync(ct).ConfigureAwait(false);
         var existing = await db.BestPractices.Where(b => b.StudyId == study.Id && b.PracticeRowId != null).Select(b => b.PracticeRowId).ToListAsync(ct).ConfigureAwait(false);
-        var comparator = await db.StudyEntities.AsNoTracking().Where(e => e.StudyId == study.Id && e.Selected).Select(e => (Guid?)e.ComparatorId).FirstOrDefaultAsync(ct)
+        var comparator = await db.StudyEntities.AsNoTracking().Where(e => e.StudyId == study.Id && e.Selected && !e.Removed).Select(e => (Guid?)e.ComparatorId).FirstOrDefaultAsync(ct)
             .ConfigureAwait(false);
         foreach (var p in practices.Where(p => !existing.Contains(p.Id)))
         {
@@ -168,7 +168,7 @@ internal sealed class BenchApprovalHook(
         var settings = await reader.SettingsAsync(ct).ConfigureAwait(false);
         if (settings.KpiBenchmarkUpdate && services.GetService(typeof(IKpiBenchmarkWriter)) is IKpiBenchmarkWriter writer)
         {
-            var rows = await db.Indicators.AsNoTracking().Where(i => i.StudyId == study.Id && i.UpdateKpiBenchmark && i.KpiCardId != null).ToListAsync(ct).ConfigureAwait(false);
+            var rows = await db.Indicators.AsNoTracking().Where(i => i.StudyId == study.Id && i.UpdateKpiBenchmark && i.KpiCardId != null && !i.Removed).ToListAsync(ct).ConfigureAwait(false);
             foreach (var row in rows)
             {
                 var value = row.TheirValue?.ToString("0.####", CultureInfo.InvariantCulture) ?? "—";
@@ -230,7 +230,7 @@ internal sealed class StudyCurrentStatus(BenchDbContext db, BenchReader reader, 
         switch (study.Stage)
         {
             case StudyStages.Plan:
-                if (!await db.Topics.AnyAsync(t => t.StudyId == study.Id, cancellationToken).ConfigureAwait(false))
+                if (!await db.Topics.AnyAsync(t => t.StudyId == study.Id && !t.Removed, cancellationToken).ConfigureAwait(false))
                 {
                     return S("bench.currentStatus.addTopic", "warning", "bench.currentStatus.requester", requester);
                 }
@@ -253,7 +253,7 @@ internal sealed class StudyCurrentStatus(BenchDbContext db, BenchReader reader, 
             default:
                 if (!study.AnalysisApproved)
                 {
-                    var items = await db.PlanItems.CountAsync(i => i.StudyId == study.Id, cancellationToken).ConfigureAwait(false);
+                    var items = await db.PlanItems.CountAsync(i => i.StudyId == study.Id && !i.Removed, cancellationToken).ConfigureAwait(false);
                     return items == 0
                         ? S("bench.currentStatus.addAction", "warning", "bench.currentStatus.coordinator", coordinator, null,
                             can.EditAnalysis ? [new CurrentStatusAction("analysis", "bench.actions.fillAnalysis")] : [])

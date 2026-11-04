@@ -345,7 +345,7 @@ internal sealed class LibraryHandlers(BenchDbContext db, BenchReader reader, ILo
 
     private async Task<BenchComparatorDto> ToDtoAsync(Comparator c, bool history, CancellationToken ct)
     {
-        var links = await db.StudyEntities.AsNoTracking().Where(e => e.ComparatorId == c.Id)
+        var links = await db.StudyEntities.AsNoTracking().Where(e => e.ComparatorId == c.Id && !e.Removed)
             .Join(db.Studies.AsNoTracking(), e => e.StudyId, s => s.Id, (e, s) => new { e, s }).ToListAsync(ct).ConfigureAwait(false);
         var ratings = links.Where(l => l.e.Rating is not null).Select(l => (decimal)l.e.Rating!.Value).ToList();
         return new BenchComparatorDto(c.Id, c.Values(), links.Count, ratings.Count == 0 ? null : Math.Round(ratings.Average(), 2),

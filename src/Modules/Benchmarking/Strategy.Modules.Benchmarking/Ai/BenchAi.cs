@@ -158,7 +158,7 @@ internal sealed class BenchAiService(AiGateway gateway, BenchDbContext db, Bench
         var visitNotes = notes;
         if (string.IsNullOrWhiteSpace(visitNotes))
         {
-            visitNotes = string.Join("\n", await db.Visits.AsNoTracking().Where(v => v.StudyId == study.Id && v.Notes != null).Select(v => v.Notes).ToListAsync(ct)
+            visitNotes = string.Join("\n", await db.Visits.AsNoTracking().Where(v => v.StudyId == study.Id && !v.Removed && v.Notes != null).Select(v => v.Notes).ToListAsync(ct)
                 .ConfigureAwait(false));
         }
 
@@ -167,7 +167,7 @@ internal sealed class BenchAiService(AiGateway gateway, BenchDbContext db, Bench
             return Error.Validation([new FieldError("notes", "validation.notEmpty", "validation.notEmpty")]);
         }
 
-        var topics = await db.Topics.AsNoTracking().Where(t => t.StudyId == study.Id).ToListAsync(ct).ConfigureAwait(false);
+        var topics = await db.Topics.AsNoTracking().Where(t => t.StudyId == study.Id && !t.Removed).ToListAsync(ct).ConfigureAwait(false);
         var call = await gateway.CompleteJsonAsync(new AiJsonRequest(BenchAiFeatures.Analysis, new Dictionary<string, string>(),
             [new AiDocument("study", await StudyTextAsync(study, ct).ConfigureAwait(false)), new AiDocument("visit-notes", visitNotes)], AnalysisSchema,
             BenchPermissions.SystemCode, ResourceType: Study.EntityType, ResourceId: study.Id.ToString("D")), ct).ConfigureAwait(false);
@@ -263,7 +263,7 @@ internal sealed class BenchAiService(AiGateway gateway, BenchDbContext db, Bench
 
     private async Task<string> StudyTextAsync(Study study, CancellationToken ct)
     {
-        var topics = await db.Topics.AsNoTracking().Where(t => t.StudyId == study.Id).OrderBy(t => t.Sort).ToListAsync(ct).ConfigureAwait(false);
+        var topics = await db.Topics.AsNoTracking().Where(t => t.StudyId == study.Id && !t.Removed).OrderBy(t => t.Sort).ToListAsync(ct).ConfigureAwait(false);
         var sb = new StringBuilder($"Study {study.Number}: {study.TitleEn ?? study.TitleAr}\nArabic title: {study.TitleAr}\nComparison type: {study.ComparisonTypeCode}\n" +
             $"Purpose: {study.PurposeCode}\nScope: {study.Scope}\n");
         foreach (var t in topics)
