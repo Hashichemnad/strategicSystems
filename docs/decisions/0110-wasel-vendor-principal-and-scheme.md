@@ -15,8 +15,8 @@
 - MFA is always required for vendors (enrolment on first sign-in), independent of the installation MFA policy. TOTP and e-mail OTP as allowed
   by Settings → Security; replay protection and lockout as for internal users. Sign-in routes use the `auth` rate-limit policy.
 - Invitation e-mail links to `/wasel/set-password` (3-day token, works once). Antiforgery token for Wasel at `/api/wasel/v1/antiforgery/token`.
-- UAE Pass for vendors is a setting (`uaePassForVendors`, default off). See the phase summary for whether the flow is built; MFA follows it in
-  any case.
+- UAE Pass for vendors is a setting (`uaePassForVendors`, default off). The vendor-side UAE Pass flow is not built in Phase 11 (the internal
+  OIDC handlers sign into the internal scheme); when it is built it must match a vendor account by e-mail and still require the second factor.
 
 ## Consequences
 No code path can turn a vendor cookie into an internal principal; the security tests enumerate every endpoint with a vendor session.

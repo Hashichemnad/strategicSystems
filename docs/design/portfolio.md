@@ -843,8 +843,8 @@ first, then implemented as written; open choices are the ADRs. Phase 15 is built
   new mail apart from the assignment notice).
 - Endpoints `/api/wasel/v1/auth/{login | mfa/verify | mfa/email-code | mfa/enrol/totp | mfa/enrol/email | mfa/enrol/confirm | password/forgot |
   password/reset | logout}`, `GET /api/wasel/v1/me`, `GET /api/wasel/v1/antiforgery/token` (the antiforgery token is bound to the vendor
-  identity). UAE Pass for vendors: setting `uaePassForVendors` (default off); when on and a UAE Pass provider is configured, the login page
-  offers it and the account is matched by e-mail — MFA still follows (ADR 0110; see the phase summary for what is built).
+  identity). UAE Pass for vendors: setting `uaePassForVendors` (default off) is stored; the vendor UAE Pass sign-in flow itself is **not built in
+  Phase 11** (known gap in the phase summary, ADR 0110) — vendors sign in with e-mail + password + mandatory second factor.
 - Entry URL `/wasel` (SPA area with its own vendor-branded bilingual layout: logo and colours from Settings → Branding, no internal menus).
 
 ## 47. Vendor authorization (ADR 0111)
@@ -1012,8 +1012,8 @@ deterministically.
 
 ## 58. Capacity view (SPEC §1.12, ADR 0116)
 
-`GET /capacity?unitId&below=true&threshold` (permission `portfolio.capacity.read`: PM Office, viewer, department viewer (unit and below),
-administrator). Rows per employee (of the unit, and below when asked; list filtered by the caller's project read scope for the project
+`GET /capacity?unitId&below=true&overOnly` (permission `portfolio.capacity.read`: PM Office, portfolio viewer, administrator; not scopable —
+a unit-limited holder can be configured in Settings → Roles later). Rows per employee (of the unit, and below when asked; list filtered by the caller's project read scope for the project
 columns): allocations from (a) **Teams** — active memberships of active teams with `allocation %` through the new Teams.Contracts
 `ITeamAllocationDirectory` (project teams included, labelled with the project), and (b) **project proposed members** (charter team list, new
 `allocation_percent`) of active projects **without** a formed team (avoids double counting). Total % and an **over-allocation warning** when
