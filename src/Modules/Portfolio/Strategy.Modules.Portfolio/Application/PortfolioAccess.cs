@@ -31,6 +31,15 @@ public static class PortfolioPermissions
     public const string SettingsManage = "portfolio.settings.manage";
     public const string AiAssessment = "portfolio.ai.assessment";
 
+    // Phase 11 — Wasel (ADR 0111) and Portfolio completion (ADR 0116).
+    public const string VendorRead = "portfolio.vendor.read";
+    public const string VendorManage = "portfolio.vendor.manage";
+    public const string ProjectVendors = "portfolio.project.vendors";
+    public const string CapacityRead = "portfolio.capacity.read";
+    public const string ReviewRead = "portfolio.review.read";
+    public const string ReviewManage = "portfolio.review.manage";
+    public const string VendorNumbering = "portfolio.vendor";
+
     public const string RequesterRole = "requester";
     public const string ApproverRole = "approver";
     public const string ProcurementRole = "procurement";
@@ -162,6 +171,12 @@ internal sealed class PortfolioAccessCatalogue : IAccessCatalogueSource
         new(PortfolioPermissions.AiAssist, "مساعدات الذكاء الاصطناعي للمشاريع", "AI assists for projects", Scopable: false),
         new(PortfolioPermissions.SettingsManage, "إدارة إعدادات المحافظ", "Manage portfolio settings", Scopable: false),
         new(PortfolioPermissions.AiAssessment, "تقييم المقترح بالذكاء الاصطناعي", "AI proposal assessment", Scopable: false),
+        new(PortfolioPermissions.VendorRead, "عرض سجل الموردين", "View the vendor register", Scopable: false),
+        new(PortfolioPermissions.VendorManage, "إدارة سجل الموردين وحسابات واصل", "Manage the vendor register and Wasel accounts", Scopable: false),
+        new(PortfolioPermissions.ProjectVendors, "إدارة الموردين في المشروع (واصل)", "Manage vendors on the project (Wasel)"),
+        new(PortfolioPermissions.CapacityRead, "عرض سعة الموظفين", "View employee capacity", Scopable: false),
+        new(PortfolioPermissions.ReviewRead, "عرض المراجعات الربعية للمحفظة", "View quarterly portfolio reviews", Scopable: false),
+        new(PortfolioPermissions.ReviewManage, "إجراء المراجعات الربعية للمحفظة", "Run quarterly portfolio reviews", Scopable: false),
     ];
 
     public IEnumerable<RoleSeed> DefaultRoles =>
@@ -175,7 +190,8 @@ internal sealed class PortfolioAccessCatalogue : IAccessCatalogueSource
             [new(PortfolioPermissions.RequestRead, DataScope.UnitAndBelow), new(PortfolioPermissions.ProjectRead, DataScope.UnitAndBelow),
                 new(PortfolioPermissions.ProjectCosts, DataScope.UnitAndBelow)]),
         new("viewer", "مستعرض المحفظة (القيادة)", "Portfolio viewer (leadership)",
-            [new(PortfolioPermissions.RequestRead, DataScope.All), new(PortfolioPermissions.ProjectRead, DataScope.All), new(PortfolioPermissions.ProjectCosts, DataScope.All)]),
+            [new(PortfolioPermissions.RequestRead, DataScope.All), new(PortfolioPermissions.ProjectRead, DataScope.All), new(PortfolioPermissions.ProjectCosts, DataScope.All),
+                new(PortfolioPermissions.VendorRead), new(PortfolioPermissions.CapacityRead), new(PortfolioPermissions.ReviewRead)]),
         new("pm-office", "مكتب إدارة المشاريع", "PM Office",
             [new(PortfolioPermissions.RequestRead, DataScope.All), new(PortfolioPermissions.RequestCreate), new(PortfolioPermissions.RequestEdit, DataScope.All),
                 new(PortfolioPermissions.RequestManage, DataScope.All), new(PortfolioPermissions.ProjectRead, DataScope.All), new(PortfolioPermissions.AiAssessment),
@@ -196,7 +212,9 @@ internal sealed class PortfolioAccessCatalogue : IAccessCatalogueSource
     [
         new(PortfolioPermissions.ProjectEdit, DataScope.All), new(PortfolioPermissions.ProjectContribute, DataScope.All), new(PortfolioPermissions.ProjectChange, DataScope.All),
         new(PortfolioPermissions.ProjectManage, DataScope.All), new(PortfolioPermissions.ProjectCosts, DataScope.All), new(PortfolioPermissions.PortfolioManage),
-        new(PortfolioPermissions.AiAssist),
+        new(PortfolioPermissions.AiAssist), new(PortfolioPermissions.VendorRead), new(PortfolioPermissions.VendorManage),
+        new(PortfolioPermissions.ProjectVendors, DataScope.All), new(PortfolioPermissions.CapacityRead), new(PortfolioPermissions.ReviewRead),
+        new(PortfolioPermissions.ReviewManage),
     ];
 
     public IEnumerable<RecordRoleDefinition> RecordRoles =>
@@ -210,7 +228,7 @@ internal sealed class PortfolioAccessCatalogue : IAccessCatalogueSource
             [PortfolioPermissions.ProjectRead, PortfolioPermissions.ProjectContribute, PortfolioPermissions.ProjectChange, PortfolioPermissions.ProjectCosts]),
         new(PortfolioPermissions.ProjectResource, PortfolioPermissions.PmRole, "مدير المشروع", "Project manager",
             [PortfolioPermissions.ProjectRead, PortfolioPermissions.ProjectEdit, PortfolioPermissions.ProjectContribute, PortfolioPermissions.ProjectChange,
-                PortfolioPermissions.ProjectCosts]),
+                PortfolioPermissions.ProjectCosts, PortfolioPermissions.ProjectVendors, PortfolioPermissions.VendorRead]),
         new(PortfolioPermissions.ProjectResource, PortfolioPermissions.TeamMemberRole, "عضو فريق المشروع", "Project team member",
             [PortfolioPermissions.ProjectRead, PortfolioPermissions.ProjectContribute]),
         new(PortfolioPermissions.ProjectResource, PortfolioPermissions.ApproverRole, "معتمد المشروع", "Project approver",
@@ -220,6 +238,9 @@ internal sealed class PortfolioAccessCatalogue : IAccessCatalogueSource
         new(PortfolioPermissions.ProjectResource, PortfolioPermissions.RequesterRole, "مقدم طلب المشروع", "Project requester",
             [PortfolioPermissions.ProjectRead, PortfolioPermissions.ProjectCosts]),
     ];
+
+    public static readonly NumberingDefinition VendorNumbering = new(
+        PortfolioPermissions.VendorNumbering, PortfolioPermissions.SystemCode, "رقم المورد", "Vendor number", "VND-{SEQ:4}");
 
     public static readonly NumberingDefinition RequestNumbering = new(
         PortfolioPermissions.RequestNumbering, PortfolioPermissions.SystemCode, "رقم طلب البرنامج", "Program request number", "PR-{SEQ:4}");
@@ -291,5 +312,49 @@ internal sealed class PortfolioAccessCatalogue : IAccessCatalogueSource
             new("ppp", "شراكة بين القطاعين العام والخاص", "Public-private partnership"),
             new(OtherCode.Value, "أخرى", "Other"),
         ]),
+    ];
+}
+
+/// <summary>Wasel vendor permissions (ADR 0111): no internal roles; given only by the vendor record roles on a project.</summary>
+public static class WaselPermissions
+{
+    public const string SystemCode = "wasel";
+    public const string ProjectRead = "wasel.project.read";
+    public const string PlanPrepare = "wasel.plan.prepare";
+    public const string PlanSubmit = "wasel.plan.submit";
+    public const string UpdatePrepare = "wasel.update.prepare";
+    public const string UpdateSubmit = "wasel.update.submit";
+    public const string DeliverableUpload = "wasel.deliverable.upload";
+    public const string ItemPropose = "wasel.item.propose";
+    public const string CommentWrite = "wasel.comment.write";
+    public const string MeetingConfirm = "wasel.meeting.confirm";
+
+    public static readonly IReadOnlyList<string> ContributorPermissions =
+        [ProjectRead, PlanPrepare, UpdatePrepare, DeliverableUpload, ItemPropose, CommentWrite, MeetingConfirm];
+
+    public static readonly IReadOnlyList<string> LeadPermissions = [.. ContributorPermissions, PlanSubmit, UpdateSubmit];
+}
+
+internal sealed class WaselAccessCatalogue : IAccessCatalogueSource
+{
+    public SystemDefinition System => new(WaselPermissions.SystemCode, SystemKind.Module, "واصل — بوابة الموردين", "Wasel — vendor portal", 101);
+
+    public IEnumerable<PermissionDefinition> Permissions =>
+    [
+        new(WaselPermissions.ProjectRead, "المورد: عرض المشروع المسند", "Vendor: view the assigned project"),
+        new(WaselPermissions.PlanPrepare, "المورد: إعداد الخطة المقترحة", "Vendor: prepare the proposed plan"),
+        new(WaselPermissions.PlanSubmit, "المورد: تقديم الخطة المقترحة", "Vendor: submit the proposed plan"),
+        new(WaselPermissions.UpdatePrepare, "المورد: إعداد تحديث المراحل", "Vendor: prepare milestone updates"),
+        new(WaselPermissions.UpdateSubmit, "المورد: تقديم تحديث المراحل", "Vendor: submit milestone updates"),
+        new(WaselPermissions.DeliverableUpload, "المورد: رفع المخرجات", "Vendor: upload deliverables"),
+        new(WaselPermissions.ItemPropose, "المورد: اقتراح مشكلات وتحديات ومخاطر", "Vendor: propose issues, challenges and risks"),
+        new(WaselPermissions.CommentWrite, "المورد: التعليق", "Vendor: comment"),
+        new(WaselPermissions.MeetingConfirm, "المورد: تأكيد الاجتماعات", "Vendor: confirm meetings"),
+    ];
+
+    public IEnumerable<RecordRoleDefinition> RecordRoles =>
+    [
+        new(PortfolioPermissions.ProjectResource, VendorRoles.Lead, "قائد مشروع المورد", "Vendor project lead", WaselPermissions.LeadPermissions),
+        new(PortfolioPermissions.ProjectResource, VendorRoles.Contributor, "مساهم من المورد", "Vendor contributor", WaselPermissions.ContributorPermissions),
     ];
 }

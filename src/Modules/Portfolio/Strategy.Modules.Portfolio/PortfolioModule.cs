@@ -36,12 +36,14 @@ public sealed class PortfolioModule : IModule
         services.AddAccessCatalogue(new PortfolioAccessCatalogue());
         services.AddNumberingFormat(PortfolioAccessCatalogue.RequestNumbering);
         services.AddNumberingFormat(PortfolioAccessCatalogue.ProjectNumbering);
+        services.AddNumberingFormat(PortfolioAccessCatalogue.VendorNumbering);
+        services.AddAccessCatalogue(new WaselAccessCatalogue());
         foreach (var lookup in PortfolioAccessCatalogue.Lookups)
         {
             services.AddLookupType(lookup);
         }
 
-        foreach (var template in PortfolioNotifications.All)
+        foreach (var template in PortfolioNotifications.All.Concat(PortfolioNotifications.Wasel))
         {
             services.AddNotificationTemplate(template);
         }
@@ -84,6 +86,26 @@ public sealed class PortfolioModule : IModule
         services.AddScoped<CommunicationReminderRunner>();
         services.AddScheduledJob(CommunicationReminderJob.Definition);
         services.AddIntegrationEventHandler<TeamMembershipChanged, ProjectTeamMembershipHandler>();
+
+        // Phase 11 — Wasel vendor portal (ADRs 0110–0115) and Portfolio completion (ADR 0116).
+        services.AddScoped<WaselContext>();
+        services.AddScoped<WaselGrants>();
+        services.AddScoped<WaselNotifier>();
+        services.AddScoped<VendorRegisterService>();
+        services.AddScoped<WaselManagementService>();
+        services.AddScoped<VendorPortalService>();
+        services.AddScoped<IUserDirectoryLookup, UserDirectoryLookup>();
+        services.AddScoped<IVendorDirectory, VendorDirectory>();
+        services.AddScoped<Strategy.Platform.Identity.Wasel.IVendorSignInPolicy, VendorSignInPolicy>();
+        services.AddScoped<WaselAccessRunner>();
+        services.AddScheduledJob(WaselAccessJob.Definition);
+        services.AddScoped<VendorReviewAiService>();
+        services.AddAiFeature(VendorReviewAiService.Definition);
+        services.AddScoped<CapacityService>();
+        services.AddScoped<PortfolioReviewService>();
+        services.AddFilePurpose(WaselFilePurposes.VendorEvidence);
+        services.AddFilePurpose(WaselFilePurposes.Deliverable);
+        services.AddFileOwnerAccess<DeliverableFiles>();
         services.AddIntegrationEventHandler<Risk.Contracts.RiskFrameworkChanged, ProjectRiskRescoreHandler>();
 
         services.AddApprovalProcess(RequestApprovalProcess.Definition);
@@ -154,5 +176,9 @@ public sealed class PortfolioModule : IModule
         services.AddAppTool<CreateStoryDraftTool>();
     }
 
-    public void MapEndpoints(IEndpointRouteBuilder endpoints) => PortfolioEndpoints.Map(endpoints.MapModuleGroup(this));
+    public void MapEndpoints(IEndpointRouteBuilder endpoints)
+    {
+        PortfolioEndpoints.Map(endpoints.MapModuleGroup(this));
+        WaselEndpoints.Map(endpoints);
+    }
 }

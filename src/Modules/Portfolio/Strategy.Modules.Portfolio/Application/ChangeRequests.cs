@@ -385,6 +385,9 @@ internal sealed class ChangeRequestService(
                 }
 
                 break;
+            case ChangeTypes.Hold:
+                Log("status", tracked.Status, ProjectStatuses.OnHold);
+                break;
         }
 
         if (tracked.ReplanChangeRequestId == cr.Id)
@@ -401,7 +404,21 @@ internal sealed class ChangeRequestService(
 
         cr.Move(ChangeActions.Apply, clock.UtcNow);
         cr.MarkApplied(JsonSerializer.Serialize(log, LogJson), clock.UtcNow);
-        if (cr.Type is ChangeTypes.Cancellation or ChangeTypes.Merge)
+        if (cr.Type == ChangeTypes.Hold && tracked.Status == ProjectStatuses.Active)
+        {
+            var running = tracked.ApprovalProcess is { } process && tracked.ApprovalResult is null ? process : null;
+            if (running is not null)
+            {
+                return ProjectService.ApprovalRunning(running);
+            }
+
+            var held = await projects.ApplyStatusAsync(tracked, ProjectStatusActions.Hold, $"{cr.Number}: {cr.Reason}", null, transaction, ct).ConfigureAwait(false);
+            if (held.IsFailure)
+            {
+                return held.Error;
+            }
+        }
+        else if (cr.Type is ChangeTypes.Cancellation or ChangeTypes.Merge)
         {
             var running = tracked.ApprovalProcess is { } process && tracked.ApprovalResult is null ? process : null;
             var cancelled = await projects.ApplyStatusAsync(tracked, ProjectStatusActions.Cancel, $"{cr.Number}: {cr.Reason}", running, transaction, ct).ConfigureAwait(false);

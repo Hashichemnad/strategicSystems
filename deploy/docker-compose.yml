@@ -82,6 +82,7 @@ services:
       Files__S3SecretKey: ${FILES_S3_SECRET_KEY:-}
       Modules__Sample__Enabled: ${MODULE_SAMPLE_ENABLED:-false}
       Modules__Portfolio__Enabled: ${MODULE_PORTFOLIO_ENABLED:-true}
+      Modules__Wasel__Enabled: ${MODULE_WASEL_ENABLED:-true}
       DataProtection__CertificatePath: ${DATAPROTECTION_CERTIFICATE_PATH:-}
       DataProtection__CertificatePassword: ${DATAPROTECTION_CERTIFICATE_PASSWORD:-}
       OTEL_EXPORTER_OTLP_ENDPOINT: ${OTEL_EXPORTER_OTLP_ENDPOINT:-}

@@ -17,6 +17,19 @@ public sealed class AuthenticationRequirementMiddleware(RequestDelegate next)
     {
         requestContext.SetUser(context.User);
 
+        // Wasel isolation (ADR 0110): a vendor principal never acts outside /api/wasel and an internal one never inside it, whatever scheme
+        // authenticated it. The scheme selection already makes this so; this is the second wall.
+        if (context.User.IsAuthenticated() && !context.User.IsSystem())
+        {
+            var waselPath = context.Request.Path.StartsWithSegments("/api/wasel", StringComparison.OrdinalIgnoreCase);
+            var vendor = context.User.FindFirst(StrategyClaims.PrincipalType)?.Value == StrategyClaims.VendorPrincipal;
+            if (vendor != waselPath && (vendor || context.Request.Path.StartsWithSegments("/api")))
+            {
+                await new Error("auth.principalRefused", "errors.forbidden", ErrorKind.Forbidden).ToProblem().ExecuteAsync(context).ConfigureAwait(false);
+                return;
+            }
+        }
+
         var endpoint = context.GetEndpoint();
         if (endpoint is not null
             && context.Request.Path.StartsWithSegments("/api")

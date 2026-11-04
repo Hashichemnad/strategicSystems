@@ -438,3 +438,21 @@ internal sealed class OpenEvaluationOnLinkedRecordClosed(TeamsDbContext db, ILin
         }
     }
 }
+
+/// <summary>Active memberships of active teams with their allocation (ADR 0116).</summary>
+internal sealed class TeamAllocationDirectory(TeamsDbContext db) : ITeamAllocationDirectory
+{
+    public async Task<IReadOnlyList<TeamAllocation>> ForEmployeesAsync(IReadOnlyCollection<Guid> employeeIds, CancellationToken cancellationToken = default)
+    {
+        if (employeeIds.Count == 0)
+        {
+            return [];
+        }
+
+        return await db.Members.AsNoTracking()
+            .Where(m => m.EmployeeId != null && employeeIds.Contains(m.EmployeeId.Value) && m.Status == MemberStatuses.Active)
+            .Join(db.Teams.AsNoTracking().Where(t => t.Status == TeamStatuses.Active), m => m.TeamId, t => t.Id,
+                (m, t) => new TeamAllocation(m.EmployeeId!.Value, t.Id, t.Number, t.NameAr, t.NameEn, m.AllocationPercent))
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
+    }
+}

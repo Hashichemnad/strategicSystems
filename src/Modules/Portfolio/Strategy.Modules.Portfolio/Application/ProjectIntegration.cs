@@ -22,7 +22,8 @@ namespace Strategy.Modules.Portfolio.Application;
 /// <summary>Moves the project with every project approval process, inside the engine's transaction (docs/design/portfolio.md §16, §18).</summary>
 internal sealed class ProjectApprovalHook(
     PortfolioDbContext db, ProjectLoader loader, ProjectProgress progress, ProjectNotifier notifier, IRecordRoleService recordRoles, IRoleHolderQuery roles,
-    IIntegrationEventPublisher events, IClock clock, IServiceProvider services, AgileService agile, BaselineService baselines, RequestReader reader) : IApprovalHook
+    IIntegrationEventPublisher events, IClock clock, IServiceProvider services, AgileService agile, BaselineService baselines, RequestReader reader,
+    WaselNotifier waselNotifier) : IApprovalHook
 {
     public IReadOnlyCollection<string> ProcessKeys { get; } = ProjectApprovalProcesses.All.Select(d => d.Key).ToList();
 
@@ -133,6 +134,20 @@ internal sealed class ProjectApprovalHook(
 
                     await agile.ApproveCarriedAsync(project.Id, now, ct).ConfigureAwait(false); // ADR 0091: monthly roll-up of sprints
 
+                    // Wasel (ADR 0114): accepted vendor submissions of the window are now "included in the approved update".
+                    if (window is not null)
+                    {
+                        foreach (var vendorSubmission in await db.VendorSubmissions.Where(v => v.MonthlyUpdateId == window.Id && v.Status == SubmissionStatuses.Accepted)
+                                     .ToListAsync(ct).ConfigureAwait(false))
+                        {
+                            vendorSubmission.Move(SubmissionActions.Include, now, null);
+                            vendorSubmission.Share("approved", vendorSubmission.SharedNote, now);
+                            await waselNotifier.ToVendorAsync(PortfolioNotifications.WaselOutcomeShared, project, vendorSubmission.VendorId, ct,
+                                stage: new BilingualText("معتمد ومُدرج في التحديث المعتمد", "Approved — included in the approved update"), due: vendorSubmission.Period,
+                                transactionContext: db).ConfigureAwait(false);
+                        }
+                    }
+
                     await db.SaveChangesAsync(ct).ConfigureAwait(false);
                     await progress.RecalculateAsync(project, ct).ConfigureAwait(false);
                     project.MarkMonthlyApproved(now);
@@ -151,6 +166,8 @@ internal sealed class ProjectApprovalHook(
                     {
                         return applied;
                     }
+
+                    await EndVendorAccessAsync(project, "project-closed", now, ct).ConfigureAwait(false);
 
                     // ADR 0072: Teams opens the project-team evaluation; other subscribers get the Portfolio event.
                     await events.PublishAsync(new LinkedRecordClosed(PortfolioPermissions.ProjectResource, project.Id, "closure-approved", now), db, ct).ConfigureAwait(false);
@@ -172,6 +189,9 @@ internal sealed class ProjectApprovalHook(
 
             case ProjectApprovalProcesses.SprintReview:
                 {
+                    // Phase 10 gap closed (ADR 0117): the PM and owner hear the sprint review decision.
+                    await notifier.ToEmployeesAsync(PortfolioNotifications.SprintSubmitted, project, [project.PmEmployeeId, project.OwnerEmployeeId], db, ct,
+                        await SprintNameAsync(project.Id, ct).ConfigureAwait(false), stage: new BilingualText("معتمد", "Approved")).ConfigureAwait(false);
                     await agile.ApproveCarriedAsync(project.Id, now, ct).ConfigureAwait(false);
                     await db.SaveChangesAsync(ct).ConfigureAwait(false);
                     await progress.RecalculateAsync(project, ct).ConfigureAwait(false);
@@ -232,6 +252,9 @@ internal sealed class ProjectApprovalHook(
                 }
 
             case ProjectApprovalProcesses.SprintReview:
+                await notifier.ToEmployeesAsync(PortfolioNotifications.SprintSubmitted, project, [project.PmEmployeeId, project.OwnerEmployeeId], db, ct,
+                    await SprintNameAsync(project.Id, ct).ConfigureAwait(false),
+                    stage: kind == ApprovalEventKinds.Returned ? new BilingualText("معاد للتصحيح", "Returned") : new BilingualText("مرفوض", "Rejected")).ConfigureAwait(false);
                 await agile.ReturnCarriedAsync(project.Id, now, ct).ConfigureAwait(false);
                 return Result.Success();
 
@@ -251,6 +274,31 @@ internal sealed class ProjectApprovalHook(
 
             default:
                 return project.Apply(ProjectActions.ApprovalReturned, template, now);
+        }
+    }
+
+    private async Task<string> SprintNameAsync(Guid projectId, CancellationToken ct) =>
+        await db.Sprints.Where(s => s.ProjectId == projectId && s.Status == SprintStatuses.InApproval).OrderByDescending(s => s.Number)
+            .Select(s => s.Name ?? s.Number.ToString(System.Globalization.CultureInfo.InvariantCulture)).FirstOrDefaultAsync(ct).ConfigureAwait(false) ?? string.Empty;
+
+    /// <summary>Wasel (ADR 0115): closure ends vendor access at once when <c>endAtClosure</c> is on (the access job also catches completed / cancelled projects).</summary>
+    private async Task EndVendorAccessAsync(Project project, string reason, DateTimeOffset now, CancellationToken ct)
+    {
+        if (!(await reader.SettingsAsync(ct).ConfigureAwait(false)).Wasel.EndAtClosure)
+        {
+            return;
+        }
+
+        var recordRoles = services.GetRequiredService<IRecordRoleService>();
+        foreach (var assignment in await db.VendorAssignments.Where(a => a.ProjectId == project.Id && a.Status == AssignmentStatuses.Active).ToListAsync(ct).ConfigureAwait(false))
+        {
+            assignment.End(AssignmentStatuses.Ended, reason, now);
+            foreach (var member in await db.VendorMembers.Where(m => m.AssignmentId == assignment.Id && m.Status == VendorMemberStatuses.Active).ToListAsync(ct).ConfigureAwait(false))
+            {
+                member.End(VendorMemberStatuses.Expired, reason);
+                await recordRoles.RevokeInTransactionAsync(db, PortfolioPermissions.ProjectResource, project.Id, RecordPrincipalKinds.User, member.UserId, member.Role, ct)
+                    .ConfigureAwait(false);
+            }
         }
     }
 
