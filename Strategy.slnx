@@ -20,6 +20,10 @@
     <Project Path="src/Modules/Requests/Strategy.Modules.Requests.Contracts/Strategy.Modules.Requests.Contracts.csproj" />
     <Project Path="src/Modules/Requests/Strategy.Modules.Requests/Strategy.Modules.Requests.csproj" />
   </Folder>
+  <Folder Name="/src/Modules/DocumentRegistry/">
+    <Project Path="src/Modules/DocumentRegistry/Strategy.Modules.DocumentRegistry.Contracts/Strategy.Modules.DocumentRegistry.Contracts.csproj" />
+    <Project Path="src/Modules/DocumentRegistry/Strategy.Modules.DocumentRegistry/Strategy.Modules.DocumentRegistry.csproj" />
+  </Folder>
   <Folder Name="/src/Modules/Kpi/">
     <Project Path="src/Modules/Kpi/Strategy.Modules.Kpi.Contracts/Strategy.Modules.Kpi.Contracts.csproj" />
     <Project Path="src/Modules/Kpi/Strategy.Modules.Kpi/Strategy.Modules.Kpi.csproj" />

@@ -1,7 +1,6 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Microsoft.Extensions.DependencyInjection;
@@ -156,9 +155,33 @@ internal sealed class RequestWorld
         return Guid.Parse(uploaded["id"]!.GetValue<string>());
     }
 
-    public static byte[] Pdf(string text) => Encoding.ASCII.GetBytes(
-        "%PDF-1.4\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj 2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj 3 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 200 200]>>endobj\n"
-        + $"% {text}\ntrailer<</Root 1 0 R>>\n%%EOF");
+    /// <summary>A one-page PDF with a real text layer (PdfPig, standard font) so text extraction, compare and the stamp work on it.</summary>
+    public static byte[] Pdf(string text)
+    {
+        var builder = new UglyToad.PdfPig.Writer.PdfDocumentBuilder();
+        var font = builder.AddStandard14Font(UglyToad.PdfPig.Fonts.Standard14Fonts.Standard14Font.Helvetica);
+        var page = builder.AddPage(UglyToad.PdfPig.Content.PageSize.A4);
+        page.AddText(text, 12, new UglyToad.PdfPig.Core.PdfPoint(50, 700), font);
+        return builder.Build();
+    }
+
+    /// <summary>The user's principal as the identity component issues it (for calling MCP tools in-process).</summary>
+    public static System.Security.Claims.ClaimsPrincipal PrincipalOf(TestUser user) => new(new System.Security.Claims.ClaimsIdentity(
+    [
+        new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.NameIdentifier, user.Id.ToString()),
+        new System.Security.Claims.Claim(Strategy.Platform.Access.StrategyClaims.PrincipalType, Strategy.Platform.Access.StrategyClaims.InternalPrincipal),
+        new System.Security.Claims.Claim(Strategy.Platform.Access.StrategyClaims.EmployeeId, user.EmployeeId?.ToString() ?? string.Empty),
+        new System.Security.Claims.Claim(Strategy.Platform.Access.StrategyClaims.AuthMethod, "pwd"),
+    ], "test"));
+
+    /// <summary>Signs everyone but the MFA users in again: sessions follow the travelling clock.</summary>
+    public async Task ReSignInAsync()
+    {
+        foreach (var user in new[] { EmployeeA, EmployeeB, Outsider })
+        {
+            Clients[user.Id] = await Factory.SignInAsync(user);
+        }
+    }
 
     public static async Task<HttpStatusCode> StatusAsync(Task<HttpResponseMessage> call) => (await call).StatusCode;
 }
