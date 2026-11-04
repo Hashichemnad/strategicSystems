@@ -43,11 +43,13 @@ public sealed record ProjectDto(
 
 public sealed record ProjectListItemDto(
     Guid Id, string Number, string Classification, string? NameAr, string? NameEn, string Stage, string Status, PortfolioUnitDto? Unit, decimal? Budget, DateOnly? PlannedStart,
-    DateOnly? PlannedEnd, DateTimeOffset CreatedAt);
+    DateOnly? PlannedEnd, DateTimeOffset CreatedAt, string SubState, PortfolioPersonDto? Pm, decimal Performance, decimal PlannedProgress, string ProgressStatus);
 
 public sealed record GetProject(Guid Id) : IQuery<ProjectDto>;
 
-public sealed record ListProjects(PageRequest Page, string? Classification = null, string? Stage = null, Guid? UnitId = null, string? Search = null)
+public sealed record ListProjects(
+    PageRequest Page, string? Classification = null, string? Stage = null, Guid? UnitId = null, string? Search = null, string? Status = null, string? View = null,
+    string? ProgressStatus = null)
     : IQuery<PagedResult<ProjectListItemDto>>;
 
 public sealed record PortfolioOptionDto(string Code, string? LabelAr, string? LabelEn);
@@ -68,7 +70,15 @@ public sealed record PortfolioOptionsDto(
     Guid? ProjectScopeTemplateFileId,
     bool AssessmentOnCreate,
     bool CanCreate,
-    bool CanManageSettings);
+    bool CanManageSettings,
+    IReadOnlyList<PortfolioOptionDto> Themes,
+    IReadOnlyList<PortfolioOptionDto> RiskCategories,
+    IReadOnlyList<PortfolioOptionDto> StakeholderClasses,
+    IReadOnlyList<PortfolioOptionDto> LessonTypes,
+    IReadOnlyList<PortfolioOptionDto> KpiIndexClasses,
+    StageTemplate ProjectTemplate,
+    StageTemplate InitiativeTemplate,
+    decimal ProgressTolerance);
 
 public sealed record GetPortfolioOptions : IQuery<PortfolioOptionsDto>;
 
@@ -78,7 +88,7 @@ public sealed record SavePortfolioSettings(PortfolioSettings Settings, uint Vers
 
 public sealed record UploadProjectScopeTemplate(string FileName, Stream Content) : ICommand<SettingsDocument<PortfolioSettings>>;
 
-internal sealed class ProjectHandlers(PortfolioDbContext db, RequestReader reader, IRequestContext context)
+internal sealed class ProjectHandlers(PortfolioDbContext db, RequestReader reader, ProjectLoader loader, IRequestContext context)
     : IQueryHandler<GetProject, ProjectDto>, IQueryHandler<ListProjects, PagedResult<ProjectListItemDto>>
 {
     public async Task<Result<ProjectDto>> HandleAsync(GetProject query, CancellationToken cancellationToken)
@@ -105,7 +115,26 @@ internal sealed class ProjectHandlers(PortfolioDbContext db, RequestReader reade
     public async Task<Result<PagedResult<ProjectListItemDto>>> HandleAsync(ListProjects query, CancellationToken cancellationToken)
     {
         var page = query.Page.Normalised();
-        var source = await reader.VisibleProjectsAsync(context.User, cancellationToken).ConfigureAwait(false);
+        var source = await loader.VisibleAsync(context.User, cancellationToken).ConfigureAwait(false);
+        if (!string.IsNullOrWhiteSpace(query.Status))
+        {
+            source = source.Where(p => p.Status == query.Status);
+        }
+
+        if (!string.IsNullOrWhiteSpace(query.ProgressStatus))
+        {
+            source = source.Where(p => p.ProgressStatus == query.ProgressStatus);
+        }
+
+        if (query.View == "mine" && context.User.EmployeeIdOf() is { } me)
+        {
+            source = source.Where(p => p.PmEmployeeId == me || p.OwnerEmployeeId == me);
+        }
+        else if (query.View == "unclaimed")
+        {
+            source = source.Where(p => p.PmEmployeeId == null && p.Status == ProjectStatuses.Active);
+        }
+
         if (!string.IsNullOrWhiteSpace(query.Classification))
         {
             source = source.Where(p => p.Classification == query.Classification);
@@ -139,15 +168,18 @@ internal sealed class ProjectHandlers(PortfolioDbContext db, RequestReader reade
         };
         var projects = await source.Skip(page.Skip).Take(page.PageSize).ToListAsync(cancellationToken).ConfigureAwait(false);
         var units = await reader.UnitsAsync(projects.Select(p => p.UnitId), cancellationToken).ConfigureAwait(false);
+        var people = await reader.PeopleAsync(projects.Select(p => p.PmEmployeeId), cancellationToken).ConfigureAwait(false);
         return new PagedResult<ProjectListItemDto>(projects.Select(p => new ProjectListItemDto(
             p.Id, p.Number, p.Classification, p.NameAr, p.NameEn, p.Stage, p.Status, p.UnitId is { } u ? units.GetValueOrDefault(u) : null, p.Budget, p.PlannedStart,
-            p.PlannedEnd, p.CreatedAt)).ToList(), page.Page, page.PageSize, total);
+            p.PlannedEnd, p.CreatedAt, p.SubState, p.PmEmployeeId is { } pm ? people.GetValueOrDefault(pm) : null, p.Performance, p.PlannedProgress, p.ProgressStatus))
+            .ToList(), page.Page, page.PageSize, total);
     }
 }
 
 /// <summary>Options for the request screens and Settings → Portfolio.</summary>
 internal sealed class PortfolioSettingsHandlers(
-    RequestReader reader, ILookupService lookups, ISettingsStore store, ISettingsEditor editor, IAccessService access, IRequestContext context, IFileService files)
+    RequestReader reader, ILookupService lookups, ISettingsStore store, ISettingsEditor editor, IAccessService access, IRequestContext context, IFileService files,
+    StrategicObjectives objectives)
     : IQueryHandler<GetPortfolioOptions, PortfolioOptionsDto>,
         IQueryHandler<GetPortfolioSettings, SettingsDocument<PortfolioSettings>>,
         ICommandHandler<SavePortfolioSettings, SettingsDocument<PortfolioSettings>>,
@@ -161,13 +193,16 @@ internal sealed class PortfolioSettingsHandlers(
             .Where(v => v.Active).OrderBy(v => v.Sort).Select(v => new PortfolioOptionDto(v.Code, v.LabelAr, v.LabelEn)).ToList();
 
         return new PortfolioOptionsDto(
-            await Values(PortfolioPermissions.ObjectiveLookup).ConfigureAwait(false), await Values(PortfolioPermissions.SourceLookup).ConfigureAwait(false),
+            await objectives.OptionsAsync(cancellationToken).ConfigureAwait(false), await Values(PortfolioPermissions.SourceLookup).ConfigureAwait(false),
             await Values(PortfolioPermissions.ProgramTypeLookup).ConfigureAwait(false), await Values(PortfolioPermissions.DeliveryOptionLookup).ConfigureAwait(false),
             settings.ActiveCriteria, settings.PriorityBands.OrderBy(b => b.Minimum).ToList(), settings.ThresholdAmount,
             (await store.GetAsync<RegionalSettings>(cancellationToken).ConfigureAwait(false)).CurrencyCode, settings.StartYearsAhead, settings.EndYearsAhead,
             await reader.TodayAsync(cancellationToken).ConfigureAwait(false), settings.ProjectScopeTemplateFileId, settings.AssessmentOnCreate,
             await access.CanAsync(context.User, PortfolioPermissions.RequestCreate, cancellationToken: cancellationToken).ConfigureAwait(false),
-            await access.CanAsync(context.User, PortfolioPermissions.SettingsManage, cancellationToken: cancellationToken).ConfigureAwait(false));
+            await access.CanAsync(context.User, PortfolioPermissions.SettingsManage, cancellationToken: cancellationToken).ConfigureAwait(false),
+            await Values(PortfolioPermissions.ThemeLookup).ConfigureAwait(false), await Values(PortfolioPermissions.RiskCategoryLookup).ConfigureAwait(false),
+            await Values(PortfolioPermissions.StakeholderClassLookup).ConfigureAwait(false), await Values(PortfolioPermissions.LessonTypeLookup).ConfigureAwait(false),
+            await Values(PortfolioPermissions.KpiIndexClassLookup).ConfigureAwait(false), settings.ProjectTemplate, settings.InitiativeTemplate, settings.ProgressTolerance);
     }
 
     public async Task<Result<SettingsDocument<PortfolioSettings>>> HandleAsync(GetPortfolioSettings query, CancellationToken cancellationToken) =>

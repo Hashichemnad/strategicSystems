@@ -26,6 +26,24 @@ public sealed record PortfolioSettings : ISettingsArea
 
     public bool AssessmentOnCreate { get; init; } = true;
 
+    /// <summary>Q-P2 / Q-P3, ADR 0070: the stage template of projects (Impact switch included).</summary>
+    public StageTemplate ProjectTemplate { get; init; } = StageTemplate.ProjectDefault;
+
+    public StageTemplate InitiativeTemplate { get; init; } = StageTemplate.InitiativeDefault;
+
+    /// <summary>ADR 0071: working days after the window opens until the monthly update is due.</summary>
+    public int MonthlyDueWorkingDays { get; init; } = 10;
+
+    public int MonthlyReminderWorkingDays { get; init; } = 3;
+
+    /// <summary>Q-P6: Delayed when approved progress is more than this below planned-to-date (ratio, 0.05 = 5 points).</summary>
+    public decimal ProgressTolerance { get; init; } = ProgressCalculator.DefaultTolerance;
+
+    /// <summary>Q-P4: change requests with a cost change above this amount go to the GM Office.</summary>
+    public decimal GmThreshold { get; init; } = 100_000m;
+
+    public StageTemplate TemplateFor(string classification) => classification == Classifications.Project ? ProjectTemplate : InitiativeTemplate;
+
     public static readonly IReadOnlyList<PriorityCriterion> DefaultCriteria =
     [
         new("vision-alignment", "الارتباط برؤية الإمارة والإدارة", "Link to the vision and the department", 1),
@@ -66,6 +84,26 @@ public sealed record PortfolioSettings : ISettingsArea
         if (string.IsNullOrWhiteSpace(value.BudgetStepCode) || value.BudgetStepCode.Length > 100)
         {
             errors.Add(new FieldError("budgetStepCode", "validation.notEmpty", "validation.notEmpty"));
+        }
+
+        Range("monthlyDueWorkingDays", value.MonthlyDueWorkingDays, 1, 60);
+        Range("monthlyReminderWorkingDays", value.MonthlyReminderWorkingDays, 0, 30);
+        if (value.ProgressTolerance is < 0 or > 1)
+        {
+            errors.Add(new FieldError("progressTolerance", "validation.inclusiveBetween", "validation.inclusiveBetween", new Dictionary<string, object?> { ["from"] = 0, ["to"] = 1 }));
+        }
+
+        if (value.GmThreshold < 0 || decimal.Round(value.GmThreshold, 2) != value.GmThreshold)
+        {
+            errors.Add(new FieldError("gmThreshold", "validation.precisionScale", "validation.precisionScale"));
+        }
+
+        foreach (var (field, template) in new[] { ("projectTemplate", value.ProjectTemplate), ("initiativeTemplate", value.InitiativeTemplate) })
+        {
+            foreach (var problem in template?.Problems() ?? ["validation.notEmpty"])
+            {
+                errors.Add(new FieldError(field, problem, problem));
+            }
         }
 
         var criteria = value.PriorityCriteria ?? [];
@@ -168,5 +206,64 @@ public static class PortfolioNotifications
         "ألغى {{actor}} الطلب «{{requestAr}}» ({{number}}). السبب: {{text}}",
         "{{actor}} cancelled the request “{{requestEn}}” ({{number}}). Reason: {{text}}");
 
-    public static readonly IReadOnlyList<NotificationTemplateDefinition> All = [ScopeSubmitted, QuotationsUploaded, RequestApproved, RequestCancelled];
+    private static readonly string[] ProjectCommon = ["name", "projectAr", "projectEn", "number", "actor", "text", "stageAr", "stageEn", "due"];
+
+    private static NotificationTemplateDefinition P(string key, string nameAr, string nameEn, string subjectAr, string subjectEn, string lineAr, string lineEn) =>
+        new(key, PortfolioPermissions.SystemCode, nameAr, nameEn, subjectAr, subjectEn,
+            $"مرحباً {{{{name}}}}،\n{lineAr}\n{{{{button}}}}", $"Hello {{{{name}}}},\n{lineEn}\n{{{{button}}}}", "فتح المشروع", "Open the project", ProjectCommon);
+
+    public static readonly NotificationTemplateDefinition OwnershipTaken = P(
+        "portfolio.ownershipTaken", "تولي إدارة مشروع", "Project ownership taken", "أصبحت مدير المشروع {{number}}", "You manage project {{number}}",
+        "أنت الآن مدير المشروع «{{projectAr}}» ({{number}}). الخطوة التالية: {{stageAr}}.",
+        "You are now the project manager of “{{projectEn}}” ({{number}}). Next: {{stageEn}}.");
+
+    public static readonly NotificationTemplateDefinition CharterApproved = P(
+        "portfolio.charterApproved", "اعتماد ميثاق المشروع — رفع أمر الشراء", "Charter approved — upload the LPO", "مطلوب أمر الشراء للمشروع {{number}}",
+        "LPO needed for project {{number}}", "اعتُمد ميثاق المشروع «{{projectAr}}» ({{number}}). يرجى رفع أمر الشراء وتفاصيل العقد والمورّد.",
+        "The charter of “{{projectEn}}” ({{number}}) was approved. Please upload the LPO with the contract and supplier details.");
+
+    public static readonly NotificationTemplateDefinition LpoUploaded = P(
+        "portfolio.lpoUploaded", "تم رفع أمر الشراء — تشكيل الفريق", "LPO uploaded — form the team", "تشكيل فريق المشروع {{number}}", "Form the team of project {{number}}",
+        "رُفع أمر الشراء للمشروع «{{projectAr}}» ({{number}}). يرجى تشكيل فريق المشروع من إدارة الفرق.",
+        "The LPO of “{{projectEn}}” ({{number}}) was uploaded. Please form the project team in Teams Management.");
+
+    public static readonly NotificationTemplateDefinition StageChanged = P(
+        "portfolio.stageChanged", "انتقال مرحلة المشروع", "Project stage changed", "المشروع {{number}}: {{stageAr}}", "Project {{number}}: {{stageEn}}",
+        "انتقل المشروع «{{projectAr}}» ({{number}}) إلى مرحلة: {{stageAr}}.", "“{{projectEn}}” ({{number}}) moved to the stage: {{stageEn}}.");
+
+    public static readonly NotificationTemplateDefinition MonthlyOpened = P(
+        "portfolio.monthlyOpened", "فتح التحديث الشهري", "Monthly update open", "التحديث الشهري للمشروع {{number}} مفتوح", "Monthly update open for {{number}}",
+        "فُتحت نافذة التحديث الشهري ({{text}}) للمشروع «{{projectAr}}». الموعد النهائي: {{due}}.",
+        "The monthly update window ({{text}}) of “{{projectEn}}” is open. Due: {{due}}.");
+
+    public static readonly NotificationTemplateDefinition MonthlyReminder = P(
+        "portfolio.monthlyReminder", "تذكير بالتحديث الشهري", "Monthly update reminder", "تذكير: تحديث المشروع {{number}}", "Reminder: update project {{number}}",
+        "لم يُقدَّم التحديث الشهري ({{text}}) للمشروع «{{projectAr}}» بعد. الموعد النهائي: {{due}}.",
+        "The monthly update ({{text}}) of “{{projectEn}}” is not submitted yet. Due: {{due}}.");
+
+    public static readonly NotificationTemplateDefinition MonthlyOverdue = P(
+        "portfolio.monthlyOverdue", "تأخر التحديث الشهري", "Monthly update overdue", "متأخر: تحديث المشروع {{number}}", "Overdue: update of project {{number}}",
+        "تجاوز التحديث الشهري ({{text}}) للمشروع «{{projectAr}}» موعده ({{due}}).", "The monthly update ({{text}}) of “{{projectEn}}” passed its due date ({{due}}).");
+
+    public static readonly NotificationTemplateDefinition ChangeRequestSubmitted = P(
+        "portfolio.changeRequestSubmitted", "تقديم طلب تغيير", "Change request submitted", "طلب تغيير على المشروع {{number}}", "Change request on project {{number}}",
+        "قدّم {{actor}} طلب التغيير {{text}} على المشروع «{{projectAr}}».", "{{actor}} submitted change request {{text}} on “{{projectEn}}”.");
+
+    public static readonly NotificationTemplateDefinition ChangeRequestDecided = P(
+        "portfolio.changeRequestDecided", "قرار طلب التغيير", "Change request decided", "طلب التغيير {{text}}: {{stageAr}}", "Change request {{text}}: {{stageEn}}",
+        "صدر القرار على طلب التغيير {{text}} للمشروع «{{projectAr}}»: {{stageAr}}.", "Change request {{text}} of “{{projectEn}}” was decided: {{stageEn}}.");
+
+    public static readonly NotificationTemplateDefinition ProjectOnHold = P(
+        "portfolio.projectOnHold", "تعليق مشروع", "Project on hold", "عُلِّق المشروع {{number}}", "Project {{number}} on hold",
+        "علّق {{actor}} المشروع «{{projectAr}}». السبب: {{text}}", "{{actor}} put “{{projectEn}}” on hold. Reason: {{text}}");
+
+    public static readonly NotificationTemplateDefinition ProjectCancelled = P(
+        "portfolio.projectCancelled", "إلغاء مشروع", "Project cancelled", "أُلغي المشروع {{number}}", "Project {{number}} cancelled",
+        "أُلغي المشروع «{{projectAr}}». السبب: {{text}}", "“{{projectEn}}” was cancelled. Reason: {{text}}");
+
+    public static readonly IReadOnlyList<NotificationTemplateDefinition> All =
+    [
+        ScopeSubmitted, QuotationsUploaded, RequestApproved, RequestCancelled, OwnershipTaken, CharterApproved, LpoUploaded, StageChanged, MonthlyOpened, MonthlyReminder,
+        MonthlyOverdue, ChangeRequestSubmitted, ChangeRequestDecided, ProjectOnHold, ProjectCancelled,
+    ];
 }

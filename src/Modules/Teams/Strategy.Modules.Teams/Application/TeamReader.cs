@@ -78,7 +78,7 @@ internal sealed class TeamReader(TeamsDbContext db, IAccessService access, IEmpl
 /// Keeps the team's record roles in line with its active memberships (CLAUDE.md §7: granted and revoked only by the owning module), in the
 /// caller's transaction: <c>member</c> for everyone, <c>leader</c> / <c>secretary</c> / <c>results_viewer</c> from the member role flags (ADR 0042).
 /// </summary>
-internal sealed class TeamRoleSync(TeamsDbContext db, IRecordRoleService recordRoles)
+internal sealed class TeamRoleSync(TeamsDbContext db, IRecordRoleService recordRoles, Strategy.Platform.Kernel.Messaging.IIntegrationEventPublisher events, Strategy.Platform.Kernel.Time.IClock clock)
 {
     private static readonly string[] Managed =
         [TeamPermissions.MemberRole, TeamPermissions.LeaderRole, TeamPermissions.SecretaryRole, TeamPermissions.ResultsViewerRole];
@@ -131,6 +131,11 @@ internal sealed class TeamRoleSync(TeamsDbContext db, IRecordRoleService recordR
         {
             await recordRoles.RevokeInTransactionAsync(db, TeamPermissions.ResourceType, team.Id, RecordPrincipalKinds.Employee, employee, role, ct).ConfigureAwait(false);
         }
+
+        // ADR 0072: linked records (projects) follow the formed team's membership.
+        await events.PublishAsync(new Strategy.Modules.Teams.Contracts.TeamMembershipChanged(
+            team.Id, team.Status, team.LeaderEmployeeId, all.Where(m => m.EmployeeId is not null).Select(m => m.EmployeeId!.Value).Distinct().ToList(), clock.UtcNow),
+            db, ct).ConfigureAwait(false);
     }
 
     public Task GrantAsync(Guid teamId, Guid employeeId, string role, CancellationToken ct) =>

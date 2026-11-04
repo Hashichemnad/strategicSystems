@@ -62,6 +62,13 @@ Write an ADR for every choice the SPEC or CLAUDE.md leaves open (CLAUDE.md §2 r
 | [0063](0063-kpi-definition-change-control.md) | KPI definition change control | Accepted by the owner |
 | [0064](0064-kpi-approval-checklist-and-bulk.md) | KPI verification checklist and bulk approval | Accepted by the owner |
 | [0065](0065-kpi-contracts-and-integration-events.md) | KPI contracts for other systems and integration events | Accepted by the owner |
+| [0070](0070-project-lifecycle-templates-and-gates.md) | Project lifecycle: stage templates, gates, one approval at a time, high-level vs detailed plan | Accepted by the owner |
+| [0071](0071-monthly-cycle-and-progress.md) | Monthly update cycle, achievement lock and progress formulas | Accepted by the owner |
+| [0072](0072-team-formation-and-project-access.md) | Team formation through Teams; project access from team membership; closure events | Accepted by the owner |
+| [0073](0073-change-requests.md) | Change requests: conditional approvers, one under review per project, semi-automatic apply | Accepted by the owner |
+| [0074](0074-project-risks-and-kpis.md) | Project risks behind a scoring interface; project KPIs and the KPI catalogue | Accepted by the owner |
+| [0075](0075-strategic-objectives-from-kpi.md) | Strategic objectives come from the KPI strategy hierarchy | Accepted by the owner |
+| [0076](0076-phase-9-ai-and-mcp.md) | Phase 9 AI and MCP scope | Accepted by the owner |
 | [0080](0080-request-framework-types-forms-stages.md) | Request Framework: built-in and custom types, form schema, stages and handlers | Accepted by the owner |
 | [0081](0081-dynamic-approval-processes-and-approve-forms.md) | Approval processes for request types and approve mini-forms | Accepted by the owner |
 | [0082](0082-numbering-type-and-org-tokens.md) | Numbering tokens `{TYPE}` and `{ORG}`; Document ID and version numbers | Accepted by the owner |

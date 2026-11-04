@@ -12,3 +12,10 @@ public interface ITeamsDirectory
 /// <summary>A team as other modules see it. Never carries evaluation results.</summary>
 public sealed record TeamSummary(
     Guid Id, string? Number, string? NameAr, string? NameEn, string Status, Guid? LeaderEmployeeId, IReadOnlyList<Guid> ActiveMemberEmployeeIds);
+
+/// <summary>
+/// Integration event (ADR 0072): the members or the status of a formed team changed (activation, member added / left / replaced, closure). Linked
+/// records (e.g. a project) use it to follow team membership — project-team members get project access. Delivered at least once.
+/// </summary>
+public sealed record TeamMembershipChanged(
+    Guid TeamId, string Status, Guid? LeaderEmployeeId, IReadOnlyList<Guid> ActiveMemberEmployeeIds, DateTimeOffset ChangedAt) : Strategy.Platform.Kernel.Messaging.IIntegrationEvent;

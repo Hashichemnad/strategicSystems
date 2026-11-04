@@ -114,11 +114,11 @@ internal sealed class GetRequestTool(IDispatcher dispatcher) : IAppTool
     }
 }
 
-internal sealed class GetProjectTool(IDispatcher dispatcher) : IAppTool
+internal sealed class GetProjectTool(ProjectService projects) : IAppTool
 {
     public ToolDefinition Definition { get; } = new(
         "portfolio_get_project", PortfolioPermissions.SystemCode, ToolKind.Read, "تفاصيل مشروع", "Project details",
-        "Returns a project or initiative created from an approved request: classification, stage, status, budget, dates, owner and the request.",
+        "Returns a project or initiative: classification, stage, status, project manager, owner, progress (performance, planned to date, on track / delayed), approval in progress, budget, dates and the request.",
         ToolRegistrationExtensions.Schema("""{"type":"object","required":["projectId"],"properties":{"projectId":{"type":"string","format":"uuid"}}}"""),
         PortfolioPermissions.ProjectRead);
 
@@ -129,7 +129,7 @@ internal sealed class GetProjectTool(IDispatcher dispatcher) : IAppTool
             return ToolResult.Fail(ToolErrors.Validation, "projectId is required.");
         }
 
-        var result = await dispatcher.SendAsync(new GetProject(id), cancellationToken).ConfigureAwait(false);
+        var result = await projects.GetAsync(id, cancellationToken).ConfigureAwait(false);
         return PortfolioToolResults.From(result, p => new
         {
             p.Id,
@@ -138,15 +138,114 @@ internal sealed class GetProjectTool(IDispatcher dispatcher) : IAppTool
             p.NameAr,
             p.NameEn,
             p.Stage,
+            p.SubState,
             p.Status,
             p.Budget,
-            p.PlannedStart,
-            p.PlannedEnd,
+            p.Charter.PlannedStart,
+            p.Charter.PlannedEnd,
             owner = p.Owner?.NameEn ?? p.Owner?.NameAr,
+            projectManager = p.Pm?.NameEn ?? p.Pm?.NameAr,
             unit = p.Unit?.NameEn ?? p.Unit?.NameAr,
+            performance = Math.Round(p.Performance * 100, 2),
+            plannedProgress = Math.Round(p.PlannedProgress * 100, 2),
+            p.ProgressStatus,
+            approval = p.Approval.Process is null ? null : new { p.Approval.Process, step = p.Approval.StepNameEn ?? p.Approval.StepNameAr, p.Approval.Result },
             p.RequestNumber,
             link = $"/portfolio/projects/{p.Id:D}",
         });
+    }
+}
+
+/// <summary>Projects I manage or own (read).</summary>
+internal sealed class MyProjectsTool(IDispatcher dispatcher) : IAppTool
+{
+    public ToolDefinition Definition { get; } = new(
+        "portfolio_my_projects", PortfolioPermissions.SystemCode, ToolKind.Read, "مشاريعي", "My projects",
+        "Lists the projects and initiatives the caller manages or owns, with stage, status and progress.",
+        ToolRegistrationExtensions.Schema("""{"type":"object","properties":{}}"""), PortfolioPermissions.ProjectRead);
+
+    public async Task<ToolResult> InvokeAsync(JsonElement arguments, ToolContext context, CancellationToken cancellationToken)
+    {
+        var result = await dispatcher.SendAsync(new ListProjects(new PageRequest(1, 50, null), View: "mine"), cancellationToken).ConfigureAwait(false);
+        return PortfolioToolResults.From(result, page => page.Items.Select(p => new
+        {
+            p.Id,
+            p.Number,
+            p.NameAr,
+            p.NameEn,
+            p.Classification,
+            p.Stage,
+            p.Status,
+            performance = Math.Round(p.Performance * 100, 2),
+            p.ProgressStatus,
+            link = $"/portfolio/projects/{p.Id:D}",
+        }).ToList());
+    }
+}
+
+/// <summary>The milestones of a project with weights and achievement (read).</summary>
+internal sealed class ProjectMilestonesTool(MilestoneService milestones) : IAppTool
+{
+    public ToolDefinition Definition { get; } = new(
+        "portfolio_project_milestones", PortfolioPermissions.SystemCode, ToolKind.Read, "مراحل المشروع", "Project milestones",
+        "Lists a project's milestones and phases: code, title, planned and actual dates, weight, approved achievement, pending update, status and delay.",
+        ToolRegistrationExtensions.Schema("""{"type":"object","required":["projectId"],"properties":{"projectId":{"type":"string","format":"uuid"}}}"""),
+        PortfolioPermissions.ProjectRead);
+
+    public async Task<ToolResult> InvokeAsync(JsonElement arguments, ToolContext context, CancellationToken cancellationToken)
+    {
+        if (arguments.Id("projectId") is not { } id)
+        {
+            return ToolResult.Fail(ToolErrors.Validation, "projectId is required.");
+        }
+
+        var result = await milestones.ListAsync(id, cancellationToken).ConfigureAwait(false);
+        return PortfolioToolResults.From(result, plan => plan.Milestones.Select(m => new
+        {
+            m.Id,
+            m.Code,
+            m.TitleAr,
+            m.TitleEn,
+            m.IsHeader,
+            m.HighLevel,
+            m.PlannedStart,
+            m.PlannedEnd,
+            weight = Math.Round(m.Weight * 100, 2),
+            approved = Math.Round(m.MaxAchieved * 100, 2),
+            pending = m.PendingAchieve is { } a ? Math.Round(a * 100, 2) : (decimal?)null,
+            m.Status,
+            m.UpdateState,
+            m.Delayed,
+        }).ToList());
+    }
+}
+
+/// <summary>Saves a milestone's pending monthly values while the window is open (never submits). Write tool: off by default.</summary>
+internal sealed class UpdateMilestoneDraftTool(MilestoneService milestones) : IAppTool
+{
+    public ToolDefinition Definition { get; } = new(
+        "portfolio_update_milestone_draft", PortfolioPermissions.SystemCode, ToolKind.Write, "حفظ مسودة تحديث مرحلة", "Save a milestone update draft",
+        "Saves the pending monthly values of one milestone (achievement in percent of the whole project, actual dates, causality and corrective actions when delayed). Requires an open monthly window. It never submits the update for approval.",
+        ToolRegistrationExtensions.Schema("""{"type":"object","required":["milestoneId","achievePercent","version"],"properties":{"milestoneId":{"type":"string","format":"uuid"},"achievePercent":{"type":"number"},"actualStart":{"type":"string","format":"date"},"actualEnd":{"type":"string","format":"date"},"causality":{"type":"string"},"correctiveActions":{"type":"string"},"version":{"type":"integer"}}}"""),
+        PortfolioPermissions.ProjectEdit,
+        DefaultEnabled: false);
+
+    public async Task<ToolResult> InvokeAsync(JsonElement arguments, ToolContext context, CancellationToken cancellationToken)
+    {
+        if (arguments.Id("milestoneId") is not { } id || !arguments.TryGetProperty("achievePercent", out var percent) || percent.ValueKind != JsonValueKind.Number
+            || !arguments.TryGetProperty("version", out var version) || !version.TryGetUInt32(out var v))
+        {
+            return ToolResult.Fail(ToolErrors.Validation, "milestoneId, achievePercent and version are required.");
+        }
+
+        static DateOnly? Date(JsonElement args, string name) =>
+            args.TryGetProperty(name, out var e) && e.ValueKind == JsonValueKind.String && DateOnly.TryParse(e.GetString(), CultureInfo.InvariantCulture, out var d) ? d : null;
+        static string? Str(JsonElement args, string name) => args.TryGetProperty(name, out var e) && e.ValueKind == JsonValueKind.String ? e.GetString() : null;
+
+        var values = new MilestoneProgressValues(Math.Round(percent.GetDecimal() / 100m, 4), Date(arguments, "actualStart"), Date(arguments, "actualEnd"),
+            Str(arguments, "causality"), Str(arguments, "correctiveActions"), null);
+        var result = await milestones.RecordProgressAsync(id, new MilestoneUpdateInput(values, v), cancellationToken).ConfigureAwait(false);
+        return PortfolioToolResults.From(result, r => new { r.Milestone.Id, r.Milestone.Code, r.Milestone.UpdateState, r.Warnings, submitted = false });
     }
 }
 

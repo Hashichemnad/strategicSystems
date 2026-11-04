@@ -92,13 +92,13 @@ internal static class PortfolioEndpoints
             (await context.RequestServices.GetRequiredService<IDispatcher>().SendAsync(new GetRequest(id), context.RequestAborted)).IsSuccess);
 
         var projects = group.MapGroup("/projects");
-        projects.MapGet("/", async (int? page, int? pageSize, string? sort, string? classification, string? stage, Guid? unitId, string? search, IDispatcher d,
-                    CancellationToken ct) =>
-                (await d.SendAsync(new ListProjects(new PageRequest(page ?? 1, pageSize ?? PageRequest.DefaultPageSize, sort), classification, stage, unitId, search), ct))
-                .ToOk())
+        projects.MapGet("/", async (int? page, int? pageSize, string? sort, string? classification, string? stage, Guid? unitId, string? search, string? status,
+                    string? view, string? progressStatus, IDispatcher d, CancellationToken ct) =>
+                (await d.SendAsync(new ListProjects(new PageRequest(page ?? 1, pageSize ?? PageRequest.DefaultPageSize, sort), classification, stage, unitId, search, status,
+                    view, progressStatus), ct)).ToOk())
             .WithName("ListPortfolioProjects").RequirePermission(PortfolioPermissions.ProjectRead);
-        projects.MapGet("/{id:guid}", async (Guid id, IDispatcher d, CancellationToken ct) => (await d.SendAsync(new GetProject(id), ct)).ToOk())
-            .WithName("GetPortfolioProject").RequirePermission(PortfolioPermissions.ProjectRead);
+
+        ProjectEndpoints.Map(group);
 
         var settings = group.MapGroup("/settings");
         settings.MapGet("/", async (IDispatcher d, CancellationToken ct) => (await d.SendAsync(new GetPortfolioSettings(), ct)).ToOk())

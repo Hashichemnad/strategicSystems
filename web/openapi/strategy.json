@@ -14785,6 +14785,48 @@
         }
       }
     },
+    "/api/v1/portfolio/kpi-cards": {
+      "get": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "SearchPortfolioKpiCards",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PortfolioKpiCardDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/portfolio/requests": {
       "get": {
         "tags": [
@@ -15704,6 +15746,27 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "view",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "progressStatus",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -15753,7 +15816,3282 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ProjectDto"
+                  "$ref": "#/components/schemas/ProjectFullDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/take-ownership": {
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "TakeProjectOwnership",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectVersionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectFullDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/assign-pm": {
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "AssignProjectManager",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignPmInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectFullDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/charter": {
+      "put": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "UpdateProjectCharter",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CharterInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectFullDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/closure": {
+      "put": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "UpdateProjectClosure",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClosureInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectFullDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/impact": {
+      "put": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "UpdateProjectImpact",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImpactInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectFullDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/submit-charter": {
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "SubmitProjectCharter",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectVersionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectFullDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/submit-planning": {
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "SubmitProjectPlanning",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectVersionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectFullDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/submit-closure": {
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "SubmitProjectClosure",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectVersionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectFullDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/submit-impact": {
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "SubmitProjectImpact",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectVersionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectFullDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/lpo-uploaded": {
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "ConfirmProjectLpo",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectVersionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectFullDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/confirm-completion": {
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "ConfirmProjectCompletion",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectVersionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectFullDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/hold": {
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "HoldProject",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectReasonInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectFullDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/resume": {
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "ResumeProject",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectReasonInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectFullDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/cancel": {
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "CancelProject",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectReasonInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectFullDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/recall": {
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "RecallProjectApproval",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectReasonInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectFullDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/files": {
+      "get": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "ListProjectFiles",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectFileDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/files/{kind}": {
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "UploadProjectFile",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "kind",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "file"
+                ],
+                "type": "object",
+                "allOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "file": {
+                        "$ref": "#/components/schemas/IFormFile"
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "comment": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectFileDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/audit": {
+      "get": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "GetPortfolioProjectAuditTrail",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "field",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResultOfAuditEntryDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/audit/as-of": {
+      "get": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "GetPortfolioProjectAsOf",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "at",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecordSnapshotDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/kpis": {
+      "get": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "ListProjectKpis",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectKpiDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "CreateProjectKpi",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KpiInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectKpiDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/kpis/{itemId}": {
+      "put": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "UpdateProjectKpi",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/KpiInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectKpiDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/risks": {
+      "get": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "ListProjectRisks",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectRiskDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "CreateProjectRisk",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectRiskDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/risks/{itemId}": {
+      "put": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "UpdateProjectRisk",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RiskInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectRiskDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/stakeholders": {
+      "get": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "ListProjectStakeholders",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/StakeholderDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "CreateProjectStakeholder",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StakeholderInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StakeholderDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/stakeholders/{itemId}": {
+      "put": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "UpdateProjectStakeholder",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StakeholderInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StakeholderDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/members": {
+      "get": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "ListProjectMembers",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProposedMemberDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "CreateProjectMember",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProposedMemberInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProposedMemberDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/members/{itemId}": {
+      "put": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "UpdateProjectMember",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProposedMemberInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProposedMemberDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/planning-items": {
+      "get": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "ListProjectPlanningItems",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PlanningItemDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "CreateProjectPlanningItem",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlanningItemInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlanningItemDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/planning-items/{itemId}": {
+      "put": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "UpdateProjectPlanningItem",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PlanningItemInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlanningItemDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/challenges": {
+      "get": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "ListProjectChallenges",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChallengeDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "CreateProjectChallenge",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChallengeInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChallengeDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/challenges/{itemId}": {
+      "put": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "UpdateProjectChallenge",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChallengeInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChallengeDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/lessons": {
+      "get": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "ListProjectLessons",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LessonDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "CreateProjectLesson",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LessonInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LessonDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/lessons/{itemId}": {
+      "put": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "UpdateProjectLesson",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LessonInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LessonDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/meetings": {
+      "get": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "ListProjectMeetings",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectMeetingDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "CreateProjectMeeting",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectMeetingInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectMeetingDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/meetings/{itemId}": {
+      "put": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "UpdateProjectMeeting",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectMeetingInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectMeetingDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/contracts": {
+      "get": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "ListProjectContracts",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ContractDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "CreateProjectContract",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContractInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContractDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/contracts/{itemId}": {
+      "put": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "UpdateProjectContract",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ContractInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ContractDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/{kind}/{itemId}/deactivate": {
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "DeactivateProjectItem",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "kind",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "itemId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeactivateInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/milestones": {
+      "get": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "ListProjectMilestones",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MilestonePlanDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "CreateProjectMilestone",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MilestoneInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MilestoneDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/monthly": {
+      "get": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "GetProjectMonthly",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MonthlyViewDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/monthly/open": {
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "OpenProjectMonthlyWindow",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MonthlyViewDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/monthly/submit": {
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "SubmitProjectMonthlyUpdate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectVersionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MonthlyViewDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/projects/{id}/change-requests": {
+      "get": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "ListProjectChangeRequests",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChangeRequestDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "CreateProjectChangeRequest",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangeRequestInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangeRequestDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/milestones/{mid}": {
+      "put": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "UpdateProjectMilestone",
+        "parameters": [
+          {
+            "name": "mid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MilestoneInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MilestoneDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/milestones/{mid}/cancel": {
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "CancelProjectMilestone",
+        "parameters": [
+          {
+            "name": "mid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeactivateInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MilestoneDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/milestones/{mid}/progress": {
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "RecordMilestoneProgress",
+        "parameters": [
+          {
+            "name": "mid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MilestoneUpdateInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MilestoneProgressResult"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/milestones/{mid}/evidence": {
+      "get": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "ListMilestoneEvidence",
+        "parameters": [
+          {
+            "name": "mid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProjectFileDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "UploadMilestoneEvidence",
+        "parameters": [
+          {
+            "name": "mid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "file"
+                ],
+                "type": "object",
+                "allOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "file": {
+                        "$ref": "#/components/schemas/IFormFile"
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "comment": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MilestoneDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/change-requests/{cid}": {
+      "get": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "GetProjectChangeRequest",
+        "parameters": [
+          {
+            "name": "cid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangeRequestDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "UpdateProjectChangeRequest",
+        "parameters": [
+          {
+            "name": "cid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangeRequestInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangeRequestDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/change-requests/{cid}/submit": {
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "SubmitProjectChangeRequest",
+        "parameters": [
+          {
+            "name": "cid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectVersionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangeRequestDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/change-requests/{cid}/cancel": {
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "CancelProjectChangeRequest",
+        "parameters": [
+          {
+            "name": "cid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProjectReasonInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangeRequestDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/portfolio/change-requests/{cid}/apply": {
+      "post": {
+        "tags": [
+          "portfolio"
+        ],
+        "operationId": "ApplyProjectChangeRequest",
+        "parameters": [
+          {
+            "name": "cid",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChangeApplyInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChangeRequestDto"
                 }
               }
             }
@@ -23567,6 +26905,23 @@
           }
         }
       },
+      "AssignPmInput": {
+        "required": [
+          "employeeId",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "employeeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
       "AttendanceDto": {
         "required": [
           "memberId",
@@ -24675,6 +28030,223 @@
           }
         }
       },
+      "ChallengeDto": {
+        "required": [
+          "id",
+          "challenge",
+          "impact",
+          "achievedPct",
+          "recommendation",
+          "reportDate",
+          "milestoneId",
+          "status",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "challenge": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "impact": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "achievedPct": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "recommendation": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "reportDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "milestoneId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "ChallengeInput": {
+        "required": [
+          "values"
+        ],
+        "type": "object",
+        "properties": {
+          "values": {
+            "$ref": "#/components/schemas/ChallengeValues"
+          },
+          "version": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          }
+        }
+      },
+      "ChallengeValues": {
+        "required": [
+          "challenge",
+          "impact",
+          "achievedPct",
+          "recommendation",
+          "reportDate",
+          "milestoneId"
+        ],
+        "type": "object",
+        "properties": {
+          "challenge": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "impact": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "achievedPct": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "recommendation": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "reportDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "milestoneId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          }
+        }
+      },
+      "ChangeApplyInput": {
+        "required": [
+          "values",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "values": {
+            "$ref": "#/components/schemas/ChangeApplyValues"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "ChangeApplyValues": {
+        "type": "object",
+        "properties": {
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "scope": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "plannedStart": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "plannedEnd": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "budget": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "newPmEmployeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "newOwnerEmployeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          }
+        },
+        "description": "What the PM confirms in \"Apply changes\" (pre-filled from the request; only the fields of the type are used)."
+      },
       "ChangedFieldDto": {
         "required": [
           "field",
@@ -24708,6 +28280,31 @@
           }
         }
       },
+      "ChangeLogEntry": {
+        "required": [
+          "field",
+          "old",
+          "new"
+        ],
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string"
+          },
+          "old": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "new": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "ChangePasswordInput": {
         "required": [
           "currentPassword",
@@ -24729,6 +28326,365 @@
           }
         }
       },
+      "ChangeRequestDto": {
+        "required": [
+          "id",
+          "projectId",
+          "number",
+          "type",
+          "areas",
+          "reason",
+          "impactOfNonResponse",
+          "proposedNameAr",
+          "proposedNameEn",
+          "proposedDescription",
+          "proposedScope",
+          "proposedStart",
+          "proposedEnd",
+          "proposedBudget",
+          "costAffected",
+          "newPm",
+          "newOwner",
+          "mergeIntoProjectId",
+          "mergeIntoProjectNumber",
+          "requestedDate",
+          "status",
+          "requestedBy",
+          "submittedAt",
+          "decidedAt",
+          "implementedAt",
+          "applied",
+          "cancelReason",
+          "canEdit",
+          "canApply",
+          "createdAt",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "projectId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "areas": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "impactOfNonResponse": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "proposedNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "proposedNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "proposedDescription": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "proposedScope": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "proposedStart": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "proposedEnd": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "proposedBudget": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "costAffected": {
+            "type": "boolean"
+          },
+          "newPm": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/PortfolioPersonDto"
+              }
+            ]
+          },
+          "newOwner": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/PortfolioPersonDto"
+              }
+            ]
+          },
+          "mergeIntoProjectId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "mergeIntoProjectNumber": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "requestedDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "status": {
+            "type": "string"
+          },
+          "requestedBy": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/PortfolioPersonDto"
+              }
+            ]
+          },
+          "submittedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "decidedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "implementedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "applied": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ChangeLogEntry"
+            }
+          },
+          "cancelReason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "canEdit": {
+            "type": "boolean"
+          },
+          "canApply": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "ChangeRequestInput": {
+        "required": [
+          "values"
+        ],
+        "type": "object",
+        "properties": {
+          "values": {
+            "$ref": "#/components/schemas/ChangeRequestValues"
+          },
+          "version": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          }
+        }
+      },
+      "ChangeRequestValues": {
+        "required": [
+          "type",
+          "areas",
+          "reason",
+          "impactOfNonResponse",
+          "proposedNameAr",
+          "proposedNameEn",
+          "proposedDescription",
+          "proposedScope",
+          "proposedStart",
+          "proposedEnd",
+          "proposedBudget",
+          "costAffected",
+          "newPmEmployeeId",
+          "newOwnerEmployeeId",
+          "mergeIntoProjectId",
+          "requestedDate"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "areas": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "impactOfNonResponse": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "proposedNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "proposedNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "proposedDescription": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "proposedScope": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "proposedStart": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "proposedEnd": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "proposedBudget": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "costAffected": {
+            "type": "boolean"
+          },
+          "newPmEmployeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "newOwnerEmployeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "mergeIntoProjectId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "requestedDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          }
+        }
+      },
       "ChangeStatusInput": {
         "required": [
           "status",
@@ -24741,6 +28697,22 @@
               "null",
               "string"
             ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "CharterInput": {
+        "required": [
+          "values",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "values": {
+            "$ref": "#/components/schemas/ProjectCharterValues"
           },
           "version": {
             "type": "integer",
@@ -24903,6 +28875,32 @@
           "usageId": {
             "type": "string",
             "format": "uuid"
+          }
+        }
+      },
+      "ClosureInput": {
+        "required": [
+          "summaryOfAchievement",
+          "mainDeliverables",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "summaryOfAchievement": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "mainDeliverables": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
           }
         }
       },
@@ -25087,6 +29085,137 @@
         "type": "object",
         "properties": {
           "comment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "ContractDto": {
+        "required": [
+          "id",
+          "name",
+          "number",
+          "supplier",
+          "issueDate",
+          "amount",
+          "contractStatus",
+          "status",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "number": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "supplier": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "issueDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "amount": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "contractStatus": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "ContractInput": {
+        "required": [
+          "values"
+        ],
+        "type": "object",
+        "properties": {
+          "values": {
+            "$ref": "#/components/schemas/ContractValues"
+          },
+          "version": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          }
+        }
+      },
+      "ContractValues": {
+        "required": [
+          "name",
+          "number",
+          "supplier",
+          "issueDate",
+          "amount",
+          "contractStatus"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "number": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "supplier": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "issueDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "amount": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "contractStatus": {
             "type": [
               "null",
               "string"
@@ -25933,6 +30062,25 @@
               "null",
               "string"
             ]
+          }
+        }
+      },
+      "DeactivateInput": {
+        "required": [
+          "reason",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
           }
         }
       },
@@ -28651,6 +32799,32 @@
           }
         }
       },
+      "GateItem": {
+        "required": [
+          "code",
+          "messageKey",
+          "met"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "messageKey": {
+            "type": "string"
+          },
+          "met": {
+            "type": "boolean"
+          },
+          "params": {
+            "type": [
+              "null",
+              "object"
+            ]
+          }
+        },
+        "description": "A gate item as the record page shows it (live checklist)."
+      },
       "GradeBand": {
         "required": [
           "code",
@@ -29159,6 +33333,65 @@
       "IFormFile": {
         "type": "string",
         "format": "binary"
+      },
+      "ImpactInput": {
+        "required": [
+          "costPerformance",
+          "communitySatisfaction",
+          "employeeSatisfaction",
+          "vendorSatisfaction",
+          "previousOperationalCost",
+          "impactNotes",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "costPerformance": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "communitySatisfaction": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "employeeSatisfaction": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "vendorSatisfaction": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "previousOperationalCost": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "impactNotes": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
       },
       "ImportIssue": {
         "required": [
@@ -31627,6 +35860,24 @@
           }
         }
       },
+      "KpiInput": {
+        "required": [
+          "values"
+        ],
+        "type": "object",
+        "properties": {
+          "values": {
+            "$ref": "#/components/schemas/ProjectKpiValues"
+          },
+          "version": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          }
+        }
+      },
       "KpiLockInput": {
         "required": [
           "reason"
@@ -33837,6 +38088,108 @@
           }
         }
       },
+      "LessonDto": {
+        "required": [
+          "id",
+          "stage",
+          "lesson",
+          "typeCode",
+          "recommendation",
+          "status",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "stage": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "lesson": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "typeCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "recommendation": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "LessonInput": {
+        "required": [
+          "values"
+        ],
+        "type": "object",
+        "properties": {
+          "values": {
+            "$ref": "#/components/schemas/LessonValues"
+          },
+          "version": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          }
+        }
+      },
+      "LessonValues": {
+        "required": [
+          "stage",
+          "lesson",
+          "typeCode",
+          "recommendation"
+        ],
+        "type": "object",
+        "properties": {
+          "stage": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "lesson": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "typeCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "recommendation": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "LevelInput": {
         "required": [
           "code",
@@ -34936,6 +39289,32 @@
           }
         }
       },
+      "MeetingValues": {
+        "required": [
+          "meetingAt",
+          "title",
+          "notes"
+        ],
+        "type": "object",
+        "properties": {
+          "meetingAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "title": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "notes": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "MemberAnswersInput": {
         "required": [
           "id",
@@ -35831,6 +40210,462 @@
           }
         }
       },
+      "MilestoneDto": {
+        "required": [
+          "id",
+          "code",
+          "parentId",
+          "isHeader",
+          "highLevel",
+          "titleAr",
+          "titleEn",
+          "plannedStart",
+          "plannedEnd",
+          "weight",
+          "maxAchieved",
+          "pendingAchieve",
+          "completionRate",
+          "actualStart",
+          "actualEnd",
+          "pendingActualStart",
+          "pendingActualEnd",
+          "cost",
+          "status",
+          "updateState",
+          "delayed",
+          "causality",
+          "correctiveActions",
+          "evidenceNote",
+          "evidenceFiles",
+          "isDeliverable",
+          "mainDeliverable",
+          "acceptanceCriteria",
+          "qualityMet",
+          "isInnovative",
+          "innovativeReason",
+          "sort",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "parentId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "isHeader": {
+            "type": "boolean"
+          },
+          "highLevel": {
+            "type": "boolean"
+          },
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "plannedStart": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "plannedEnd": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "weight": {
+            "type": "number",
+            "format": "double"
+          },
+          "maxAchieved": {
+            "type": "number",
+            "format": "double"
+          },
+          "pendingAchieve": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "completionRate": {
+            "type": "number",
+            "format": "double"
+          },
+          "actualStart": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "actualEnd": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "pendingActualStart": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "pendingActualEnd": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "cost": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "status": {
+            "type": "string"
+          },
+          "updateState": {
+            "type": "string"
+          },
+          "delayed": {
+            "type": "boolean"
+          },
+          "causality": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "correctiveActions": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "evidenceNote": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "evidenceFiles": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isDeliverable": {
+            "type": "boolean"
+          },
+          "mainDeliverable": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "acceptanceCriteria": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "qualityMet": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          },
+          "isInnovative": {
+            "type": "boolean"
+          },
+          "innovativeReason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sort": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "MilestoneInput": {
+        "required": [
+          "values"
+        ],
+        "type": "object",
+        "properties": {
+          "values": {
+            "$ref": "#/components/schemas/MilestoneValues"
+          },
+          "version": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          }
+        }
+      },
+      "MilestonePlanDto": {
+        "required": [
+          "milestones",
+          "detailedWeight",
+          "highLevelWeight",
+          "performance",
+          "plannedProgress",
+          "progressStatus"
+        ],
+        "type": "object",
+        "properties": {
+          "milestones": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MilestoneDto"
+            }
+          },
+          "detailedWeight": {
+            "type": "number",
+            "format": "double"
+          },
+          "highLevelWeight": {
+            "type": "number",
+            "format": "double"
+          },
+          "performance": {
+            "type": "number",
+            "format": "double"
+          },
+          "plannedProgress": {
+            "type": "number",
+            "format": "double"
+          },
+          "progressStatus": {
+            "type": "string"
+          }
+        }
+      },
+      "MilestoneProgressResult": {
+        "required": [
+          "milestone",
+          "warnings"
+        ],
+        "type": "object",
+        "properties": {
+          "milestone": {
+            "$ref": "#/components/schemas/MilestoneDto"
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "MilestoneProgressValues": {
+        "required": [
+          "achieve",
+          "actualStart",
+          "actualEnd",
+          "causality",
+          "correctiveActions",
+          "evidenceNote"
+        ],
+        "type": "object",
+        "properties": {
+          "achieve": {
+            "type": "number",
+            "format": "double"
+          },
+          "actualStart": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "actualEnd": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "causality": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "correctiveActions": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "evidenceNote": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "description": "A milestone progress update as the PM enters it in the monthly window (ADR 0071)."
+      },
+      "MilestoneUpdateInput": {
+        "required": [
+          "values",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "values": {
+            "$ref": "#/components/schemas/MilestoneProgressValues"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "MilestoneValues": {
+        "required": [
+          "titleAr",
+          "titleEn",
+          "parentId",
+          "isHeader",
+          "highLevel",
+          "plannedStart",
+          "plannedEnd",
+          "weight",
+          "cost",
+          "isDeliverable",
+          "mainDeliverable",
+          "acceptanceCriteria",
+          "qualityMet",
+          "isInnovative",
+          "innovativeReason"
+        ],
+        "type": "object",
+        "properties": {
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "parentId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "isHeader": {
+            "type": "boolean"
+          },
+          "highLevel": {
+            "type": "boolean"
+          },
+          "plannedStart": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "plannedEnd": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "weight": {
+            "type": "number",
+            "format": "double"
+          },
+          "cost": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "isDeliverable": {
+            "type": "boolean"
+          },
+          "mainDeliverable": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "acceptanceCriteria": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "qualityMet": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          },
+          "isInnovative": {
+            "type": "boolean"
+          },
+          "innovativeReason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sort": {
+            "type": "integer",
+            "format": "int32",
+            "default": 0
+          }
+        }
+      },
       "MinutesAiInput": {
         "required": [
           "notes"
@@ -36014,6 +40849,121 @@
           "version": {
             "type": "integer",
             "format": "uint32"
+          }
+        }
+      },
+      "MonthlyUpdateDto": {
+        "required": [
+          "id",
+          "period",
+          "sequence",
+          "status",
+          "openedAt",
+          "dueAt",
+          "openedBy",
+          "submittedAt",
+          "approvedAt",
+          "overdue",
+          "submitComment",
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "period": {
+            "type": "string"
+          },
+          "sequence": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "type": "string"
+          },
+          "openedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "dueAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "openedBy": {
+            "type": "string"
+          },
+          "submittedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "approvedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "overdue": {
+            "type": "boolean"
+          },
+          "submitComment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "MonthlyViewDto": {
+        "required": [
+          "current",
+          "history",
+          "canUpdate",
+          "canSubmit",
+          "canOpen",
+          "pendingMilestones"
+        ],
+        "type": "object",
+        "properties": {
+          "current": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/MonthlyUpdateDto"
+              }
+            ]
+          },
+          "history": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MonthlyUpdateDto"
+            }
+          },
+          "canUpdate": {
+            "type": "boolean"
+          },
+          "canSubmit": {
+            "type": "boolean"
+          },
+          "canOpen": {
+            "type": "boolean"
+          },
+          "pendingMilestones": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
@@ -38073,6 +43023,120 @@
           }
         }
       },
+      "PlanningItemDto": {
+        "required": [
+          "id",
+          "category",
+          "description",
+          "createdStage",
+          "status",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "category": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "createdStage": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "PlanningItemInput": {
+        "required": [
+          "values"
+        ],
+        "type": "object",
+        "properties": {
+          "values": {
+            "$ref": "#/components/schemas/PlanningItemValues"
+          },
+          "version": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          }
+        }
+      },
+      "PlanningItemValues": {
+        "required": [
+          "category",
+          "description"
+        ],
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "PortfolioKpiCardDto": {
+        "required": [
+          "id",
+          "code",
+          "nameAr",
+          "nameEn",
+          "unitCode",
+          "direction",
+          "link"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "unitCode": {
+            "type": "string"
+          },
+          "direction": {
+            "type": "string"
+          },
+          "link": {
+            "type": "string"
+          }
+        }
+      },
       "PortfolioOptionDto": {
         "required": [
           "code",
@@ -38114,7 +43178,15 @@
           "projectScopeTemplateFileId",
           "assessmentOnCreate",
           "canCreate",
-          "canManageSettings"
+          "canManageSettings",
+          "themes",
+          "riskCategories",
+          "stakeholderClasses",
+          "lessonTypes",
+          "kpiIndexClasses",
+          "projectTemplate",
+          "initiativeTemplate",
+          "progressTolerance"
         ],
         "type": "object",
         "properties": {
@@ -38188,6 +43260,46 @@
           },
           "canManageSettings": {
             "type": "boolean"
+          },
+          "themes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PortfolioOptionDto"
+            }
+          },
+          "riskCategories": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PortfolioOptionDto"
+            }
+          },
+          "stakeholderClasses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PortfolioOptionDto"
+            }
+          },
+          "lessonTypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PortfolioOptionDto"
+            }
+          },
+          "kpiIndexClasses": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PortfolioOptionDto"
+            }
+          },
+          "projectTemplate": {
+            "$ref": "#/components/schemas/StageTemplate"
+          },
+          "initiativeTemplate": {
+            "$ref": "#/components/schemas/StageTemplate"
+          },
+          "progressTolerance": {
+            "type": "number",
+            "format": "double"
           }
         },
         "description": "Everything the request screens need to render choices and live calculations (labels are configuration)."
@@ -38257,6 +43369,32 @@
           },
           "assessmentOnCreate": {
             "type": "boolean"
+          },
+          "projectTemplate": {
+            "description": "Q-P2 / Q-P3, ADR 0070: the stage template of projects (Impact switch included).",
+            "$ref": "#/components/schemas/StageTemplate"
+          },
+          "initiativeTemplate": {
+            "$ref": "#/components/schemas/StageTemplate"
+          },
+          "monthlyDueWorkingDays": {
+            "type": "integer",
+            "description": "ADR 0071: working days after the window opens until the monthly update is due.",
+            "format": "int32"
+          },
+          "monthlyReminderWorkingDays": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "progressTolerance": {
+            "type": "number",
+            "description": "Q-P6: Delayed when approved progress is more than this below planned-to-date (ratio, 0.05 = 5 points).",
+            "format": "double"
+          },
+          "gmThreshold": {
+            "type": "number",
+            "description": "Q-P4: change requests with a cost change above this amount go to the GM Office.",
+            "format": "double"
           }
         },
         "description": "Settings → Portfolio (docs/design/portfolio.md §2.1). Defaults are SPEC Appendix A (Q-P5, Q-P6)."
@@ -38829,7 +43967,343 @@
           }
         }
       },
-      "ProjectDto": {
+      "ProjectApprovalDto": {
+        "required": [
+          "process",
+          "stepCode",
+          "stepNameAr",
+          "stepNameEn",
+          "result"
+        ],
+        "type": "object",
+        "properties": {
+          "process": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "stepCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "stepNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "stepNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "result": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "ProjectCharterValues": {
+        "type": "object",
+        "properties": {
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "scopeOfWork": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "strategicObjectiveCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "operationalThemes": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "structuralChanges": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "resourcesHuman": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "resourcesFinancial": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "resourcesTechnical": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "resourcesContract": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "resourcesOther": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "plannedStart": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "plannedEnd": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "year1ContractedCost": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "year2ContractedCost": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "year3ContractedCost": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "year4ContractedCost": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "year1ActualCost": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "year2ActualCost": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "year3ActualCost": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "year4ActualCost": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "contractedInitialCost": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "annualOperationCost": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "annualMaintenanceCost": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "annualLicenceCost": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "annualOtherCost": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "operatingCostsFrom": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          }
+        },
+        "description": "Charter details the PM edits (SPEC §1.4 B identity, budget &amp; cost, charter resources)."
+      },
+      "ProjectCountsDto": {
+        "required": [
+          "kpis",
+          "risks",
+          "stakeholders",
+          "members",
+          "planningItems",
+          "milestones",
+          "challenges",
+          "lessons",
+          "meetings",
+          "contracts",
+          "changeRequests"
+        ],
+        "type": "object",
+        "properties": {
+          "kpis": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "risks": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "stakeholders": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "members": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "planningItems": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "milestones": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "challenges": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lessons": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "meetings": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "contracts": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "changeRequests": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "ProjectFileDto": {
+        "required": [
+          "id",
+          "kind",
+          "name",
+          "contentType",
+          "sizeBytes",
+          "versionNo",
+          "updatedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "contentType": {
+            "type": "string"
+          },
+          "sizeBytes": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "versionNo": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ProjectFullDto": {
         "required": [
           "id",
           "number",
@@ -38839,11 +44313,16 @@
           "description",
           "scopeOfWork",
           "stage",
+          "subState",
           "status",
+          "template",
+          "stagePath",
           "unit",
           "sectionUnit",
           "strategicObjectiveCode",
           "programTypeCode",
+          "operationalThemes",
+          "charter",
           "budget",
           "year1PlannedCost",
           "year2PlannedCost",
@@ -38852,10 +44331,35 @@
           "plannedStart",
           "plannedEnd",
           "owner",
+          "pm",
           "requester",
+          "ownershipTakenAt",
+          "lpoUploaded",
+          "teamId",
+          "teamFormedAt",
+          "approval",
+          "performance",
+          "plannedProgress",
+          "progressStatus",
+          "summaryOfAchievement",
+          "mainDeliverables",
+          "costPerformance",
+          "communitySatisfaction",
+          "employeeSatisfaction",
+          "vendorSatisfaction",
+          "previousOperationalCost",
+          "impactNotes",
+          "updateOpenedAt",
+          "monthlyApprovedAt",
+          "cancelReason",
+          "holdReason",
+          "mergedIntoProjectId",
+          "completedAt",
           "requestId",
           "requestNumber",
-          "stagePath",
+          "gates",
+          "counts",
+          "permissions",
           "createdAt",
           "version"
         ],
@@ -38898,8 +44402,20 @@
           "stage": {
             "type": "string"
           },
+          "subState": {
+            "type": "string"
+          },
           "status": {
             "type": "string"
+          },
+          "template": {
+            "$ref": "#/components/schemas/StageTemplate"
+          },
+          "stagePath": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           },
           "unit": {
             "oneOf": [
@@ -38932,6 +44448,15 @@
               "null",
               "string"
             ]
+          },
+          "operationalThemes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "charter": {
+            "$ref": "#/components/schemas/ProjectCharterValues"
           },
           "budget": {
             "type": [
@@ -38992,6 +44517,16 @@
               }
             ]
           },
+          "pm": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/PortfolioPersonDto"
+              }
+            ]
+          },
           "requester": {
             "oneOf": [
               {
@@ -39001,6 +44536,137 @@
                 "$ref": "#/components/schemas/PortfolioPersonDto"
               }
             ]
+          },
+          "ownershipTakenAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "lpoUploaded": {
+            "type": "boolean"
+          },
+          "teamId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "teamFormedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "approval": {
+            "$ref": "#/components/schemas/ProjectApprovalDto"
+          },
+          "performance": {
+            "type": "number",
+            "format": "double"
+          },
+          "plannedProgress": {
+            "type": "number",
+            "format": "double"
+          },
+          "progressStatus": {
+            "type": "string"
+          },
+          "summaryOfAchievement": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "mainDeliverables": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "costPerformance": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "communitySatisfaction": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "employeeSatisfaction": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "vendorSatisfaction": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "previousOperationalCost": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "impactNotes": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "updateOpenedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "monthlyApprovedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "cancelReason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "holdReason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "mergedIntoProjectId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "completedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
           },
           "requestId": {
             "type": "string",
@@ -39012,11 +44678,14 @@
               "string"
             ]
           },
-          "stagePath": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
+          "gates": {
+            "$ref": "#/components/schemas/ProjectGatesDto"
+          },
+          "counts": {
+            "$ref": "#/components/schemas/ProjectCountsDto"
+          },
+          "permissions": {
+            "$ref": "#/components/schemas/ProjectPermissionsDto"
           },
           "createdAt": {
             "type": "string",
@@ -39025,6 +44694,264 @@
           "version": {
             "type": "integer",
             "format": "uint32"
+          }
+        }
+      },
+      "ProjectGatesDto": {
+        "required": [
+          "charter",
+          "planning",
+          "charterMandatoryDone",
+          "planningMandatoryDone"
+        ],
+        "type": "object",
+        "properties": {
+          "charter": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GateItem"
+            }
+          },
+          "planning": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GateItem"
+            }
+          },
+          "charterMandatoryDone": {
+            "type": "boolean"
+          },
+          "planningMandatoryDone": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ProjectKpiDto": {
+        "required": [
+          "id",
+          "nature",
+          "kpiCardId",
+          "kpiCardCode",
+          "projectGoal",
+          "nameAr",
+          "nameEn",
+          "equation",
+          "direction",
+          "indexClassCode",
+          "target",
+          "targetYear",
+          "whenMeasured",
+          "currentResult",
+          "performance",
+          "cappedPerformance",
+          "goalStatus",
+          "createdStage",
+          "status",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "nature": {
+            "type": "string"
+          },
+          "kpiCardId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "kpiCardCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "projectGoal": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "equation": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "direction": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "indexClassCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "target": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "targetYear": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "whenMeasured": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "currentResult": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "performance": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "cappedPerformance": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "goalStatus": {
+            "type": "string"
+          },
+          "createdStage": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "ProjectKpiValues": {
+        "required": [
+          "nature",
+          "kpiCardId",
+          "projectGoal",
+          "nameAr",
+          "nameEn",
+          "equation",
+          "direction",
+          "indexClassCode",
+          "target",
+          "targetYear",
+          "whenMeasured",
+          "currentResult"
+        ],
+        "type": "object",
+        "properties": {
+          "nature": {
+            "type": "string"
+          },
+          "kpiCardId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "projectGoal": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "equation": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "direction": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "indexClassCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "target": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "targetYear": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "whenMeasured": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "currentResult": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
           }
         }
       },
@@ -39041,7 +44968,12 @@
           "budget",
           "plannedStart",
           "plannedEnd",
-          "createdAt"
+          "createdAt",
+          "subState",
+          "pm",
+          "performance",
+          "plannedProgress",
+          "progressStatus"
         ],
         "type": "object",
         "properties": {
@@ -39107,6 +45039,154 @@
           "createdAt": {
             "type": "string",
             "format": "date-time"
+          },
+          "subState": {
+            "type": "string"
+          },
+          "pm": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/PortfolioPersonDto"
+              }
+            ]
+          },
+          "performance": {
+            "type": "number",
+            "format": "double"
+          },
+          "plannedProgress": {
+            "type": "number",
+            "format": "double"
+          },
+          "progressStatus": {
+            "type": "string"
+          }
+        }
+      },
+      "ProjectMeetingDto": {
+        "required": [
+          "id",
+          "meetingAt",
+          "title",
+          "notes",
+          "status",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "meetingAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "title": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "notes": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "ProjectMeetingInput": {
+        "required": [
+          "values"
+        ],
+        "type": "object",
+        "properties": {
+          "values": {
+            "$ref": "#/components/schemas/MeetingValues"
+          },
+          "version": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          }
+        }
+      },
+      "ProjectPermissionsDto": {
+        "required": [
+          "canEdit",
+          "canContribute",
+          "canChange",
+          "canManage",
+          "canLpo",
+          "canTakeOwnership",
+          "canEditCharter",
+          "canEditContent",
+          "canPlanMilestones",
+          "canRecall"
+        ],
+        "type": "object",
+        "properties": {
+          "canEdit": {
+            "type": "boolean"
+          },
+          "canContribute": {
+            "type": "boolean"
+          },
+          "canChange": {
+            "type": "boolean"
+          },
+          "canManage": {
+            "type": "boolean"
+          },
+          "canLpo": {
+            "type": "boolean"
+          },
+          "canTakeOwnership": {
+            "type": "boolean"
+          },
+          "canEditCharter": {
+            "type": "boolean"
+          },
+          "canEditContent": {
+            "type": "boolean"
+          },
+          "canPlanMilestones": {
+            "type": "boolean"
+          },
+          "canRecall": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ProjectReasonInput": {
+        "required": [
+          "reason",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
           }
         }
       },
@@ -39127,6 +45207,261 @@
           },
           "classification": {
             "type": "string"
+          }
+        }
+      },
+      "ProjectRiskDto": {
+        "required": [
+          "id",
+          "title",
+          "categoryCode",
+          "probability",
+          "impact",
+          "riskFactor",
+          "controlEvaluation",
+          "inherentScore",
+          "inherentBand",
+          "residualScore",
+          "residualBand",
+          "response",
+          "mitigationActions",
+          "implementationPct",
+          "implementationStart",
+          "implementationEnd",
+          "owner",
+          "rmsStatus",
+          "createdStage",
+          "status",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "categoryCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "probability": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "impact": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "riskFactor": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "controlEvaluation": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "inherentScore": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "inherentBand": {
+            "type": "string"
+          },
+          "residualScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "residualBand": {
+            "type": "string"
+          },
+          "response": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "mitigationActions": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "implementationPct": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "implementationStart": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "implementationEnd": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "owner": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/PortfolioPersonDto"
+              }
+            ]
+          },
+          "rmsStatus": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "createdStage": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "ProjectRiskValues": {
+        "required": [
+          "title",
+          "categoryCode",
+          "probability",
+          "impact",
+          "riskFactor",
+          "controlEvaluation",
+          "response",
+          "mitigationActions",
+          "implementationPct",
+          "implementationStart",
+          "implementationEnd",
+          "ownerEmployeeId",
+          "rmsStatus"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "categoryCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "probability": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "impact": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "riskFactor": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "controlEvaluation": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "response": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "mitigationActions": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "implementationPct": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "implementationStart": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "implementationEnd": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "ownerEmployeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "rmsStatus": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "ProjectVersionInput": {
+        "required": [
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "comment": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
@@ -39196,6 +45531,77 @@
           }
         },
         "description": "What a definition change proposes (null = unchanged)."
+      },
+      "ProposedMemberDto": {
+        "required": [
+          "id",
+          "employee",
+          "roleAr",
+          "roleEn",
+          "responsibilities",
+          "status",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "employee": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/PortfolioPersonDto"
+              }
+            ]
+          },
+          "roleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "roleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "responsibilities": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "ProposedMemberInput": {
+        "required": [
+          "values"
+        ],
+        "type": "object",
+        "properties": {
+          "values": {
+            "$ref": "#/components/schemas/TeamMemberValues"
+          },
+          "version": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          }
+        }
       },
       "ProtectionRule": {
         "required": [
@@ -42123,6 +48529,24 @@
           }
         }
       },
+      "RiskInput": {
+        "required": [
+          "values"
+        ],
+        "type": "object",
+        "properties": {
+          "values": {
+            "$ref": "#/components/schemas/ProjectRiskValues"
+          },
+          "version": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          }
+        }
+      },
       "RoleDto": {
         "required": [
           "id",
@@ -43553,6 +49977,192 @@
           },
           "state": {
             "type": "string"
+          }
+        }
+      },
+      "StageTemplate": {
+        "required": [
+          "charter",
+          "lpo",
+          "teamFormation",
+          "closure",
+          "impact"
+        ],
+        "type": "object",
+        "properties": {
+          "charter": {
+            "type": "boolean"
+          },
+          "lpo": {
+            "type": "boolean"
+          },
+          "teamFormation": {
+            "type": "boolean"
+          },
+          "closure": {
+            "type": "boolean"
+          },
+          "impact": {
+            "type": "boolean"
+          }
+        },
+        "description": "The stage template of a classification (Q-P2 / Q-P3, ADR 0070): which optional steps run. Snapshotted on the project when its lifecycle starts."
+      },
+      "StakeholderDto": {
+        "required": [
+          "id",
+          "name",
+          "classificationCode",
+          "interestLevel",
+          "impactLevel",
+          "communicationMethod",
+          "communicationFrequency",
+          "email",
+          "phone",
+          "status",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "classificationCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "interestLevel": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "impactLevel": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "communicationMethod": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "communicationFrequency": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "email": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "phone": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "StakeholderInput": {
+        "required": [
+          "values"
+        ],
+        "type": "object",
+        "properties": {
+          "values": {
+            "$ref": "#/components/schemas/StakeholderValues"
+          },
+          "version": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          }
+        }
+      },
+      "StakeholderValues": {
+        "required": [
+          "name",
+          "classificationCode",
+          "interestLevel",
+          "impactLevel",
+          "communicationMethod",
+          "communicationFrequency",
+          "email",
+          "phone"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "classificationCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "interestLevel": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "impactLevel": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "communicationMethod": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "communicationFrequency": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "email": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "phone": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
@@ -45943,6 +52553,39 @@
           },
           "myMembership": {
             "type": "boolean"
+          }
+        }
+      },
+      "TeamMemberValues": {
+        "required": [
+          "employeeId",
+          "roleAr",
+          "roleEn",
+          "responsibilities"
+        ],
+        "type": "object",
+        "properties": {
+          "employeeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "roleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "roleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "responsibilities": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },

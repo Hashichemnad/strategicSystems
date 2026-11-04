@@ -6,13 +6,12 @@ using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Strategy.IntegrationTests.Infrastructure;
 using Strategy.IntegrationTests.Workflow;
+using Strategy.Modules.Kpi.Contracts;
 using Strategy.Modules.Portfolio.Application;
 using Strategy.Modules.Portfolio.Domain;
 using Strategy.Platform.Access.Application;
 using Strategy.Platform.Kernel.Messaging;
 using Strategy.Platform.Organisation.Application;
-using Strategy.Platform.Settings.Domain;
-using Strategy.Platform.Settings.Infrastructure;
 using Strategy.Platform.Workflow.Application;
 
 namespace Strategy.IntegrationTests.Portfolio;
@@ -46,6 +45,8 @@ internal sealed class PortfolioWorld
     public required ApiFactory Factory { get; init; }
 
     public required string Suffix { get; init; }
+
+    public required Guid OrganisationId { get; init; }
 
     public required Guid DepartmentId { get; init; }
 
@@ -93,14 +94,12 @@ internal sealed class PortfolioWorld
             section = (await dispatcher.SendAsync(new CreateUnit($"SEC-{suffix}", "قسم", $"Section {suffix}", "section", department, null, null, null, null))).Value.Id;
             other = (await dispatcher.SendAsync(new CreateUnit($"OTH-{suffix}", "إدارة أخرى", $"Other {suffix}", "department", organisation, null, null, null, null))).Value.Id;
 
-            // Strategic objectives are configuration (seeded empty, Q-P7): the organisation loads its own.
-            var settings = scope.ServiceProvider.GetRequiredService<SettingsDbContext>();
-            if (!settings.LookupValues.Any(v => v.TypeCode == PortfolioPermissions.ObjectiveLookup && v.Code == Objective))
-            {
-                settings.LookupValues.Add(LookupValue.Create(PortfolioPermissions.ObjectiveLookup, Objective, "خدمات رقمية", "Digital services", 10, null, null));
-                settings.LookupValues.Add(LookupValue.Create(PortfolioPermissions.ObjectiveLookup, "efficiency", "الكفاءة", "Efficiency", 20, null, null));
-                await settings.SaveChangesAsync();
-            }
+            // Strategic objectives are configuration (seeded empty, Q-P7) held by the KPI strategy hierarchy (ADR 0075).
+            await scope.ServiceProvider.GetRequiredService<IKpiStrategyCatalog>().EnsureObjectivesAsync(
+            [
+                new(Objective, "خدمات رقمية", "Digital services", true, 10),
+                new("efficiency", "الكفاءة", "Efficiency", true, 20),
+            ]);
 
             // Portfolio is a business system: everyone may open it (the requester role is everyone's).
             await AccessGrants.GrantSystemAccessAsync(scope.ServiceProvider, PortfolioPermissions.SystemCode, AccessGrants.Everyone, null);
@@ -121,6 +120,9 @@ internal sealed class PortfolioWorld
         await ApprovalWorld.SetHeadAsync(factory, department, director.EmployeeId);
         await ApprovalWorld.SetHeadAsync(factory, section, manager.EmployeeId);
         await ApprovalWorld.SetHeadAsync(factory, other, otherDirector.EmployeeId);
+
+        // The DG Office holder heads the organisation: the General Manager of the Teams formation chain (Phase 9 project teams).
+        await ApprovalWorld.SetHeadAsync(factory, organisation, dg.EmployeeId);
         var clients = new Dictionary<Guid, HttpClient>();
         foreach (var user in new[] { director, manager, requester, sectionRequester, pmOffice, dg, budget, administration, viewer, otherRequester, outsider })
         {
@@ -131,6 +133,7 @@ internal sealed class PortfolioWorld
         {
             Factory = factory,
             Suffix = suffix,
+            OrganisationId = organisation,
             DepartmentId = department,
             SectionId = section,
             OtherDepartmentId = other,

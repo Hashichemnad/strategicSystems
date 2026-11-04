@@ -98,3 +98,19 @@ public sealed record KpiTargetMissed(
     Guid? ResponsibleUnitId,
     Guid? ResponsibleEmployeeId,
     DateTimeOffset ApprovedAt) : IIntegrationEvent;
+
+/// <summary>A strategic objective of the strategy hierarchy (SPEC §2.7) as other modules use it (ADR 0075). Codes are stable references.</summary>
+public sealed record StrategicObjective(string Code, string? NameAr, string? NameEn, bool Active, int Sort);
+
+/// <summary>
+/// The strategy hierarchy's objectives — the single source of strategic objectives for every system (ADR 0075). Reference data: not
+/// scope-filtered (objectives are public within the installation).
+/// </summary>
+public interface IKpiStrategyCatalog
+{
+    /// <summary>Objectives ordered by sort then code; inactive ones only when asked (to label stored codes).</summary>
+    Task<IReadOnlyList<StrategicObjective>> ListObjectivesAsync(bool includeInactive = false, CancellationToken cancellationToken = default);
+
+    /// <summary>Creates the objectives whose code does not exist yet (as top-level objectives); never changes existing elements. Returns the number created.</summary>
+    Task<int> EnsureObjectivesAsync(IReadOnlyList<StrategicObjective> objectives, CancellationToken cancellationToken = default);
+}

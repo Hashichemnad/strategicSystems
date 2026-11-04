@@ -1,12 +1,14 @@
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Strategy.Modules.Kpi.Contracts;
 using Strategy.Modules.Portfolio.Ai;
 using Strategy.Modules.Portfolio.Api;
 using Strategy.Modules.Portfolio.Application;
 using Strategy.Modules.Portfolio.Contracts;
 using Strategy.Modules.Portfolio.Infrastructure;
 using Strategy.Modules.Portfolio.Mcp;
+using Strategy.Modules.Teams.Contracts;
 using Strategy.Platform.Access;
 using Strategy.Platform.AI;
 using Strategy.Platform.AI.Tools;
@@ -16,12 +18,13 @@ using Strategy.Platform.Kernel;
 using Strategy.Platform.Links;
 using Strategy.Platform.Notifications;
 using Strategy.Platform.Persistence;
+using Strategy.Platform.Scheduling;
 using Strategy.Platform.Settings;
 using Strategy.Platform.Workflow;
 
 namespace Strategy.Modules.Portfolio;
 
-/// <summary>Portfolio Management — Phase 8: program requests up to the automatic Project / Initiative (SPEC §1, docs/design/portfolio.md).</summary>
+/// <summary>Portfolio Management — Phase 8 program requests and Phase 9 project lifecycle (SPEC §1, docs/design/portfolio.md).</summary>
 public sealed class PortfolioModule : IModule
 {
     public string Name => "portfolio";
@@ -49,8 +52,31 @@ public sealed class PortfolioModule : IModule
         services.AddScoped<RequestFileFlags>();
         services.AddScoped<PortfolioNotifier>();
         services.AddScoped<IPortfolioDirectory, PortfolioDirectory>();
+        services.AddScoped<StrategicObjectives>();
+        services.AddScoped<IDatabaseSeeder, ObjectivesToKpiSeeder>();
+        services.AddScoped<ProjectLoader>();
+        services.AddScoped<ProjectProgress>();
+        services.AddScoped<ProjectNotifier>();
+        services.AddScoped<ProjectService>();
+        services.AddScoped<ProjectItems>();
+        services.AddScoped<MilestoneService>();
+        services.AddScoped<MonthlyWindows>();
+        services.AddScoped<ChangeRequestService>();
+        services.AddScoped<MonthlyCycleRunner>();
+        services.AddScoped<IProjectRiskScoring, DefaultProjectRiskScoring>();
+        services.AddScoped<IProjectRiskDirectory, ProjectRiskDirectory>();
+        services.AddScoped<IKpiLinkedRecordSource, ProjectKpiLinks>();
+        services.AddScheduledJob(MonthlyCycleJob.Definition);
+        services.AddIntegrationEventHandler<TeamMembershipChanged, ProjectTeamMembershipHandler>();
 
         services.AddApprovalProcess(RequestApprovalProcess.Definition);
+        foreach (var process in ProjectApprovalProcesses.All)
+        {
+            services.AddApprovalProcess(process);
+        }
+
+        services.AddApprovalHook<ProjectApprovalHook>();
+        services.AddMyWorkSource<ProjectMyWork>();
         services.AddApprovalHook<RequestApprovalHook>();
         services.AddCurrentStatusProvider<RequestCurrentStatus>();
         services.AddCurrentStatusProvider<ProjectCurrentStatus>();
@@ -62,11 +88,23 @@ public sealed class PortfolioModule : IModule
         }
 
         services.AddFilePurpose(RequestFilePurposes.Template);
+        foreach (var purpose in ProjectFilePurposes.OnProject)
+        {
+            services.AddFilePurpose(purpose);
+        }
+
+        services.AddFilePurpose(ProjectFilePurposes.Evidence);
+        services.AddFileOwnerAccess<ProjectFiles>();
+        services.AddFileOwnerAccess<MilestoneFiles>();
         services.AddFileOwnerAccess<RequestFiles>();
         services.AddFileOwnerAccess<TemplateFiles>();
 
         services.AddLinkableType(RequestLinks.Definition);
         services.AddLinkTargetSource<RequestLinkTargets>();
+        services.AddLinkableType(ProjectLinks.Project);
+        services.AddLinkableType(ProjectLinks.Milestone);
+        services.AddLinkTargetSource<ProjectLinkTargets>();
+        services.AddLinkTargetSource<MilestoneLinkTargets>();
 
         foreach (var feature in PortfolioAiFeatures.All)
         {
@@ -85,6 +123,9 @@ public sealed class PortfolioModule : IModule
         services.AddAppTool<GetRequestTool>();
         services.AddAppTool<GetProjectTool>();
         services.AddAppTool<CreateDraftRequestTool>();
+        services.AddAppTool<MyProjectsTool>();
+        services.AddAppTool<ProjectMilestonesTool>();
+        services.AddAppTool<UpdateMilestoneDraftTool>();
     }
 
     public void MapEndpoints(IEndpointRouteBuilder endpoints) => PortfolioEndpoints.Map(endpoints.MapModuleGroup(this));

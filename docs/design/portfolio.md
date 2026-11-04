@@ -5,7 +5,7 @@
 | Phase | Part | Status of this note |
 |---|---|---|
 | **8** | Program Requests up to the automatic creation of the Project / Initiative record (SPEC §1.1–§1.4 A, §1.5 W1, §1.6–§1.9 for requests, §1.15 A, §1.19, Appendix A Q-P4 / Q-P5 / Q-P6) | **Detailed below — the Phase 8 plan** |
-| 9 | Project / Initiative lifecycle (charter, planning, monthly cycle, closure, impact, change control) | Outline (§12); detailed when Phase 9 starts |
+| **9** | Project / Initiative lifecycle (charter, planning, monthly cycle, closure, impact, change control) — SPEC §1.3, §1.4 B–D, §1.5 W2–W8, §1.6–§1.9, §1.16, §1.17, Q-P1/P2/P3/P9 | **Detailed in §15–§28 — the Phase 9 plan** (ADRs 0070–0076) |
 | 10 | Agile / Hybrid, PM standards, Gantt, portfolio views | Outline (§12) |
 | 11 | Wasel vendor portal | Outline (§12) |
 
@@ -326,3 +326,252 @@ default**; creates a **draft** only — never submits), `portfolio_get_project` 
 - **Vitest:** wizard year-total indicator and "AI value must be reviewed" rule; Portfolio message keys exist in AR and EN.
 - **E2E (ar + en):** wizard → submit → approval chain → project created; start from a document with AI review; Proposal Assessment;
   approval routes; return for correction. Screenshots in `docs/screenshots/phase-8/`.
+
+---
+
+# Phase 9 — Project / Initiative lifecycle and change control (detailed plan)
+
+Reuses everything above plus Phase 6 (Task Management: project and milestone tasks), Phase 7 (Teams: formation, members, evaluation on
+`LinkedRecordClosed`), Phase 12 (KPI: `IKpiCatalog`, `IKpiPerformance`, `IKpiLinkedRecordSource`, the strategy hierarchy). Decisions:
+**0070** (stage templates, gates, one approval at a time per project, high-level vs detailed plan), **0071** (monthly cycle, window, lock,
+progress formulas), **0072** (team formation through Teams and project access from team membership; closure events), **0073** (change requests:
+conditional approvers, one under review per project, semi-automatic apply), **0074** (project risks scoring interface and project KPIs),
+**0075** (strategic objectives from the KPI strategy hierarchy), **0076** (Phase 9 AI and MCP scope). The session runs without an interactive
+approval step (as earlier phases): this plan is committed first, then implemented as written.
+
+## 15. Lifecycle overview
+
+| Classification | Stage path (template defaults, Q-P2 / Q-P3) |
+|---|---|
+| Project | Initiation (Take Ownership → charter → charter approval → LPO → team formation) › Planning › Execution (monthly cycle) › Closure › Impact › Completed |
+| Initiative | Planning (Take Ownership → planning → planning approval) › Execution (monthly cycle) › Completed (PM Office confirms at 100 %) |
+
+**Stage templates** (Settings → Portfolio → `stageTemplates`, one per classification, ADR 0070): `charter`, `lpo`, `teamFormation`,
+`closure`, `impact` (booleans). Defaults: project all on; initiative all off. Rules: `lpo` and `teamFormation` need `charter`; `impact` needs
+`closure`. The **Impact switch** (Q-P3) is the project template's `impact` flag — off: closure approval → Completed. The stage path shown on the
+stepper is derived from the template: `[initiation if charter] planning execution [closure if closure] [impact if impact] completed`. The
+template is **snapshotted on the project** (`template` jsonb) when it is created/first read in Phase 9, so a later settings change does not move
+running projects (PM Office can re-apply the current template — not in this phase).
+
+Statuses (SPEC §1.3): `active`, `on-hold`, `cancelled`, `completed` (`draft` is unused for projects: they are born active).
+
+## 16. Project state machine (`ProjectLifecycle`, unit-tested transition table)
+
+Every project command is `(stage, sub-state, status) × action → guard → new state`. Sub-states: `ownership` (no PM), `charter-draft`,
+`charter-approval`, `lpo` (waiting Administration), `team-formation` (waiting PM Office / Teams), `planning-draft`, `planning-approval`,
+`execution` (monthly cycle; see §19), `completion` (initiative at 100 %, waiting PM Office), `closure-draft`, `closure-approval`,
+`impact-draft`, `impact-approval`, `done`.
+
+| From | Action (who) | Guard | To |
+|---|---|---|---|
+| any stage, no PM (status active) | `take-ownership` (employee of the section, ADR 0070) · `assign-pm` (PM Office) | user's unit is the section (or below it) | PM set, record role `pm`; project → `charter-draft` (charter on) / `planning-draft` |
+| `charter-draft` | `edit-charter`, children CRUD (PM) | — | same |
+| `charter-draft` | `submit-charter` (PM) | **charter gate** (§17) | `charter-approval` (process `portfolio.charter`) |
+| `charter-approval` | approved / returned / rejected (engine) | — | `lpo` (if `lpo`) → else `team-formation` (if on) → else Stage **Planning** · returned → `charter-draft` · rejected → `charter-draft` with approval status `rejected` (PM may correct and resubmit; PM Office may cancel) |
+| `lpo` | `lpo-uploaded` (record role `procurement`) | ≥ 1 LPO file | `team-formation` (if on) else Stage Planning; PM Office notified |
+| `team-formation` | linked project team becomes **Active** in Teams (event, ADR 0072) | team linked to the project | Stage **Planning** (`planning-draft`); PM notified |
+| `planning-draft` | planning items, milestones (PM) · `submit-planning` | **planning gate** (§17) | `planning-approval` (`portfolio.planning`) |
+| `planning-approval` | approved / returned / rejected | — | Stage **Execution** (monthly cycle on) · back to `planning-draft` |
+| `execution` | monthly cycle (§19) | — | when approved total achievement = 100 %: Stage **Closure** (`closure` on) or `completion` (initiative) |
+| `completion` | `confirm-completion` (PM Office) | performance = 100 % | Stage / status **Completed** |
+| `closure-draft` | closure form, lessons · `submit-closure` | summary + main deliverables, ≥ 1 lesson | `closure-approval` (`portfolio.closure`) |
+| `closure-approval` | approved | — | events `ProjectClosureApproved` + `LinkedRecordClosed(closure-approved)`; Stage **Impact** (`impact` on) else **Completed** |
+| `impact-draft` | impact form · `submit-impact` | cost performance + the three satisfactions | `impact-approval` (`portfolio.impact`) |
+| `impact-approval` | approved | — | Stage / status **Completed** |
+| any `*-approval`, monthly or change request under review | `recall` (submitter or PM Office, reason) | an approval is in progress | instance cancelled; back to the draft (monthly window returned, change request draft); approval result `recalled` |
+| active (not completed) | `hold` (PM Office, reason) | refused while an approval is in progress (`approvalInProgress`, `action = recall`: the UI offers *Recall*) | status `on-hold` (everything read-only; monthly cycle skipped) |
+| on-hold | `resume` (PM Office) | — | status `active` (sub-state unchanged; re-submit any cancelled approval) |
+| active / on-hold | `cancel` (PM Office, reason) or approved cancellation / merge change request | open approval cancelled | status `cancelled` (final), `LinkedRecordClosed(cancelled)` |
+| completed / cancelled | anything | — | refused `portfolio.errors.projectClosed` (409 / 422) |
+
+Only one approval is in progress per project (ADR 0070): every project process uses the project as the approval subject. The project stores
+the **approval status** shown in the header (process key + step names AR / EN, last result), e.g. "Department Director – Charter".
+
+## 17. Gates (server-side, all failures returned together with keys)
+
+| Gate | Rules (keys `portfolio.errors.*`) |
+|---|---|
+| **Charter** (`charterGate`) | ≥ 1 active KPI (`gateKpi`), ≥ 1 active risk (`gateRisk`), ≥ 1 active stakeholder (`gateStakeholder`), ≥ 3 proposed team members (`gateMembers`), PM, scope, the high-level plan: ≥ 1 high-level milestone and **high-level weights = 100 %** (`gateHighLevelPlan`). The record shows "Charter mandatory done" = gate passes |
+| **Planning** (`planningGate`) | ≥ 1 planning item of category *in scope* (`gateScope`); ≥ 1 detailed milestone; **detailed leaf weights total exactly 100 %** (`weightsNot100` `{total}`); every leaf has planned start / end within each other (end ≥ start); deliverable fields complete when "is deliverable" (`deliverableFields`) |
+| **Closure** | summary of achievement, main deliverables (`validation.notEmpty`), ≥ 1 lesson learned (`gateLessons`) |
+| **Impact** | cost performance and the three satisfactions (1–5) (`validation.notEmpty`) |
+| Milestone save (always) | weight 0 < w ≤ 100 %; Σ leaf weights of the plan ≤ 100 % and Σ high-level weights ≤ 100 % (`weightsOver100`); header phases carry no own weight (sum of children); end ≥ start; one level of phases (phase → milestone) |
+
+## 18. Approval processes (seeded version 1, editable in the Approval Settings centre; subject = the project)
+
+Variables for every project process: `classification`, `budget`, plus the built-ins. Steps: Approve / Reject / Return; comment on reject
+and return; approver record role `approver` (read). `SM` = section-manager step with the Q-P4 condition of §2.4.
+
+| Key | Default chain | Notes |
+|---|---|---|
+| `portfolio.charter` | SM → Department Director → PM Office | W2.3 |
+| `portfolio.planning` | SM → Department Director → PM Office | W3.3 (initiatives use it too) |
+| `portfolio.monthly-update` | **Department Director → PM Office** (Q-P1) | variables `period`, `performance` |
+| `portfolio.closure` | SM → Department Director → PM Office | W5.2 |
+| `portfolio.impact` | PM Office | W6.2 |
+| `portfolio.change-request` | Department Director → PM Office → **Finance Service Section** (`costAffected`) → **GM Office** (`changeType == 'cancellation' or changeType == 'merge' or costChange > gmThreshold`) | Q-P4; variables `changeType`, `costAffected`, `costChange`, `gmThreshold` (Settings → Portfolio, default 100 000) |
+
+New roles: `portfolio.finance-section`, `portfolio.gm-office` (approver roles, request read Own).
+
+## 19. Monthly cycle (W4, ADR 0071)
+
+- **Record** `monthly_update` (`portfolio.monthly-update`): `project_id`, `period` (`YYYY-MM`), `sequence` (1 = the month's window opened by
+  the job; 2, 3… = additional windows the PM Office opens in the same month once the previous one is approved), `status` (`open` · `submitted` · `returned` ·
+  `approved`), `opened_at`, `due_at`, `opened_by` (`job` / user), `submitted_at`, `approved_at`, `reminded_at`, `overdue_notified_at`,
+  `items` (jsonb snapshot of the submitted milestone updates), unique (project, period, sequence).
+- **Window** (job `portfolio.monthly-cycle`, hourly, idempotent): for each **active** project in Execution, the period is the month of *today*
+  in the installation time zone. The window **opens on the 1st at the start of the first working moment** of the project unit's business
+  hours (a 1st that is a weekend / holiday rolls to the next working day; `IBusinessHoursCalculator`). One row per project and period;
+  PM notified (`portfolio.monthlyOpened`). **Due** = end of working time `monthlyDueWorkingDays` (default 10) working days after opening;
+  reminder `monthlyReminderWorkingDays` (default 3) working days before due (`portfolio.monthlyReminder`); overdue notice once
+  (`portfolio.monthlyOverdue`). A previous period still open stays open (no second window until it is approved). PM Office may **open now**.
+- **Milestone update** (PM while the period is `open` / `returned`): pending achieve (0 ≤ a ≤ weight, **≥ approved Max Achieved** — the approved
+  achievement is locked), actual start (required with the first achievement > 0), actual end + **evidence file** (purpose
+  `portfolio.milestone-evidence`) required at **100 %** (a = weight), **causality + corrective actions required when delayed** (today > planned
+  end and a < weight). Open linked tasks at 100 % → warning (`portfolio.warnings.openTasks`), not a block (SPEC §1.16). Header phases aggregate.
+- **Submit** (PM): at least one milestone updated or confirmation that nothing changed; starts `portfolio.monthly-update`; milestones
+  → `pending-approval`. **Approved:** each pending value becomes approved (Max Achieved, actual dates; completed at 100 %), the update is
+  `approved` with its snapshot, project progress recalculated, `monthly_approved_at` set; **100 % total → Closure / completion**.
+  **Returned / rejected:** the period goes back to `returned`, milestone pending values stay for correction.
+
+## 20. Calculators (pure, table-tested; ratios 1.0 = 100 %)
+
+| Calculator | Rule |
+|---|---|
+| `MilestoneCalculator.CompletionRate` | achieve ÷ weight (0 when weight 0) |
+| Header aggregation | phase weight = Σ child weights; phase achieve = Σ child achieve |
+| `ProgressCalculator.Performance` | Σ approved achieve (Max Achieved) of the detailed **leaf** milestones (not cancelled), capped at 1 |
+| `ProgressCalculator.PlannedToDate(d)` | Σ over leaves of weight × planned fraction at d: 0 before start, weight on / after end, else weight × (days elapsed + 1) ÷ (duration + 1) — linear (ADR 0071) |
+| `ProgressCalculator.Status` (Q-P6) | **Delayed** when performance < planned-to-date − tolerance (`progressTolerance`, default 0.05 = 5 points) **or** any active leaf is past its planned end below 100 %; else **On Track** |
+| `RiskScoring` (ADR 0074) | inherent = probability × impact (1–25); residual = inherent × (11 − control) ÷ 10 (control 1–10, none = inherent); bands Low 1–4 · Medium 5–9 · High 10–16 · Critical 17–25 |
+| KPI goal status | `IKpiPerformance.Calculate("single", direction, target, …, current)` capped → `BandAsync`; existing KPI: the card's year performance from `IKpiCatalog` |
+
+## 21. Data model additions (schema `portfolio`; audited, `xmin`, no hard deletes — children are deactivated)
+
+| Table | Columns |
+|---|---|
+| `project` (+) | `pm_employee_id`, `ownership_taken_at`, `sub_state`, `template` (jsonb), `operational_themes` (jsonb codes, lookup `portfolio.operational-theme`), `structural_changes`, `resources_human/financial/technical/contract/other`, contracted / actual Year 1–4 costs, `contracted_initial_cost`, annual operation / maintenance / licence / other cost + `operating_costs_from`, `lpo_uploaded`, `team_id`, `team_formed_at`, `approval_process`, `approval_step_code`, `approval_step_name_ar/en`, `approval_result`, `performance`, `planned_progress`, `progress_status`, `summary_of_achievement`, `main_deliverables`, `cost_performance`, `community_satisfaction`, `employee_satisfaction`, `vendor_satisfaction` (1–5), `previous_operational_cost`, `impact_notes`, `update_opened_at`, `monthly_approved_at`, `cancel_reason`, `hold_reason`, `merged_into_project_id`, `completed_at` |
+| `milestone` | `project_id`, `code` (`<Number>-1.1`), `parent_id` (phase), `is_header`, `high_level`, `title_ar/en`, `planned_start/end`, `weight`, `max_achieved`, `pending_achieve`, `actual_start/end` (approved) + `pending_actual_start/end`, `cost`, `status` (`not-started` · `active` · `completed` · `cancelled`), `update_state` (`waiting-update` · `draft` · `pending-approval` · `approved` · `returned`), `causality`, `corrective_actions`, `evidence_note`, `is_deliverable`, `main_deliverable`, `acceptance_criteria`, `quality_met`, `is_innovative`, `innovative_reason`, `sort` |
+| `project_kpi` | `nature` (`new` / `existing`), `kpi_card_id`, `project_goal`, `name_ar/en`, `equation`, `direction`, `index_class_code`, `target`, `target_year`, `when_measured` (`during` / `after`), `current_result`, `created_stage`, `status` |
+| `project_risk` | `title`, `risk_code` (lookup `portfolio.risk-category`), `probability`, `impact`, `risk_factor`, `control_evaluation`, `inherent_score`, `inherent_band`, `residual_score`, `residual_band`, `response` (`accept` / `avoid` / `mitigate` / `transfer`), `mitigation_actions`, `implementation_pct`, `implementation_start/end`, `owner_employee_id`, `rms_status`, `created_stage`, `status` |
+| `stakeholder` | `name`, `classification_code` (lookup `portfolio.stakeholder-class`, incl. *contractor / supplier*), `interest_level`, `impact_level` (low/medium/high), `communication_method`, `communication_frequency`, `email`, `phone`, `status` |
+| `team_member` (proposed, charter) | `employee_id`, `role_ar/en`, `responsibilities`, `status` |
+| `planning_item` | `category` (`in-scope` · `out-of-scope` · `assumption` · `constraint` · `deliverable` · `added-value` · `resource-human` · `resource-technical` · `resource-financial` · `resource-contract` · `resource-other`), `description`, `created_stage`, `status` |
+| `challenge` | `challenge`, `impact`, `achieved_pct`, `recommendation`, `report_date`, `milestone_id`, `status` |
+| `lesson` | `stage`, `lesson`, `type_code` (lookup `portfolio.lesson-type`), `recommendation`, `status` |
+| `meeting` | `meeting_at`, `title`, `notes` (sanitised rich text), `status` |
+| `contract` | `name`, `number`, `supplier`, `issue_date`, `amount`, `status` (`active` / `closed` / `cancelled`) |
+| `change_request` | `number` (`<Number>-CR-n`), `type` (`details` · `cancellation` · `postponement` · `ownership` · `merge`), `areas` (jsonb: `name`, `scope`, `dates`, `budget`, `description`), `reason`, `impact_of_non_response`, `proposed_name_ar/en`, `proposed_description`, `proposed_scope`, `proposed_start/end`, `proposed_budget`, `cost_affected`, `new_pm_employee_id`, `new_owner_employee_id`, `merge_into_project_id`, `status` (`draft` · `under-review` · `approved` · `rejected` · `cancelled` · `completed`), `submitted_at`, `decided_at`, `implemented_at`, `applied` (jsonb log of field / old / new), `cancel_reason` |
+| `monthly_update` | §19 |
+
+Files (owner `portfolio.project` unless noted): `portfolio.project-document` (scope / quotations / general documents), `portfolio.lpo`,
+`portfolio.closure`, `portfolio.milestone-evidence` (owner `portfolio.milestone`).
+
+## 22. Access (SPEC §1.9; seeded, editable)
+
+| Permission | Scopable | Who (default) |
+|---|---|---|
+| `portfolio.project.read` | ✓ | as Phase 8 + record roles `pm`, `team-member`, `approver`, `procurement`; **employees of the section see a project that has no PM yet** (to take ownership) |
+| `portfolio.project.edit` | ✓ | record role `pm`; PM Office / administrator **All** — charter, planning, milestones, monthly update, closure, impact, files |
+| `portfolio.project.contribute` | ✓ | record roles `owner`, `pm`, `team-member`; PM Office — challenges, meetings / minutes, lessons |
+| `portfolio.project.change` | ✓ | record roles `owner`, `pm`; PM Office — raise / edit / submit change requests |
+| `portfolio.project.manage` | ✓ | PM Office / administrator — assign PM, hold / resume / cancel, open the monthly window now, confirm initiative completion |
+| `portfolio.project.lpo` | ✓ | record role `procurement` (granted on charter approval to holders of `portfolio.administration`) |
+
+Record roles on `portfolio.project`: `owner`, `pm`, `team-member` (synced from the linked team, ADR 0072), `requester`, `approver` (engine),
+`procurement`. Out-of-scope → **404**; visible but not allowed → **403**.
+
+## 23. Integrations
+
+- **Teams (ADR 0072):** `portfolio.project` is declared linkable **task-able** and **team-able**; `portfolio.milestone` task-able. The project's
+  Team tab is the shared `LinkedTeamsPanel` (PM Office: *Request a team* with the project linked → Teams formation approval → memo). Teams
+  publishes **`TeamMembershipChanged`** (Teams.Contracts, additive) whenever it syncs member record roles of a formed team; Portfolio's handler
+  (a) moves a project waiting in `team-formation` to Planning when a linked team is Active, stores `team_id`, notifies the PM; (b) syncs record
+  role `team-member` on the project with the team's active members (project-team members get project access). Closure approval publishes
+  `LinkedRecordClosed(portfolio.project, id, closure-approved)` → Teams opens the project-team evaluation, and `ProjectClosureApproved`
+  (Portfolio.Contracts) for other subscribers.
+- **Tasks:** project-level tasks and tasks under milestones are Task Management tasks linked to `portfolio.project` / `portfolio.milestone`
+  (the shared `LinkedTasksPanel`; Full workflow template; creator approves — ADR 0035). The PM follows every linked task
+  (`FollowLinkedPermission = portfolio.project.edit`). `ITaskDirectory.CountLinkedAsync` feeds the 100 % warning.
+- **KPI (Phase 12 contracts):** Existing KPI picker = `IKpiCatalog.SearchAsync` (caller's scope); goal status from `IKpiPerformance`; Portfolio
+  implements **`IKpiLinkedRecordSource`** (projects whose active KPIs link the card) so the card's *Linked records* tab lists them.
+- **Strategic objectives (ADR 0075):** single source = the KPI strategy hierarchy. New Kpi.Contracts **`IKpiStrategyCatalog`**
+  (`ListObjectivesAsync`, `EnsureObjectivesAsync`). Requests / projects keep storing the **code**; options, validation and AI choices read the
+  KPI objectives. A Portfolio seeder copies every Phase 8 `portfolio.strategic-objective` lookup value missing from the hierarchy into it as an
+  objective (same code, labels, sort, active flag) — no request or project data changes; the Portfolio lookup type is no longer registered.
+- **Risk (Phase 13):** `IProjectRiskScoring` (default 5×5, §20) and **`IProjectRiskDirectory`** (Portfolio.Contracts: project risks with scores
+  and bands, scope-filtered) for Risk's future *Project Risks* tab.
+
+## 24. Change requests (W7, Q-P9, ADR 0073)
+
+Draft (PM / owner: `portfolio.project.change`) → *Submit* → `under-review` (`portfolio.change-request`, subject = the project; one change
+request under review per project) → `approved` / `rejected`; returned → `draft`. Cancel a draft or an approved-not-applied request with a
+reason. **Apply changes** (PM, approved only): the dialog is pre-filled from the request (new PM / owner, dates, budget, name, scope); the PM
+may adjust and **confirms** → the system applies each change and logs it (`applied`: field, old, new) in one transaction → status
+`completed` ("Changes implemented", `implemented_at`). Nothing changes before that confirmation. Per type:
+
+| Type | Apply |
+|---|---|
+| details | name AR / EN, description, scope, planned start / end, budget (as filled) |
+| postponement | planned start / end (leaf milestones are not moved automatically — the PM re-plans; noted in the log) |
+| ownership | new PM: revoke `pm` from the old, grant to the new; new owner: revoke / grant `owner` (record roles move) |
+| cancellation | project status `cancelled` (reason = the request's reason) + `LinkedRecordClosed(cancelled)` |
+| merge | project `cancelled` with `merged_into_project_id` (the target must be readable and active) |
+
+## 25. Current status (§1.6), notifications, My Work
+
+`ProjectCurrentStatus` messages (`portfolio.currentStatus.project.*`): take ownership (section employees) · fill minimums (PM, lists what is
+missing) · submit charter (PM) · waiting ⟨step⟩ – ⟨process⟩ (approvers, approve / reject / return) · waiting Administration to upload the LPO ·
+waiting PM Office to form the team · update planning details / add milestones to 100 % (PM) · monthly update open / returned (PM, due date) ·
+waiting monthly approval · no window open (next opening) · confirm completion (PM Office) · submit closure · enter impact · on hold (reason) ·
+cancelled (reason) · completed. Change request status on its own panel.
+
+Templates (system `portfolio`, AR / EN): `portfolio.ownershipTaken`, `portfolio.charterApproved` (Administration: upload LPO),
+`portfolio.lpoUploaded` (PM Office: form the team), `portfolio.stageChanged` (PM), `portfolio.monthlyOpened`, `portfolio.monthlyReminder`,
+`portfolio.monthlyOverdue`, `portfolio.changeRequestSubmitted` / `portfolio.changeRequestDecided` (PM, owner), `portfolio.projectOnHold`,
+`portfolio.projectCancelled`. Approver / outcome mails come from the engine's `workflow.*` templates.
+
+My Work (Portfolio source, extended): **projects needing my action** (take ownership in my section, charter / planning / closure / impact to
+submit, returned approvals, LPO to upload, team to form, initiative to confirm, approved change requests to apply) and **monthly updates
+due** (open / returned periods of projects I manage, with the due date). A *Projects* card on My Work groups them (shared source, no new UI
+plumbing).
+
+## 26. API additions (`/api/v1/portfolio`)
+
+`GET /projects/{id}` (+ PM, template, sub-state, gates, progress, approval status, permissions) · `POST /projects/{id}/{take-ownership |
+assign-pm | recall | submit-charter | lpo-uploaded | submit-planning | submit-closure | submit-impact | confirm-completion | hold | resume | cancel}` ·
+`PUT /projects/{id}/{charter | closure | impact}` · children `GET|POST /projects/{id}/{kpis | risks | stakeholders | members | planning-items |
+challenges | lessons | meetings | contracts}`, `PUT …/{itemId}`, `POST …/{itemId}/deactivate` · milestones `GET|POST /projects/{id}/milestones`,
+`PUT /milestones/{mid}`, `POST /milestones/{mid}/cancel`, `POST /milestones/{mid}/progress`, `POST /milestones/{mid}/evidence` ·
+`GET /projects/{id}/monthly`, `POST /projects/{id}/monthly/{open | submit}` · `GET /projects/{id}/files`, `POST /projects/{id}/files/{kind}` ·
+`GET|POST /projects/{id}/change-requests`, `PUT /change-requests/{cid}`, `POST /change-requests/{cid}/{submit | cancel | apply}` ·
+`GET /kpi-cards?search=` (Existing KPI picker) · history `GET /projects/{id}/audit` (shared record history). Project commands are services called
+directly by the endpoints (as Phase 8's `AssessmentService`), not dispatcher handlers; validation lives in the services. Submit / apply endpoints accept the idempotency key.
+
+## 27. Screens (AR + EN, RTL / LTR, shared components)
+
+**Project record page** `/portfolio/projects/$id`: header (number, name, classification / stage / status / progress chips, PM, owner), **stage
+stepper** from the template, **current-status banner** with actions (take ownership, submit…, upload LPO, request team, open window, confirm,
+hold / resume / cancel), progress strip (performance, planned to date, status), tabs **Overview** (charter details, budget & costs, edit
+charter) · **KPIs** · **Risks** (scores and bands) · **Stakeholders** · **Team** (proposed members + linked teams panel) · **Scope** (in / out) ·
+**Assumptions & constraints** · **Added values** · **Milestones** (phases tree, weights total, high-level plan, deliverable fields, monthly
+update dialog with evidence / causality) · **Monthly updates** (current window, submit, history) · **Tasks** · **Challenges** · **Meetings** ·
+**Lessons** · **Contracts** · **Change requests** (create, submit, apply dialog) · **Closure** · **Impact** · **Approvals** · **Documents** ·
+**History**. Simplified tab set for initiatives. Projects list gains PM / progress / status filters. Settings → Portfolio gains stage templates,
+monthly cycle values, progress tolerance, GM threshold.
+
+## 28. Tests (Phase 9)
+
+- **Unit:** `ProjectLifecycleTests` (transition table incl. forbidden pairs and hold / cancel), `ProgressCalculatorTests` (performance,
+  linear planned-to-date at boundaries, tolerance 5 points, past-end milestone), `MilestoneRulesTests` (achieve ≤ weight, ≥ approved, 100 % needs
+  evidence + actual end, delayed needs causality + corrective actions, weights), `GateTests` (charter minimums one by one, planning weights
+  99.99 / 100 / 100.01), `RiskScoringTests` (bands at 4/5, 9/10, 16/17; residual), `StageTemplateTests` (paths, invalid combinations),
+  `ChangeRequestRulesTests`.
+- **Integration (PostgreSQL, fake clock):** full project Take Ownership → Completed with every approval and notification; gate blocks until
+  minimums met; weights 100 %; monthly window opens on the 1st (fake clock, a Friday 1st rolls to Monday with the business hours), reminder,
+  update with evidence / delay rules, approval locks achievement; closure → Impact → Completed and → Completed with Impact off; initiative
+  template; change request applies only after PM confirms, ownership moves record roles; closure approval publishes the event that opens the
+  team evaluation; team members get project access; strategic objectives read from the KPI catalogue (and the lookup migration); KPI linked
+  records; authorization (outsider 404, team member 403 on edit, procurement only LPO); MCP tools.
+- **E2E (ar + en):** take ownership, charter tabs and gate, team formation, planning items, milestones with weights, monthly update with evidence
+  and delay, closure, impact, change request apply, record page with stage stepper — screenshots `docs/screenshots/phase-9/`.

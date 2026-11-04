@@ -95,6 +95,71 @@ export function PortfolioSettingsPage() {
           />
         </div>
       </section>
+      <section
+        className="flex flex-col gap-4 rounded-lg border bg-card p-6"
+        data-testid="portfolio-settings-lifecycle"
+      >
+        <h2 className="font-semibold">{t('settings.lifecycle')}</h2>
+        <p className="text-sm text-muted-foreground">{t('settings.lifecycleHint')}</p>
+        <div className="grid gap-6 md:grid-cols-2">
+          {(['projectTemplate', 'initiativeTemplate'] as const).map((key) => {
+            const template = value[key] ?? {
+              charter: false,
+              lpo: false,
+              teamFormation: false,
+              closure: false,
+              impact: false,
+            };
+            return (
+              <fieldset key={key} className="flex flex-col gap-2">
+                <legend className="font-medium">{t(`settings.${key}`)}</legend>
+                {(['charter', 'lpo', 'teamFormation', 'closure', 'impact'] as const).map((step) => (
+                  <Switch
+                    key={step}
+                    checked={template[step]}
+                    onCheckedChange={(checked) => update({ [key]: { ...template, [step]: checked } })}
+                    label={t(`settings.steps.${step}`)}
+                  />
+                ))}
+              </fieldset>
+            );
+          })}
+        </div>
+        <div className="grid gap-4 md:grid-cols-2">
+          <FormField label={t('settings.monthlyDueWorkingDays')}>
+            <Input
+              dir="ltr"
+              inputMode="numeric"
+              value={String(value.monthlyDueWorkingDays ?? '')}
+              onChange={(e) => update({ monthlyDueWorkingDays: Number(e.target.value) })}
+            />
+          </FormField>
+          <FormField label={t('settings.monthlyReminderWorkingDays')}>
+            <Input
+              dir="ltr"
+              inputMode="numeric"
+              value={String(value.monthlyReminderWorkingDays ?? '')}
+              onChange={(e) => update({ monthlyReminderWorkingDays: Number(e.target.value) })}
+            />
+          </FormField>
+          <FormField label={t('settings.progressTolerance')} hint={t('settings.progressToleranceHint')}>
+            <Input
+              dir="ltr"
+              inputMode="decimal"
+              value={String(Math.round((value.progressTolerance ?? 0) * 10000) / 100)}
+              onChange={(e) => update({ progressTolerance: Number(e.target.value) / 100 })}
+            />
+          </FormField>
+          <FormField label={t('settings.gmThreshold')} hint={t('settings.gmThresholdHint')}>
+            <Input
+              dir="ltr"
+              inputMode="decimal"
+              value={String(value.gmThreshold ?? '')}
+              onChange={(e) => update({ gmThreshold: Number(e.target.value) })}
+            />
+          </FormField>
+        </div>
+      </section>
       <section className="flex flex-col gap-3 rounded-lg border bg-card p-6">
         <h2 className="font-semibold">{t('settings.criteria')}</h2>
         {criteria.map((c, i) => (
