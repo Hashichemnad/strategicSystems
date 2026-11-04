@@ -1,6 +1,6 @@
 # 0049 — Automatic Project / Initiative creation and `PROJ-…` numbering
 
-- **Status:** Proposed (Phase 8)
+- **Status:** Accepted by the owner (Phase 8, before the pull request)
 - **Context:** SPEC W1.7: final approval auto-creates the Project / Initiative (Stage = Initiation for projects) and copies the request
   data; the ID format is `PROJ-SPMO-YYYY-NNN` where `SPMO` is the ADoF strategy / PM office. Nothing organisation-specific may be coded.
   The project lifecycle itself is Phase 9.

@@ -1,6 +1,6 @@
 # 0051 — Administration Dept quotation hand-off
 
-- **Status:** Proposed (Phase 8)
+- **Status:** Accepted by the owner (Phase 8, before the pull request)
 - **Context:** SPEC W1.3: without a cost file, the creator uploads the project scope, the Administration Dept is emailed, uploads
   quotations, and the request goes back to the creator. §1.9: Administration Dept (Procurement) scope = "Assigned".
 

@@ -1,6 +1,6 @@
 # 0047 — Program request validation: what applies when, and the "other" convention
 
-- **Status:** Proposed (Phase 8)
+- **Status:** Accepted by the owner (Phase 8, before the pull request)
 - **Context:** SPEC §1.4 A lists the request's validation rules (Year 1–4 costs = budget, date windows, 4-digit years, Operation or Service,
   previous program name, "Other" requires text, 2 decimals). The SPEC also asks for save-as-draft wizards (§0.3), so a half-filled request
   must be storable. The picklists are configuration (CLAUDE.md rule 2), but "Other requires text" needs to know which value is "Other".

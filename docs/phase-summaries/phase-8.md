@@ -65,7 +65,8 @@ changed). The E2E caught one real defect, fixed: editing a draft through the API
 
 **Dependencies added:** none (NuGet or npm).
 
-## Decisions (ADRs) — proposed, for the owner
+## Decisions (ADRs)
+All five were **accepted by the owner** as proposed before the pull request.
 - [0047](../decisions/0047-program-request-validation.md) Format rules on every save, business rules at submission; the `other` code convention.
 - [0048](../decisions/0048-request-approval-chain-and-approved-budget.md) Seeded chain and conditions; one *in-approval* status with the step's code and name; approved budget set by the budget step's approver (default: estimated).
 - [0049](../decisions/0049-project-auto-creation-and-numbering.md) Project creation in the approval transaction; `PROJ-{UNIT}-{YYYY}-{SEQ:3}` with the Portfolio system's owning unit.

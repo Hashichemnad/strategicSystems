@@ -1,6 +1,6 @@
 # 0050 — Proposal Assessment versions and run-time choices for AI forms
 
-- **Status:** Proposed (Phase 8)
+- **Status:** Accepted by the owner (Phase 8, before the pull request)
 - **Context:** SPEC §1.15 A: the smart request fills the form from one or more documents (strategic objective "matched to the configured
   list") and produces a Proposal Assessment saved on the request, visible to the creator and all approvers, regenerable with previous
   versions kept. Phase 5's AI forms declare their choices in code; strategic objectives are a lookup (configuration).

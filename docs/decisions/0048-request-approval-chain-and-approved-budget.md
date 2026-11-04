@@ -1,6 +1,6 @@
 # 0048 — Request approval chain, status per step and the Approved Budget
 
-- **Status:** Proposed (Phase 8)
+- **Status:** Accepted by the owner (Phase 8, before the pull request)
 - **Context:** SPEC §1.5 W1 / Appendix A Q-P4: Section Manager (when applicable) → Department Director → PM Office → DG Office (budget >
   threshold) → Budget Section (budget required). The Salesforce status lists one value per step (Manager / PMO / DGO / Budget Approval);
   steps are configuration in the Approval Settings centre (CLAUDE.md §9), so codes may be renamed, added or removed. The Budget step "sets
