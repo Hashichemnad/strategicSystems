@@ -298,8 +298,13 @@ public sealed class WaselTests(WaselFixture fx) : IClassFixture<WaselFixture>
         // A milestone of the vendor's own project that is not assigned to it: invisible and not updatable.
         var unassigned = await ProjectLifecycleTests.MilestoneAsync(w, projectId, new
         {
-            titleEn = "Internal work", isHeader = false, highLevel = false, plannedStart = DateOnly.FromDateTime(DateTime.UtcNow),
-            plannedEnd = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(10), weight = 0.2m, cost = 7654321.25m,
+            titleEn = "Internal work",
+            isHeader = false,
+            highLevel = false,
+            plannedStart = DateOnly.FromDateTime(DateTime.UtcNow),
+            plannedEnd = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(10),
+            weight = 0.2m,
+            cost = 7654321.25m,
         });
         var milestones = await Ok<List<VendorMilestoneDto>>(lead.GetAsync($"{Wasel}/projects/{projectId}/milestones"));
         milestones.Select(m => m.Id).ShouldBe([assigned]);
@@ -446,8 +451,13 @@ public sealed class WaselTests(WaselFixture fx) : IClassFixture<WaselFixture>
         await InviteAsync(w, project.Id, vendor.Id, email, VendorRoles.Lead);
         var milestone = await ProjectLifecycleTests.MilestoneAsync(w, project.Id, new
         {
-            titleEn = "Vendor work", isHeader = false, highLevel = false, plannedStart = DateOnly.FromDateTime(DateTime.UtcNow),
-            plannedEnd = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(20), weight = 0.5m, cost = 7654321.25m,
+            titleEn = "Vendor work",
+            isHeader = false,
+            highLevel = false,
+            plannedStart = DateOnly.FromDateTime(DateTime.UtcNow),
+            plannedEnd = DateOnly.FromDateTime(DateTime.UtcNow).AddDays(20),
+            weight = 0.5m,
+            cost = 7654321.25m,
         });
         await Ok<WaselPanelDto>(w.C(w.Requester).PutAsJsonAsync($"{Base}/milestones/{milestone.Id}/vendor", new { vendorId = vendor.Id }));
         var (client, _) = await AcceptInvitationAndSignInAsync(email);
