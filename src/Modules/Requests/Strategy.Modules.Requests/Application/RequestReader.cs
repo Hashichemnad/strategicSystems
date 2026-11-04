@@ -25,7 +25,7 @@ internal sealed class RequestReader(
     public async Task<IQueryable<Request>> VisibleAsync(ClaimsPrincipal user, CancellationToken ct, bool tracked = false)
     {
         var source = tracked ? db.Requests : db.Requests.AsNoTracking();
-        var scoped = await access.ApplyScopeAsync(db.Requests.AsNoTracking(), user, RequestPermissions.Read, RequestScope.Map, ct).ConfigureAwait(false);
+        var scoped = await access.ApplyScopeAsync(tracked ? db.Requests : db.Requests.AsNoTracking(), user, RequestPermissions.Read, RequestScope.Map, ct).ConfigureAwait(false);
         var processed = (await ProcessorTypesAsync(user, ct).ConfigureAwait(false)).ToList();
         var userId = user.UserId();
         var scopedIds = scoped.Select(r => r.Id);
