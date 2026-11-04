@@ -23,7 +23,7 @@ public sealed record StageStepDto(string Code, string Kind, string? NameAr, stri
 
 public sealed record StageActionDto(string Code, string Kind, string? LabelAr, string? LabelEn, FormSchema? Form, bool RequiresComment, string Tone);
 
-public sealed record RequestCapabilities(bool Edit, bool Submit, bool Cancel, bool Decide, IReadOnlyList<string> DecideActions, FormSchema? ApproveForm,
+public sealed record RequestActionsDto(bool Edit, bool Submit, bool Cancel, bool Decide, IReadOnlyList<string> DecideActions, FormSchema? ApproveForm,
     IReadOnlyList<StageActionDto> Actions, bool Upload);
 
 public sealed record RequestEventDto(Guid Id, string Action, string? FromStatus, string? ToStatus, string? FromStage, string? ToStage, string? ActorName, string? Comment,
@@ -31,7 +31,7 @@ public sealed record RequestEventDto(Guid Id, string Action, string? FromStatus,
 
 public sealed record RequestTemplateDto(string Code, string? NameAr, string? NameEn);
 
-public sealed record RequestDto(
+public sealed record RequestRecordDto(
     Guid Id,
     string Number,
     string TypeCode,
@@ -59,13 +59,13 @@ public sealed record RequestDto(
     DateTimeOffset? CompletedAt,
     string? CancelReason,
     string Source,
-    RequestCapabilities Can,
+    RequestActionsDto Can,
     ApprovalStatusView? Approval,
     IReadOnlyList<RequestEventDto> Events,
     IReadOnlyList<RequestTemplateDto> Templates,
     uint Version);
 
-public sealed record RequestListItemDto(
+public sealed record RequestRowDto(
     Guid Id,
     string Number,
     string TypeCode,
@@ -106,13 +106,13 @@ internal sealed class RequestQueries(
     IRequestContext context,
     IClock clock)
 {
-    public async Task<Result<RequestDto>> GetAsync(Guid id, CancellationToken ct)
+    public async Task<Result<RequestRecordDto>> GetAsync(Guid id, CancellationToken ct)
     {
         var request = await reader.FindAsync(id, context.User, ct).ConfigureAwait(false);
         return request is null ? Error.NotFound() : await ToDtoAsync(request, ct).ConfigureAwait(false);
     }
 
-    public async Task<RequestDto> ToDtoAsync(Request request, CancellationToken ct)
+    public async Task<RequestRecordDto> ToDtoAsync(Request request, CancellationToken ct)
     {
         var type = types.Find(request.TypeId) ?? throw new InvalidOperationException("Unknown request type.");
         var user = context.User;
@@ -138,7 +138,7 @@ internal sealed class RequestQueries(
             || (RequestStatuses.IsOpen(request.Status) && request.Status != RequestStatuses.Draft
                 && await reader.CanAsync(user, RequestPermissions.Manage, request, ct).ConfigureAwait(false));
         var decide = status?.MyTaskId is not null;
-        var can = new RequestCapabilities(editable, editable, cancel, decide, decide ? status!.MyActions : [], decide ? stage?.ApproveForm : null, actions,
+        var can = new RequestActionsDto(editable, editable, cancel, decide, decide ? status!.MyActions : [], decide ? stage?.ApproveForm : null, actions,
             editable || actions.Count > 0);
 
         var stageForms = type.Stages.ToDictionary(s => s.Code, RequestEngine.StageForm);
@@ -159,7 +159,7 @@ internal sealed class RequestQueries(
         var processor = actions.Count > 0 || await reader.CanAsync(user, RequestPermissions.Manage, request, ct).ConfigureAwait(false);
         var templates = type.Templates.Where(t => t.Audience == "requester" ? requester || processor : processor)
             .Select(t => new RequestTemplateDto(t.Code, t.NameAr, t.NameEn)).ToList();
-        return new RequestDto(request.Id, request.Number, type.Code, type.NameAr, type.NameEn, type.SystemCode, request.TitleAr, request.TitleEn, request.Status, request.Stage,
+        return new RequestRecordDto(request.Id, request.Number, type.Code, type.NameAr, type.NameEn, type.SystemCode, request.TitleAr, request.TitleEn, request.Status, request.Stage,
             Steps(type, request), person, unit, type.Form, FormSecrets.Masked(type.Form, request.Data), processMasked, stageForms, request.Outcome, request.SubjectType,
             request.SubjectId, request.CreatedAt, request.SubmittedAt, request.StageDueAt, Overdue(request), request.CompletedAt, request.CancelReason, request.Source,
             can, status,
@@ -193,7 +193,7 @@ internal sealed class RequestQueries(
     public bool Overdue(Request request) => request.StageDueAt is { } due && RequestStatuses.IsOpen(request.Status) && due < clock.UtcNow;
 
     /// <summary>My Requests: the caller's own requests, returned first, newest next.</summary>
-    public async Task<PagedResult<RequestListItemDto>> MineAsync(PageRequest page, string? status, string? type, string? search, CancellationToken ct)
+    public async Task<PagedResult<RequestRowDto>> MineAsync(PageRequest page, string? status, string? type, string? search, CancellationToken ct)
     {
         var userId = context.UserId;
         var employee = context.User.EmployeeIdOf();
@@ -202,11 +202,11 @@ internal sealed class RequestQueries(
         var total = await query.CountAsync(ct).ConfigureAwait(false);
         var rows = await query.OrderBy(r => r.Status == RequestStatuses.Returned ? 0 : 1).ThenByDescending(r => r.UpdatedAt)
             .Skip(page.Skip).Take(page.PageSize).ToListAsync(ct).ConfigureAwait(false);
-        return new PagedResult<RequestListItemDto>(await ItemsAsync(rows, ct).ConfigureAwait(false), page.Page, page.PageSize, total);
+        return new PagedResult<RequestRowDto>(await ItemsAsync(rows, ct).ConfigureAwait(false), page.Page, page.PageSize, total);
     }
 
     /// <summary>Processor queue: requests at processing stages the user processes; with a status filter, every visible request of that status.</summary>
-    public async Task<PagedResult<RequestListItemDto>> QueueAsync(PageRequest page, string? status, string? type, string? stage, string? search, bool overdueOnly,
+    public async Task<PagedResult<RequestRowDto>> QueueAsync(PageRequest page, string? status, string? type, string? stage, string? search, bool overdueOnly,
         CancellationToken ct)
     {
         var user = context.User;
@@ -242,7 +242,7 @@ internal sealed class RequestQueries(
         var total = await query.CountAsync(ct).ConfigureAwait(false);
         var rows = await query.OrderBy(r => r.StageDueAt == null).ThenBy(r => r.StageDueAt).ThenBy(r => r.SubmittedAt)
             .Skip(page.Skip).Take(page.PageSize).ToListAsync(ct).ConfigureAwait(false);
-        return new PagedResult<RequestListItemDto>(await ItemsAsync(rows, ct).ConfigureAwait(false), page.Page, page.PageSize, total);
+        return new PagedResult<RequestRowDto>(await ItemsAsync(rows, ct).ConfigureAwait(false), page.Page, page.PageSize, total);
     }
 
     private static IQueryable<Request> Filter(IQueryable<Request> query, string? status, string? type, string? search)
@@ -266,7 +266,7 @@ internal sealed class RequestQueries(
         return query;
     }
 
-    public async Task<IReadOnlyList<RequestListItemDto>> ItemsAsync(IReadOnlyList<Request> rows, CancellationToken ct)
+    public async Task<IReadOnlyList<RequestRowDto>> ItemsAsync(IReadOnlyList<Request> rows, CancellationToken ct)
     {
         var people = await employees.GetManyAsync(rows.Where(r => r.RequesterEmployeeId is not null).Select(r => r.RequesterEmployeeId!.Value).Distinct().ToList(), ct)
             .ConfigureAwait(false);
@@ -277,7 +277,7 @@ internal sealed class RequestQueries(
             var p = r.RequesterEmployeeId is { } e && people.TryGetValue(e, out var emp)
                 ? new RequestPersonDto(emp.Id, emp.NameAr ?? emp.NameEn, emp.NameEn ?? emp.NameAr)
                 : new RequestPersonDto(null, null, null);
-            return new RequestListItemDto(r.Id, r.Number, r.TypeCode, t?.NameAr, t?.NameEn, r.TitleAr, r.TitleEn, r.Status, r.Stage, s?.NameAr, s?.NameEn, p, r.SubmittedAt,
+            return new RequestRowDto(r.Id, r.Number, r.TypeCode, t?.NameAr, t?.NameEn, r.TitleAr, r.TitleEn, r.Status, r.Stage, s?.NameAr, s?.NameEn, p, r.SubmittedAt,
                 r.StageDueAt, Overdue(r), r.UpdatedAt);
         }).ToList();
     }

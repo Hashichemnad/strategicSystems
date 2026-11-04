@@ -133,7 +133,7 @@ public sealed class RequestFrameworkTests(RequestsFixture fixture) : IClassFixtu
         fields.ShouldContain("fields.startDate");
         fields.ShouldContain("fields.hacker");
 
-        var saved = await RequestWorld.OkAsync<RequestDto>(w.C(w.EmployeeA).PutAsJsonAsync($"{Base}/{draft.Id}", new
+        var saved = await RequestWorld.OkAsync<RequestRecordDto>(w.C(w.EmployeeA).PutAsJsonAsync($"{Base}/{draft.Id}", new
         {
             version = draft.Version,
             data = new
@@ -148,7 +148,7 @@ public sealed class RequestFrameworkTests(RequestsFixture fixture) : IClassFixtu
         (await refused.ShouldBeProblemAsync(HttpStatusCode.BadRequest, "validation.failed")).GetProperty("errors").EnumerateArray()
             .Select(e => e.GetProperty("field").GetString()).ShouldContain("fields.provider");
 
-        saved = await RequestWorld.OkAsync<RequestDto>(w.C(w.EmployeeA).PutAsJsonAsync($"{Base}/{draft.Id}", new
+        saved = await RequestWorld.OkAsync<RequestRecordDto>(w.C(w.EmployeeA).PutAsJsonAsync($"{Base}/{draft.Id}", new
         {
             version = saved.Version,
             data = new
@@ -229,7 +229,7 @@ public sealed class RequestFrameworkTests(RequestsFixture fixture) : IClassFixtu
         // The requester cannot cancel at a processing stage; the office (manage) can.
         (await RequestWorld.StatusAsync(w.C(w.EmployeeB).PostAsJsonAsync($"{Base}/{draft.Id}/cancel", new { reason = "x", version = again.Version })))
             .ShouldBe(HttpStatusCode.Forbidden);
-        var cancelled = await RequestWorld.OkAsync<RequestDto>(w.C(w.Office).PostAsJsonAsync($"{Base}/{draft.Id}/cancel", new { reason = "Duplicate", version = again.Version }));
+        var cancelled = await RequestWorld.OkAsync<RequestRecordDto>(w.C(w.Office).PostAsJsonAsync($"{Base}/{draft.Id}/cancel", new { reason = "Duplicate", version = again.Version }));
         cancelled.Status.ShouldBe("cancelled");
     }
 }

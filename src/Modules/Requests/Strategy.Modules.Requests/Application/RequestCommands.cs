@@ -17,9 +17,9 @@ public sealed record DraftInput(string? TypeCode, JsonObject? Data, string? Sour
 
 public sealed record SaveInput(JsonObject? Data, uint Version);
 
-public sealed record SubmitInput(uint Version, string? Comment = null);
+public sealed record RequestSubmitInput(uint Version, string? Comment = null);
 
-public sealed record CancelInput(string? Reason, uint Version);
+public sealed record RequestCancelInput(string? Reason, uint Version);
 
 public sealed record DecideInput(string? Action, string? Comment, JsonObject? Form);
 
@@ -47,7 +47,7 @@ internal sealed class RequestCommands(
     IRequestContext context,
     IClock clock)
 {
-    public async Task<Result<RequestDto>> CreateAsync(DraftInput input, CancellationToken ct)
+    public async Task<Result<RequestRecordDto>> CreateAsync(DraftInput input, CancellationToken ct)
     {
         var user = context.User;
         if (types.Find(input.TypeCode ?? string.Empty) is not { } type || !await reader.CanSubmitAsync(user, type, ct).ConfigureAwait(false))
@@ -76,7 +76,7 @@ internal sealed class RequestCommands(
         return await queries.ToDtoAsync(request, ct).ConfigureAwait(false);
     }
 
-    public async Task<Result<RequestDto>> SaveAsync(Guid id, SaveInput input, CancellationToken ct)
+    public async Task<Result<RequestRecordDto>> SaveAsync(Guid id, SaveInput input, CancellationToken ct)
     {
         var loaded = await LoadEditableAsync(id, LifecycleActions.Save, ct).ConfigureAwait(false);
         if (loaded.IsFailure)
@@ -106,7 +106,7 @@ internal sealed class RequestCommands(
         return await queries.ToDtoAsync(request, ct).ConfigureAwait(false);
     }
 
-    public async Task<Result<RequestDto>> SubmitAsync(Guid id, SubmitInput input, CancellationToken ct)
+    public async Task<Result<RequestRecordDto>> SubmitAsync(Guid id, RequestSubmitInput input, CancellationToken ct)
     {
         var loaded = await LoadEditableAsync(id, LifecycleActions.Submit, ct).ConfigureAwait(false);
         if (loaded.IsFailure)
@@ -165,7 +165,7 @@ internal sealed class RequestCommands(
         return await queries.ToDtoAsync(request, ct).ConfigureAwait(false);
     }
 
-    public async Task<Result<RequestDto>> CancelAsync(Guid id, CancelInput input, CancellationToken ct)
+    public async Task<Result<RequestRecordDto>> CancelAsync(Guid id, RequestCancelInput input, CancellationToken ct)
     {
         var request = await reader.FindAsync(id, context.User, ct, tracked: true).ConfigureAwait(false);
         if (request is null || types.Find(request.TypeId) is not { } type)
@@ -228,7 +228,7 @@ internal sealed class RequestCommands(
     }
 
     /// <summary>Approve / reject / return the approval stage from the request page, with the approve form (ADR 0081).</summary>
-    public async Task<Result<RequestDto>> DecideAsync(Guid id, DecideInput input, CancellationToken ct)
+    public async Task<Result<RequestRecordDto>> DecideAsync(Guid id, DecideInput input, CancellationToken ct)
     {
         var request = await reader.FindAsync(id, context.User, ct).ConfigureAwait(false);
         if (request is null || types.Find(request.TypeId) is not { } type)
@@ -266,7 +266,7 @@ internal sealed class RequestCommands(
     }
 
     /// <summary>A processing-stage action (complete, custom, return, reject) with its mini-form.</summary>
-    public async Task<Result<RequestDto>> ActAsync(Guid id, string actionCode, ActionInput input, CancellationToken ct)
+    public async Task<Result<RequestRecordDto>> ActAsync(Guid id, string actionCode, ActionInput input, CancellationToken ct)
     {
         var request = await reader.FindAsync(id, context.User, ct, tracked: true).ConfigureAwait(false);
         if (request is null || types.Find(request.TypeId) is not { } type)

@@ -6690,6 +6690,21 @@ export interface components {
       labelEn: null | string;
       commentRequired: boolean;
     };
+    ApprovalInstanceSummary: {
+      /** Format: uuid */
+      instanceId: string;
+      processKey: string;
+      status: string;
+      /** Format: int32 */
+      attempt: number;
+      currentStepCode: null | string;
+      currentStepNameAr: null | string;
+      currentStepNameEn: null | string;
+      /** Format: date-time */
+      submittedAt: string;
+      /** Format: date-time */
+      completedAt: null | string;
+    };
     /** @description Settings → Approvals: which organisation levels the "section manager" and "department director" rules look for (ADR 0025). */
     ApprovalSettings: {
       /** @default section */
@@ -6708,6 +6723,16 @@ export interface components {
       departmentLevelCode: null | string;
       /** Format: uint32 */
       version: number;
+    };
+    /** @description The pending step of a record as the current user sees it (for current-status providers). */
+    ApprovalStatusView: {
+      instance: components['schemas']['ApprovalInstanceSummary'];
+      approvers: components['schemas']['PersonName'][];
+      /** Format: date-time */
+      dueAt: null | string;
+      /** Format: uuid */
+      myTaskId: null | string;
+      myActions: string[];
     };
     /** @description One step of a chain, as configured in the Approval Settings centre. */
     ApprovalStepDefinition: {
@@ -8265,6 +8290,11 @@ export interface components {
       sensitive: boolean;
       close: boolean;
     };
+    IpCountDto: {
+      code: string;
+      /** Format: int32 */
+      count: number;
+    };
     IpDashboardDto: {
       /** Format: int32 */
       total: number;
@@ -8276,9 +8306,9 @@ export interface components {
       expiringSoon: number;
       /** Format: int32 */
       expired: number;
-      byType: components['schemas']['CountDto'][];
-      byProtection: components['schemas']['CountDto'][];
-      byYear: components['schemas']['CountDto'][];
+      byType: components['schemas']['IpCountDto'][];
+      byProtection: components['schemas']['IpCountDto'][];
+      byYear: components['schemas']['IpCountDto'][];
       byUnit: components['schemas']['UnitCountDto'][];
       upcomingExpiries: components['schemas']['IpListItemDto'][];
     };
@@ -8361,6 +8391,10 @@ export interface components {
       settings: components['schemas']['IpSettings'];
       /** Format: uint32 */
       version: number;
+    };
+    IpSuggestInput: {
+      title: null | string;
+      description: null | string;
     };
     IpUnitDto: {
       /** Format: uuid */
@@ -10283,6 +10317,18 @@ export interface components {
       totalPages?: number;
     };
     /** @description One page of items plus the total count across all pages. */
+    PagedResultOfRequestRowDto: {
+      items: components['schemas']['RequestRowDto'][];
+      /** Format: int32 */
+      page: number;
+      /** Format: int32 */
+      pageSize: number;
+      /** Format: int32 */
+      totalCount: number;
+      /** Format: int32 */
+      totalPages?: number;
+    };
+    /** @description One page of items plus the total count across all pages. */
     PagedResultOfSampleItemDto: {
       items: components['schemas']['SampleItemDto'][];
       /** Format: int32 */
@@ -10976,6 +11022,21 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    RequestActionsDto: {
+      edit: boolean;
+      submit: boolean;
+      cancel: boolean;
+      decide: boolean;
+      decideActions: string[];
+      approveForm: null | components['schemas']['FormSchema'];
+      actions: components['schemas']['StageActionDto'][];
+      upload: boolean;
+    };
+    RequestCancelInput: {
+      reason: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
     /** @description What the current user may do on the request now (drives the record page; the server checks again on every call). */
     RequestCapabilities: {
       edit: boolean;
@@ -11038,6 +11099,20 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    RequestEventDto: {
+      /** Format: uuid */
+      id: string;
+      action: string;
+      fromStatus: null | string;
+      toStatus: null | string;
+      fromStage: null | string;
+      toStage: null | string;
+      actorName: null | string;
+      comment: null | string;
+      data: null | components['schemas']['JsonObject'];
+      /** Format: date-time */
+      at: string;
+    };
     /** @description A file on a request with its kind (`document`, `cost-estimation`, `project-scope`, `quotation`). */
     RequestFileDto: {
       kind: string;
@@ -11071,6 +11146,99 @@ export interface components {
       /** Format: date-time */
       updatedAt: string;
       projectNumber: null | string;
+    };
+    RequestOptionDto: {
+      code: string;
+      labelAr: null | string;
+      labelEn: null | string;
+    };
+    RequestPersonDto: {
+      /** Format: uuid */
+      id: null | string;
+      nameAr: null | string;
+      nameEn: null | string;
+    };
+    RequestRecordDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      typeCode: string;
+      typeNameAr: null | string;
+      typeNameEn: null | string;
+      systemCode: string;
+      titleAr: null | string;
+      titleEn: null | string;
+      status: string;
+      stage: null | string;
+      stages: components['schemas']['StageStepDto'][];
+      requester: components['schemas']['RequestPersonDto'];
+      unit: null | components['schemas']['RequestUnitDto'];
+      form: components['schemas']['FormSchema'];
+      data: components['schemas']['JsonObject'];
+      processData: components['schemas']['JsonObject'];
+      stageForms: {
+        [key: string]: components['schemas']['FormSchema'];
+      };
+      outcome: null | string;
+      subjectType: null | string;
+      /** Format: uuid */
+      subjectId: null | string;
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: date-time */
+      submittedAt: null | string;
+      /** Format: date-time */
+      stageDueAt: null | string;
+      overdue: boolean;
+      /** Format: date-time */
+      completedAt: null | string;
+      cancelReason: null | string;
+      source: string;
+      can: components['schemas']['RequestActionsDto'];
+      approval: null | components['schemas']['ApprovalStatusView'];
+      events: components['schemas']['RequestEventDto'][];
+      templates: components['schemas']['RequestTemplateDto'][];
+      /** Format: uint32 */
+      version: number;
+    };
+    RequestRowDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      typeCode: string;
+      typeNameAr: null | string;
+      typeNameEn: null | string;
+      titleAr: null | string;
+      titleEn: null | string;
+      status: string;
+      stage: null | string;
+      stageNameAr: null | string;
+      stageNameEn: null | string;
+      requester: components['schemas']['RequestPersonDto'];
+      /** Format: date-time */
+      submittedAt: null | string;
+      /** Format: date-time */
+      stageDueAt: null | string;
+      overdue: boolean;
+      /** Format: date-time */
+      updatedAt: string;
+    };
+    RequestSubmitInput: {
+      /** Format: uint32 */
+      version: number;
+      comment?: null | string;
+    };
+    RequestTemplateDto: {
+      code: string;
+      nameAr: null | string;
+      nameEn: null | string;
+    };
+    RequestUnitDto: {
+      /** Format: uuid */
+      id: string;
+      code: string;
+      nameAr: null | string;
+      nameEn: null | string;
     };
     RequestUpdateInput: {
       values: components['schemas']['RequestValues'];
@@ -11564,6 +11732,15 @@ export interface components {
       requiresComment?: boolean;
       /** @description Visual tone: primary, secondary, danger. */
       tone?: string;
+    };
+    StageActionDto: {
+      code: string;
+      kind: string;
+      labelAr: null | string;
+      labelEn: null | string;
+      form: null | components['schemas']['FormSchema'];
+      requiresComment: boolean;
+      tone: string;
     };
     /** @description One stage of a request type. */
     StageDefinition: {
@@ -12499,10 +12676,10 @@ export interface components {
     };
     TypeOptionsDto: {
       fieldTypes: string[];
-      lookupTypes: components['schemas']['OptionDto'][];
-      recordTypes: components['schemas']['OptionDto'][];
-      roles: components['schemas']['OptionDto'][];
-      categories: components['schemas']['OptionDto'][];
+      lookupTypes: components['schemas']['RequestOptionDto'][];
+      recordTypes: components['schemas']['RequestOptionDto'][];
+      roles: components['schemas']['RequestOptionDto'][];
+      categories: components['schemas']['RequestOptionDto'][];
     };
     TypeSuggestionDto: {
       propertyType: null | string;
@@ -26293,7 +26470,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          'application/json': components['schemas']['PagedResultOfRequestListItemDto'];
+          'application/json': components['schemas']['PagedResultOfRequestRowDto'];
         };
       };
       /** @description Problem Details (RFC 9457) */
@@ -26330,7 +26507,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          'application/json': components['schemas']['PagedResultOfRequestListItemDto'];
+          'application/json': components['schemas']['PagedResultOfRequestRowDto'];
         };
       };
       /** @description Problem Details (RFC 9457) */
@@ -26396,7 +26573,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          'application/json': components['schemas']['RequestDto'];
+          'application/json': components['schemas']['RequestRecordDto'];
         };
       };
       /** @description Problem Details (RFC 9457) */
@@ -26427,7 +26604,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          'application/json': components['schemas']['RequestDto'];
+          'application/json': components['schemas']['RequestRecordDto'];
         };
       };
       /** @description Problem Details (RFC 9457) */
@@ -26462,7 +26639,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          'application/json': components['schemas']['RequestDto'];
+          'application/json': components['schemas']['RequestRecordDto'];
         };
       };
       /** @description Problem Details (RFC 9457) */
@@ -26487,7 +26664,7 @@ export interface operations {
     };
     requestBody: {
       content: {
-        'application/json': components['schemas']['SubmitInput'];
+        'application/json': components['schemas']['RequestSubmitInput'];
       };
     };
     responses: {
@@ -26497,7 +26674,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          'application/json': components['schemas']['RequestDto'];
+          'application/json': components['schemas']['RequestRecordDto'];
         };
       };
       /** @description Problem Details (RFC 9457) */
@@ -26522,7 +26699,7 @@ export interface operations {
     };
     requestBody: {
       content: {
-        'application/json': components['schemas']['CancelInput'];
+        'application/json': components['schemas']['RequestCancelInput'];
       };
     };
     responses: {
@@ -26532,7 +26709,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          'application/json': components['schemas']['RequestDto'];
+          'application/json': components['schemas']['RequestRecordDto'];
         };
       };
       /** @description Problem Details (RFC 9457) */
@@ -26567,7 +26744,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          'application/json': components['schemas']['RequestDto'];
+          'application/json': components['schemas']['RequestRecordDto'];
         };
       };
       /** @description Problem Details (RFC 9457) */
@@ -26603,7 +26780,7 @@ export interface operations {
           [name: string]: unknown;
         };
         content: {
-          'application/json': components['schemas']['RequestDto'];
+          'application/json': components['schemas']['RequestRecordDto'];
         };
       };
       /** @description Problem Details (RFC 9457) */
@@ -28012,7 +28189,7 @@ export interface operations {
     };
     requestBody: {
       content: {
-        'application/json': components['schemas']['SuggestInput'];
+        'application/json': components['schemas']['IpSuggestInput'];
       };
     };
     responses: {
@@ -28047,7 +28224,7 @@ export interface operations {
     };
     requestBody: {
       content: {
-        'application/json': components['schemas']['SuggestInput'];
+        'application/json': components['schemas']['IpSuggestInput'];
       };
     };
     responses: {

@@ -40,10 +40,10 @@ public sealed record TypeDetailDto(
     SimpleStagesInput? Simple,
     TypeOptionsDto Options);
 
-public sealed record OptionDto(string Code, string? LabelAr, string? LabelEn);
+public sealed record RequestOptionDto(string Code, string? LabelAr, string? LabelEn);
 
-public sealed record TypeOptionsDto(IReadOnlyList<string> FieldTypes, IReadOnlyList<OptionDto> LookupTypes, IReadOnlyList<OptionDto> RecordTypes,
-    IReadOnlyList<OptionDto> Roles, IReadOnlyList<OptionDto> Categories);
+public sealed record TypeOptionsDto(IReadOnlyList<string> FieldTypes, IReadOnlyList<RequestOptionDto> LookupTypes, IReadOnlyList<RequestOptionDto> RecordTypes,
+    IReadOnlyList<RequestOptionDto> Roles, IReadOnlyList<RequestOptionDto> Categories);
 
 /// <summary>The form builder's input. Custom types: everything; built-in types: labels, extra fields, catalogue / submitter settings, SLA.</summary>
 public sealed record TypeInput(
@@ -106,11 +106,11 @@ internal sealed partial class TypeAdministration(
 
     public async Task<TypeOptionsDto> OptionsAsync(CancellationToken ct)
     {
-        var record = (await links.TypesAsync(cancellationToken: ct).ConfigureAwait(false)).Select(t => new OptionDto(t.ResourceType, t.NameAr, t.NameEn)).ToList();
-        var roleOptions = (await roles.ListRolesAsync(ct).ConfigureAwait(false)).Where(r => r.Active).Select(r => new OptionDto(r.Key, r.NameAr, r.NameEn)).ToList();
+        var record = (await links.TypesAsync(cancellationToken: ct).ConfigureAwait(false)).Select(t => new RequestOptionDto(t.ResourceType, t.NameAr, t.NameEn)).ToList();
+        var roleOptions = (await roles.ListRolesAsync(ct).ConfigureAwait(false)).Where(r => r.Active).Select(r => new RequestOptionDto(r.Key, r.NameAr, r.NameEn)).ToList();
         var categories = (await lookups.GetValuesAsync(RequestPermissions.CategoryLookup, cancellationToken: ct).ConfigureAwait(false))
-            .Select(v => new OptionDto(v.Code, v.LabelAr, v.LabelEn)).ToList();
-        return new TypeOptionsDto(FieldTypes.All, lookupTypes.Select(l => new OptionDto(l.Code, l.NameAr, l.NameEn)).OrderBy(o => o.Code).ToList(), record, roleOptions,
+            .Select(v => new RequestOptionDto(v.Code, v.LabelAr, v.LabelEn)).ToList();
+        return new TypeOptionsDto(FieldTypes.All, lookupTypes.Select(l => new RequestOptionDto(l.Code, l.NameAr, l.NameEn)).OrderBy(o => o.Code).ToList(), record, roleOptions,
             categories);
     }
 

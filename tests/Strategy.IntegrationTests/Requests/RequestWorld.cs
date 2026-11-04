@@ -127,21 +127,21 @@ internal sealed class RequestWorld
         return JsonSerializer.Deserialize<T>(body, Json)!;
     }
 
-    public async Task<RequestDto> DraftAsync(TestUser user, string type, object values) =>
-        await OkAsync<RequestDto>(C(user).PostAsJsonAsync(Base, new { typeCode = type, data = values }));
+    public async Task<RequestRecordDto> DraftAsync(TestUser user, string type, object values) =>
+        await OkAsync<RequestRecordDto>(C(user).PostAsJsonAsync(Base, new { typeCode = type, data = values }));
 
-    public async Task<RequestDto> SubmitAsync(TestUser user, RequestDto request) =>
-        await OkAsync<RequestDto>(C(user).PostAsJsonAsync($"{Base}/{request.Id}/submit", new { version = request.Version }));
+    public async Task<RequestRecordDto> SubmitAsync(TestUser user, RequestRecordDto request) =>
+        await OkAsync<RequestRecordDto>(C(user).PostAsJsonAsync($"{Base}/{request.Id}/submit", new { version = request.Version }));
 
-    public async Task<RequestDto> GetAsync(TestUser user, Guid id) => await OkAsync<RequestDto>(C(user).GetAsync($"{Base}/{id}"));
+    public async Task<RequestRecordDto> GetAsync(TestUser user, Guid id) => await OkAsync<RequestRecordDto>(C(user).GetAsync($"{Base}/{id}"));
 
-    public async Task<RequestDto> DecideAsync(TestUser user, Guid id, string action, object? form = null, string? comment = null) =>
-        await OkAsync<RequestDto>(C(user).PostAsJsonAsync($"{Base}/{id}/decide", new { action, comment, form }));
+    public async Task<RequestRecordDto> DecideAsync(TestUser user, Guid id, string action, object? form = null, string? comment = null) =>
+        await OkAsync<RequestRecordDto>(C(user).PostAsJsonAsync($"{Base}/{id}/decide", new { action, comment, form }));
 
-    public async Task<RequestDto> ActAsync(TestUser user, Guid id, string action, object? form = null, string? comment = null)
+    public async Task<RequestRecordDto> ActAsync(TestUser user, Guid id, string action, object? form = null, string? comment = null)
     {
         var current = await GetAsync(user, id);
-        return await OkAsync<RequestDto>(C(user).PostAsJsonAsync($"{Base}/{id}/actions/{action}", new { version = current.Version, comment, form }));
+        return await OkAsync<RequestRecordDto>(C(user).PostAsJsonAsync($"{Base}/{id}/actions/{action}", new { version = current.Version, comment, form }));
     }
 
     /// <summary>Uploads a file to the request (generic attachments API) and returns its id.</summary>

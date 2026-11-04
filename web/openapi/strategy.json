@@ -18758,7 +18758,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PagedResultOfRequestListItemDto"
+                  "$ref": "#/components/schemas/PagedResultOfRequestRowDto"
                 }
               }
             }
@@ -18841,7 +18841,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/PagedResultOfRequestListItemDto"
+                  "$ref": "#/components/schemas/PagedResultOfRequestRowDto"
                 }
               }
             }
@@ -18921,7 +18921,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RequestDto"
+                  "$ref": "#/components/schemas/RequestRecordDto"
                 }
               }
             }
@@ -18962,7 +18962,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RequestDto"
+                  "$ref": "#/components/schemas/RequestRecordDto"
                 }
               }
             }
@@ -19011,7 +19011,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RequestDto"
+                  "$ref": "#/components/schemas/RequestRecordDto"
                 }
               }
             }
@@ -19050,7 +19050,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SubmitInput"
+                "$ref": "#/components/schemas/RequestSubmitInput"
               }
             }
           },
@@ -19062,7 +19062,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RequestDto"
+                  "$ref": "#/components/schemas/RequestRecordDto"
                 }
               }
             }
@@ -19101,7 +19101,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CancelInput"
+                "$ref": "#/components/schemas/RequestCancelInput"
               }
             }
           },
@@ -19113,7 +19113,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RequestDto"
+                  "$ref": "#/components/schemas/RequestRecordDto"
                 }
               }
             }
@@ -19164,7 +19164,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RequestDto"
+                  "$ref": "#/components/schemas/RequestRecordDto"
                 }
               }
             }
@@ -19223,7 +19223,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/RequestDto"
+                  "$ref": "#/components/schemas/RequestRecordDto"
                 }
               }
             }
@@ -21306,7 +21306,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SuggestInput"
+                "$ref": "#/components/schemas/IpSuggestInput"
               }
             }
           },
@@ -21356,7 +21356,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SuggestInput"
+                "$ref": "#/components/schemas/IpSuggestInput"
               }
             }
           },
@@ -22757,6 +22757,65 @@
           }
         }
       },
+      "ApprovalInstanceSummary": {
+        "required": [
+          "instanceId",
+          "processKey",
+          "status",
+          "attempt",
+          "currentStepCode",
+          "currentStepNameAr",
+          "currentStepNameEn",
+          "submittedAt",
+          "completedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "instanceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "processKey": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "attempt": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "currentStepCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "currentStepNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "currentStepNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "submittedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "completedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          }
+        }
+      },
       "ApprovalSettings": {
         "type": "object",
         "properties": {
@@ -22819,6 +22878,48 @@
             "format": "uint32"
           }
         }
+      },
+      "ApprovalStatusView": {
+        "required": [
+          "instance",
+          "approvers",
+          "dueAt",
+          "myTaskId",
+          "myActions"
+        ],
+        "type": "object",
+        "properties": {
+          "instance": {
+            "$ref": "#/components/schemas/ApprovalInstanceSummary"
+          },
+          "approvers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PersonName"
+            }
+          },
+          "dueAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "myTaskId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "myActions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "description": "The pending step of a record as the current user sees it (for current-status providers)."
       },
       "ApprovalStepDefinition": {
         "required": [
@@ -29277,6 +29378,22 @@
           }
         }
       },
+      "IpCountDto": {
+        "required": [
+          "code",
+          "count"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
       "IpDashboardDto": {
         "required": [
           "total",
@@ -29315,19 +29432,19 @@
           "byType": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/CountDto"
+              "$ref": "#/components/schemas/IpCountDto"
             }
           },
           "byProtection": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/CountDto"
+              "$ref": "#/components/schemas/IpCountDto"
             }
           },
           "byYear": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/CountDto"
+              "$ref": "#/components/schemas/IpCountDto"
             }
           },
           "byUnit": {
@@ -29720,6 +29837,27 @@
           "version": {
             "type": "integer",
             "format": "uint32"
+          }
+        }
+      },
+      "IpSuggestInput": {
+        "required": [
+          "title",
+          "description"
+        ],
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
@@ -37462,6 +37600,40 @@
         },
         "description": "One page of items plus the total count across all pages."
       },
+      "PagedResultOfRequestRowDto": {
+        "required": [
+          "items",
+          "page",
+          "pageSize",
+          "totalCount"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RequestRowDto"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "description": "One page of items plus the total count across all pages."
+      },
       "PagedResultOfSampleItemDto": {
         "required": [
           "items",
@@ -40194,6 +40366,77 @@
           }
         }
       },
+      "RequestActionsDto": {
+        "required": [
+          "edit",
+          "submit",
+          "cancel",
+          "decide",
+          "decideActions",
+          "approveForm",
+          "actions",
+          "upload"
+        ],
+        "type": "object",
+        "properties": {
+          "edit": {
+            "type": "boolean"
+          },
+          "submit": {
+            "type": "boolean"
+          },
+          "cancel": {
+            "type": "boolean"
+          },
+          "decide": {
+            "type": "boolean"
+          },
+          "decideActions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "approveForm": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/FormSchema"
+              }
+            ]
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StageActionDto"
+            }
+          },
+          "upload": {
+            "type": "boolean"
+          }
+        }
+      },
+      "RequestCancelInput": {
+        "required": [
+          "reason",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
       "RequestCapabilities": {
         "required": [
           "edit",
@@ -40477,6 +40720,80 @@
           }
         }
       },
+      "RequestEventDto": {
+        "required": [
+          "id",
+          "action",
+          "fromStatus",
+          "toStatus",
+          "fromStage",
+          "toStage",
+          "actorName",
+          "comment",
+          "data",
+          "at"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "action": {
+            "type": "string"
+          },
+          "fromStatus": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "toStatus": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "fromStage": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "toStage": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "actorName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "comment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "data": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/JsonObject"
+              }
+            ]
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
       "RequestFileDto": {
         "required": [
           "kind",
@@ -40634,6 +40951,439 @@
             "format": "date-time"
           },
           "projectNumber": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "RequestOptionDto": {
+        "required": [
+          "code",
+          "labelAr",
+          "labelEn"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "labelAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "labelEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "RequestPersonDto": {
+        "required": [
+          "id",
+          "nameAr",
+          "nameEn"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "RequestRecordDto": {
+        "required": [
+          "id",
+          "number",
+          "typeCode",
+          "typeNameAr",
+          "typeNameEn",
+          "systemCode",
+          "titleAr",
+          "titleEn",
+          "status",
+          "stage",
+          "stages",
+          "requester",
+          "unit",
+          "form",
+          "data",
+          "processData",
+          "stageForms",
+          "outcome",
+          "subjectType",
+          "subjectId",
+          "createdAt",
+          "submittedAt",
+          "stageDueAt",
+          "overdue",
+          "completedAt",
+          "cancelReason",
+          "source",
+          "can",
+          "approval",
+          "events",
+          "templates",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": "string"
+          },
+          "typeCode": {
+            "type": "string"
+          },
+          "typeNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "typeNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "systemCode": {
+            "type": "string"
+          },
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "stage": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "stages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/StageStepDto"
+            }
+          },
+          "requester": {
+            "$ref": "#/components/schemas/RequestPersonDto"
+          },
+          "unit": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/RequestUnitDto"
+              }
+            ]
+          },
+          "form": {
+            "$ref": "#/components/schemas/FormSchema"
+          },
+          "data": {
+            "$ref": "#/components/schemas/JsonObject"
+          },
+          "processData": {
+            "$ref": "#/components/schemas/JsonObject"
+          },
+          "stageForms": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/FormSchema"
+            }
+          },
+          "outcome": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "subjectType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "subjectId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "submittedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "stageDueAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "overdue": {
+            "type": "boolean"
+          },
+          "completedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "cancelReason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "source": {
+            "type": "string"
+          },
+          "can": {
+            "$ref": "#/components/schemas/RequestActionsDto"
+          },
+          "approval": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/ApprovalStatusView"
+              }
+            ]
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RequestEventDto"
+            }
+          },
+          "templates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RequestTemplateDto"
+            }
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "RequestRowDto": {
+        "required": [
+          "id",
+          "number",
+          "typeCode",
+          "typeNameAr",
+          "typeNameEn",
+          "titleAr",
+          "titleEn",
+          "status",
+          "stage",
+          "stageNameAr",
+          "stageNameEn",
+          "requester",
+          "submittedAt",
+          "stageDueAt",
+          "overdue",
+          "updatedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": "string"
+          },
+          "typeCode": {
+            "type": "string"
+          },
+          "typeNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "typeNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "stage": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "stageNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "stageNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "requester": {
+            "$ref": "#/components/schemas/RequestPersonDto"
+          },
+          "submittedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "stageDueAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "overdue": {
+            "type": "boolean"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "RequestSubmitInput": {
+        "required": [
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          },
+          "comment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "RequestTemplateDto": {
+        "required": [
+          "code",
+          "nameAr",
+          "nameEn"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "RequestUnitDto": {
+        "required": [
+          "id",
+          "code",
+          "nameAr",
+          "nameEn"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
             "type": [
               "null",
               "string"
@@ -42626,6 +43376,54 @@
           }
         },
         "description": "An action of a processing stage, with an optional mini-form."
+      },
+      "StageActionDto": {
+        "required": [
+          "code",
+          "kind",
+          "labelAr",
+          "labelEn",
+          "form",
+          "requiresComment",
+          "tone"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "labelAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "labelEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "form": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/FormSchema"
+              }
+            ]
+          },
+          "requiresComment": {
+            "type": "boolean"
+          },
+          "tone": {
+            "type": "string"
+          }
+        }
       },
       "StageDefinition": {
         "type": "object",
@@ -46487,25 +47285,25 @@
           "lookupTypes": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/OptionDto"
+              "$ref": "#/components/schemas/RequestOptionDto"
             }
           },
           "recordTypes": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/OptionDto"
+              "$ref": "#/components/schemas/RequestOptionDto"
             }
           },
           "roles": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/OptionDto"
+              "$ref": "#/components/schemas/RequestOptionDto"
             }
           },
           "categories": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/OptionDto"
+              "$ref": "#/components/schemas/RequestOptionDto"
             }
           }
         }

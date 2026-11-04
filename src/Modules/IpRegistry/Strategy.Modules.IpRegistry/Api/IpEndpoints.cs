@@ -65,9 +65,9 @@ internal static class IpEndpoints
             (await context.RequestServices.GetRequiredService<IpService>().GetAsync(rid, context.RequestAborted)).IsSuccess);
 
         var ai = group.MapGroup("/ai");
-        ai.MapPost("/suggest", async (SuggestInput b, IpAiService s, CancellationToken ct) => (await s.SuggestAsync(b, ct)).ToOk())
+        ai.MapPost("/suggest", async (IpSuggestInput b, IpAiService s, CancellationToken ct) => (await s.SuggestAsync(b, ct)).ToOk())
             .WithName("SuggestIpTypes").RequirePermission(IpPermissions.AiSuggest);
-        ai.MapPost("/similar", async (SuggestInput b, Guid? excludeId, IpAiService s, CancellationToken ct) => (await s.SimilarityAsync(b, excludeId, ct)).ToOk())
+        ai.MapPost("/similar", async (IpSuggestInput b, Guid? excludeId, IpAiService s, CancellationToken ct) => (await s.SimilarityAsync(b, excludeId, ct)).ToOk())
             .WithName("FindSimilarIp").RequirePermission(IpPermissions.AiSimilarity);
         ai.MapPost("/records/{id:guid}/moet-description", async (Guid id, IpAiService s, CancellationToken ct) => (await s.MoetDescriptionAsync(id, ct)).ToOk())
             .WithName("DraftIpMoetDescription").RequirePermission(IpPermissions.AiMoet);

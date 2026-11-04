@@ -23,13 +23,13 @@ public sealed class DocumentRegistryTests(RequestsFixture fixture) : IClassFixtu
         await RequestWorld.CreateAsync(fixture.Factory, "docreg.office");
 
     /// <summary>Submits a new document (or a new version), approves it with the classification and publishes it; returns the document id.</summary>
-    internal static async Task<(Guid DocumentId, RequestDto Request)> PublishAsync(
+    internal static async Task<(Guid DocumentId, RequestRecordDto Request)> PublishAsync(
         RequestWorld w, TestUser requester, string name, string sensitivity, string type = "policy", bool shareToAll = false, Guid? existing = null,
         string? expiryDate = null, string? effectiveDate = null)
     {
         var draft = await w.DraftAsync(requester, "docreg.document", new { nameAr = "وثيقة " + name, nameEn = name });
         var file = await w.UploadAsync(requester, draft.Id, "draft.txt", System.Text.Encoding.UTF8.GetBytes($"{name} draft text: travel approval limit is 5000"), "text/plain");
-        var saved = await RequestWorld.OkAsync<RequestDto>(w.C(requester).PutAsJsonAsync($"{RequestWorld.Base}/{draft.Id}", new
+        var saved = await RequestWorld.OkAsync<RequestRecordDto>(w.C(requester).PutAsJsonAsync($"{RequestWorld.Base}/{draft.Id}", new
         {
             version = draft.Version,
             data = new
@@ -71,7 +71,7 @@ public sealed class DocumentRegistryTests(RequestsFixture fixture) : IClassFixtu
         (await RequestWorld.OkAsync<CatalogueDto>(w.C(w.EmployeeA).GetAsync($"{RequestWorld.Base}/catalogue"))).Types.ShouldContain(t => t.Code == "docreg.document");
         var draft = await w.DraftAsync(w.EmployeeA, "docreg.document", new { nameAr = "سياسة السفر", nameEn = "Travel policy" });
         var file = await w.UploadAsync(w.EmployeeA, draft.Id, "draft.txt", "Travel approval limit is 5000"u8.ToArray(), "text/plain");
-        var saved = await RequestWorld.OkAsync<RequestDto>(w.C(w.EmployeeA).PutAsJsonAsync($"{RequestWorld.Base}/{draft.Id}", new
+        var saved = await RequestWorld.OkAsync<RequestRecordDto>(w.C(w.EmployeeA).PutAsJsonAsync($"{RequestWorld.Base}/{draft.Id}", new
         {
             version = draft.Version,
             data = new { nameAr = "سياسة السفر", nameEn = "Travel policy", ownerUnit = w.DepartmentA, draftFile = file },
@@ -113,7 +113,7 @@ public sealed class DocumentRegistryTests(RequestsFixture fixture) : IClassFixtu
         // A second new-version request while one is in progress is refused.
         var other = await w.DraftAsync(w.EmployeeA, "docreg.document", new { nameAr = "س", nameEn = "S" });
         var otherFile = await w.UploadAsync(w.EmployeeA, other.Id, "d.txt", "x"u8.ToArray(), "text/plain");
-        var otherSaved = await RequestWorld.OkAsync<RequestDto>(w.C(w.EmployeeA).PutAsJsonAsync($"{RequestWorld.Base}/{other.Id}", new
+        var otherSaved = await RequestWorld.OkAsync<RequestRecordDto>(w.C(w.EmployeeA).PutAsJsonAsync($"{RequestWorld.Base}/{other.Id}", new
         {
             version = other.Version,
             data = new { isNewVersion = true, existingDocument = documentId, nameAr = "س", nameEn = "S", ownerUnit = w.DepartmentA, draftFile = otherFile, changeReason = "x" },
@@ -121,7 +121,7 @@ public sealed class DocumentRegistryTests(RequestsFixture fixture) : IClassFixtu
         await w.SubmitAsync(w.EmployeeA, otherSaved);
         var third = await w.DraftAsync(w.EmployeeA, "docreg.document", new { nameAr = "س", nameEn = "S" });
         var thirdFile = await w.UploadAsync(w.EmployeeA, third.Id, "d.txt", "x"u8.ToArray(), "text/plain");
-        var thirdSaved = await RequestWorld.OkAsync<RequestDto>(w.C(w.EmployeeA).PutAsJsonAsync($"{RequestWorld.Base}/{third.Id}", new
+        var thirdSaved = await RequestWorld.OkAsync<RequestRecordDto>(w.C(w.EmployeeA).PutAsJsonAsync($"{RequestWorld.Base}/{third.Id}", new
         {
             version = third.Version,
             data = new { isNewVersion = true, existingDocument = documentId, nameAr = "س", nameEn = "S", ownerUnit = w.DepartmentA, draftFile = thirdFile, changeReason = "x" },

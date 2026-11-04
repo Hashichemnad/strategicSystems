@@ -108,7 +108,7 @@ public sealed class IpRegistryTests(IpFixture fixture) : IClassFixture<IpFixture
         });
         (await bad.Content.ReadAsStringAsync()).ShouldContain("requests.errors.emiratesId");
 
-        var saved = await RequestWorld.OkAsync<RequestDto>(w.C(w.EmployeeA).PutAsJsonAsync($"{RequestWorld.Base}/{draft.Id}", new
+        var saved = await RequestWorld.OkAsync<RequestRecordDto>(w.C(w.EmployeeA).PutAsJsonAsync($"{RequestWorld.Base}/{draft.Id}", new
         {
             version = draft.Version,
             data = Form(w,
@@ -126,7 +126,7 @@ public sealed class IpRegistryTests(IpFixture fixture) : IClassFixture<IpFixture
 
         // Sending the mask back keeps the stored value; the shares are corrected.
         var masked = saved.Data["contributors"]![0]!["emiratesId"]!.GetValue<string>();
-        saved = await RequestWorld.OkAsync<RequestDto>(w.C(w.EmployeeA).PutAsJsonAsync($"{RequestWorld.Base}/{draft.Id}", new
+        saved = await RequestWorld.OkAsync<RequestRecordDto>(w.C(w.EmployeeA).PutAsJsonAsync($"{RequestWorld.Base}/{draft.Id}", new
         {
             version = saved.Version,
             data = Form(w,

@@ -88,10 +88,10 @@ public sealed record MoetDescriptionInput(string? DescriptionAr, string? Descrip
 
 public sealed record RevealDto(Guid ContributorId, string EmiratesId);
 
-public sealed record IpDashboardDto(int Total, int Registered, int Pending, int ExpiringSoon, int Expired, IReadOnlyList<CountDto> ByType, IReadOnlyList<CountDto> ByProtection,
-    IReadOnlyList<CountDto> ByYear, IReadOnlyList<UnitCountDto> ByUnit, IReadOnlyList<IpListItemDto> UpcomingExpiries);
+public sealed record IpDashboardDto(int Total, int Registered, int Pending, int ExpiringSoon, int Expired, IReadOnlyList<IpCountDto> ByType, IReadOnlyList<IpCountDto> ByProtection,
+    IReadOnlyList<IpCountDto> ByYear, IReadOnlyList<UnitCountDto> ByUnit, IReadOnlyList<IpListItemDto> UpcomingExpiries);
 
-public sealed record CountDto(string Code, int Count);
+public sealed record IpCountDto(string Code, int Count);
 
 public sealed record UnitCountDto(Guid Id, string? NameAr, string? NameEn, int Count);
 
@@ -536,10 +536,10 @@ internal sealed class IpService(
         var expired = await visible.CountAsync(r => r.Status == IpStatuses.Expired, ct).ConfigureAwait(false);
         var upcoming = await visible.Where(r => (r.Status == IpStatuses.Registered || r.Status == IpStatuses.Renewed) && r.ExpiryDate != null && r.ExpiryDate <= soon)
             .OrderBy(r => r.ExpiryDate).Take(20).ToListAsync(ct).ConfigureAwait(false);
-        var byType = await visible.GroupBy(r => r.PropertyType).Select(g => new CountDto(g.Key ?? string.Empty, g.Count())).ToListAsync(ct).ConfigureAwait(false);
-        var byProtection = await visible.GroupBy(r => r.ProtectionType).Select(g => new CountDto(g.Key ?? string.Empty, g.Count())).ToListAsync(ct).ConfigureAwait(false);
+        var byType = await visible.GroupBy(r => r.PropertyType).Select(g => new IpCountDto(g.Key ?? string.Empty, g.Count())).ToListAsync(ct).ConfigureAwait(false);
+        var byProtection = await visible.GroupBy(r => r.ProtectionType).Select(g => new IpCountDto(g.Key ?? string.Empty, g.Count())).ToListAsync(ct).ConfigureAwait(false);
         var years = await visible.Select(r => r.CreatedAt).ToListAsync(ct).ConfigureAwait(false);
-        var byYear = years.GroupBy(d => d.Year).OrderBy(g => g.Key).Select(g => new CountDto(g.Key.ToString(CultureInfo.InvariantCulture), g.Count())).ToList();
+        var byYear = years.GroupBy(d => d.Year).OrderBy(g => g.Key).Select(g => new IpCountDto(g.Key.ToString(CultureInfo.InvariantCulture), g.Count())).ToList();
         var units = await visible.Where(r => r.OwnerUnitId != null).GroupBy(r => r.OwnerUnitId!.Value).Select(g => new { g.Key, Count = g.Count() }).ToListAsync(ct)
             .ConfigureAwait(false);
         var byUnit = new List<UnitCountDto>();

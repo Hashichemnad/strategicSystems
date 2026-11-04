@@ -45,7 +45,7 @@ internal static class RequestEndpoints
         group.MapPost("/queue/bulk-complete", async (BulkCompleteInput body, RequestCommands c, CancellationToken ct) => (await c.BulkCompleteAsync(body, ct)).ToOk())
             .WithName("BulkCompleteRequests").RequirePermission(RequestPermissions.Read);
 
-        group.MapPost("/", async Task<Results<Created<RequestDto>, ProblemHttpResult>> (DraftInput body, RequestCommands c, CancellationToken ct) =>
+        group.MapPost("/", async Task<Results<Created<RequestRecordDto>, ProblemHttpResult>> (DraftInput body, RequestCommands c, CancellationToken ct) =>
             {
                 var result = await c.CreateAsync(body, ct);
                 return result.IsSuccess ? TypedResults.Created($"/api/v1/requests/{result.Value.Id}", result.Value) : result.Error.ToProblem();
@@ -55,9 +55,9 @@ internal static class RequestEndpoints
             .WithName("GetRequest").RequirePermission(RequestPermissions.Read);
         group.MapPut("/{id:guid}", async (Guid id, SaveInput body, RequestCommands c, CancellationToken ct) => (await c.SaveAsync(id, body, ct)).ToOk())
             .WithName("SaveRequestDraft").RequirePermission(RequestPermissions.Read);
-        group.MapPost("/{id:guid}/submit", async (Guid id, SubmitInput body, RequestCommands c, CancellationToken ct) => (await c.SubmitAsync(id, body, ct)).ToOk())
+        group.MapPost("/{id:guid}/submit", async (Guid id, RequestSubmitInput body, RequestCommands c, CancellationToken ct) => (await c.SubmitAsync(id, body, ct)).ToOk())
             .WithName("SubmitRequest").RequirePermission(RequestPermissions.Read).WithIdempotency();
-        group.MapPost("/{id:guid}/cancel", async (Guid id, CancelInput body, RequestCommands c, CancellationToken ct) => (await c.CancelAsync(id, body, ct)).ToOk())
+        group.MapPost("/{id:guid}/cancel", async (Guid id, RequestCancelInput body, RequestCommands c, CancellationToken ct) => (await c.CancelAsync(id, body, ct)).ToOk())
             .WithName("CancelRequest").RequirePermission(RequestPermissions.Read);
         group.MapPost("/{id:guid}/decide", async (Guid id, DecideInput body, RequestCommands c, CancellationToken ct) => (await c.DecideAsync(id, body, ct)).ToOk())
             .WithName("DecideRequest").RequirePermission(RequestPermissions.Read).WithIdempotency();

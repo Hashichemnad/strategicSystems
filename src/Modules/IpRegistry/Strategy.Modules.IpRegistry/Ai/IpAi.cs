@@ -33,11 +33,11 @@ public sealed record SimilarityDto(IReadOnlyList<SimilarItemDto> Items);
 
 public sealed record MoetDraftDto(string DescriptionAr, string DescriptionEn, Guid UsageId);
 
-public sealed record SuggestInput(string? Title, string? Description);
+public sealed record IpSuggestInput(string? Title, string? Description);
 
 internal sealed class IpAiService(AiGateway gateway, IpService ip, IpSearchSource search, IDocumentDirectory documents, ILookupService lookups, IRequestContext context)
 {
-    public async Task<Result<TypeSuggestionDto>> SuggestAsync(SuggestInput input, CancellationToken ct)
+    public async Task<Result<TypeSuggestionDto>> SuggestAsync(IpSuggestInput input, CancellationToken ct)
     {
         var text = $"{input.Title}\n{input.Description}".Trim();
         if (text.Length < 10 || text.Length > 20_000)
@@ -63,7 +63,7 @@ internal sealed class IpAiService(AiGateway gateway, IpService ip, IpSearchSourc
     }
 
     /// <summary>Similar IP records and published documents the user may see (no model needed: the visibility rules of both registers apply).</summary>
-    public async Task<Result<SimilarityDto>> SimilarityAsync(SuggestInput input, Guid? excludeId, CancellationToken ct)
+    public async Task<Result<SimilarityDto>> SimilarityAsync(IpSuggestInput input, Guid? excludeId, CancellationToken ct)
     {
         var ready = await gateway.PrepareAsync(IpAiFeatures.Similarity, createClient: false, ct).ConfigureAwait(false);
         if (ready.IsFailure)

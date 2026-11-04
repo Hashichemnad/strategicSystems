@@ -24,7 +24,7 @@ internal static class RequestToolResults
                 : result.Error.MessageKey),
         };
 
-    public static object Item(RequestListItemDto r) => new
+    public static object Item(RequestRowDto r) => new
     {
         requestId = r.Id,
         r.Number,
@@ -103,7 +103,7 @@ internal sealed class SubmitRequestDraftTool(RequestCommands commands, RequestQu
         var values = arguments.ValueKind == JsonValueKind.Object && arguments.TryGetProperty("values", out var v) && v.ValueKind == JsonValueKind.Object
             ? JsonNode.Parse(v.GetRawText()) as JsonObject
             : null;
-        Result<RequestDto> result;
+        Result<RequestRecordDto> result;
         if (arguments.Id("requestId") is { } id)
         {
             var version = arguments.ValueKind == JsonValueKind.Object && arguments.TryGetProperty("version", out var ver) && ver.TryGetUInt32(out var n) ? n : 0u;

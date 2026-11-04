@@ -533,8 +533,8 @@ export const documentCompareRoute = createRoute({
   getParentRoute: () => appLayout,
   path: '/documents/$documentId/compare',
   validateSearch: z.object({
-    from: z.string().uuid().optional().catch(undefined),
-    to: z.string().uuid().optional().catch(undefined),
+    from: z.uuid().optional().catch(undefined),
+    to: z.uuid().optional().catch(undefined),
   }),
   component: lazyRouteComponent(() => import('@/features/docreg/ComparePage'), 'DocumentComparePage'),
 });
@@ -555,7 +555,9 @@ export const ipRecordRoute = createRoute({
   getParentRoute: () => appLayout,
   path: '/ip/records/$recordId',
   validateSearch: z.object({
-    tab: z.enum(['overview', 'contributors', 'registration', 'documents', 'linked', 'history']).catch('overview'),
+    tab: z
+      .enum(['overview', 'contributors', 'registration', 'documents', 'linked', 'history'])
+      .catch('overview'),
   }),
   component: lazyRouteComponent(() => import('@/features/ip/RecordPage'), 'IpRecordPage'),
 });
