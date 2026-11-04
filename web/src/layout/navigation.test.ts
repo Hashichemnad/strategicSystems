@@ -34,6 +34,12 @@ describe('sidebar filtered by real access', () => {
     expect(routes({ systems: ['kpi'], permissions: [], roles: [] })).not.toContain('/kpi');
   });
 
+  it('shows Risk Management only when the risk system is open and risks are readable', () => {
+    expect(routes({ systems: ['risk'], permissions: ['risk.risk.read'], roles: [] })).toContain('/risk');
+    expect(routes({ systems: [], permissions: ['risk.risk.read'], roles: [] })).not.toContain('/risk');
+    expect(routes({ systems: ['risk'], permissions: [], roles: [] })).not.toContain('/risk');
+  });
+
   it('shows nothing guarded while access is still loading', () => {
     expect(routes(undefined)).toEqual(['/', '/ui-kit']);
   });

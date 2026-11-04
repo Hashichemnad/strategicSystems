@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { errorMessage } from '@/api/problem';
 import { useCan } from '@/features/access/session';
 import { AiBadge } from '@/features/ai/AiDraft';
+import { useAiFeature } from '@/features/ai/api';
 import { formatDateTime } from '@/lib/format';
 import {
   Button,
@@ -33,7 +34,15 @@ import {
   type ReviewValues,
   type Risk,
 } from './api';
-import { RatingChip, RiskMatrix, Section, useAxisLabels, useNames, useRiskLabels, useRiskT } from './components';
+import {
+  RatingChip,
+  RiskMatrix,
+  Section,
+  useAxisLabels,
+  useNames,
+  useRiskLabels,
+  useRiskT,
+} from './components';
 import { previewRating } from './scoring';
 
 const NONE = '-';
@@ -49,14 +58,16 @@ export function ReviewsTab({ risk }: { risk: Risk }) {
   return (
     <div className="flex flex-col gap-4" data-testid="risk-reviews">
       {open ? (
-        <ReviewForm key={open.id + open.version} risk={risk} review={open} />
+        <ReviewForm key={`${open.id}-${open.version}`} risk={risk} review={open} />
       ) : (
         risk.can.startReview && (
           <Button
             className="self-start"
             loading={start.isPending}
             data-testid="risk-review-start"
-            onClick={() => start.mutate(risk.id, { onError: (e) => toast({ tone: 'error', title: errorMessage(tc, e) }) })}
+            onClick={() =>
+              start.mutate(risk.id, { onError: (e) => toast({ tone: 'error', title: errorMessage(tc, e) }) })
+            }
           >
             <ClipboardCheck aria-hidden />
             {k('actions.startReview')}
@@ -84,7 +95,9 @@ export function ReviewsTab({ risk }: { risk: Risk }) {
                 <TableRow key={r.id}>
                   <TableCell>{formatDateTime(r.createdAt, language)}</TableCell>
                   <TableCell>
-                    <StatusChip tone={reviewTone[r.status] ?? 'neutral'}>{k(`reviewStatus.${r.status}`)}</StatusChip>
+                    <StatusChip tone={reviewTone[r.status] ?? 'neutral'}>
+                      {k(`reviewStatus.${r.status}`)}
+                    </StatusChip>
                   </TableCell>
                   <TableCell>
                     <RatingChip band={r.previewResidualBand} score={r.previewResidualScore} />
@@ -92,7 +105,11 @@ export function ReviewsTab({ risk }: { risk: Risk }) {
                   <TableCell className="max-w-80 whitespace-pre-line">{r.values.commentary ?? '—'}</TableCell>
                   <TableCell className="max-w-64 whitespace-pre-line">
                     {r.decisionComment ?? '—'}
-                    {r.decidedAt && <span className="block text-xs text-muted-foreground">{formatDateTime(r.decidedAt, language)}</span>}
+                    {r.decidedAt && (
+                      <span className="block text-xs text-muted-foreground">
+                        {formatDateTime(r.decidedAt, language)}
+                      </span>
+                    )}
                   </TableCell>
                 </TableRow>
               ))}
@@ -115,16 +132,24 @@ function ReviewForm({ risk, review }: { risk: Risk; review: Review }) {
   const labels = useRiskLabels();
   const names = useNames();
   const axis = useAxisLabels();
-  const canAssist = useCan('risk.ai.review');
+  const aiAssist = useAiFeature('risk-review-assistant');
+  const canAssist = useCan('risk.ai.review') && aiAssist;
   const save = useRiskMutation(riskApi.saveReview);
   const submit = useRiskMutation(riskApi.submitReview);
-  const [v, setV] = useState<ReviewValues>({ ...review.values, controlRatings: review.values.controlRatings ?? {} });
+  const [v, setV] = useState<ReviewValues>({
+    ...review.values,
+    controlRatings: review.values.controlRatings ?? {},
+  });
   const [assist, setAssist] = useState<ReviewAssist>();
   const [assisting, setAssisting] = useState(false);
-  const dirty = JSON.stringify(v) !== JSON.stringify({ ...review.values, controlRatings: review.values.controlRatings ?? {} });
+  const dirty =
+    JSON.stringify(v) !==
+    JSON.stringify({ ...review.values, controlRatings: review.values.controlRatings ?? {} });
   const onError = (e: unknown) => toast({ tone: 'error', title: errorMessage(tc, e) });
   const framework = options.data?.framework.content;
-  const live = framework ? previewRating(framework.scoringMethod, framework.bands, v.residualLikelihood, v.residualImpact) : null;
+  const live = framework
+    ? previewRating(framework.scoringMethod, framework.bands, v.residualLikelihood, v.residualImpact)
+    : null;
   async function runAssist() {
     setAssisting(true);
     try {
@@ -141,7 +166,13 @@ function ReviewForm({ risk, review }: { risk: Risk; review: Review }) {
       testId="risk-review-form"
       actions={
         canAssist && (
-          <Button variant="outline" size="sm" onClick={() => void runAssist()} loading={assisting} data-testid="risk-ai-review">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => void runAssist()}
+            loading={assisting}
+            data-testid="risk-ai-review"
+          >
             <Sparkles aria-hidden />
             {t('ai.review.action')}
           </Button>
@@ -162,7 +193,11 @@ function ReviewForm({ risk, review }: { risk: Risk; review: Review }) {
                 <span className="text-muted-foreground">{t('wizard.computedOnSave')}</span>
               )}
               <span className="text-muted-foreground">{t('reviews.saved')}</span>
-              <RatingChip band={review.previewResidualBand} score={review.previewResidualScore} testId="risk-review-preview" />
+              <RatingChip
+                band={review.previewResidualBand}
+                score={review.previewResidualScore}
+                testId="risk-review-preview"
+              />
             </span>
           </header>
           {options.data && (
@@ -190,21 +225,28 @@ function ReviewForm({ risk, review }: { risk: Risk; review: Review }) {
                   value={v.controlRatings?.[c.id] ?? c.values.effectivenessCode ?? NONE}
                   onValueChange={(value) =>
                     setV((p) => {
-                      const next = { ...(p.controlRatings ?? {}) };
-                      if (value === NONE) delete next[c.id];
-                      else next[c.id] = value;
+                      const next = Object.fromEntries(
+                        Object.entries(p.controlRatings ?? {}).filter(([id]) => id !== c.id),
+                      );
+                      if (value !== NONE) next[c.id] = value;
                       return { ...p, controlRatings: next };
                     })
                   }
                   options={[
                     { value: NONE, label: t('controls.notRated') },
-                    ...(framework?.controlEffectiveness ?? []).map((e) => ({ value: e.code, label: labels.effectiveness(e.code) })),
+                    ...(framework?.controlEffectiveness ?? []).map((e) => ({
+                      value: e.code,
+                      label: labels.effectiveness(e.code),
+                    })),
                   ]}
                 />
               </FormField>
             ))}
           <FormField label={t('reviews.actionNotes')}>
-            <Textarea value={v.actionNotes ?? ''} onChange={(e) => setV((p) => ({ ...p, actionNotes: e.target.value || null }))} />
+            <Textarea
+              value={v.actionNotes ?? ''}
+              onChange={(e) => setV((p) => ({ ...p, actionNotes: e.target.value || null }))}
+            />
           </FormField>
           <FormField label={t('reviews.commentary')} required>
             <Textarea
@@ -217,7 +259,10 @@ function ReviewForm({ risk, review }: { risk: Risk; review: Review }) {
         </div>
       </div>
       {assist && (
-        <div className="flex flex-col gap-2 rounded border bg-muted/30 p-3 text-sm" data-testid="risk-ai-review-result">
+        <div
+          className="flex flex-col gap-2 rounded border bg-muted/30 p-3 text-sm"
+          data-testid="risk-ai-review-result"
+        >
           <AiBadge label={t('ai.generatedDraft')} className="self-start" />
           {assist.changes.length > 0 && (
             <>
@@ -231,7 +276,12 @@ function ReviewForm({ risk, review }: { risk: Risk; review: Review }) {
           )}
           <h4 className="font-semibold">{t('ai.review.commentary')}</h4>
           <p className="whitespace-pre-line">{assist.commentary}</p>
-          <Button size="sm" className="self-start" onClick={() => setV((p) => ({ ...p, commentary: assist.commentary }))} data-testid="risk-ai-review-use">
+          <Button
+            size="sm"
+            className="self-start"
+            onClick={() => setV((p) => ({ ...p, commentary: assist.commentary }))}
+            data-testid="risk-ai-review-use"
+          >
             {t('ai.use')}
           </Button>
         </div>

@@ -6,6 +6,7 @@ import { errorMessage } from '@/api/problem';
 import { UnitSelect } from '@/features/access/pickers';
 import { useCan } from '@/features/access/session';
 import { AiBadge } from '@/features/ai/AiDraft';
+import { useAiFeature } from '@/features/ai/api';
 import { formatDate, formatNumber } from '@/lib/format';
 import {
   Button,
@@ -36,7 +37,18 @@ import {
   type RiskFilterQuery,
   type RiskListItem,
 } from './api';
-import { HeatMap, ProgressBar, RatingChip, RiskPageLayout, useAxisLabels, useBands, useNames, useNum, useRiskLabels, useRiskT } from './components';
+import {
+  HeatMap,
+  ProgressBar,
+  RatingChip,
+  RiskPageLayout,
+  useAxisLabels,
+  useBands,
+  useNames,
+  useNum,
+  useRiskLabels,
+  useRiskT,
+} from './components';
 
 const ALL = '__all';
 
@@ -47,7 +59,8 @@ export function RiskDashboardPage() {
   const { k } = useRiskT();
   const options = useRiskOptions();
   const labels = useRiskLabels();
-  const canReport = useCan('risk.ai.report');
+  const aiReport = useAiFeature('risk-report');
+  const canReport = useCan('risk.ai.report') && aiReport;
   const [unitId, setUnitId] = useState<string>();
   const [category, setCategory] = useState<string>();
   const [residualStatus, setResidualStatus] = useState<string>();
@@ -88,7 +101,10 @@ export function RiskDashboardPage() {
           onValueChange={(v) => setCategory(v === ALL ? undefined : v)}
           options={[
             { value: ALL, label: t('register.allCategories') },
-            ...(options.data?.categories ?? []).map((c) => ({ value: c.code, label: labels.category(c.code) })),
+            ...(options.data?.categories ?? []).map((c) => ({
+              value: c.code,
+              label: labels.category(c.code),
+            })),
           ]}
         />
         <Select
@@ -163,9 +179,19 @@ function DashboardBody({
     <>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7" data-testid="risk-tiles">
         {tiles.map(([key, label, value, tone]) => (
-          <div key={key} className="flex flex-col gap-1 rounded-lg border bg-card p-4" data-testid={`risk-tile-${key}`}>
+          <div
+            key={key}
+            className="flex flex-col gap-1 rounded-lg border bg-card p-4"
+            data-testid={`risk-tile-${key}`}
+          >
             <span className="text-sm text-muted-foreground">{label}</span>
-            <span className={tone === 'danger' && value > 0 ? 'text-2xl font-semibold text-danger' : 'text-2xl font-semibold'}>
+            <span
+              className={
+                tone === 'danger' && value > 0
+                  ? 'text-2xl font-semibold text-danger'
+                  : 'text-2xl font-semibold'
+              }
+            >
               {n(value)}
             </span>
           </div>
@@ -200,11 +226,19 @@ function DashboardBody({
         />
         <CountBars
           title={t('dashboard.byUnit')}
-          rows={data.byUnit.map((r) => ({ key: r.code, label: names.unit(data.units[r.code]), value: r.count }))}
+          rows={data.byUnit.map((r) => ({
+            key: r.code,
+            label: names.unit(data.units[r.code]),
+            value: r.count,
+          }))}
         />
         <CountBars
           title={t('dashboard.byResidualStatus')}
-          rows={data.byResidualStatus.map((r) => ({ key: r.code, label: k(`residualStatus.${r.code}`), value: r.count }))}
+          rows={data.byResidualStatus.map((r) => ({
+            key: r.code,
+            label: k(`residualStatus.${r.code}`),
+            value: r.count,
+          }))}
         />
       </div>
       <Panel title={t('dashboard.top10')} testId="risk-top10">
@@ -259,7 +293,9 @@ function DashboardBody({
               {t('dashboard.unchanged')}: <strong>{n(data.movement.unchanged)}</strong>
             </span>
           </div>
-          {data.movement.worsenedRisks.length > 0 && <RiskTable rows={data.movement.worsenedRisks} bands={data.bands} />}
+          {data.movement.worsenedRisks.length > 0 && (
+            <RiskTable rows={data.movement.worsenedRisks} bands={data.bands} />
+          )}
         </Panel>
       </div>
       <Panel title={t('dashboard.kriBreaches')} testId="risk-kri-breaches">
@@ -314,7 +350,11 @@ function Empty() {
 
 function Panel({ title, children, testId }: { title: string; children: ReactNode; testId?: string }) {
   return (
-    <section className="flex flex-col gap-3 rounded-lg border bg-card p-5" aria-label={title} data-testid={testId}>
+    <section
+      className="flex flex-col gap-3 rounded-lg border bg-card p-5"
+      aria-label={title}
+      data-testid={testId}
+    >
       <h2 className="font-semibold">{title}</h2>
       {children}
     </section>
@@ -339,7 +379,10 @@ function CountBars({
       ) : (
         <ul className="flex flex-col gap-2">
           {rows.map((row) => (
-            <li key={row.key} className="grid grid-cols-[minmax(6rem,12rem)_1fr_auto] items-center gap-2 text-sm">
+            <li
+              key={row.key}
+              className="grid grid-cols-[minmax(6rem,12rem)_1fr_auto] items-center gap-2 text-sm"
+            >
               <span className="truncate" title={row.label}>
                 {row.label}
               </span>
@@ -388,7 +431,11 @@ export function RiskTable({
           <TableRow key={r.id}>
             {rank && <TableCell className="tabular-nums">{r.top10Rank ?? index + 1}</TableCell>}
             <TableCell>
-              <Link to="/risk/risks/$riskId" params={{ riskId: r.id }} className="font-medium text-primary hover:underline">
+              <Link
+                to="/risk/risks/$riskId"
+                params={{ riskId: r.id }}
+                className="font-medium text-primary hover:underline"
+              >
                 <bdi>{r.number}</bdi>
               </Link>
             </TableCell>
@@ -422,7 +469,11 @@ function CellRisks({
   const result = useHeatCell(cell, filter);
   return (
     <Panel
-      title={t('heatmap.cellRisks', { kind: t(`heatmap.${cell.kind}`), likelihood: cell.likelihood, impact: cell.impact })}
+      title={t('heatmap.cellRisks', {
+        kind: t(`heatmap.${cell.kind}`),
+        likelihood: cell.likelihood,
+        impact: cell.impact,
+      })}
       testId="risk-heat-cell-list"
     >
       {result.isError ? (
@@ -435,7 +486,11 @@ function CellRisks({
         <ul className="flex flex-col divide-y">
           {result.data.risks.map((r) => (
             <li key={r.id} className="flex flex-wrap items-center gap-3 py-2 text-sm">
-              <Link to="/risk/risks/$riskId" params={{ riskId: r.id }} className="font-medium text-primary hover:underline">
+              <Link
+                to="/risk/risks/$riskId"
+                params={{ riskId: r.id }}
+                className="font-medium text-primary hover:underline"
+              >
                 <bdi>{r.number}</bdi> · {names.text(r.titleAr, r.titleEn)}
               </Link>
               <span className="text-muted-foreground">{names.unit(r.unit)}</span>
@@ -497,17 +552,18 @@ function ReportDialog({ unitId, year, onClose }: { unitId?: string; year?: numbe
         {draft && (
           <div className="flex max-h-[60vh] flex-col gap-4 overflow-auto" data-testid="risk-ai-report-draft">
             <AiBadge label={t('ai.generatedDraft')} className="self-start" />
-            {(ar ? [draft.reportAr, draft.top10Ar, draft.reportEn, draft.top10En] : [draft.reportEn, draft.top10En, draft.reportAr, draft.top10Ar]).map(
-              (text, index) => (
-                <section key={index} dir={(index < 2) === ar ? 'rtl' : 'ltr'} className="rounded border p-3">
-                  <h3 className="mb-1 text-sm font-semibold">
-                    {index % 2 === 0 ? t('ai.report.report') : t('ai.report.top10')} ·{' '}
-                    {(index < 2) === ar ? 'العربية' : 'English'}
-                  </h3>
-                  <p className="whitespace-pre-line text-sm">{text}</p>
-                </section>
-              ),
-            )}
+            {(ar
+              ? [draft.reportAr, draft.top10Ar, draft.reportEn, draft.top10En]
+              : [draft.reportEn, draft.top10En, draft.reportAr, draft.top10Ar]
+            ).map((text, index) => (
+              <section key={index} dir={index < 2 === ar ? 'rtl' : 'ltr'} className="rounded border p-3">
+                <h3 className="mb-1 text-sm font-semibold">
+                  {index % 2 === 0 ? t('ai.report.report') : t('ai.report.top10')} ·{' '}
+                  {index < 2 === ar ? 'العربية' : 'English'}
+                </h3>
+                <p className="whitespace-pre-line text-sm">{text}</p>
+              </section>
+            ))}
           </div>
         )}
       </DialogContent>

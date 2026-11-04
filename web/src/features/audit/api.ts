@@ -21,6 +21,7 @@ export type AuditedRecord =
   | 'project'
   | 'kpiCard'
   | 'kpiResult'
+  | 'risk'
   | 'serviceRequest'
   | 'document'
   | 'ipRecord';
@@ -55,6 +56,8 @@ async function fetchHistory(record: AuditedRecord, id: string, query: HistoryQue
       return unwrap(await api.GET('/api/v1/kpi/cards/{id}/audit', { params, signal }));
     case 'kpiResult':
       return unwrap(await api.GET('/api/v1/kpi/results/{id}/audit', { params, signal }));
+    case 'risk':
+      return unwrap(await api.GET('/api/v1/risk/risks/{id}/audit', { params, signal }));
     case 'serviceRequest':
       return unwrap(await api.GET('/api/v1/requests/{id}/audit', { params, signal }));
     case 'document':
@@ -87,6 +90,8 @@ async function fetchAsOf(record: AuditedRecord, id: string, at: string, signal: 
       return unwrap(await api.GET('/api/v1/kpi/cards/{id}/audit/as-of', { params, signal }));
     case 'kpiResult':
       return unwrap(await api.GET('/api/v1/kpi/results/{id}/audit/as-of', { params, signal }));
+    case 'risk':
+      return unwrap(await api.GET('/api/v1/risk/risks/{id}/audit/as-of', { params, signal }));
     case 'serviceRequest':
       return unwrap(await api.GET('/api/v1/requests/{id}/audit/as-of', { params, signal }));
     case 'document':

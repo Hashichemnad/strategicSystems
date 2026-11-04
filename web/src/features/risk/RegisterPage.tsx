@@ -6,6 +6,7 @@ import { errorMessage } from '@/api/problem';
 import { UnitSelect } from '@/features/access/pickers';
 import { useCan } from '@/features/access/session';
 import { AiBadge } from '@/features/ai/AiDraft';
+import { useAiFeature } from '@/features/ai/api';
 import { cn } from '@/lib/cn';
 import { formatDate } from '@/lib/format';
 import {
@@ -59,7 +60,8 @@ export function RiskRegisterPage() {
   const labels = useRiskLabels();
   const names = useNames();
   const { bands } = useBands();
-  const canIdentify = useCan('risk.ai.identify');
+  const aiIdentify = useAiFeature('risk-identify');
+  const canIdentify = useCan('risk.ai.identify') && aiIdentify;
   const [identify, setIdentify] = useState(false);
   const [text, setText] = useState(search.search ?? '');
   useEffect(() => {
@@ -80,7 +82,8 @@ export function RiskRegisterPage() {
     ...(search.status ? { status: search.status } : {}),
     ...(search.band ? { residualBand: search.band } : {}),
   });
-  const set = (patch: Record<string, unknown>) => void navigate({ search: (p) => ({ ...p, ...patch, page: undefined }) });
+  const set = (patch: Record<string, unknown>) =>
+    void navigate({ search: (p) => ({ ...p, ...patch, page: undefined }) });
 
   return (
     <RiskPageLayout testId="risk-register">
@@ -92,7 +95,10 @@ export function RiskRegisterPage() {
             {options.data?.canExport &&
               (['pdf', 'xlsx'] as const).map((format) => (
                 <Button key={format} variant="outline" size="sm" asChild>
-                  <a href={reportUrl('register', format, language)} data-testid={`risk-register-export-${format}`}>
+                  <a
+                    href={reportUrl('register', format, language)}
+                    data-testid={`risk-register-export-${format}`}
+                  >
                     <Download aria-hidden />
                     {t(`reports.formats.${format}`)}
                   </a>
@@ -115,7 +121,12 @@ export function RiskRegisterPage() {
           </div>
         }
       />
-      <div role="tablist" aria-label={t('register.views')} className="flex flex-wrap gap-1" data-testid="risk-views">
+      <div
+        role="tablist"
+        aria-label={t('register.views')}
+        className="flex flex-wrap gap-1"
+        data-testid="risk-views"
+      >
         {registerViews.map((v) => (
           <button
             key={v}
@@ -135,7 +146,10 @@ export function RiskRegisterPage() {
       </div>
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
         <div className="relative">
-          <Search className="pointer-events-none absolute start-3 top-3 size-4 text-muted-foreground" aria-hidden />
+          <Search
+            className="pointer-events-none absolute start-3 top-3 size-4 text-muted-foreground"
+            aria-hidden
+          />
           <Input
             className="ps-9"
             placeholder={t('register.search')}
@@ -152,7 +166,10 @@ export function RiskRegisterPage() {
           onValueChange={(v) => set({ category: v === ALL ? undefined : v })}
           options={[
             { value: ALL, label: t('register.allCategories') },
-            ...(options.data?.categories ?? []).map((c) => ({ value: c.code, label: labels.category(c.code) })),
+            ...(options.data?.categories ?? []).map((c) => ({
+              value: c.code,
+              label: labels.category(c.code),
+            })),
           ]}
         />
         <Select
@@ -231,7 +248,9 @@ export function RiskRegisterPage() {
                             {t('flags.reassessment')}
                           </StatusChip>
                         )}
-                        {r.withinAppetite === false && <StatusChip tone="danger">{t('flags.outsideAppetite')}</StatusChip>}
+                        {r.withinAppetite === false && (
+                          <StatusChip tone="danger">{t('flags.outsideAppetite')}</StatusChip>
+                        )}
                       </span>
                     </span>
                   </TableCell>
@@ -251,7 +270,9 @@ export function RiskRegisterPage() {
                     {r.nextReviewOn ? formatDate(r.nextReviewOn, language) : '—'}
                   </TableCell>
                   <TableCell>
-                    <StatusChip tone={statusTone[r.status] ?? 'neutral'}>{k(`status.${r.status}`)}</StatusChip>
+                    <StatusChip tone={statusTone[r.status] ?? 'neutral'}>
+                      {k(`status.${r.status}`)}
+                    </StatusChip>
                   </TableCell>
                 </TableRow>
               ))}
@@ -314,7 +335,12 @@ function IdentifyDialog({ onClose }: { onClose: () => void }) {
             <DialogClose asChild>
               <Button variant="outline">{tc('actions.close')}</Button>
             </DialogClose>
-            <Button onClick={() => void run()} loading={busy} disabled={!description.trim() && !file} data-testid="risk-ai-identify-run">
+            <Button
+              onClick={() => void run()}
+              loading={busy}
+              disabled={!description.trim() && !file}
+              data-testid="risk-ai-identify-run"
+            >
               <Sparkles aria-hidden />
               {t('ai.identify.run')}
             </Button>
@@ -322,7 +348,12 @@ function IdentifyDialog({ onClose }: { onClose: () => void }) {
         }
       >
         <FormField label={t('ai.identify.description')}>
-          <Textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={4} data-testid="risk-ai-identify-text" />
+          <Textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            rows={4}
+            data-testid="risk-ai-identify-text"
+          />
         </FormField>
         <FileDrop
           label={t('ai.identify.file')}
@@ -353,8 +384,8 @@ function IdentifyDialog({ onClose }: { onClose: () => void }) {
                   <span className="text-muted-foreground">{t('fields.consequence')}:</span> {r.consequence}
                 </p>
                 <p className="text-muted-foreground">
-                  {labels.category(r.categoryCode)} · {t('fields.likelihood')} {r.likelihood ?? '—'} · {t('fields.impact')}{' '}
-                  {r.impact ?? '—'}
+                  {labels.category(r.categoryCode)} · {t('fields.likelihood')} {r.likelihood ?? '—'} ·{' '}
+                  {t('fields.impact')} {r.impact ?? '—'}
                 </p>
                 {r.reasoning && <p className="text-xs text-muted-foreground">{r.reasoning}</p>}
               </article>

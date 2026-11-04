@@ -29,7 +29,11 @@ export function RiskMyActionsPage() {
         title={t('myActions.title')}
         description={t('myActions.description')}
         actions={
-          <Switch checked={includeCompleted} onCheckedChange={setIncludeCompleted} label={t('myActions.includeCompleted')} />
+          <Switch
+            checked={includeCompleted}
+            onCheckedChange={setIncludeCompleted}
+            label={t('myActions.includeCompleted')}
+          />
         }
       />
       {actions.isError ? (
@@ -39,7 +43,13 @@ export function RiskMyActionsPage() {
       ) : actions.data.length === 0 ? (
         <EmptyState icon={ListChecks} title={t('myActions.empty')} />
       ) : (
-        <ActionTable rows={actions.data} showRisk highlight={action} onProgress={setProgress} onUpdates={setUpdates} />
+        <ActionTable
+          rows={actions.data}
+          showRisk
+          highlight={action}
+          onProgress={setProgress}
+          onUpdates={setUpdates}
+        />
       )}
       {progress && <ProgressDialog action={progress} onClose={() => setProgress(undefined)} />}
       {updates && <UpdatesDialog action={updates} onClose={() => setUpdates(undefined)} />}

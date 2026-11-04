@@ -82,7 +82,9 @@ export function ActionsTab({ risk }: { risk: Risk }) {
           onCancel={setCancelling}
         />
       )}
-      {editing && <ActionDialog riskId={risk.id} action={editing.action} onClose={() => setEditing(undefined)} />}
+      {editing && (
+        <ActionDialog riskId={risk.id} action={editing.action} onClose={() => setEditing(undefined)} />
+      )}
       {progress && <ProgressDialog action={progress} onClose={() => setProgress(undefined)} />}
       {convert && <ConvertDialog action={convert} onClose={() => setConvert(undefined)} />}
       {updates && <UpdatesDialog action={updates} onClose={() => setUpdates(undefined)} />}
@@ -171,7 +173,9 @@ export function ActionTable({
               <span className="flex flex-col">
                 <span>{names.text(a.values.titleAr, a.values.titleEn)}</span>
                 {a.responsibleUnits.length > 0 && (
-                  <span className="text-xs text-muted-foreground">{a.responsibleUnits.map(names.unit).join('، ')}</span>
+                  <span className="text-xs text-muted-foreground">
+                    {a.responsibleUnits.map(names.unit).join('، ')}
+                  </span>
                 )}
                 {a.draftUpdates > 0 && (
                   <StatusChip tone="info" className="mt-1 self-start">
@@ -201,17 +205,29 @@ export function ActionTable({
               <ProgressBar ratio={a.completionPct} label={t('treatment.progress')} />
             </TableCell>
             <TableCell>
-              <StatusChip tone={actionTone[a.status] ?? 'neutral'}>{k(`actionStatus.${a.status}`)}</StatusChip>
+              <StatusChip tone={actionTone[a.status] ?? 'neutral'}>
+                {k(`actionStatus.${a.status}`)}
+              </StatusChip>
             </TableCell>
             <TableCell>
               <span className="flex flex-wrap gap-1">
                 {a.canProgress && open(a) && (
-                  <Button size="sm" variant="outline" onClick={() => onProgress(a)} data-testid="risk-action-progress">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => onProgress(a)}
+                    data-testid="risk-action-progress"
+                  >
                     {t('treatment.updateProgress')}
                   </Button>
                 )}
                 {a.canConvert && a.status === 'completed' && !a.convertedControlId && onConvert && (
-                  <Button size="sm" variant="outline" onClick={() => onConvert(a)} data-testid="risk-action-convert">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => onConvert(a)}
+                    data-testid="risk-action-convert"
+                  >
                     {t('treatment.convert')}
                   </Button>
                 )}
@@ -220,11 +236,21 @@ export function ActionTable({
                     {tc('actions.edit')}
                   </Button>
                 )}
-                <Button size="sm" variant="ghost" onClick={() => onUpdates(a)} aria-label={t('treatment.updates')}>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => onUpdates(a)}
+                  aria-label={t('treatment.updates')}
+                >
                   <History aria-hidden />
                 </Button>
                 {onTasks && (
-                  <Button size="sm" variant="ghost" onClick={() => onTasks(a)} aria-label={t('treatment.tasks', { number: a.number })}>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => onTasks(a)}
+                    aria-label={t('treatment.tasks', { number: a.number })}
+                  >
                     <ListTodo aria-hidden />
                   </Button>
                 )}
@@ -272,7 +298,8 @@ export function ActionDialog({
     ...action?.values,
     ...prefill,
   });
-  const set = <K extends keyof ActionValues>(key: K, value: ActionValues[K]) => setV((p) => ({ ...p, [key]: value }));
+  const set = <K extends keyof ActionValues>(key: K, value: ActionValues[K]) =>
+    setV((p) => ({ ...p, [key]: value }));
   const units = v.responsibleUnitIds ?? [];
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
@@ -291,7 +318,10 @@ export function ActionDialog({
               onClick={() =>
                 save.mutate(
                   { riskId, actionId: action?.id, values: v, version: action?.version ?? null },
-                  { onSuccess: onClose, onError: (e) => toast({ tone: 'error', title: errorMessage(tc, e) }) },
+                  {
+                    onSuccess: onClose,
+                    onError: (e) => toast({ tone: 'error', title: errorMessage(tc, e) }),
+                  },
                 )
               }
             >
@@ -302,22 +332,49 @@ export function ActionDialog({
       >
         <div className="grid gap-3 md:grid-cols-2">
           <FormField label={t('treatment.titleAr')}>
-            <Input dir="rtl" value={v.titleAr ?? ''} onChange={(e) => set('titleAr', e.target.value || null)} data-testid="risk-action-title-ar" />
+            <Input
+              dir="rtl"
+              value={v.titleAr ?? ''}
+              onChange={(e) => set('titleAr', e.target.value || null)}
+              data-testid="risk-action-title-ar"
+            />
           </FormField>
           <FormField label={t('treatment.titleEn')}>
-            <Input dir="ltr" value={v.titleEn ?? ''} onChange={(e) => set('titleEn', e.target.value || null)} data-testid="risk-action-title-en" />
+            <Input
+              dir="ltr"
+              value={v.titleEn ?? ''}
+              onChange={(e) => set('titleEn', e.target.value || null)}
+              data-testid="risk-action-title-en"
+            />
           </FormField>
           <FormField label={t('fields.owner')}>
-            <EmployeePicker value={v.ownerEmployeeId ?? undefined} onChange={(x) => set('ownerEmployeeId', x ?? null)} />
+            <EmployeePicker
+              value={v.ownerEmployeeId ?? undefined}
+              onChange={(x) => set('ownerEmployeeId', x ?? null)}
+            />
           </FormField>
           <FormField label={t('treatment.cost')}>
-            <Input type="number" min={0} value={v.cost ?? ''} onChange={(e) => set('cost', e.target.value === '' ? null : Number(e.target.value))} />
+            <Input
+              type="number"
+              min={0}
+              value={v.cost ?? ''}
+              onChange={(e) => set('cost', e.target.value === '' ? null : Number(e.target.value))}
+            />
           </FormField>
           <FormField label={t('fields.plannedStart')}>
-            <Input type="date" value={v.plannedStart ?? ''} onChange={(e) => set('plannedStart', e.target.value || null)} />
+            <Input
+              type="date"
+              value={v.plannedStart ?? ''}
+              onChange={(e) => set('plannedStart', e.target.value || null)}
+            />
           </FormField>
           <FormField label={t('fields.plannedEnd')}>
-            <Input type="date" value={v.plannedEnd ?? ''} onChange={(e) => set('plannedEnd', e.target.value || null)} data-testid="risk-action-planned-end" />
+            <Input
+              type="date"
+              value={v.plannedEnd ?? ''}
+              onChange={(e) => set('plannedEnd', e.target.value || null)}
+              data-testid="risk-action-planned-end"
+            />
           </FormField>
           <div className="flex flex-col gap-2 md:col-span-2">
             <span className="text-sm font-medium">{t('treatment.responsibleUnits')}</span>
@@ -330,7 +387,12 @@ export function ActionDialog({
             <ResponsibleUnitChips
               ids={units}
               names={unitNames}
-              onRemove={(id) => set('responsibleUnitIds', units.filter((u) => u !== id))}
+              onRemove={(id) =>
+                set(
+                  'responsibleUnitIds',
+                  units.filter((u) => u !== id),
+                )
+              }
             />
           </div>
         </div>
@@ -386,7 +448,7 @@ export function ProgressDialog({ action, onClose }: { action: TreatmentAction; o
     <Dialog open onOpenChange={(open) => !open && onClose()}>
       <DialogContent
         title={t('treatment.updateProgress')}
-        description={`${action.number}`}
+        description={action.number}
         footer={
           <>
             <DialogClose asChild>
@@ -406,7 +468,10 @@ export function ProgressDialog({ action, onClose }: { action: TreatmentAction; o
                     actualEnd: actualEnd || null,
                     version: action.version,
                   },
-                  { onSuccess: onClose, onError: (e) => toast({ tone: 'error', title: errorMessage(tc, e) }) },
+                  {
+                    onSuccess: onClose,
+                    onError: (e) => toast({ tone: 'error', title: errorMessage(tc, e) }),
+                  },
                 )
               }
             >
@@ -417,10 +482,22 @@ export function ProgressDialog({ action, onClose }: { action: TreatmentAction; o
       >
         <div className="grid gap-3 md:grid-cols-2">
           <FormField label={t('treatment.percent')} required className="md:col-span-2">
-            <Input type="number" min={0} max={100} step={1} value={pct} onChange={(e) => setPct(e.target.value)} data-testid="risk-progress-pct" />
+            <Input
+              type="number"
+              min={0}
+              max={100}
+              step={1}
+              value={pct}
+              onChange={(e) => setPct(e.target.value)}
+              data-testid="risk-progress-pct"
+            />
           </FormField>
           <FormField label={t('common.note')} required className="md:col-span-2">
-            <Textarea value={note} onChange={(e) => setNote(e.target.value)} data-testid="risk-progress-note" />
+            <Textarea
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              data-testid="risk-progress-note"
+            />
           </FormField>
           <FormField label={t('treatment.actualStart')}>
             <Input type="date" value={actualStart} onChange={(e) => setActualStart(e.target.value)} />
@@ -449,7 +526,11 @@ function ConvertDialog({ action, onClose }: { action: TreatmentAction; onClose: 
   const [frequencyCode, setFrequencyCode] = useState(NONE);
   const n = (v: string) => (v === NONE ? null : v);
   const lookup = (value: string, set: (v: string) => void, type: string) => (
-    <Select value={value} onValueChange={set} options={[{ value: NONE, label: t('common.none') }, ...labels.lookupOptions(type)]} />
+    <Select
+      value={value}
+      onValueChange={set}
+      options={[{ value: NONE, label: t('common.none') }, ...labels.lookupOptions(type)]}
+    />
   );
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
@@ -479,7 +560,10 @@ function ConvertDialog({ action, onClose }: { action: TreatmentAction; onClose: 
                       frequencyCode: n(frequencyCode),
                     },
                   },
-                  { onSuccess: onClose, onError: (e) => toast({ tone: 'error', title: errorMessage(tc, e) }) },
+                  {
+                    onSuccess: onClose,
+                    onError: (e) => toast({ tone: 'error', title: errorMessage(tc, e) }),
+                  },
                 )
               }
             >
@@ -505,9 +589,15 @@ function ConvertDialog({ action, onClose }: { action: TreatmentAction; onClose: 
           <FormField label={t('controls.nameEn')}>
             <Input dir="ltr" value={nameEn} onChange={(e) => setNameEn(e.target.value)} />
           </FormField>
-          <FormField label={t('controls.type')}>{lookup(typeCode, setTypeCode, 'risk.control-type')}</FormField>
-          <FormField label={t('controls.nature')}>{lookup(natureCode, setNatureCode, 'risk.control-nature')}</FormField>
-          <FormField label={t('controls.frequency')}>{lookup(frequencyCode, setFrequencyCode, 'risk.control-frequency')}</FormField>
+          <FormField label={t('controls.type')}>
+            {lookup(typeCode, setTypeCode, 'risk.control-type')}
+          </FormField>
+          <FormField label={t('controls.nature')}>
+            {lookup(natureCode, setNatureCode, 'risk.control-nature')}
+          </FormField>
+          <FormField label={t('controls.frequency')}>
+            {lookup(frequencyCode, setFrequencyCode, 'risk.control-frequency')}
+          </FormField>
         </div>
       </DialogContent>
     </Dialog>

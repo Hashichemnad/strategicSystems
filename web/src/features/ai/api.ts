@@ -34,7 +34,13 @@ export type AiFeatureKey =
   | 'kpi-causality'
   | 'kpi-card-builder'
   | 'kpi-target-suggestion'
-  | 'kpi-narrative';
+  | 'kpi-narrative'
+  | 'risk-identify'
+  | 'risk-quality'
+  | 'risk-suggest'
+  | 'risk-duplicates'
+  | 'risk-review-assistant'
+  | 'risk-report';
 
 export const aiKeys = {
   all: ['ai'] as const,

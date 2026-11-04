@@ -18,7 +18,11 @@ export function MyRiskCard({ items }: { items: MyWorkItem[] }) {
   const returned = count('returned');
   const actions = count('actionOverdue');
   return (
-    <section className="flex flex-col gap-3 rounded-lg border bg-card p-5" aria-label={t('myWork.title')} data-testid="my-risk-card">
+    <section
+      className="flex flex-col gap-3 rounded-lg border bg-card p-5"
+      aria-label={t('myWork.title')}
+      data-testid="my-risk-card"
+    >
       <header className="flex items-center justify-between gap-2">
         <h2 className="flex items-center gap-2 font-semibold">
           <ShieldAlert className="size-5 text-primary" aria-hidden />
@@ -49,7 +53,9 @@ export function MyRiskCard({ items }: { items: MyWorkItem[] }) {
           {items.slice(0, 8).map((item) => (
             <li key={`${item.resourceType}:${item.resourceId}`} className="flex flex-col gap-0.5 py-3">
               <Link to={item.link as '/'} className="font-medium text-primary hover:underline">
-                {[item.number, pickText(i18n.language, item.titleAr, item.titleEn)].filter(Boolean).join(' · ')}
+                {[item.number, pickText(i18n.language, item.titleAr, item.titleEn)]
+                  .filter(Boolean)
+                  .join(' · ')}
               </Link>
               <span className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
                 {translateMessageKey(tc, item.messageKey)}

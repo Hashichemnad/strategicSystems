@@ -7,6 +7,7 @@ import { errorMessage, translateMessageKey } from '@/api/problem';
 import { UnitSelect } from '@/features/access/pickers';
 import { useCan } from '@/features/access/session';
 import { AiBadge } from '@/features/ai/AiDraft';
+import { useAiFeature } from '@/features/ai/api';
 import { EmployeePicker } from '@/features/org/EmployeePicker';
 import { formatDate, pickText } from '@/lib/format';
 import {
@@ -37,7 +38,15 @@ import {
   type StatementCheck,
   type SuggestedRisk,
 } from './api';
-import { RatingChip, RiskMatrix, RiskPageLayout, useAxisLabels, useNames, useRiskLabels, useRiskT } from './components';
+import {
+  RatingChip,
+  RiskMatrix,
+  RiskPageLayout,
+  useAxisLabels,
+  useNames,
+  useRiskLabels,
+  useRiskT,
+} from './components';
 import { previewRating } from './scoring';
 
 const NONE = '-';
@@ -151,7 +160,8 @@ function RiskForm({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const create = useRiskMutation(riskApi.create);
   const update = useRiskMutation(riskApi.update);
-  const set = <K extends keyof RiskValues>(key: K, value: RiskValues[K]) => setV((prev) => ({ ...prev, [key]: value }));
+  const set = <K extends keyof RiskValues>(key: K, value: RiskValues[K]) =>
+    setV((prev) => ({ ...prev, [key]: value }));
   const text = (key: keyof RiskValues) => (v[key] as string | null) ?? '';
   const framework = options.framework.content;
   const bands = framework.bands;
@@ -168,7 +178,8 @@ function RiskForm({
   function onError(error: unknown) {
     if (error instanceof ApiError && error.problem.errors?.length) {
       const next: Record<string, string> = {};
-      for (const e of error.problem.errors) next[e.field] = translateMessageKey(tc, e.messageKey, e.params ?? undefined);
+      for (const e of error.problem.errors)
+        next[e.field] = translateMessageKey(tc, e.messageKey, e.params ?? undefined);
       setErrors(next);
     }
     toast({ tone: 'error', title: errorMessage(tc, error) });
@@ -181,8 +192,10 @@ function RiskForm({
       opportunity: opportunities ? v.opportunity : false,
       objectiveCodes: v.objectiveCodes ?? [],
     };
-    const done = (risk: { id: string }) => void navigate({ to: '/risk/risks/$riskId', params: { riskId: risk.id } });
-    if (riskId && version !== undefined) update.mutate({ id: riskId, values, version }, { onSuccess: done, onError });
+    const done = (risk: { id: string }) =>
+      void navigate({ to: '/risk/risks/$riskId', params: { riskId: risk.id } });
+    if (riskId && version !== undefined)
+      update.mutate({ id: riskId, values, version }, { onSuccess: done, onError });
     else create.mutate(values, { onSuccess: done, onError });
   }
 
@@ -197,8 +210,7 @@ function RiskForm({
     />
   );
 
-  const rating = (l: number | null, i: number | null) =>
-    previewRating(method, bands, l || null, i || null);
+  const rating = (l: number | null, i: number | null) => previewRating(method, bands, l || null, i || null);
   const chip = (l: number | null, i: number | null, testId: string) => {
     if (!l || !i) return <span className="text-sm text-muted-foreground">—</span>;
     const r = rating(l, i);
@@ -217,27 +229,55 @@ function RiskForm({
     {
       key: 'statement',
       title: t('wizard.steps.statement'),
-      validate: () => require([['titleEn', !!(v.titleAr?.trim() || v.titleEn?.trim())]]),
+      validate: () =>
+        require([
+          ['titleEn', !!(v.titleAr?.trim() || v.titleEn?.trim())],
+          ['cause', !!v.cause?.trim()],
+          ['eventText', !!v.eventText?.trim()],
+          ['consequence', !!v.consequence?.trim()],
+        ]),
       content: (
         <div className="flex flex-col gap-4" data-testid="risk-wizard-statement">
           {fromAi && <AiBadge label={t('ai.prefilled')} className="self-start" />}
           <Grid>
             <FormField label={t('fields.titleAr')} error={errors.titleAr}>
-              <Input dir="rtl" value={text('titleAr')} onChange={(e) => set('titleAr', e.target.value || null)} data-testid="risk-title-ar" />
+              <Input
+                dir="rtl"
+                value={text('titleAr')}
+                onChange={(e) => set('titleAr', e.target.value || null)}
+                data-testid="risk-title-ar"
+              />
             </FormField>
             <FormField label={t('fields.titleEn')} error={errors.titleEn}>
-              <Input dir="ltr" value={text('titleEn')} onChange={(e) => set('titleEn', e.target.value || null)} data-testid="risk-title-en" />
+              <Input
+                dir="ltr"
+                value={text('titleEn')}
+                onChange={(e) => set('titleEn', e.target.value || null)}
+                data-testid="risk-title-en"
+              />
             </FormField>
           </Grid>
           <p className="text-sm text-muted-foreground">{t('wizard.statementHint')}</p>
           <FormField label={t('fields.cause')} error={errors.cause}>
-            <Textarea value={text('cause')} onChange={(e) => set('cause', e.target.value || null)} data-testid="risk-cause" />
+            <Textarea
+              value={text('cause')}
+              onChange={(e) => set('cause', e.target.value || null)}
+              data-testid="risk-cause"
+            />
           </FormField>
           <FormField label={t('fields.eventText')} error={errors.eventText}>
-            <Textarea value={text('eventText')} onChange={(e) => set('eventText', e.target.value || null)} data-testid="risk-event" />
+            <Textarea
+              value={text('eventText')}
+              onChange={(e) => set('eventText', e.target.value || null)}
+              data-testid="risk-event"
+            />
           </FormField>
           <FormField label={t('fields.consequence')} error={errors.consequence}>
-            <Textarea value={text('consequence')} onChange={(e) => set('consequence', e.target.value || null)} data-testid="risk-consequence" />
+            <Textarea
+              value={text('consequence')}
+              onChange={(e) => set('consequence', e.target.value || null)}
+              data-testid="risk-consequence"
+            />
           </FormField>
           <StatementTools values={v} riskId={riskId} onRewrite={(r) => setV((prev) => ({ ...prev, ...r }))} />
         </div>
@@ -249,6 +289,7 @@ function RiskForm({
       validate: () =>
         require([
           ['unitId', !!v.unitId],
+          ['ownerEmployeeId', !!v.ownerEmployeeId],
           ['categoryCodes', v.categoryCodes.length > 0],
           ['identifiedOn', !!v.identifiedOn],
         ]),
@@ -267,7 +308,9 @@ function RiskForm({
                     onChange={(e) =>
                       set(
                         'categoryCodes',
-                        e.target.checked ? [...v.categoryCodes, c.code] : v.categoryCodes.filter((x) => x !== c.code),
+                        e.target.checked
+                          ? [...v.categoryCodes, c.code]
+                          : v.categoryCodes.filter((x) => x !== c.code),
                       )
                     }
                   />
@@ -283,33 +326,60 @@ function RiskForm({
                 options={riskTypes.map((x) => ({ value: x, label: k(`riskType.${x}`) }))}
               />
             </FormField>
-            <FormField label={t('fields.determinedBy')}>{lookupSelect('determinedByCode', 'risk.determined-by')}</FormField>
+            <FormField label={t('fields.determinedBy')}>
+              {lookupSelect('determinedByCode', 'risk.determined-by')}
+            </FormField>
             <FormField label={t('fields.identifiedOn')} error={errors.identifiedOn}>
-              <Input type="date" value={v.identifiedOn} onChange={(e) => set('identifiedOn', e.target.value)} />
+              <Input
+                type="date"
+                value={v.identifiedOn}
+                onChange={(e) => set('identifiedOn', e.target.value)}
+              />
             </FormField>
             <FormField label={t('fields.exposureStart')}>
-              <Input type="date" value={text('exposureStart')} onChange={(e) => set('exposureStart', e.target.value || null)} />
+              <Input
+                type="date"
+                value={text('exposureStart')}
+                onChange={(e) => set('exposureStart', e.target.value || null)}
+              />
             </FormField>
             <FormField label={t('fields.unit')} error={errors.unitId}>
               <UnitSelect value={v.unitId || undefined} onChange={(value) => set('unitId', value ?? '')} />
             </FormField>
             <FormField label={t('fields.owner')} error={errors.ownerEmployeeId}>
-              <EmployeePicker value={v.ownerEmployeeId ?? undefined} onChange={(x) => set('ownerEmployeeId', x ?? null)} />
+              <EmployeePicker
+                value={v.ownerEmployeeId ?? undefined}
+                onChange={(x) => set('ownerEmployeeId', x ?? null)}
+              />
             </FormField>
             <FormField label={t('fields.coordinator')}>
-              <EmployeePicker value={v.coordinatorEmployeeId ?? undefined} onChange={(x) => set('coordinatorEmployeeId', x ?? null)} />
+              <EmployeePicker
+                value={v.coordinatorEmployeeId ?? undefined}
+                onChange={(x) => set('coordinatorEmployeeId', x ?? null)}
+              />
             </FormField>
             <FormField label={t('fields.followUp')}>
-              <EmployeePicker value={v.followUpEmployeeId ?? undefined} onChange={(x) => set('followUpEmployeeId', x ?? null)} />
+              <EmployeePicker
+                value={v.followUpEmployeeId ?? undefined}
+                onChange={(x) => set('followUpEmployeeId', x ?? null)}
+              />
             </FormField>
             <FormField label={t('fields.processes')} className="md:col-span-2">
               <Input value={text('processes')} onChange={(e) => set('processes', e.target.value || null)} />
             </FormField>
           </Grid>
           <div className="flex flex-wrap gap-6">
-            <Checkbox label={t('fields.emerging')} checked={v.emerging} onChange={(e) => set('emerging', e.target.checked)} />
+            <Checkbox
+              label={t('fields.emerging')}
+              checked={v.emerging}
+              onChange={(e) => set('emerging', e.target.checked)}
+            />
             {opportunities && (
-              <Checkbox label={t('fields.opportunity')} checked={v.opportunity} onChange={(e) => set('opportunity', e.target.checked)} />
+              <Checkbox
+                label={t('fields.opportunity')}
+                checked={v.opportunity}
+                onChange={(e) => set('opportunity', e.target.checked)}
+              />
             )}
           </div>
           {options.objectives.length > 0 && (
@@ -369,7 +439,10 @@ function RiskForm({
                 onValueChange={(value) => set('inherentImpactArea', value === NONE ? null : value)}
                 options={[
                   { value: NONE, label: t('common.none') },
-                  ...framework.impactAreas.map((a) => ({ value: a.code, label: pickText(language, a.labelAr, a.labelEn) || a.code })),
+                  ...framework.impactAreas.map((a) => ({
+                    value: a.code,
+                    label: pickText(language, a.labelAr, a.labelEn) || a.code,
+                  })),
                 ]}
               />
             </FormField>
@@ -391,12 +464,19 @@ function RiskForm({
                 <section key={kind} className="flex flex-col gap-3">
                   <header className="flex flex-wrap items-center justify-between gap-2">
                     <h3 className="font-semibold">
-                      {t(`rating.${kind}`)} <span className="text-sm font-normal text-muted-foreground">({t('wizard.optional')})</span>
+                      {t(`rating.${kind}`)}{' '}
+                      <span className="text-sm font-normal text-muted-foreground">
+                        ({t('wizard.optional')})
+                      </span>
                     </h3>
                     <span className="flex items-center gap-2">
                       {chip(v[lk], v[ik], `risk-wizard-${kind}-chip`)}
                       {v[lk] != null && (
-                        <Button variant="ghost" size="sm" onClick={() => setV((p) => ({ ...p, [lk]: null, [ik]: null }))}>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setV((p) => ({ ...p, [lk]: null, [ik]: null }))}
+                        >
                           <X aria-hidden />
                           {tc('actions.clear')}
                         </Button>
@@ -418,13 +498,25 @@ function RiskForm({
           </div>
           <Grid>
             <FormField label={t('fields.targetDate')} error={errors.targetDate}>
-              <Input type="date" value={text('targetDate')} onChange={(e) => set('targetDate', e.target.value || null)} />
+              <Input
+                type="date"
+                value={text('targetDate')}
+                onChange={(e) => set('targetDate', e.target.value || null)}
+              />
             </FormField>
             <FormField label={t('fields.response')} error={errors.responseCode}>
-              {lookupSelect('responseCode', 'risk.response', (code) => opportunities || (code !== 'exploit' && code !== 'enhance'))}
+              {lookupSelect(
+                'responseCode',
+                'risk.response',
+                (code) => opportunities || (code !== 'exploit' && code !== 'enhance'),
+              )}
             </FormField>
           </Grid>
-          <Checkbox label={t('fields.needsFollowUp')} checked={v.needsFollowUp} onChange={(e) => set('needsFollowUp', e.target.checked)} />
+          <Checkbox
+            label={t('fields.needsFollowUp')}
+            checked={v.needsFollowUp}
+            onChange={(e) => set('needsFollowUp', e.target.checked)}
+          />
         </div>
       ),
     },
@@ -442,9 +534,18 @@ function RiskForm({
         description={t('wizard.description')}
       />
       {Object.keys(errors).length > 0 && (
-        <StatusBanner tone="danger" title={t('wizard.fixErrors')} description={Object.values(errors).join(' · ')} />
+        <StatusBanner
+          tone="danger"
+          title={t('wizard.fixErrors')}
+          description={Object.values(errors).join(' · ')}
+        />
       )}
-      <Wizard steps={steps} onFinish={save} busy={create.isPending || update.isPending} finishLabel={tc('actions.save')} />
+      <Wizard
+        steps={steps}
+        onFinish={save}
+        busy={create.isPending || update.isPending}
+        finishLabel={tc('actions.save')}
+      />
     </RiskPageLayout>
   );
 }
@@ -505,7 +606,8 @@ function StatementTools({
   const names = useNames();
   const toast = useToast();
   const canCheck = useCan('risk.ai.quality');
-  const canDuplicates = useCan('risk.ai.duplicates');
+  const aiDuplicates = useAiFeature('risk-duplicates');
+  const canDuplicates = useCan('risk.ai.duplicates') && aiDuplicates;
   const [check, setCheck] = useState<StatementCheck>();
   const [duplicates, setDuplicates] = useState<DuplicateCheck>();
   const [busy, setBusy] = useState<'check' | 'duplicates'>();
@@ -514,7 +616,11 @@ function StatementTools({
     setBusy('check');
     try {
       setCheck(
-        await riskApi.statementCheck({ cause: values.cause, eventText: values.eventText, consequence: values.consequence }),
+        await riskApi.statementCheck({
+          cause: values.cause,
+          eventText: values.eventText,
+          consequence: values.consequence,
+        }),
       );
     } catch (e) {
       toast({ tone: 'error', title: errorMessage(tc, e) });
@@ -525,7 +631,10 @@ function StatementTools({
   async function runDuplicates() {
     setBusy('duplicates');
     try {
-      const text = [values.titleEn, values.titleAr, values.eventText].filter(Boolean).join(' ').slice(0, 2000);
+      const text = [values.titleEn, values.titleAr, values.eventText]
+        .filter(Boolean)
+        .join(' ')
+        .slice(0, 2000);
       setDuplicates(await riskApi.duplicates({ text, excludeId: riskId ?? null }));
     } catch (e) {
       toast({ tone: 'error', title: errorMessage(tc, e) });
@@ -538,7 +647,13 @@ function StatementTools({
     <div className="flex flex-col gap-3 rounded-lg border bg-muted/30 p-4">
       <div className="flex flex-wrap gap-2">
         {canCheck && (
-          <Button variant="outline" size="sm" onClick={() => void runCheck()} loading={busy === 'check'} data-testid="risk-statement-check">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => void runCheck()}
+            loading={busy === 'check'}
+            data-testid="risk-statement-check"
+          >
             <Sparkles aria-hidden />
             {t('ai.statement.action')}
           </Button>
@@ -612,7 +727,12 @@ function StatementTools({
             <ul className="flex flex-col gap-1">
               {duplicates.visible.map((d) => (
                 <li key={d.id}>
-                  <a href={`/risk/risks/${d.id}`} target="_blank" rel="noreferrer" className="text-primary hover:underline">
+                  <a
+                    href={`/risk/risks/${d.id}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-primary hover:underline"
+                  >
                     <bdi>{d.number}</bdi> · {names.text(d.titleAr, d.titleEn)}
                   </a>{' '}
                   <span className="text-muted-foreground">({Math.round(d.score * 100)}%)</span>
@@ -621,7 +741,9 @@ function StatementTools({
             </ul>
           )}
           {duplicates.otherUnits > 0 && (
-            <p className="text-muted-foreground">{t('ai.duplicates.otherUnits', { count: duplicates.otherUnits })}</p>
+            <p className="text-muted-foreground">
+              {t('ai.duplicates.otherUnits', { count: duplicates.otherUnits })}
+            </p>
           )}
         </div>
       )}

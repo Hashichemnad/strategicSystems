@@ -162,17 +162,17 @@ export function useRisks(query: RiskListQuery) {
 export function useRisk(id: string | undefined) {
   return useQuery({
     queryKey: riskKeys.risk(id ?? ''),
-    queryFn: async ({ signal }) => unwrap(await api.GET('/api/v1/risk/risks/{id}', { ...path(id ?? ''), signal })),
+    queryFn: async ({ signal }) =>
+      unwrap(await api.GET('/api/v1/risk/risks/{id}', { ...path(id ?? ''), signal })),
     enabled: !!id,
     retry: false,
   });
 }
 
-function useRiskChild<T>(id: string, key: string, fetch: (signal: AbortSignal) => Promise<T>, enabled = true) {
+function useRiskChild<T>(id: string, key: string, load: (signal: AbortSignal) => Promise<T>) {
   return useQuery({
     queryKey: [...riskKeys.risk(id), key],
-    queryFn: ({ signal }) => fetch(signal),
-    enabled,
+    queryFn: ({ signal }) => load(signal),
   });
 }
 
@@ -255,7 +255,10 @@ export function useHeatCell(
   });
 }
 
-export function useProjectRisks(query: { band?: string; search?: string; projectId?: string }, enabled = true) {
+export function useProjectRisks(
+  query: { band?: string; search?: string; projectId?: string },
+  enabled = true,
+) {
   return useQuery({
     queryKey: [...riskKeys.all, 'project-risks', query],
     queryFn: async ({ signal }) =>
@@ -305,7 +308,12 @@ export function useFrameworkPreview(content: FrameworkContent | undefined) {
   return useQuery({
     queryKey: [...riskKeys.all, 'framework', 'preview', content],
     queryFn: async ({ signal }) =>
-      unwrap(await api.POST('/api/v1/risk/framework/preview', { body: { content: content! }, signal })),
+      unwrap(
+        await api.POST('/api/v1/risk/framework/preview', {
+          body: { content: content ?? ({} as FrameworkContent) },
+          signal,
+        }),
+      ),
     enabled: !!content,
     placeholderData: keepPreviousData,
     retry: false,
@@ -393,7 +401,10 @@ export const riskApi = {
           }),
         )
       : unwrap(
-          await api.POST('/api/v1/risk/risks/{id}/controls', { ...path(riskId), body: { values, version: null } }),
+          await api.POST('/api/v1/risk/risks/{id}/controls', {
+            ...path(riskId),
+            body: { values, version: null },
+          }),
         ),
   rateControl: async ({
     id,
@@ -404,7 +415,12 @@ export const riskApi = {
     effectivenessCode: string | null;
     version: number;
   }) =>
-    unwrap(await api.POST('/api/v1/risk/controls/{id}/rate', { ...path(id), body: { effectivenessCode, version } })),
+    unwrap(
+      await api.POST('/api/v1/risk/controls/{id}/rate', {
+        ...path(id),
+        body: { effectivenessCode, version },
+      }),
+    ),
   retireControl: async (id: string) => unwrap(await api.POST('/api/v1/risk/controls/{id}/retire', path(id))),
   saveAction: async ({
     riskId,
@@ -425,7 +441,10 @@ export const riskApi = {
           }),
         )
       : unwrap(
-          await api.POST('/api/v1/risk/risks/{id}/actions', { ...path(riskId), body: { values, version: null } }),
+          await api.POST('/api/v1/risk/risks/{id}/actions', {
+            ...path(riskId),
+            body: { values, version: null },
+          }),
         ),
   cancelAction: async (id: string) => unwrap(await api.POST('/api/v1/risk/actions/{id}/cancel', path(id))),
   progress: async ({
@@ -446,7 +465,7 @@ export const riskApi = {
     unwrap(
       await api.POST('/api/v1/risk/actions/{id}/progress', {
         ...path(id),
-        body: { completionPct, note, actualStart, actualEnd, version },
+        body: { completionPct, note, actualStart, actualEnd, version, fromMcp: false },
       }),
     ),
   convert: async ({ id, input }: { id: string; input: ConvertInput }) =>
@@ -469,11 +488,17 @@ export const riskApi = {
             body: { values, version },
           }),
         )
-      : unwrap(await api.POST('/api/v1/risk/risks/{id}/kris', { ...path(riskId), body: { values, version: null } })),
+      : unwrap(
+          await api.POST('/api/v1/risk/risks/{id}/kris', {
+            ...path(riskId),
+            body: { values, version: null },
+          }),
+        ),
   removeKri: async (id: string) => unwrap(await api.POST('/api/v1/risk/kris/{id}/remove', path(id))),
   logEvent: async (values: EventValues) =>
     unwrap(await api.POST('/api/v1/risk/events', { body: { values, version: null } })),
-  startReview: async (riskId: string) => unwrap(await api.POST('/api/v1/risk/risks/{id}/reviews', path(riskId))),
+  startReview: async (riskId: string) =>
+    unwrap(await api.POST('/api/v1/risk/risks/{id}/reviews', path(riskId))),
   saveReview: async ({ id, values, version }: { id: string; values: ReviewValues; version: number }) =>
     unwrap(await api.PUT('/api/v1/risk/reviews/{id}', { ...path(id), body: { values, version } })),
   submitReview: async ({ id, comment }: { id: string; comment: string | null }) =>
@@ -508,8 +533,11 @@ export const riskApi = {
       }),
     );
   },
-  statementCheck: async (input: { cause: string | null; eventText: string | null; consequence: string | null }) =>
-    unwrap(await api.POST('/api/v1/risk/ai/statement-check', { body: input })),
+  statementCheck: async (input: {
+    cause: string | null;
+    eventText: string | null;
+    consequence: string | null;
+  }) => unwrap(await api.POST('/api/v1/risk/ai/statement-check', { body: input })),
   duplicates: async ({ text, excludeId }: { text: string; excludeId: string | null }) =>
     unwrap(await api.POST('/api/v1/risk/ai/duplicates', { body: { text, excludeId } })),
   suggestions: async (riskId: string) =>

@@ -4,7 +4,14 @@ import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/cn';
 import { formatNumber, pickText } from '@/lib/format';
 import { StatusChip } from '@/ui';
-import { useRiskOptions, type HeatCell, type MatrixCell, type RatingBand, type RiskPerson, type RiskUnit } from './api';
+import {
+  useRiskOptions,
+  type HeatCell,
+  type MatrixCell,
+  type RatingBand,
+  type RiskPerson,
+  type RiskUnit,
+} from './api';
 import { textOn } from './scoring';
 
 type Dyn = (key: string, options?: Record<string, unknown>) => string;
@@ -30,8 +37,10 @@ export function usePct() {
 export function useNames() {
   const { i18n } = useTranslation();
   return {
-    unit: (u: RiskUnit | null | undefined) => (u ? pickText(i18n.language, u.nameAr, u.nameEn) || u.code || '—' : '—'),
-    person: (p: RiskPerson | null | undefined) => (p ? pickText(i18n.language, p.nameAr, p.nameEn) || '—' : '—'),
+    unit: (u: RiskUnit | null | undefined) =>
+      u ? pickText(i18n.language, u.nameAr, u.nameEn) || u.code || '—' : '—',
+    person: (p: RiskPerson | null | undefined) =>
+      p ? pickText(i18n.language, p.nameAr, p.nameEn) || '—' : '—',
     text: (ar: string | null | undefined, en: string | null | undefined) => pickText(i18n.language, ar, en),
   };
 }
@@ -122,7 +131,13 @@ export function RatingChip({
   );
 }
 
-export function CodeChip({ tone, label }: { tone?: 'neutral' | 'info' | 'success' | 'warning' | 'danger'; label: string }) {
+export function CodeChip({
+  tone,
+  label,
+}: {
+  tone?: 'neutral' | 'info' | 'success' | 'warning' | 'danger';
+  label: string;
+}) {
   return <StatusChip tone={tone ?? 'neutral'}>{label}</StatusChip>;
 }
 
@@ -153,7 +168,10 @@ export function Section({
   className?: string;
 }) {
   return (
-    <section className={cn('flex flex-col gap-3 rounded-lg border bg-card p-5', className)} data-testid={testId}>
+    <section
+      className={cn('flex flex-col gap-3 rounded-lg border bg-card p-5', className)}
+      data-testid={testId}
+    >
       <header className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="font-semibold">{title}</h2>
         {actions && <div className="flex flex-wrap gap-2">{actions}</div>}
@@ -178,7 +196,11 @@ export function RiskNav() {
   const options = useRiskOptions();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   return (
-    <nav aria-label={t('nav.label')} className="-mt-2 flex flex-wrap gap-1 border-b pb-2" data-testid="risk-nav">
+    <nav
+      aria-label={t('nav.label')}
+      className="-mt-2 flex flex-wrap gap-1 border-b pb-2"
+      data-testid="risk-nav"
+    >
       {navItems
         .filter(
           (item) =>
@@ -294,7 +316,7 @@ export function HeatMap({
                         count: enterprise,
                         project,
                       })}
-                      aria-pressed={active}
+                      aria-selected={active}
                       onClick={() => onSelect?.(l, i)}
                       className={cn(
                         'flex h-11 items-center justify-center rounded text-sm font-semibold tabular-nums outline-offset-2 transition hover:opacity-90',
@@ -320,7 +342,11 @@ export function HeatMap({
             ))}
           <span />
           {range(maxI).map((i) => (
-            <span key={i} className="text-center text-xs text-muted-foreground tabular-nums" title={axis?.impact?.(i)}>
+            <span
+              key={i}
+              className="text-center text-xs text-muted-foreground tabular-nums"
+              title={axis?.impact?.(i)}
+            >
               {i}
             </span>
           ))}
@@ -438,9 +464,7 @@ export function RiskMatrix({
                   <div
                     key={i}
                     role="gridcell"
-                    aria-label={
-                      here.length ? `${text} — ${here.map((m) => m.title).join('، ')}` : text
-                    }
+                    aria-label={here.length ? `${text} — ${here.map((m) => m.title).join('، ')}` : text}
                     data-testid={`risk-matrix-${prefix}-${l}-${i}`}
                     className={className}
                     style={style}
@@ -497,7 +521,10 @@ export function ProgressBar({ ratio, label }: { ratio: number; label: string }) 
         aria-valuemax={100}
         aria-valuenow={Math.round(ratio * 100)}
       >
-        <span className="h-full bg-primary" style={{ inlineSize: `${Math.max(0, Math.min(1, ratio)) * 100}%` }} />
+        <span
+          className="h-full bg-primary"
+          style={{ inlineSize: `${Math.max(0, Math.min(1, ratio)) * 100}%` }}
+        />
       </span>
       <span className="text-xs tabular-nums text-muted-foreground">{pct(ratio)}</span>
     </span>

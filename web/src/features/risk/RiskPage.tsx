@@ -1,5 +1,16 @@
 import { getRouteApi, Link, useNavigate } from '@tanstack/react-router';
-import { ArrowLeft, Flag, Gavel, Pencil, ShieldCheck, Trash2, TrendingDown, TrendingUp, TriangleAlert, XCircle } from 'lucide-react';
+import {
+  ArrowLeft,
+  Flag,
+  Gavel,
+  Pencil,
+  ShieldCheck,
+  Trash2,
+  TrendingDown,
+  TrendingUp,
+  TriangleAlert,
+  XCircle,
+} from 'lucide-react';
 import { useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { errorMessage } from '@/api/problem';
@@ -113,7 +124,8 @@ export function RiskPage() {
         title={names.text(r.values.titleAr, r.values.titleEn) || r.number}
         description={
           <>
-            <bdi data-testid="risk-number">{r.number}</bdi> · {names.unit(r.unit)} · {t('fields.owner')}: {names.person(r.owner)}
+            <bdi data-testid="risk-number">{r.number}</bdi> · {names.unit(r.unit)} · {t('fields.owner')}:{' '}
+            {names.person(r.owner)}
           </>
         }
         meta={
@@ -122,17 +134,32 @@ export function RiskPage() {
               <span data-testid="risk-status">{k(`status.${r.status}`)}</span>
             </StatusChip>
             <span className="flex flex-wrap items-center gap-1" data-testid="risk-ratings">
-              <RatingChip band={r.inherentBand} score={r.inherentScore} prefix={t('rating.inherentShort')} testId="risk-chip-inherent" />
+              <RatingChip
+                band={r.inherentBand}
+                score={r.inherentScore}
+                prefix={t('rating.inherentShort')}
+                testId="risk-chip-inherent"
+              />
               <span aria-hidden className="rtl:rotate-180">
                 →
               </span>
-              <RatingChip band={r.residualBand} score={r.residualScore} prefix={t('rating.residualShort')} testId="risk-chip-residual" />
+              <RatingChip
+                band={r.residualBand}
+                score={r.residualScore}
+                prefix={t('rating.residualShort')}
+                testId="risk-chip-residual"
+              />
               {r.targetBand && (
                 <>
                   <span aria-hidden className="rtl:rotate-180">
                     →
                   </span>
-                  <RatingChip band={r.targetBand} score={r.targetScore} prefix={t('rating.targetShort')} testId="risk-chip-target" />
+                  <RatingChip
+                    band={r.targetBand}
+                    score={r.targetScore}
+                    prefix={t('rating.targetShort')}
+                    testId="risk-chip-target"
+                  />
                 </>
               )}
             </span>
@@ -154,14 +181,18 @@ export function RiskPage() {
                 {t('flags.reassessment')}
               </StatusChip>
             )}
-            {r.withinAppetite === false && <StatusChip tone="danger">{t('flags.outsideAppetite')}</StatusChip>}
+            {r.withinAppetite === false && (
+              <StatusChip tone="danger">{t('flags.outsideAppetite')}</StatusChip>
+            )}
             <span
               className="text-xs text-muted-foreground"
               title={r.onCurrentFramework ? undefined : t('risk.oldFramework')}
               data-testid="risk-framework-version"
             >
               {t('risk.frameworkVersion', { version: r.frameworkVersionNo })}
-              {!r.onCurrentFramework && <span className="ms-1 text-warning">({t('risk.oldFrameworkShort')})</span>}
+              {!r.onCurrentFramework && (
+                <span className="ms-1 text-warning">({t('risk.oldFrameworkShort')})</span>
+              )}
             </span>
           </div>
         }
@@ -176,7 +207,11 @@ export function RiskPage() {
               </Button>
             )}
             {r.can.requestClosure && (
-              <Button variant="outline" onClick={() => setDialog('closure')} data-testid="risk-request-closure">
+              <Button
+                variant="outline"
+                onClick={() => setDialog('closure')}
+                data-testid="risk-request-closure"
+              >
                 <XCircle aria-hidden />
                 {t('risk.requestClosure')}
               </Button>
@@ -194,7 +229,11 @@ export function RiskPage() {
               </>
             )}
             {r.can.committeeDecide && (
-              <Button variant="outline" onClick={() => setDialog('decision')} data-testid="risk-committee-decision">
+              <Button
+                variant="outline"
+                onClick={() => setDialog('decision')}
+                data-testid="risk-committee-decision"
+              >
                 <Gavel aria-hidden />
                 {t('committee.record')}
               </Button>
@@ -218,7 +257,10 @@ export function RiskPage() {
             if (code === 'reopen') setDialog('reopen');
             if (code === 'review') {
               go('overview');
-              setTimeout(() => document.getElementById('risk-approvals')?.scrollIntoView({ behavior: 'smooth' }), 50);
+              setTimeout(
+                () => document.getElementById('risk-approvals')?.scrollIntoView({ behavior: 'smooth' }),
+                50,
+              );
             }
             if (code === 'start-review')
               startReview.mutate(r.id, {
@@ -338,7 +380,10 @@ function Overview({ risk: r }: { risk: Risk }) {
           [t('fields.response'), labels.lookup('risk.response', v.responseCode)],
           [t('fields.targetDate'), date(v.targetDate)],
           [t('fields.needsFollowUp'), v.needsFollowUp ? t('common.yes') : t('common.no')],
-          [t('fields.controlEffectiveness'), labels.effectiveness(r.controlEffectivenessOverride ?? r.controlEffectiveness)],
+          [
+            t('fields.controlEffectiveness'),
+            labels.effectiveness(r.controlEffectivenessOverride ?? r.controlEffectiveness),
+          ],
           [
             t('fields.residualStatus'),
             <span key="rs">
@@ -346,7 +391,9 @@ function Overview({ risk: r }: { risk: Risk }) {
               {r.residualStatusOverride && (
                 <span className="ms-1 text-xs text-muted-foreground">({t('office.overridden')})</span>
               )}
-              {r.residualStatusJustification && <span className="block text-xs text-muted-foreground">{r.residualStatusJustification}</span>}
+              {r.residualStatusJustification && (
+                <span className="block text-xs text-muted-foreground">{r.residualStatusJustification}</span>
+              )}
             </span>,
           ],
           [t('fields.appetite'), r.appetite == null ? t('common.notSet') : num(r.appetite)],
@@ -362,7 +409,12 @@ function Overview({ risk: r }: { risk: Risk }) {
             </span>,
           ],
           ...(r.escalated
-            ? ([[t('escalation.reason'), r.escalationReason ? k(`escalationReason.${r.escalationReason}`) : '—']] as [string, ReactNode][])
+            ? ([
+                [
+                  t('escalation.reason'),
+                  r.escalationReason ? k(`escalationReason.${r.escalationReason}`) : '—',
+                ],
+              ] as [string, ReactNode][])
             : []),
           ...(r.closureReasonCode
             ? ([
@@ -371,7 +423,9 @@ function Overview({ risk: r }: { risk: Risk }) {
                 [t('closure.closedAt'), r.closedAt ? formatDateTime(r.closedAt, language) : '—'],
               ] as [string, ReactNode][])
             : []),
-          ...(r.rejectionReason ? ([[t('risk.rejectionReason'), r.rejectionReason]] as [string, ReactNode][]) : []),
+          ...(r.rejectionReason
+            ? ([[t('risk.rejectionReason'), r.rejectionReason]] as [string, ReactNode][])
+            : []),
         ]}
       />
       <CommitteeDecisions riskId={r.id} />
@@ -395,7 +449,8 @@ function CommitteeDecisions({ riskId }: { riskId: string }) {
           {decisions.data.map((d) => (
             <li key={d.id} className="flex flex-col gap-0.5 py-2">
               <span className="font-medium">
-                {labels.lookup('risk.committee-decision', d.decisionCode)} · {formatDate(d.decidedOn, language)}
+                {labels.lookup('risk.committee-decision', d.decisionCode)} ·{' '}
+                {formatDate(d.decidedOn, language)}
               </span>
               {d.note && <span className="text-muted-foreground">{d.note}</span>}
             </li>
@@ -416,12 +471,31 @@ function AssessmentTab({ risk: r }: { risk: Risk }) {
   const assessments = useRiskAssessments(r.id);
   const v = r.values;
   const markers = [
-    { likelihood: v.inherentLikelihood, impact: v.inherentImpact, label: t('rating.inherentShort'), title: t('rating.inherent') },
+    {
+      likelihood: v.inherentLikelihood,
+      impact: v.inherentImpact,
+      label: t('rating.inherentShort'),
+      title: t('rating.inherent'),
+    },
     ...(v.residualLikelihood != null
-      ? [{ likelihood: v.residualLikelihood, impact: v.residualImpact, label: t('rating.residualShort'), title: t('rating.residual') }]
+      ? [
+          {
+            likelihood: v.residualLikelihood,
+            impact: v.residualImpact,
+            label: t('rating.residualShort'),
+            title: t('rating.residual'),
+          },
+        ]
       : []),
     ...(v.targetLikelihood != null
-      ? [{ likelihood: v.targetLikelihood, impact: v.targetImpact, label: t('rating.targetShort'), title: t('rating.target') }]
+      ? [
+          {
+            likelihood: v.targetLikelihood,
+            impact: v.targetImpact,
+            label: t('rating.targetShort'),
+            title: t('rating.target'),
+          },
+        ]
       : []),
   ];
   return (
@@ -503,10 +577,16 @@ export function HistoryChart({ rows }: { rows: readonly RiskAssessment[] }) {
   const width = 480;
   const height = 200;
   const pad = 28;
-  const max = Math.max(1, ...bands.map((b) => b.max), ...points.map((p) => Math.max(p.inherentScore, p.residualScore)));
-  const x = (i: number) => (points.length === 1 ? width / 2 : pad + (i * (width - 2 * pad)) / (points.length - 1));
+  const max = Math.max(
+    1,
+    ...bands.map((b) => b.max),
+    ...points.map((p) => Math.max(p.inherentScore, p.residualScore)),
+  );
+  const x = (i: number) =>
+    points.length === 1 ? width / 2 : pad + (i * (width - 2 * pad)) / (points.length - 1);
   const y = (score: number) => height - pad - (score / max) * (height - 2 * pad);
-  const line = (key: 'inherentScore' | 'residualScore') => points.map((p, i) => `${x(i)},${y(p[key])}`).join(' ');
+  const line = (key: 'inherentScore' | 'residualScore') =>
+    points.map((p, i) => `${x(i)},${y(p[key])}`).join(' ');
   const rtl = language === 'ar';
   return (
     <figure className="flex flex-col gap-2">
@@ -515,7 +595,9 @@ export function HistoryChart({ rows }: { rows: readonly RiskAssessment[] }) {
         className="h-auto w-full"
         role="img"
         aria-label={t('assessment.chartLabel', {
-          values: points.map((p) => `${formatDate(p.at, language)}: ${num(p.inherentScore)} / ${num(p.residualScore)}`).join('; '),
+          values: points
+            .map((p) => `${formatDate(p.at, language)}: ${num(p.inherentScore)} / ${num(p.residualScore)}`)
+            .join('; '),
         })}
         style={rtl ? { transform: 'scaleX(-1)' } : undefined}
       >
@@ -531,8 +613,20 @@ export function HistoryChart({ rows }: { rows: readonly RiskAssessment[] }) {
             strokeWidth={1}
           />
         ))}
-        <polyline points={line('inherentScore')} fill="none" stroke="currentColor" className="text-danger" strokeWidth={2.5} />
-        <polyline points={line('residualScore')} fill="none" stroke="currentColor" className="text-primary" strokeWidth={2.5} />
+        <polyline
+          points={line('inherentScore')}
+          fill="none"
+          stroke="currentColor"
+          className="text-danger"
+          strokeWidth={2.5}
+        />
+        <polyline
+          points={line('residualScore')}
+          fill="none"
+          stroke="currentColor"
+          className="text-primary"
+          strokeWidth={2.5}
+        />
         {points.map((p, i) => (
           <g key={p.id}>
             <circle cx={x(i)} cy={y(p.inherentScore)} r={4} className="fill-danger" />
@@ -550,7 +644,8 @@ export function HistoryChart({ rows }: { rows: readonly RiskAssessment[] }) {
           {t('rating.residual')}
         </span>
         <span>
-          {formatDate(points[0]!.at, language)} – {formatDate(points[points.length - 1]!.at, language)}
+          {formatDate(points[0]?.at ?? '', language)} –{' '}
+          {formatDate(points[points.length - 1]?.at ?? '', language)}
         </span>
       </figcaption>
     </figure>
@@ -658,7 +753,11 @@ function ClosureDialog({ risk, onClose }: { risk: Risk; onClose: () => void }) {
       onSubmit={() => reasonCode && m.run({ id: risk.id, reasonCode, note: note || null })}
     >
       <FormField label={t('closure.reason')} required>
-        <Select value={reasonCode} onValueChange={setReasonCode} options={labels.lookupOptions('risk.closure-reason')} />
+        <Select
+          value={reasonCode}
+          onValueChange={setReasonCode}
+          options={labels.lookupOptions('risk.closure-reason')}
+        />
       </FormField>
       <FormField label={t('closure.note')}>
         <Textarea value={note} onChange={(e) => setNote(e.target.value)} />
@@ -723,7 +822,10 @@ function OfficeDialog({ risk, onClose }: { risk: Risk; onClose: () => void }) {
         })
       }
     >
-      <FormField label={t('office.effectivenessOverride')} hint={t('office.computed', { value: labels.effectiveness(risk.controlEffectiveness) })}>
+      <FormField
+        label={t('office.effectivenessOverride')}
+        hint={t('office.computed', { value: labels.effectiveness(risk.controlEffectiveness) })}
+      >
         <Select
           value={effectiveness}
           onValueChange={setEffectiveness}
@@ -795,10 +897,16 @@ function DecisionDialog({ risk, onClose }: { risk: Risk; onClose: () => void }) 
       disabled={!code}
       submitLabel={t('committee.record')}
       testId="risk-decision-confirm"
-      onSubmit={() => code && m.run({ id: risk.id, decisionCode: code, note: note || null, decidedOn: decidedOn || null })}
+      onSubmit={() =>
+        code && m.run({ id: risk.id, decisionCode: code, note: note || null, decidedOn: decidedOn || null })
+      }
     >
       <FormField label={t('committee.decision')} required>
-        <Select value={code} onValueChange={setCode} options={labels.lookupOptions('risk.committee-decision')} />
+        <Select
+          value={code}
+          onValueChange={setCode}
+          options={labels.lookupOptions('risk.committee-decision')}
+        />
       </FormField>
       <FormField label={t('committee.decidedOn')}>
         <Input type="date" value={decidedOn} onChange={(e) => setDecidedOn(e.target.value)} />

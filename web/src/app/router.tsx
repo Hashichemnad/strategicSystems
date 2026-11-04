@@ -500,7 +500,17 @@ export const riskRoute = createRoute({
   path: '/risk/risks/$riskId',
   validateSearch: z.object({
     tab: z
-      .enum(['overview', 'assessment', 'controls', 'actions', 'kris', 'events', 'reviews', 'documents', 'activity'])
+      .enum([
+        'overview',
+        'assessment',
+        'controls',
+        'actions',
+        'kris',
+        'events',
+        'reviews',
+        'documents',
+        'activity',
+      ])
       .optional()
       .catch(undefined),
   }),

@@ -73,10 +73,14 @@ export function EventsTab({ risk }: { risk: Risk }) {
                 <TableCell>{formatDate(e.values.occurredOn, language)}</TableCell>
                 <TableCell className="max-w-72 whitespace-pre-line">
                   {e.values.description ?? '—'}
-                  {e.values.otherImpact && <span className="block text-xs text-muted-foreground">{e.values.otherImpact}</span>}
+                  {e.values.otherImpact && (
+                    <span className="block text-xs text-muted-foreground">{e.values.otherImpact}</span>
+                  )}
                 </TableCell>
                 <TableCell className="tabular-nums">
-                  {e.values.financialImpact == null ? '—' : `${num(e.values.financialImpact)} ${e.values.currency ?? ''}`}
+                  {e.values.financialImpact == null
+                    ? '—'
+                    : `${num(e.values.financialImpact)} ${e.values.currency ?? ''}`}
                 </TableCell>
                 <TableCell className="max-w-56 whitespace-pre-line">{e.values.rootCause ?? '—'}</TableCell>
                 <TableCell className="max-w-56 whitespace-pre-line">{e.values.lessons ?? '—'}</TableCell>
@@ -107,7 +111,8 @@ function EventDialog({ risk, onClose }: { risk: Risk; onClose: () => void }) {
     unitId: risk.values.unitId,
     riskIds: [risk.id],
   });
-  const set = <K extends keyof EventValues>(key: K, value: EventValues[K]) => setV((p) => ({ ...p, [key]: value }));
+  const set = <K extends keyof EventValues>(key: K, value: EventValues[K]) =>
+    setV((p) => ({ ...p, [key]: value }));
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
       <DialogContent
@@ -124,7 +129,10 @@ function EventDialog({ risk, onClose }: { risk: Risk; onClose: () => void }) {
               disabled={!v.occurredOn || !v.description?.trim()}
               data-testid="risk-event-save"
               onClick={() =>
-                log.mutate(v, { onSuccess: onClose, onError: (e) => toast({ tone: 'error', title: errorMessage(tc, e) }) })
+                log.mutate(v, {
+                  onSuccess: onClose,
+                  onError: (e) => toast({ tone: 'error', title: errorMessage(tc, e) }),
+                })
               }
             >
               {tc('actions.save')}
@@ -136,9 +144,17 @@ function EventDialog({ risk, onClose }: { risk: Risk; onClose: () => void }) {
           <FormField label={t('events.occurredOn')} required>
             <Input type="date" value={v.occurredOn} onChange={(e) => set('occurredOn', e.target.value)} />
           </FormField>
-          <Checkbox label={t('events.nearMiss')} checked={v.nearMiss} onChange={(e) => set('nearMiss', e.target.checked)} />
+          <Checkbox
+            label={t('events.nearMiss')}
+            checked={v.nearMiss}
+            onChange={(e) => set('nearMiss', e.target.checked)}
+          />
           <FormField label={t('events.description')} required className="md:col-span-2">
-            <Textarea value={v.description ?? ''} onChange={(e) => set('description', e.target.value || null)} data-testid="risk-event-description" />
+            <Textarea
+              value={v.description ?? ''}
+              onChange={(e) => set('description', e.target.value || null)}
+              data-testid="risk-event-description"
+            />
           </FormField>
           <FormField label={t('events.financialImpact')}>
             <Input
@@ -150,10 +166,17 @@ function EventDialog({ risk, onClose }: { risk: Risk; onClose: () => void }) {
             />
           </FormField>
           <FormField label={t('events.currency')}>
-            <Input value={v.currency ?? ''} maxLength={3} onChange={(e) => set('currency', e.target.value.toUpperCase() || null)} />
+            <Input
+              value={v.currency ?? ''}
+              maxLength={3}
+              onChange={(e) => set('currency', e.target.value.toUpperCase() || null)}
+            />
           </FormField>
           <FormField label={t('events.otherImpact')} className="md:col-span-2">
-            <Textarea value={v.otherImpact ?? ''} onChange={(e) => set('otherImpact', e.target.value || null)} />
+            <Textarea
+              value={v.otherImpact ?? ''}
+              onChange={(e) => set('otherImpact', e.target.value || null)}
+            />
           </FormField>
           <FormField label={t('events.rootCause')}>
             <Textarea value={v.rootCause ?? ''} onChange={(e) => set('rootCause', e.target.value || null)} />

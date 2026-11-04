@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { errorMessage } from '@/api/problem';
 import { useCan } from '@/features/access/session';
 import { AiBadge } from '@/features/ai/AiDraft';
+import { useAiFeature } from '@/features/ai/api';
 import { EmployeePicker } from '@/features/org/EmployeePicker';
 import { formatDate } from '@/lib/format';
 import {
@@ -66,7 +67,8 @@ export function ControlsTab({ risk }: { risk: Risk }) {
   const tone = useEffectivenessTone();
   const options = useRiskOptions();
   const toast = useToast();
-  const canSuggest = useCan('risk.ai.suggest');
+  const aiSuggest = useAiFeature('risk-suggest');
+  const canSuggest = useCan('risk.ai.suggest') && aiSuggest;
   const rate = useRiskMutation(riskApi.rateControl);
   const retire = useRiskMutation(riskApi.retireControl);
   const [editing, setEditing] = useState<{ control?: Control; values?: Partial<ControlValues> }>();
@@ -95,7 +97,13 @@ export function ControlsTab({ risk }: { risk: Risk }) {
         actions={
           <>
             {canSuggest && risk.can.manageChildren && (
-              <Button variant="outline" size="sm" onClick={() => void suggest()} loading={suggesting} data-testid="risk-ai-suggest">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => void suggest()}
+                loading={suggesting}
+                data-testid="risk-ai-suggest"
+              >
                 <Sparkles aria-hidden />
                 {t('ai.suggest.action')}
               </Button>
@@ -136,8 +144,12 @@ export function ControlsTab({ risk }: { risk: Risk }) {
                   <TableCell>
                     <span className="flex flex-col">
                       <span className="font-medium">{names.text(c.values.nameAr, c.values.nameEn)}</span>
-                      {c.values.description && <span className="text-xs text-muted-foreground">{c.values.description}</span>}
-                      {c.sourceActionId && <span className="text-xs text-muted-foreground">{t('controls.fromAction')}</span>}
+                      {c.values.description && (
+                        <span className="text-xs text-muted-foreground">{c.values.description}</span>
+                      )}
+                      {c.sourceActionId && (
+                        <span className="text-xs text-muted-foreground">{t('controls.fromAction')}</span>
+                      )}
                     </span>
                   </TableCell>
                   <TableCell>{labels.lookup('risk.control-type', c.values.typeCode)}</TableCell>
@@ -151,7 +163,11 @@ export function ControlsTab({ risk }: { risk: Risk }) {
                         value={c.values.effectivenessCode ?? NONE}
                         onValueChange={(value) =>
                           rate.mutate(
-                            { id: c.id, effectivenessCode: value === NONE ? null : value, version: c.version },
+                            {
+                              id: c.id,
+                              effectivenessCode: value === NONE ? null : value,
+                              version: c.version,
+                            },
                             { onError },
                           )
                         }
@@ -165,14 +181,20 @@ export function ControlsTab({ risk }: { risk: Risk }) {
                         className="min-w-36"
                       />
                     ) : c.values.effectivenessCode ? (
-                      <StatusChip tone={tone(c.values.effectivenessCode)}>{labels.effectiveness(c.values.effectivenessCode)}</StatusChip>
+                      <StatusChip tone={tone(c.values.effectivenessCode)}>
+                        {labels.effectiveness(c.values.effectivenessCode)}
+                      </StatusChip>
                     ) : (
                       <span className="text-muted-foreground">{t('controls.notRated')}</span>
                     )}
                   </TableCell>
-                  <TableCell>{c.values.lastAssessedOn ? formatDate(c.values.lastAssessedOn, language) : '—'}</TableCell>
                   <TableCell>
-                    <StatusChip tone={c.status === 'active' ? 'success' : 'neutral'}>{k(`controlStatus.${c.status}`)}</StatusChip>
+                    {c.values.lastAssessedOn ? formatDate(c.values.lastAssessedOn, language) : '—'}
+                  </TableCell>
+                  <TableCell>
+                    <StatusChip tone={c.status === 'active' ? 'success' : 'neutral'}>
+                      {k(`controlStatus.${c.status}`)}
+                    </StatusChip>
                   </TableCell>
                   <TableCell>
                     {c.canEdit && c.status === 'active' && (
@@ -198,17 +220,28 @@ export function ControlsTab({ risk }: { risk: Risk }) {
           <div className="grid gap-4 md:grid-cols-2">
             <div className="flex flex-col gap-2">
               <h3 className="text-sm font-semibold">{t('controls.title')}</h3>
-              {suggestions.controls.length === 0 && <p className="text-sm text-muted-foreground">{t('ai.none')}</p>}
+              {suggestions.controls.length === 0 && (
+                <p className="text-sm text-muted-foreground">{t('ai.none')}</p>
+              )}
               {suggestions.controls.map((s, index) => (
-                <div key={index} className="flex items-center justify-between gap-2 rounded border p-2 text-sm">
+                <div
+                  key={index}
+                  className="flex items-center justify-between gap-2 rounded border p-2 text-sm"
+                >
                   <span>
                     {names.text(s.nameAr, s.nameEn)}
-                    {s.typeCode && <span className="ms-1 text-muted-foreground">· {labels.lookup('risk.control-type', s.typeCode)}</span>}
+                    {s.typeCode && (
+                      <span className="ms-1 text-muted-foreground">
+                        · {labels.lookup('risk.control-type', s.typeCode)}
+                      </span>
+                    )}
                   </span>
                   <Button
                     size="sm"
                     variant="outline"
-                    onClick={() => setEditing({ values: { nameAr: s.nameAr, nameEn: s.nameEn, typeCode: s.typeCode } })}
+                    onClick={() =>
+                      setEditing({ values: { nameAr: s.nameAr, nameEn: s.nameEn, typeCode: s.typeCode } })
+                    }
                   >
                     {t('ai.add')}
                   </Button>
@@ -217,11 +250,20 @@ export function ControlsTab({ risk }: { risk: Risk }) {
             </div>
             <div className="flex flex-col gap-2">
               <h3 className="text-sm font-semibold">{t('treatment.title')}</h3>
-              {suggestions.actions.length === 0 && <p className="text-sm text-muted-foreground">{t('ai.none')}</p>}
+              {suggestions.actions.length === 0 && (
+                <p className="text-sm text-muted-foreground">{t('ai.none')}</p>
+              )}
               {suggestions.actions.map((s, index) => (
-                <div key={index} className="flex items-center justify-between gap-2 rounded border p-2 text-sm">
+                <div
+                  key={index}
+                  className="flex items-center justify-between gap-2 rounded border p-2 text-sm"
+                >
                   <span>{names.text(s.titleAr, s.titleEn)}</span>
-                  <Button size="sm" variant="outline" onClick={() => setNewAction({ titleAr: s.titleAr, titleEn: s.titleEn })}>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setNewAction({ titleAr: s.titleAr, titleEn: s.titleEn })}
+                  >
                     {t('ai.add')}
                   </Button>
                 </div>
@@ -236,9 +278,16 @@ export function ControlsTab({ risk }: { risk: Risk }) {
         </Section>
       )}
       {editing && (
-        <ControlDialog riskId={risk.id} control={editing.control} prefill={editing.values} onClose={() => setEditing(undefined)} />
+        <ControlDialog
+          riskId={risk.id}
+          control={editing.control}
+          prefill={editing.values}
+          onClose={() => setEditing(undefined)}
+        />
       )}
-      {newAction && <ActionDialog riskId={risk.id} prefill={newAction} onClose={() => setNewAction(undefined)} />}
+      {newAction && (
+        <ActionDialog riskId={risk.id} prefill={newAction} onClose={() => setNewAction(undefined)} />
+      )}
       <ConfirmDialog
         open={!!retiring}
         onOpenChange={(open) => !open && setRetiring(undefined)}
@@ -247,7 +296,9 @@ export function ControlsTab({ risk }: { risk: Risk }) {
         confirmLabel={t('controls.retire')}
         destructive
         loading={retire.isPending}
-        onConfirm={() => retiring && retire.mutate(retiring.id, { onSuccess: () => setRetiring(undefined), onError })}
+        onConfirm={() =>
+          retiring && retire.mutate(retiring.id, { onSuccess: () => setRetiring(undefined), onError })
+        }
       />
     </div>
   );
@@ -284,7 +335,8 @@ function ControlDialog({
     ...control?.values,
     ...prefill,
   });
-  const set = <K extends keyof ControlValues>(key: K, value: ControlValues[K]) => setV((p) => ({ ...p, [key]: value }));
+  const set = <K extends keyof ControlValues>(key: K, value: ControlValues[K]) =>
+    setV((p) => ({ ...p, [key]: value }));
   const lookup = (key: 'typeCode' | 'natureCode' | 'frequencyCode', type: string) => (
     <Select
       value={v[key] ?? NONE}
@@ -309,7 +361,10 @@ function ControlDialog({
               onClick={() =>
                 save.mutate(
                   { riskId, controlId: control?.id, values: v, version: control?.version ?? null },
-                  { onSuccess: onClose, onError: (e) => toast({ tone: 'error', title: errorMessage(tc, e) }) },
+                  {
+                    onSuccess: onClose,
+                    onError: (e) => toast({ tone: 'error', title: errorMessage(tc, e) }),
+                  },
                 )
               }
             >
@@ -320,19 +375,37 @@ function ControlDialog({
       >
         <div className="grid gap-3 md:grid-cols-2">
           <FormField label={t('controls.nameAr')}>
-            <Input dir="rtl" value={v.nameAr ?? ''} onChange={(e) => set('nameAr', e.target.value || null)} data-testid="risk-control-name-ar" />
+            <Input
+              dir="rtl"
+              value={v.nameAr ?? ''}
+              onChange={(e) => set('nameAr', e.target.value || null)}
+              data-testid="risk-control-name-ar"
+            />
           </FormField>
           <FormField label={t('controls.nameEn')}>
-            <Input dir="ltr" value={v.nameEn ?? ''} onChange={(e) => set('nameEn', e.target.value || null)} data-testid="risk-control-name-en" />
+            <Input
+              dir="ltr"
+              value={v.nameEn ?? ''}
+              onChange={(e) => set('nameEn', e.target.value || null)}
+              data-testid="risk-control-name-en"
+            />
           </FormField>
           <FormField label={t('controls.description')} className="md:col-span-2">
-            <Textarea value={v.description ?? ''} onChange={(e) => set('description', e.target.value || null)} />
+            <Textarea
+              value={v.description ?? ''}
+              onChange={(e) => set('description', e.target.value || null)}
+            />
           </FormField>
           <FormField label={t('controls.type')}>{lookup('typeCode', 'risk.control-type')}</FormField>
           <FormField label={t('controls.nature')}>{lookup('natureCode', 'risk.control-nature')}</FormField>
-          <FormField label={t('controls.frequency')}>{lookup('frequencyCode', 'risk.control-frequency')}</FormField>
+          <FormField label={t('controls.frequency')}>
+            {lookup('frequencyCode', 'risk.control-frequency')}
+          </FormField>
           <FormField label={t('fields.owner')}>
-            <EmployeePicker value={v.ownerEmployeeId ?? undefined} onChange={(x) => set('ownerEmployeeId', x ?? null)} />
+            <EmployeePicker
+              value={v.ownerEmployeeId ?? undefined}
+              onChange={(x) => set('ownerEmployeeId', x ?? null)}
+            />
           </FormField>
           <FormField label={t('controls.effectiveness')}>
             <Select
@@ -348,7 +421,11 @@ function ControlDialog({
             />
           </FormField>
           <FormField label={t('controls.lastAssessedOn')}>
-            <Input type="date" value={v.lastAssessedOn ?? ''} onChange={(e) => set('lastAssessedOn', e.target.value || null)} />
+            <Input
+              type="date"
+              value={v.lastAssessedOn ?? ''}
+              onChange={(e) => set('lastAssessedOn', e.target.value || null)}
+            />
           </FormField>
           <FormField label={t('controls.evidence')} className="md:col-span-2">
             <Textarea value={v.evidence ?? ''} onChange={(e) => set('evidence', e.target.value || null)} />

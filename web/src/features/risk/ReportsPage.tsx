@@ -21,7 +21,10 @@ export function RiskReportsPage() {
       </FormField>
       <Section title={t('reports.exports')}>
         {reportKinds.map((kind) => (
-          <div key={kind} className="flex flex-wrap items-center justify-between gap-2 border-b py-2 last:border-b-0">
+          <div
+            key={kind}
+            className="flex flex-wrap items-center justify-between gap-2 border-b py-2 last:border-b-0"
+          >
             <span className="flex flex-col">
               <span className="font-medium">{k(`reports.kinds.${kind}`)}</span>
               <span className="text-sm text-muted-foreground">{k(`reports.hints.${kind}`)}</span>
@@ -30,7 +33,10 @@ export function RiskReportsPage() {
               <span className="flex gap-2">
                 {(['pdf', 'xlsx'] as const).map((format) => (
                   <Button key={format} variant="outline" size="sm" asChild>
-                    <a href={reportUrl(kind, format, language, unitId)} data-testid={`risk-report-${kind}-${format}`}>
+                    <a
+                      href={reportUrl(kind, format, language, unitId)}
+                      data-testid={`risk-report-${kind}-${format}`}
+                    >
                       <Download aria-hidden />
                       {t(`reports.formats.${format}`)}
                     </a>

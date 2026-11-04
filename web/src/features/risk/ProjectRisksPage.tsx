@@ -17,7 +17,15 @@ import {
   TableRow,
 } from '@/ui';
 import { useProjectRisks } from './api';
-import { ProgressBar, RatingChip, RiskPageLayout, useBands, useNames, useNum, useRiskLabels } from './components';
+import {
+  ProgressBar,
+  RatingChip,
+  RiskPageLayout,
+  useBands,
+  useNames,
+  useNum,
+  useRiskLabels,
+} from './components';
 
 const ALL = '__all';
 
@@ -42,7 +50,10 @@ export function RiskProjectRisksPage() {
       <PageHeader title={t('projectRisks.title')} description={t('projectRisks.description')} />
       <div className="grid gap-3 md:grid-cols-3">
         <div className="relative md:col-span-2">
-          <Search className="pointer-events-none absolute start-3 top-3 size-4 text-muted-foreground" aria-hidden />
+          <Search
+            className="pointer-events-none absolute start-3 top-3 size-4 text-muted-foreground"
+            aria-hidden
+          />
           <Input
             className="ps-9"
             placeholder={t('projectRisks.search')}
@@ -91,14 +102,18 @@ export function RiskProjectRisksPage() {
                   <a href={r.link} className="font-medium text-primary hover:underline">
                     <bdi>{r.projectNumber}</bdi>
                   </a>
-                  <span className="block text-xs text-muted-foreground">{names.text(r.projectNameAr, r.projectNameEn)}</span>
+                  <span className="block text-xs text-muted-foreground">
+                    {names.text(r.projectNameAr, r.projectNameEn)}
+                  </span>
                 </TableCell>
                 <TableCell>
                   <a href={r.link} className="hover:underline">
                     {r.title ?? '—'}
                   </a>
                 </TableCell>
-                <TableCell>{r.categoryCode ? labels.lookup('portfolio.risk-category', r.categoryCode) : '—'}</TableCell>
+                <TableCell>
+                  {r.categoryCode ? labels.lookup('portfolio.risk-category', r.categoryCode) : '—'}
+                </TableCell>
                 <TableCell className="tabular-nums">
                   <bdi>
                     {num(r.probability)} × {num(r.impact)}
@@ -113,7 +128,11 @@ export function RiskProjectRisksPage() {
                 </TableCell>
                 <TableCell>{r.response ?? '—'}</TableCell>
                 <TableCell>
-                  {r.implementationPct == null ? '—' : <ProgressBar ratio={r.implementationPct} label={t('projectRisks.implementation')} />}
+                  {r.implementationPct == null ? (
+                    '—'
+                  ) : (
+                    <ProgressBar ratio={r.implementationPct} label={t('projectRisks.implementation')} />
+                  )}
                 </TableCell>
                 <TableCell>{names.person(r.owner)}</TableCell>
               </TableRow>

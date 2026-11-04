@@ -89,7 +89,11 @@ export function KrisTab({ risk }: { risk: Risk }) {
               <TableRow key={kri.id} data-testid="risk-kri-row">
                 <TableCell>
                   {kri.cardVisible ? (
-                    <Link to="/kpi/cards/$cardId" params={{ cardId: kri.kpiCardId }} className="text-primary hover:underline">
+                    <Link
+                      to="/kpi/cards/$cardId"
+                      params={{ cardId: kri.kpiCardId }}
+                      className="text-primary hover:underline"
+                    >
                       <bdi>{kri.cardCode}</bdi> · {names.text(kri.cardNameAr, kri.cardNameEn)}
                     </Link>
                   ) : (
@@ -113,17 +117,26 @@ export function KrisTab({ risk }: { risk: Risk }) {
                     <StatusChip tone={kriTone[kri.lastLevel] ?? 'neutral'}>
                       <span data-testid="risk-kri-level">{k(`kriLevel.${kri.lastLevel}`)}</span>
                     </StatusChip>
-                    {kri.lastPeriod && <span className="text-xs text-muted-foreground">{kri.lastPeriod}</span>}
-                    {kri.lastAt && <span className="text-xs text-muted-foreground">{formatDateTime(kri.lastAt, language)}</span>}
+                    {kri.lastPeriod && (
+                      <span className="text-xs text-muted-foreground">{kri.lastPeriod}</span>
+                    )}
+                    {kri.lastAt && (
+                      <span className="text-xs text-muted-foreground">
+                        {formatDateTime(kri.lastAt, language)}
+                      </span>
+                    )}
                   </span>
                 </TableCell>
                 <TableCell className="tabular-nums">
                   {kri.performance ? (
                     <span>
                       {pct(kri.performance.capped)}
-                      {kri.performance.actual != null && kri.performance.actual !== kri.performance.capped && (
-                        <span className="ms-1 text-xs text-muted-foreground">({pct(kri.performance.actual)})</span>
-                      )}
+                      {kri.performance.actual != null &&
+                        kri.performance.actual !== kri.performance.capped && (
+                          <span className="ms-1 text-xs text-muted-foreground">
+                            ({pct(kri.performance.actual)})
+                          </span>
+                        )}
                       <span className="ms-1 text-xs text-muted-foreground">{kri.performance.year}</span>
                     </span>
                   ) : (
@@ -191,7 +204,9 @@ function KriDialog({ riskId, kri, onClose }: { riskId: string; kri?: Kri; onClos
   });
   const [breach, setBreach] = useState(kri ? String(kri.breachThreshold) : '');
   const cardOptions = [
-    ...(kri ? [{ value: kri.kpiCardId, label: `${kri.cardCode} · ${names.text(kri.cardNameAr, kri.cardNameEn)}` }] : []),
+    ...(kri
+      ? [{ value: kri.kpiCardId, label: `${kri.cardCode} · ${names.text(kri.cardNameAr, kri.cardNameEn)}` }]
+      : []),
     ...(cards.data?.items ?? [])
       .filter((c) => c.id !== kri?.kpiCardId)
       .map((c) => ({ value: c.id, label: `${c.code} · ${names.text(c.nameAr, c.nameEn)}` })),
@@ -218,7 +233,10 @@ function KriDialog({ riskId, kri, onClose }: { riskId: string; kri?: Kri; onClos
                     values: { ...v, breachThreshold: Number(breach) },
                     version: kri?.version ?? null,
                   },
-                  { onSuccess: onClose, onError: (e) => toast({ tone: 'error', title: errorMessage(tc, e) }) },
+                  {
+                    onSuccess: onClose,
+                    onError: (e) => toast({ tone: 'error', title: errorMessage(tc, e) }),
+                  },
                 )
               }
             >
@@ -257,16 +275,31 @@ function KriDialog({ riskId, kri, onClose }: { riskId: string; kri?: Kri; onClos
               options={kriDirections.map((d) => ({ value: d, label: k(`kriDirection.${d}`) }))}
             />
           </FormField>
-          <FormField label={t('kris.warningThreshold')} hint={v.basis === 'performance' ? t('kris.ratioHint') : undefined}>
+          <FormField
+            label={t('kris.warningThreshold')}
+            hint={v.basis === 'performance' ? t('kris.ratioHint') : undefined}
+          >
             <Input
               type="number"
               step="any"
               value={v.warningThreshold ?? ''}
-              onChange={(e) => setV({ ...v, warningThreshold: e.target.value === '' ? null : Number(e.target.value) })}
+              onChange={(e) =>
+                setV({ ...v, warningThreshold: e.target.value === '' ? null : Number(e.target.value) })
+              }
             />
           </FormField>
-          <FormField label={t('kris.breachThreshold')} required hint={v.basis === 'performance' ? t('kris.ratioHint') : undefined}>
-            <Input type="number" step="any" value={breach} onChange={(e) => setBreach(e.target.value)} data-testid="risk-kri-breach" />
+          <FormField
+            label={t('kris.breachThreshold')}
+            required
+            hint={v.basis === 'performance' ? t('kris.ratioHint') : undefined}
+          >
+            <Input
+              type="number"
+              step="any"
+              value={breach}
+              onChange={(e) => setBreach(e.target.value)}
+              data-testid="risk-kri-breach"
+            />
           </FormField>
         </div>
       </DialogContent>

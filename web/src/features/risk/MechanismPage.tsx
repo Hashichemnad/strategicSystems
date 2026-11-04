@@ -24,7 +24,8 @@ export function RiskMechanismPage() {
   const { k, language } = useRiskT();
   const num = useNum();
   const mechanism = useMechanism();
-  const text = (ar: string | null | undefined, en: string | null | undefined) => pickText(language, ar, en) || '—';
+  const text = (ar: string | null | undefined, en: string | null | undefined) =>
+    pickText(language, ar, en) || '—';
   if (mechanism.isError) return <StatusBanner tone="danger" title={errorMessage(tc, mechanism.error)} />;
   if (!mechanism.data) return <Skeleton className="h-96 rounded-lg" />;
   const { framework, matrix, categories } = mechanism.data;
@@ -93,8 +94,16 @@ export function RiskMechanismPage() {
             prefix="mechanism"
             label={t('mechanism.matrix')}
             axis={{
-              likelihood: (v) => text(c.likelihood.find((x) => x.value === v)?.labelAr, c.likelihood.find((x) => x.value === v)?.labelEn),
-              impact: (v) => text(c.impact.find((x) => x.value === v)?.labelAr, c.impact.find((x) => x.value === v)?.labelEn),
+              likelihood: (v) =>
+                text(
+                  c.likelihood.find((x) => x.value === v)?.labelAr,
+                  c.likelihood.find((x) => x.value === v)?.labelEn,
+                ),
+              impact: (v) =>
+                text(
+                  c.impact.find((x) => x.value === v)?.labelAr,
+                  c.impact.find((x) => x.value === v)?.labelEn,
+                ),
             }}
           />
         </Section>
@@ -180,7 +189,9 @@ export function RiskMechanismPage() {
               ))}
             </TableBody>
           </Table>
-          <p className="text-xs text-muted-foreground">{k(`projectResidualRuleHint.${c.projectResidualRule ?? 'control-reduction'}`)}</p>
+          <p className="text-xs text-muted-foreground">
+            {k(`projectResidualRuleHint.${c.projectResidualRule}`)}
+          </p>
         </Section>
       </div>
       <Section title={t('mechanism.categories')} testId="risk-mechanism-categories">
@@ -201,7 +212,9 @@ export function RiskMechanismPage() {
                     <bdi>{cat.code}</bdi>
                   </TableCell>
                   <TableCell>{text(cat.nameAr, cat.nameEn)}</TableCell>
-                  <TableCell className="tabular-nums">{cat.appetite == null ? t('common.notSet') : num(cat.appetite)}</TableCell>
+                  <TableCell className="tabular-nums">
+                    {cat.appetite == null ? t('common.notSet') : num(cat.appetite)}
+                  </TableCell>
                 </TableRow>
               ))}
           </TableBody>

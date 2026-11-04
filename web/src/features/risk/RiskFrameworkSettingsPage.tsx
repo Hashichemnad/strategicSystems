@@ -59,7 +59,11 @@ export function RiskFrameworkSettingsPage() {
         title={t('settings.title')}
         description={t('settings.description', { version: framework.data.versionNo })}
       />
-      <FrameworkEditor key={framework.data.id} initial={framework.data.content} versionNo={framework.data.versionNo} />
+      <FrameworkEditor
+        key={framework.data.id}
+        initial={framework.data.content}
+        versionNo={framework.data.versionNo}
+      />
       <VersionsTable />
       <CategoriesSection />
       <SettingsSection />
@@ -139,13 +143,18 @@ function FrameworkEditor({ initial, versionNo }: { initial: FrameworkContent; ve
           </FormField>
           <FormField label={t('settings.projectResidualRule')}>
             <Select
-              value={c.projectResidualRule ?? 'control-reduction'}
+              value={c.projectResidualRule}
               onValueChange={(value) => update({ projectResidualRule: value })}
               options={projectResidualRules.map((r) => ({ value: r, label: k(`projectResidualRule.${r}`) }))}
             />
           </FormField>
         </Section>
-        <PreviewPanel content={debounced} preview={preview.data} loading={preview.isFetching} failed={preview.error} />
+        <PreviewPanel
+          content={debounced}
+          preview={preview.data}
+          loading={preview.isFetching}
+          failed={preview.error}
+        />
       </div>
 
       <Section title={t('settings.likelihood')} testId="risk-settings-likelihood">
@@ -166,16 +175,38 @@ function FrameworkEditor({ initial, versionNo }: { initial: FrameworkContent; ve
                 <TableRow key={i}>
                   <TableCell className="tabular-nums">{l.value}</TableCell>
                   <TableCell>
-                    <Input dir="rtl" aria-label={t('settings.labelAr')} value={l.labelAr ?? ''} onChange={(e) => setAt('likelihood', i, { labelAr: e.target.value || null })} />
+                    <Input
+                      dir="rtl"
+                      aria-label={t('settings.labelAr')}
+                      value={l.labelAr ?? ''}
+                      onChange={(e) => setAt('likelihood', i, { labelAr: e.target.value || null })}
+                    />
                   </TableCell>
                   <TableCell>
-                    <Input dir="ltr" aria-label={t('settings.labelEn')} value={l.labelEn ?? ''} onChange={(e) => setAt('likelihood', i, { labelEn: e.target.value || null })} />
+                    <Input
+                      dir="ltr"
+                      aria-label={t('settings.labelEn')}
+                      value={l.labelEn ?? ''}
+                      onChange={(e) => setAt('likelihood', i, { labelEn: e.target.value || null })}
+                    />
                   </TableCell>
                   <TableCell>
-                    <Textarea dir="rtl" rows={2} aria-label={t('settings.descriptionAr')} value={l.descriptionAr ?? ''} onChange={(e) => setAt('likelihood', i, { descriptionAr: e.target.value || null })} />
+                    <Textarea
+                      dir="rtl"
+                      rows={2}
+                      aria-label={t('settings.descriptionAr')}
+                      value={l.descriptionAr ?? ''}
+                      onChange={(e) => setAt('likelihood', i, { descriptionAr: e.target.value || null })}
+                    />
                   </TableCell>
                   <TableCell>
-                    <Textarea dir="ltr" rows={2} aria-label={t('settings.descriptionEn')} value={l.descriptionEn ?? ''} onChange={(e) => setAt('likelihood', i, { descriptionEn: e.target.value || null })} />
+                    <Textarea
+                      dir="ltr"
+                      rows={2}
+                      aria-label={t('settings.descriptionEn')}
+                      value={l.descriptionEn ?? ''}
+                      onChange={(e) => setAt('likelihood', i, { descriptionEn: e.target.value || null })}
+                    />
                   </TableCell>
                 </TableRow>
               ))}
@@ -188,7 +219,13 @@ function FrameworkEditor({ initial, versionNo }: { initial: FrameworkContent; ve
         title={t('settings.impactAreas')}
         testId="risk-settings-areas"
         actions={
-          <Button size="sm" variant="outline" onClick={() => update({ impactAreas: [...c.impactAreas, { code: '', labelAr: null, labelEn: null }] })}>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() =>
+              update({ impactAreas: [...c.impactAreas, { code: '', labelAr: null, labelEn: null }] })
+            }
+          >
             <Plus aria-hidden />
             {t('settings.add')}
           </Button>
@@ -198,10 +235,30 @@ function FrameworkEditor({ initial, versionNo }: { initial: FrameworkContent; ve
         <div className="grid gap-2">
           {c.impactAreas.map((a, i) => (
             <div key={i} className="grid grid-cols-[8rem_1fr_1fr_auto] items-center gap-2">
-              <Input dir="ltr" aria-label={t('settings.code')} value={a.code} onChange={(e) => setAt('impactAreas', i, { code: e.target.value })} />
-              <Input dir="rtl" aria-label={t('settings.labelAr')} value={a.labelAr ?? ''} onChange={(e) => setAt('impactAreas', i, { labelAr: e.target.value || null })} />
-              <Input dir="ltr" aria-label={t('settings.labelEn')} value={a.labelEn ?? ''} onChange={(e) => setAt('impactAreas', i, { labelEn: e.target.value || null })} />
-              <Button size="icon" variant="ghost" aria-label={t('settings.remove')} onClick={() => removeAt('impactAreas', i)}>
+              <Input
+                dir="ltr"
+                aria-label={t('settings.code')}
+                value={a.code}
+                onChange={(e) => setAt('impactAreas', i, { code: e.target.value })}
+              />
+              <Input
+                dir="rtl"
+                aria-label={t('settings.labelAr')}
+                value={a.labelAr ?? ''}
+                onChange={(e) => setAt('impactAreas', i, { labelAr: e.target.value || null })}
+              />
+              <Input
+                dir="ltr"
+                aria-label={t('settings.labelEn')}
+                value={a.labelEn ?? ''}
+                onChange={(e) => setAt('impactAreas', i, { labelEn: e.target.value || null })}
+              />
+              <Button
+                size="icon"
+                variant="ghost"
+                aria-label={t('settings.remove')}
+                onClick={() => removeAt('impactAreas', i)}
+              >
                 <Trash2 aria-hidden />
               </Button>
             </div>
@@ -228,19 +285,43 @@ function FrameworkEditor({ initial, versionNo }: { initial: FrameworkContent; ve
                   <TableCell className="tabular-nums">{l.value}</TableCell>
                   <TableCell className="min-w-44">
                     <div className="flex flex-col gap-1">
-                      <Input dir="rtl" aria-label={t('settings.labelAr')} value={l.labelAr ?? ''} onChange={(e) => setAt('impact', i, { labelAr: e.target.value || null })} />
-                      <Input dir="ltr" aria-label={t('settings.labelEn')} value={l.labelEn ?? ''} onChange={(e) => setAt('impact', i, { labelEn: e.target.value || null })} />
+                      <Input
+                        dir="rtl"
+                        aria-label={t('settings.labelAr')}
+                        value={l.labelAr ?? ''}
+                        onChange={(e) => setAt('impact', i, { labelAr: e.target.value || null })}
+                      />
+                      <Input
+                        dir="ltr"
+                        aria-label={t('settings.labelEn')}
+                        value={l.labelEn ?? ''}
+                        onChange={(e) => setAt('impact', i, { labelEn: e.target.value || null })}
+                      />
                     </div>
                   </TableCell>
                   {c.impactAreas.map((a) => {
                     const crit = l.criteria?.[a.code] ?? { ar: null, en: null };
                     const setCrit = (patch: Partial<typeof crit>) =>
-                      setAt('impact', i, { criteria: { ...(l.criteria ?? {}), [a.code]: { ...crit, ...patch } } });
+                      setAt('impact', i, {
+                        criteria: { ...(l.criteria ?? {}), [a.code]: { ...crit, ...patch } },
+                      });
                     return (
                       <TableCell key={a.code} className="min-w-48">
                         <div className="flex flex-col gap-1">
-                          <Textarea dir="rtl" rows={2} aria-label={`${a.labelAr ?? a.code} — ${t('settings.criteriaAr')}`} value={crit.ar ?? ''} onChange={(e) => setCrit({ ar: e.target.value || null })} />
-                          <Textarea dir="ltr" rows={2} aria-label={`${a.labelEn ?? a.code} — ${t('settings.criteriaEn')}`} value={crit.en ?? ''} onChange={(e) => setCrit({ en: e.target.value || null })} />
+                          <Textarea
+                            dir="rtl"
+                            rows={2}
+                            aria-label={`${a.labelAr ?? a.code} — ${t('settings.criteriaAr')}`}
+                            value={crit.ar ?? ''}
+                            onChange={(e) => setCrit({ ar: e.target.value || null })}
+                          />
+                          <Textarea
+                            dir="ltr"
+                            rows={2}
+                            aria-label={`${a.labelEn ?? a.code} — ${t('settings.criteriaEn')}`}
+                            value={crit.en ?? ''}
+                            onChange={(e) => setCrit({ en: e.target.value || null })}
+                          />
                         </div>
                       </TableCell>
                     );
@@ -263,7 +344,15 @@ function FrameworkEditor({ initial, versionNo }: { initial: FrameworkContent; ve
               update({
                 bands: [
                   ...c.bands,
-                  { code: '', labelAr: null, labelEn: null, color: '#64748b', min: 0, max: 0, residualStatus: 'continuous-review' },
+                  {
+                    code: '',
+                    labelAr: null,
+                    labelEn: null,
+                    color: '#64748b',
+                    min: 0,
+                    max: 0,
+                    residualStatus: 'continuous-review',
+                  },
                 ],
               })
             }
@@ -295,13 +384,29 @@ function FrameworkEditor({ initial, versionNo }: { initial: FrameworkContent; ve
               {c.bands.map((b, i) => (
                 <TableRow key={i} data-testid="risk-band-row">
                   <TableCell>
-                    <Input dir="ltr" className="w-28" aria-label={t('settings.code')} value={b.code} onChange={(e) => setAt('bands', i, { code: e.target.value })} />
+                    <Input
+                      dir="ltr"
+                      className="w-28"
+                      aria-label={t('settings.code')}
+                      value={b.code}
+                      onChange={(e) => setAt('bands', i, { code: e.target.value })}
+                    />
                   </TableCell>
                   <TableCell>
-                    <Input dir="rtl" aria-label={t('settings.labelAr')} value={b.labelAr ?? ''} onChange={(e) => setAt('bands', i, { labelAr: e.target.value || null })} />
+                    <Input
+                      dir="rtl"
+                      aria-label={t('settings.labelAr')}
+                      value={b.labelAr ?? ''}
+                      onChange={(e) => setAt('bands', i, { labelAr: e.target.value || null })}
+                    />
                   </TableCell>
                   <TableCell>
-                    <Input dir="ltr" aria-label={t('settings.labelEn')} value={b.labelEn ?? ''} onChange={(e) => setAt('bands', i, { labelEn: e.target.value || null })} />
+                    <Input
+                      dir="ltr"
+                      aria-label={t('settings.labelEn')}
+                      value={b.labelEn ?? ''}
+                      onChange={(e) => setAt('bands', i, { labelEn: e.target.value || null })}
+                    />
                   </TableCell>
                   <TableCell>
                     <input
@@ -313,10 +418,24 @@ function FrameworkEditor({ initial, versionNo }: { initial: FrameworkContent; ve
                     />
                   </TableCell>
                   <TableCell>
-                    <Input type="number" step="any" className="w-20" aria-label={t('settings.min')} value={b.min} onChange={(e) => setAt('bands', i, { min: n(e.target.value) })} />
+                    <Input
+                      type="number"
+                      step="any"
+                      className="w-20"
+                      aria-label={t('settings.min')}
+                      value={b.min}
+                      onChange={(e) => setAt('bands', i, { min: n(e.target.value) })}
+                    />
                   </TableCell>
                   <TableCell>
-                    <Input type="number" step="any" className="w-20" aria-label={t('settings.max')} value={b.max} onChange={(e) => setAt('bands', i, { max: n(e.target.value) })} />
+                    <Input
+                      type="number"
+                      step="any"
+                      className="w-20"
+                      aria-label={t('settings.max')}
+                      value={b.max}
+                      onChange={(e) => setAt('bands', i, { max: n(e.target.value) })}
+                    />
                   </TableCell>
                   <TableCell>
                     <Select
@@ -331,13 +450,23 @@ function FrameworkEditor({ initial, versionNo }: { initial: FrameworkContent; ve
                       aria-label={t('settings.reviewFrequency')}
                       value={String(c.reviewFrequencyMonths[b.code] ?? 3)}
                       onValueChange={(value) =>
-                        update({ reviewFrequencyMonths: { ...c.reviewFrequencyMonths, [b.code]: Number(value) } })
+                        update({
+                          reviewFrequencyMonths: { ...c.reviewFrequencyMonths, [b.code]: Number(value) },
+                        })
                       }
-                      options={reviewFrequencyChoices.map((m) => ({ value: String(m), label: t('mechanism.months', { count: m }) }))}
+                      options={reviewFrequencyChoices.map((m) => ({
+                        value: String(m),
+                        label: t('mechanism.months', { count: m }),
+                      }))}
                     />
                   </TableCell>
                   <TableCell>
-                    <Button size="icon" variant="ghost" aria-label={t('settings.remove')} onClick={() => removeAt('bands', i)}>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      aria-label={t('settings.remove')}
+                      onClick={() => removeAt('bands', i)}
+                    >
                       <Trash2 aria-hidden />
                     </Button>
                   </TableCell>
@@ -347,7 +476,9 @@ function FrameworkEditor({ initial, versionNo }: { initial: FrameworkContent; ve
           </Table>
         </div>
         {(errPrefix('bands[') || errPrefix('reviewFrequencyMonths')) && (
-          <p className="text-sm text-danger">{[errPrefix('bands['), errPrefix('reviewFrequencyMonths')].filter(Boolean).join(' ')}</p>
+          <p className="text-sm text-danger">
+            {[errPrefix('bands['), errPrefix('reviewFrequencyMonths')].filter(Boolean).join(' ')}
+          </p>
         )}
         <p className="text-xs text-muted-foreground">{t('mechanism.gapRule')}</p>
       </Section>
@@ -359,7 +490,14 @@ function FrameworkEditor({ initial, versionNo }: { initial: FrameworkContent; ve
           <Button
             size="sm"
             variant="outline"
-            onClick={() => update({ controlEffectiveness: [...c.controlEffectiveness, { code: '', labelAr: null, labelEn: null, factor: 0 }] })}
+            onClick={() =>
+              update({
+                controlEffectiveness: [
+                  ...c.controlEffectiveness,
+                  { code: '', labelAr: null, labelEn: null, factor: 0 },
+                ],
+              })
+            }
           >
             <Plus aria-hidden />
             {t('settings.add')}
@@ -370,9 +508,24 @@ function FrameworkEditor({ initial, versionNo }: { initial: FrameworkContent; ve
         <div className="grid gap-2">
           {c.controlEffectiveness.map((e, i) => (
             <div key={i} className="grid grid-cols-[8rem_1fr_1fr_6rem_auto] items-center gap-2">
-              <Input dir="ltr" aria-label={t('settings.code')} value={e.code} onChange={(ev) => setAt('controlEffectiveness', i, { code: ev.target.value })} />
-              <Input dir="rtl" aria-label={t('settings.labelAr')} value={e.labelAr ?? ''} onChange={(ev) => setAt('controlEffectiveness', i, { labelAr: ev.target.value || null })} />
-              <Input dir="ltr" aria-label={t('settings.labelEn')} value={e.labelEn ?? ''} onChange={(ev) => setAt('controlEffectiveness', i, { labelEn: ev.target.value || null })} />
+              <Input
+                dir="ltr"
+                aria-label={t('settings.code')}
+                value={e.code}
+                onChange={(ev) => setAt('controlEffectiveness', i, { code: ev.target.value })}
+              />
+              <Input
+                dir="rtl"
+                aria-label={t('settings.labelAr')}
+                value={e.labelAr ?? ''}
+                onChange={(ev) => setAt('controlEffectiveness', i, { labelAr: ev.target.value || null })}
+              />
+              <Input
+                dir="ltr"
+                aria-label={t('settings.labelEn')}
+                value={e.labelEn ?? ''}
+                onChange={(ev) => setAt('controlEffectiveness', i, { labelEn: ev.target.value || null })}
+              />
               <Input
                 type="number"
                 min={0}
@@ -382,7 +535,12 @@ function FrameworkEditor({ initial, versionNo }: { initial: FrameworkContent; ve
                 value={e.factor}
                 onChange={(ev) => setAt('controlEffectiveness', i, { factor: n(ev.target.value) })}
               />
-              <Button size="icon" variant="ghost" aria-label={t('settings.remove')} onClick={() => removeAt('controlEffectiveness', i)}>
+              <Button
+                size="icon"
+                variant="ghost"
+                aria-label={t('settings.remove')}
+                onClick={() => removeAt('controlEffectiveness', i)}
+              >
                 <Trash2 aria-hidden />
               </Button>
             </div>
@@ -395,7 +553,11 @@ function FrameworkEditor({ initial, versionNo }: { initial: FrameworkContent; ve
         <Button variant="outline" disabled={!changed} onClick={() => setC(structuredClone(initial))}>
           {t('settings.reset')}
         </Button>
-        <Button disabled={!changed || preview.data?.valid === false} onClick={() => setSaving(true)} data-testid="risk-framework-save">
+        <Button
+          disabled={!changed || preview.data?.valid === false}
+          onClick={() => setSaving(true)}
+          data-testid="risk-framework-save"
+        >
           <Save aria-hidden />
           {t('settings.saveVersion', { version: versionNo + 1 })}
         </Button>
@@ -424,7 +586,11 @@ function PreviewPanel({
     return b ? names.text(b.labelAr, b.labelEn) || code : code;
   };
   return (
-    <Section title={t('settings.preview')} testId="risk-framework-preview" actions={loading && <span className="text-xs text-muted-foreground">{tc('status.loading')}</span>}>
+    <Section
+      title={t('settings.preview')}
+      testId="risk-framework-preview"
+      actions={loading && <span className="text-xs text-muted-foreground">{tc('status.loading')}</span>}
+    >
       {failed ? (
         <StatusBanner tone="danger" title={errorMessage(tc, failed)} />
       ) : !preview ? (
@@ -435,13 +601,23 @@ function PreviewPanel({
             <StatusBanner
               tone="danger"
               title={t('settings.invalid')}
-              description={preview.errors.map((e) => translateMessageKey(tc, e.messageKey, e.params ?? undefined)).join(' · ')}
+              description={preview.errors
+                .map((e) => translateMessageKey(tc, e.messageKey, e.params ?? undefined))
+                .join(' · ')}
             />
           )}
-          {preview.matrix.length > 0 && <RiskMatrix cells={preview.matrix} bands={content.bands} prefix="preview" label={t('settings.preview')} />}
+          {preview.matrix.length > 0 && (
+            <RiskMatrix
+              cells={preview.matrix}
+              bands={content.bands}
+              prefix="preview"
+              label={t('settings.preview')}
+            />
+          )}
           <p className="text-sm font-medium" data-testid="risk-preview-summary">
             {t('settings.affected', { count: preview.affectedRisks, total: preview.openRisks })}
-            {preview.affectedProjectRisks > 0 && ` ${t('settings.affectedProject', { count: preview.affectedProjectRisks })}`}
+            {preview.affectedProjectRisks > 0 &&
+              ` ${t('settings.affectedProject', { count: preview.affectedProjectRisks })}`}
           </p>
           {preview.examples.length > 0 && (
             <ul className="flex flex-col gap-1 text-sm" data-testid="risk-preview-examples">
@@ -506,7 +682,11 @@ function SaveDialog({ content, onClose }: { content: FrameworkContent; onClose: 
         }
       >
         <FormField label={t('common.reason')} required>
-          <Textarea value={reason} onChange={(e) => setReason(e.target.value)} data-testid="risk-framework-reason" />
+          <Textarea
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+            data-testid="risk-framework-reason"
+          />
         </FormField>
         <fieldset className="flex flex-col gap-2">
           <legend className="mb-1 text-sm font-medium">{t('settings.recalculation')}</legend>
@@ -626,10 +806,14 @@ function CategoriesSection() {
                 <TableCell>{c.nameAr ?? '—'}</TableCell>
                 <TableCell>{c.nameEn ?? '—'}</TableCell>
                 <TableCell>{parent(c.parentId)}</TableCell>
-                <TableCell className="tabular-nums">{c.appetite == null ? t('common.notSet') : num(c.appetite)}</TableCell>
+                <TableCell className="tabular-nums">
+                  {c.appetite == null ? t('common.notSet') : num(c.appetite)}
+                </TableCell>
                 <TableCell className="tabular-nums">{c.sort}</TableCell>
                 <TableCell>
-                  <StatusChip tone={c.active ? 'success' : 'neutral'}>{c.active ? t('settings.active') : t('settings.inactive')}</StatusChip>
+                  <StatusChip tone={c.active ? 'success' : 'neutral'}>
+                    {c.active ? t('settings.active') : t('settings.inactive')}
+                  </StatusChip>
                 </TableCell>
                 <TableCell>
                   <Button size="sm" variant="ghost" onClick={() => setEditing({ category: c })}>
@@ -641,12 +825,26 @@ function CategoriesSection() {
           </TableBody>
         </Table>
       )}
-      {editing && <CategoryDialog category={editing.category} all={categories.data ?? []} onClose={() => setEditing(undefined)} />}
+      {editing && (
+        <CategoryDialog
+          category={editing.category}
+          all={categories.data ?? []}
+          onClose={() => setEditing(undefined)}
+        />
+      )}
     </Section>
   );
 }
 
-function CategoryDialog({ category, all, onClose }: { category?: RiskCategory; all: RiskCategory[]; onClose: () => void }) {
+function CategoryDialog({
+  category,
+  all,
+  onClose,
+}: {
+  category?: RiskCategory;
+  all: RiskCategory[];
+  onClose: () => void;
+}) {
   const { t } = useTranslation('risk');
   const { t: tc } = useTranslation();
   const names = useNames();
@@ -679,7 +877,10 @@ function CategoryDialog({ category, all, onClose }: { category?: RiskCategory; a
               onClick={() =>
                 save.mutate(
                   { id: category?.id, input: v },
-                  { onSuccess: onClose, onError: (e) => toast({ tone: 'error', title: errorMessage(tc, e) }) },
+                  {
+                    onSuccess: onClose,
+                    onError: (e) => toast({ tone: 'error', title: errorMessage(tc, e) }),
+                  },
                 )
               }
             >
@@ -689,17 +890,38 @@ function CategoryDialog({ category, all, onClose }: { category?: RiskCategory; a
         }
       >
         <div className="grid gap-3 md:grid-cols-2">
-          <FormField label={t('settings.categories.code')} required hint={category ? t('settings.categories.codeFixed') : undefined}>
-            <Input dir="ltr" value={v.code} disabled={!!category} onChange={(e) => setV({ ...v, code: e.target.value })} />
+          <FormField
+            label={t('settings.categories.code')}
+            required
+            hint={category ? t('settings.categories.codeFixed') : undefined}
+          >
+            <Input
+              dir="ltr"
+              value={v.code}
+              disabled={!!category}
+              onChange={(e) => setV({ ...v, code: e.target.value })}
+            />
           </FormField>
           <FormField label={t('settings.categories.sort')}>
-            <Input type="number" value={v.sort} onChange={(e) => setV({ ...v, sort: Number(e.target.value) || 0 })} />
+            <Input
+              type="number"
+              value={v.sort}
+              onChange={(e) => setV({ ...v, sort: Number(e.target.value) || 0 })}
+            />
           </FormField>
           <FormField label={t('settings.labelAr')}>
-            <Input dir="rtl" value={v.nameAr ?? ''} onChange={(e) => setV({ ...v, nameAr: e.target.value || null })} />
+            <Input
+              dir="rtl"
+              value={v.nameAr ?? ''}
+              onChange={(e) => setV({ ...v, nameAr: e.target.value || null })}
+            />
           </FormField>
           <FormField label={t('settings.labelEn')}>
-            <Input dir="ltr" value={v.nameEn ?? ''} onChange={(e) => setV({ ...v, nameEn: e.target.value || null })} />
+            <Input
+              dir="ltr"
+              value={v.nameEn ?? ''}
+              onChange={(e) => setV({ ...v, nameEn: e.target.value || null })}
+            />
           </FormField>
           <FormField label={t('settings.categories.parent')}>
             <Select
@@ -707,7 +929,9 @@ function CategoryDialog({ category, all, onClose }: { category?: RiskCategory; a
               onValueChange={(value) => setV({ ...v, parentId: value === NONE ? null : value })}
               options={[
                 { value: NONE, label: t('common.none') },
-                ...all.filter((c) => c.id !== category?.id).map((c) => ({ value: c.id, label: names.text(c.nameAr, c.nameEn) || c.code })),
+                ...all
+                  .filter((c) => c.id !== category?.id)
+                  .map((c) => ({ value: c.id, label: names.text(c.nameAr, c.nameEn) || c.code })),
               ]}
             />
           </FormField>
@@ -717,11 +941,17 @@ function CategoryDialog({ category, all, onClose }: { category?: RiskCategory; a
               min={0}
               step="any"
               value={v.appetite ?? ''}
-              onChange={(e) => setV({ ...v, appetite: e.target.value === '' ? null : Number(e.target.value) })}
+              onChange={(e) =>
+                setV({ ...v, appetite: e.target.value === '' ? null : Number(e.target.value) })
+              }
               data-testid="risk-category-appetite"
             />
           </FormField>
-          <Checkbox label={t('settings.active')} checked={v.active} onChange={(e) => setV({ ...v, active: e.target.checked })} />
+          <Checkbox
+            label={t('settings.active')}
+            checked={v.active}
+            onChange={(e) => setV({ ...v, active: e.target.checked })}
+          />
         </div>
       </DialogContent>
     </Dialog>
@@ -749,7 +979,11 @@ function SettingsSection() {
   if (!settings.data) return <Skeleton className="h-32 rounded-lg" />;
   return (
     <Section title={t('settings.general.title')} testId="risk-settings-general">
-      <SettingsForm key={settings.data.version} initial={{ ...defaultSettings, ...(settings.data.value ?? {}) }} version={settings.data.version} />
+      <SettingsForm
+        key={settings.data.version}
+        initial={{ ...defaultSettings, ...(settings.data.value ?? {}) }}
+        version={settings.data.version}
+      />
     </Section>
   );
 }
@@ -760,13 +994,32 @@ function SettingsForm({ initial, version }: { initial: Required<RiskSettingsValu
   const toast = useToast();
   const save = useRiskMutation(riskApi.saveSettings);
   const [v, setV] = useState(initial);
-  const number = (key: 'topCount' | 'reviewReminderWorkingDays' | 'actionReminderWorkingDays' | 'actionEscalationWorkingDays'): ReactNode => (
+  const number = (
+    key:
+      'topCount' | 'reviewReminderWorkingDays' | 'actionReminderWorkingDays' | 'actionEscalationWorkingDays',
+  ): ReactNode => (
     <FormField label={t(`settings.general.${key}`)}>
-      <Input type="number" min={0} value={v[key]} onChange={(e) => setV({ ...v, [key]: Number(e.target.value) || 0 })} />
+      <Input
+        type="number"
+        min={0}
+        value={v[key]}
+        onChange={(e) => setV({ ...v, [key]: Number(e.target.value) || 0 })}
+      />
     </FormField>
   );
-  const flag = (key: 'opportunitiesEnabled' | 'escalateCritical' | 'escalateOutsideAppetite' | 'kriWarningNotifies' | 'includeProjectRisksByDefault') => (
-    <Checkbox label={t(`settings.general.${key}`)} checked={v[key]} onChange={(e) => setV({ ...v, [key]: e.target.checked })} />
+  const flag = (
+    key:
+      | 'opportunitiesEnabled'
+      | 'escalateCritical'
+      | 'escalateOutsideAppetite'
+      | 'kriWarningNotifies'
+      | 'includeProjectRisksByDefault',
+  ) => (
+    <Checkbox
+      label={t(`settings.general.${key}`)}
+      checked={v[key]}
+      onChange={(e) => setV({ ...v, [key]: e.target.checked })}
+    />
   );
   return (
     <div className="flex flex-col gap-4">
@@ -776,7 +1029,11 @@ function SettingsForm({ initial, version }: { initial: Required<RiskSettingsValu
         {number('actionReminderWorkingDays')}
         {number('actionEscalationWorkingDays')}
         <FormField label={t('settings.general.organisationCode')}>
-          <Input dir="ltr" value={v.organisationCode} onChange={(e) => setV({ ...v, organisationCode: e.target.value })} />
+          <Input
+            dir="ltr"
+            value={v.organisationCode}
+            onChange={(e) => setV({ ...v, organisationCode: e.target.value })}
+          />
         </FormField>
       </div>
       <div className="flex flex-col gap-2">

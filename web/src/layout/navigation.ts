@@ -178,7 +178,13 @@ export const navigation: readonly NavSection[] = [
         permissions: ['portfolio.project.read'],
       },
       { to: '/kpi', labelKey: 'nav.kpi', icon: Gauge, system: 'kpi', permissions: ['kpi.card.read'] },
-      { to: '/risk', labelKey: 'nav.risk', icon: ShieldAlert, system: 'risk', permissions: ['risk.risk.read'] },
+      {
+        to: '/risk',
+        labelKey: 'nav.risk',
+        icon: ShieldAlert,
+        system: 'risk',
+        permissions: ['risk.risk.read'],
+      },
       {
         to: '/requests',
         labelKey: 'nav.requests',
