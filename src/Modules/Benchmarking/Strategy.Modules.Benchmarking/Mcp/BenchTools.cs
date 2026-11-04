@@ -115,8 +115,14 @@ internal sealed class BenchBestPracticesTool(IDispatcher dispatcher) : IAppTool
         return BenchToolResults.From(result, page => new
         {
             total = page.TotalCount,
-            practices = page.Items.Select(p => new { title = p.Values.TitleEn ?? p.Values.TitleAr, p.Values.Description, p.Values.Topic, study = p.StudyNumber,
-                comparator = p.ComparatorNameEn ?? p.ComparatorNameAr }),
+            practices = page.Items.Select(p => new
+            {
+                title = p.Values.TitleEn ?? p.Values.TitleAr,
+                p.Values.Description,
+                p.Values.Topic,
+                study = p.StudyNumber,
+                comparator = p.ComparatorNameEn ?? p.ComparatorNameAr
+            }),
         });
     }
 }

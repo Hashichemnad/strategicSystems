@@ -185,7 +185,10 @@ public sealed record CapSettings : ISettingsArea
 
         var result = compiled.Expression.Evaluate(new Dictionary<string, object?>
         {
-            ["priority"] = priority, ["type"] = type, ["sourceType"] = sourceType, ["criterion"] = criterion ?? string.Empty,
+            ["priority"] = priority,
+            ["type"] = type,
+            ["sourceType"] = sourceType,
+            ["criterion"] = criterion ?? string.Empty,
         });
         return result.Value is true;
     }

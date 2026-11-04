@@ -248,8 +248,13 @@ internal static class SuggestionIntake
         {
             await sp.GetRequiredService<CapNotifier>().SendAsync(CapNotifications.SuggestionRaised, [], new Dictionary<string, string>
             {
-                ["number"] = suggestion.ParentNumber ?? string.Empty, ["titleAr"] = suggestion.TitleAr ?? string.Empty, ["titleEn"] = suggestion.TitleEn ?? string.Empty,
-                ["date"] = string.Empty, ["actor"] = string.Empty, ["text"] = suggestion.ParentNumber ?? string.Empty, ["count"] = string.Empty,
+                ["number"] = suggestion.ParentNumber ?? string.Empty,
+                ["titleAr"] = suggestion.TitleAr ?? string.Empty,
+                ["titleEn"] = suggestion.TitleEn ?? string.Empty,
+                ["date"] = string.Empty,
+                ["actor"] = string.Empty,
+                ["text"] = suggestion.ParentNumber ?? string.Empty,
+                ["count"] = string.Empty,
             }, "/cap/suggestions", db, ct, [CapPermissions.OfficeRoleKey]).ConfigureAwait(false);
         }
 

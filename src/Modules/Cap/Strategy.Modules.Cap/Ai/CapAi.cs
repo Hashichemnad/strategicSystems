@@ -136,7 +136,6 @@ internal sealed class CapAiService(
             return call.Error;
         }
 
-        var unitsByCode = departments.Keys.ToDictionary(k => k, k => k);
         var codeToId = await UnitIdsByCodeAsync(ct).ConfigureAwait(false);
         var remarks = new List<ExtractedRemarkDto>();
         if (call.Value.Output.TryGetProperty("remarks", out var array) && array.ValueKind == JsonValueKind.Array)
@@ -151,7 +150,6 @@ internal sealed class CapAiService(
             }
         }
 
-        _ = unitsByCode;
         return new RemarkExtractionDto(remarks, call.Value.UsageId);
     }
 

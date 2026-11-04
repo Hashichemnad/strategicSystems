@@ -106,7 +106,14 @@ internal sealed class BenchWorld
 
         return new BenchWorld
         {
-            Factory = factory, DepartmentA = a, DepartmentB = b, Office = office, Manager = manager, Coordinator = coordinator, TopicOwner = topicOwner, Outsider = outsider,
+            Factory = factory,
+            DepartmentA = a,
+            DepartmentB = b,
+            Office = office,
+            Manager = manager,
+            Coordinator = coordinator,
+            TopicOwner = topicOwner,
+            Outsider = outsider,
             Clients = clients,
         };
     }
@@ -115,8 +122,15 @@ internal sealed class BenchWorld
 
     public object PlanData(int year, int quarter, string title = "Digital services benchmarking") => new
     {
-        titleAr = "مقارنة " + title, titleEn = title, responsibleUnit = DepartmentA, responsibleEmployee = Coordinator.EmployeeId, targetYear = year, targetQuarter = quarter,
-        comparisonType = "functional", purpose = "process-improvement", scope = "Customer service channels and turnaround times",
+        titleAr = "مقارنة " + title,
+        titleEn = title,
+        responsibleUnit = DepartmentA,
+        responsibleEmployee = Coordinator.EmployeeId,
+        targetYear = year,
+        targetQuarter = quarter,
+        comparisonType = "functional",
+        purpose = "process-improvement",
+        scope = "Customer service channels and turnaround times",
         topics = new object[]
         {
             new { topic = "Service channels", owner = TopicOwner.EmployeeId, description = "Channels and their uptake" },
@@ -301,8 +315,16 @@ public sealed class BenchApiTests(BenchFixture fx) : IClassFixture<BenchFixture>
         // CAP: the owner (head of A) accepts and submits the proposed actions, the PM Office validates, assignees complete with evidence.
         var cap = new CapWorld
         {
-            Factory = fx.Factory, DepartmentA = w.DepartmentA, SectionA1 = w.DepartmentA, DepartmentB = w.DepartmentB, Pmo = w.Office, SectionManager = w.Manager,
-            Assignee = w.TopicOwner, DepartmentManager = w.Manager, Outsider = w.Outsider, Clients = w.Clients,
+            Factory = fx.Factory,
+            DepartmentA = w.DepartmentA,
+            SectionA1 = w.DepartmentA,
+            DepartmentB = w.DepartmentB,
+            Pmo = w.Office,
+            SectionManager = w.Manager,
+            Assignee = w.TopicOwner,
+            DepartmentManager = w.Manager,
+            Outsider = w.Outsider,
+            Clients = w.Clients,
         };
         foreach (var remark in progress.Remarks)
         {

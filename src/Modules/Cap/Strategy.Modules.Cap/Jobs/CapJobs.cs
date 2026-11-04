@@ -35,7 +35,6 @@ internal sealed class CapMonitorRunner(CapDbContext db, IServiceScopeFactory sco
             var scoped = sp.GetRequiredService<CapDbContext>();
             var deadlines = sp.GetRequiredService<CapDeadlines>();
             var notifier = sp.GetRequiredService<CapNotifier>();
-            var service = sp.GetRequiredService<CapService>();
             var settings = await sp.GetRequiredService<CapReader>().SettingsAsync(ct).ConfigureAwait(false);
             var today = await deadlines.TodayAsync(ct).ConfigureAwait(false);
             var action = await scoped.Actions.FirstAsync(a => a.Id == id, ct).ConfigureAwait(false);
@@ -79,7 +78,6 @@ internal sealed class CapMonitorRunner(CapDbContext db, IServiceScopeFactory sco
 
             await scoped.SaveChangesAsync(ct).ConfigureAwait(false);
             await transaction.CommitAsync(ct).ConfigureAwait(false);
-            _ = service;
         }
 
         await using (var scope = CapJobScope.Create(scopes))
@@ -135,7 +133,12 @@ internal sealed class CapMonitorRunner(CapDbContext db, IServiceScopeFactory sco
 
                     await notifier.SendAsync(CapNotifications.MonthlyReminder, [group.Key], new Dictionary<string, string>
                     {
-                        ["number"] = string.Empty, ["titleAr"] = string.Empty, ["titleEn"] = string.Empty, ["date"] = month, ["actor"] = string.Empty, ["text"] = counts,
+                        ["number"] = string.Empty,
+                        ["titleAr"] = string.Empty,
+                        ["titleEn"] = string.Empty,
+                        ["date"] = month,
+                        ["actor"] = string.Empty,
+                        ["text"] = counts,
                         ["count"] = group.Count().ToString(CultureInfo.InvariantCulture),
                     }, "/cap/my-actions", scoped, ct).ConfigureAwait(false);
                     monthly++;

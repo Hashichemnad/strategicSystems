@@ -248,10 +248,10 @@ internal sealed class LibraryHandlers(BenchDbContext db, BenchReader reader, ILo
             ? await source.OrderByDescending(b => b.CreatedAt).Skip((page.Page - 1) * page.PageSize).Take(page.PageSize).Select(b => new { B = b, Score = 1d })
                 .ToListAsync(cancellationToken).ConfigureAwait(false)
             : await source.Select(b => new
-                {
-                    B = b,
-                    Score = Math.Max(EF.Functions.TrigramsSimilarity(b.TitleEn ?? string.Empty, text), EF.Functions.TrigramsSimilarity(b.TitleAr ?? string.Empty, text)),
-                })
+            {
+                B = b,
+                Score = Math.Max(EF.Functions.TrigramsSimilarity(b.TitleEn ?? string.Empty, text), EF.Functions.TrigramsSimilarity(b.TitleAr ?? string.Empty, text)),
+            })
                 .OrderByDescending(x => x.Score).ThenByDescending(x => x.B.CreatedAt).Skip((page.Page - 1) * page.PageSize).Take(page.PageSize)
                 .ToListAsync(cancellationToken).ConfigureAwait(false);
         var studyIds = ranked.Where(r => r.B.StudyId != null).Select(r => r.B.StudyId!.Value).Distinct().ToList();

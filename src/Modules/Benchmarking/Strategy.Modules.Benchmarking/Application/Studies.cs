@@ -1069,7 +1069,12 @@ internal sealed class StudyCommands(
         var year = command.Year.ToString(CultureInfo.InvariantCulture);
         await notifier.SendAsync(BenchNotifications.PlanCirculated, recipients.Select(r => (Guid?)r), new Dictionary<string, string>
         {
-            ["number"] = year, ["titleAr"] = string.Empty, ["titleEn"] = string.Empty, ["date"] = string.Empty, ["actor"] = string.Empty, ["text"] = year,
+            ["number"] = year,
+            ["titleAr"] = string.Empty,
+            ["titleEn"] = string.Empty,
+            ["date"] = string.Empty,
+            ["actor"] = string.Empty,
+            ["text"] = year,
             ["count"] = studies.Count.ToString(CultureInfo.InvariantCulture),
         }, $"/bench/plan?year={year}", db, cancellationToken).ConfigureAwait(false);
         await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);

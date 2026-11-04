@@ -31,7 +31,7 @@ internal sealed class BenchMonitorRunner(BenchDbContext db, IServiceScopeFactory
             var scoped = sp.GetRequiredService<BenchDbContext>();
             var settings = await sp.GetRequiredService<BenchReader>().SettingsAsync(ct).ConfigureAwait(false);
             var study = await scoped.Studies.FirstAsync(s => s.Id == id, ct).ConfigureAwait(false);
-            var (day, from) = await sp.GetRequiredService<BenchCalendar>().SearchNoticeAsync(study.ResponsibleUnitId, study.TargetYear, study.TargetQuarter,
+            var (_, from) = await sp.GetRequiredService<BenchCalendar>().SearchNoticeAsync(study.ResponsibleUnitId, study.TargetYear, study.TargetQuarter,
                 settings.SearchNoticeDays, settings.CountWorkingDays, ct).ConfigureAwait(false);
             if (now < from)
             {
@@ -46,7 +46,6 @@ internal sealed class BenchMonitorRunner(BenchDbContext db, IServiceScopeFactory
                 BenchNotifier.Values(study, BenchCalendar.Date(Quarters.Start(study.TargetYear, study.TargetQuarter))), BenchNotifier.Link(study, "search"), scoped, ct)
                 .ConfigureAwait(false);
             await transaction.CommitAsync(ct).ConfigureAwait(false);
-            _ = day;
             search++;
         }
 

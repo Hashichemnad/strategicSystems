@@ -124,8 +124,16 @@ internal sealed class CapWorld
 
         return new CapWorld
         {
-            Factory = factory, DepartmentA = a, SectionA1 = a1, DepartmentB = b, Pmo = pmo, SectionManager = manager, Assignee = assignee,
-            DepartmentManager = departmentManager, Outsider = outsider, Clients = clients,
+            Factory = factory,
+            DepartmentA = a,
+            SectionA1 = a1,
+            DepartmentB = b,
+            Pmo = pmo,
+            SectionManager = manager,
+            Assignee = assignee,
+            DepartmentManager = departmentManager,
+            Outsider = outsider,
+            Clients = clients,
         };
     }
 
@@ -139,7 +147,11 @@ internal sealed class CapWorld
     public async Task<CapSourceDto> SourceAsync(string type = CapSourceTypes.Workshop, string title = "Excellence workshop") =>
         await OkAsync<CapSourceDto>(C(Pmo).PostAsJsonAsync($"{Base}/sources", new
         {
-            titleAr = "ورشة " + title, titleEn = title, sourceTypeCode = type, description = "Findings of the workshop", receivedOn = new DateOnly(2026, 9, 1),
+            titleAr = "ورشة " + title,
+            titleEn = title,
+            sourceTypeCode = type,
+            description = "Findings of the workshop",
+            receivedOn = new DateOnly(2026, 9, 1),
             ownerEmployeeId = Pmo.EmployeeId,
         }));
 
@@ -147,8 +159,13 @@ internal sealed class CapWorld
         CapSourceDto source, string text, string priority = CapPriorities.Medium, Guid? department = null, Guid? section = null, Guid? owner = null) =>
         await OkAsync<CapRemarkDto>(C(Pmo).PostAsJsonAsync($"{Base}/sources/{source.Id}/remarks", new
         {
-            textAr = "ملاحظة " + text, textEn = text, typeCode = CapRemarkTypes.Improvement, priority, departmentUnitId = department ?? DepartmentA,
-            sectionUnitId = section ?? SectionA1, ownerEmployeeId = owner,
+            textAr = "ملاحظة " + text,
+            textEn = text,
+            typeCode = CapRemarkTypes.Improvement,
+            priority,
+            departmentUnitId = department ?? DepartmentA,
+            sectionUnitId = section ?? SectionA1,
+            ownerEmployeeId = owner,
         }));
 
     public async Task<CapRemarkDto> GetAsync(Guid remarkId, TestUser? user = null) => await OkAsync<CapRemarkDto>(C(user ?? Pmo).GetAsync($"{Base}/remarks/{remarkId}"));
@@ -157,9 +174,16 @@ internal sealed class CapWorld
 
     public object CapActionValues(string details, bool budgetRequired = false, bool? budgetAvailable = null, decimal? cost = null, DateOnly? end = null) => new
     {
-        detailsAr = "إجراء " + details, detailsEn = details + " — publish the revised procedure and train the section staff", typeCode = CapActionTypes.Corrective,
-        budgetRequired, budgetAvailable, estimatedCost = cost, relatedProcess = "Service delivery", assignedEmployeeId = Assignee.EmployeeId,
-        plannedStart = new DateOnly(2026, 9, 15), plannedEnd = end ?? new DateOnly(2026, 11, 30),
+        detailsAr = "إجراء " + details,
+        detailsEn = details + " — publish the revised procedure and train the section staff",
+        typeCode = CapActionTypes.Corrective,
+        budgetRequired,
+        budgetAvailable,
+        estimatedCost = cost,
+        relatedProcess = "Service delivery",
+        assignedEmployeeId = Assignee.EmployeeId,
+        plannedStart = new DateOnly(2026, 9, 15),
+        plannedEnd = end ?? new DateOnly(2026, 11, 30),
     };
 
     public async Task<CapActionDto> AddActionAsync(Guid remarkId, object values) =>
@@ -222,7 +246,10 @@ public sealed class CapApiTests(CapFixture fx) : IClassFixture<CapFixture>
 
         await w.SettingsAsync(s => s with
         {
-            RejectionNeedsPmoConfirmation = false, EffectivenessVerification = false, MonthlyReminderDay = Math.Min(today.Day, 28), EscalatePmoWorkingDays = 0,
+            RejectionNeedsPmoConfirmation = false,
+            EffectivenessVerification = false,
+            MonthlyReminderDay = Math.Min(today.Day, 28),
+            EscalatePmoWorkingDays = 0,
         });
         var source = await w.SourceAsync();
         source.Number.ShouldStartWith($"CAPS-{today.Year}-");

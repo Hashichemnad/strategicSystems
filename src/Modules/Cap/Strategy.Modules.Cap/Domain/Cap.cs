@@ -430,7 +430,12 @@ public sealed class Remark : AuditableEntity
     {
         var remark = new Remark
         {
-            Number = number, SourceId = sourceId, AssignedOn = assignedOn, ExternalKey = externalKey, LinkedType = linkedType, LinkedId = linkedId,
+            Number = number,
+            SourceId = sourceId,
+            AssignedOn = assignedOn,
+            ExternalKey = externalKey,
+            LinkedType = linkedType,
+            LinkedId = linkedId,
         };
         remark.Edit(values);
         remark.SetDue(dueOn, dueAt);
@@ -966,8 +971,18 @@ public sealed class Suggestion : AuditableEntity
         string kind, string resourceType, Guid resourceId, string parentType, Guid parentId, string? parentNumber, string? titleAr, string? titleEn, string detailsJson,
         Guid? unitId, Guid? ownerEmployeeId, string priority) => new()
         {
-            Kind = kind, ResourceType = resourceType, ResourceId = resourceId, ParentType = parentType, ParentId = parentId, ParentNumber = parentNumber, TitleAr = titleAr,
-            TitleEn = titleEn, DetailsJson = detailsJson, UnitId = unitId, OwnerEmployeeId = ownerEmployeeId, Priority = priority,
+            Kind = kind,
+            ResourceType = resourceType,
+            ResourceId = resourceId,
+            ParentType = parentType,
+            ParentId = parentId,
+            ParentNumber = parentNumber,
+            TitleAr = titleAr,
+            TitleEn = titleEn,
+            DetailsJson = detailsJson,
+            UnitId = unitId,
+            OwnerEmployeeId = ownerEmployeeId,
+            Priority = priority,
         };
 
     public void Raised(Guid remarkId)
