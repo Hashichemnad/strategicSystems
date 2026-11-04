@@ -1,6 +1,6 @@
 # 0073 — Change requests: conditional approvers, one under review per project, semi-automatic apply
 
-- **Status:** Proposed (Phase 9)
+- **Status:** Accepted by the owner (Phase 9)
 - **Context:** SPEC W7 and Q-P4 / Q-P9: types Details, Cancellation, Postponement, Ownership, Merge; approval Department Director → PM Office →
   Finance Service Section (when cost / budget is affected) → GM Office (Cancellation or Merge, or a cost change above a configurable amount);
   after approval the PM opens "Apply changes" pre-filled, confirms, the system applies and logs each change → Changes Implemented.

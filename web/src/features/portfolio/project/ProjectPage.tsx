@@ -1,5 +1,5 @@
 import { getRouteApi, Link } from '@tanstack/react-router';
-import { ArrowLeft, CircleCheck, CircleX, Pencil, Pause, Play, Ban } from 'lucide-react';
+import { ArrowLeft, CircleCheck, CircleX, Pencil, Pause, Play, Ban, Undo2 } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { errorMessage, translateMessageKey } from '@/api/problem';
@@ -42,6 +42,7 @@ import {
   type ProjectTab,
 } from '../projectApi';
 import { FieldErrors } from './FieldErrors';
+import { offersRecall } from '../projectApi';
 import { MilestonesTab } from './MilestonesTab';
 import {
   ChallengesTab,
@@ -71,7 +72,8 @@ type SubmitStage = 'charter' | 'planning' | 'closure' | 'impact';
 type Dialogs =
   | { kind: 'submit'; stage: SubmitStage }
   | { kind: 'status'; action: 'hold' | 'resume' | 'cancel' }
-  | { kind: 'charter' };
+  | { kind: 'charter' }
+  | { kind: 'recall' };
 
 /** Project / initiative record page (SPEC §1.8, docs/design/portfolio.md §27). */
 export function ProjectPage() {
@@ -152,6 +154,9 @@ export function ProjectPage() {
         break;
       case 'resume':
         setDialog({ kind: 'status', action: 'resume' });
+        break;
+      case 'recall':
+        setDialog({ kind: 'recall' });
         break;
     }
   };
@@ -311,6 +316,18 @@ export function ProjectPage() {
           <ImpactTab project={p} onSubmit={() => setDialog({ kind: 'submit', stage: 'impact' })} />
         </TabsContent>
         <TabsContent value="approvals">
+          {p.permissions.canRecall && (
+            <div className="mb-3 flex justify-end">
+              <Button
+                variant="outline"
+                onClick={() => setDialog({ kind: 'recall' })}
+                data-testid="recall-approval"
+              >
+                <Undo2 aria-hidden />
+                {t('actions.recall')}
+              </Button>
+            </div>
+          )}
           <ApprovalPanel resourceType={projectResource} resourceId={p.id} />
         </TabsContent>
         <TabsContent value="documents">
@@ -327,8 +344,14 @@ export function ProjectPage() {
       {dialog?.kind === 'submit' && (
         <SubmitDialog project={p} stage={dialog.stage} onClose={() => setDialog(undefined)} />
       )}
+      {dialog?.kind === 'recall' && <RecallDialog project={p} onClose={() => setDialog(undefined)} />}
       {dialog?.kind === 'status' && (
-        <StatusDialog project={p} action={dialog.action} onClose={() => setDialog(undefined)} />
+        <StatusDialog
+          project={p}
+          action={dialog.action}
+          onClose={() => setDialog(undefined)}
+          onRecall={() => setDialog({ kind: 'recall' })}
+        />
       )}
       {dialog?.kind === 'charter' && (
         <CharterDialog project={p} options={options.data} onClose={() => setDialog(undefined)} />
@@ -579,14 +602,63 @@ function SubmitDialog({
   );
 }
 
+/** Recall a pending approval with a reason (submitter or PM Office) — then the project can be corrected or put on hold. */
+function RecallDialog({ project, onClose }: { project: ProjectFull; onClose: () => void }) {
+  const { t } = useTranslation('portfolio');
+  const { t: tc } = useTranslation();
+  const toast = useToast();
+  const recall = useProjectMutation(project.id, projectApi.recall);
+  const [reason, setReason] = useState('');
+  return (
+    <Dialog open onOpenChange={(open) => !open && onClose()}>
+      <DialogContent
+        title={t('project.recall.title')}
+        description={t('project.recall.hint')}
+        footer={
+          <>
+            <DialogClose asChild>
+              <Button variant="outline">{tc('actions.close')}</Button>
+            </DialogClose>
+            <Button
+              disabled={reason.trim() === ''}
+              loading={recall.isPending}
+              data-testid="recall-confirm"
+              onClick={() =>
+                recall.mutate(
+                  { id: project.id, version: project.version, reason: reason.trim() },
+                  {
+                    onSuccess: () => {
+                      toast({ title: t('project.recall.done') });
+                      onClose();
+                    },
+                  },
+                )
+              }
+            >
+              {t('actions.recall')}
+            </Button>
+          </>
+        }
+      >
+        <FormField label={t('project.reason')} required>
+          <Textarea value={reason} onChange={(e) => setReason(e.target.value)} />
+        </FormField>
+        {recall.isError && <FieldErrors error={recall.error} />}
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 function StatusDialog({
   project,
   action,
   onClose,
+  onRecall,
 }: {
   project: ProjectFull;
   action: 'hold' | 'resume' | 'cancel';
   onClose: () => void;
+  onRecall: () => void;
 }) {
   const { t } = useTranslation('portfolio');
   const { t: tc } = useTranslation();
@@ -625,6 +697,12 @@ function StatusDialog({
           </FormField>
         )}
         {change.isError && <FieldErrors error={change.error} />}
+        {change.isError && offersRecall(change.error) && project.permissions.canRecall && (
+          <Button variant="outline" onClick={onRecall} data-testid="hold-recall">
+            <Undo2 aria-hidden />
+            {t('actions.recall')}
+          </Button>
+        )}
       </DialogContent>
     </Dialog>
   );

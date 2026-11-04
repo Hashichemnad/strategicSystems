@@ -362,7 +362,7 @@ internal sealed class MilestoneService(
 
         if (project.ApprovalProcess is not null && project.ApprovalResult is null)
         {
-            return Error.Rule("portfolio.project.approvalRunning", "portfolio.errors.approvalInProgress");
+            return ProjectService.ApprovalRunning(project!.ApprovalProcess!);
         }
 
         var milestones = await db.Milestones.Where(m => m.ProjectId == projectId && (m.UpdateState == UpdateStates.Draft || m.UpdateState == UpdateStates.Returned))

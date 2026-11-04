@@ -181,7 +181,7 @@ internal sealed class ChangeRequestService(
 
         if (tracked.ApprovalProcess is not null && tracked.ApprovalResult is null)
         {
-            return Error.Rule("portfolio.project.approvalRunning", "portfolio.errors.approvalInProgress");
+            return ProjectService.ApprovalRunning(tracked.ApprovalProcess!);
         }
 
         var errors = await ValidateAsync(cr.ToValues(), tracked, ct).ConfigureAwait(false);

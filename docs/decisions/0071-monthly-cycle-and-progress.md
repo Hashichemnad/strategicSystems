@@ -1,6 +1,6 @@
 # 0071 — Monthly update cycle, achievement lock and progress formulas
 
-- **Status:** Proposed (Phase 9)
+- **Status:** Accepted by the owner (Phase 9)
 - **Context:** SPEC W4: on the 1st of every month the update window opens and the PM is emailed; the PM updates milestones (actual start, Achieve
   %, actual end + evidence at 100 %, causality + corrective actions when delayed) and submits; approval (Q-P1: Department Director → PM Office);
   approved achievement is locked. Q-P6: Progress Status = Delayed when approved progress is more than 5 points (configurable) below

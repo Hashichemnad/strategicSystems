@@ -1,6 +1,6 @@
 # 0075 — Strategic objectives come from the KPI strategy hierarchy
 
-- **Status:** Proposed (Phase 9)
+- **Status:** Accepted by the owner (Phase 9)
 - **Context:** Phase 8 seeded an empty Portfolio lookup `portfolio.strategic-objective` (Q-P7) and noted that the KPI system could supply
   objectives. Phase 12 built the strategy hierarchy (vision → perspective → objective) in the KPI module. Two lists of objectives would drift.
 

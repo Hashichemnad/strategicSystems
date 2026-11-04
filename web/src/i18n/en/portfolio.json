@@ -228,7 +228,8 @@
     "confirmCompletion": "Confirm completion",
     "closure": "Fill the closure form",
     "impact": "Enter the impact",
-    "resume": "Resume"
+    "resume": "Resume",
+    "recall": "Recall"
   },
   "dialogs": {
     "submitTitle": "Submit for approval",
@@ -441,7 +442,7 @@
     "actualEndInFuture": "The actual end date cannot be in the future.",
     "actualEndRequired": "A completed milestone needs its actual end date.",
     "actualStartRequired": "Enter the actual start date with the first achievement.",
-    "approvalInProgress": "An approval is already in progress for this project.",
+    "approvalInProgress": "An approval is in progress for this project. Recall the pending approval first (with a reason), then try again.",
     "causalityRequired": "The milestone is delayed: explain the cause.",
     "changeNothing": "The change request proposes no change.",
     "correctiveActionsRequired": "The milestone is delayed: enter the corrective actions.",
@@ -474,7 +475,8 @@
     "weightsNot100": "Milestone weights must total exactly 100 % (now {{total}} %).",
     "weightsOver100": "Milestone weights would total {{total}} % (more than 100 %).",
     "windowAlreadyOpen": "A monthly update window is already open.",
-    "windowClosed": "No monthly update window is open."
+    "windowClosed": "No monthly update window is open.",
+    "nothingToRecall": "There is no pending approval to recall."
   },
   "warnings": {
     "openTasks": "This milestone still has open tasks: close or cancel them."
@@ -884,6 +886,11 @@
         "4": "4 — High",
         "5": "5 — Very high"
       }
+    },
+    "recall": {
+      "title": "Recall the pending approval",
+      "hint": "The running approval is cancelled and the record goes back to where it was before submission, so it can be corrected or the project put on hold.",
+      "done": "Approval recalled"
     }
   }
 }

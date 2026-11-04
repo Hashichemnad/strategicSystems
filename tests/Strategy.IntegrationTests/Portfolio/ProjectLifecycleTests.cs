@@ -493,6 +493,75 @@ public sealed class ProjectLifecycleTests(ProjectFixture fx) : IClassFixture<Pro
     }
 
     [Fact]
+    public async Task A_pending_approval_can_be_recalled_with_a_reason_so_the_project_can_be_put_on_hold()
+    {
+        var w = await PortfolioWorld.CreateAsync(fx.Factory);
+        var project = await ApprovedProjectAsync(w, "Recall project");
+        await DriveAsync(project.Id, w.Requester, SubStates.PlanningDraft);
+        await PortfolioWorld.OkAsync<PlanningItemDto>(w.C(w.Requester).PostAsJsonAsync($"{Base}/projects/{project.Id}/planning-items",
+            new { values = new { category = "in-scope", description = "Scope" } }));
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        var only = await MilestoneAsync(w, project.Id, new { titleEn = "All", isHeader = false, highLevel = false, plannedStart = today, plannedEnd = today.AddDays(60), weight = 1 });
+
+        // Nothing pending: nothing to recall.
+        (await w.C(w.Requester).PostAsJsonAsync($"{Base}/projects/{project.Id}/recall", new { reason = "x", version = (await Get(w, project.Id)).Version }))
+            .StatusCode.ShouldBe(HttpStatusCode.UnprocessableEntity);
+
+        // Planning in approval: hold is refused with the Recall hint; a viewer may not recall; the PM must give a reason.
+        var submitted = await PortfolioWorld.OkAsync<ProjectFullDto>(w.C(w.Requester).PostAsJsonAsync($"{Base}/projects/{project.Id}/submit-planning",
+            new { version = (await Get(w, project.Id)).Version }));
+        submitted.Permissions.CanRecall.ShouldBeTrue();
+        (await StatusAsync(w, project.Id, w.Requester)).NextActions.Select(a => a.Code).ShouldContain("recall");
+        var refused = await w.C(w.PmOffice).PostAsJsonAsync($"{Base}/projects/{project.Id}/hold", new { reason = "Budget freeze", version = submitted.Version });
+        refused.StatusCode.ShouldBe(HttpStatusCode.UnprocessableEntity);
+        var problem = await refused.Content.ReadFromJsonAsync<System.Text.Json.JsonElement>();
+        problem.GetProperty("messageKey").GetString().ShouldBe("portfolio.errors.approvalInProgress");
+        problem.GetProperty("params").GetProperty("action").GetString().ShouldBe("recall");
+        (await Get(w, project.Id, w.DepartmentViewer)).Permissions.CanRecall.ShouldBeFalse();
+        (await w.C(w.DepartmentViewer).PostAsJsonAsync($"{Base}/projects/{project.Id}/recall", new { reason = "x", version = submitted.Version }))
+            .StatusCode.ShouldBe(HttpStatusCode.Forbidden);
+        (await w.C(w.Requester).PostAsJsonAsync($"{Base}/projects/{project.Id}/recall", new { reason = " ", version = submitted.Version }))
+            .StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        var recalled = await PortfolioWorld.OkAsync<ProjectFullDto>(w.C(w.Requester).PostAsJsonAsync($"{Base}/projects/{project.Id}/recall",
+            new { reason = "Plan needs a second phase", version = submitted.Version }));
+        recalled.SubState.ShouldBe(SubStates.PlanningDraft);
+        recalled.Approval.Result.ShouldBe(ProjectApprovalResults.Recalled);
+        var panel = (await w.C(w.Director).GetFromJsonAsync<SubjectApprovalsDto>($"/api/v1/workflow/subjects/portfolio.project/{project.Id}"))!;
+        panel.Instances.ShouldNotContain(i => i.Status == ApprovalInstanceStatuses.InProgress, "the approvers' task is gone");
+
+        // Monthly update recalled by the PM Office: the window and milestones go back for correction.
+        await DriveAsync(project.Id, w.Requester, SubStates.Execution);
+        await PortfolioWorld.OkAsync<MonthlyViewDto>(w.C(w.PmOffice).PostAsync($"{Base}/projects/{project.Id}/monthly/open", null));
+        only = (await PlanAsync(w, project.Id)).Single(m => m.Id == only.Id);
+        await PortfolioWorld.OkAsync<MilestoneProgressResult>(w.C(w.Requester).PostAsJsonAsync($"{Base}/milestones/{only.Id}/progress",
+            Progress(0.3m, only.Version, today, null)));
+        await PortfolioWorld.OkAsync<MonthlyViewDto>(w.C(w.Requester).PostAsJsonAsync($"{Base}/projects/{project.Id}/monthly/submit",
+            new { version = (await Get(w, project.Id)).Version }));
+        await PortfolioWorld.OkAsync<ProjectFullDto>(w.C(w.PmOffice).PostAsJsonAsync($"{Base}/projects/{project.Id}/recall",
+            new { reason = "Hold the programme", version = (await Get(w, project.Id)).Version }));
+        var monthly = await PortfolioWorld.OkAsync<MonthlyViewDto>(w.C(w.Requester).GetAsync($"{Base}/projects/{project.Id}/monthly"));
+        monthly.Current!.Status.ShouldBe(MonthlyStatuses.Returned);
+        (await PlanAsync(w, project.Id)).Single(m => m.Id == only.Id).UpdateState.ShouldBe(UpdateStates.Returned);
+
+        // Change request recalled by the person who raised it (a co-owner: raises changes, does not edit), then the project is put on hold.
+        await fx.Factory.GrantRecordRoleAsync(PortfolioPermissions.ProjectResource, project.Id, RecordPrincipalKinds.Employee, w.DepartmentViewer.EmployeeId!.Value,
+            PortfolioPermissions.OwnerRole);
+        var ownerClient = w.C(w.DepartmentViewer);
+        var cr = await PortfolioWorld.OkAsync<ChangeRequestDto>(ownerClient.PostAsJsonAsync($"{Base}/projects/{project.Id}/change-requests",
+            new { values = new { type = "postponement", reason = "Vendor delay", proposedEnd = today.AddMonths(6) } }));
+        await PortfolioWorld.OkAsync<ChangeRequestDto>(ownerClient.PostAsJsonAsync($"{Base}/change-requests/{cr.Id}/submit", new { version = cr.Version }));
+        var asOwner = await Get(w, project.Id, w.DepartmentViewer);
+        asOwner.Permissions.CanEdit.ShouldBeFalse();
+        asOwner.Permissions.CanRecall.ShouldBeTrue("the person who raised the change request");
+        await PortfolioWorld.OkAsync<ProjectFullDto>(ownerClient.PostAsJsonAsync($"{Base}/projects/{project.Id}/recall",
+            new { reason = "Wrong dates", version = (await Get(w, project.Id)).Version }));
+        (await PortfolioWorld.OkAsync<ChangeRequestDto>(ownerClient.GetAsync($"{Base}/change-requests/{cr.Id}"))).Status.ShouldBe(ChangeStatuses.Draft);
+        var held = await PortfolioWorld.OkAsync<ProjectFullDto>(w.C(w.PmOffice).PostAsJsonAsync($"{Base}/projects/{project.Id}/hold",
+            new { reason = "Budget freeze", version = (await Get(w, project.Id)).Version }));
+        held.Status.ShouldBe(ProjectStatuses.OnHold);
+    }
+
+    [Fact]
     public async Task Monthly_window_opens_on_the_first_working_moment_of_the_month_with_reminder_and_overdue()
     {
         var w = await PortfolioWorld.CreateAsync(fx.Factory);
@@ -733,7 +802,10 @@ public sealed class ProjectLifecycleTests(ProjectFixture fx) : IClassFixture<Pro
                 break;
             }
 
-            project.Apply(action, t, DateTimeOffset.UtcNow).IsSuccess.ShouldBeTrue($"{project.SubState} × {action}");
+            if (ProjectLifecycle.Allows(project.SubState, action))
+            {
+                project.Apply(action, t, DateTimeOffset.UtcNow).IsSuccess.ShouldBeTrue($"{project.SubState} × {action}");
+            }
         }
 
         project.SubState.ShouldBe(target);

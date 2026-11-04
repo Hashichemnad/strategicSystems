@@ -61,6 +61,9 @@ internal static class ProjectEndpoints
                 .WithName(name).RequirePermission(PortfolioPermissions.ProjectRead);
         }
 
+        projects.MapPost("/{id:guid}/recall", async (Guid id, ProjectReasonInput b, ProjectService s, CancellationToken ct) =>
+                (await s.RecallAsync(id, b.Reason, b.Version, ct)).ToOk())
+            .WithName("RecallProjectApproval").RequirePermission(PortfolioPermissions.ProjectRead);
         projects.MapGet("/{id:guid}/files", async (Guid id, ProjectService s, CancellationToken ct) => (await s.ListFilesAsync(id, ct)).ToOk())
             .WithName("ListProjectFiles").RequirePermission(PortfolioPermissions.ProjectRead);
         projects.MapPost("/{id:guid}/files/{kind}", async (Guid id, string kind, IFormFile file, [Microsoft.AspNetCore.Mvc.FromForm] string? comment, ProjectService s,

@@ -485,3 +485,10 @@ public static class DefaultRiskScoring
         _ => RiskBands.Low,
     };
 }
+
+/// <summary>Results stored on the project besides the engine's statuses (approved / returned / rejected / cancelled).</summary>
+public static class ProjectApprovalResults
+{
+    /// <summary>The submitter or the PM Office withdrew the pending approval with a reason.</summary>
+    public const string Recalled = "recalled";
+}

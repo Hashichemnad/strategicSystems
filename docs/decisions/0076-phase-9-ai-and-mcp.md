@@ -1,6 +1,6 @@
 # 0076 — Phase 9 AI and MCP scope
 
-- **Status:** Proposed (Phase 9)
+- **Status:** Accepted by the owner (Phase 9)
 - **Context:** SPEC §1.15 lists the charter assistant, plan generator and update assistant; BUILD_PLAN puts "remaining AI assists" in Phase 10.
   MCP: read tools on, write tools off, no approve tool (ADR 0031).
 

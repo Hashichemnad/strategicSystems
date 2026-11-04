@@ -1,6 +1,6 @@
 # 0072 — Team formation through Teams; project access from team membership; closure events
 
-- **Status:** Proposed (Phase 9)
+- **Status:** Accepted by the owner (Phase 9)
 - **Context:** SPEC W2.5: after the LPO, the PM Office forms the project team through Teams Management (formation request → approval → memo →
   team Active → Stage = Planning). §1.9: team members' access "follows team membership automatically". ADR 0043: closure approval publishes
   `LinkedRecordClosed` so Teams opens the project-team evaluation. Modules talk only through Contracts and integration events.

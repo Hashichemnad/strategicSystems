@@ -378,7 +378,8 @@ Every project command is `(stage, sub-state, status) × action → guard → new
 | `closure-approval` | approved | — | events `ProjectClosureApproved` + `LinkedRecordClosed(closure-approved)`; Stage **Impact** (`impact` on) else **Completed** |
 | `impact-draft` | impact form · `submit-impact` | cost performance + the three satisfactions | `impact-approval` (`portfolio.impact`) |
 | `impact-approval` | approved | — | Stage / status **Completed** |
-| active (not completed) | `hold` (PM Office, reason) | refused while an approval is in progress (`approvalInProgress`) | status `on-hold` (everything read-only; monthly cycle skipped) |
+| any `*-approval`, monthly or change request under review | `recall` (submitter or PM Office, reason) | an approval is in progress | instance cancelled; back to the draft (monthly window returned, change request draft); approval result `recalled` |
+| active (not completed) | `hold` (PM Office, reason) | refused while an approval is in progress (`approvalInProgress`, `action = recall`: the UI offers *Recall*) | status `on-hold` (everything read-only; monthly cycle skipped) |
 | on-hold | `resume` (PM Office) | — | status `active` (sub-state unchanged; re-submit any cancelled approval) |
 | active / on-hold | `cancel` (PM Office, reason) or approved cancellation / merge change request | open approval cancelled | status `cancelled` (final), `LinkedRecordClosed(cancelled)` |
 | completed / cancelled | anything | — | refused `portfolio.errors.projectClosed` (409 / 422) |
@@ -538,7 +539,7 @@ plumbing).
 ## 26. API additions (`/api/v1/portfolio`)
 
 `GET /projects/{id}` (+ PM, template, sub-state, gates, progress, approval status, permissions) · `POST /projects/{id}/{take-ownership |
-assign-pm | submit-charter | lpo-uploaded | submit-planning | submit-closure | submit-impact | confirm-completion | hold | resume | cancel}` ·
+assign-pm | recall | submit-charter | lpo-uploaded | submit-planning | submit-closure | submit-impact | confirm-completion | hold | resume | cancel}` ·
 `PUT /projects/{id}/{charter | closure | impact}` · children `GET|POST /projects/{id}/{kpis | risks | stakeholders | members | planning-items |
 challenges | lessons | meetings | contracts}`, `PUT …/{itemId}`, `POST …/{itemId}/deactivate` · milestones `GET|POST /projects/{id}/milestones`,
 `PUT /milestones/{mid}`, `POST /milestones/{mid}/cancel`, `POST /milestones/{mid}/progress`, `POST /milestones/{mid}/evidence` ·

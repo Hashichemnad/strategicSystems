@@ -278,6 +278,14 @@ internal sealed class ProjectCurrentStatus(
                     a == ApprovalActions.Approve ? "primary" : a == ApprovalActions.Reject ? "danger" : "secondary", taskId)).ToList()
                 : [];
             var definition = ProjectApprovalProcesses.Find(process);
+            var canRecall = canManage || canEdit || (process == ProjectApprovalProcesses.ChangeRequest && user.EmployeeIdOf() is { } me
+                && await db.ChangeRequests.AnyAsync(c => c.ProjectId == p.Id && c.Status == ChangeStatuses.UnderReview && c.RequestedByEmployeeId == me, cancellationToken)
+                    .ConfigureAwait(false));
+            if (canRecall)
+            {
+                actions.Add(new CurrentStatusAction("recall", "portfolio.actions.recall", "secondary"));
+            }
+
             return Status("waitingApproval", "info", "portfolio.currentStatus.approvers", view?.Approvers ?? [], actions, new Dictionary<string, BilingualText>
             {
                 ["step"] = new(view?.Instance.CurrentStepNameAr ?? p.ApprovalStepNameAr, view?.Instance.CurrentStepNameEn ?? p.ApprovalStepNameEn),

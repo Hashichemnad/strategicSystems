@@ -231,6 +231,10 @@ export const projectApi = {
         headers: idem(),
       }),
     ),
+  recall: async ({ id, version, reason }: { id: string; version: number; reason: string }) =>
+    unwrap(
+      await api.POST('/api/v1/portfolio/projects/{id}/recall', { ...path(id), body: { reason, version } }),
+    ),
   status: async ({
     id,
     version,
@@ -485,4 +489,10 @@ export function milestoneTree<T extends Pick<Milestone, 'id' | 'parentId' | 'cod
       .sort(byOrder)
       .map((c) => ({ row: c, depth: 1 })),
   ]);
+}
+
+/** The server refuses hold while an approval runs and says Recall is the way out (params.action = recall). */
+export function offersRecall(error: unknown): boolean {
+  const params = (error as { problem?: { params?: Record<string, unknown> | null } } | null)?.problem?.params;
+  return params?.action === 'recall';
 }

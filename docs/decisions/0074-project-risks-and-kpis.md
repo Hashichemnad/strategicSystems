@@ -1,6 +1,6 @@
 # 0074 — Project risks behind a scoring interface; project KPIs and the KPI catalogue
 
-- **Status:** Proposed (Phase 9)
+- **Status:** Accepted by the owner (Phase 9)
 - **Context:** SPEC §1.4 D project risks (probability 1–5, impact 1–5, risk factor, inherent score, existing control evaluation 1–10, residual
   status, response, mitigation, implementation %). Q-P6: project risk scoring uses the shared Risk framework (§3.3) — built in Phase 13.
   Project KPIs are New or Existing (→ KPI card); goal status uses the KPI calculator with the RAG bands.

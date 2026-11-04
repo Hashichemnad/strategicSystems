@@ -16,7 +16,8 @@ namespace Strategy.Modules.Portfolio.Application;
 
 public sealed record ProjectPermissionsDto(
     bool CanEdit, bool CanContribute, bool CanChange, bool CanManage, bool CanLpo, bool CanTakeOwnership, bool CanEditCharter, bool CanEditContent,
-    bool CanPlanMilestones);
+    bool CanPlanMilestones,
+    bool CanRecall);
 
 public sealed record ProjectApprovalDto(string? Process, string? StepCode, string? StepNameAr, string? StepNameEn, string? Result);
 
@@ -547,12 +548,129 @@ internal sealed class ProjectService(
         var running = project.ApprovalProcess is { } process && project.ApprovalResult is null ? process : null;
         if (action == ProjectStatusActions.Hold && running is not null)
         {
-            return Error.Rule("portfolio.project.approvalRunning", "portfolio.errors.approvalInProgress");
+            // The UI offers "Recall" from this error: recall the pending approval first, then hold.
+            return ApprovalRunning(running);
         }
 
         db.Entry(project).Property(x => x.Version).OriginalValue = version;
         await using var transaction = await db.Database.BeginTransactionAsync(ct).ConfigureAwait(false);
         return await ApplyStatusAsync(project, action, reason, running, transaction, ct).ConfigureAwait(false);
+    }
+
+    /// <summary>Refusal while an approval runs; <c>recall</c> tells the client to offer the Recall action.</summary>
+    public static Error ApprovalRunning(string process) =>
+        Error.Rule("portfolio.project.approvalRunning", "portfolio.errors.approvalInProgress",
+            new Dictionary<string, object?> { ["process"] = process, ["action"] = "recall" });
+
+    /// <summary>
+    /// Can <paramref name="project"/>'s pending approval be recalled by the caller? The PM Office always; the PM (submitter of stage and monthly
+    /// approvals); for a change request the PM or the person who raised it.
+    /// </summary>
+    public async Task<bool> CanRecallAsync(Project project, CancellationToken ct)
+    {
+        if (project.ApprovalProcess is not { } process || project.ApprovalResult is not null)
+        {
+            return false;
+        }
+
+        var user = context.User;
+        if (await loader.CanAsync(user, PortfolioPermissions.ProjectManage, project, ct).ConfigureAwait(false)
+            || await loader.CanAsync(user, PortfolioPermissions.ProjectEdit, project, ct).ConfigureAwait(false))
+        {
+            return true;
+        }
+
+        return process == ProjectApprovalProcesses.ChangeRequest && user.EmployeeIdOf() is { } me
+            && await db.ChangeRequests.AnyAsync(c => c.ProjectId == project.Id && c.Status == ChangeStatuses.UnderReview && c.RequestedByEmployeeId == me, ct)
+                .ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Recall a pending approval with a reason (charter, planning, monthly update, closure, impact, change request): the instance is cancelled and
+    /// the record goes back to where it was before submission, so it can be corrected or the project put on hold.
+    /// </summary>
+    public async Task<Result<ProjectFullDto>> RecallAsync(Guid id, string? reason, uint version, CancellationToken ct)
+    {
+        var project = await loader.FindAsync(id, context.User, ct, tracked: true).ConfigureAwait(false);
+        if (project is null)
+        {
+            return Error.NotFound();
+        }
+
+        if (project.ApprovalProcess is not { } process || project.ApprovalResult is not null)
+        {
+            return Error.Rule("portfolio.project.nothingToRecall", "portfolio.errors.nothingToRecall");
+        }
+
+        if (!await CanRecallAsync(project, ct).ConfigureAwait(false))
+        {
+            return Error.Forbidden();
+        }
+
+        if (string.IsNullOrWhiteSpace(reason))
+        {
+            return Error.Validation([new FieldError("reason", "validation.notEmpty", "validation.notEmpty")]);
+        }
+
+        if (reason.Length > RequestRules.TextMaxLength)
+        {
+            return Error.Validation([new FieldError("reason", "validation.maximumLength", "validation.maximumLength")]);
+        }
+
+        var template = await loader.EnsureTemplateAsync(project, ct).ConfigureAwait(false);
+        db.Entry(project).Property(x => x.Version).OriginalValue = version;
+        switch (process)
+        {
+            case ProjectApprovalProcesses.MonthlyUpdate:
+                {
+                    var window = await db.MonthlyUpdates.Where(m => m.ProjectId == project.Id && m.Status == MonthlyStatuses.Submitted).FirstOrDefaultAsync(ct)
+                        .ConfigureAwait(false);
+                    window?.Return();
+                    foreach (var m in await db.Milestones.Where(m => m.ProjectId == project.Id && m.UpdateState == UpdateStates.PendingApproval).ToListAsync(ct)
+                                 .ConfigureAwait(false))
+                    {
+                        m.ReturnUpdate();
+                    }
+
+                    break;
+                }
+
+            case ProjectApprovalProcesses.ChangeRequest:
+                {
+                    var cr = await db.ChangeRequests.FirstOrDefaultAsync(c => c.ProjectId == project.Id && c.Status == ChangeStatuses.UnderReview, ct).ConfigureAwait(false);
+                    cr?.Move(ChangeActions.Return, clock.UtcNow);
+                    break;
+                }
+
+            default:
+                {
+                    var applied = project.Apply(ProjectActions.ApprovalReturned, template, clock.UtcNow);
+                    if (applied.IsFailure)
+                    {
+                        return applied.Error;
+                    }
+
+                    break;
+                }
+        }
+
+        project.DecideApproval(process, ProjectApprovalResults.Recalled);
+        await using var transaction = await db.Database.BeginTransactionAsync(ct).ConfigureAwait(false);
+        if (await SaveAsync(ct).ConfigureAwait(false) is { } conflict)
+        {
+            return conflict;
+        }
+
+        var cancelled = await engine.CancelAsync(process, project.Id, reason.Trim(), db, ct).ConfigureAwait(false);
+        if (cancelled.IsFailure)
+        {
+            return cancelled.Error;
+        }
+
+        await db.SaveChangesAsync(ct).ConfigureAwait(false);
+        await transaction.CommitAsync(ct).ConfigureAwait(false);
+        await db.Entry(project).ReloadAsync(ct).ConfigureAwait(false);
+        return await ToDtoAsync(project, ct).ConfigureAwait(false);
     }
 
     /// <summary>Shared by hold / cancel and the change-request apply (cancellation, merge). Commits the given transaction.</summary>
@@ -728,7 +846,8 @@ internal sealed class ProjectService(
                 && (canManage || await loader.InSectionAsync(user, p, ct).ConfigureAwait(false)),
             canEdit && ProjectLifecycle.CanEditCharter(p.Status, p.SubState),
             canEdit && ProjectLifecycle.CanEditContent(p.Status, p.SubState),
-            canEdit && ProjectLifecycle.CanPlanMilestones(p.Status, p.SubState));
+            canEdit && ProjectLifecycle.CanPlanMilestones(p.Status, p.SubState),
+            await CanRecallAsync(p, ct).ConfigureAwait(false));
         var themes = JsonSerializer.Deserialize<List<string>>(p.OperationalThemes) ?? [];
         return new ProjectFullDto(
             p.Id, p.Number, p.Classification, p.NameAr, p.NameEn, p.Description, p.ScopeOfWork, p.Stage, p.SubState, p.Status, template, template.Path(),

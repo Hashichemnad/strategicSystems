@@ -1,6 +1,6 @@
 # 0070 — Project lifecycle: stage templates, gates, one approval at a time, high-level vs detailed plan
 
-- **Status:** Proposed (Phase 9)
+- **Status:** Accepted by the owner (Phase 9)
 - **Context:** SPEC §1.3 / §1.5 W2–W6 and Appendix A Q-P2 / Q-P3: a project runs Initiation › Planning › Execution › Closure › Impact ›
   Completed; an initiative skips charter approval, LPO, team formation, closure approval and Impact ("stage templates per classification are
   configurable"); Impact can be switched off. Take Ownership is open to "any employee from the same section". The charter needs a "high-level
@@ -30,6 +30,12 @@
   detailed plan only.
 - Charter "team members ≥ 3" counts the **proposed team members** listed on the charter (employee, role, responsibilities); the formal
   project team is formed later through Teams (ADR 0072).
+
+- **Recall** (owner addition): the submitter (the PM for stage and monthly approvals; the PM or the person who raised a change request) and
+  the PM Office may **recall a pending approval with a reason** (`POST /projects/{id}/recall`): the engine instance is cancelled, the stage
+  returns to its draft (monthly window → returned, change request → draft) and the project shows approval result `recalled`. **Hold is
+  refused while an approval runs**; the refusal carries `action = recall` so the UI offers *Recall* there, on the Approvals tab and on the
+  current-status banner.
 
 ## Consequences
 Running projects keep their path; the PM Office changes defaults for new projects only. The gate rules live in one place (`ProjectGates`),

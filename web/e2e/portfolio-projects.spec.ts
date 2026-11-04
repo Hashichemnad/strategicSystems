@@ -441,6 +441,31 @@ test.describe('portfolio — project lifecycle', () => {
       .getByRole('button', { name: k(language, 'actions.submit') })
       .click();
     await expect(page.getByTestId('project-submit-dialog')).toBeHidden();
+
+    // 6b. The PM recalls the pending planning approval with a reason (Approvals tab), then submits again.
+    await openTab(page, language, id, 'approvals');
+    await page.getByTestId('recall-approval').click();
+    await page
+      .getByRole('dialog')
+      .getByRole('textbox')
+      .fill(language === 'ar' ? 'إضافة مرحلة اختبار' : 'Add a test phase');
+    await shot('approval-recall');
+    await page.getByTestId('recall-confirm').click();
+    await waitFor(
+      ahmed,
+      id,
+      (p) => p.subState === 'planning-draft' && p.approval.result === 'recalled',
+      'planning recalled',
+    );
+    await expect(page.getByTestId('recall-approval')).toBeHidden();
+    const recalled = await project(ahmed, id);
+    expect(
+      (
+        await apiPost(ahmed, `/api/v1/portfolio/projects/${id}/submit-planning`, {
+          version: recalled.version,
+        })
+      ).ok(),
+    ).toBeTruthy();
     await approve(adminApi, 'portfolio.project', id, 2);
     await waitFor(ahmed, id, (p) => p.subState === 'execution', 'planning approved → Execution');
 

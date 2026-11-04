@@ -1,5 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { fromPercent, isDelayed, milestoneTree, toPercent, visibleTabs, weightTotals } from './projectApi';
+import {
+  fromPercent,
+  isDelayed,
+  milestoneTree,
+  offersRecall,
+  toPercent,
+  visibleTabs,
+  weightTotals,
+} from './projectApi';
 import { periodLabel } from './project/StageTabs';
 
 describe('percent conversion (API ratios, 1.0 = 100 %)', () => {
@@ -100,5 +108,16 @@ describe('milestone helpers', () => {
   it('labels a second window of the same month with its sequence', () => {
     expect(periodLabel({ period: '2027-03', sequence: 1 })).toBe('2027-03');
     expect(periodLabel({ period: '2027-03', sequence: 2 })).toBe('2027-03 (2)');
+  });
+});
+
+describe('offersRecall', () => {
+  it('is true only for the hold refusal that names recall', () => {
+    expect(offersRecall({ problem: { params: { action: 'recall', process: 'portfolio.planning' } } })).toBe(
+      true,
+    );
+    expect(offersRecall({ problem: { params: { status: 'active' } } })).toBe(false);
+    expect(offersRecall(new Error('network'))).toBe(false);
+    expect(offersRecall(null)).toBe(false);
   });
 });
