@@ -343,10 +343,10 @@ Security tests are mandatory: a vendor user cannot reach any internal endpoint, 
 Finish with the phase summary.
 ```
 
-**Acceptance checks**
-- [ ] PM invites a vendor; vendor logs in with MFA at `/wasel`, sees only assigned project data, proposes a plan, submits a monthly update.
-- [ ] PM edits one value before accepting; vendor sees the change; approvers see which values came from the vendor.
-- [ ] Penetration-style tests (manual checklist + automated) find no internal data exposure.
+**Acceptance checks** (verified by Claude Code in the build session; owner acceptance pending — see `docs/phase-summaries/phase-11.md`)
+- [x] PM invites a vendor; vendor logs in with MFA at `/wasel`, sees only assigned project data, proposes a plan, submits a monthly update.
+- [x] PM edits one value before accepting; vendor sees the change; approvers see which values came from the vendor.
+- [x] Penetration-style tests (manual checklist + automated) find no internal data exposure.
 
 ---
 
@@ -520,7 +520,7 @@ Implement, then run the full hardening review and fix findings, run performance 
 | 8 | Portfolio A — Requests | ☑ built — awaiting owner acceptance | |
 | 9 | Portfolio B — Lifecycle & change | ☑ built — awaiting owner acceptance | |
 | 10 | Portfolio C — Agile, standards, Gantt | ☑ built — awaiting owner acceptance | |
-| 11 | Wasel vendor portal | ☐ | |
+| 11 | Wasel vendor portal (+ Portfolio completion) | ☑ built — awaiting owner acceptance | |
 | 12 | Performance Management | ☑ built — awaiting owner acceptance | |
 | 13 | Risk Management | ☑ built — awaiting owner acceptance | |
 | 14 | Requests, Document Registry, IP | ☑ built — awaiting owner acceptance | |

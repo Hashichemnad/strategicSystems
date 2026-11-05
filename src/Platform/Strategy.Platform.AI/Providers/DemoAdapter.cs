@@ -498,6 +498,18 @@ internal sealed partial class DemoChatClient(string model) : IChatClient
             });
         }
 
+        if (system.Contains("Task: vendor-review", StringComparison.Ordinal))
+        {
+            return JsonSerializer.Serialize(new
+            {
+                summary = arabic
+                    ? "ملخص تجريبي: قدّم المورد تحديث المراحل المسندة إليه؛ راجع المؤشرات المعلّمة قبل القبول."
+                    : "Demo summary: the vendor submitted the update of its assigned milestones; check the flagged items before accepting.",
+                returnCommentAr = "يرجى استكمال الدليل للمراحل المكتملة وتوضيح أسباب التأخير والإجراءات التصحيحية ثم إعادة التقديم.",
+                returnCommentEn = "Please add the evidence for the completed milestones, explain the causes of any delay with the corrective actions, and resubmit.",
+            });
+        }
+
         if (system.Contains("Task: change-impact", StringComparison.Ordinal))
         {
             return JsonSerializer.Serialize(new

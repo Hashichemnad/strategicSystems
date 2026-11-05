@@ -383,9 +383,11 @@ internal sealed class SignInService(
     // ---- Password reset and invitation ----
 
     /// <summary>Always succeeds from the caller's point of view (no account enumeration); sends the email when the account exists.</summary>
-    public async Task<Result> RequestPasswordResetAsync(string login, Uri? requestOrigin, CancellationToken cancellationToken)
+    public async Task<Result> RequestPasswordResetAsync(
+        string login, Uri? requestOrigin, CancellationToken cancellationToken, string principalType = StrategyClaims.InternalPrincipal, string path = "reset-password",
+        NotificationTemplateDefinition? template = null)
     {
-        var user = await FindUserAsync(login).ConfigureAwait(false);
+        var user = await FindUserAsync(login, principalType).ConfigureAwait(false);
         if (user is null || !user.Active || user.Email is null)
         {
             await events.WriteAsync(AuthEventTypes.PasswordResetRequested, false, user?.Id, login, detail: "noAccount", cancellationToken: cancellationToken)
@@ -393,23 +395,30 @@ internal sealed class SignInService(
             return Error.Rule("identity.email.failed", "identity.errors.smtpFailed");
         }
 
-        var link = await ResetLinkAsync(user, requestOrigin).ConfigureAwait(false);
+        var link = await ResetLinkAsync(user, requestOrigin, path).ConfigureAwait(false);
         var sent = link is null
             ? Error.Rule("identity.email.publicUrlMissing", "identity.errors.publicUrlMissing")
-            : await TrySendAsync(IdentityEmails.PasswordReset, user, Values(user), link, cancellationToken).ConfigureAwait(false);
+            : await TrySendAsync(template ?? IdentityEmails.PasswordReset, user, Values(user), link, cancellationToken).ConfigureAwait(false);
         await events.WriteAsync(AuthEventTypes.PasswordResetRequested, sent.IsSuccess, user.Id, user.UserName,
             detail: sent.IsSuccess ? null : sent.Error!.MessageKey, cancellationToken: cancellationToken).ConfigureAwait(false);
         return sent;
     }
 
-    public async Task<Result> SendInvitationAsync(StrategyUser user, Uri? requestOrigin, CancellationToken cancellationToken)
+    public async Task<Result> SendInvitationAsync(
+        StrategyUser user, Uri? requestOrigin, CancellationToken cancellationToken, string path = "reset-password", NotificationTemplateDefinition? template = null,
+        IReadOnlyDictionary<string, string>? extraValues = null)
     {
         var token = await users.GenerateUserTokenAsync(user, InvitationTokenProvider, InvitationPurpose).ConfigureAwait(false);
-        var link = PublicLink(requestOrigin, "reset-password", user, token, invitation: true);
+        var link = PublicLink(requestOrigin, path, user, token, invitation: true);
+        var values = Values(user, ("userName", user.UserName!));
+        foreach (var (key, value) in extraValues ?? new Dictionary<string, string>())
+        {
+            values[key] = value;
+        }
+
         return link is null
             ? Error.Rule("identity.email.publicUrlMissing", "identity.errors.publicUrlMissing")
-            : await TrySendAsync(IdentityEmails.Invitation, user, Values(user, ("userName", user.UserName!)), link, cancellationToken)
-                .ConfigureAwait(false);
+            : await TrySendAsync(template ?? IdentityEmails.Invitation, user, values, link, cancellationToken).ConfigureAwait(false);
     }
 
     public async Task<Result> ResetPasswordAsync(Guid userId, string token, string newPassword, bool invitation, CancellationToken cancellationToken)
@@ -481,7 +490,11 @@ internal sealed class SignInService(
         await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    public async Task<StrategyUser?> FindUserAsync(string login)
+    /// <summary>
+    /// The account of <paramref name="principalType"/> signing in with a user name or e-mail. Internal and vendor (Wasel, ADR 0110) accounts never
+    /// sign in through each other's endpoints: an account of the other type is "not found".
+    /// </summary>
+    public async Task<StrategyUser?> FindUserAsync(string login, string principalType = StrategyClaims.InternalPrincipal)
     {
         var trimmed = login.Trim();
         if (trimmed.Length == 0)
@@ -489,9 +502,14 @@ internal sealed class SignInService(
             return null;
         }
 
-        return await users.FindByNameAsync(trimmed).ConfigureAwait(false)
-            ?? await users.Users.Where(u => u.NormalizedEmail == users.NormalizeEmail(trimmed)).OrderBy(u => u.CreatedAt)
-                .FirstOrDefaultAsync().ConfigureAwait(false);
+        var byName = await users.FindByNameAsync(trimmed).ConfigureAwait(false);
+        if (byName is not null && byName.PrincipalType == principalType)
+        {
+            return byName;
+        }
+
+        return await users.Users.Where(u => u.NormalizedEmail == users.NormalizeEmail(trimmed) && u.PrincipalType == principalType).OrderBy(u => u.CreatedAt)
+            .FirstOrDefaultAsync().ConfigureAwait(false);
     }
 
     private async Task<StrategyUser?> EnrolmentUserAsync()
@@ -500,7 +518,7 @@ internal sealed class SignInService(
         return enrolment ? user : null;
     }
 
-    private List<string> EnrolmentMethods()
+    public List<string> EnrolmentMethods()
     {
         var methods = new List<string>();
         if (settings.Security.MfaAllowTotp)
@@ -516,16 +534,16 @@ internal sealed class SignInService(
         return methods;
     }
 
-    private async Task MarkSignedInAsync(StrategyUser user)
+    public async Task MarkSignedInAsync(StrategyUser user)
     {
         user.LastSignInAt = DateTimeOffset.UtcNow;
         await users.UpdateAsync(user).ConfigureAwait(false);
     }
 
-    private async Task<string?> ResetLinkAsync(StrategyUser user, Uri? requestOrigin)
+    private async Task<string?> ResetLinkAsync(StrategyUser user, Uri? requestOrigin, string path)
     {
         var token = await users.GeneratePasswordResetTokenAsync(user).ConfigureAwait(false);
-        return PublicLink(requestOrigin, "reset-password", user, token, invitation: false);
+        return PublicLink(requestOrigin, path, user, token, invitation: false);
     }
 
     /// <summary>

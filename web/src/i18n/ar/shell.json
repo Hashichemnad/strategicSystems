@@ -37,7 +37,10 @@
     "risk": "إدارة المخاطر",
     "requests": "الطلبات",
     "documents": "مكتبة الوثائق",
-    "ip": "الملكية الفكرية"
+    "ip": "الملكية الفكرية",
+    "portfolioVendors": "الموردون (واصل)",
+    "portfolioCapacity": "السعة",
+    "portfolioReviews": "مراجعات المحفظة"
   },
   "language": {
     "label": "اللغة",

@@ -63,6 +63,12 @@ public sealed record PortfolioSettings : ISettingsArea
 
     public GateChecklists GateChecklists { get; init; } = GateChecklists.Default;
 
+    /// <summary>Wasel vendor portal (SPEC §1.18, docs/design/portfolio.md §49).</summary>
+    public WaselSettings Wasel { get; init; } = new();
+
+    /// <summary>Capacity view: total allocation above this ratio is over-allocation (ADR 0116).</summary>
+    public decimal CapacityThreshold { get; init; } = CapacityCalculator.DefaultThreshold;
+
     public string SuggestedMethodology(string? programTypeCode) =>
         programTypeCode is { } code && MethodologySuggestions.TryGetValue(code, out var m) && Methodologies.All.Contains(m) ? m : Methodologies.Waterfall;
 
@@ -242,6 +248,23 @@ public sealed record PortfolioSettings : ISettingsArea
             || bands.Select(b => b.Minimum).Distinct().Count() != bands.Count)
         {
             errors.Add(new FieldError("priorityBands", "validation.duplicate", "validation.duplicate"));
+        }
+
+        var wasel = value.Wasel ?? new WaselSettings();
+        if (!UpdateModes.All.Contains(wasel.DefaultUpdateMode ?? string.Empty))
+        {
+            errors.Add(new FieldError("wasel.defaultUpdateMode", "validation.unknownCode", "validation.unknownCode"));
+        }
+
+        if (!ExpiryRules.All.Contains(wasel.ExpiryRule ?? string.Empty))
+        {
+            errors.Add(new FieldError("wasel.expiryRule", "validation.unknownCode", "validation.unknownCode"));
+        }
+
+        Range("wasel.dormantDays", wasel.DormantDays, 0, 3650);
+        if (value.CapacityThreshold is <= 0 or > 5)
+        {
+            errors.Add(new FieldError("capacityThreshold", "validation.inclusiveBetween", "validation.inclusiveBetween", new Dictionary<string, object?> { ["from"] = 0, ["to"] = 5 }));
         }
 
         return errors;
@@ -426,10 +449,110 @@ public static class PortfolioNotifications
         "portfolio.sprintReviewed", "اعتماد مراجعة السبرنت", "Sprint review decided", "مراجعة السبرنت — المشروع {{number}}", "Sprint review — project {{number}}",
         "صدر القرار على مراجعة السبرنت {{text}} للمشروع «{{projectAr}}»: {{stageAr}}.", "The review of sprint {{text}} of “{{projectEn}}” was decided: {{stageEn}}.");
 
+    // ---- Wasel (SPEC §1.18, docs/design/portfolio.md §56) ----
+    public static readonly NotificationTemplateDefinition WaselAssigned = P(
+        "portfolio.waselAssigned", "تكليف مورد بمشروع (واصل)", "Vendor assigned to a project (Wasel)", "مشروع جديد في واصل: {{number}}", "New project in Wasel: {{number}}",
+        "أضافك {{actor}} إلى المشروع «{{projectAr}}» ({{number}}) في بوابة واصل بدور: {{text}}.",
+        "{{actor}} added you to the project “{{projectEn}}” ({{number}}) in the Wasel portal as: {{text}}.");
+
+    public static readonly NotificationTemplateDefinition WaselMonthlyOpened = P(
+        "portfolio.waselMonthlyOpened", "فتح التحديث الشهري للمورد", "Monthly update open for the vendor", "حدّث مراحل المشروع {{number}}", "Update the milestones of project {{number}}",
+        "فُتحت نافذة التحديث الشهري ({{text}}) للمشروع «{{projectAr}}». حدّث المراحل المسندة إليكم وقدّمها لمدير المشروع قبل {{due}}.",
+        "The monthly update window ({{text}}) of “{{projectEn}}” is open. Update your assigned milestones and submit them to the project manager by {{due}}.");
+
+    public static readonly NotificationTemplateDefinition WaselSubmissionReceived = P(
+        "portfolio.waselSubmissionReceived", "تحديث مقدّم من المورد", "Vendor update received", "تحديث المورد للمشروع {{number}}", "Vendor update for project {{number}}",
+        "قدّم المورد {{actor}} تحديث المراحل ({{text}}) للمشروع «{{projectAr}}». راجع كل مرحلة واعتمدها أو أعدها.",
+        "The vendor {{actor}} submitted the milestone update ({{text}}) of “{{projectEn}}”. Review each milestone: accept or return it.");
+
+    public static readonly NotificationTemplateDefinition WaselSubmissionReviewed = P(
+        "portfolio.waselSubmissionReviewed", "نتيجة مراجعة تحديث المورد", "Vendor update reviewed", "تحديثكم للمشروع {{number}}: {{stageAr}}", "Your update of project {{number}}: {{stageEn}}",
+        "راجع مدير المشروع تحديثكم ({{text}}) للمشروع «{{projectAr}}»: {{stageAr}}.", "The project manager reviewed your update ({{text}}) of “{{projectEn}}”: {{stageEn}}.");
+
+    public static readonly NotificationTemplateDefinition WaselProposalReceived = P(
+        "portfolio.waselProposalReceived", "خطة مقترحة من المورد", "Plan proposed by the vendor", "خطة مقترحة للمشروع {{number}}", "Plan proposed for project {{number}}",
+        "اقترح المورد {{actor}} الخطة التفصيلية للمشروع «{{projectAr}}». راجعها واعتمدها في الخطة أو أعدها.",
+        "The vendor {{actor}} proposed the detailed plan of “{{projectEn}}”. Review it and accept it into the plan or return it.");
+
+    public static readonly NotificationTemplateDefinition WaselProposalDecided = P(
+        "portfolio.waselProposalDecided", "قرار الخطة المقترحة", "Proposed plan decided", "خطتكم المقترحة للمشروع {{number}}: {{stageAr}}", "Your proposed plan for {{number}}: {{stageEn}}",
+        "قرار مدير المشروع على خطتكم المقترحة للمشروع «{{projectAr}}»: {{stageAr}}. {{text}}", "The project manager's decision on your proposed plan of “{{projectEn}}”: {{stageEn}}. {{text}}");
+
+    public static readonly NotificationTemplateDefinition WaselDeliverableReceived = P(
+        "portfolio.waselDeliverableReceived", "مخرج مرفوع من المورد", "Deliverable uploaded by the vendor", "مخرج جديد للمشروع {{number}}", "New deliverable for project {{number}}",
+        "رفع المورد {{actor}} المخرج «{{text}}» للمشروع «{{projectAr}}». راجعه واقبله أو أعده.",
+        "The vendor {{actor}} uploaded the deliverable “{{text}}” for “{{projectEn}}”. Review it: accept or return it.");
+
+    public static readonly NotificationTemplateDefinition WaselDeliverableDecided = P(
+        "portfolio.waselDeliverableDecided", "قرار المخرج", "Deliverable decided", "المخرج «{{text}}»: {{stageAr}}", "Deliverable “{{text}}”: {{stageEn}}",
+        "قرار مدير المشروع على المخرج «{{text}}» للمشروع «{{projectAr}}»: {{stageAr}}.", "The project manager's decision on the deliverable “{{text}}” of “{{projectEn}}”: {{stageEn}}.");
+
+    public static readonly NotificationTemplateDefinition WaselItemProposed = P(
+        "portfolio.waselItemProposed", "مسودة من المورد (مشكلة / تحدٍ / خطر)", "Vendor draft (issue / challenge / risk)", "مسودة من المورد للمشروع {{number}}",
+        "Vendor draft for project {{number}}", "اقترح المورد {{actor}} «{{text}}» للمشروع «{{projectAr}}». اقبله أو ارفضه.",
+        "The vendor {{actor}} proposed “{{text}}” for “{{projectEn}}”. Accept or reject it.");
+
+    public static readonly NotificationTemplateDefinition WaselOutcomeShared = P(
+        "portfolio.waselOutcomeShared", "نتيجة التحديث الشهري", "Monthly update outcome", "نتيجة تحديث المشروع {{number}}: {{stageAr}}", "Outcome for project {{number}}: {{stageEn}}",
+        "نتيجة التحديث الشهري ({{due}}) للمشروع «{{projectAr}}»: {{stageAr}}. {{text}}", "The outcome of the monthly update ({{due}}) of “{{projectEn}}”: {{stageEn}}. {{text}}");
+
+    public static readonly NotificationTemplateDefinition WaselComment = P(
+        "portfolio.waselComment", "تعليق جديد (واصل)", "New comment (Wasel)", "تعليق جديد — المشروع {{number}}", "New comment — project {{number}}",
+        "كتب {{actor}} تعليقاً على المشروع «{{projectAr}}»: {{text}}", "{{actor}} commented on “{{projectEn}}”: {{text}}");
+
+    public static readonly NotificationTemplateDefinition WaselAccessEnded = P(
+        "portfolio.waselAccessEnded", "انتهاء وصول المورد", "Vendor access ended", "انتهى وصولكم إلى المشروع {{number}}", "Your access to project {{number}} ended",
+        "انتهى وصولكم إلى المشروع «{{projectAr}}» في بوابة واصل. السبب: {{text}}", "Your access to “{{projectEn}}” in the Wasel portal has ended. Reason: {{text}}");
+
+    public static readonly NotificationTemplateDefinition WaselDormant = P(
+        "portfolio.waselDormant", "تعطيل حساب مورد خامل", "Dormant vendor account disabled", "تعطيل حساب مورد: {{actor}}", "Vendor account disabled: {{actor}}",
+        "عُطّل حساب المورد {{actor}} لعدم الدخول منذ {{text}} يوماً. يمكن لمكتب إدارة المشاريع إعادة تفعيله.",
+        "The vendor account {{actor}} was disabled after {{text}} days without a sign-in. The PM Office can reactivate it.");
+
+    public static IReadOnlyList<NotificationTemplateDefinition> Wasel =>
+    [
+        WaselAssigned, WaselMonthlyOpened, WaselSubmissionReceived, WaselSubmissionReviewed, WaselProposalReceived, WaselProposalDecided, WaselDeliverableReceived,
+        WaselDeliverableDecided, WaselItemProposed, WaselOutcomeShared, WaselComment, WaselAccessEnded, WaselDormant,
+    ];
+
     public static readonly IReadOnlyList<NotificationTemplateDefinition> All =
     [
         CommunicationDue, SprintSubmitted,
         ScopeSubmitted, QuotationsUploaded, RequestApproved, RequestCancelled, OwnershipTaken, CharterApproved, LpoUploaded, StageChanged, MonthlyOpened, MonthlyReminder,
         MonthlyOverdue, ChangeRequestSubmitted, ChangeRequestDecided, ProjectOnHold, ProjectCancelled,
     ];
+}
+
+/// <summary>Settings → Portfolio → Wasel (docs/design/portfolio.md §49, ADRs 0113 / 0115).</summary>
+public sealed record WaselSettings
+{
+    public string DefaultUpdateMode { get; init; } = UpdateModes.PmOnly;
+
+    public string ExpiryRule { get; init; } = ExpiryRules.ContractEnd;
+
+    public bool EndAtClosure { get; init; } = true;
+
+    public int DormantDays { get; init; } = 90;
+
+    public bool UaePassForVendors { get; init; }
+
+    public VendorVisibleFields VisibleFields { get; init; } = new();
+}
+
+/// <summary>Optional vendor-visible fields (ADR 0113). Costs are off unless switched on here.</summary>
+public sealed record VendorVisibleFields
+{
+    public bool Description { get; init; } = true;
+
+    public bool Progress { get; init; } = true;
+
+    public bool Owner { get; init; }
+
+    public bool Budget { get; init; }
+
+    public bool ApprovalStatus { get; init; }
+
+    public bool MilestoneWeight { get; init; } = true;
+
+    public bool MilestoneCost { get; init; }
 }

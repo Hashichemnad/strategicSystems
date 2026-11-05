@@ -167,7 +167,7 @@ internal sealed class SessionStoreCookieSetup(SessionTicketStore store) : Micros
 {
     public void PostConfigure(string? name, CookieAuthenticationOptions options)
     {
-        if (name == Microsoft.AspNetCore.Identity.IdentityConstants.ApplicationScheme)
+        if (name == Microsoft.AspNetCore.Identity.IdentityConstants.ApplicationScheme || name == Authentication.AuthSchemes.Wasel)
         {
             options.SessionStore = store;
         }

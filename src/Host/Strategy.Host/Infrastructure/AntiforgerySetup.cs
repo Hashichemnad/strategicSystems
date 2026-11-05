@@ -26,16 +26,20 @@ internal static class AntiforgerySetup
         });
 
     /// <summary><c>GET /api/v1/antiforgery/token</c>: sets the antiforgery cookie and returns the matching request token.</summary>
-    public static void MapAntiforgeryEndpoint(this IEndpointRouteBuilder endpoints) =>
-        endpoints.MapGet("/api/v1/antiforgery/token", Ok<AntiforgeryToken> (HttpContext context, IAntiforgery antiforgery) =>
-            {
-                var tokens = antiforgery.GetAndStoreTokens(context);
-                context.Response.Headers.CacheControl = "no-store";
-                return TypedResults.Ok(new AntiforgeryToken(tokens.RequestToken!, HeaderName));
-            })
-            .WithName("GetAntiforgeryToken")
-            .WithTags("platform")
-            .AsPublic();
+    public static void MapAntiforgeryEndpoint(this IEndpointRouteBuilder endpoints)
+    {
+        endpoints.MapGet("/api/v1/antiforgery/token", Token).WithName("GetAntiforgeryToken").WithTags("platform").AsPublic();
+
+        // Wasel (ADR 0110): the token is bound to the vendor identity, which only the /api/wasel scheme sees.
+        endpoints.MapGet("/api/wasel/v1/antiforgery/token", Token).WithName("GetWaselAntiforgeryToken").WithTags("wasel").AsPublic();
+    }
+
+    private static Ok<AntiforgeryToken> Token(HttpContext context, IAntiforgery antiforgery)
+    {
+        var tokens = antiforgery.GetAndStoreTokens(context);
+        context.Response.Headers.CacheControl = "no-store";
+        return TypedResults.Ok(new AntiforgeryToken(tokens.RequestToken!, HeaderName));
+    }
 }
 
 /// <summary>

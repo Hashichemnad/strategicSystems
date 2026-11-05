@@ -47,6 +47,7 @@ public sealed class ApiFactory(
         builder.UseSetting("Database:MigrateOnStartup", "true");
         builder.UseSetting("Modules:Sample:Enabled", "true");
         builder.UseSetting("Modules:Portfolio:Enabled", "true");
+        builder.UseSetting("Modules:Wasel:Enabled", "true");
         builder.UseSetting("Modules:Kpi:Enabled", "true");
         builder.UseSetting("Modules:Risk:Enabled", "true");
         builder.UseSetting("Modules:Requests:Enabled", "true");

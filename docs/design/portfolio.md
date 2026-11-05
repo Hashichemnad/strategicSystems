@@ -7,7 +7,7 @@
 | **8** | Program Requests up to the automatic creation of the Project / Initiative record (SPEC §1.1–§1.4 A, §1.5 W1, §1.6–§1.9 for requests, §1.15 A, §1.19, Appendix A Q-P4 / Q-P5 / Q-P6) | **Detailed below — the Phase 8 plan** |
 | **9** | Project / Initiative lifecycle (charter, planning, monthly cycle, closure, impact, change control) — SPEC §1.3, §1.4 B–D, §1.5 W2–W8, §1.6–§1.9, §1.16, §1.17, Q-P1/P2/P3/P9 | **Detailed in §15–§28 — the Phase 9 plan** (ADRs 0070–0076) |
 | **10** | Agile / Hybrid, PM standards, Gantt, portfolio views — SPEC §1.12, §1.13, §1.15 B, §1.16, §0.4 | **Detailed in §29–§45 — the Phase 10 plan** (ADRs 0090–0099) |
-| 11 | Wasel vendor portal | Outline (§12) |
+| **11** | Wasel vendor portal (SPEC §1.18, §1.5 W3–W4, §1.9, §0.0) and Portfolio completion (§1.12 capacity view, quarterly portfolio review) | **Detailed in §46–§62 — the Phase 11 plan** (ADRs 0110–0117) |
 
 Reuses Phase 1 (organisation, employees, delegation), Phase 2 (access: system access, roles with scopes, record roles), Phase 3 (audit,
 files, notifications, numbering, lookups, settings), Phase 4 (approval engine, Approval Settings centre, current status, My Work, business
@@ -810,3 +810,270 @@ creation, health thresholds, gate checklists, templates.
 - **E2E (ar + en):** screenshots in `docs/screenshots/phase-10/`: methodology choice, agile board, sprint with burndown, monthly roll-up
   approval, Gantt (project and portfolio), RAG health, baseline variance, EVM panel, RAID log, RACI, status report PDF, portfolio dashboard,
   AI plan generator review; Gantt of a 30-milestone project rendered < 5 s in both directions.
+
+---
+
+# Phase 11 — Wasel vendor portal and Portfolio completion (detailed plan)
+
+Reuses everything above plus Platform.Identity (accounts, lockout, MFA, server-side sessions — ADR 0016), Platform.Access (record roles with
+validity dates), Files (scan, allow-list), Notifications (outbox, bilingual templates), Scheduling, AI gateway. Decisions: **0110** (vendor
+principal and the separate `wasel` authentication scheme), **0111** (vendor authorization through `IAccessService` and record roles), **0112**
+(vendor register as the shared supplier master), **0113** (vendor-visible fields and separate vendor DTOs), **0114** (plan proposal and update
+submission state machines, PM review with diff, vendor values in the monthly approval), **0115** (access expiry, revocation, dormant accounts,
+vendor notifications, vendor rating), **0116** (capacity view and quarterly portfolio review), **0117** (Wasel AI on the PM side, bundled Gantt
+export font, `portfolio.sprintReviewed`). As in earlier phases the session runs without an interactive approval step: this plan is committed
+first, then implemented as written; open choices are the ADRs. Phase 15 is built in parallel: shared files change only additively.
+
+## 46. Vendor principal and sign-in (ADR 0110)
+
+- A vendor user is a `StrategyUser` with `PrincipalType = vendor`, no employee, unique e-mail among vendor accounts. It never signs in through
+  the internal endpoints (`/api/v1/identity/auth/*` answers *invalid credentials* for a vendor account, internal SSO / LDAP never link to one),
+  and an internal account never signs in through Wasel.
+- **Own scheme.** Cookie scheme `wasel` (cookie `strategy.wasel`, HttpOnly, SameSite Strict, server-side session in `identity.user_session`
+  with the same idle / absolute limits and immediate revocation) and its own two-factor state cookie `strategy.wasel.mfa` (5 minutes). The
+  default policy scheme picks **`wasel` for every `/api/wasel/*` request and never for anything else**, so a vendor session is anonymous
+  on every internal endpoint (401) and an internal session is anonymous on Wasel (401). Defence in depth: `AuthenticationRequirementMiddleware`
+  refuses a vendor principal outside `/api/wasel` and an internal one inside it (403 `auth.principalRefused`); MCP, AI, Ask, search and SignalR
+  already refuse vendors.
+- **MFA is mandatory** whatever the installation's MFA policy: the first sign-in after the invitation goes to enrolment (authenticator app or
+  e-mail code, as allowed in Settings → Security), later sign-ins to the second factor; recovery codes as for internal users. Lockout and the
+  `auth` rate limit apply (same thresholds); sign-in events go to the auth log and the audit trail with channel `wasel`.
+- **Invitation:** `IVendorAccounts` (Platform.Identity) creates the account without a password and e-mails a 3-day *set your password* link
+  to `/wasel/set-password` (template `identity.waselInvitation`, AR + EN). An existing vendor account is reused (another project assignment, no
+  new mail apart from the assignment notice).
+- Endpoints `/api/wasel/v1/auth/{login | mfa/verify | mfa/email-code | mfa/enrol/totp | mfa/enrol/email | mfa/enrol/confirm | password/forgot |
+  password/reset | logout}`, `GET /api/wasel/v1/me`, `GET /api/wasel/v1/antiforgery/token` (the antiforgery token is bound to the vendor
+  identity). UAE Pass for vendors: setting `uaePassForVendors` (default off) is stored; the vendor UAE Pass sign-in flow itself is **not built in
+  Phase 11** (known gap in the phase summary, ADR 0110) — vendors sign in with e-mail + password + mandatory second factor.
+- Entry URL `/wasel` (SPA area with its own vendor-branded bilingual layout: logo and colours from Settings → Branding, no internal menus).
+
+## 47. Vendor authorization (ADR 0111)
+
+- New system **`wasel`** (`SystemKind.Module`, AR "واصل" / EN "Wasel", switchable in Settings → Systems — off = every Wasel endpoint 404
+  `module.disabled` and vendors cannot sign in). It has **no internal roles**; its permissions are given only by the vendor record roles on
+  `portfolio.project`:
+
+| Permission | Vendor Project Lead (`vendor-lead`) | Vendor Contributor (`vendor-contributor`) |
+|---|---|---|
+| `wasel.project.read` — overview, assigned milestones, meetings, statuses | ✔ | ✔ |
+| `wasel.plan.prepare` — draft a plan proposal | ✔ | ✔ |
+| `wasel.plan.submit` | ✔ | — |
+| `wasel.update.prepare` — milestone update values, evidence | ✔ | ✔ |
+| `wasel.update.submit` | ✔ | — |
+| `wasel.deliverable.upload` · `wasel.item.propose` (issues / challenges / risks) · `wasel.comment.write` · `wasel.meeting.confirm` | ✔ | ✔ |
+
+  The mapping is seed data (editable in Settings → Roles → record roles, "configurable" in SPEC §1.18).
+- `IAccessService` gains one branch: a **vendor principal** may hold only `wasel.*` permissions, only through **active record roles granted to
+  its user id** (validity `from ≤ now < to` — so the access ends by itself at `access_until`, fake clock in tests), only while the `wasel` system is
+  on; it never gets system roles, data scopes or `ApplyScope` rows other than those record ids. An **internal** principal is refused every
+  `wasel.*` permission (fail closed). Wasel endpoints declare `RequireVendorPermission("wasel.…")` (new endpoint metadata `VendorEndpoint`,
+  endpoint check through `IAccessService`); handlers check the record (`portfolio.project`, id) and answer **404** for a project the vendor is not
+  assigned to.
+- Every Wasel request also resolves the **vendor context** (`WaselContext`): the `vendor_user` row must be active and its vendor `active`
+  (suspended / blacklisted vendors lose access at once), and the project assignment must be active. Milestone-level rule: a vendor sees and
+  updates only **leaf milestones assigned to its vendor** (`milestone.vendor_id`) — anything else is 404.
+- Internal permissions (system `portfolio`): `portfolio.vendor.read` (register, scopable no; PM Office, viewer, administrator, record role pm),
+  `portfolio.vendor.manage` (PM Office, administrator: register, vendor status, deactivate / reactivate vendor users, activity), and
+  `portfolio.project.vendors` (scopable; record role pm, PM Office, administrator: invite, assign milestones, update mode, review proposals /
+  submissions / deliverables / proposed items, comments, rating, revoke). Project Owner and approvers read the Wasel panel through
+  `portfolio.project.read`.
+
+## 48. Data model (schema `portfolio`; audited, `xmin`, no hard deletes)
+
+| Table | Columns |
+|---|---|
+| `vendor` | `number` (`VND-{SEQ:4}`, numbering `portfolio.vendor`), `name_ar`, `name_en`, `trade_licence_no`, `licence_expiry`, `country_code`, `address`, `contact_person`, `email`, `phone`, `status` (`active` · `suspended` · `blacklisted`), `status_reason`, `notes`; unique trade licence no. (when given) |
+| `vendor_user` | `vendor_id`, `user_id` (identity), `email`, `name`, `language`, `status` (`invited` · `active` · `disabled` · `dormant`), `invited_at`, `invited_by_user_id`, `disabled_reason`, `disabled_at` |
+| `vendor_assignment` | `project_id`, `vendor_id`, `contract_id?`, `access_until` (date, inclusive), `expiry_rule` (`contract-end` · `project-closure` · `date`), `status` (`active` · `ended` · `revoked`), `ended_reason`, `ended_at`; one active assignment per project and vendor |
+| `vendor_member` | `assignment_id`, `project_id`, `vendor_user_id`, `user_id`, `role` (`vendor-lead` · `vendor-contributor`), `status` (`active` · `revoked` · `expired`), `valid_to`, `revoked_reason` — mirrors the record role grant |
+| `project` (+) | `milestone_update_mode` (`pm-only` default · `vendor-then-pm`) — switching is audited |
+| `milestone` (+) | `vendor_id` (assigned vendor, leaf only), `pending_source` (`pm` · `vendor` · `vendor-edited`), `pending_vendor_item_id` |
+| `contract` (+) | `vendor_id` (supplier from the register; the free-text `supplier` stays for older rows), `end_date` |
+| `meeting` (+) | `vendor_id` (attending vendor: minutes shared), `vendor_confirmed_at`, `vendor_confirmed_by_user_id` |
+| `plan_proposal` | `project_id`, `vendor_id`, `sequence`, `status`, `kind` (`waterfall` · `agile`), `items` (jsonb, vendor's version), `accepted_items` (jsonb), `diff` (jsonb), `submitted_at`, `submitted_by_user_id`, `decided_at`, `decided_by_user_id`, `pm_comment`, `vendor_note` |
+| `vendor_submission` | `project_id`, `vendor_id`, `monthly_update_id`, `period`, `status`, `submitted_at`, `submitted_by_user_id`, `reviewed_at`, `shared_outcome` (`approved` · `returned` · `rejected` · null), `shared_note`, `shared_at` |
+| `vendor_submission_item` | `submission_id`, `milestone_id`, vendor values (`achieve`, `actual_start`, `actual_end`, `progress_note`, `causality`, `corrective_actions`), `previous` (jsonb: last approved values at submission), `review_status` (`pending` · `accepted` · `edited` · `returned`), PM values (`final_*`), `diff` (jsonb `[{field, vendor, pm}]`), `pm_comment`, `reviewed_by_user_id`, `reviewed_at` |
+| `vendor_deliverable` | `project_id`, `vendor_id`, `milestone_id?`, `title`, `description`, `status` (`submitted` · `accepted` · `returned`), `pm_comment`, `decided_*`; files purpose `portfolio.vendor-deliverable` |
+| `vendor_item` | proposed issue / challenge / risk: `project_id`, `vendor_id`, `kind` (`issue` · `challenge` · `risk`), `title`, `description`, `impact`, `probability` (1–5), `impact_level` (1–5), `milestone_id?`, `status` (`proposed` · `accepted` · `rejected`), `pm_comment`, `created_record_id` |
+| `vendor_comment` | `project_id`, `vendor_id`, `subject_type` (`milestone` · `submission` · `proposal` · `deliverable`), `subject_id`, `author_user_id`, `author_kind` (`vendor` · `internal`), `body` (≤ 4 000) — append-only thread |
+| `vendor_rating` | `vendor_id`, `project_id`, `milestone_id?`, `timeliness`, `quality`, `responsiveness`, `reporting` (1–5), `overall` (average, 2 dp), `comment`, `rated_by_user_id`, `rated_at` |
+
+Files: vendor evidence `portfolio.vendor-evidence` (owner `portfolio.milestone`), deliverables `portfolio.vendor-deliverable` (owner
+`portfolio.vendor-deliverable`). Upload through the Files service (allow-list, magic number, size, **ClamAV scan when on**, audited).
+
+## 49. Settings → Portfolio → Wasel (`wasel` section, `portfolio.settings.manage`)
+
+| Value | Default | Use |
+|---|---|---|
+| `defaultUpdateMode` | `pm-only` | Mode of new projects |
+| `expiryRule` | `contract-end` | `contract-end` (assignment's contract end date, else the date the PM enters) · `project-closure` · `date` |
+| `endAtClosure` | true | Access also ends when the project is closed (closure approved, completed or cancelled) |
+| `dormantDays` | 90 | Vendor accounts without sign-in for N days are disabled by the job (0 = off) |
+| `visibleFields` | project `description` ✔, `progress` ✔, `owner` ✗, `budget` ✗, `approvalStatus` ✗; milestone `weight` ✔, `cost` ✗ | Optional vendor-visible fields (ADR 0113). Always visible: number, name, scope, planned dates, stage / status, PM name and e-mail, assigned milestones and their dates / status |
+| `uaePassForVendors` | false | §46 |
+
+## 50. Vendor-visible DTOs (ADR 0113)
+
+Separate records in `Wasel/` (`VendorProjectDto`, `VendorMilestoneDto`, `VendorSubmissionDto`, `VendorProposalDto`, `VendorDeliverableDto`,
+`VendorItemDto`, `VendorMeetingDto`, `VendorCommentDto`, `VendorMeDto`) built by explicit mapping from the entities; optional fields are null
+unless flagged in `visibleFields`; **costs are never sent** unless `budget` / `cost` is flagged (and then only the project budget / milestone
+cost). Internal comments, approval history, approver names, other vendors, internal notes, risks / issues not raised by the vendor, team and
+stakeholders are never in a vendor DTO. A unit test compares the property names of every vendor DTO with a deny-list (`cost`, `budget`,
+`approval`, `comment` of internal origin…).
+
+## 51. Plan proposal (W3.2, ADR 0114)
+
+`PlanProposalLifecycle` (unit-tested): `draft` —submit (lead; project in planning, i.e. `CanPlan`)→ `submitted` —accept (PM)→ `accepted` /
+—return (PM, comment required)→ `returned` —edit (vendor)→ `draft`… ; `draft` / `returned` —withdraw (vendor)→ `withdrawn`. One open
+(draft / submitted / returned) proposal per vendor and project. Items: waterfall — phases (header) and milestones (title AR / EN, parent phase,
+planned start / end, weight, deliverable flag, proposed **tasks** as titles); agile / hybrid — epics (weight) with user stories (title, as-a /
+I-want / so-that, points). Validation on submit: leaf weights total **exactly 100 % of the share the vendor plans** — i.e. ≤ remaining
+unallocated weight of the plan, and > 0; dates within the project's planned dates when set. **Accept:** the PM sends the final items (edited in
+the review dialog); the server records the **diff** (added / removed / changed fields: vendor value → PM value), creates the milestones
+(assigned to the vendor) or the epics and stories through the normal plan services (weights rule, codes), and the proposal becomes `accepted`;
+proposed tasks are listed on the accepted proposal for the PM to create in the milestone's Tasks panel (there is no task-creation contract —
+ADR 0114). The vendor sees the accepted plan and the diff.
+
+## 52. Milestone updates in *Vendor then PM* mode (W4.2, ADR 0114)
+
+- **Mode** per project: `PUT /projects/{id}/wasel/mode` (PM or PM Office; audited field change). In `pm-only` vendors see their milestones but
+  cannot prepare updates.
+- **Submission** per vendor and monthly window (created when the vendor first edits after the window opens; the job also notifies vendor users
+  when a window opens — template `portfolio.waselMonthlyOpened`). `VendorSubmissionLifecycle` (unit-tested):
+
+| From | Action (who) | Guard | To |
+|---|---|---|---|
+| `draft` / `returned` | edit item, evidence (lead or contributor) | window accepts updates; milestone assigned to the vendor; item not already accepted | same |
+| `draft` / `returned` | `submit` (**lead only**) | ≥ 1 item; every pending item passes `MilestoneRules.ValidateProgress` (achieve ≤ weight and ≥ approved, actual start with progress, **actual end + evidence at 100 %**, **causality + corrective actions when delayed**) | `submitted` (PM notified) |
+| `submitted` | per item `accept` / `edit-accept` / `return` (PM) | — | when every item is reviewed: any returned → `returned` (vendor notified), else `accepted` (vendor notified) |
+| `accepted` | monthly update approved (engine hook) | — | `included` (*Included in approved update*) |
+
+- **PM review** shows each item side by side: last approved values (`previous`, snapshotted on submit) · vendor values · PM values (editable).
+  *Accept* copies the vendor values into the milestone's pending update (`pending_source = vendor`); *Edit then accept* uses the PM's values and
+  records the **diff** (`pending_source = vendor-edited`), visible to the vendor; *Return* requires a comment. Accepted values are validated with
+  the same rules (evidence counts milestone evidence plus the vendor's evidence files).
+- **Monthly approval:** the PM completes non-vendor milestones and submits the monthly update as before; submit is refused while a vendor
+  submission of the window is `submitted` and unreviewed (`portfolio.errors.vendorSubmissionPending`). The approval snapshot (`items`) carries per
+  milestone `source` (`pm` / `vendor` / `vendor-edited`), the vendor name and, when edited, the vendor's values — the Monthly tab and the approval
+  panel show a *From vendor* / *Edited by PM* chip, so approvers see which values came from the vendor.
+- **Outcome to the vendor:** status *Included in approved update* (or the window returned / rejected) without internal comments; the PM can
+  *Share with vendor* a note (`shared_note`). Approval comments are never in a vendor DTO.
+- Statuses shown to the vendor: Draft · Submitted · Returned · Accepted by PM · Included in approved update.
+
+## 53. Deliverables, proposed items, meetings, comments
+
+- **Deliverables:** vendor uploads a deliverable (title, milestone, files) → `submitted` → PM *Accept* / *Return* (comment) → vendor sees the
+  result. Accepting does not sign off quality (that stays with the owner / PM Office, §35).
+- **Issues / challenges / risks:** vendor proposes (`vendor_item`, `proposed`); PM *Accept* creates the real record through the normal services
+  (issue → RAID issue when RAID is on, else a challenge; challenge → challenge; risk → project risk scored by the shared framework) and links it;
+  *Reject* with a comment. The vendor sees only its own proposals and their status.
+- **Meetings:** PM marks the vendor as attending (`PUT /meetings/{id}/vendor`); the vendor sees those meetings with the minutes and *confirms*
+  the actions (`vendor_confirmed_at`).
+- **Comments:** one thread per subject (milestone, submission, proposal, deliverable), both sides write; the other side is notified
+  (`portfolio.waselComment` / internal in-app). All kept on the record (append-only).
+
+## 54. Access expiry, revocation, dormant accounts (ADR 0115)
+
+- On assignment the PM sets `access_until` (default: the linked contract's `end_date`; required for rule `date` / when the contract has none).
+  Member grants carry `valid_to = access_until + 1 day` (installation time zone) — access ends by itself.
+- **Revoke** a member or the whole assignment at any time (reason) → record roles revoked, sessions of members with no other active
+  assignment revoked.
+- Job **`portfolio.wasel-access`** (hourly, idempotent): marks expired members / assignments (`expired` / `ended`), ends assignments of
+  projects closed / completed / cancelled when `endAtClosure`, and disables **dormant** vendor accounts (`dormantDays` without a sign-in since
+  activation or invitation) — account inactive + sessions revoked, vendor user `dormant`, PM Office notified. PM Office may reactivate
+  (`POST /vendor-users/{id}/reactivate`).
+- Vendor suspended / blacklisted → every member loses access immediately (context check), sessions revoked.
+- **Activity:** the register shows each vendor user's status, last sign-in, assignments (PM Office).
+
+## 55. Vendor rating (ADR 0115)
+
+At closure (project stage Closure or later; per milestone at any time) the PM rates the vendor: timeliness, quality of deliverables,
+responsiveness, compliance with reporting (1–5) + comment; `overall` = average. The vendor's register page shows its **performance history**
+(ratings per project, averages per criterion). Feeds Impact: when the project's `vendor_satisfaction` is empty the closure rating sets it to the
+rounded average of the project's closure ratings (the PM may still change it in the Impact form).
+
+## 56. Notifications (bilingual, AR + EN side by side)
+
+Vendor side (e-mail to the vendor user's address, in their language preference; vendors have no in-app bell): `identity.waselInvitation`,
+`portfolio.waselAssigned`, `portfolio.waselMonthlyOpened`, `portfolio.waselSubmissionReviewed` (accepted / returned), `portfolio.waselProposalDecided`,
+`portfolio.waselDeliverableDecided`, `portfolio.waselOutcomeShared`, `portfolio.waselComment`, `portfolio.waselAccessEnded`.
+Internal side (PM, e-mail + in-app, deep link to the project's Wasel tab): `portfolio.waselSubmissionReceived`, `portfolio.waselProposalReceived`,
+`portfolio.waselDeliverableReceived`, `portfolio.waselItemProposed`, `portfolio.waselComment` (same key, internal recipients), `portfolio.waselDormant`
+(PM Office).
+
+## 57. AI on the PM side only (ADR 0117)
+
+Feature `portfolio-vendor-review` (permission `portfolio.ai.assist` + `portfolio.project.vendors` on the project): for one vendor submission,
+**inconsistency flags computed by the server** (100 % without evidence, progress jump above `jumpThreshold` 0.30 of the weight vs the last
+approved value, actual dates outside the contract / assignment dates or before the milestone start, delayed without causality) plus the model's
+**summary** and a **draft "return to vendor" comment** (AR / EN, JSON validated). Draft only; the PM copies the comment into the Return dialog.
+Vendors never reach any AI, Ask, search or MCP (gateway refuses vendor principals; the routes are internal anyway). Demo provider answers it
+deterministically.
+
+## 58. Capacity view (SPEC §1.12, ADR 0116)
+
+`GET /capacity?unitId&below=true&overOnly` (permission `portfolio.capacity.read`: PM Office, portfolio viewer, administrator; not scopable —
+a unit-limited holder can be configured in Settings → Roles later). Rows per employee (of the unit, and below when asked; list filtered by the caller's project read scope for the project
+columns): allocations from (a) **Teams** — active memberships of active teams with `allocation %` through the new Teams.Contracts
+`ITeamAllocationDirectory` (project teams included, labelled with the project), and (b) **project proposed members** (charter team list, new
+`allocation_percent`) of active projects **without** a formed team (avoids double counting). Total % and an **over-allocation warning** when
+total > `capacityThreshold` (Settings → Portfolio, default 1.0 = 100 %). Screen: *Capacity* page (sidebar under Portfolio) with unit filter,
+bars, warning chips, drill-down list of allocations.
+
+## 59. Quarterly portfolio review (SPEC §1.12, ADR 0116)
+
+`portfolio_review` (`period` `YYYY-Qn`, `title`, `review_date`, `notes`, `status` `draft` · `completed`, `completed_at`) and
+`portfolio_review_decision` (`review_id`, `project_id`, `decision` `continue` · `re-scope` · `hold` · `cancel`, `comment`, `change_request_id`).
+PM Office (`portfolio.review.manage`; read `portfolio.review.read` for viewers) creates a review for a quarter (the active projects in its
+scope listed with progress, health, budget when visible), records a decision per project, then **Completes** it. Completing never changes a
+project: for **hold** and **cancel** it creates a **change request** (type `hold` — new, applied by *Apply changes* as an on-hold with the
+reason — or `cancellation`), reason = the review comment, and **submits** it into `portfolio.change-request` (when another change request is
+already under review it stays a draft and the decision shows it); **re-scope** creates a draft `details` change request for the PM to complete.
+The decision links to its change request.
+
+## 60. Other completion items (ADR 0117)
+
+- **Gantt export font:** the PNG / PDF export embeds the bundled **IBM Plex Sans Arabic** (and IBM Plex Sans) woff2 (from the `@fontsource`
+  packages already shipped, OFL) as `@font-face` data URLs in the exported SVG before rasterising, so Arabic is shaped with the product font,
+  not a system font. Vitest checks the exported markup contains the embedded font; E2E renders an Arabic export.
+- **`portfolio.sprintReviewed`** is now sent (PM, owner) when a sprint review approval completes (approved / returned / rejected).
+
+## 61. API additions
+
+Wasel (`/api/wasel/v1`, vendor scheme): auth (§46), `GET /me`, `GET /projects`, `GET /projects/{id}`, `GET /projects/{id}/milestones`,
+`GET|POST /projects/{id}/proposals`, `PUT /proposals/{pid}`, `POST /proposals/{pid}/{submit|withdraw}`, `GET /projects/{id}/submission`
+(current window, items), `PUT /projects/{id}/submission/items/{milestoneId}`, `POST /projects/{id}/submission/items/{milestoneId}/evidence`,
+`POST /projects/{id}/submission/submit`, `GET /projects/{id}/submissions` (history), `GET|POST /projects/{id}/deliverables`,
+`GET|POST /projects/{id}/items`, `GET /projects/{id}/meetings`, `POST /meetings/{mid}/confirm`, `GET|POST /projects/{id}/comments`,
+`GET /projects/{id}/files/{fileId}` (own evidence / deliverables).
+Internal (`/api/v1/portfolio`): `GET|POST /vendors`, `GET|PUT /vendors/{id}`, `POST /vendors/{id}/status`, `POST /vendor-users/{id}/{deactivate|reactivate}`,
+`GET /projects/{id}/wasel`, `PUT /projects/{id}/wasel/mode`, `POST /projects/{id}/wasel/assignments`, `POST /wasel-assignments/{aid}/revoke`,
+`POST /projects/{id}/wasel/invitations`, `POST /wasel-members/{mid}/revoke`, `PUT /milestones/{mid}/vendor`,
+`POST /proposals/{pid}/{accept|return}`, `POST /vendor-submissions/{sid}/items/{iid}/{accept|return}`, `POST /vendor-submissions/{sid}/share`,
+`POST /vendor-deliverables/{did}/{accept|return}`, `POST /vendor-items/{vid}/{accept|reject}`, `GET|POST /projects/{id}/wasel/comments`,
+`GET|POST /projects/{id}/wasel/ratings`, `PUT /meetings/{mid}/vendor`, `POST /vendor-submissions/{sid}/ai-review`, `GET /capacity`,
+`GET|POST /reviews`, `GET /reviews/{rid}`, `PUT /reviews/{rid}/decisions/{projectId}`, `POST /reviews/{rid}/complete`.
+
+## 62. Screens and tests
+
+**Wasel SPA area** (`/wasel`, vendor layout): login, MFA / enrolment, set password; *My projects*; project page with tabs Overview, Plan
+proposal (editor + status + diff), Monthly update (assigned milestones, values, evidence, submit for leads, statuses, PM diff, shared
+outcome), Deliverables, Issues & risks, Meetings, Comments. **Internal:** project tab **Vendors (Wasel)** — assignment, invitations, members
+with last sign-in, update mode switch, milestone assignment, proposals review (diff editor), submissions review side by side (accept / edit /
+return, AI review), deliverables, proposed items, comments, rating; Monthly tab chips *From vendor* / *Edited by PM*; **Vendors** register
+page (list, vendor page with users and performance history); **Capacity** page; **Portfolio reviews** pages; Settings → Portfolio → Wasel.
+Tests:
+- **Unit:** `PlanProposalLifecycleTests`, `VendorSubmissionLifecycleTests` (every allowed / forbidden pair), `VendorDiffTests`, `VendorRatingTests`,
+  `VendorInconsistencyTests` (flags), `VendorDtoShapeTests` (no cost / approval / internal fields), `CapacityCalculatorTests` (sum, threshold,
+  double-count rule), `ReviewDecisionTests`, access branch tests (vendor only `wasel.*` through active record roles; internal refused `wasel.*`).
+- **Integration (mandatory security):** a vendor session gets **401 on every internal `/api` endpoint** (generated from the endpoint catalogue)
+  and an internal session 401 on every Wasel endpoint; another vendor's project and a non-assigned milestone → 404; vendor DTOs contain no budget
+  / cost fields; MCP, AI and search refuse vendors; internal login refuses a vendor account and Wasel login an internal one; MFA enrolment is
+  forced at first sign-in; access **expires with the fake clock** and after project closure; revocation, suspended vendor, dormant job;
+  **Contributor cannot submit** (403); PM **edit-then-accept** records the diff and the vendor sees it; accepted vendor values flow into the
+  monthly approval snapshot with their origin and become approved; plan proposal accept creates the milestones with the diff; deliverable and
+  proposed item flows; every vendor action audited with channel **`wasel`**; capacity over-allocation; review decision hold / cancel creates and
+  submits a change request; sprint review sends `portfolio.sprintReviewed`.
+- **Vitest:** Gantt export embeds the bundled font; Wasel message keys AR / EN; diff view.
+- **E2E (ar + en):** screenshots in `docs/screenshots/phase-11/`: vendor invitation, Wasel login with MFA, vendor project overview, plan proposal,
+  monthly submission, PM review with diff, vendor sees accepted / returned, vendor rating, capacity view, portfolio review, Gantt export in Arabic.

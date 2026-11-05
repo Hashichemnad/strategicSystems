@@ -196,6 +196,11 @@ public sealed class Project : AuditableEntity
     /// <summary>Waterfall · agile · hybrid (SPEC §1.13, ADR 0090).</summary>
     public string Methodology { get; private set; } = Methodologies.Waterfall;
 
+    /// <summary>Wasel milestone update mode (SPEC §1.18): <c>pm-only</c> (default) or <c>vendor-then-pm</c>.</summary>
+    public string MilestoneUpdateMode { get; private set; } = UpdateModes.PmOnly;
+
+    public void SetUpdateMode(string mode) => MilestoneUpdateMode = mode;
+
     /// <summary>Project override of the agile approval mode (null = the installation default, ADR 0091).</summary>
     public string? AgileApprovalMode { get; private set; }
 

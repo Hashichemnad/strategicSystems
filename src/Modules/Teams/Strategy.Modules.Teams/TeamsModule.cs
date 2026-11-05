@@ -60,6 +60,7 @@ public sealed class TeamsModule : IModule
         services.AddScoped<EvaluationReader>();
         services.AddScoped<EvaluationReaderFactory>();
         services.AddScoped<ITeamsDirectory, TeamsDirectory>();
+        services.AddScoped<ITeamAllocationDirectory, TeamAllocationDirectory>();
         services.AddScoped<ITeamRoleResolver, TeamRoleResolver>();
 
         services.AddApprovalProcess(FormationApprovalProcess.Definition);

@@ -52,7 +52,9 @@ public sealed record MilestoneDto(
     bool DeliveredInSprints = false,
     string? QualityStatus = null,
     string? QualityComment = null,
-    DateTimeOffset? QualityAt = null);
+    DateTimeOffset? QualityAt = null,
+    Guid? VendorId = null,
+    string? PendingSource = null);
 
 public sealed record MilestonePlanDto(
     IReadOnlyList<MilestoneDto> Milestones, decimal DetailedWeight, decimal HighLevelWeight, decimal Performance, decimal PlannedProgress, string ProgressStatus);
@@ -373,6 +375,18 @@ internal sealed class MilestoneService(
             return ProjectService.ApprovalRunning(project!.ApprovalProcess!);
         }
 
+        // Wasel (ADR 0114): a vendor submission of this window waiting for the PM's review blocks the monthly submit.
+        if (await db.VendorSubmissions.AnyAsync(v => v.MonthlyUpdateId == window.Id && v.Status == SubmissionStatuses.Submitted, ct).ConfigureAwait(false))
+        {
+            return Error.Rule("portfolio.wasel.submissionPending", "portfolio.errors.vendorSubmissionPending");
+        }
+
+        var vendorNames = await db.Vendors.AsNoTracking().Where(v => db.Milestones.Any(m => m.ProjectId == projectId && m.VendorId == v.Id))
+            .ToDictionaryAsync(v => v.Id, v => (v.NameAr, v.NameEn), ct).ConfigureAwait(false);
+        var vendorItemIds = await db.Milestones.Where(m => m.ProjectId == projectId && m.PendingVendorItemId != null).Select(m => m.PendingVendorItemId!.Value)
+            .ToListAsync(ct).ConfigureAwait(false);
+        var vendorItems = await db.VendorSubmissionItems.AsNoTracking().Where(i => vendorItemIds.Contains(i.Id)).ToDictionaryAsync(i => i.Id, ct).ConfigureAwait(false);
+
         var sprintSnapshot = Methodologies.UsesSprints(project.Methodology) ? await agile.CarryIntoMonthlyAsync(project, window.Period, ct).ConfigureAwait(false) : "[]";
         var milestones = (await db.Milestones.Where(m => m.ProjectId == projectId && (m.UpdateState == UpdateStates.Draft || m.UpdateState == UpdateStates.Returned))
             .ToListAsync(ct).ConfigureAwait(false)).Concat(db.Milestones.Local.Where(m => m.ProjectId == projectId && m.UpdateState == UpdateStates.Draft))
@@ -410,6 +424,13 @@ internal sealed class MilestoneService(
             m.Causality,
             m.CorrectiveActions,
             m.EvidenceNote,
+            Source = m.PendingSource ?? PendingSources.Pm,
+            m.VendorId,
+            VendorNameAr = m.VendorId is { } vid && vendorNames.TryGetValue(vid, out var vn) ? vn.NameAr : null,
+            VendorNameEn = m.VendorId is { } vid2 && vendorNames.TryGetValue(vid2, out var vn2) ? vn2.NameEn : null,
+            VendorValues = m.PendingVendorItemId is { } itemId && vendorItems.TryGetValue(itemId, out var item)
+                ? new { item.Achieve, item.ActualStart, item.ActualEnd, item.ProgressNote, item.Causality, item.CorrectiveActions, Diff = item.Diff }
+                : null,
         }), SnapshotJson);
         window.Submit(clock.UtcNow, snapshot, comment);
         window.SetSprints(sprintSnapshot);
@@ -592,8 +613,10 @@ internal sealed class MilestoneService(
     private async Task<Project> TrackedProjectAsync(Guid projectId, CancellationToken ct) =>
         await db.Projects.FirstAsync(p => p.Id == projectId, ct).ConfigureAwait(false);
 
+    /// <summary>Evidence of the PM plus the vendor's evidence (Wasel, ADR 0114).</summary>
     private async Task<int> EvidenceCountAsync(Guid milestoneId, CancellationToken ct) =>
-        (await files.ListAsync(PortfolioPermissions.MilestoneResource, milestoneId.ToString("D"), ProjectFilePurposes.Evidence.Key, ct).ConfigureAwait(false)).Count;
+        (await files.ListAsync(PortfolioPermissions.MilestoneResource, milestoneId.ToString("D"), null, ct).ConfigureAwait(false))
+            .Count(f => f.Purpose == ProjectFilePurposes.Evidence.Key || f.Purpose == WaselFilePurposes.VendorEvidence.Key);
 
     private async Task<IReadOnlyList<MilestoneDto>> ToDtosAsync(List<Milestone> rows, CancellationToken ct)
     {
@@ -601,7 +624,9 @@ internal sealed class MilestoneService(
         var projectId = rows.Count == 0 ? Guid.Empty : rows[0].ProjectId;
         var project = rows.Count == 0 ? null : await db.Projects.AsNoTracking().FirstOrDefaultAsync(p => p.Id == projectId, ct).ConfigureAwait(false);
         var showCosts = project is not null && await costs.CanSeeAsync(context.User, project, ct).ConfigureAwait(false);
-        var withEvidence = await files.OwnersWithFilesAsync(ProjectFilePurposes.Evidence.Key, rows.Select(r => r.Id.ToString("D")).ToList(), ct).ConfigureAwait(false);
+        var ownerIds = rows.Select(r => r.Id.ToString("D")).ToList();
+        var withEvidence = (await files.OwnersWithFilesAsync(ProjectFilePurposes.Evidence.Key, ownerIds, ct).ConfigureAwait(false))
+            .Concat(await files.OwnersWithFilesAsync(WaselFilePurposes.VendorEvidence.Key, ownerIds, ct).ConfigureAwait(false)).ToHashSet();
         var result = new List<MilestoneDto>();
         foreach (var m in rows)
         {
@@ -612,7 +637,7 @@ internal sealed class MilestoneService(
                 ProgressCalculator.CompletionRate(m.MaxAchieved, m.Weight), m.ActualStart, m.ActualEnd, m.PendingActualStart, m.PendingActualEnd, showCosts ? m.Cost : null, m.Status,
                 m.UpdateState, m.IsActive && !m.IsHeader && MilestoneRules.IsDelayed(current, m.Weight, m.PlannedEnd, today), m.Causality, m.CorrectiveActions,
                 m.EvidenceNote, evidence, m.IsDeliverable, m.MainDeliverable, m.AcceptanceCriteria, m.QualityMet, m.IsInnovative, m.InnovativeReason, m.Sort, m.Version,
-                m.DeliveredInSprints, m.QualityStatus, m.QualityComment, m.QualityAt));
+                m.DeliveredInSprints, m.QualityStatus, m.QualityComment, m.QualityAt, m.VendorId, m.PendingSource));
         }
 
         return result;
@@ -636,7 +661,8 @@ internal sealed class MilestoneService(
 /// The monthly window (ADR 0071): opens on the 1st at the first working moment of the project unit's business hours, due N working days later at
 /// the end of working time; reminder R working days before; overdue notice once.
 /// </summary>
-internal sealed class MonthlyWindows(PortfolioDbContext db, RequestReader reader, ProjectNotifier notifier, IBusinessHoursCalculator calculator)
+internal sealed class MonthlyWindows(
+    PortfolioDbContext db, RequestReader reader, ProjectNotifier notifier, IBusinessHoursCalculator calculator, WaselNotifier waselNotifier)
 {
     private const int MaxDaysScanned = 400;
 
@@ -660,8 +686,20 @@ internal sealed class MonthlyWindows(PortfolioDbContext db, RequestReader reader
         }
 
         await db.SaveChangesAsync(ct).ConfigureAwait(false);
-        await notifier.ToEmployeesAsync(PortfolioNotifications.MonthlyOpened, project, [project.PmEmployeeId], db, ct, period, due: await DueTextAsync(unit, due, ct)
-            .ConfigureAwait(false)).ConfigureAwait(false);
+        var dueText = await DueTextAsync(unit, due, ct).ConfigureAwait(false);
+        await notifier.ToEmployeesAsync(PortfolioNotifications.MonthlyOpened, project, [project.PmEmployeeId], db, ct, period, due: dueText).ConfigureAwait(false);
+        if (project.MilestoneUpdateMode == UpdateModes.VendorThenPm)
+        {
+            // Wasel (SPEC §1.18 review flow 1): vendor users with assigned milestones are told the window is open.
+            var vendorIds = await db.Milestones.Where(m => m.ProjectId == project.Id && m.VendorId != null && m.Status != MilestoneStatuses.Cancelled)
+                .Select(m => m.VendorId!.Value).Distinct().ToListAsync(ct).ConfigureAwait(false);
+            foreach (var vendorId in vendorIds)
+            {
+                await waselNotifier.ToVendorAsync(PortfolioNotifications.WaselMonthlyOpened, project, vendorId, ct, period, due: dueText, transactionContext: db)
+                    .ConfigureAwait(false);
+            }
+        }
+
         await db.SaveChangesAsync(ct).ConfigureAwait(false);
         return window;
     }

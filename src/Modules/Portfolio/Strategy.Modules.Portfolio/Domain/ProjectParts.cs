@@ -284,7 +284,7 @@ public sealed class Stakeholder : ProjectChild
     }
 }
 
-public sealed record TeamMemberValues(Guid EmployeeId, string? RoleAr, string? RoleEn, string? Responsibilities);
+public sealed record TeamMemberValues(Guid EmployeeId, string? RoleAr, string? RoleEn, string? Responsibilities, decimal? AllocationPercent = null);
 
 /// <summary>A proposed project team member listed on the charter (≥ 3, ADR 0070); the formal team is formed in Teams.</summary>
 [Audited(EntityType)]
@@ -305,6 +305,9 @@ public sealed class ProposedMember : ProjectChild
 
     public string? Responsibilities { get; private set; }
 
+    /// <summary>Planned allocation (ratio, 1.0 = 100 %) for the capacity view while the project has no formed team (ADR 0116).</summary>
+    public decimal? AllocationPercent { get; private set; }
+
     public static ProposedMember Create(Guid projectId, TeamMemberValues values)
     {
         var item = new ProposedMember { ProjectId = projectId };
@@ -319,6 +322,7 @@ public sealed class ProposedMember : ProjectChild
         RoleAr = Clean(v.RoleAr);
         RoleEn = Clean(v.RoleEn);
         Responsibilities = Clean(v.Responsibilities);
+        AllocationPercent = v.AllocationPercent;
     }
 }
 
@@ -470,6 +474,30 @@ public sealed class Meeting : ProjectChild
 
     public string? Notes { get; private set; }
 
+    /// <summary>Attending vendor (Wasel): the vendor sees this meeting and its minutes (SPEC §1.18).</summary>
+    public Guid? VendorId { get; private set; }
+
+    public DateTimeOffset? VendorConfirmedAt { get; private set; }
+
+    public Guid? VendorConfirmedByUserId { get; private set; }
+
+    public void ShareWithVendor(Guid? vendorId)
+    {
+        if (VendorId != vendorId)
+        {
+            VendorConfirmedAt = null;
+            VendorConfirmedByUserId = null;
+        }
+
+        VendorId = vendorId;
+    }
+
+    public void ConfirmByVendor(Guid userId, DateTimeOffset at)
+    {
+        VendorConfirmedAt = at;
+        VendorConfirmedByUserId = userId;
+    }
+
     public static Meeting Create(Guid projectId, MeetingValues values)
     {
         var item = new Meeting { ProjectId = projectId };
@@ -486,7 +514,8 @@ public sealed class Meeting : ProjectChild
     }
 }
 
-public sealed record ContractValues(string? Name, string? Number, string? Supplier, DateOnly? IssueDate, decimal? Amount, string? ContractStatus);
+public sealed record ContractValues(
+    string? Name, string? Number, string? Supplier, DateOnly? IssueDate, decimal? Amount, string? ContractStatus, Guid? VendorId = null, DateOnly? EndDate = null);
 
 /// <summary>Contract / PO (SPEC §1.4 D) — uploaded by Administration with the LPO, or by the PM.</summary>
 [Audited(EntityType)]
@@ -510,6 +539,12 @@ public sealed class Contract : ProjectChild
     public decimal? Amount { get; private set; }
 
     public string ContractStatus { get; private set; } = "active";
+
+    /// <summary>Supplier from the vendor register (ADR 0112); the free-text supplier stays for older rows.</summary>
+    public Guid? VendorId { get; private set; }
+
+    /// <summary>Contract end: the default end of the vendor's Wasel access (ADR 0115).</summary>
+    public DateOnly? EndDate { get; private set; }
 
     public int? RatingQuality { get; private set; }
 
@@ -552,6 +587,8 @@ public sealed class Contract : ProjectChild
         IssueDate = v.IssueDate;
         Amount = v.Amount;
         ContractStatus = Clean(v.ContractStatus) ?? "active";
+        VendorId = v.VendorId;
+        EndDate = v.EndDate;
     }
 }
 
@@ -667,6 +704,24 @@ public sealed class Milestone : AuditableEntity
     /// <summary>Hybrid: delivered in sprints — achievement comes from its epics (ADR 0091).</summary>
     public bool DeliveredInSprints { get; private set; }
 
+    /// <summary>Wasel: the vendor responsible for this leaf milestone (ADR 0111), null = PM only.</summary>
+    public Guid? VendorId { get; private set; }
+
+    /// <summary>Where the pending update came from: <see cref="PendingSources"/> (shown to approvers, ADR 0114).</summary>
+    public string? PendingSource { get; private set; }
+
+    public Guid? PendingVendorItemId { get; private set; }
+
+    public void AssignVendor(Guid? vendorId) => VendorId = vendorId;
+
+    /// <summary>The PM accepted a vendor value (as sent, or edited) into the pending update.</summary>
+    public void RecordVendorProgress(MilestoneProgressValues v, Guid vendorItemId, bool edited)
+    {
+        RecordProgress(v);
+        PendingSource = edited ? PendingSources.VendorEdited : PendingSources.Vendor;
+        PendingVendorItemId = vendorItemId;
+    }
+
     /// <summary>Deliverable quality sign-off: pending · accepted · rejected (ADR 0095).</summary>
     public string? QualityStatus { get; private set; }
 
@@ -727,6 +782,8 @@ public sealed class Milestone : AuditableEntity
         CorrectiveActions = Clean(v.CorrectiveActions);
         EvidenceNote = Clean(v.EvidenceNote);
         UpdateState = UpdateStates.Draft;
+        PendingSource = PendingSources.Pm;
+        PendingVendorItemId = null;
         if (Status == MilestoneStatuses.NotStarted && v.Achieve > 0)
         {
             Status = MilestoneStatuses.Active;
@@ -757,6 +814,8 @@ public sealed class Milestone : AuditableEntity
         PendingAchieve = null;
         PendingActualStart = null;
         PendingActualEnd = null;
+        PendingSource = null;
+        PendingVendorItemId = null;
         UpdateState = UpdateStates.Approved;
         Status = Weight > 0 && MaxAchieved >= Weight ? MilestoneStatuses.Completed : MaxAchieved > 0 ? MilestoneStatuses.Active : Status;
     }
@@ -904,7 +963,10 @@ public static class ChangeTypes
     public const string Ownership = "ownership";
     public const string Merge = "merge";
 
-    public static readonly IReadOnlyList<string> All = [Details, Cancellation, Postponement, Ownership, Merge];
+    /// <summary>Put the project on hold (Phase 11, from a quarterly portfolio review decision — ADR 0116).</summary>
+    public const string Hold = "hold";
+
+    public static readonly IReadOnlyList<string> All = [Details, Cancellation, Postponement, Ownership, Merge, Hold];
 }
 
 public static class ChangeStatuses

@@ -9,8 +9,11 @@ import { Button, FileDrop, StatusBanner, StatusChip, useToast, type SelectOption
 import type { PortfolioOptions } from '../api';
 import { useFeature } from '../featuresApi';
 import { ContractExtrasSection } from '../standards/ContractExtrasPanel';
+import { MeetingVendorCell, useVendorOptions } from '../wasel/ProjectVendorBits';
+import { percent } from '../wasel/waselFormat';
 import {
   projectApi,
+  fromPercent,
   toPercent,
   useKpiCardSearch,
   useProjectFiles,
@@ -392,6 +395,7 @@ export function TeamTab({ project }: TabProps) {
           { name: 'roleAr', label: t('project.team.roleAr'), kind: 'text' },
           { name: 'roleEn', label: t('project.team.roleEn'), kind: 'text' },
           { name: 'responsibilities', label: t('project.team.responsibilities'), kind: 'textarea' },
+          { name: 'allocationPercent', label: t('project.team.allocation'), kind: 'number' },
         ]}
         empty={{}}
         fromRow={(m) => ({
@@ -399,12 +403,15 @@ export function TeamTab({ project }: TabProps) {
           roleAr: m.roleAr ?? null,
           roleEn: m.roleEn ?? null,
           responsibilities: m.responsibilities ?? null,
+          allocationPercent: asText(toPercent(allocationOf(m))),
         })}
         toPayload={(v) => ({
           employeeId: str(v.employeeId),
           roleAr: str(v.roleAr),
           roleEn: str(v.roleEn),
           responsibilities: str(v.responsibilities),
+          // Capacity view (ADR 0116): typed as a percentage, stored as a ratio.
+          allocationPercent: fromPercent(str(v.allocationPercent) ?? ''),
         })}
         columns={[
           {
@@ -416,6 +423,7 @@ export function TeamTab({ project }: TabProps) {
             render: (m) => pickText(i18n.language, m.roleAr, m.roleEn) || '—',
           },
           { label: t('project.team.responsibilities'), render: (m) => m.responsibilities ?? '—' },
+          { label: t('project.team.allocation'), render: (m) => percent(allocationOf(m), i18n.language) },
         ]}
       />
       {project.template.teamFormation && (
@@ -625,13 +633,35 @@ export function MeetingsTab({ project }: TabProps) {
           label: t('project.meeting.notes'),
           render: (m) => <span className="whitespace-pre-line">{m.notes ?? '—'}</span>,
         },
+        {
+          label: t('project.meeting.vendor'),
+          render: (m) => (
+            <MeetingVendorCell
+              projectId={project.id}
+              meetingId={m.id}
+              vendorId={(m as WaselMeetingFields).vendorId}
+              confirmedAt={(m as WaselMeetingFields).vendorConfirmedAt}
+              canShare={project.permissions.canEdit && project.status === 'active'}
+            />
+          ),
+        },
       ]}
     />
   );
 }
 
+/** Wasel fields of a meeting row, when the server sends them (SPEC §1.18 "Meetings"). */
+interface WaselMeetingFields {
+  vendorId?: string | null;
+  vendorConfirmedAt?: string | null;
+}
+
+/** Planned allocation of a proposed member (ratio), when the server sends it (capacity view, ADR 0116). */
+const allocationOf = (m: object) => (m as { allocationPercent?: number | null }).allocationPercent ?? null;
+
 export function ContractsTab({ project }: TabProps) {
   const { t, i18n } = useTranslation('portfolio');
+  const vendorOptions = useVendorOptions();
   const { t: tc } = useTranslation();
   const toast = useToast();
   const files = useProjectFiles(project.id);
@@ -726,8 +756,15 @@ export function ContractsTab({ project }: TabProps) {
         fields={[
           { name: 'name', label: t('project.contract.name'), kind: 'text', required: true },
           { name: 'number', label: t('project.contract.number'), kind: 'text' },
+          {
+            name: 'vendorId',
+            label: t('project.contract.vendor'),
+            kind: 'select',
+            options: [{ value: '*', label: t('project.contract.noVendor') }, ...vendorOptions],
+          },
           { name: 'supplier', label: t('project.contract.supplier'), kind: 'text' },
           { name: 'issueDate', label: t('project.contract.issueDate'), kind: 'date' },
+          { name: 'endDate', label: t('project.contract.endDate'), kind: 'date' },
           { name: 'amount', label: t('project.contract.amount'), kind: 'number' },
           {
             name: 'contractStatus',
@@ -747,6 +784,8 @@ export function ContractsTab({ project }: TabProps) {
           issueDate: c.issueDate ?? null,
           amount: asText(c.amount),
           contractStatus: c.contractStatus,
+          vendorId: (c as WaselContractFields).vendorId ?? null,
+          endDate: (c as WaselContractFields).endDate ?? null,
         })}
         toPayload={(v) => ({
           name: str(v.name),
@@ -755,6 +794,8 @@ export function ContractsTab({ project }: TabProps) {
           issueDate: str(v.issueDate),
           amount: num(v.amount),
           contractStatus: str(v.contractStatus),
+          vendorId: str(v.vendorId) === '*' ? null : str(v.vendorId),
+          endDate: str(v.endDate),
         })}
         columns={[
           { label: t('project.contract.name'), render: (c) => c.name ?? '—' },
@@ -769,6 +810,13 @@ export function ContractsTab({ project }: TabProps) {
             render: (c) => (c.amount !== null ? formatNumber(c.amount, i18n.language) : '—'),
           },
           {
+            label: t('project.contract.endDate'),
+            render: (c) => {
+              const end = (c as WaselContractFields).endDate;
+              return end ? formatDate(end, i18n.language) : '—';
+            },
+          },
+          {
             label: t('project.contract.status'),
             render: (c) => t(`project.contract.statuses.${c.contractStatus as 'active'}`),
           },
@@ -777,4 +825,10 @@ export function ContractsTab({ project }: TabProps) {
       {procurement && <ContractExtrasSection project={project} canWrite={canLpo} />}
     </div>
   );
+}
+
+/** Supplier from the vendor register and end date of a contract, when the server sends them (ADR 0112 / 0115). */
+interface WaselContractFields {
+  vendorId?: string | null;
+  endDate?: string | null;
 }

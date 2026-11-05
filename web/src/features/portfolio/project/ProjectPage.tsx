@@ -72,6 +72,7 @@ import { RaidTab } from '../standards/RaidTab';
 import { useAiAssist } from '../standards/standardsApi';
 import { GroupingCard } from '../views/GroupingCard';
 import { ProjectGanttTab } from '../views/ProjectGanttTab';
+import { WaselTab } from '../wasel/WaselTab';
 
 const route = getRouteApi('/app/portfolio/projects/$projectId');
 
@@ -345,6 +346,9 @@ export function ProjectPage() {
         </TabsContent>
         <TabsContent value="contracts">
           <ContractsTab project={p} options={options.data} />
+        </TabsContent>
+        <TabsContent value="vendors">
+          <WaselTab project={p} />
         </TabsContent>
         <TabsContent value="changes">
           <ChangesTab project={p} />

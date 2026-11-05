@@ -10,8 +10,11 @@ namespace Strategy.Platform.Access.Application;
 /// The three-layer access model (SPEC §0.2, CLAUDE.md §7, docs/design/access.md, ADR 0015). Registered per scope: the
 /// user's snapshot is resolved once per request (and cached for a minute across requests).
 /// </summary>
-internal sealed class AccessService(UserAccessLoader loader, AccessDbContext db, IClock clock) : IAccessService
+internal sealed class AccessService(UserAccessLoader loader, AccessModelCache models, AccessDbContext db, IClock clock) : IAccessService
 {
+    /// <summary>Wasel vendor permissions (ADR 0111): only vendor principals hold them, only through record roles.</summary>
+    public const string VendorPermissionPrefix = "wasel.";
+
     private readonly Dictionary<(Guid, Guid?), (AccessModel, UserAccess)> _perRequest = [];
 
     public async Task<bool> CanAsync(
@@ -24,7 +27,12 @@ internal sealed class AccessService(UserAccessLoader loader, AccessDbContext db,
             return true;
         }
 
-        if (!principal.IsInternal() || principal.UserId() is not { } userId)
+        if (IsVendor(principal))
+        {
+            return await VendorCanAsync(principal, permission, resource, cancellationToken).ConfigureAwait(false);
+        }
+
+        if (!principal.IsInternal() || principal.UserId() is not { } userId || IsVendorPermission(permission))
         {
             return false;
         }
@@ -82,7 +90,15 @@ internal sealed class AccessService(UserAccessLoader loader, AccessDbContext db,
             return query;
         }
 
-        if (!principal.IsInternal() || principal.UserId() is not { } userId)
+        if (IsVendor(principal))
+        {
+            var vendorIds = await VendorRecordIdsAsync(principal, permission, scope.ResourceType, cancellationToken).ConfigureAwait(false);
+            var vendorBuilder = new ScopePredicateBuilder<T>(scope);
+            vendorBuilder.AddIds(vendorIds);
+            return vendorBuilder.Build() is { } vendorPredicate ? query.Where(vendorPredicate) : query.Where(_ => false);
+        }
+
+        if (!principal.IsInternal() || principal.UserId() is not { } userId || IsVendorPermission(permission))
         {
             return query.Where(_ => false);
         }
@@ -116,6 +132,76 @@ internal sealed class AccessService(UserAccessLoader loader, AccessDbContext db,
         }
 
         return builder.Build() is { } predicate ? query.Where(predicate) : query.Where(_ => false);
+    }
+
+    private static bool IsVendor(ClaimsPrincipal principal) =>
+        principal.IsAuthenticated() && principal.FindFirst(StrategyClaims.PrincipalType)?.Value == StrategyClaims.VendorPrincipal;
+
+    private static bool IsVendorPermission(string permission) => permission.StartsWith(VendorPermissionPrefix, StringComparison.Ordinal);
+
+    /// <summary>
+    /// Vendor principals (ADR 0111): only <c>wasel.*</c> permissions of the catalogue, only while the Wasel system is on, only through record roles granted
+    /// to the vendor's user id that are valid now. No system roles, no data scopes.
+    /// </summary>
+    private async Task<bool> VendorCanAsync(ClaimsPrincipal principal, string permission, ResourceRef? resource, CancellationToken cancellationToken)
+    {
+        if (principal.UserId() is not { } userId || !IsVendorPermission(permission))
+        {
+            return false;
+        }
+
+        var model = await models.GetAsync(cancellationToken).ConfigureAwait(false);
+        if (!VendorSystemOpen(model, permission))
+        {
+            return false;
+        }
+
+        var recordRoles = model.RecordRolesFor(permission);
+        if (recordRoles.Count == 0)
+        {
+            return false;
+        }
+
+        var grants = VendorGrants(userId);
+        if (resource is null)
+        {
+            var types = recordRoles.Keys.ToList();
+            var candidates = await grants.Where(g => types.Contains(g.ResourceType)).Select(g => new { g.ResourceType, g.RoleCode }).Distinct()
+                .ToListAsync(cancellationToken).ConfigureAwait(false);
+            return candidates.Any(c => recordRoles[c.ResourceType].Contains(c.RoleCode, StringComparer.Ordinal));
+        }
+
+        return recordRoles.TryGetValue(resource.Type, out var codes)
+            && await grants.AnyAsync(g => g.ResourceType == resource.Type && g.ResourceId == resource.Id && codes.Contains(g.RoleCode), cancellationToken)
+                .ConfigureAwait(false);
+    }
+
+    private async Task<IReadOnlyCollection<Guid>> VendorRecordIdsAsync(
+        ClaimsPrincipal principal, string permission, string resourceType, CancellationToken cancellationToken)
+    {
+        if (principal.UserId() is not { } userId || !IsVendorPermission(permission))
+        {
+            return [];
+        }
+
+        var model = await models.GetAsync(cancellationToken).ConfigureAwait(false);
+        if (!VendorSystemOpen(model, permission) || !model.RecordRolesFor(permission).TryGetValue(resourceType, out var codes))
+        {
+            return [];
+        }
+
+        return await VendorGrants(userId).Where(g => g.ResourceType == resourceType && codes.Contains(g.RoleCode)).Select(g => g.ResourceId).Distinct()
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    private static bool VendorSystemOpen(AccessModel model, string permission) =>
+        model.Permissions.TryGetValue(permission, out var info) && model.Systems.TryGetValue(info.SystemCode, out var system) && system.Enabled;
+
+    private IQueryable<Domain.RecordRoleGrant> VendorGrants(Guid userId)
+    {
+        var now = clock.UtcNow;
+        return db.RecordRoles.AsNoTracking().Where(g =>
+            g.ValidFrom <= now && (g.ValidTo == null || g.ValidTo > now) && g.PrincipalKind == RecordPrincipalKinds.User && g.PrincipalId == userId);
     }
 
     /// <summary>The snapshot for a user (also used by the access API and the MFA policy).</summary>

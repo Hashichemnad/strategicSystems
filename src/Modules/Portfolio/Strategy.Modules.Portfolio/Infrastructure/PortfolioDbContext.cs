@@ -67,6 +67,32 @@ public sealed class PortfolioDbContext(DbContextOptions<PortfolioDbContext> opti
     public DbSet<Baseline> Baselines => Set<Baseline>();
 
     public DbSet<ProjectTemplate> Templates => Set<ProjectTemplate>();
+
+    public DbSet<Vendor> Vendors => Set<Vendor>();
+
+    public DbSet<VendorUser> VendorUsers => Set<VendorUser>();
+
+    public DbSet<VendorAssignment> VendorAssignments => Set<VendorAssignment>();
+
+    public DbSet<VendorMember> VendorMembers => Set<VendorMember>();
+
+    public DbSet<PlanProposal> PlanProposals => Set<PlanProposal>();
+
+    public DbSet<VendorSubmission> VendorSubmissions => Set<VendorSubmission>();
+
+    public DbSet<VendorSubmissionItem> VendorSubmissionItems => Set<VendorSubmissionItem>();
+
+    public DbSet<VendorDeliverable> VendorDeliverables => Set<VendorDeliverable>();
+
+    public DbSet<VendorItem> VendorItems => Set<VendorItem>();
+
+    public DbSet<VendorComment> VendorComments => Set<VendorComment>();
+
+    public DbSet<VendorRating> VendorRatings => Set<VendorRating>();
+
+    public DbSet<PortfolioReview> Reviews => Set<PortfolioReview>();
+
+    public DbSet<ReviewDecision> ReviewDecisions => Set<ReviewDecision>();
 }
 
 internal sealed class ProgramRequestConfiguration : IEntityTypeConfiguration<ProgramRequest>
@@ -219,6 +245,7 @@ internal sealed class ProjectConfiguration : IEntityTypeConfiguration<Project>
         builder.HasIndex(x => x.PmEmployeeId);
         builder.HasIndex(x => new { x.Status, x.SubState });
         builder.Property(x => x.Methodology).HasMaxLength(20).HasDefaultValue(Methodologies.Waterfall);
+        builder.Property(x => x.MilestoneUpdateMode).HasMaxLength(20).HasDefaultValue(UpdateModes.PmOnly);
         builder.Property(x => x.AgileApprovalMode).HasMaxLength(20);
         builder.Property(x => x.DefinitionOfDone).HasMaxLength(RequestRules.LongTextMaxLength);
         builder.Property(x => x.Board).HasColumnType("jsonb");
@@ -270,6 +297,8 @@ internal sealed class MilestoneConfiguration : IEntityTypeConfiguration<Mileston
 
         builder.Property(x => x.Cost).HasPrecision(18, 2);
         builder.Property(x => x.QualityStatus).HasMaxLength(20);
+        builder.Property(x => x.PendingSource).HasMaxLength(20);
+        builder.HasIndex(x => x.VendorId);
         builder.Property(x => x.QualityComment).HasMaxLength(RequestRules.TextMaxLength);
         builder.Ignore(x => x.IsActive);
         builder.Ignore(x => x.HasPendingUpdate);
@@ -345,6 +374,7 @@ internal sealed class ProposedMemberConfiguration : IEntityTypeConfiguration<Pro
     public void Configure(EntityTypeBuilder<ProposedMember> builder)
     {
         ChildConfiguration.Child(builder, "team_member");
+        builder.Property(x => x.AllocationPercent).HasPrecision(9, 4);
         ChildConfiguration.Texts(builder, RequestRules.NameMaxLength, nameof(ProposedMember.RoleAr), nameof(ProposedMember.RoleEn));
         ChildConfiguration.Texts(builder, RequestRules.TextMaxLength, nameof(ProposedMember.Responsibilities));
     }

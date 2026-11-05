@@ -33,6 +33,11 @@ public sealed class IdentityComponent : IPlatformComponent
 {
     public const string SessionCookieName = "strategy.session";
 
+    /// <summary>Wasel vendor session cookie (ADR 0110), sent by the browser only to <c>/api/wasel</c>.</summary>
+    public const string WaselCookieName = "strategy.wasel";
+
+    public const string WaselPathPrefix = "/api/wasel";
+
     public string Name => "identity";
 
     public void AddServices(IServiceCollection services, IConfiguration configuration)
@@ -51,6 +56,8 @@ public sealed class IdentityComponent : IPlatformComponent
         services.AddScoped<AccessTokenService>();
         services.AddScoped<TokenPrincipalFactory>();
         services.AddScoped<UserAdministration>();
+        services.AddScoped<Wasel.WaselSignInService>();
+        services.AddScoped<Wasel.IVendorAccounts, Wasel.VendorAccounts>();
         services.AddScoped<ISmtpSettingsSource, SmtpSettingsSource>();
         services.AddScoped<INotificationRecipientDirectory, NotificationRecipientDirectory>();
         foreach (var template in IdentityEmails.All)
@@ -95,11 +102,37 @@ public sealed class IdentityComponent : IPlatformComponent
                 options.DefaultScheme = AuthSchemes.Default;
                 options.DefaultSignInScheme = IdentityConstants.ApplicationScheme;
             })
+            // Wasel (ADR 0110): every /api/wasel request authenticates with the vendor cookie only, and nothing else ever reads it.
             .AddPolicyScheme(AuthSchemes.Default, null, options => options.ForwardDefaultSelector = context =>
-                PatAuthenticationHandler.BearerValue(context.Request) is { Length: > 0 } bearer
-                    ? AccessTokenService.LooksLikeToken(bearer) ? AuthSchemes.PersonalAccessToken : AuthSchemes.OAuth
-                    : IdentityConstants.ApplicationScheme)
+                context.Request.Path.StartsWithSegments(WaselPathPrefix, StringComparison.OrdinalIgnoreCase)
+                    ? AuthSchemes.Wasel
+                    : PatAuthenticationHandler.BearerValue(context.Request) is { Length: > 0 } bearer
+                        ? AccessTokenService.LooksLikeToken(bearer) ? AuthSchemes.PersonalAccessToken : AuthSchemes.OAuth
+                        : IdentityConstants.ApplicationScheme)
             .AddScheme<AuthenticationSchemeOptions, PatAuthenticationHandler>(AuthSchemes.PersonalAccessToken, null)
+            .AddCookie(AuthSchemes.Wasel, options =>
+            {
+                options.Cookie.Name = WaselCookieName;
+                options.Cookie.Path = WaselPathPrefix;
+                options.Cookie.HttpOnly = true;
+                options.Cookie.SameSite = SameSiteMode.Strict;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+                options.ExpireTimeSpan = TimeSpan.FromHours(24); // idle / absolute limits come from the session store
+                options.SlidingExpiration = true;
+                options.Events.OnRedirectToLogin = context => WriteProblemAsync(context.HttpContext,
+                    new Error("auth.required", "errors.unauthorized", ErrorKind.Unauthorized));
+                options.Events.OnRedirectToAccessDenied = context => WriteProblemAsync(context.HttpContext, Error.Forbidden());
+                options.Events.OnValidatePrincipal = ValidateVendorAsync;
+            })
+            .AddCookie(AuthSchemes.WaselTwoFactor, options =>
+            {
+                options.Cookie.Name = "strategy.wasel.mfa";
+                options.Cookie.Path = WaselPathPrefix;
+                options.Cookie.HttpOnly = true;
+                options.Cookie.SameSite = SameSiteMode.Strict;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(5);
+            })
             .AddIdentityCookies();
 
         services.ConfigureApplicationCookie(options =>
@@ -143,6 +176,21 @@ public sealed class IdentityComponent : IPlatformComponent
         MeEndpoints.Map(group);
         AdminEndpoints.Map(group);
         ExternalEndpoints.Map(group, endpoints);
+        Wasel.WaselAuthEndpoints.Map(endpoints);
+    }
+
+    /// <summary>A vendor session stays valid only while the account is an active vendor account with the same security stamp.</summary>
+    private static async Task ValidateVendorAsync(CookieValidatePrincipalContext context)
+    {
+        var users = context.HttpContext.RequestServices.GetRequiredService<StrategyUserManager>();
+        var id = context.Principal?.UserId();
+        var user = id is null ? null : await users.FindByIdAsync(id.Value.ToString()).ConfigureAwait(false);
+        var stamp = context.Principal?.FindFirst(users.Options.ClaimsIdentity.SecurityStampClaimType)?.Value;
+        if (user is not { Active: true, PrincipalType: StrategyClaims.VendorPrincipal } || (stamp is not null && stamp != user.SecurityStamp))
+        {
+            context.RejectPrincipal();
+            await context.HttpContext.SignOutAsync(AuthSchemes.Wasel).ConfigureAwait(false);
+        }
     }
 
     private static Task WriteProblemAsync(HttpContext context, Error error) => error.ToProblem().ExecuteAsync(context);

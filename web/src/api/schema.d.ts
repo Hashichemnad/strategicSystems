@@ -20,6 +20,22 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/wasel/v1/antiforgery/token': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetWaselAntiforgeryToken'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/audit/entries': {
     parameters: {
       query?: never;
@@ -2094,6 +2110,182 @@ export interface paths {
     get?: never;
     put?: never;
     post: operations['TestProvider'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/wasel/v1/auth/login': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['WaselLogin'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/wasel/v1/auth/mfa/verify': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['WaselVerifySecondFactor'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/wasel/v1/auth/mfa/email-code': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['WaselSendEmailCode'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/wasel/v1/auth/mfa/enrol/totp': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['WaselStartTotpEnrolment'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/wasel/v1/auth/mfa/enrol/email': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['WaselStartEmailEnrolment'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/wasel/v1/auth/mfa/enrol/confirm': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['WaselConfirmMfaEnrolment'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/wasel/v1/auth/password/forgot': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['WaselForgotPassword'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/wasel/v1/auth/password/reset': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['WaselResetPassword'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/wasel/v1/auth/logout': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['WaselLogout'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/wasel/v1/me': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetWaselMe'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/wasel/v1/me/preferences': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateWaselPreferences'];
+    post?: never;
     delete?: never;
     options?: never;
     head?: never;
@@ -4628,6 +4820,390 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/portfolio/vendors': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListVendors'];
+    put?: never;
+    post: operations['CreateVendor'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/vendors/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetVendor'];
+    put: operations['UpdateVendor'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/vendors/{id}/status': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SetVendorStatus'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/vendor-users/{id}/deactivate': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['DeactivateVendorUser'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/vendor-users/{id}/reactivate': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ReactivateVendorUser'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/wasel-assignments/{aid}/revoke': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RevokeVendorAssignment'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/wasel-members/{mid}/revoke': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RevokeVendorMember'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/milestones/{mid}/vendor': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['AssignMilestoneVendor'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/meetings/{mid}/vendor': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['ShareMeetingWithVendor'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/proposals/{pid}/accept': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['AcceptPlanProposal'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/proposals/{pid}/return': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ReturnPlanProposal'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/vendor-submissions/{sid}/items/{iid}/accept': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['AcceptVendorSubmissionItem'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/vendor-submissions/{sid}/items/{iid}/return': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ReturnVendorSubmissionItem'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/vendor-submissions/{sid}/share': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ShareVendorOutcome'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/vendor-submissions/{sid}/ai-review': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ReviewVendorSubmissionWithAi'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/vendor-deliverables/{did}/accept': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['AcceptVendorDeliverable'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/vendor-deliverables/{did}/return': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ReturnVendorDeliverable'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/vendor-items/{vid}/accept': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['AcceptVendorItem'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/vendor-items/{vid}/reject': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RejectVendorItem'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/capacity': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetPortfolioCapacity'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/reviews': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListPortfolioReviews'];
+    put?: never;
+    post: operations['CreatePortfolioReview'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/reviews/{rid}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetPortfolioReview'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/reviews/{rid}/decisions/{projectId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['SetPortfolioReviewDecision'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/reviews/{rid}/complete': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CompletePortfolioReview'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/portfolio/requests': {
     parameters: {
       query?: never;
@@ -6644,6 +7220,102 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/portfolio/projects/{id}/wasel': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetProjectWasel'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/wasel/mode': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['SetProjectUpdateMode'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/wasel/assignments': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['AssignProjectVendor'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/wasel/invitations': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['InviteVendorUser'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/wasel/comments': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListProjectWaselComments'];
+    put?: never;
+    post: operations['AddProjectWaselComment'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/{id}/wasel/ratings': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RateProjectVendor'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/portfolio/settings': {
     parameters: {
       query?: never;
@@ -6670,6 +7342,294 @@ export interface paths {
     get?: never;
     put?: never;
     post: operations['UploadProjectScopeTemplate'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/wasel/v1/portal': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetWaselPortal'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/wasel/v1/projects/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetWaselProject'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/wasel/v1/projects/{id}/milestones': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListWaselMilestones'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/wasel/v1/projects/{id}/proposals': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListWaselProposals'];
+    put?: never;
+    post: operations['CreateWaselProposal'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/wasel/v1/projects/{id}/proposals/{pid}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateWaselProposal'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/wasel/v1/projects/{id}/proposals/{pid}/submit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SubmitWaselProposal'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/wasel/v1/projects/{id}/proposals/{pid}/withdraw': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['WithdrawWaselProposal'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/wasel/v1/projects/{id}/submission': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetWaselSubmission'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/wasel/v1/projects/{id}/submissions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListWaselSubmissions'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/wasel/v1/projects/{id}/submission/items/{milestoneId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['SaveWaselSubmissionItem'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/wasel/v1/projects/{id}/submission/items/{milestoneId}/evidence': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['UploadWaselEvidence'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/wasel/v1/projects/{id}/submission/submit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SubmitWaselSubmission'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/wasel/v1/projects/{id}/deliverables': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListWaselDeliverables'];
+    put?: never;
+    post: operations['UploadWaselDeliverable'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/wasel/v1/projects/{id}/items': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListWaselItems'];
+    put?: never;
+    post: operations['ProposeWaselItem'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/wasel/v1/projects/{id}/meetings': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListWaselMeetings'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/wasel/v1/projects/{id}/meetings/{mid}/confirm': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ConfirmWaselMeeting'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/wasel/v1/projects/{id}/comments': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListWaselComments'];
+    put?: never;
+    post: operations['AddWaselComment'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/wasel/v1/projects/{id}/files/{fileId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['DownloadWaselFile'];
+    put?: never;
+    post?: never;
     delete?: never;
     options?: never;
     head?: never;
@@ -10191,6 +11151,47 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    CapacityAllocationDto: {
+      source: string;
+      /** Format: uuid */
+      teamId: null | string;
+      /** Format: uuid */
+      projectId: null | string;
+      number: null | string;
+      nameAr: null | string;
+      nameEn: null | string;
+      /** Format: double */
+      allocationPercent: null | number;
+      projectNumber: null | string;
+    };
+    CapacityDto: {
+      /** Format: uuid */
+      unitId: null | string;
+      includeBelow: boolean;
+      /** Format: double */
+      threshold: number;
+      /** Format: int32 */
+      employees: number;
+      /** Format: int32 */
+      overAllocated: number;
+      rows: components['schemas']['CapacityRowDto'][];
+    };
+    CapacityRowDto: {
+      /** Format: uuid */
+      employeeId: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      /** Format: uuid */
+      unitId: null | string;
+      unitNameAr: null | string;
+      unitNameEn: null | string;
+      /** Format: double */
+      total: number;
+      overAllocated: boolean;
+      /** Format: int32 */
+      notSet: number;
+      allocations: components['schemas']['CapacityAllocationDto'][];
+    };
     /** @description Everything an author sets on a card (form / API / AI builder). */
     CardValues: {
       nameAr: null | string;
@@ -10628,6 +11629,10 @@ export interface components {
       status: string;
       /** Format: uint32 */
       version: number;
+      /** Format: uuid */
+      vendorId?: null | string;
+      /** Format: date */
+      endDate?: null | string;
     };
     ContractExtrasDto: {
       /** Format: uuid */
@@ -10654,6 +11659,10 @@ export interface components {
       /** Format: double */
       amount: null | number;
       contractStatus: null | string;
+      /** Format: uuid */
+      vendorId?: null | string;
+      /** Format: date */
+      endDate?: null | string;
     };
     /** @description A contributor as the API shows it: the Emirates ID is masked for everyone (reveal is a separate, audited call — ADR 0086). */
     ContributorDto: {
@@ -10989,6 +11998,12 @@ export interface components {
       number: string;
       nameAr: null | string;
       nameEn: null | string;
+    };
+    /** @description One field the PM changed before accepting a vendor value. */
+    DiffEntry: {
+      field: string;
+      vendor: null | string;
+      pm: null | string;
     };
     /** @description A run of the comparison: `same`, `added` or `removed` text. */
     DiffPart: {
@@ -12238,6 +13253,14 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    InvitationInput: {
+      /** Format: uuid */
+      vendorId: string;
+      email: string;
+      name: null | string;
+      role: string;
+      language: null | string;
+    };
     IpCapabilities: {
       file: boolean;
       registerInternally: boolean;
@@ -12365,6 +13388,12 @@ export interface components {
       code: string;
       nameAr: null | string;
       nameEn: null | string;
+    };
+    ItemReviewInput: {
+      values: null | components['schemas']['VendorProgressValues'];
+      comment: null | string;
+      /** Format: uint32 */
+      version: number;
     };
     JobDto: {
       key: string;
@@ -13737,6 +14766,10 @@ export interface components {
       title: null | string;
       notes: null | string;
     };
+    MeetingVendorInput: {
+      /** Format: uuid */
+      vendorId: null | string;
+    };
     MemberAnswersInput: {
       /** Format: uuid */
       id: string;
@@ -14009,6 +15042,9 @@ export interface components {
       qualityComment?: null | string;
       /** Format: date-time */
       qualityAt?: null | string;
+      /** Format: uuid */
+      vendorId?: null | string;
+      pendingSource?: null | string;
     };
     MilestoneInput: {
       values: components['schemas']['MilestoneValues'];
@@ -14076,6 +15112,10 @@ export interface components {
       sort: number;
       /** @default false */
       deliveredInSprints: boolean;
+    };
+    MilestoneVendorInput: {
+      /** Format: uuid */
+      vendorId: null | string;
     };
     MinutesAiInput: {
       notes: null | string;
@@ -14816,6 +15856,116 @@ export interface components {
       category: string;
       description: null | string;
     };
+    PmDeliverableDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      vendorId: string;
+      vendorNameAr: null | string;
+      vendorNameEn: null | string;
+      /** Format: uuid */
+      milestoneId: null | string;
+      title: string;
+      description: null | string;
+      status: string;
+      pmComment: null | string;
+      files: components['schemas']['VendorFileDto'][];
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: uint32 */
+      version: number;
+    };
+    PmProposalDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      vendorId: string;
+      vendorNameAr: null | string;
+      vendorNameEn: null | string;
+      /** Format: int32 */
+      sequence: number;
+      status: string;
+      kind: string;
+      items: components['schemas']['ProposalItem'][];
+      acceptedItems: null | components['schemas']['ProposalItem'][];
+      diff: components['schemas']['ProposalDiffEntry'][];
+      vendorNote: null | string;
+      pmComment: null | string;
+      /** Format: date-time */
+      submittedAt: null | string;
+      /** Format: date-time */
+      decidedAt: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
+    PmSubmissionDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      vendorId: string;
+      vendorNameAr: null | string;
+      vendorNameEn: null | string;
+      period: string;
+      status: string;
+      /** Format: date-time */
+      submittedAt: null | string;
+      /** Format: date-time */
+      reviewedAt: null | string;
+      sharedOutcome: null | string;
+      sharedNote: null | string;
+      items: components['schemas']['PmSubmissionItemDto'][];
+      /** Format: uint32 */
+      version: number;
+    };
+    PmSubmissionItemDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      milestoneId: string;
+      code: string;
+      titleAr: null | string;
+      titleEn: null | string;
+      /** Format: double */
+      weight: number;
+      /** Format: date */
+      plannedStart: null | string;
+      /** Format: date */
+      plannedEnd: null | string;
+      previous: null | components['schemas']['PreviousValuesDto'];
+      vendor: components['schemas']['VendorProgressValues'];
+      final: null | components['schemas']['VendorProgressValues'];
+      reviewStatus: string;
+      diff: components['schemas']['DiffEntry'][];
+      pmComment: null | string;
+      evidence: components['schemas']['VendorFileDto'][];
+      flags: string[];
+      /** Format: uint32 */
+      version: number;
+    };
+    PmVendorItemDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      vendorId: string;
+      kind: string;
+      title: string;
+      description: null | string;
+      impact: null | string;
+      /** Format: int32 */
+      probability: null | number;
+      /** Format: int32 */
+      impactLevel: null | number;
+      /** Format: uuid */
+      milestoneId: null | string;
+      status: string;
+      pmComment: null | string;
+      /** Format: uuid */
+      createdRecordId: null | string;
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: uint32 */
+      version: number;
+    };
     PortfolioDashboardDto: {
       /** Format: int32 */
       total: number;
@@ -14969,6 +16119,68 @@ export interface components {
       nameAr: null | string;
       nameEn: null | string;
     };
+    PortfolioReviewDecisionInput: {
+      decision: string;
+      comment: null | string;
+    };
+    PortfolioReviewDto: {
+      /** Format: uuid */
+      id: string;
+      period: string;
+      title: null | string;
+      /** Format: date */
+      reviewDate: null | string;
+      notes: null | string;
+      status: string;
+      /** Format: date-time */
+      completedAt: null | string;
+      projects: components['schemas']['PortfolioReviewProjectDto'][];
+      canManage: boolean;
+      /** Format: uint32 */
+      version: number;
+    };
+    PortfolioReviewInput: {
+      period: string;
+      title: null | string;
+      /** Format: date */
+      reviewDate: null | string;
+      notes: null | string;
+    };
+    PortfolioReviewListItemDto: {
+      /** Format: uuid */
+      id: string;
+      period: string;
+      title: null | string;
+      /** Format: date */
+      reviewDate: null | string;
+      status: string;
+      /** Format: int32 */
+      decisions: number;
+      /** Format: date-time */
+      completedAt: null | string;
+    };
+    PortfolioReviewProjectDto: {
+      /** Format: uuid */
+      projectId: string;
+      number: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      stage: string;
+      status: string;
+      /** Format: double */
+      performance: number;
+      progressStatus: string;
+      /** Format: double */
+      budget: null | number;
+      decision: null | string;
+      comment: null | string;
+      /** Format: uuid */
+      changeRequestId: null | string;
+      changeRequestNumber: null | string;
+      changeRequestStatus: null | string;
+      /** Format: uint32 */
+      version: null | number;
+    };
     /** @description Settings → Portfolio (docs/design/portfolio.md §2.1). Defaults are SPEC Appendix A (Q-P5, Q-P6). */
     PortfolioSettings: {
       /** Format: double */
@@ -15019,6 +16231,13 @@ export interface components {
       teamMembersCreateStories?: boolean;
       health?: components['schemas']['HealthThresholds'];
       gateChecklists?: components['schemas']['GateChecklists'];
+      /** @description Wasel vendor portal (SPEC §1.18, docs/design/portfolio.md §49). */
+      wasel?: components['schemas']['WaselSettings'];
+      /**
+       * Format: double
+       * @description Capacity view: total allocation above this ratio is over-allocation (ADR 0116).
+       */
+      capacityThreshold?: number;
     };
     PortfolioSettingsInput: {
       settings: components['schemas']['PortfolioSettings'];
@@ -15067,6 +16286,14 @@ export interface components {
       conditionError: null | string;
       approvers: components['schemas']['PreviewApproverDto'][];
       notes: string[];
+    };
+    PreviousValuesDto: {
+      /** Format: double */
+      approved: number;
+      /** Format: date */
+      actualStart: null | string;
+      /** Format: date */
+      actualEnd: null | string;
     };
     PrincipalDto: {
       kind: string;
@@ -15457,6 +16684,10 @@ export interface components {
       status: string;
       /** Format: uint32 */
       version: number;
+      /** Format: uuid */
+      vendorId?: null | string;
+      /** Format: date-time */
+      vendorConfirmedAt?: null | string;
     };
     ProjectMeetingInput: {
       values: components['schemas']['MeetingValues'];
@@ -15605,6 +16836,43 @@ export interface components {
       version: number;
       comment?: null | string;
     };
+    ProposalDecisionInput: {
+      items: null | components['schemas']['ProposalItem'][];
+      comment: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
+    /** @description One change the PM made to a proposed item before accepting (or an added / removed item). */
+    ProposalDiffEntry: {
+      key: string;
+      field: string;
+      vendor: null | string;
+      pm: null | string;
+    };
+    /** @description Plan proposal item (waterfall: phase / milestone with tasks; agile: epic / story). Keys link children to parents inside the proposal. */
+    ProposalItem: {
+      key: string;
+      type: string;
+      parentKey: null | string;
+      titleAr: null | string;
+      titleEn: null | string;
+      /** Format: date */
+      plannedStart: null | string;
+      /** Format: date */
+      plannedEnd: null | string;
+      /** Format: double */
+      weight: null | number;
+      /** @default false */
+      isDeliverable: boolean;
+      mainDeliverable?: null | string;
+      acceptanceCriteria?: null | string;
+      tasks?: null | string[];
+      /** Format: int32 */
+      storyPoints?: null | number;
+      asA?: null | string;
+      iWant?: null | string;
+      soThat?: null | string;
+    };
     /** @description What a definition change proposes (null = unchanged). */
     ProposedChange: {
       measuringEquation: null | string;
@@ -15629,6 +16897,8 @@ export interface components {
       status: string;
       /** Format: uint32 */
       version: number;
+      /** Format: double */
+      allocationPercent?: null | number;
     };
     ProposedMemberInput: {
       values: components['schemas']['TeamMemberValues'];
@@ -15861,6 +17131,9 @@ export interface components {
       /** Format: int32 */
       communication: number;
       comment: null | string;
+    };
+    ReasonOnlyInput: {
+      reason: null | string;
     };
     /**
      * @description "Reassign open tasks of an employee" (ADR 0040). `TaskIds` narrows the preview (null = all open tasks). In `to-creators` mode the
@@ -17191,6 +18464,9 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    ShareOutcomeInput: {
+      note: null | string;
+    };
     /** @description Outcome of a sign-in step. IReadOnlyList&lt;string&gt; SignInOutcome.Methods lists the second factors the user may use (or enrol). */
     SignInOutcome: {
       status: string;
@@ -18137,6 +19413,8 @@ export interface components {
       roleAr: null | string;
       roleEn: null | string;
       responsibilities: null | string;
+      /** Format: double */
+      allocationPercent?: null | number;
     };
     /** @description What the formation wizard and team pages need (any signed-in user): active types and roles, the published template's grades. */
     TeamOptionsDto: {
@@ -18677,6 +19955,11 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    UpdateModeInput: {
+      mode: string;
+      /** Format: uint32 */
+      version: number;
+    };
     UpdateRoleInput: {
       nameAr: null | string;
       nameEn: null | string;
@@ -18843,6 +20126,444 @@ export interface components {
       /** Format: int32 */
       completed: number;
     };
+    VendorAssignmentInput: {
+      /** Format: uuid */
+      vendorId: string;
+      /** Format: uuid */
+      contractId: null | string;
+      /** Format: date */
+      accessUntil: null | string;
+      expiryRule: null | string;
+    };
+    VendorContactDto: {
+      nameAr: null | string;
+      nameEn: null | string;
+      email: null | string;
+    };
+    VendorDeliverableDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      milestoneId: null | string;
+      title: string;
+      description: null | string;
+      status: string;
+      pmComment: null | string;
+      files: components['schemas']['VendorFileDto'][];
+      /** Format: date-time */
+      createdAt: string;
+    };
+    VendorDetailDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      tradeLicenceNo: null | string;
+      /** Format: date */
+      licenceExpiry: null | string;
+      countryCode: null | string;
+      address: null | string;
+      contactPerson: null | string;
+      email: null | string;
+      phone: null | string;
+      status: string;
+      statusReason: null | string;
+      notes: null | string;
+      users: components['schemas']['VendorUserDto'][];
+      ratings: components['schemas']['VendorRatingDto'][];
+      performance: components['schemas']['VendorPerformanceDto'];
+      /** Format: uint32 */
+      version: number;
+    };
+    VendorFileDto: {
+      /** Format: uuid */
+      id: string;
+      name: string;
+      contentType: string;
+      /** Format: int64 */
+      sizeBytes: number;
+      scanStatus: string;
+    };
+    VendorInput: {
+      values: components['schemas']['VendorValues'];
+      /** Format: uint32 */
+      version?: null | number;
+    };
+    VendorItemDto: {
+      /** Format: uuid */
+      id: string;
+      kind: string;
+      title: string;
+      description: null | string;
+      impact: null | string;
+      /** Format: int32 */
+      probability: null | number;
+      /** Format: int32 */
+      impactLevel: null | number;
+      /** Format: uuid */
+      milestoneId: null | string;
+      status: string;
+      pmComment: null | string;
+      /** Format: date-time */
+      createdAt: string;
+    };
+    VendorItemInput: {
+      values: components['schemas']['VendorItemValues'];
+    };
+    VendorItemValues: {
+      kind: string;
+      title: string;
+      description: null | string;
+      impact: null | string;
+      /** Format: int32 */
+      probability: null | number;
+      /** Format: int32 */
+      impactLevel: null | number;
+      /** Format: uuid */
+      milestoneId: null | string;
+    };
+    VendorListItemDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      status: string;
+      tradeLicenceNo: null | string;
+      /** Format: date */
+      licenceExpiry: null | string;
+      email: null | string;
+      /** Format: int32 */
+      users: number;
+      /** Format: int32 */
+      activeProjects: number;
+      /** Format: double */
+      averageRating: null | number;
+    };
+    VendorMeetingDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: date-time */
+      meetingAt: string;
+      title: null | string;
+      notes: null | string;
+      /** Format: date-time */
+      confirmedAt: null | string;
+    };
+    VendorMilestoneDto: {
+      /** Format: uuid */
+      id: string;
+      code: string;
+      phaseTitleAr: null | string;
+      phaseTitleEn: null | string;
+      titleAr: null | string;
+      titleEn: null | string;
+      /** Format: date */
+      plannedStart: null | string;
+      /** Format: date */
+      plannedEnd: null | string;
+      /** Format: double */
+      weight: null | number;
+      /** Format: double */
+      approvedAchieve: number;
+      /** Format: date */
+      actualStart: null | string;
+      /** Format: date */
+      actualEnd: null | string;
+      status: string;
+      delayed: boolean;
+      /** Format: double */
+      cost: null | number;
+      isDeliverable: boolean;
+      mainDeliverable: null | string;
+    };
+    VendorPerformanceDto: {
+      /** Format: int32 */
+      count: number;
+      /** Format: double */
+      timeliness: null | number;
+      /** Format: double */
+      quality: null | number;
+      /** Format: double */
+      responsiveness: null | number;
+      /** Format: double */
+      reporting: null | number;
+      /** Format: double */
+      overall: null | number;
+    };
+    VendorPortalMeDto: {
+      /** Format: uuid */
+      vendorUserId: string;
+      email: string;
+      name: null | string;
+      /** Format: uuid */
+      vendorId: string;
+      vendorNumber: string;
+      vendorNameAr: null | string;
+      vendorNameEn: null | string;
+      projects: components['schemas']['VendorProjectSummaryDto'][];
+    };
+    VendorProgressInput: {
+      values: components['schemas']['VendorProgressValues'];
+      /** Format: uint32 */
+      version?: null | number;
+    };
+    VendorProgressValues: {
+      /** Format: double */
+      achieve: number;
+      /** Format: date */
+      actualStart: null | string;
+      /** Format: date */
+      actualEnd: null | string;
+      progressNote: null | string;
+      causality: null | string;
+      correctiveActions: null | string;
+    };
+    VendorProjectDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      scope: null | string;
+      description: null | string;
+      stage: string;
+      status: string;
+      methodology: string;
+      /** Format: date */
+      plannedStart: null | string;
+      /** Format: date */
+      plannedEnd: null | string;
+      projectManager: null | components['schemas']['VendorContactDto'];
+      owner: null | components['schemas']['VendorContactDto'];
+      /** Format: double */
+      progress: null | number;
+      /** Format: double */
+      budget: null | number;
+      approvalStatus: null | string;
+      role: string;
+      updateMode: string;
+      /** Format: date */
+      accessUntil: null | string;
+      canProposePlan: boolean;
+      openWindowPeriod: null | string;
+      /** Format: date-time */
+      windowDueAt: null | string;
+      permissions: string[];
+    };
+    VendorProjectSummaryDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      stage: string;
+      status: string;
+      role: string;
+      updateMode: string;
+      /** Format: date */
+      accessUntil: null | string;
+      /** Format: int32 */
+      openActions: number;
+    };
+    VendorProposalDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: int32 */
+      sequence: number;
+      status: string;
+      kind: string;
+      items: components['schemas']['ProposalItem'][];
+      acceptedItems: null | components['schemas']['ProposalItem'][];
+      diff: components['schemas']['ProposalDiffEntry'][];
+      vendorNote: null | string;
+      pmComment: null | string;
+      /** Format: date-time */
+      submittedAt: null | string;
+      /** Format: date-time */
+      decidedAt: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
+    VendorProposalInput: {
+      items: components['schemas']['ProposalItem'][];
+      note: null | string;
+      /** Format: uint32 */
+      version?: null | number;
+    };
+    VendorProposalsDto: {
+      proposals: components['schemas']['VendorProposalDto'][];
+      canPropose: boolean;
+      kind: string;
+      /** Format: double */
+      availableWeight: number;
+    };
+    VendorRatingDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      projectId: string;
+      projectNumber: null | string;
+      projectNameAr: null | string;
+      projectNameEn: null | string;
+      /** Format: uuid */
+      milestoneId: null | string;
+      /** Format: int32 */
+      timeliness: number;
+      /** Format: int32 */
+      quality: number;
+      /** Format: int32 */
+      responsiveness: number;
+      /** Format: int32 */
+      reporting: number;
+      /** Format: double */
+      overall: number;
+      comment: null | string;
+      /** Format: date-time */
+      ratedAt: string;
+    };
+    VendorRatingInput: {
+      /** Format: uuid */
+      vendorId: string;
+      /** Format: uuid */
+      milestoneId: null | string;
+      values: components['schemas']['VendorRatingValues'];
+    };
+    VendorRatingValues: {
+      /** Format: int32 */
+      timeliness: number;
+      /** Format: int32 */
+      quality: number;
+      /** Format: int32 */
+      responsiveness: number;
+      /** Format: int32 */
+      reporting: number;
+      comment: null | string;
+    };
+    VendorReviewAiDto: {
+      flags: components['schemas']['VendorReviewFlagDto'][];
+      summary: null | string;
+      returnCommentAr: null | string;
+      returnCommentEn: null | string;
+      aiUsed: boolean;
+    };
+    VendorReviewFlagDto: {
+      /** Format: uuid */
+      milestoneId: string;
+      code: string;
+      flag: string;
+    };
+    VendorStatusInput: {
+      status: string;
+      reason: null | string;
+    };
+    VendorSubmissionDto: {
+      /** Format: uuid */
+      id: null | string;
+      period: null | string;
+      windowStatus: null | string;
+      /** Format: date-time */
+      dueAt: null | string;
+      status: string;
+      /** Format: date-time */
+      submittedAt: null | string;
+      sharedOutcome: null | string;
+      sharedNote: null | string;
+      items: components['schemas']['VendorSubmissionItemDto'][];
+      canEdit: boolean;
+      canSubmit: boolean;
+      updateMode: string;
+      /** Format: uint32 */
+      version: null | number;
+    };
+    VendorSubmissionHistoryDto: {
+      /** Format: uuid */
+      id: string;
+      period: string;
+      status: string;
+      /** Format: date-time */
+      submittedAt: null | string;
+      sharedOutcome: null | string;
+      sharedNote: null | string;
+      /** Format: int32 */
+      items: number;
+    };
+    VendorSubmissionItemDto: {
+      /** Format: uuid */
+      id: null | string;
+      /** Format: uuid */
+      milestoneId: string;
+      code: string;
+      titleAr: null | string;
+      titleEn: null | string;
+      /** Format: double */
+      weight: null | number;
+      /** Format: double */
+      approvedAchieve: number;
+      /** Format: date */
+      approvedActualStart: null | string;
+      /** Format: date */
+      plannedEnd: null | string;
+      delayed: boolean;
+      values: null | components['schemas']['VendorProgressValues'];
+      reviewStatus: string;
+      final: null | components['schemas']['VendorProgressValues'];
+      diff: components['schemas']['DiffEntry'][];
+      pmComment: null | string;
+      evidence: components['schemas']['VendorFileDto'][];
+      /** Format: uint32 */
+      version: null | number;
+    };
+    VendorSubmitInput: {
+      /** Format: uint32 */
+      version: number;
+    };
+    VendorUserDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      userId: string;
+      email: string;
+      name: null | string;
+      status: string;
+      /** Format: date-time */
+      invitedAt: string;
+      /** Format: date-time */
+      lastSignInAt: null | string;
+      mfaEnabled: boolean;
+      hasPassword: boolean;
+      /** Format: int32 */
+      activeProjects: number;
+      disabledReason: null | string;
+    };
+    VendorValues: {
+      nameAr: null | string;
+      nameEn: null | string;
+      tradeLicenceNo: null | string;
+      /** Format: date */
+      licenceExpiry: null | string;
+      countryCode: null | string;
+      address: null | string;
+      contactPerson: null | string;
+      email: null | string;
+      phone: null | string;
+      notes: null | string;
+    };
+    VendorVersionInput: {
+      /** Format: uint32 */
+      version: number;
+    };
+    /** @description Optional vendor-visible fields (ADR 0113). Costs are off unless switched on here. */
+    VendorVisibleFields: {
+      description?: boolean;
+      progress?: boolean;
+      owner?: boolean;
+      budget?: boolean;
+      approvalStatus?: boolean;
+      milestoneWeight?: boolean;
+      milestoneCost?: boolean;
+    };
     VerificationRunDto: {
       /** Format: uuid */
       id: string;
@@ -18926,6 +20647,127 @@ export interface components {
       /** Format: int32 */
       stepCount: number;
     };
+    WaselAssignmentDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      vendorId: string;
+      vendorNumber: string;
+      vendorNameAr: null | string;
+      vendorNameEn: null | string;
+      vendorStatus: string;
+      /** Format: uuid */
+      contractId: null | string;
+      /** Format: date */
+      accessUntil: null | string;
+      expiryRule: string;
+      status: string;
+      endedReason: null | string;
+      members: components['schemas']['WaselMemberDto'][];
+    };
+    WaselCodeInput: {
+      method: null | string;
+      code: null | string;
+    };
+    WaselCommentDto: {
+      /** Format: uuid */
+      id: string;
+      subjectType: string;
+      /** Format: uuid */
+      subjectId: string;
+      authorKind: string;
+      authorName: null | string;
+      body: string;
+      /** Format: date-time */
+      createdAt: string;
+    };
+    WaselCommentInput: {
+      subjectType: string;
+      /** Format: uuid */
+      subjectId: string;
+      body: string;
+      /** Format: uuid */
+      vendorId?: null | string;
+    };
+    WaselDecisionInput: {
+      comment: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
+    WaselForgotInput: {
+      login: null | string;
+    };
+    WaselLoginInput: {
+      login: null | string;
+      password: null | string;
+    };
+    WaselMeDto: {
+      /** Format: uuid */
+      id: string;
+      email: string;
+      language: null | string;
+      mfaEnabled: boolean;
+      /** Format: date-time */
+      lastSignInAt: null | string;
+    };
+    WaselMemberDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      vendorUserId: string;
+      email: string;
+      name: null | string;
+      role: string;
+      status: string;
+      /** Format: date-time */
+      validTo: null | string;
+      /** Format: date-time */
+      lastSignInAt: null | string;
+      userStatus: string;
+    };
+    WaselMilestoneRefDto: {
+      /** Format: uuid */
+      id: string;
+      code: string;
+      titleAr: null | string;
+      titleEn: null | string;
+      isHeader: boolean;
+      /** Format: uuid */
+      vendorId: null | string;
+      /** Format: double */
+      weight: number;
+    };
+    WaselPanelDto: {
+      updateMode: string;
+      canManage: boolean;
+      assignments: components['schemas']['WaselAssignmentDto'][];
+      proposals: components['schemas']['PmProposalDto'][];
+      submissions: components['schemas']['PmSubmissionDto'][];
+      deliverables: components['schemas']['PmDeliverableDto'][];
+      items: components['schemas']['PmVendorItemDto'][];
+      ratings: components['schemas']['VendorRatingDto'][];
+      milestones: components['schemas']['WaselMilestoneRefDto'][];
+    };
+    WaselPreferencesInput: {
+      language: null | string;
+    };
+    WaselResetInput: {
+      /** Format: uuid */
+      userId: null | string;
+      token: null | string;
+      newPassword: null | string;
+      invitation: boolean;
+    };
+    /** @description Settings → Portfolio → Wasel (docs/design/portfolio.md §49, ADRs 0113 / 0115). */
+    WaselSettings: {
+      defaultUpdateMode?: string;
+      expiryRule?: string;
+      endAtClosure?: boolean;
+      /** Format: int32 */
+      dormantDays?: number;
+      uaePassForVendors?: boolean;
+      visibleFields?: components['schemas']['VendorVisibleFields'];
+    };
     /** @description A submission-window rule (ADR 0060). */
     WindowRule: {
       periodCode: string;
@@ -18967,6 +20809,35 @@ export interface components {
 export type $defs = Record<string, never>;
 export interface operations {
   GetAntiforgeryToken: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AntiforgeryToken'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetWaselAntiforgeryToken: {
     parameters: {
       query?: never;
       header?: never;
@@ -24053,6 +25924,337 @@ export interface operations {
         content: {
           'application/json': components['schemas']['ProviderTestResultDto'];
         };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  WaselLogin: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['WaselLoginInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SignInOutcome'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  WaselVerifySecondFactor: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['WaselCodeInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SignInOutcome'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  WaselSendEmailCode: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  WaselStartTotpEnrolment: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TotpSetupDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  WaselStartEmailEnrolment: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  WaselConfirmMfaEnrolment: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['WaselCodeInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['EnrolmentResultDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  WaselForgotPassword: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['WaselForgotInput'];
+      };
+    };
+    responses: {
+      /** @description Accepted */
+      202: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  WaselResetPassword: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['WaselResetInput'];
+      };
+    };
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  WaselLogout: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetWaselMe: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['WaselMeDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateWaselPreferences: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['WaselPreferencesInput'];
+      };
+    };
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
       };
       /** @description Problem Details (RFC 9457) */
       default: {
@@ -30227,6 +32429,919 @@ export interface operations {
       };
     };
   };
+  ListVendors: {
+    parameters: {
+      query?: {
+        search?: string;
+        status?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VendorListItemDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateVendor: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['VendorInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VendorDetailDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetVendor: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VendorDetailDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateVendor: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['VendorInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VendorDetailDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SetVendorStatus: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['VendorStatusInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VendorDetailDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  DeactivateVendorUser: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ReasonOnlyInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VendorDetailDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ReactivateVendorUser: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VendorDetailDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RevokeVendorAssignment: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        aid: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ReasonOnlyInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['WaselPanelDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RevokeVendorMember: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        mid: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ReasonOnlyInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['WaselPanelDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  AssignMilestoneVendor: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        mid: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['MilestoneVendorInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['WaselPanelDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ShareMeetingWithVendor: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        mid: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['MeetingVendorInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['WaselPanelDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  AcceptPlanProposal: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        pid: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ProposalDecisionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['WaselPanelDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ReturnPlanProposal: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        pid: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ProposalDecisionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['WaselPanelDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  AcceptVendorSubmissionItem: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        sid: string;
+        iid: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ItemReviewInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['WaselPanelDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ReturnVendorSubmissionItem: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        sid: string;
+        iid: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ItemReviewInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['WaselPanelDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ShareVendorOutcome: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        sid: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ShareOutcomeInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['WaselPanelDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ReviewVendorSubmissionWithAi: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        sid: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VendorReviewAiDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  AcceptVendorDeliverable: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        did: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['WaselDecisionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['WaselPanelDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ReturnVendorDeliverable: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        did: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['WaselDecisionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['WaselPanelDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  AcceptVendorItem: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        vid: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['WaselDecisionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['WaselPanelDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RejectVendorItem: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        vid: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['WaselDecisionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['WaselPanelDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetPortfolioCapacity: {
+    parameters: {
+      query?: {
+        unitId?: string;
+        below?: boolean;
+        overOnly?: boolean;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapacityDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListPortfolioReviews: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PortfolioReviewListItemDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreatePortfolioReview: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['PortfolioReviewInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PortfolioReviewDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetPortfolioReview: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        rid: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PortfolioReviewDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SetPortfolioReviewDecision: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        rid: string;
+        projectId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['PortfolioReviewDecisionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PortfolioReviewDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CompletePortfolioReview: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        rid: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PortfolioReviewDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
   ListProgramRequests: {
     parameters: {
       query?: {
@@ -35228,6 +38343,246 @@ export interface operations {
       };
     };
   };
+  GetProjectWasel: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['WaselPanelDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SetProjectUpdateMode: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UpdateModeInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['WaselPanelDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  AssignProjectVendor: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['VendorAssignmentInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['WaselPanelDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  InviteVendorUser: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['InvitationInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['WaselPanelDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListProjectWaselComments: {
+    parameters: {
+      query?: {
+        subjectType?: string;
+        subjectId?: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['WaselCommentDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  AddProjectWaselComment: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['WaselCommentInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['WaselCommentDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RateProjectVendor: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['VendorRatingInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['WaselPanelDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
   GetPortfolioSettings: {
     parameters: {
       query?: never;
@@ -35313,6 +38668,745 @@ export interface operations {
         content: {
           'application/json': components['schemas']['SettingsDocumentOfPortfolioSettings'];
         };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetWaselPortal: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VendorPortalMeDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetWaselProject: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VendorProjectDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListWaselMilestones: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VendorMilestoneDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListWaselProposals: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VendorProposalsDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateWaselProposal: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['VendorProposalInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VendorProposalsDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateWaselProposal: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        pid: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['VendorProposalInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VendorProposalsDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SubmitWaselProposal: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        pid: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['VendorVersionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VendorProposalsDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  WithdrawWaselProposal: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        pid: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['VendorVersionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VendorProposalsDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetWaselSubmission: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VendorSubmissionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListWaselSubmissions: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VendorSubmissionHistoryDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SaveWaselSubmissionItem: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        milestoneId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['VendorProgressInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VendorSubmissionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UploadWaselEvidence: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        milestoneId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'multipart/form-data': {
+          file: components['schemas']['IFormFile'];
+        };
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VendorSubmissionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SubmitWaselSubmission: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['VendorSubmitInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VendorSubmissionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListWaselDeliverables: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VendorDeliverableDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UploadWaselDeliverable: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'multipart/form-data': {
+          file: components['schemas']['IFormFile'];
+        } & {
+          title?: string;
+        } & {
+          description?: string;
+        } & {
+          /** Format: uuid */
+          milestoneId?: string;
+        };
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VendorDeliverableDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListWaselItems: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VendorItemDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ProposeWaselItem: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['VendorItemInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VendorItemDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListWaselMeetings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VendorMeetingDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ConfirmWaselMeeting: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        mid: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VendorMeetingDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListWaselComments: {
+    parameters: {
+      query?: {
+        subjectType?: string;
+        subjectId?: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['WaselCommentDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  AddWaselComment: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['WaselCommentInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['WaselCommentDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  DownloadWaselFile: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        fileId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
       };
       /** @description Problem Details (RFC 9457) */
       default: {

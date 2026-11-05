@@ -18,7 +18,7 @@ public class EndpointCatalogueTests(ApiFixture api) : IClassFixture<ApiFixture>
         endpoints.ShouldNotBeEmpty();
         var undeclared = endpoints
             .Where(e => e.Metadata.GetMetadata<RequiredPermission>() is null && e.Metadata.GetMetadata<PublicEndpoint>() is null
-                && e.Metadata.GetMetadata<SelfServiceEndpoint>() is null)
+                && e.Metadata.GetMetadata<SelfServiceEndpoint>() is null && e.Metadata.GetMetadata<VendorEndpoint>() is null)
             .Select(e => e.DisplayName)
             .ToList();
         undeclared.ShouldBeEmpty();
@@ -35,5 +35,18 @@ public class EndpointCatalogueTests(ApiFixture api) : IClassFixture<ApiFixture>
 
         permissions.ShouldNotBeEmpty();
         permissions.ShouldAllBe(p => System.Text.RegularExpressions.Regex.IsMatch(p, "^[a-z][a-z0-9-]*\\.[a-z][a-z0-9-]*\\.[a-z][a-z0-9-]*$"));
+    }
+
+    /// <summary>ADR 0111: Wasel endpoints declare <c>wasel.*</c> vendor permissions only, and nothing outside <c>/api/wasel</c> does.</summary>
+    [Fact]
+    public void Vendor_endpoints_live_under_api_wasel_and_declare_wasel_permissions()
+    {
+        var endpoints = api.Factory.Services.GetRequiredService<EndpointDataSource>().Endpoints.OfType<RouteEndpoint>().ToList();
+        var vendor = endpoints.Where(e => e.Metadata.GetMetadata<VendorEndpoint>() is not null).ToList();
+        vendor.Count.ShouldBeGreaterThan(15);
+        vendor.ShouldAllBe(e => e.RoutePattern.RawText!.StartsWith("/api/wasel/", StringComparison.Ordinal)
+            && e.Metadata.GetMetadata<VendorEndpoint>()!.Permission.StartsWith("wasel.", StringComparison.Ordinal)
+            && e.Metadata.GetMetadata<RequiredPermission>() == null);
+        endpoints.Where(e => e.Metadata.GetMetadata<RequiredPermission>() is { } p && p.Permission.StartsWith("wasel.", StringComparison.Ordinal)).ShouldBeEmpty();
     }
 }

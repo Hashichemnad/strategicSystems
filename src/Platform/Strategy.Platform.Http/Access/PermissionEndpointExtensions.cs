@@ -19,6 +19,11 @@ public sealed record PublicEndpoint;
 /// </summary>
 public sealed record SelfServiceEndpoint;
 
+/// <summary>
+/// Endpoint metadata: a Wasel vendor endpoint (<c>/api/wasel</c>, ADR 0111) requiring a <c>wasel.*</c> permission, which only vendor record roles give.
+/// </summary>
+public sealed record VendorEndpoint(string Permission);
+
 public static class PermissionEndpointExtensions
 {
     /// <summary>
@@ -34,6 +39,25 @@ public static class PermissionEndpointExtensions
             var access = context.HttpContext.RequestServices.GetRequiredService<IAccessService>();
             var allowed = await access.CanAsync(context.HttpContext.User, permission, cancellationToken: context.HttpContext.RequestAborted)
                 .ConfigureAwait(false);
+            return allowed ? await next(context).ConfigureAwait(false) : Error.Forbidden().ToProblem();
+        });
+        return builder;
+    }
+
+    /// <summary>
+    /// Declares and enforces a vendor permission through <see cref="IAccessService"/>: the caller must be a vendor principal holding the permission
+    /// through an active record role on some project (403 otherwise). The handler checks the project itself (404 when not assigned).
+    /// </summary>
+    public static TBuilder RequireVendorPermission<TBuilder>(this TBuilder builder, string permission)
+        where TBuilder : IEndpointConventionBuilder
+    {
+        builder.WithMetadata(new VendorEndpoint(permission));
+        builder.AddEndpointFilter(async (context, next) =>
+        {
+            var user = context.HttpContext.User;
+            var access = context.HttpContext.RequestServices.GetRequiredService<IAccessService>();
+            var allowed = user.FindFirst(StrategyClaims.PrincipalType)?.Value == StrategyClaims.VendorPrincipal
+                && await access.CanAsync(user, permission, cancellationToken: context.HttpContext.RequestAborted).ConfigureAwait(false);
             return allowed ? await next(context).ConfigureAwait(false) : Error.Forbidden().ToProblem();
         });
         return builder;

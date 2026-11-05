@@ -37,7 +37,10 @@
     "risk": "Risk Management",
     "requests": "Requests",
     "documents": "Document library",
-    "ip": "Intellectual property"
+    "ip": "Intellectual property",
+    "portfolioVendors": "Vendors (Wasel)",
+    "portfolioCapacity": "Capacity",
+    "portfolioReviews": "Portfolio reviews"
   },
   "language": {
     "label": "Language",
