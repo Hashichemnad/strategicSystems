@@ -68,9 +68,7 @@ function cells(): HeatCell[] {
 
 async function render(ui: React.ReactElement, language: 'ar' | 'en' = 'en') {
   // The band labels come from the props; options are not needed (the request never resolves).
-  vi.spyOn(api as unknown as LooseGetApi, 'GET').mockReturnValue(
-    new Promise(() => {}),
-  );
+  vi.spyOn(api as unknown as LooseGetApi, 'GET').mockReturnValue(new Promise(() => {}));
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return renderWithProviders(<QueryClientProvider client={client}>{ui}</QueryClientProvider>, { language });
 }

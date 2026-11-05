@@ -225,8 +225,10 @@ test.describe('audit management', () => {
     const recs = await json<{ id: string }[]>(
       await adminApi.get(`${base}/findings/${f1.id}/recommendations`),
     );
+    const [rec] = recs;
+    if (!rec) throw new Error('The finding has no recommendation');
     await json(
-      await apiPost(adminApi, `${base}/recommendations/${recs[0]!.id}/follow-ups`, {
+      await apiPost(adminApi, `${base}/recommendations/${rec.id}/follow-ups`, {
         followUpOn: today(),
         achievedOn: null,
         pct: 0.4,
