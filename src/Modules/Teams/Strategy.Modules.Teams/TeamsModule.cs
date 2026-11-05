@@ -8,6 +8,7 @@ using Strategy.Modules.Teams.Contracts;
 using Strategy.Modules.Teams.Infrastructure;
 using Strategy.Modules.Teams.Jobs;
 using Strategy.Modules.Teams.Mcp;
+using Strategy.Modules.Teams.Reporting;
 using Strategy.Platform.Access;
 using Strategy.Platform.AI;
 using Strategy.Platform.AI.Tools;
@@ -17,6 +18,7 @@ using Strategy.Platform.Kernel;
 using Strategy.Platform.Links;
 using Strategy.Platform.Notifications;
 using Strategy.Platform.Persistence;
+using Strategy.Platform.Reporting;
 using Strategy.Platform.Scheduling;
 using Strategy.Platform.Settings;
 using Strategy.Platform.Workflow;
@@ -70,6 +72,11 @@ public sealed class TeamsModule : IModule
         services.AddApprovalHook<EvaluationApprovalHook>();
         services.AddCurrentStatusProvider<TeamCurrentStatus>();
         services.AddMyWorkSource<TeamMyWork>();
+
+        // Phase 17 — reporting sources (docs/design/reporting.md §2.5, §6, §7).
+        services.AddReportingMetricSource<TeamsMetricSource>();
+        services.AddReportingDatasetSource<TeamsDatasetSource>();
+        services.AddMyWorkCardSource<TeamsMyWorkCards>();
 
         services.AddFilePurpose(TeamFilePurposes.Documents);
         services.AddFilePurpose(TeamFilePurposes.Generated);
