@@ -31,14 +31,24 @@ Status: **built — awaiting owner acceptance** (ADRs 0140–0149 accepted by th
 | Every widget and report respects access scope | Engine tests above + restricted partitions (`costs` amounts only for editors; Portfolio costs, confidential tasks, office audit findings, document sensitivity in the module tests); a metric without access is *unavailable* |
 | Report builder cannot expose fields or records the user may not see | `The_report_builder_never_exposes_fields_or_records_the_runner_may_not_see` (dropped column, 400 on filter / sort by a hidden field, shared report runs with the runner's scope) + module dataset tests |
 | Scheduled e-mail in both languages with the recipient's permissions | `A_scheduled_report_is_delivered_to_each_recipient_in_their_language_with_their_permissions_at_send_time` (Arabic recipient: RTL sheet, Arabic headers, 3 rows; English recipient: LTR, all rows; idempotent re-run); E2E: Mailpit message (screenshot) |
-| Executive dashboard performance on the seeded volume | `ExecutivePerformanceTests` — 500 projects, 1 000 KPI cards (+ results), 1 000 risks, 2 000 findings, 2 000 remarks, 10 000 tasks: TIMINGS |
+| Executive dashboard performance on the seeded volume | `ExecutivePerformanceTests` — 500 projects, 1 000 KPI cards (+ results), 1 000 risks, 2 000 findings, 2 000 remarks, 10 000 tasks: seeding 471 ms, full refresh of all systems 994 ms, executive dashboard data (Director General, year, three timed runs after a warm-up) 77 / 151 / 72 ms — target < 3 s |
 | Aggregates refresh after a relevant event | `ReportingRefreshTests` (a save marks the system dirty; the cache keeps its figure until the refresh; the refresh updates it) |
 | Drill-down links land on records the user may open | `Drill_down_links_land_on_records_the_viewer_may_open_and_not_on_others` + list-link checks (200 / 404) in the module tests |
 | First start of the documented Docker install (owner request) | `MigrationTests.First_start_on_a_fresh_two_role_database_…` (init role, migrate as owner, `--create-admin` in the app service and in the migrate service, refused before `--migrate`, administrator signs in); manual run of `deploy/README.md` on a fresh Docker volume (below) |
 
 ## Quality gates run
 
-GATES
+| Gate | Result |
+|---|---|
+| `dotnet build Strategy.slnx -c Release` | 0 warnings, 0 errors |
+| `dotnet format Strategy.slnx --verify-no-changes` | clean |
+| Unit + architecture tests | 1 930 / 1 930 |
+| Integration tests (Testcontainers / local PostgreSQL 16) | 2 567 / 2 567 (a Document Registry test that compared against the UTC date failed between 20:00 and 24:00 UTC — fixed to use the installation's date; one CAP due-date test passed on re-run) |
+| Web: `lint`, `format:check`, `typecheck`, `test`, `build` | pass; Vitest 367 / 367 |
+| `npm audit --audit-level=high`, `lint:licenses` | no high / critical (8 moderate, dev tooling); 617 packages, all allowed licences |
+| `tools/check-vulnerable.sh`, `tools/check-api-client.sh` | E2E_GATE_VULN |
+| Playwright E2E (`ar` + `en`) | E2E_GATE_RESULT |
+| Fresh Docker install per `deploy/README.md` | DOCKER_GATE |
 
 ## Decisions (ADRs, accepted by the owner)
 0140 reporting read model through Contracts · 0141 scope-correct cached aggregates · 0142 periods, snapshots and refresh ·
