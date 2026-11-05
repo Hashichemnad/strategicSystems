@@ -106,7 +106,10 @@ public class ReportingEngineTests(ApiFixture api) : IClassFixture<ApiFixture>
         };
         var created = await w.AdminClient.PostAsJsonAsync("/api/v1/reporting/dashboards", new
         {
-            titleAr = "لوحة البنود", titleEn = "Items dashboard " + Guid.CreateVersion7().ToString("N")[^6..], level = "role", definition = new { widgets },
+            titleAr = "لوحة البنود",
+            titleEn = "Items dashboard " + Guid.CreateVersion7().ToString("N")[^6..],
+            level = "role",
+            definition = new { widgets },
         });
         created.StatusCode.ShouldBe(HttpStatusCode.OK, await created.Content.ReadAsStringAsync());
         var id = (await created.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("id").GetGuid();
@@ -211,7 +214,9 @@ public class ReportingEngineTests(ApiFixture api) : IClassFixture<ApiFixture>
         catalogue.GetProperty("metrics").EnumerateArray().Select(m => m.GetProperty("code").GetString()).ShouldNotContain("sample.items");
         var refused = await author.PostAsJsonAsync("/api/v1/reporting/dashboards", new
         {
-            titleEn = "Mine", level = "custom", definition = new { widgets = new[] { new { id = "x", type = "tile", metric = "sample.items", x = 0, y = 0, w = 3, h = 2 } } },
+            titleEn = "Mine",
+            level = "custom",
+            definition = new { widgets = new[] { new { id = "x", type = "tile", metric = "sample.items", x = 0, y = 0, w = 3, h = 2 } } },
         });
         await ShouldBeValidationAsync(refused, "reporting.errors.metricNotAllowed");
 
@@ -255,8 +260,11 @@ public class ReportingEngineTests(ApiFixture api) : IClassFixture<ApiFixture>
         {
             definition = new
             {
-                dataset = "sample.items", columns = new[] { "number" }, filters = new[] { new { field = "amount", @operator = "gte", values = new[] { "60" } } },
-                groupBy = Array.Empty<string>(), sort = Array.Empty<object>(),
+                dataset = "sample.items",
+                columns = new[] { "number" },
+                filters = new[] { new { field = "amount", @operator = "gte", values = new[] { "60" } } },
+                groupBy = Array.Empty<string>(),
+                sort = Array.Empty<object>(),
             },
         });
         await ShouldBeValidationAsync(filtered, "reporting.errors.fieldNotAllowed");
@@ -316,8 +324,15 @@ public class ReportingEngineTests(ApiFixture api) : IClassFixture<ApiFixture>
 
         var schedule = await authorClient.PostAsJsonAsync("/api/v1/reporting/schedules", new
         {
-            name = "Weekly items", targetKind = "report", targetId = reportId, frequency = "weekly", time = "07:00", day = 0, periodRule = "current-month",
-            format = "xlsx", active = true,
+            name = "Weekly items",
+            targetKind = "report",
+            targetId = reportId,
+            frequency = "weekly",
+            time = "07:00",
+            day = 0,
+            periodRule = "current-month",
+            format = "xlsx",
+            active = true,
             recipients = new[] { new { kind = "user", @ref = w.UnitReader.Id.ToString("D") }, new { kind = "user", @ref = w.AllReader.Id.ToString("D") } },
         });
         schedule.StatusCode.ShouldBe(HttpStatusCode.OK, await schedule.Content.ReadAsStringAsync());
@@ -362,6 +377,48 @@ public class ReportingEngineTests(ApiFixture api) : IClassFixture<ApiFixture>
 
         var deliveries = await authorClient.GetFromJsonAsync<JsonElement>($"/api/v1/reporting/schedules/{scheduleId}/deliveries");
         deliveries.EnumerateArray().Select(d => d.GetProperty("status").GetString()).ShouldAllBe(s => s == "sent");
+    }
+
+    [Fact]
+    public async Task The_ai_executive_brief_is_a_draft_and_only_cites_evidence_from_the_viewers_own_dashboard()
+    {
+        var w = await WorldAsync();
+        var provider = await w.AdminClient.PostAsJsonAsync("/api/v1/ai/providers", new { name = "Demo " + Guid.CreateVersion7(), type = "demo", defaultModel = "demo-large" });
+        provider.StatusCode.ShouldBe(HttpStatusCode.Created, await provider.Content.ReadAsStringAsync());
+        var providerId = (await provider.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("id").GetGuid();
+        var current = System.Text.Json.Nodes.JsonNode.Parse(await w.AdminClient.GetStringAsync("/api/v1/ai/settings"))!;
+        current["settings"]!["enabled"] = true;
+        current["settings"]!["defaultProviderId"] = providerId.ToString("D");
+        (await w.AdminClient.PutAsJsonAsync("/api/v1/ai/settings", current)).StatusCode.ShouldBe(HttpStatusCode.OK);
+
+        var response = await w.AdminClient.PostAsJsonAsync("/api/v1/reporting/brief", new { kind = "month" });
+        response.StatusCode.ShouldBe(HttpStatusCode.OK, await response.Content.ReadAsStringAsync());
+        var brief = await response.Content.ReadFromJsonAsync<JsonElement>();
+        brief.GetProperty("aiGenerated").GetBoolean().ShouldBeTrue();
+        brief.GetProperty("id").ValueKind.ShouldBe(JsonValueKind.Null, "a draft is not saved until a person saves it");
+        brief.GetProperty("attention").GetArrayLength().ShouldBeGreaterThan(0);
+        foreach (var point in brief.GetProperty("improved").EnumerateArray().Concat(brief.GetProperty("attention").EnumerateArray()))
+        {
+            point.GetProperty("textAr").GetString().ShouldNotBeNullOrWhiteSpace();
+            point.GetProperty("textEn").GetString().ShouldNotBeNullOrWhiteSpace();
+            foreach (var evidence in point.GetProperty("evidence").EnumerateArray())
+            {
+                evidence.GetProperty("link").GetString()!.ShouldStartWith("/"); // mapped server-side from the viewer's own lists
+            }
+        }
+
+        // Users without the brief permission are refused; saving keeps the edited text.
+        (await w.UnitClient.PostAsJsonAsync("/api/v1/reporting/brief", new { kind = "month" })).StatusCode.ShouldBe(HttpStatusCode.Forbidden);
+        var saved = await w.AdminClient.PostAsJsonAsync("/api/v1/reporting/briefs", new
+        {
+            periodKey = brief.GetProperty("periodKey").GetString(),
+            improved = brief.GetProperty("improved"),
+            attention = brief.GetProperty("attention"),
+            decisions = brief.GetProperty("decisions"),
+            aiGenerated = false,
+        });
+        saved.StatusCode.ShouldBe(HttpStatusCode.OK, await saved.Content.ReadAsStringAsync());
+        (await w.AdminClient.GetFromJsonAsync<JsonElement>("/api/v1/reporting/briefs")).GetArrayLength().ShouldBe(1);
     }
 
     [Fact]

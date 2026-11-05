@@ -22,8 +22,23 @@ public static class DefaultDashboards
         string? variant = null, Thresholds? thresholds = null, List<string>? metrics = null) =>
         new()
         {
-            Id = id, Type = type, Metric = metric, TitleAr = ar, TitleEn = en, X = x, Y = y, W = w, H = h, Dimension = dimension, Series = series, Filters = filters,
-            Top = top, List = list, Variant = variant, Thresholds = thresholds, Metrics = metrics,
+            Id = id,
+            Type = type,
+            Metric = metric,
+            TitleAr = ar,
+            TitleEn = en,
+            X = x,
+            Y = y,
+            W = w,
+            H = h,
+            Dimension = dimension,
+            Series = series,
+            Filters = filters,
+            Top = top,
+            List = list,
+            Variant = variant,
+            Thresholds = thresholds,
+            Metrics = metrics,
         };
 
     private static Dictionary<string, List<string>> F(string dim, params string[] values) => new() { [dim] = [.. values] };

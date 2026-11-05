@@ -1,12 +1,12 @@
 using System.Security.Claims;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Strategy.Platform.Access;
 using Strategy.Platform.Kernel.Context;
 using Strategy.Platform.Kernel.Results;
 using Strategy.Platform.Reporting.Domain;
-using Microsoft.Extensions.DependencyInjection;
 using Strategy.Platform.Reporting.Infrastructure;
 
 namespace Strategy.Platform.Reporting.Application;

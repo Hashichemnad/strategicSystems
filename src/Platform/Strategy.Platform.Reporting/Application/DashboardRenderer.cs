@@ -45,8 +45,12 @@ public sealed class DashboardRenderer(IPdfRenderer pdf, ISettingsStore settings)
         var branding = await settings.GetAsync<BrandingSettings>(ct).ConfigureAwait(false);
         var document = new ReportDocument
         {
-            TitleAr = dashboard.TitleAr, TitleEn = dashboard.TitleEn, OrganisationAr = branding.OrganisationNameAr, OrganisationEn = branding.OrganisationNameEn,
-            Language = language, PrimaryColor = branding.PrimaryColor,
+            TitleAr = dashboard.TitleAr,
+            TitleEn = dashboard.TitleEn,
+            OrganisationAr = branding.OrganisationNameAr,
+            OrganisationEn = branding.OrganisationNameEn,
+            Language = language,
+            PrimaryColor = branding.PrimaryColor,
         };
         document.Paragraph($"الفترة: {dashboard.Period.From} – {dashboard.Period.To}", $"Period: {dashboard.Period.From} – {dashboard.Period.To}");
         var color = System.Text.RegularExpressions.Regex.IsMatch(branding.PrimaryColor, "^#[0-9a-fA-F]{6}$") ? branding.PrimaryColor : "#1f3a68";

@@ -341,7 +341,11 @@ public sealed class ReportService(
         var branding = await settings.GetAsync<BrandingSettings>(ct).ConfigureAwait(false);
         var document = new ReportDocument
         {
-            TitleAr = title, TitleEn = title, OrganisationAr = branding.OrganisationNameAr, OrganisationEn = branding.OrganisationNameEn, Language = language,
+            TitleAr = title,
+            TitleEn = title,
+            OrganisationAr = branding.OrganisationNameAr,
+            OrganisationEn = branding.OrganisationNameEn,
+            Language = language,
             PrimaryColor = branding.PrimaryColor,
         };
         document.Table(run.Columns.Select(c => new ReportColumn(c.LabelAr, c.LabelEn)).ToList(), run.Rows.Select(r => r.Cells.ToArray()));

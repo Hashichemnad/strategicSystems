@@ -392,6 +392,29 @@ internal sealed partial class DemoChatClient(string model) : IChatClient
                 summaryEn = "(Draft) Study summary: purpose, comparator, key practices, gaps and action progress.",
             });
         }
+        else if (system.Contains("You write the executive brief of an organisation", StringComparison.Ordinal))
+        {
+            // Phase 17 (reporting-executive-brief): cites the first evidence references found in the data, never invents one.
+            var document = Document().Match(user) is { Success: true } d ? d.Groups[1].Value : string.Empty;
+            var refs = BriefRef().Matches(document).Select(m => m.Value).Distinct(StringComparer.Ordinal).ToArray();
+            string[] Refs(int skip) => refs.Skip(skip).Take(2).ToArray();
+            text = JsonSerializer.Serialize(new
+            {
+                improved = new[]
+                {
+                    new { textAr = "(مسودة) تحسّن أداء المؤشرات مقارنة بالفترة السابقة في معظم الإدارات.", textEn = "(Draft) KPI performance improved on the previous period in most departments.", evidence = Array.Empty<string>() },
+                },
+                attention = new[]
+                {
+                    new { textAr = "(مسودة) مشاريع متأخرة ومخاطر عالية تحتاج إلى متابعة.", textEn = "(Draft) Delayed projects and high risks need follow-up.", evidence = Refs(0) },
+                    new { textAr = "(مسودة) توصيات تدقيق متأخرة عن مواعيدها.", textEn = "(Draft) Audit recommendations are past their due dates.", evidence = Refs(2) },
+                },
+                decisions = new[]
+                {
+                    new { textAr = "(مسودة) تكليف مالكي المشاريع المتأخرة بخطط استدراك خلال شهر.", textEn = "(Draft) Ask the owners of delayed projects for recovery plans within a month.", evidence = Refs(0) },
+                },
+            });
+        }
         else if (system.Contains("You turn a question about best practices into search keywords", StringComparison.Ordinal))
         {
             var document = Document().Match(user) is { Success: true } d ? d.Groups[1].Value.Trim() : string.Empty;
@@ -703,6 +726,9 @@ internal sealed partial class DemoChatClient(string model) : IChatClient
 
     private static UsageDetails Usage(string input, string output) =>
         new() { InputTokenCount = Math.Max(1, Encoding.UTF8.GetByteCount(input) / 4), OutputTokenCount = Math.Max(1, Encoding.UTF8.GetByteCount(output) / 4) };
+
+    [GeneratedRegex(@"\bref-\d+\b")]
+    private static partial Regex BriefRef();
 
     [GeneratedRegex(@"<untrusted_document[^>]*>\n?(.*?)\n?</untrusted_document", RegexOptions.Singleline)]
     private static partial Regex Document();

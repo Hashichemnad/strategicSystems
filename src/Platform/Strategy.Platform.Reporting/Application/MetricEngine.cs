@@ -191,8 +191,14 @@ public sealed partial class FactRefresher(
                 .Where(f => !stock.Contains(f.Metric) || f.Month == current)
                 .Select(f => new MetricFactRow
                 {
-                    Metric = f.Metric, Month = f.Month, UnitId = f.UnitId, Partition = f.Partition, DimsJson = JsonSerializer.Serialize(f.Dimensions, Json),
-                    Value = f.Value, Weight = f.Weight, ComputedAt = log.At,
+                    Metric = f.Metric,
+                    Month = f.Month,
+                    UnitId = f.UnitId,
+                    Partition = f.Partition,
+                    DimsJson = JsonSerializer.Serialize(f.Dimensions, Json),
+                    Value = f.Value,
+                    Weight = f.Weight,
+                    ComputedAt = log.At,
                 })
                 .ToList();
             var strategy = db.Database.CreateExecutionStrategy();
@@ -229,7 +235,12 @@ public sealed partial class FactRefresher(
             db.ChangeTracker.Clear();
             db.RefreshLogs.Add(new RefreshLog
             {
-                SystemCode = source.SystemCode, Kind = kind, FromMonth = from, ToMonth = to, At = clock.UtcNow, Error = ex.GetType().Name + ": " + Truncate(ex.Message),
+                SystemCode = source.SystemCode,
+                Kind = kind,
+                FromMonth = from,
+                ToMonth = to,
+                At = clock.UtcNow,
+                Error = ex.GetType().Name + ": " + Truncate(ex.Message),
                 DurationMs = (int)watch.ElapsedMilliseconds,
             });
             await db.SaveChangesAsync(ct).ConfigureAwait(false);
