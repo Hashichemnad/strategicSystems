@@ -149,6 +149,8 @@ export function useAuditDashboard(query: {
   year?: number;
   priority?: string;
   reportType?: string;
+  from?: string;
+  to?: string;
 }) {
   return useQuery({
     queryKey: [...auditKeys.all, 'dashboard', query],

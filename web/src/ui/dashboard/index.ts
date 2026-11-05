@@ -27,13 +27,20 @@ export {
   normalizePeriod,
   periodKinds,
   periodRange,
+  periodToDates,
   previousPeriod,
   shiftPeriod,
   toSearch,
   type PeriodKind,
   type PeriodValue,
 } from './period';
-export { PeriodSelector, periodLabel, type PeriodSelectorProps } from './PeriodSelector';
+export {
+  OptionalPeriodSelector,
+  PeriodSelector,
+  periodLabel,
+  type OptionalPeriodSelectorProps,
+  type PeriodSelectorProps,
+} from './PeriodSelector';
 export { RagGrid, type RagGridCell, type RagGridProps, type RagGridRow } from './RagGrid';
 export {
   StrategyMap,

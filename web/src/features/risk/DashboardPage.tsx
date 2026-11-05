@@ -2,6 +2,7 @@ import { Link } from '@tanstack/react-router';
 import { Sparkles } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSystemDashboard } from '@/features/reporting/SystemDashboard';
 import { errorMessage } from '@/api/problem';
 import { UnitSelect } from '@/features/access/pickers';
 import { useCan } from '@/features/access/session';
@@ -16,7 +17,6 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
-  PageHeader,
   Select,
   Skeleton,
   StatusBanner,
@@ -30,6 +30,10 @@ import {
   token,
   useToast,
   ProgressBar,
+  DashboardFrame,
+  OptionalPeriodSelector,
+  periodToDates,
+  type PeriodValue,
 } from '@/ui';
 import {
   residualStatuses,
@@ -67,84 +71,84 @@ export function RiskDashboardPage() {
   const [unitId, setUnitId] = useState<string>();
   const [category, setCategory] = useState<string>();
   const [residualStatus, setResidualStatus] = useState<string>();
-  const [year, setYear] = useState<number>();
+  const [period, setPeriod] = useState<PeriodValue | null>(null);
+  const range = period ? periodToDates(period) : undefined;
   const [includeProject, setIncludeProject] = useState<boolean>();
   const include = includeProject ?? options.data?.includeProjectRisksByDefault ?? true;
   const filter: RiskFilterQuery = {
     ...(unitId ? { unitId } : {}),
     ...(category ? { category } : {}),
     ...(residualStatus ? { residualStatus } : {}),
-    ...(year ? { year } : {}),
+    ...range,
     includeProjectRisks: include,
   };
   const dashboard = useRiskDashboard(filter, options.isSuccess);
   const [cell, setCell] = useState<{ kind: 'inherent' | 'residual'; likelihood: number; impact: number }>();
   const [report, setReport] = useState(false);
-  const thisYear = new Date().getFullYear();
+  const system = useSystemDashboard('risk.profile', period, unitId);
+  // The AI report takes a year: the selected calendar year, otherwise all years.
+  const year = period?.kind === 'year' ? Number(period.from.slice(0, 4)) : undefined;
 
   return (
     <RiskPageLayout testId="risk-dashboard">
-      <PageHeader
+      <DashboardFrame
         title={t('dashboard.title')}
         description={t('dashboard.description')}
+        exports={system.exports}
+        filters={<OptionalPeriodSelector value={period} onChange={setPeriod} allowCompare={false} />}
         actions={
-          canReport && (
-            <Button variant="outline" onClick={() => setReport(true)} data-testid="risk-ai-report">
-              <Sparkles aria-hidden />
-              {t('ai.report.action')}
-            </Button>
-          )
+          <>
+            {system.action}
+            {canReport && (
+              <Button variant="outline" onClick={() => setReport(true)} data-testid="risk-ai-report">
+                <Sparkles aria-hidden />
+                {t('ai.report.action')}
+              </Button>
+            )}
+          </>
         }
-      />
-      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5" data-testid="risk-dashboard-filters">
-        <UnitSelect allowEmpty value={unitId} onChange={setUnitId} />
-        <Select
-          aria-label={t('fields.category')}
-          value={category ?? ALL}
-          onValueChange={(v) => setCategory(v === ALL ? undefined : v)}
-          options={[
-            { value: ALL, label: t('register.allCategories') },
-            ...(options.data?.categories ?? []).map((c) => ({
-              value: c.code,
-              label: labels.category(c.code),
-            })),
-          ]}
-        />
-        <Select
-          aria-label={t('fields.residualStatus')}
-          value={residualStatus ?? ALL}
-          onValueChange={(v) => setResidualStatus(v === ALL ? undefined : v)}
-          options={[
-            { value: ALL, label: t('dashboard.allResidualStatuses') },
-            ...residualStatuses.map((s) => ({ value: s, label: k(`residualStatus.${s}`) })),
-          ]}
-        />
-        <Select
-          aria-label={t('dashboard.year')}
-          value={year ? String(year) : ALL}
-          onValueChange={(v) => setYear(v === ALL ? undefined : Number(v))}
-          options={[
-            { value: ALL, label: t('dashboard.allYears') },
-            ...[0, 1, 2, 3, 4].map((d) => ({ value: String(thisYear - d), label: String(thisYear - d) })),
-          ]}
-        />
-        <Switch
-          checked={include}
-          onCheckedChange={setIncludeProject}
-          label={t('dashboard.includeProjectRisks')}
-        />
-      </div>
-      {dashboard.isError && <StatusBanner tone="danger" title={errorMessage(tc, dashboard.error)} />}
-      {!dashboard.data ? (
-        !dashboard.isError && <Skeleton className="h-96 rounded-lg" />
-      ) : (
-        <DashboardBody
-          data={dashboard.data}
-          cell={cell}
-          onCell={(kind, likelihood, impact) => setCell({ kind, likelihood, impact })}
-          filter={filter}
-        />
-      )}
+      >
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4" data-testid="risk-dashboard-filters">
+          <UnitSelect allowEmpty value={unitId} onChange={setUnitId} />
+          <Select
+            aria-label={t('fields.category')}
+            value={category ?? ALL}
+            onValueChange={(v) => setCategory(v === ALL ? undefined : v)}
+            options={[
+              { value: ALL, label: t('register.allCategories') },
+              ...(options.data?.categories ?? []).map((c) => ({
+                value: c.code,
+                label: labels.category(c.code),
+              })),
+            ]}
+          />
+          <Select
+            aria-label={t('fields.residualStatus')}
+            value={residualStatus ?? ALL}
+            onValueChange={(v) => setResidualStatus(v === ALL ? undefined : v)}
+            options={[
+              { value: ALL, label: t('dashboard.allResidualStatuses') },
+              ...residualStatuses.map((s) => ({ value: s, label: k(`residualStatus.${s}`) })),
+            ]}
+          />
+          <Switch
+            checked={include}
+            onCheckedChange={setIncludeProject}
+            label={t('dashboard.includeProjectRisks')}
+          />
+        </div>
+        {dashboard.isError && <StatusBanner tone="danger" title={errorMessage(tc, dashboard.error)} />}
+        {!dashboard.data ? (
+          !dashboard.isError && <Skeleton className="h-96 rounded-lg" />
+        ) : (
+          <DashboardBody
+            data={dashboard.data}
+            cell={cell}
+            onCell={(kind, likelihood, impact) => setCell({ kind, likelihood, impact })}
+            filter={filter}
+          />
+        )}
+      </DashboardFrame>
       {report && <ReportDialog unitId={unitId} year={year} onClose={() => setReport(false)} />}
     </RiskPageLayout>
   );

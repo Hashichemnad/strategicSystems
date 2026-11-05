@@ -1,5 +1,5 @@
 import type { APIRequestContext, Page } from '@playwright/test';
-import { apiPost, apiPut, expect, mailpitUrl, screenshotPath, test, tr, useMailpit, type Language } from './fixtures';
+import { apiPost, apiPut, expect, mailpitUrl, screenshotPath, test, tr, useMailpit } from './fixtures';
 
 /**
  * Phase 17 — Dashboards and reporting (docs/design/reporting.md). Mariam (demo Director General: executive viewer, reporting administrator,
@@ -31,12 +31,17 @@ async function json<T>(response: Awaited<ReturnType<APIRequestContext['get']>>):
 
 /** AI on with the offline demo provider (drafts only). */
 async function ensureDemoAi(admin: APIRequestContext) {
-  const current = await json<{ settings: { enabled: boolean; defaultProviderId: string | null } & Record<string, unknown>; version: number }>(
-    await admin.get('/api/v1/ai/settings'),
-  );
+  const current = await json<{
+    settings: { enabled: boolean; defaultProviderId: string | null } & Record<string, unknown>;
+    version: number;
+  }>(await admin.get('/api/v1/ai/settings'));
   if (current.settings.enabled && current.settings.defaultProviderId) return;
   const provider = await json<{ id: string }>(
-    await apiPost(admin, '/api/v1/ai/providers', { name: `Demo ${Date.now()}`, type: 'demo', defaultModel: 'demo-large' }),
+    await apiPost(admin, '/api/v1/ai/providers', {
+      name: `Demo ${Date.now()}`,
+      type: 'demo',
+      defaultModel: 'demo-large',
+    }),
   );
   await json(
     await apiPut(admin, '/api/v1/ai/settings', {
@@ -52,7 +57,9 @@ async function waitForAggregates(admin: APIRequestContext) {
   await expect
     .poll(
       async () => {
-        const status = await json<{ systemCode: string; at: string | null }[]>(await admin.get('/api/v1/reporting/refresh'));
+        const status = await json<{ systemCode: string; at: string | null }[]>(
+          await admin.get('/api/v1/reporting/refresh'),
+        );
         return status.filter((s) => s.at).length;
       },
       { timeout: 150_000, intervals: [5_000] },
@@ -74,7 +81,8 @@ test.describe('dashboards and reporting', () => {
     shot,
   }) => {
     test.setTimeout(900_000);
-    const r = (key: string, params: Record<string, string | number> = {}) => tr(language, `reporting:${key}`, params);
+    const r = (key: string, params: Record<string, string | number> = {}) =>
+      tr(language, `reporting:${key}`, params);
     const tag = `${language.toUpperCase()}${Date.now().toString(36).slice(-5).toUpperCase()}`;
     await ensureDemoAi(adminApi);
     await waitForAggregates(adminApi);
@@ -82,7 +90,12 @@ test.describe('dashboards and reporting', () => {
     // ---- Level 1: My Work with a card per system, then customised -------------------------------------------------
     await page.goto('/');
     await expect(page.getByTestId('my-work-cards')).toBeVisible();
-    await expect(page.getByTestId('my-work-card-workflow.approvals').or(page.getByTestId('my-work-card-notifications.latest')).first()).toBeVisible();
+    await expect(
+      page
+        .getByTestId('my-work-card-workflow.approvals')
+        .or(page.getByTestId('my-work-card-notifications.latest'))
+        .first(),
+    ).toBeVisible();
     await settle(page);
     await shot('my-work', { fullPage: true });
     await page.getByTestId('my-work-customise').click();
@@ -168,10 +181,17 @@ test.describe('dashboards and reporting', () => {
     await useMailpit(adminApi, baseURL ?? '');
     const reportId = /\/reports\/([0-9a-f-]{36})/.exec(page.url())?.[1] ?? '';
     const me = await json<{ id: string }>(await adminApi.get('/api/v1/identity/me'));
-    const regional = await json<{ value: { timeZone: string } | null }>(await adminApi.get('/api/v1/settings/regional'));
+    const regional = await json<{ value: { timeZone: string } | null }>(
+      await adminApi.get('/api/v1/settings/regional'),
+    );
     const zone = regional.value?.timeZone ?? 'Asia/Dubai';
     const at = new Date(Date.now() + 70_000);
-    const time = new Intl.DateTimeFormat('en-GB', { timeZone: zone, hour: '2-digit', minute: '2-digit', hour12: false }).format(at);
+    const time = new Intl.DateTimeFormat('en-GB', {
+      timeZone: zone,
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    }).format(at);
     await page.getByTestId('schedule-open').click();
     await expect(page.getByTestId('schedule-dialog')).toBeVisible();
     await shot('schedule-dialog');
@@ -198,7 +218,9 @@ test.describe('dashboards and reporting', () => {
     await expect
       .poll(
         async () => {
-          const response = await page.request.get(`${mailpitUrl}/api/v1/search`, { params: { query: `subject:"${tag}"`, limit: '5' } });
+          const response = await page.request.get(`${mailpitUrl}/api/v1/search`, {
+            params: { query: `subject:"${tag}"`, limit: '5' },
+          });
           const { messages } = (await response.json()) as { messages: { ID: string; Created: string }[] };
           messageId = messages.find((m) => new Date(m.Created) >= since)?.ID ?? '';
           return messageId;
@@ -209,7 +231,7 @@ test.describe('dashboards and reporting', () => {
     const mail = await page.context().newPage();
     await mail.goto(`${mailpitUrl}/view/${messageId}`);
     await mail.waitForLoadState('networkidle');
-    await mail.screenshot({ path: screenshotPath(language as Language, 'scheduled-report-email'), fullPage: true });
+    await mail.screenshot({ path: screenshotPath(language, 'scheduled-report-email'), fullPage: true });
     await mail.close();
     await page.goto('/reports/schedules');
     await expect(page.getByTestId('schedules-table')).toBeVisible();

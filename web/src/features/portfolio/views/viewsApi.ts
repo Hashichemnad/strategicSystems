@@ -116,8 +116,8 @@ export function usePortfolioGantt(filter: PortfolioFilter) {
   });
 }
 
-export function usePortfolioDashboard(filter: PortfolioFilter) {
-  const query = cleanFilter(filter);
+export function usePortfolioDashboard(filter: PortfolioFilter, range?: { from: string; to: string }) {
+  const query = { ...cleanFilter(filter), ...range };
   return useQuery({
     queryKey: viewKeys.dashboard(query),
     queryFn: async ({ signal }) =>

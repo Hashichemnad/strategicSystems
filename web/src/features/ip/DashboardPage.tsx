@@ -1,8 +1,21 @@
 import { Link } from '@tanstack/react-router';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSystemDashboard } from '@/features/reporting/SystemDashboard';
 import { errorMessage } from '@/api/problem';
 import { pickText } from '@/lib/format';
-import { CountChart, PageHeader, Skeleton, StatusBanner, StatusChip, Tile, type TileTone } from '@/ui';
+import {
+  CountChart,
+  Skeleton,
+  StatusBanner,
+  StatusChip,
+  Tile,
+  type TileTone,
+  DashboardFrame,
+  OptionalPeriodSelector,
+  periodToDates,
+  type PeriodValue,
+} from '@/ui';
 import { ipLookups, useIpDashboard, type IpDashboard } from './api';
 import { IpPage, IpStatusChip, useDate, useIpT, useLookupLabel } from './components';
 
@@ -11,55 +24,65 @@ export function IpDashboardPage() {
   const { t } = useTranslation('ip');
   const { t: tc } = useTranslation();
   const { language } = useIpT();
-  const dashboard = useIpDashboard();
+  const [period, setPeriod] = useState<PeriodValue | null>(null);
+  const range = period ? periodToDates(period) : undefined;
+  const dashboard = useIpDashboard(range);
+  const system = useSystemDashboard('ip.register', period);
   const propertyLabel = useLookupLabel(ipLookups.propertyType);
   const protectionLabel = useLookupLabel(ipLookups.protectionType);
 
   return (
     <IpPage testId="ip-dashboard">
-      <PageHeader title={t('dashboard.title')} description={t('dashboard.description')} />
-      {dashboard.isError && <StatusBanner tone="danger" title={errorMessage(tc, dashboard.error)} />}
-      {dashboard.isPending ? (
-        <Skeleton className="h-96 rounded-lg" />
-      ) : (
-        dashboard.data && (
-          <>
-            <Tiles data={dashboard.data} />
-            <div className="grid gap-4 lg:grid-cols-2">
-              <CountChart
-                title={t('dashboard.byType')}
-                testId="ip-by-type"
-                rows={dashboard.data.byType.map((r) => ({
-                  key: r.code,
-                  label: propertyLabel(r.code),
-                  value: r.count,
-                }))}
-              />
-              <CountChart
-                title={t('dashboard.byProtection')}
-                rows={dashboard.data.byProtection.map((r) => ({
-                  key: r.code,
-                  label: protectionLabel(r.code),
-                  value: r.count,
-                }))}
-              />
-              <CountChart
-                title={t('dashboard.byYear')}
-                rows={dashboard.data.byYear.map((r) => ({ key: r.code, label: r.code, value: r.count }))}
-              />
-              <CountChart
-                title={t('dashboard.byUnit')}
-                rows={dashboard.data.byUnit.map((r) => ({
-                  key: r.id,
-                  label: pickText(language, r.nameAr, r.nameEn) || '—',
-                  value: r.count,
-                }))}
-              />
-            </div>
-            <Upcoming rows={dashboard.data.upcomingExpiries} />
-          </>
-        )
-      )}
+      <DashboardFrame
+        title={t('dashboard.title')}
+        description={t('dashboard.description')}
+        actions={system.action}
+        exports={system.exports}
+        filters={<OptionalPeriodSelector value={period} onChange={setPeriod} allowCompare={false} />}
+      >
+        {dashboard.isError && <StatusBanner tone="danger" title={errorMessage(tc, dashboard.error)} />}
+        {dashboard.isPending ? (
+          <Skeleton className="h-96 rounded-lg" />
+        ) : (
+          dashboard.data && (
+            <>
+              <Tiles data={dashboard.data} />
+              <div className="grid gap-4 lg:grid-cols-2">
+                <CountChart
+                  title={t('dashboard.byType')}
+                  testId="ip-by-type"
+                  rows={dashboard.data.byType.map((r) => ({
+                    key: r.code,
+                    label: propertyLabel(r.code),
+                    value: r.count,
+                  }))}
+                />
+                <CountChart
+                  title={t('dashboard.byProtection')}
+                  rows={dashboard.data.byProtection.map((r) => ({
+                    key: r.code,
+                    label: protectionLabel(r.code),
+                    value: r.count,
+                  }))}
+                />
+                <CountChart
+                  title={t('dashboard.byYear')}
+                  rows={dashboard.data.byYear.map((r) => ({ key: r.code, label: r.code, value: r.count }))}
+                />
+                <CountChart
+                  title={t('dashboard.byUnit')}
+                  rows={dashboard.data.byUnit.map((r) => ({
+                    key: r.id,
+                    label: pickText(language, r.nameAr, r.nameEn) || '—',
+                    value: r.count,
+                  }))}
+                />
+              </div>
+              <Upcoming rows={dashboard.data.upcomingExpiries} />
+            </>
+          )
+        )}
+      </DashboardFrame>
     </IpPage>
   );
 }

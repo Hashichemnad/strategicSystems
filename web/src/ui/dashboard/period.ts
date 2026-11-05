@@ -140,3 +140,10 @@ export function fromSearch(
     };
   return normalizePeriod({ kind, from, to: kind === 'custom' ? (to ?? from) : from, compare });
 }
+
+/** The period as inclusive calendar dates for APIs that take `DateOnly` bounds: first day of the first month, last day of the last month. */
+export function periodToDates(period: Pick<PeriodValue, 'from' | 'to'>): { from: string; to: string } {
+  const [year, month] = parts(period.to);
+  const lastDay = new Date(Date.UTC(year, month, 0)).getUTCDate();
+  return { from: `${period.from}-01`, to: `${period.to}-${String(lastDay).padStart(2, '0')}` };
+}
