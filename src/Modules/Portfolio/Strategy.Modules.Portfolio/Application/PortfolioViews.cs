@@ -495,7 +495,11 @@ public sealed record PortfolioDashboardDto(
     IReadOnlyList<DashboardProjectDto> Projects, IReadOnlyList<DashboardProjectDto> DelayedProjects, IReadOnlyList<UpcomingMilestoneDto> Upcoming, FunnelDto Funnel,
     bool HealthOn, int CostsHidden);
 
-public sealed record DashboardFilter(Guid? PortfolioGroupId, Guid? ProgrammeId, Guid? UnitId);
+/// <remarks>
+/// <c>From</c> / <c>To</c> (inclusive dates, normally the first day of the first month and the last day of the last month of the period): only
+/// projects whose planned window overlaps the period (a project without a planned start / end is open on that side). Docs/design/reporting.md §2.3.
+/// </remarks>
+public sealed record DashboardFilter(Guid? PortfolioGroupId, Guid? ProgrammeId, Guid? UnitId, DateOnly? From = null, DateOnly? To = null);
 
 internal sealed class PortfolioViewService(
     PortfolioDbContext db, ProjectLoader loader, RequestReader reader, HealthService health, CostVisibility costs, IRequestContext context)
@@ -580,6 +584,12 @@ internal sealed class PortfolioViewService(
 
     public async Task<Result<PortfolioDashboardDto>> DashboardAsync(DashboardFilter filter, CancellationToken ct)
     {
+        ArgumentNullException.ThrowIfNull(filter);
+        if (filter.From is { } from && filter.To is { } to && from > to)
+        {
+            return Error.Validation([new FieldError("to", "validation.invalid", "validation.invalid")]);
+        }
+
         var user = context.User;
         var projects = await ProjectsAsync(filter, ct).ConfigureAwait(false);
         var ids = projects.Select(p => p.Id).ToList();
@@ -680,6 +690,16 @@ internal sealed class PortfolioViewService(
         if (filter.UnitId is { } unit)
         {
             query = query.Where(p => p.UnitId == unit || p.SectionUnitId == unit);
+        }
+
+        if (filter.From is { } from)
+        {
+            query = query.Where(p => p.PlannedEnd == null || p.PlannedEnd >= from);
+        }
+
+        if (filter.To is { } to)
+        {
+            query = query.Where(p => p.PlannedStart == null || p.PlannedStart <= to);
         }
 
         return await query.Where(p => p.Status != ProjectStatuses.Draft).OrderBy(p => p.Number).Take(MaxProjects).ToListAsync(ct).ConfigureAwait(false);

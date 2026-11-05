@@ -231,8 +231,8 @@ internal static class Phase10Endpoints
         group.MapGet("/gantt", async (Guid? portfolioGroupId, Guid? programmeId, Guid? unitId, PortfolioViewService s, CancellationToken ct) =>
                 (await s.PortfolioGanttAsync(new DashboardFilter(portfolioGroupId, programmeId, unitId), ct)).ToOk())
             .WithName("GetPortfolioGantt").RequirePermission(read);
-        group.MapGet("/dashboard", async (Guid? portfolioGroupId, Guid? programmeId, Guid? unitId, PortfolioViewService s, CancellationToken ct) =>
-                (await s.DashboardAsync(new DashboardFilter(portfolioGroupId, programmeId, unitId), ct)).ToOk())
+        group.MapGet("/dashboard", async (Guid? portfolioGroupId, Guid? programmeId, Guid? unitId, DateOnly? from, DateOnly? to, PortfolioViewService s,
+                CancellationToken ct) => (await s.DashboardAsync(new DashboardFilter(portfolioGroupId, programmeId, unitId, from, to), ct)).ToOk())
             .WithName("GetPortfolioDashboard").RequirePermission(read);
 
         const string Ai = PortfolioPermissions.AiAssist;
