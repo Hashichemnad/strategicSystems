@@ -60,7 +60,8 @@ internal static class CapEndpoints
             .WithName("GetCapSettings").RequirePermission(CapPermissions.SettingsManage);
         group.MapPut("/settings", async (CapSettingsInput b, IDispatcher d, CancellationToken ct) => (await d.SendAsync(new SaveCapSettings(b.Settings, b.Version), ct)).ToOk())
             .WithName("SaveCapSettings").RequirePermission(CapPermissions.SettingsManage);
-        group.MapGet("/dashboard", async (Guid? unitId, int? year, IDispatcher d, CancellationToken ct) => (await d.SendAsync(new GetCapDashboard(unitId, year), ct)).ToOk())
+        group.MapGet("/dashboard", async (Guid? unitId, int? year, DateOnly? from, DateOnly? to, IDispatcher d, CancellationToken ct) =>
+                (await d.SendAsync(new GetCapDashboard(unitId, year, from, to), ct)).ToOk())
             .WithName("GetCapDashboard").RequirePermission(CapPermissions.DashboardRead);
         group.MapGet("/reports/{kind}", async Task<Results<FileContentHttpResult, ProblemHttpResult>> (string kind, string format, Guid? unitId, Guid? sourceId,
                 string? sourceType, int? year, string? language, IDispatcher d, CancellationToken ct) =>

@@ -142,17 +142,33 @@ internal sealed class AuditMyWork(AuditMgmtDbContext db, AuditReader reader, Aud
 
         var settings = await reader.SettingsAsync(cancellationToken).ConfigureAwait(false);
         var today = await deadlines.TodayAsync(cancellationToken).ConfigureAwait(false);
-        var limit = today.AddDays(Math.Max(settings.FollowUpReminderDays, 7));
-        var mine = db.Findings.Where(f => f.AuditorEmployeeId == me && f.Status != AuditFindingStatuses.Cancelled);
-        var rows = await db.Recommendations.AsNoTracking()
-            .Where(r => (r.Status == RecommendationStatuses.NotStarted || r.Status == RecommendationStatuses.Continuing || r.Status == RecommendationStatuses.Late)
-                && ((r.NextFollowUpOn != null && r.NextFollowUpOn <= limit) || r.Status == RecommendationStatuses.Late))
-            .Join(mine, r => r.FindingId, f => f.Id, (r, f) => new { R = r, F = f })
+        var rows = await FollowUpsDue(db, me, Limit(settings, today))
             .OrderBy(x => x.R.NextFollowUpOn ?? x.R.DueOn).Take(50).ToListAsync(cancellationToken).ConfigureAwait(false);
         return rows.Select(x => new MyWorkItem(AuditPermissions.SystemCode, Finding.EntityType, x.F.Id, x.R.Number, AuditNotifier.Short(x.R.ActionAr ?? x.R.ActionEn),
             AuditNotifier.Short(x.R.ActionEn ?? x.R.ActionAr), x.R.Status == RecommendationStatuses.Late ? "auditmgmt.myWork.late" : "auditmgmt.myWork.followUpDue",
             $"{AuditService.Link(x.F)}?recommendation={x.R.Id:D}", null, x.R.NextFollowUpOn ?? x.R.EffectiveDue)).ToList();
     }
+
+    /// <summary>How far ahead follow-ups count as due: the reminder days, at least a week.</summary>
+    internal static DateOnly Limit(AuditMgmtSettings settings, DateOnly today) => today.AddDays(Math.Max(settings.FollowUpReminderDays, 7));
+
+    /// <summary>Open recommendations of the auditor's findings whose follow-up is due by <paramref name="limit"/>, or late.</summary>
+    internal static IQueryable<AuditFollowUpDue> FollowUpsDue(AuditMgmtDbContext db, Guid auditor, DateOnly limit)
+    {
+        var mine = db.Findings.Where(f => f.AuditorEmployeeId == auditor && f.Status != AuditFindingStatuses.Cancelled);
+        return db.Recommendations.AsNoTracking()
+            .Where(r => (r.Status == RecommendationStatuses.NotStarted || r.Status == RecommendationStatuses.Continuing || r.Status == RecommendationStatuses.Late)
+                && ((r.NextFollowUpOn != null && r.NextFollowUpOn <= limit) || r.Status == RecommendationStatuses.Late))
+            .Join(mine, r => r.FindingId, f => f.Id, (r, f) => new AuditFollowUpDue { R = r, F = f });
+    }
+}
+
+/// <summary>A recommendation with its finding (My Work follow-ups).</summary>
+internal sealed class AuditFollowUpDue
+{
+    public required Recommendation R { get; init; }
+
+    public required Finding F { get; init; }
 }
 
 internal sealed class FindingLinkTargets(AuditReader reader) : ILinkTargetSource

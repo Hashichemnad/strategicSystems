@@ -7,6 +7,7 @@ using Strategy.Modules.AuditManagement.Application;
 using Strategy.Modules.AuditManagement.Infrastructure;
 using Strategy.Modules.AuditManagement.Jobs;
 using Strategy.Modules.AuditManagement.Mcp;
+using Strategy.Modules.AuditManagement.Reporting;
 using Strategy.Platform.Access;
 using Strategy.Platform.AI;
 using Strategy.Platform.AI.Tools;
@@ -16,6 +17,7 @@ using Strategy.Platform.Kernel;
 using Strategy.Platform.Links;
 using Strategy.Platform.Notifications;
 using Strategy.Platform.Persistence;
+using Strategy.Platform.Reporting;
 using Strategy.Platform.Scheduling;
 using Strategy.Platform.Settings;
 using Strategy.Platform.Workflow;
@@ -62,6 +64,10 @@ public sealed class AuditMgmtModule : IModule
         services.AddApprovalHook<AuditApprovalHook>();
         services.AddCurrentStatusProvider<FindingCurrentStatus>();
         services.AddMyWorkSource<AuditMyWork>();
+        services.AddReportingMetricSource<AuditMetricSource>();
+        services.AddReportingListSource<AuditListSource>();
+        services.AddReportingDatasetSource<AuditDatasetSource>();
+        services.AddMyWorkCardSource<AuditMyWorkCards>();
 
         services.AddFilePurpose(AuditFilePurposes.ReportFile);
         services.AddFilePurpose(AuditFilePurposes.Evidence);

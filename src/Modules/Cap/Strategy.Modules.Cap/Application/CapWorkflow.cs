@@ -377,9 +377,7 @@ internal sealed class CapMyWork(CapDbContext db, CapReader reader, CapDeadlines 
         var remarks = await reader.RemarksAsync(user, cancellationToken).ConfigureAwait(false);
         if (me is { } employee)
         {
-            var mine = await remarks.Where(r => r.OwnerEmployeeId == employee
-                    && (r.Status == CapRemarkStatuses.Assigned || r.Status == CapRemarkStatuses.Planning || r.Status == CapRemarkStatuses.Correction))
-                .OrderBy(r => r.DueOn).Take(50).ToListAsync(cancellationToken).ConfigureAwait(false);
+            var mine = await ToRespond(remarks, employee).OrderBy(r => r.DueOn).Take(50).ToListAsync(cancellationToken).ConfigureAwait(false);
             items.AddRange(mine.Select(r => new MyWorkItem(CapPermissions.SystemCode, Remark.EntityType, r.Id, r.Number, CapNotifier.Short(r.TextAr ?? r.TextEn),
                 CapNotifier.Short(r.TextEn ?? r.TextAr), r.Status switch
                 {
@@ -389,11 +387,7 @@ internal sealed class CapMyWork(CapDbContext db, CapReader reader, CapDeadlines 
                 }, CapService.Link(r), null, r.DueOn)));
             var today = await deadlines.TodayAsync(cancellationToken).ConfigureAwait(false);
             var monthEnd = new DateOnly(today.Year, today.Month, 1).AddMonths(1).AddDays(-1);
-            var actions = await db.Actions.AsNoTracking()
-                .Where(a => a.AssignedEmployeeId == employee && a.ValidationStatus == ValidationStatuses.Approved && a.PendingProcess == null
-                    && (a.Status == ActionStatuses.Late || ((a.Status == ActionStatuses.NotStarted || a.Status == ActionStatuses.InProgress)
-                        && (a.RevisedEnd ?? a.PlannedEnd) <= monthEnd)))
-                .OrderBy(a => a.RevisedEnd ?? a.PlannedEnd).Take(50).ToListAsync(cancellationToken).ConfigureAwait(false);
+            var actions = await ToUpdate(db.Actions.AsNoTracking(), employee, monthEnd).OrderBy(a => a.RevisedEnd ?? a.PlannedEnd).Take(50).ToListAsync(cancellationToken).ConfigureAwait(false);
             items.AddRange(actions.Select(a => new MyWorkItem(CapPermissions.SystemCode, CapAction.EntityType, a.Id, a.Number, CapNotifier.Short(a.DetailsAr ?? a.DetailsEn),
                 CapNotifier.Short(a.DetailsEn ?? a.DetailsAr), a.Status == ActionStatuses.Late ? "cap.myWork.actionLate" : "cap.myWork.actionToUpdate",
                 $"/cap/my-actions?action={a.Id:D}", null, a.EffectiveEnd)));
@@ -401,8 +395,7 @@ internal sealed class CapMyWork(CapDbContext db, CapReader reader, CapDeadlines 
 
         if (await reader.CanAllAsync(user, CapPermissions.Office, cancellationToken).ConfigureAwait(false))
         {
-            var pendingRemarks = await remarks.Where(r => r.Status == CapRemarkStatuses.Validation || r.Status == CapRemarkStatuses.RejectionPending)
-                .OrderBy(r => r.UpdatedAt).Take(50).ToListAsync(cancellationToken).ConfigureAwait(false);
+            var pendingRemarks = await OfficePending(remarks).OrderBy(r => r.UpdatedAt).Take(50).ToListAsync(cancellationToken).ConfigureAwait(false);
             items.AddRange(pendingRemarks.Select(r => new MyWorkItem(CapPermissions.SystemCode, Remark.EntityType, r.Id, r.Number, CapNotifier.Short(r.TextAr ?? r.TextEn),
                 CapNotifier.Short(r.TextEn ?? r.TextAr), r.Status == CapRemarkStatuses.Validation ? "cap.myWork.toValidate" : "cap.myWork.toConfirm",
                 r.Status == CapRemarkStatuses.Validation ? $"/cap/remarks/{r.Id:D}/validate" : CapService.Link(r), r.UpdatedAt, r.DueOn)));
@@ -410,4 +403,19 @@ internal sealed class CapMyWork(CapDbContext db, CapReader reader, CapDeadlines 
 
         return items;
     }
+
+    /// <summary>Remarks waiting for their owner: to accept, to plan, to correct.</summary>
+    internal static IQueryable<Remark> ToRespond(IQueryable<Remark> remarks, Guid employee) =>
+        remarks.Where(r => r.OwnerEmployeeId == employee
+            && (r.Status == CapRemarkStatuses.Assigned || r.Status == CapRemarkStatuses.Planning || r.Status == CapRemarkStatuses.Correction));
+
+    /// <summary>Approved actions of the assignee that are late or end by <paramref name="monthEnd"/> (no pending approval).</summary>
+    internal static IQueryable<CapAction> ToUpdate(IQueryable<CapAction> actions, Guid employee, DateOnly monthEnd) =>
+        actions.Where(a => a.AssignedEmployeeId == employee && a.ValidationStatus == ValidationStatuses.Approved && a.PendingProcess == null
+            && (a.Status == ActionStatuses.Late || ((a.Status == ActionStatuses.NotStarted || a.Status == ActionStatuses.InProgress)
+                && (a.RevisedEnd ?? a.PlannedEnd) <= monthEnd)));
+
+    /// <summary>The PM Office's queue: remarks whose actions wait for validation, rejections to confirm.</summary>
+    internal static IQueryable<Remark> OfficePending(IQueryable<Remark> remarks) =>
+        remarks.Where(r => r.Status == CapRemarkStatuses.Validation || r.Status == CapRemarkStatuses.RejectionPending);
 }

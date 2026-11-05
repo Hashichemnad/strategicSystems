@@ -42,7 +42,8 @@ public sealed record CapDashboardDto(
 
 public sealed record CapExportedFile(byte[] Content, string ContentType, string FileName);
 
-public sealed record GetCapDashboard(Guid? UnitId, int? Year) : IQuery<CapDashboardDto>;
+/// <summary><paramref name="From"/> / <paramref name="To"/>: whole months (inclusive) of the remarks' assignment date (reporting level 2).</summary>
+public sealed record GetCapDashboard(Guid? UnitId, int? Year, DateOnly? From = null, DateOnly? To = null) : IQuery<CapDashboardDto>;
 
 public sealed record ExportCapReport(string Kind, string Format, Guid? UnitId, Guid? SourceId, string? SourceTypeCode, int? Year, string? Language) : IQuery<CapExportedFile>;
 
@@ -68,7 +69,24 @@ internal sealed class CapDashboardQueries(
             return Error.Forbidden();
         }
 
+        if (query.From is { } f && query.To is { } t && f > t)
+        {
+            return Error.Validation([new FieldError("to", "validation.invalid", "validation.invalid")]);
+        }
+
         var remarksQuery = await FilteredAsync(query.UnitId, query.Year, cancellationToken).ConfigureAwait(false);
+        if (query.From is { } fromDate)
+        {
+            var from = new DateOnly(fromDate.Year, fromDate.Month, 1);
+            remarksQuery = remarksQuery.Where(r => r.AssignedOn >= from);
+        }
+
+        if (query.To is { } toDate)
+        {
+            var to = new DateOnly(toDate.Year, toDate.Month, 1).AddMonths(1).AddDays(-1);
+            remarksQuery = remarksQuery.Where(r => r.AssignedOn <= to);
+        }
+
         var remarks = await remarksQuery.ToListAsync(cancellationToken).ConfigureAwait(false);
         var ids = remarks.Select(r => r.Id).ToList();
         var sourceIds = remarks.Select(r => r.SourceId).Distinct().ToList();

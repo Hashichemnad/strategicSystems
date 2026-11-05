@@ -43,7 +43,8 @@ public sealed record AuditExportInput(string Format, string? Language, Guid? Rep
 
 public sealed record AuditExportedFile(byte[] Content, string ContentType, string FileName);
 
-public sealed record AuditDashboardFilter(Guid? UnitId, int? Year, string? Priority, string? ReportTypeCode, Guid? ReportId);
+/// <summary><paramref name="From"/> / <paramref name="To"/>: whole months (inclusive) of the finding date (reporting level 2).</summary>
+public sealed record AuditDashboardFilter(Guid? UnitId, int? Year, string? Priority, string? ReportTypeCode, Guid? ReportId, DateOnly? From = null, DateOnly? To = null);
 
 public sealed record GetAuditDashboard(AuditDashboardFilter Filter) : IQuery<AuditDashboardDto>;
 
@@ -75,6 +76,11 @@ internal sealed class AuditDashboardQueries(
             && !await reader.CanAsync(context.User, AuditPermissions.AiSummary, cancellationToken).ConfigureAwait(false))
         {
             return Error.Forbidden();
+        }
+
+        if (query.Filter.From is { } from && query.Filter.To is { } to && from > to)
+        {
+            return Error.Validation([new FieldError("to", "validation.invalid", "validation.invalid")]);
         }
 
         return await BuildAsync(query.Filter, cancellationToken).ConfigureAwait(false);
@@ -408,6 +414,18 @@ internal sealed class AuditDashboardQueries(
         if (filter.Year is { } year)
         {
             source = source.Where(f => f.Year == year);
+        }
+
+        if (filter.From is { } fromDate)
+        {
+            var from = new DateOnly(fromDate.Year, fromDate.Month, 1);
+            source = source.Where(f => f.FindingDate >= from);
+        }
+
+        if (filter.To is { } toDate)
+        {
+            var to = new DateOnly(toDate.Year, toDate.Month, 1).AddMonths(1).AddDays(-1);
+            source = source.Where(f => f.FindingDate <= to);
         }
 
         if (!string.IsNullOrWhiteSpace(filter.Priority))
