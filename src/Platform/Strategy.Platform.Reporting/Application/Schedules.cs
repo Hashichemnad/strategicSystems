@@ -143,7 +143,7 @@ public sealed class ScheduleService(
             errors.Add(new FieldError("frequency", "reporting.errors.frequency", "reporting.errors.frequency"));
         }
 
-        if (!TimeOnly.TryParseExact(input.Time, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out var time))
+        if (!TimeOnly.TryParseExact(input.Time ?? string.Empty, "HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out var time))
         {
             errors.Add(new FieldError("time", "reporting.errors.time", "reporting.errors.time"));
         }
@@ -163,7 +163,7 @@ public sealed class ScheduleService(
             errors.Add(new FieldError("format", "reporting.errors.format", "reporting.errors.format"));
         }
 
-        if (input.Recipients.Count is 0 or > 200
+        if (input.Recipients is null || input.Recipients.Count is 0 or > 200
             || input.Recipients.Any(r => !SharePrincipalKinds.All.Contains(r.Kind, StringComparer.Ordinal) || string.IsNullOrWhiteSpace(r.Ref) || r.Ref.Length > 120))
         {
             errors.Add(new FieldError("recipients", "reporting.errors.recipients", "reporting.errors.recipients"));

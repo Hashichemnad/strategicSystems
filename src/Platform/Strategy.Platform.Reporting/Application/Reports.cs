@@ -95,6 +95,11 @@ public sealed class ReportService(
     private async Task<Result<(DatasetDefinition Dataset, IReportingDatasetSource Source, IReadOnlyList<DatasetField> Fields, List<string> Dropped, ReportDefinition Effective)>> PrepareAsync(
         ReportDefinition definition, ClaimsPrincipal user, CancellationToken ct)
     {
+        if (definition?.Dataset is null || definition.Columns is null || definition.Filters is null || definition.GroupBy is null || definition.Sort is null)
+        {
+            return Error.Validation([Err("dataset", "reporting.errors.columns")]);
+        }
+
         if (!registry.TryDataset(definition.Dataset, out var dataset, out var source)
             || !await access.CanAsync(user, dataset.ReadPermission, cancellationToken: ct).ConfigureAwait(false))
         {
@@ -402,7 +407,7 @@ public sealed class ReportService(
             return Error.Forbidden();
         }
 
-        if (string.IsNullOrWhiteSpace(input.Name) || input.Name.Length > 200 || (input.Description?.Length ?? 0) > 1000)
+        if (string.IsNullOrWhiteSpace(input.Name) || input.Name.Length > 200 || (input.Description?.Length ?? 0) > 1000 || input.Definition is null)
         {
             return Error.Validation([new FieldError("name", "reporting.errors.name", "reporting.errors.name")]);
         }

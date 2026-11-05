@@ -243,19 +243,24 @@ public sealed class DashboardService(
             errors.Add(new FieldError("level", "reporting.errors.level", "reporting.errors.level"));
         }
 
+        if (input.Definition is null)
+        {
+            errors.Add(new FieldError("definition", "reporting.errors.widgetType", "reporting.errors.widgetType"));
+            return errors;
+        }
+
         errors.AddRange(await validator.ValidateAsync(input.Definition, user, ct).ConfigureAwait(false));
         return errors;
     }
 
     public async Task<Result<ReportingDashboardDto>> CreateAsync(DashboardInput input, ClaimsPrincipal user, CancellationToken ct)
     {
-        var manage = await CanManageAsync(user, ct).ConfigureAwait(false);
-        if (input.Level != DashboardLevels.Custom && !manage)
+        var errors = await ValidateInputAsync(input, user, ct).ConfigureAwait(false);
+        if (errors.Count == 0 && input.Level != DashboardLevels.Custom && !await CanManageAsync(user, ct).ConfigureAwait(false))
         {
             return Error.Forbidden();
         }
 
-        var errors = await ValidateInputAsync(input, user, ct).ConfigureAwait(false);
         if (errors.Count > 0)
         {
             return Error.Validation(errors);

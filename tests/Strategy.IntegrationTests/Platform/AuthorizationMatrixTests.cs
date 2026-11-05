@@ -139,6 +139,12 @@ public partial class AuthorizationMatrixTests(ApiFixture api) : IClassFixture<Ap
                 form.Add(file, "file", "x.csv");
                 request.Content = form;
             }
+            else if (route.StartsWith("/api/v1/reporting/", StringComparison.Ordinal)
+                && (route.EndsWith("/roles", StringComparison.Ordinal) || route.EndsWith("/shares", StringComparison.Ordinal) || route.EndsWith("/layout", StringComparison.Ordinal)))
+            {
+                // Phase 17 endpoints whose body is a list.
+                request.Content = new StringContent("[]", Encoding.UTF8, "application/json");
+            }
             else
             {
                 request.Content = new StringContent("{}", Encoding.UTF8, "application/json");

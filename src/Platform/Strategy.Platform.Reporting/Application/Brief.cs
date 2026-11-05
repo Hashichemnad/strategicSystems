@@ -121,7 +121,7 @@ public sealed class BriefService(AiGateway gateway, DashboardService dashboards,
 
     public async Task<Result<BriefDto>> SaveAsync(BriefInput input, ClaimsPrincipal user, CancellationToken ct)
     {
-        if (input.PeriodKey.Length > 50 || input.Improved.Count + input.Attention.Count + input.Decisions.Count > 30
+        if (input.PeriodKey is null || input.Improved is null || input.Attention is null || input.Decisions is null || input.PeriodKey.Length > 50 || input.Improved.Count + input.Attention.Count + input.Decisions.Count > 30
             || input.Improved.Concat(input.Attention).Concat(input.Decisions).Any(p => p.TextAr.Length > 2000 || p.TextEn.Length > 2000))
         {
             return Error.Validation([new FieldError("brief", "reporting.errors.brief", "reporting.errors.brief")]);
