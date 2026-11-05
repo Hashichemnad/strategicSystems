@@ -46,7 +46,12 @@ public sealed record GetKpiScorecard(int? Year, Guid? UnitId) : IQuery<KpiScorec
 
 public sealed record GetKpiStrategyMap(int? Year) : IQuery<KpiStrategyMapDto>;
 
-public sealed record GetKpiDashboard(int? Year) : IQuery<KpiDashboardDto>;
+/// <remarks>
+/// <c>From</c> / <c>To</c> (inclusive dates, normally the first day of the first month and the last day of the last month of the period): the result
+/// figures (updates, overdue, backlog, approved) count the results whose period ends in the range instead of the year's; plans, scores and
+/// performers stay those of <c>Year</c> (default: the year of <c>To</c>, else of <c>From</c>, else this year). Docs/design/reporting.md §2.3.
+/// </remarks>
+public sealed record GetKpiDashboard(int? Year, DateOnly? From = null, DateOnly? To = null) : IQuery<KpiDashboardDto>;
 
 public sealed record GetKpiDataQuality(int? Year) : IQuery<IReadOnlyList<KpiDataQualityDto>>;
 
@@ -186,15 +191,35 @@ internal sealed class ReportQueries(
 
     public async Task<Result<KpiDashboardDto>> HandleAsync(GetKpiDashboard query, CancellationToken cancellationToken)
     {
-        var year = query.Year ?? clock.Today.Year;
+        if (query.From is { } rangeFrom && query.To is { } rangeTo && rangeFrom > rangeTo)
+        {
+            return Error.Validation([new FieldError("to", "validation.invalid", "validation.invalid")]);
+        }
+
+        var year = query.Year ?? query.To?.Year ?? query.From?.Year ?? clock.Today.Year;
         var visible = await reader.CardsAsync(context.User, cancellationToken).ConfigureAwait(false);
         var all = await visible.ToListAsync(cancellationToken).ConfigureAwait(false);
         var active = all.Where(c => c.Status == CardStatuses.Active).ToList();
         var ids = all.Select(c => c.Id).ToList();
         var plans = await db.Plans.AsNoTracking().Where(p => ids.Contains(p.CardId) && p.Year == year).ToListAsync(cancellationToken).ConfigureAwait(false);
         var planByCard = plans.ToDictionary(p => p.CardId);
-        var results = await (await reader.ResultsAsync(context.User, cancellationToken).ConfigureAwait(false)).Where(r => r.Year == year)
-            .Select(r => new { r.Status, r.DueAt }).ToListAsync(cancellationToken).ConfigureAwait(false);
+        var scopedResults = await reader.ResultsAsync(context.User, cancellationToken).ConfigureAwait(false);
+        if (query.From is null && query.To is null)
+        {
+            scopedResults = scopedResults.Where(r => r.Year == year);
+        }
+
+        if (query.From is { } from)
+        {
+            scopedResults = scopedResults.Where(r => r.PeriodEnd >= from);
+        }
+
+        if (query.To is { } to)
+        {
+            scopedResults = scopedResults.Where(r => r.PeriodEnd <= to);
+        }
+
+        var results = await scopedResults.Select(r => new { r.Status, r.DueAt }).ToListAsync(cancellationToken).ConfigureAwait(false);
         var now = clock.UtcNow;
         var types = (await lookups.GetValuesAsync(KpiPermissions.TypeLookup, true, cancellationToken).ConfigureAwait(false)).ToDictionary(v => v.Code);
         var byType = active.GroupBy(c => c.TypeCode ?? "-").Select(g => new KpiCountDto(g.Key, types.GetValueOrDefault(g.Key)?.LabelAr, types.GetValueOrDefault(g.Key)?.LabelEn,
