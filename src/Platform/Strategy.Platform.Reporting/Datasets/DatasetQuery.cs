@@ -226,14 +226,9 @@ public sealed class DatasetQuery<T>
     /// <summary>A parameterised constant (closure member access), so EF Core sends it as a query parameter.</summary>
     private static MemberExpression Constant(object? value, Type type)
     {
-        var holderType = typeof(Holder<>).MakeGenericType(type);
+        var holderType = typeof(DatasetValueHolder<>).MakeGenericType(type);
         var holder = Activator.CreateInstance(holderType, value);
         return Expression.Property(Expression.Constant(holder), "Value");
-    }
-
-    private sealed class Holder<TValue>(TValue value)
-    {
-        public TValue Value { get; } = value;
     }
 
     internal static object? Parse(string? value, Type type)
@@ -273,3 +268,10 @@ public sealed class DatasetQuery<T>
         protected override Expression VisitParameter(ParameterExpression node) => node == from ? to : base.VisitParameter(node);
     }
 }
+
+/// <summary>A closure-like holder so EF Core sends filter values as query parameters (not nested in the generic query class).</summary>
+internal sealed class DatasetValueHolder<TValue>(TValue value)
+{
+    public TValue Value { get; } = value;
+}
+
