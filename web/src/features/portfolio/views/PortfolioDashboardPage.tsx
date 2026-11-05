@@ -2,6 +2,7 @@ import { Link, useNavigate } from '@tanstack/react-router';
 import { Sparkles } from 'lucide-react';
 import { useMemo, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSystemDashboard } from '@/features/reporting/SystemDashboard';
 import { errorMessage } from '@/api/problem';
 import { AiBadge } from '@/features/ai/AiDraft';
 import { useAiFeature, type AiFeatureKey } from '@/features/ai/api';
@@ -19,7 +20,6 @@ import {
   type Rag,
   type RagGridCell,
   type RagGridRow,
-  PageHeader,
   Skeleton,
   StatusBanner,
   StatusChip,
@@ -29,6 +29,10 @@ import {
   TableHead,
   TableHeaderCell,
   TableRow,
+  DashboardFrame,
+  OptionalPeriodSelector,
+  periodToDates,
+  type PeriodValue,
 } from '@/ui';
 import { PortfolioFilters } from './PortfolioFilters';
 import {
@@ -52,17 +56,24 @@ export function PortfolioDashboardPage() {
   const { t } = useTranslation('portfolioViews');
   const { t: tc } = useTranslation();
   const [filter, setFilter] = useState<PortfolioFilter>({});
-  const dashboard = usePortfolioDashboard(filter);
+  const [period, setPeriod] = useState<PeriodValue | null>(null);
+  const range = period ? periodToDates(period) : undefined;
+  const dashboard = usePortfolioDashboard(filter, range);
+  const system = useSystemDashboard('portfolio.overview', period, filter.unitId);
   const insightsOn = useAiFeature('portfolio-insights' as AiFeatureKey);
   const insights = usePortfolioInsights();
 
   return (
-    <div className="flex flex-col gap-6" data-testid="portfolio-dashboard">
-      <PageHeader
-        title={t('dashboard.title')}
-        description={t('dashboard.description')}
-        actions={
-          insightsOn ? (
+    <DashboardFrame
+      testId="portfolio-dashboard"
+      title={t('dashboard.title')}
+      description={t('dashboard.description')}
+      exports={system.exports}
+      filters={<OptionalPeriodSelector value={period} onChange={setPeriod} allowCompare={false} />}
+      actions={
+        <>
+          {system.action}
+          {insightsOn && (
             <Button
               variant="outline"
               loading={insights.isPending}
@@ -72,9 +83,10 @@ export function PortfolioDashboardPage() {
               <Sparkles aria-hidden />
               {t('dashboard.insights')}
             </Button>
-          ) : undefined
-        }
-      />
+          )}
+        </>
+      }
+    >
       <PortfolioFilters value={filter} onChange={setFilter} />
       {insights.isError && <StatusBanner tone="warning" title={errorMessage(tc, insights.error)} />}
       {insights.data && (
@@ -112,7 +124,7 @@ export function PortfolioDashboardPage() {
       ) : (
         <DashboardBody data={dashboard.data} />
       )}
-    </div>
+    </DashboardFrame>
   );
 }
 

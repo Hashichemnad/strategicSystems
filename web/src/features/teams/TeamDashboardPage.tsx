@@ -1,14 +1,29 @@
 import { Download, UsersRound } from 'lucide-react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useCan } from '@/features/access/session';
+import { useSystemDashboard } from '@/features/reporting/SystemDashboard';
 import { formatNumber, pickText } from '@/lib/format';
-import { Button, CountChart, PageHeader, Skeleton, StatusBanner, StatusChip, Tile } from '@/ui';
+import {
+  Button,
+  CountChart,
+  DashboardFrame,
+  OptionalPeriodSelector,
+  periodToDates,
+  Skeleton,
+  StatusBanner,
+  StatusChip,
+  Tile,
+  type PeriodValue,
+} from '@/ui';
 import { exportUrl, useTeamDashboard, useTeamOptions } from './api';
 
 /** Teams dashboard (SPEC §4.6): teams by type / status, committees, workload, evaluation progress, scores, grades and rewards. */
 export function TeamDashboardPage() {
   const { t, i18n } = useTranslation('teams');
-  const dashboard = useTeamDashboard();
+  const [period, setPeriod] = useState<PeriodValue | null>(null);
+  const dashboard = useTeamDashboard(period ? periodToDates(period) : undefined);
+  const system = useSystemDashboard('teams.overview', period);
   const options = useTeamOptions();
   const canExport = useCan('teams.report.export');
   if (dashboard.isPending) return <Skeleton className="h-96 rounded-lg" />;
@@ -23,11 +38,15 @@ export function TeamDashboardPage() {
     return band ? pickText(i18n.language, band.nameAr, band.nameEn) : code;
   };
   return (
-    <div className="flex flex-col gap-6" data-testid="teams-dashboard">
-      <PageHeader
-        title={t('dashboardPage.title')}
-        actions={
-          canExport && (
+    <DashboardFrame
+      testId="teams-dashboard"
+      title={t('dashboardPage.title')}
+      exports={system.exports}
+      filters={<OptionalPeriodSelector value={period} onChange={setPeriod} allowCompare={false} />}
+      actions={
+        <>
+          {system.action}
+          {canExport && (
             <div className="flex flex-wrap gap-2">
               {(['register', 'membership', 'evaluations', 'rewards'] as const).map((kind) => (
                 <Button key={kind} variant="outline" size="sm" asChild>
@@ -38,9 +57,10 @@ export function TeamDashboardPage() {
                 </Button>
               ))}
             </div>
-          )
-        }
-      />
+          )}
+        </>
+      }
+    >
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Tile label={t('dashboardPage.teams')} value={d.teams} />
         <Tile label={t('dashboardPage.committees')} value={d.activeCommittees} />
@@ -103,6 +123,6 @@ export function TeamDashboardPage() {
           />
         )}
       </div>
-    </div>
+    </DashboardFrame>
   );
 }

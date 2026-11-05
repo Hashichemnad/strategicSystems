@@ -13,6 +13,7 @@
     "label": "Period",
     "kind": "Period type",
     "kinds": {
+      "all": "All periods",
       "month": "Month",
       "quarter": "Quarter",
       "year": "Year",
@@ -55,5 +56,6 @@
     "node": "{{name}}: {{score}}, {{rag}}",
     "noScore": "no score",
     "causes": "{{from}} drives {{to}}"
-  }
+  },
+  "systemDashboard": "System dashboard"
 }

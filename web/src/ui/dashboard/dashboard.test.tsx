@@ -12,12 +12,13 @@ import {
   monthCount,
   monthsOf,
   periodRange,
+  periodToDates,
   previousPeriod,
   shiftPeriod,
   toSearch,
   type PeriodValue,
 } from './period';
-import { PeriodSelector } from './PeriodSelector';
+import { OptionalPeriodSelector, PeriodSelector } from './PeriodSelector';
 import { ProgressBar } from './parts';
 import { RagGrid } from './RagGrid';
 import { StrategyMap, strategyMapLayout } from './StrategyMap';
@@ -93,6 +94,50 @@ describe('period helpers', () => {
       from: '2026-04',
       to: '2026-06',
     });
+  });
+});
+
+describe('periodToDates', () => {
+  it('gives the first and last day of the period (leap years included)', () => {
+    expect(periodToDates({ from: '2026-01', to: '2026-03' })).toEqual({
+      from: '2026-01-01',
+      to: '2026-03-31',
+    });
+    expect(periodToDates({ from: '2028-02', to: '2028-02' })).toEqual({
+      from: '2028-02-01',
+      to: '2028-02-29',
+    });
+    expect(periodToDates({ from: '2025-11', to: '2026-02' })).toEqual({
+      from: '2025-11-01',
+      to: '2026-02-28',
+    });
+  });
+});
+
+describe('OptionalPeriodSelector', () => {
+  it('shows "All periods" without a period and the step buttons with one', async () => {
+    const { rerender } = await renderWithProviders(
+      <OptionalPeriodSelector value={null} onChange={() => undefined} />,
+    );
+    expect(screen.getByRole('combobox', { name: 'Period type' })).toHaveTextContent('All periods');
+    expect(screen.queryByRole('button', { name: 'Previous period' })).not.toBeInTheDocument();
+    rerender(
+      <OptionalPeriodSelector
+        value={{ kind: 'year', from: '2026-01', to: '2026-12', compare: false }}
+        onChange={() => undefined}
+        allowCompare={false}
+      />,
+    );
+    expect(screen.getByText('2026')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Previous period' })).toBeInTheDocument();
+    expect(screen.queryByRole('switch')).not.toBeInTheDocument();
+  });
+
+  it('names "All periods" in Arabic', async () => {
+    await renderWithProviders(<OptionalPeriodSelector value={null} onChange={() => undefined} />, {
+      language: 'ar',
+    });
+    expect(screen.getByRole('combobox', { name: 'نوع الفترة' })).toHaveTextContent('كل الفترات');
   });
 });
 

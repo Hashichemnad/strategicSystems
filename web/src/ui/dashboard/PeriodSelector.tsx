@@ -9,6 +9,7 @@ import { Select } from '../select';
 import { Switch } from '../toggle';
 import {
   changeKind,
+  currentPeriod,
   isMonth,
   normalizePeriod,
   periodKinds,
@@ -43,6 +44,8 @@ export function periodLabel(period: PeriodValue, language: string, t: Translate)
   }
 }
 
+const allPeriods = 'all';
+
 export interface PeriodSelectorProps {
   value: PeriodValue;
   onChange: (value: PeriodValue) => void;
@@ -50,6 +53,8 @@ export interface PeriodSelectorProps {
   kinds?: readonly PeriodKind[];
   /** Shows the "compare with previous period" switch (default true). */
   allowCompare?: boolean;
+  /** Offers "All periods" in the kind list; choosing it calls this (see {@link OptionalPeriodSelector}). */
+  onClear?: () => void;
   className?: string;
   testId?: string;
 }
@@ -60,6 +65,7 @@ export function PeriodSelector({
   onChange,
   kinds = periodKinds,
   allowCompare = true,
+  onClear,
   className,
   testId,
 }: PeriodSelectorProps) {
@@ -77,8 +83,13 @@ export function PeriodSelector({
       <Select
         aria-label={t('period.kind')}
         value={value.kind}
-        onValueChange={(kind) => onChange(changeKind(value, kind as PeriodKind))}
-        options={kinds.map((k) => ({ value: k, label: t(`period.kinds.${k}`) }))}
+        onValueChange={(kind) =>
+          kind === allPeriods ? onClear?.() : onChange(changeKind(value, kind as PeriodKind))
+        }
+        options={[
+          ...(onClear ? [{ value: allPeriods, label: t('period.kinds.all') }] : []),
+          ...kinds.map((k) => ({ value: k, label: t(`period.kinds.${k}`) })),
+        ]}
         className="w-36"
       />
       {value.kind === 'custom' ? (
@@ -142,6 +153,55 @@ export function PeriodSelector({
           className="items-center gap-2"
         />
       )}
+    </div>
+  );
+}
+
+export interface OptionalPeriodSelectorProps extends Omit<
+  PeriodSelectorProps,
+  'value' | 'onChange' | 'onClear'
+> {
+  /** `null` = all periods (the dashboard's unfiltered view). */
+  value: PeriodValue | null;
+  onChange: (value: PeriodValue | null) => void;
+}
+
+/** A PeriodSelector that also offers "All periods" (module dashboards whose endpoints treat a missing period as "everything"). */
+export function OptionalPeriodSelector({
+  value,
+  onChange,
+  kinds = periodKinds,
+  ...rest
+}: OptionalPeriodSelectorProps) {
+  const { t: tt } = useTranslation('charts');
+  const t = tt as unknown as Translate;
+  if (value)
+    return (
+      <PeriodSelector
+        value={value}
+        onChange={onChange}
+        onClear={() => onChange(null)}
+        kinds={kinds}
+        {...rest}
+      />
+    );
+  return (
+    <div
+      role="group"
+      aria-label={t('period.label')}
+      className={cn('flex items-center', rest.className)}
+      data-testid={rest.testId}
+    >
+      <Select
+        aria-label={t('period.kind')}
+        value={allPeriods}
+        onValueChange={(kind) => kind !== allPeriods && onChange(currentPeriod(kind as PeriodKind))}
+        options={[
+          { value: allPeriods, label: t('period.kinds.all') },
+          ...kinds.map((k) => ({ value: k, label: t(`period.kinds.${k}`) })),
+        ]}
+        className="w-36"
+      />
     </div>
   );
 }

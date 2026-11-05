@@ -2,6 +2,7 @@ import { Link } from '@tanstack/react-router';
 import { Download, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSystemDashboard } from '@/features/reporting/SystemDashboard';
 import { errorMessage } from '@/api/problem';
 import { useCan } from '@/features/access/session';
 import { useAiFeature } from '@/features/ai/api';
@@ -9,13 +10,16 @@ import { formatNumber, pickText } from '@/lib/format';
 import {
   Button,
   CountChart,
-  PageHeader,
   Select,
   Skeleton,
   StatusBanner,
   StatusChip,
   Tile,
   useToast,
+  DashboardFrame,
+  OptionalPeriodSelector,
+  periodToDates,
+  type PeriodValue,
 } from '@/ui';
 import {
   currentYear,
@@ -35,18 +39,22 @@ export function KpiDashboardPage() {
   const { t: tc } = useTranslation();
   const { k, language } = useKpiT();
   const [year, setYear] = useState(currentYear());
-  const dashboard = useKpiDashboard(year);
+  const [period, setPeriod] = useState<PeriodValue | null>(null);
+  const range = period ? periodToDates(period) : undefined;
+  const dashboard = useKpiDashboard(year, range);
+  const system = useSystemDashboard('kpi.scorecard', period);
   const canExport = useCan('kpi.report.export');
   const label = (row: { key: string; labelAr?: string | null; labelEn?: string | null }) =>
     pickText(language, row.labelAr, row.labelEn) || row.key;
 
   return (
     <KpiPage testId="kpi-dashboard">
-      <PageHeader
+      <DashboardFrame
         title={t('dashboard.title')}
         description={t('dashboard.description')}
-        actions={
-          <div className="flex flex-wrap items-center gap-2">
+        exports={system.exports}
+        filters={
+          <>
             <Select
               aria-label={t('common.year')}
               value={String(year)}
@@ -54,6 +62,12 @@ export function KpiDashboardPage() {
               options={yearOptions(currentYear())}
               className="w-28"
             />
+            <OptionalPeriodSelector value={period} onChange={setPeriod} allowCompare={false} />
+          </>
+        }
+        actions={
+          <div className="flex flex-wrap items-center gap-2">
+            {system.action}
             {canExport && (
               <Button variant="outline" size="sm" asChild>
                 <a href={exportUrl('scorecard', 'xlsx', language, { year: String(year) })}>
@@ -64,49 +78,50 @@ export function KpiDashboardPage() {
             )}
           </div>
         }
-      />
-      {dashboard.isError && <StatusBanner tone="danger" title={errorMessage(tc, dashboard.error)} />}
-      {dashboard.isPending ? (
-        <Skeleton className="h-96 rounded-lg" />
-      ) : (
-        dashboard.data && (
-          <>
-            <Tiles data={dashboard.data} />
-            <div className="grid gap-4 lg:grid-cols-2">
-              <CountChart
-                title={t('dashboard.achievement')}
-                testId="kpi-achievement"
-                rows={dashboard.data.achievement.map((r) => ({
-                  key: r.key,
-                  label: k(`dashboard.achievementKeys.${r.key}`),
-                  value: r.count,
-                }))}
-              />
-              <CountChart
-                title={t('dashboard.byType')}
-                rows={dashboard.data.byType.map((r) => ({ key: r.key, label: label(r), value: r.count }))}
-              />
-              <ScoredList
-                title={t('dashboard.byDepartment')}
-                rows={dashboard.data.byDepartment}
-                label={label}
-              />
-              <ScoredList
-                title={t('dashboard.byObjective')}
-                rows={dashboard.data.byObjective}
-                label={label}
-              />
-              <Performers title={t('dashboard.top')} rows={dashboard.data.top} />
-              <Performers title={t('dashboard.bottom')} rows={dashboard.data.bottom} />
-            </div>
-            <section className="flex flex-col gap-3 rounded-lg border bg-card p-5">
-              <h2 className="font-semibold">{t('reports.dataQuality')}</h2>
-              <DataQualityTable year={year} />
-            </section>
-            <Narrative year={year} />
-          </>
-        )
-      )}
+      >
+        {dashboard.isError && <StatusBanner tone="danger" title={errorMessage(tc, dashboard.error)} />}
+        {dashboard.isPending ? (
+          <Skeleton className="h-96 rounded-lg" />
+        ) : (
+          dashboard.data && (
+            <>
+              <Tiles data={dashboard.data} />
+              <div className="grid gap-4 lg:grid-cols-2">
+                <CountChart
+                  title={t('dashboard.achievement')}
+                  testId="kpi-achievement"
+                  rows={dashboard.data.achievement.map((r) => ({
+                    key: r.key,
+                    label: k(`dashboard.achievementKeys.${r.key}`),
+                    value: r.count,
+                  }))}
+                />
+                <CountChart
+                  title={t('dashboard.byType')}
+                  rows={dashboard.data.byType.map((r) => ({ key: r.key, label: label(r), value: r.count }))}
+                />
+                <ScoredList
+                  title={t('dashboard.byDepartment')}
+                  rows={dashboard.data.byDepartment}
+                  label={label}
+                />
+                <ScoredList
+                  title={t('dashboard.byObjective')}
+                  rows={dashboard.data.byObjective}
+                  label={label}
+                />
+                <Performers title={t('dashboard.top')} rows={dashboard.data.top} />
+                <Performers title={t('dashboard.bottom')} rows={dashboard.data.bottom} />
+              </div>
+              <section className="flex flex-col gap-3 rounded-lg border bg-card p-5">
+                <h2 className="font-semibold">{t('reports.dataQuality')}</h2>
+                <DataQualityTable year={year} />
+              </section>
+              <Narrative year={year} />
+            </>
+          )
+        )}
+      </DashboardFrame>
     </KpiPage>
   );
 }

@@ -257,11 +257,11 @@ export function useKpiStrategyMap(year: number) {
   });
 }
 
-export function useKpiDashboard(year: number) {
+export function useKpiDashboard(year: number, range?: { from: string; to: string }) {
   return useQuery({
-    queryKey: [...kpiKeys.all, 'dashboard', year],
+    queryKey: [...kpiKeys.all, 'dashboard', year, range ?? null],
     queryFn: async ({ signal }) =>
-      unwrap(await api.GET('/api/v1/kpi/dashboard', { params: { query: { year } }, signal })),
+      unwrap(await api.GET('/api/v1/kpi/dashboard', { params: { query: { year, ...range } }, signal })),
   });
 }
 
