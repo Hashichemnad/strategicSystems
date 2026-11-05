@@ -58,7 +58,7 @@
     "overdue": "Overdue",
     "unavailable": "This card is not available right now",
     "cards": {
-      "approvals": "Pending approvals",
+      "approvals": "My approvals",
       "notifications": "Notifications",
       "pins": "Pinned dashboards and reports",
       "unavailable": "Not available",
