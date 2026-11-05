@@ -226,7 +226,7 @@ dotnet tool restore
 dotnet run --project src/Host/Strategy.Host
 dotnet run --project src/Host/Strategy.Host -- --migrate                      # apply migrations and exit (as ConnectionStrings:StrategyMigrations when set, ADR 0018)
 dotnet run --project src/Host/Strategy.Host -- --setup-db-roles                # create / update the runtime role and its grants (upgrade step, deploy/README.md)
-dotnet run --project src/Host/Strategy.Host -- --create-admin --email <e> --password-file <f>   # first administrator
+dotnet run --project src/Host/Strategy.Host -- --create-admin --email <e> --password-file <f>   # first administrator (after --migrate; never migrates on the runtime role; /dev/stdin works)
 # Development seed (empty DB): mariam@strategy.local (platform administrator roles, must use MFA) / ahmed@strategy.local (sample editor), password Strategy#Demo2026.
 # Seed__AdminTotpKey=<base32> gives the admin a known authenticator key (E2E uses JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP).
 
@@ -247,7 +247,7 @@ tools/check-vulnerable.sh && tools/check-api-client.sh
 cd web && npm run lint && npm run format:check && npm run typecheck && npm test
 npm run build && npm audit --audit-level=high && npm run lint:licenses
 npx playwright test                                                           # E2E, projects "ar" and "en" (needs postgres + mailpit + gotenberg; starts the host)
-# E2E screenshots go to docs/screenshots/$E2E_SCREENSHOTS (default phase-4). A sandbox Chromium of another revision: E2E_CHROMIUM_PATH=/opt/pw-browsers/chromium
+# E2E screenshots go to docs/screenshots/$E2E_SCREENSHOTS (default phase-4); Phase 17: E2E_SCREENSHOTS=phase-17 npx playwright test e2e/reporting.spec.ts (after the other specs, so every system has data). A sandbox Chromium of another revision: E2E_CHROMIUM_PATH=/opt/pw-browsers/chromium
 # The Teams E2E renders the generated memo / certificate PDFs to PNG with pdftoppm (poppler-utils, test machine only)
 
 # Containerised install (http://localhost:8080)
