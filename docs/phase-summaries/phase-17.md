@@ -50,6 +50,20 @@ Status: **built — awaiting owner acceptance** (ADRs 0140–0149 accepted by th
 | Playwright E2E (`ar` + `en`) | E2E_GATE_RESULT |
 | Fresh Docker install per `deploy/README.md` | DOCKER_GATE |
 
+## Defects found while verifying (fixed in this phase)
+- **Scheduled jobs never ran on their schedule (since Phase 3).** `JobRunListener` read `triggeredBy` with `GetString`, which
+  throws on a missing key in Quartz 3.22; only manual runs carry the key, so Quartz logged "Job will NOT be executed" for every
+  cron firing — reminders, SLA escalation, KPI windows, digests, the reporting refresh and all other jobs ran only when started from
+  the job dashboard. Integration tests call jobs directly, so they never saw it; the Phase 17 E2E (waiting for the refresh job) did.
+  Fixed with `TryGetString`; `JobDashboardTests` now fires a run without the key. Because cron jobs now really fire, integration
+  test hosts set the new `Scheduling:RunSchedules=false` (default true), which vetoes only schedule-fired runs.
+- `/dashboards/<system.key>` returned a 404 problem on a deep link or refresh (a dotted last segment looks like a file) — added to
+  the SPA fallback routes.
+- My Work count keys from Tasks, Risk and Requests carried the `myWork.counts.` prefix the client adds itself (chips showed the
+  generic error text); the contract now says count keys are bare codes.
+- The approvals card and the detailed approvals list were both regions named "Pending approvals" — the card is now "My approvals".
+- Document Registry expiry test compared with the UTC date (failed 20:00–24:00 UTC); Wasel E2E navigated before the password was saved.
+
 ## Decisions (ADRs, accepted by the owner)
 0140 reporting read model through Contracts · 0141 scope-correct cached aggregates · 0142 periods, snapshots and refresh ·
 0143 widget catalogue and dashboard builder · 0144 report builder datasets and field security · 0145 scheduled delivery as the recipient ·
