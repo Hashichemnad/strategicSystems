@@ -8,6 +8,7 @@ using Strategy.Modules.Tasks.Contracts;
 using Strategy.Modules.Tasks.Infrastructure;
 using Strategy.Modules.Tasks.Jobs;
 using Strategy.Modules.Tasks.Mcp;
+using Strategy.Modules.Tasks.Reporting;
 using Strategy.Platform.Access;
 using Strategy.Platform.AI;
 using Strategy.Platform.AI.Tools;
@@ -17,6 +18,7 @@ using Strategy.Platform.Kernel;
 using Strategy.Platform.Links;
 using Strategy.Platform.Notifications;
 using Strategy.Platform.Persistence;
+using Strategy.Platform.Reporting;
 using Strategy.Platform.Scheduling;
 using Strategy.Platform.Settings;
 using Strategy.Platform.Workflow;
@@ -56,6 +58,10 @@ public sealed class TasksModule : IModule
         services.AddFileOwnerAccess<TaskFiles>();
         services.AddCurrentStatusProvider<TaskCurrentStatus>();
         services.AddMyWorkSource<TaskMyWork>();
+        services.AddReportingMetricSource<TaskMetricSource>();
+        services.AddReportingListSource<TaskListSource>();
+        services.AddReportingDatasetSource<TaskDatasetSource>();
+        services.AddMyWorkCardSource<TaskMyWorkCards>();
         services.AddLinkableType(TaskLinkTargets.Definition);
         services.AddLinkTargetSource<TaskLinkTargets>();
 
