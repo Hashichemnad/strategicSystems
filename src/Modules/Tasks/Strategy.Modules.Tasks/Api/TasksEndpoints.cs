@@ -102,7 +102,8 @@ internal static class TasksEndpoints
                 (await d.SendAsync(new CancelGroup(id, b.Reason), ct)).ToOk())
             .WithName("CancelAssignmentGroup").RequirePermission(TaskPermissions.Read);
 
-        group.MapGet("/dashboard", async (IDispatcher d, CancellationToken ct) => (await d.SendAsync(new GetTaskDashboard(), ct)).ToOk())
+        group.MapGet("/dashboard", async (DateOnly? from, DateOnly? to, IDispatcher d, CancellationToken ct) =>
+                (await d.SendAsync(new GetTaskDashboard(from, to), ct)).ToOk())
             .WithName("GetTaskDashboard").RequirePermission(TaskPermissions.DashboardRead);
         group.MapGet("/performance/{employeeId:guid}", async (Guid employeeId, IDispatcher d, CancellationToken ct) =>
                 (await d.SendAsync(new GetEmployeePerformance(employeeId), ct)).ToOk())

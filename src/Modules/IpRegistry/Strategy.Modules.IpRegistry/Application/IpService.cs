@@ -542,9 +542,27 @@ internal sealed class IpService(
         return new IpPdf(pdf, $"{record.Number}-MOET.pdf");
     }
 
-    public async Task<IpDashboardDto> DashboardAsync(CancellationToken ct)
+    /// <summary>
+    /// The dashboard. <paramref name="from"/> / <paramref name="to"/> (inclusive month range, design note reporting.md §3.3): records filed in the
+    /// range — records not filed yet count by their creation date.
+    /// </summary>
+    public async Task<IpDashboardDto> DashboardAsync(CancellationToken ct, DateOnly? from = null, DateOnly? to = null)
     {
         var visible = await reader.VisibleAsync(context.User, ct).ConfigureAwait(false);
+        if (from is { } f)
+        {
+            var start = new DateOnly(f.Year, f.Month, 1);
+            var startAt = new DateTimeOffset(start.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero);
+            visible = visible.Where(r => r.FilingDate != null ? r.FilingDate >= start : r.CreatedAt >= startAt);
+        }
+
+        if (to is { } t)
+        {
+            var end = new DateOnly(t.Year, t.Month, 1).AddMonths(1);
+            var endAt = new DateTimeOffset(end.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero);
+            visible = visible.Where(r => r.FilingDate != null ? r.FilingDate < end : r.CreatedAt < endAt);
+        }
+
         var soon = clock.Today.AddDays(SoonDays);
         var total = await visible.CountAsync(ct).ConfigureAwait(false);
         var registered = await visible.CountAsync(r => r.Status == IpStatuses.Registered || r.Status == IpStatuses.Renewed, ct).ConfigureAwait(false);

@@ -195,12 +195,14 @@ internal static class RiskEndpoints
             .WithName("SubmitRiskReview").RequirePermission(RiskPermissions.Read).WithIdempotency();
 
         // Dashboard, heat-maps, Project Risks, reports
-        group.MapGet("/dashboard", async (Guid? unitId, string? category, string? residualStatus, int? year, bool? includeProjectRisks, IDispatcher d, CancellationToken ct) =>
-                (await d.SendAsync(new GetRiskDashboard(new RiskFilter(unitId, category, residualStatus, year, includeProjectRisks)), ct)).ToOk())
+        group.MapGet("/dashboard", async (Guid? unitId, string? category, string? residualStatus, int? year, bool? includeProjectRisks, DateOnly? from, DateOnly? to,
+                    IDispatcher d, CancellationToken ct) =>
+                (await d.SendAsync(new GetRiskDashboard(new RiskFilter(unitId, category, residualStatus, year, includeProjectRisks, from, to)), ct)).ToOk())
             .WithName("GetRiskDashboard").RequirePermission(RiskPermissions.DashboardRead);
         group.MapGet("/heatmap", async (string kind, int likelihood, int impact, Guid? unitId, string? category, string? residualStatus,
-                    int? year, bool? includeProjectRisks, IDispatcher d, CancellationToken ct) =>
-                (await d.SendAsync(new GetHeatCellRisks(kind, likelihood, impact, new RiskFilter(unitId, category, residualStatus, year, includeProjectRisks)), ct)).ToOk())
+                    int? year, bool? includeProjectRisks, DateOnly? from, DateOnly? to, IDispatcher d, CancellationToken ct) =>
+                (await d.SendAsync(new GetHeatCellRisks(kind, likelihood, impact, new RiskFilter(unitId, category, residualStatus, year, includeProjectRisks, from, to)), ct))
+                    .ToOk())
             .WithName("GetRiskHeatCell").RequirePermission(RiskPermissions.DashboardRead);
         group.MapGet("/project-risks", async (Guid? projectId, string? band, string? search, IDispatcher d, CancellationToken ct) =>
                 (await d.SendAsync(new ListProjectRisks(projectId, band, search), ct)).ToOk())

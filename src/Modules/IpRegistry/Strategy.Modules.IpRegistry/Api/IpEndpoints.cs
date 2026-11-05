@@ -23,7 +23,7 @@ internal static class IpEndpoints
                 TypedResults.Ok(await s.ListAsync(new PageRequest(page ?? 1, pageSize ?? PageRequest.DefaultPageSize).Normalised(), propertyType, protectionType, status, unitId,
                     year, expiringWithin, mine == true, search, ct)))
             .WithName("ListIpRecords").RequirePermission(IpPermissions.Read);
-        group.MapGet("/dashboard", async (IpService s, CancellationToken ct) => TypedResults.Ok(await s.DashboardAsync(ct)))
+        group.MapGet("/dashboard", async (DateOnly? from, DateOnly? to, IpService s, CancellationToken ct) => TypedResults.Ok(await s.DashboardAsync(ct, from, to)))
             .WithName("GetIpDashboard").RequirePermission(IpPermissions.DashboardRead);
 
         var records = group.MapGroup("/records/{id:guid}");

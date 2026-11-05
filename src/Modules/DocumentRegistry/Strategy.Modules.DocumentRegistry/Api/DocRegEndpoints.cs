@@ -23,7 +23,7 @@ internal static class DocRegEndpoints
                 TypedResults.Ok(await s.LibraryAsync(new PageRequest(page ?? 1, pageSize ?? PageRequest.DefaultPageSize).Normalised(), level, type, unitId, sensitivity, status,
                     expiringWithin, search, ct)))
             .WithName("GetDocumentLibrary").RequirePermission(DocRegPermissions.Read);
-        group.MapGet("/dashboard", async (DocumentService s, CancellationToken ct) => TypedResults.Ok(await s.DashboardAsync(ct)))
+        group.MapGet("/dashboard", async (DateOnly? from, DateOnly? to, DocumentService s, CancellationToken ct) => TypedResults.Ok(await s.DashboardAsync(ct, from, to)))
             .WithName("GetDocumentDashboard").RequirePermission(DocRegPermissions.DashboardRead);
 
         var documents = group.MapGroup("/documents");
