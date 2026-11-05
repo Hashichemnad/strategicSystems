@@ -29,13 +29,24 @@ internal static partial class Bootstrap
     {
         var email = Argument(args, "--email");
         var passwordFile = Argument(args, "--password-file");
-        if (email is null || passwordFile is null || !File.Exists(passwordFile))
+        if (email is null || passwordFile is null || (!File.Exists(passwordFile) && passwordFile != "/dev/stdin"))
         {
             await output.WriteLineAsync("Usage: --create-admin --email <email> --password-file <file containing the password>");
             return 2;
         }
 
-        var password = (await File.ReadAllTextAsync(passwordFile)).TrimEnd('\r', '\n');
+        string password;
+        try
+        {
+            password = (await File.ReadAllTextAsync(passwordFile)).TrimEnd('\r', '\n');
+        }
+        catch (UnauthorizedAccessException)
+        {
+            // In the container the application runs as a non-root user: a root-only (chmod 600) file mounted from the host is unreadable.
+            await output.WriteLineAsync($"The password file {passwordFile} cannot be read by this process. Pass the password on standard input instead (--password-file /dev/stdin), see deploy/README.md.");
+            return 2;
+        }
+
 
         // Never migrate here: the application role may not create schemas on a two-role install (ADR 0018). Program applies pending
         // migrations as the owner first when ConnectionStrings:StrategyMigrations is configured; otherwise `--migrate` must run first.
