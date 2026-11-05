@@ -37,7 +37,7 @@ ADRs **0130–0137** (status *Proposed*).
 | Gate | Result |
 |---|---|
 | `dotnet build Strategy.slnx -c Release` · `dotnet format --verify-no-changes` | 0 warnings, 0 errors · clean |
-| `dotnet test --solution Strategy.slnx` | BACKEND_RESULT |
+| `dotnet test --solution Strategy.slnx` | **4 645 / 4 645** — unit, architecture and integration on real PostgreSQL with the Mailpit / Gotenberg / Keycloak / OpenLDAP containers and Tesseract (OCR). New in this phase: 15 unit test methods (88 cases: derived statuses, closure, follow-up validation, engagement transitions, risk score, sign-off) and 9 integration tests; authorization matrix, job dashboard (`auditmgmt.monitor`) and access-administration tests updated |
 | `tools/check-api-client.sh` · `tools/check-vulnerable.sh` | OpenAPI document and TS client up to date · no High / Critical |
 | `npm run lint` (incl. RTL class check) · `format:check` · `typecheck` · `npm test` | clean · **322 / 322** Vitest (new: Audit Management message keys and UI codes in AR and EN) |
 | `npm run build` · `npm audit --audit-level=high` · `npm run lint:licenses` | OK · no High / Critical (moderate advisories only, unchanged dependencies) · 617 packages allowed |
