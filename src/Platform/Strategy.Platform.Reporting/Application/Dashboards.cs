@@ -16,13 +16,13 @@ public sealed record DashboardSummaryDto(
     Guid Id, string Code, string TitleAr, string TitleEn, string? DescriptionAr, string? DescriptionEn, string Level, string? SystemCode, string Status,
     bool IsRoleDefault, bool Pinned, bool CanEdit, int PublishedVersion);
 
-public sealed record DashboardDto(
+public sealed record ReportingDashboardDto(
     Guid Id, string Code, string TitleAr, string TitleEn, string? DescriptionAr, string? DescriptionEn, string Level, string? SystemCode, string Status,
     DashboardDefinition Definition, DashboardDefinition? Draft, bool CanEdit, bool HasDraft, int PublishedVersion, IReadOnlyList<string> RoleKeys, uint Version);
 
-public sealed record PeriodDto(string Kind, string From, string To, string PreviousFrom, string PreviousTo);
+public sealed record ReportingPeriodDto(string Kind, string From, string To, string PreviousFrom, string PreviousTo);
 
-public sealed record DashboardDataDto(Guid Id, string Code, string TitleAr, string TitleEn, string Level, string? SystemCode, PeriodDto Period, Guid? UnitId,
+public sealed record DashboardDataDto(Guid Id, string Code, string TitleAr, string TitleEn, string Level, string? SystemCode, ReportingPeriodDto Period, Guid? UnitId,
     IReadOnlyList<WidgetConfig> Widgets, IReadOnlyList<WidgetDataDto> Data, IReadOnlyList<UnitNameDto> Units);
 
 public sealed record DashboardInput(string TitleAr, string TitleEn, string? DescriptionAr, string? DescriptionEn, string Level, string? SystemCode, DashboardDefinition Definition);
@@ -169,7 +169,7 @@ public sealed class DashboardService(
             ? await db.Dashboards.FirstOrDefaultAsync(d => d.Id == id, ct).ConfigureAwait(false)
             : await db.Dashboards.FirstOrDefaultAsync(d => d.Code == codeOrId, ct).ConfigureAwait(false);
 
-    public async Task<Result<DashboardDto>> GetAsync(string codeOrId, ClaimsPrincipal user, CancellationToken ct)
+    public async Task<Result<ReportingDashboardDto>> GetAsync(string codeOrId, ClaimsPrincipal user, CancellationToken ct)
     {
         var d = await FindAsync(codeOrId, ct).ConfigureAwait(false);
         if (d is null || !await CanViewAsync(d, user, ct).ConfigureAwait(false))
@@ -180,7 +180,7 @@ public sealed class DashboardService(
         var manage = await CanManageAsync(user, ct).ConfigureAwait(false);
         var edit = CanEdit(d, user, manage);
         var roleKeys = await db.DashboardRoles.AsNoTracking().Where(r => r.DashboardId == d.Id).OrderBy(r => r.Sort).Select(r => r.RoleKey).ToListAsync(ct).ConfigureAwait(false);
-        return new DashboardDto(d.Id, d.Code, d.TitleAr, d.TitleEn, d.DescriptionAr, d.DescriptionEn, d.Level, d.SystemCode, d.Status, Parse(d.DefinitionJson),
+        return new ReportingDashboardDto(d.Id, d.Code, d.TitleAr, d.TitleEn, d.DescriptionAr, d.DescriptionEn, d.Level, d.SystemCode, d.Status, Parse(d.DefinitionJson),
             edit && d.DraftJson is not null ? Parse(d.DraftJson) : null, edit, d.DraftJson is not null, d.PublishedVersion, roleKeys, d.Version);
     }
 
@@ -220,7 +220,7 @@ public sealed class DashboardService(
 
         var names = await unitNames.ListAsync(unitCodes, ct).ConfigureAwait(false);
         return new DashboardDataDto(d.Id, d.Code, d.TitleAr, d.TitleEn, d.Level, d.SystemCode,
-            new PeriodDto(period.Kind, Month(period.From), Month(period.To), Month(previous.From), Month(previous.To)), unitId, definition.Widgets, data, names);
+            new ReportingPeriodDto(period.Kind, Month(period.From), Month(period.To), Month(previous.From), Month(previous.To)), unitId, definition.Widgets, data, names);
     }
 
     private static string Month(DateOnly month) => month.ToString("yyyy-MM", System.Globalization.CultureInfo.InvariantCulture);
@@ -247,7 +247,7 @@ public sealed class DashboardService(
         return errors;
     }
 
-    public async Task<Result<DashboardDto>> CreateAsync(DashboardInput input, ClaimsPrincipal user, CancellationToken ct)
+    public async Task<Result<ReportingDashboardDto>> CreateAsync(DashboardInput input, ClaimsPrincipal user, CancellationToken ct)
     {
         var manage = await CanManageAsync(user, ct).ConfigureAwait(false);
         if (input.Level != DashboardLevels.Custom && !manage)
@@ -270,7 +270,7 @@ public sealed class DashboardService(
         return await GetAsync(d.Id.ToString("D"), user, ct).ConfigureAwait(false);
     }
 
-    public async Task<Result<DashboardDto>> UpdateAsync(Guid id, DashboardInput input, uint version, ClaimsPrincipal user, CancellationToken ct)
+    public async Task<Result<ReportingDashboardDto>> UpdateAsync(Guid id, DashboardInput input, uint version, ClaimsPrincipal user, CancellationToken ct)
     {
         var d = await db.Dashboards.FirstOrDefaultAsync(x => x.Id == id, ct).ConfigureAwait(false);
         if (d is null || !await CanViewAsync(d, user, ct).ConfigureAwait(false))
@@ -301,7 +301,7 @@ public sealed class DashboardService(
         return await GetAsync(d.Id.ToString("D"), user, ct).ConfigureAwait(false);
     }
 
-    public async Task<Result<DashboardDto>> PublishAsync(Guid id, ClaimsPrincipal user, CancellationToken ct)
+    public async Task<Result<ReportingDashboardDto>> PublishAsync(Guid id, ClaimsPrincipal user, CancellationToken ct)
     {
         var d = await db.Dashboards.FirstOrDefaultAsync(x => x.Id == id, ct).ConfigureAwait(false);
         if (d is null || !await CanViewAsync(d, user, ct).ConfigureAwait(false))

@@ -17,7 +17,9 @@ function serverKeys(): string[] {
       if (name === 'bin' || name === 'obj' || name === 'Migrations') continue;
       if (statSync(path).isDirectory()) walk(path);
       else if (name.endsWith('.cs'))
-        for (const match of readFileSync(path, 'utf8').matchAll(/"(reporting\.(?:errors|myWork\.items)\.[A-Za-z]+)"/g))
+        for (const match of readFileSync(path, 'utf8').matchAll(
+          /"(reporting\.(?:errors|myWork\.items)\.[A-Za-z]+)"/g,
+        ))
           if (match[1]) keys.add(match[1]);
     }
   };
@@ -37,8 +39,10 @@ function cardKeys(): string[] {
       else if (name.endsWith('.cs')) {
         const text = readFileSync(path, 'utf8');
         if (!text.includes('IMyWorkCardSource')) continue;
-        for (const match of text.matchAll(/"(myWork\.cards\.[A-Za-z-]+)"/g)) if (match[1]) keys.add(`reporting.${match[1]}`);
-        for (const match of text.matchAll(/new MyWorkCount\("([A-Za-z]+)"/g)) if (match[1]) keys.add(`reporting.myWork.counts.${match[1]}`);
+        for (const match of text.matchAll(/"(myWork\.cards\.[A-Za-z-]+)"/g))
+          if (match[1]) keys.add(`reporting.${match[1]}`);
+        for (const match of text.matchAll(/new MyWorkCount\("([A-Za-z]+)"/g))
+          if (match[1]) keys.add(`reporting.myWork.counts.${match[1]}`);
       }
     }
   };

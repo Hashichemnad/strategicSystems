@@ -9570,6 +9570,1656 @@
         }
       }
     },
+    "/api/v1/reporting/catalogue": {
+      "get": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "GetReportingCatalogue",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportingCatalogueDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/dashboards": {
+      "get": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "ListDashboards",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DashboardSummaryDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "CreateDashboard",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DashboardInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportingDashboardDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/dashboards/{key}": {
+      "get": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "GetDashboard",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportingDashboardDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/dashboards/{key}/data": {
+      "get": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "GetDashboardData",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "kind",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "compare",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          },
+          {
+            "name": "unit",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "draft",
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DashboardDataDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/dashboards/{key}/export": {
+      "get": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "ExportDashboard",
+        "parameters": [
+          {
+            "name": "key",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "kind",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "unit",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "lang",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/dashboards/{id}": {
+      "put": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "UpdateDashboard",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DashboardBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportingDashboardDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/dashboards/{id}/publish": {
+      "post": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "PublishDashboard",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportingDashboardDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/dashboards/{id}/archive": {
+      "post": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "ArchiveDashboard",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/dashboards/{id}/roles": {
+      "put": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "SetDashboardRoles",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/DashboardRoleInput"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/dashboards/{id}/shares": {
+      "get": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "ListDashboardShares",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ShareInput"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "ShareDashboard",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ShareInput"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/dashboards/{id}/filters": {
+      "get": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "ListSavedFilters",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SavedFilterDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "SaveFilter",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SavedFilterInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedFilterDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/filters/{id}": {
+      "delete": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "DeleteSavedFilter",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/pins": {
+      "get": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "ListPins",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PinDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "Pin",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PinInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PinDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/pins/{id}": {
+      "delete": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "Unpin",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/my-work/cards": {
+      "get": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "GetMyWorkCards",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MyWorkCardsDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/my-work/layout": {
+      "put": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "SaveMyWorkLayout",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/MyWorkLayoutItem"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/datasets": {
+      "get": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "ListDatasets",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DatasetDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/reports/run": {
+      "post": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "RunReport",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportRunInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportRunDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/reports/export": {
+      "post": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "ExportReport",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportExportInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/reports": {
+      "get": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "ListReports",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SavedReportDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "CreateReport",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SavedReportInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedReportDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/reports/{id}": {
+      "get": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "GetReport",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedReportDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "UpdateReport",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SavedReportBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SavedReportDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/reports/{id}/archive": {
+      "post": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "ArchiveReport",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/reports/{id}/shares": {
+      "get": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "ListReportShares",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ShareInput"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "ShareReport",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ShareInput"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/schedules": {
+      "get": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "ListSchedules",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ScheduleDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "CreateSchedule",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScheduleInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScheduleDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/schedules/{id}": {
+      "put": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "UpdateSchedule",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScheduleBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScheduleDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/schedules/{id}/deliveries": {
+      "get": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "ListDeliveries",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ScheduleDeliveryDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/brief": {
+      "post": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "GenerateExecutiveBrief",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BriefRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BriefDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/briefs": {
+      "post": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "SaveExecutiveBrief",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BriefInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BriefDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "ListExecutiveBriefs",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BriefDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/settings": {
+      "get": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "GetReportingSettings",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingsDocumentOfReportingSettings"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "SaveReportingSettings",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportingSettingsInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingsDocumentOfReportingSettings"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/refresh": {
+      "post": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "RequestReportingRefresh",
+        "responses": {
+          "202": {
+            "description": "Accepted"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "GetReportingRefreshStatus",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RefreshStatusDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/sample/items": {
       "get": {
         "tags": [
@@ -11730,6 +13380,24 @@
           "tasks"
         ],
         "operationId": "GetTaskDashboard",
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -13735,6 +15403,24 @@
           "teams"
         ],
         "operationId": "GetTeamDashboard",
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -15682,6 +17368,22 @@
             "schema": {
               "type": "string",
               "format": "uuid"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
             }
           }
         ],
@@ -28224,6 +29926,22 @@
               "type": "integer",
               "format": "int32"
             }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
           }
         ],
         "responses": {
@@ -30211,6 +31929,24 @@
           "docreg"
         ],
         "operationId": "GetDocumentDashboard",
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -31045,6 +32781,24 @@
           "ip"
         ],
         "operationId": "GetIpDashboard",
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -34294,6 +36048,22 @@
             "schema": {
               "type": "boolean"
             }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
           }
         ],
         "responses": {
@@ -34388,6 +36158,22 @@
             "in": "query",
             "schema": {
               "type": "boolean"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
             }
           }
         ],
@@ -35100,6 +36886,22 @@
             "schema": {
               "type": "integer",
               "format": "int32"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
             }
           }
         ],
@@ -38039,6 +39841,22 @@
               "type": "string",
               "format": "uuid"
             }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
           }
         ],
         "responses": {
@@ -39960,6 +41778,22 @@
             "schema": {
               "type": "string",
               "format": "uuid"
+            }
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
             }
           }
         ],
@@ -51891,6 +53725,277 @@
         },
         "description": "Branding per installation (SPEC §0.2): names, colour, email header / footer. Logos are separate assets."
       },
+      "BreakdownRowDto": {
+        "required": [
+          "key",
+          "value",
+          "previous",
+          "link"
+        ],
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "value": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "previous": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "link": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "BriefDto": {
+        "required": [
+          "id",
+          "periodKey",
+          "improved",
+          "attention",
+          "decisions",
+          "aiGenerated",
+          "usageId",
+          "savedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "periodKey": {
+            "type": "string"
+          },
+          "improved": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BriefPointDto"
+            }
+          },
+          "attention": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BriefPointDto"
+            }
+          },
+          "decisions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BriefPointDto"
+            }
+          },
+          "aiGenerated": {
+            "type": "boolean"
+          },
+          "usageId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "savedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          }
+        }
+      },
+      "BriefEvidenceDto": {
+        "required": [
+          "ref",
+          "resourceType",
+          "id",
+          "number",
+          "titleAr",
+          "titleEn",
+          "link"
+        ],
+        "type": "object",
+        "properties": {
+          "ref": {
+            "type": "string"
+          },
+          "resourceType": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "link": {
+            "type": "string"
+          }
+        }
+      },
+      "BriefInput": {
+        "required": [
+          "periodKey",
+          "improved",
+          "attention",
+          "decisions",
+          "aiGenerated"
+        ],
+        "type": "object",
+        "properties": {
+          "periodKey": {
+            "type": "string"
+          },
+          "improved": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BriefPointDto"
+            }
+          },
+          "attention": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BriefPointDto"
+            }
+          },
+          "decisions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BriefPointDto"
+            }
+          },
+          "aiGenerated": {
+            "type": "boolean"
+          }
+        }
+      },
+      "BriefPointDto": {
+        "required": [
+          "textAr",
+          "textEn",
+          "evidence"
+        ],
+        "type": "object",
+        "properties": {
+          "textAr": {
+            "type": "string"
+          },
+          "textEn": {
+            "type": "string"
+          },
+          "evidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BriefEvidenceDto"
+            }
+          }
+        }
+      },
+      "BriefRequest": {
+        "required": [
+          "kind",
+          "from",
+          "to",
+          "unitId"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "from": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "to": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "unitId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          }
+        }
+      },
+      "BubblePointDto": {
+        "required": [
+          "code",
+          "x",
+          "y",
+          "size"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "x": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "y": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "size": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          }
+        }
+      },
       "BudgetRowDto": {
         "required": [
           "unitId",
@@ -58113,6 +60218,101 @@
           }
         }
       },
+      "DashboardBody": {
+        "required": [
+          "dashboard",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "dashboard": {
+            "$ref": "#/components/schemas/DashboardInput"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "DashboardDataDto": {
+        "required": [
+          "id",
+          "code",
+          "titleAr",
+          "titleEn",
+          "level",
+          "systemCode",
+          "period",
+          "unitId",
+          "widgets",
+          "data",
+          "units"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "titleAr": {
+            "type": "string"
+          },
+          "titleEn": {
+            "type": "string"
+          },
+          "level": {
+            "type": "string"
+          },
+          "systemCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "period": {
+            "$ref": "#/components/schemas/ReportingPeriodDto"
+          },
+          "unitId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "widgets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WidgetConfig"
+            }
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WidgetDataDto"
+            }
+          },
+          "units": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UnitNameDto"
+            }
+          }
+        }
+      },
+      "DashboardDefinition": {
+        "type": "object",
+        "properties": {
+          "widgets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WidgetConfig"
+            }
+          }
+        }
+      },
       "DashboardDto": {
         "required": [
           "published",
@@ -58177,6 +60377,50 @@
             "items": {
               "$ref": "#/components/schemas/DocumentListItemDto"
             }
+          }
+        }
+      },
+      "DashboardInput": {
+        "required": [
+          "titleAr",
+          "titleEn",
+          "descriptionAr",
+          "descriptionEn",
+          "level",
+          "systemCode",
+          "definition"
+        ],
+        "type": "object",
+        "properties": {
+          "titleAr": {
+            "type": "string"
+          },
+          "titleEn": {
+            "type": "string"
+          },
+          "descriptionAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "descriptionEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "level": {
+            "type": "string"
+          },
+          "systemCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "definition": {
+            "$ref": "#/components/schemas/DashboardDefinition"
           }
         }
       },
@@ -58302,6 +60546,96 @@
           }
         }
       },
+      "DashboardRoleInput": {
+        "required": [
+          "roleKey",
+          "sort",
+          "isDefault"
+        ],
+        "type": "object",
+        "properties": {
+          "roleKey": {
+            "type": "string"
+          },
+          "sort": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "isDefault": {
+            "type": "boolean"
+          }
+        }
+      },
+      "DashboardSummaryDto": {
+        "required": [
+          "id",
+          "code",
+          "titleAr",
+          "titleEn",
+          "descriptionAr",
+          "descriptionEn",
+          "level",
+          "systemCode",
+          "status",
+          "isRoleDefault",
+          "pinned",
+          "canEdit",
+          "publishedVersion"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "titleAr": {
+            "type": "string"
+          },
+          "titleEn": {
+            "type": "string"
+          },
+          "descriptionAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "descriptionEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "level": {
+            "type": "string"
+          },
+          "systemCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "isRoleDefault": {
+            "type": "boolean"
+          },
+          "pinned": {
+            "type": "boolean"
+          },
+          "canEdit": {
+            "type": "boolean"
+          },
+          "publishedVersion": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
       "DataElement": {
         "required": [
           "code",
@@ -58327,6 +60661,78 @@
           }
         },
         "description": "A data element of a composite KPI (e.g. numerator / denominator)."
+      },
+      "DatasetDto": {
+        "required": [
+          "code",
+          "systemCode",
+          "labelAr",
+          "labelEn",
+          "fields"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "systemCode": {
+            "type": "string"
+          },
+          "labelAr": {
+            "type": "string"
+          },
+          "labelEn": {
+            "type": "string"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DatasetFieldDto"
+            }
+          }
+        }
+      },
+      "DatasetFieldDto": {
+        "required": [
+          "code",
+          "labelAr",
+          "labelEn",
+          "type",
+          "filterable",
+          "groupable",
+          "sortable",
+          "lookupType"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "labelAr": {
+            "type": "string"
+          },
+          "labelEn": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "filterable": {
+            "type": "boolean"
+          },
+          "groupable": {
+            "type": "boolean"
+          },
+          "sortable": {
+            "type": "boolean"
+          },
+          "lookupType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
       },
       "DayDto": {
         "required": [
@@ -58666,6 +61072,35 @@
           }
         },
         "description": "A run of the comparison: `same`, `added` or `removed` text."
+      },
+      "DimensionLabelDto": {
+        "required": [
+          "dimension",
+          "code",
+          "labelAr",
+          "labelEn"
+        ],
+        "type": "object",
+        "properties": {
+          "dimension": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "labelAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "labelEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
       },
       "DocPersonDto": {
         "required": [
@@ -69360,6 +71795,29 @@
         },
         "description": "A resolved link as the UI shows it. Only string LinkVisibility.Visible views carry content."
       },
+      "ListCatalogueDto": {
+        "required": [
+          "code",
+          "systemCode",
+          "labelAr",
+          "labelEn"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "systemCode": {
+            "type": "string"
+          },
+          "labelAr": {
+            "type": "string"
+          },
+          "labelEn": {
+            "type": "string"
+          }
+        }
+      },
       "LoginInput": {
         "required": [
           "login",
@@ -71133,6 +73591,84 @@
           }
         }
       },
+      "MetricCatalogueDto": {
+        "required": [
+          "code",
+          "systemCode",
+          "labelAr",
+          "labelEn",
+          "kind",
+          "aggregation",
+          "valueKind",
+          "higherIsBetter",
+          "dimensions",
+          "live"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "systemCode": {
+            "type": "string"
+          },
+          "labelAr": {
+            "type": "string"
+          },
+          "labelEn": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "aggregation": {
+            "type": "string"
+          },
+          "valueKind": {
+            "type": "string"
+          },
+          "higherIsBetter": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          },
+          "dimensions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MetricDimensionDto"
+            }
+          },
+          "live": {
+            "type": "boolean"
+          }
+        }
+      },
+      "MetricDimensionDto": {
+        "required": [
+          "code",
+          "lookup",
+          "labels"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "lookup": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "labels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DimensionLabelDto"
+            }
+          }
+        }
+      },
       "MfaCodeInput": {
         "required": [
           "method",
@@ -72268,6 +74804,149 @@
           }
         }
       },
+      "MyWorkCardDto": {
+        "required": [
+          "code",
+          "systemCode",
+          "titleKey",
+          "counts",
+          "items",
+          "link",
+          "hidden",
+          "state"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "systemCode": {
+            "type": "string"
+          },
+          "titleKey": {
+            "type": "string"
+          },
+          "counts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MyWorkCount"
+            }
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MyWorkCardItem"
+            }
+          },
+          "link": {
+            "type": "string"
+          },
+          "hidden": {
+            "type": "boolean"
+          },
+          "state": {
+            "type": "string"
+          }
+        }
+      },
+      "MyWorkCardItem": {
+        "required": [
+          "resourceType",
+          "id",
+          "number",
+          "titleAr",
+          "titleEn",
+          "messageKey",
+          "link"
+        ],
+        "type": "object",
+        "properties": {
+          "resourceType": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "messageKey": {
+            "type": "string"
+          },
+          "link": {
+            "type": "string"
+          },
+          "dueDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "overdue": {
+            "type": "boolean",
+            "default": false
+          }
+        },
+        "description": "One item on a card (deep link to the record)."
+      },
+      "MyWorkCardsDto": {
+        "required": [
+          "cards"
+        ],
+        "type": "object",
+        "properties": {
+          "cards": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MyWorkCardDto"
+            }
+          }
+        }
+      },
+      "MyWorkCount": {
+        "required": [
+          "key",
+          "value"
+        ],
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "value": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "tone": {
+            "type": "string",
+            "default": "neutral"
+          },
+          "link": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "description": "A counter on a My Work card. Tone: neutral, info, success, warning or danger."
+      },
       "MyWorkCountsDto": {
         "required": [
           "pendingApprovals",
@@ -72395,6 +75074,21 @@
           }
         },
         "description": "An item that needs the user's action, shown on My Work."
+      },
+      "MyWorkLayoutItem": {
+        "required": [
+          "code",
+          "hidden"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "hidden": {
+            "type": "boolean"
+          }
+        }
       },
       "MyWorkTaskDto": {
         "required": [
@@ -74656,6 +77350,83 @@
             ]
           },
           "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "PinDto": {
+        "required": [
+          "id",
+          "kind",
+          "refId",
+          "widgetId",
+          "sort",
+          "titleAr",
+          "titleEn",
+          "code"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "refId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "widgetId": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sort": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "code": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "PinInput": {
+        "required": [
+          "kind",
+          "refId",
+          "widgetId"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "refId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "widgetId": {
             "type": [
               "null",
               "string"
@@ -80787,6 +83558,44 @@
           }
         }
       },
+      "RefreshStatusDto": {
+        "required": [
+          "systemCode",
+          "at",
+          "kind",
+          "facts",
+          "error"
+        ],
+        "type": "object",
+        "properties": {
+          "systemCode": {
+            "type": "string"
+          },
+          "at": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "kind": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "facts": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "error": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "RegionalSettings": {
         "type": "object",
         "properties": {
@@ -81118,6 +83927,62 @@
           }
         }
       },
+      "ReportColumnDto": {
+        "required": [
+          "code",
+          "labelAr",
+          "labelEn",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "labelAr": {
+            "type": "string"
+          },
+          "labelEn": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "ReportDefinition": {
+        "type": "object",
+        "properties": {
+          "dataset": {
+            "type": "string"
+          },
+          "columns": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "filters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportFilter"
+            }
+          },
+          "groupBy": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "sort": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportSort"
+            }
+          }
+        },
+        "description": "A report definition as the builder sends it (also stored as a saved report's definition)."
+      },
       "ReportDto": {
         "required": [
           "id",
@@ -81198,6 +84063,266 @@
           }
         }
       },
+      "ReportExportInput": {
+        "required": [
+          "definition",
+          "format",
+          "language",
+          "title"
+        ],
+        "type": "object",
+        "properties": {
+          "definition": {
+            "$ref": "#/components/schemas/ReportDefinition"
+          },
+          "format": {
+            "type": "string"
+          },
+          "language": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "title": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "ReportFilter": {
+        "required": [
+          "field",
+          "operator",
+          "values"
+        ],
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string"
+          },
+          "operator": {
+            "type": "string"
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "description": "One filter. Values are strings in invariant format (dates ISO, numbers with '.', bools true/false)."
+      },
+      "ReportingCatalogueDto": {
+        "required": [
+          "widgetTypes",
+          "metrics",
+          "lists"
+        ],
+        "type": "object",
+        "properties": {
+          "widgetTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "metrics": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MetricCatalogueDto"
+            }
+          },
+          "lists": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ListCatalogueDto"
+            }
+          }
+        }
+      },
+      "ReportingDashboardDto": {
+        "required": [
+          "id",
+          "code",
+          "titleAr",
+          "titleEn",
+          "descriptionAr",
+          "descriptionEn",
+          "level",
+          "systemCode",
+          "status",
+          "definition",
+          "draft",
+          "canEdit",
+          "hasDraft",
+          "publishedVersion",
+          "roleKeys",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "titleAr": {
+            "type": "string"
+          },
+          "titleEn": {
+            "type": "string"
+          },
+          "descriptionAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "descriptionEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "level": {
+            "type": "string"
+          },
+          "systemCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "definition": {
+            "$ref": "#/components/schemas/DashboardDefinition"
+          },
+          "draft": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/DashboardDefinition"
+              }
+            ]
+          },
+          "canEdit": {
+            "type": "boolean"
+          },
+          "hasDraft": {
+            "type": "boolean"
+          },
+          "publishedVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "roleKeys": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "ReportingPeriodDto": {
+        "required": [
+          "kind",
+          "from",
+          "to",
+          "previousFrom",
+          "previousTo"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "from": {
+            "type": "string"
+          },
+          "to": {
+            "type": "string"
+          },
+          "previousFrom": {
+            "type": "string"
+          },
+          "previousTo": {
+            "type": "string"
+          }
+        }
+      },
+      "ReportingSettings": {
+        "type": "object",
+        "properties": {
+          "departmentLevelCode": {
+            "type": "string",
+            "description": "Organisation level whose units are the \"departments\" of the comparison scorecard; lower units roll up."
+          },
+          "fiscalStartMonth": {
+            "type": "integer",
+            "description": "First month of the fiscal year (quarters and years).",
+            "format": "int32"
+          },
+          "refreshMinutes": {
+            "type": "integer",
+            "description": "Full refresh of the current month every N minutes (dirty systems refresh within about a minute).",
+            "format": "int32"
+          },
+          "deliveryMode": {
+            "type": "string",
+            "description": "`attachment` or `link` (installations that forbid attachments)."
+          },
+          "exportRowLimit": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "attachmentLimitMb": {
+            "type": "integer",
+            "description": "Attachments larger than this are sent as a link to the authorised download.",
+            "format": "int32"
+          },
+          "deliveryRetentionDays": {
+            "type": "integer",
+            "description": "Generated files kept for download (days).",
+            "format": "int32"
+          },
+          "scorecard": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ScorecardColumn"
+            }
+          }
+        },
+        "description": "Settings → Reporting (docs/design/reporting.md §2–§9). Every value is a seeded default the organisation can change."
+      },
+      "ReportingSettingsInput": {
+        "required": [
+          "settings",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "settings": {
+            "$ref": "#/components/schemas/ReportingSettings"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
       "ReportInput": {
         "required": [
           "summary",
@@ -81211,6 +84336,131 @@
           "version": {
             "type": "integer",
             "format": "uint32"
+          }
+        }
+      },
+      "ReportRowDto": {
+        "required": [
+          "id",
+          "cells",
+          "link"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "cells": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "link": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "ReportRunDto": {
+        "required": [
+          "dataset",
+          "columns",
+          "rows",
+          "total",
+          "page",
+          "pageSize",
+          "droppedColumns"
+        ],
+        "type": "object",
+        "properties": {
+          "dataset": {
+            "type": "string"
+          },
+          "columns": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportColumnDto"
+            }
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportRowDto"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "droppedColumns": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ReportRunInput": {
+        "required": [
+          "definition",
+          "page",
+          "pageSize",
+          "language"
+        ],
+        "type": "object",
+        "properties": {
+          "definition": {
+            "$ref": "#/components/schemas/ReportDefinition"
+          },
+          "page": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "language": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "ReportSort": {
+        "required": [
+          "field",
+          "descending"
+        ],
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string"
+          },
+          "descending": {
+            "type": "boolean"
           }
         }
       },
@@ -85234,6 +88484,135 @@
           }
         }
       },
+      "SavedFilterDto": {
+        "required": [
+          "id",
+          "name",
+          "filters",
+          "isDefault"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "filters": {
+            "$ref": "#/components/schemas/JsonElement"
+          },
+          "isDefault": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SavedFilterInput": {
+        "required": [
+          "name",
+          "filters",
+          "isDefault"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "filters": {
+            "$ref": "#/components/schemas/JsonElement"
+          },
+          "isDefault": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SavedReportBody": {
+        "required": [
+          "report",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "report": {
+            "$ref": "#/components/schemas/SavedReportInput"
+          },
+          "version": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          }
+        }
+      },
+      "SavedReportDto": {
+        "required": [
+          "id",
+          "name",
+          "description",
+          "dataset",
+          "definition",
+          "ownerUserId",
+          "canEdit",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "dataset": {
+            "type": "string"
+          },
+          "definition": {
+            "$ref": "#/components/schemas/ReportDefinition"
+          },
+          "ownerUserId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "canEdit": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "SavedReportInput": {
+        "required": [
+          "name",
+          "description",
+          "definition"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "definition": {
+            "$ref": "#/components/schemas/ReportDefinition"
+          }
+        }
+      },
       "SaveInput": {
         "required": [
           "data",
@@ -85331,6 +88710,411 @@
           }
         },
         "description": "A level of a qualitative KPI's scale."
+      },
+      "ScheduleBody": {
+        "required": [
+          "schedule",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "schedule": {
+            "$ref": "#/components/schemas/ScheduleInput"
+          },
+          "version": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          }
+        }
+      },
+      "ScheduleDeliveryDto": {
+        "required": [
+          "id",
+          "userId",
+          "periodKey",
+          "status",
+          "format",
+          "rows",
+          "detail",
+          "fileId",
+          "at"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "periodKey": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "format": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "rows": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "detail": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "fileId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ScheduleDto": {
+        "required": [
+          "id",
+          "name",
+          "targetKind",
+          "targetId",
+          "frequency",
+          "time",
+          "day",
+          "periodRule",
+          "format",
+          "recipients",
+          "active",
+          "nextRunAt",
+          "lastRunAt",
+          "ownerUserId",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "targetKind": {
+            "type": "string"
+          },
+          "targetId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "frequency": {
+            "type": "string"
+          },
+          "time": {
+            "type": "string"
+          },
+          "day": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "periodRule": {
+            "type": "string"
+          },
+          "format": {
+            "type": "string"
+          },
+          "recipients": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ScheduleRecipient"
+            }
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "nextRunAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "lastRunAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "ownerUserId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "ScheduleInput": {
+        "required": [
+          "name",
+          "targetKind",
+          "targetId",
+          "frequency",
+          "time",
+          "day",
+          "periodRule",
+          "format",
+          "recipients",
+          "active"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "targetKind": {
+            "type": "string"
+          },
+          "targetId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "frequency": {
+            "type": "string"
+          },
+          "time": {
+            "type": "string"
+          },
+          "day": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "periodRule": {
+            "type": "string"
+          },
+          "format": {
+            "type": "string"
+          },
+          "recipients": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ScheduleRecipient"
+            }
+          },
+          "active": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ScheduleRecipient": {
+        "required": [
+          "kind",
+          "ref"
+        ],
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "ref": {
+            "type": "string"
+          }
+        }
+      },
+      "ScorecardCellDto": {
+        "required": [
+          "column",
+          "value",
+          "rag",
+          "link"
+        ],
+        "type": "object",
+        "properties": {
+          "column": {
+            "type": "string"
+          },
+          "value": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rag": {
+            "type": "string"
+          },
+          "link": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "ScorecardColumn": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "labelAr": {
+            "type": "string"
+          },
+          "labelEn": {
+            "type": "string"
+          },
+          "metric": {
+            "type": "string"
+          },
+          "filters": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "green": {
+            "type": "number",
+            "description": "Green from this value (higher is better) or up to it (lower is better).",
+            "format": "double"
+          },
+          "amber": {
+            "type": "number",
+            "format": "double"
+          },
+          "higherIsBetter": {
+            "type": "boolean"
+          },
+          "dashboard": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Drill target: the system dashboard code."
+          }
+        },
+        "description": "One column of the department comparison scorecard (ADR 0146): a metric with optional dimension filters and RAG limits."
+      },
+      "ScorecardColumnDto": {
+        "required": [
+          "code",
+          "labelAr",
+          "labelEn",
+          "metric",
+          "valueKind",
+          "higherIsBetter",
+          "green",
+          "amber"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "labelAr": {
+            "type": "string"
+          },
+          "labelEn": {
+            "type": "string"
+          },
+          "metric": {
+            "type": "string"
+          },
+          "valueKind": {
+            "type": "string"
+          },
+          "higherIsBetter": {
+            "type": "boolean"
+          },
+          "green": {
+            "type": "number",
+            "format": "double"
+          },
+          "amber": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "ScorecardDto": {
+        "required": [
+          "columns",
+          "rows"
+        ],
+        "type": "object",
+        "properties": {
+          "columns": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ScorecardColumnDto"
+            }
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ScorecardRowDto"
+            }
+          }
+        }
+      },
+      "ScorecardRowDto": {
+        "required": [
+          "unitId",
+          "code",
+          "nameAr",
+          "nameEn",
+          "cells",
+          "link"
+        ],
+        "type": "object",
+        "properties": {
+          "unitId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "cells": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ScorecardCellDto"
+            }
+          },
+          "link": {
+            "type": "string"
+          }
+        }
       },
       "SecuritySettingsDto": {
         "required": [
@@ -85728,6 +89512,29 @@
           }
         }
       },
+      "SettingsDocumentOfReportingSettings": {
+        "required": [
+          "value",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "value": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/ReportingSettings"
+              }
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
       "SettingsDocumentOfRiskSettings": {
         "required": [
           "value",
@@ -85764,6 +89571,21 @@
           "version": {
             "type": "integer",
             "format": "uint32"
+          }
+        }
+      },
+      "ShareInput": {
+        "required": [
+          "principalKind",
+          "principalRef"
+        ],
+        "type": "object",
+        "properties": {
+          "principalKind": {
+            "type": "string"
+          },
+          "principalRef": {
+            "type": "string"
           }
         }
       },
@@ -90906,6 +94728,28 @@
           }
         }
       },
+      "Thresholds": {
+        "required": [
+          "green",
+          "amber"
+        ],
+        "type": "object",
+        "properties": {
+          "green": {
+            "type": "number",
+            "format": "double"
+          },
+          "amber": {
+            "type": "number",
+            "format": "double"
+          },
+          "higherIsBetter": {
+            "type": "boolean",
+            "default": true
+          }
+        },
+        "description": "RAG limits of a tile / gauge (green from / amber from when higher is better, up to otherwise)."
+      },
       "TimelineDto": {
         "required": [
           "events",
@@ -91271,6 +95115,25 @@
           "usageId": {
             "type": "string",
             "format": "uuid"
+          }
+        }
+      },
+      "TrendPointDto": {
+        "required": [
+          "month",
+          "value"
+        ],
+        "type": "object",
+        "properties": {
+          "month": {
+            "type": "string"
+          },
+          "value": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
           }
         }
       },
@@ -91998,6 +95861,36 @@
               "string"
             ],
             "format": "date"
+          }
+        }
+      },
+      "UnitNameDto": {
+        "required": [
+          "id",
+          "code",
+          "nameAr",
+          "nameEn"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
@@ -95708,6 +99601,356 @@
         },
         "description": "Settings → Portfolio → Wasel (docs/design/portfolio.md §49, ADRs 0113 / 0115)."
       },
+      "WidgetConfig": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "metric": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "metrics": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "description": "Bubble: x, y, size metrics, broken down by string? WidgetConfig.Dimension."
+          },
+          "dimension": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "series": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "filters": {
+            "type": [
+              "null",
+              "object"
+            ],
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "top": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "list": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "variant": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Bar: `horizontal`, `stacked`."
+          },
+          "thresholds": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/Thresholds"
+              }
+            ]
+          },
+          "x": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "y": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "w": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "h": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "description": "One widget of a dashboard definition (ADR 0143). Grid: 12 columns, `X` / `Y` / `W` / `H` in grid units.\n`Dimension`: breakdown (category axis, table rows, heat-map rows); `Series`: second breakdown (stacks, heat-map columns).\nThe pseudo-dimension `unit` breaks down by owning unit."
+      },
+      "WidgetDataDto": {
+        "required": [
+          "id",
+          "type",
+          "state",
+          "metric",
+          "metricLabelAr",
+          "metricLabelEn",
+          "valueKind",
+          "higherIsBetter",
+          "value",
+          "previous",
+          "rag",
+          "trend",
+          "rows",
+          "labels",
+          "items",
+          "bubbles",
+          "scorecard",
+          "drillLink",
+          "asOf",
+          "live"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "metric": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "metricLabelAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "metricLabelEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "valueKind": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "higherIsBetter": {
+            "type": [
+              "null",
+              "boolean"
+            ]
+          },
+          "value": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "previous": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "rag": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "trend": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/TrendPointDto"
+            }
+          },
+          "rows": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/BreakdownRowDto"
+            }
+          },
+          "labels": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/DimensionLabelDto"
+            }
+          },
+          "items": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/WidgetListItemDto"
+            }
+          },
+          "bubbles": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/BubblePointDto"
+            }
+          },
+          "scorecard": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/ScorecardDto"
+              }
+            ]
+          },
+          "drillLink": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "asOf": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "live": {
+            "type": "boolean"
+          }
+        },
+        "description": "A widget's data for one viewer and period. `State`: `ok`, `unavailable` (the viewer may not see this metric — never 0),\n`empty`. Labels resolve dimension codes in both languages."
+      },
+      "WidgetListItemDto": {
+        "required": [
+          "resourceType",
+          "id",
+          "number",
+          "titleAr",
+          "titleEn",
+          "statusCode",
+          "tone",
+          "value",
+          "date",
+          "link",
+          "detailAr",
+          "detailEn"
+        ],
+        "type": "object",
+        "properties": {
+          "resourceType": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "statusCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "tone": {
+            "type": "string"
+          },
+          "value": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "date": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "link": {
+            "type": "string"
+          },
+          "detailAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "detailEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "WindowRule": {
         "required": [
           "periodCode",
@@ -95895,6 +100138,9 @@
     },
     {
       "name": "links"
+    },
+    {
+      "name": "reporting"
     },
     {
       "name": "sample"

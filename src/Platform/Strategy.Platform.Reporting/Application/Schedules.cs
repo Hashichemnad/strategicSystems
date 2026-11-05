@@ -28,7 +28,7 @@ public sealed record ScheduleDto(
     Guid Id, string Name, string TargetKind, Guid TargetId, string Frequency, string Time, int Day, string PeriodRule, string Format,
     IReadOnlyList<ScheduleRecipient> Recipients, bool Active, DateTimeOffset? NextRunAt, DateTimeOffset? LastRunAt, Guid OwnerUserId, uint Version);
 
-public sealed record DeliveryDto(Guid Id, Guid UserId, string PeriodKey, string Status, string? Format, int Rows, string? Detail, Guid? FileId, DateTimeOffset At);
+public sealed record ScheduleDeliveryDto(Guid Id, Guid UserId, string PeriodKey, string Status, string? Format, int Rows, string? Detail, Guid? FileId, DateTimeOffset At);
 
 public static class PeriodRules
 {
@@ -113,7 +113,7 @@ public sealed class ScheduleService(
             .Select(ToDto).ToList();
     }
 
-    public async Task<Result<IReadOnlyList<DeliveryDto>>> DeliveriesAsync(Guid id, ClaimsPrincipal user, CancellationToken ct)
+    public async Task<Result<IReadOnlyList<ScheduleDeliveryDto>>> DeliveriesAsync(Guid id, ClaimsPrincipal user, CancellationToken ct)
     {
         var schedule = await db.Schedules.AsNoTracking().FirstOrDefaultAsync(s => s.Id == id, ct).ConfigureAwait(false);
         if (schedule is null || (schedule.OwnerUserId != user.UserId() && !await AdministerAsync(user, ct).ConfigureAwait(false)))
@@ -122,7 +122,7 @@ public sealed class ScheduleService(
         }
 
         return await db.Deliveries.AsNoTracking().Where(d => d.ScheduleId == id).OrderByDescending(d => d.CreatedAt).Take(200)
-            .Select(d => new DeliveryDto(d.Id, d.UserId, d.PeriodKey, d.Status, d.Format, d.Rows, d.Detail, d.FileId, d.CreatedAt)).ToListAsync(ct).ConfigureAwait(false);
+            .Select(d => new ScheduleDeliveryDto(d.Id, d.UserId, d.PeriodKey, d.Status, d.Format, d.Rows, d.Detail, d.FileId, d.CreatedAt)).ToListAsync(ct).ConfigureAwait(false);
     }
 
     public async Task<Result<ScheduleDto>> SaveAsync(Guid? id, ScheduleInput input, uint? version, ClaimsPrincipal user, CancellationToken ct)

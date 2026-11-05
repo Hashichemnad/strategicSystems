@@ -98,16 +98,31 @@ const homeRoute = createRoute({ getParentRoute: () => appLayout, path: '/', comp
 
 const dashboardSearch = z.object({
   kind: z.enum(['month', 'quarter', 'year', 'custom']).optional().catch(undefined),
-  from: z.string().regex(/^\d{4}-\d{2}$/).optional().catch(undefined),
-  to: z.string().regex(/^\d{4}-\d{2}$/).optional().catch(undefined),
+  from: z
+    .string()
+    .regex(/^\d{4}-\d{2}$/)
+    .optional()
+    .catch(undefined),
+  to: z
+    .string()
+    .regex(/^\d{4}-\d{2}$/)
+    .optional()
+    .catch(undefined),
   compare: z.boolean().optional().catch(undefined),
-  unit: z.string().uuid().optional().catch(undefined),
+  unit: z.uuid().optional().catch(undefined),
 });
 
 export const dashboardsRoute = createRoute({
   getParentRoute: () => appLayout,
   path: '/dashboards',
   component: lazyRouteComponent(() => import('@/features/reporting/DashboardPage'), 'DashboardsPage'),
+});
+
+export const executiveRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/dashboards/executive',
+  validateSearch: dashboardSearch,
+  component: lazyRouteComponent(() => import('@/features/reporting/routes'), 'ExecutiveRoutePage'),
 });
 
 export const dashboardRoute = createRoute({
@@ -140,7 +155,6 @@ export const reportRoute = createRoute({
   path: '/reports/$reportId',
   component: lazyRouteComponent(() => import('@/features/reporting/routes'), 'ReportRoutePage'),
 });
-
 
 /** OAuth consent for MCP clients (docs/design/mcp.md §2): a signed-in page in the sign-in layout. */
 const consentLayout = createRoute({
@@ -1395,7 +1409,10 @@ const dashboardsSettingsRoute = createRoute({
 const reportingSettingsRoute = createRoute({
   getParentRoute: () => settingsLayout,
   path: '/reporting',
-  component: lazyRouteComponent(() => import('@/features/reporting/ReportingSettingsPage'), 'ReportingSettingsPage'),
+  component: lazyRouteComponent(
+    () => import('@/features/reporting/ReportingSettingsPage'),
+    'ReportingSettingsPage',
+  ),
 });
 
 const capSettingsRoute = createRoute({
@@ -1485,6 +1502,7 @@ const routeTree = rootRoute.addChildren([
   appLayout.addChildren([
     homeRoute,
     dashboardsRoute,
+    executiveRoute,
     dashboardRoute,
     reportsRoute,
     reportNewRoute,

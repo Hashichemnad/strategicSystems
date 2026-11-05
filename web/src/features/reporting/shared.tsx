@@ -68,7 +68,12 @@ export function PrincipalListEditor({
             <UserPicker
               value={undefined}
               onChange={(principal) => {
-                if (principal?.id) add({ kind: 'user', ref: principal.id, label: principal.nameEn ?? principal.nameAr ?? principal.detail ?? principal.id });
+                if (principal?.id)
+                  add({
+                    kind: 'user',
+                    ref: principal.id,
+                    label: principal.nameEn ?? principal.nameAr ?? principal.detail ?? principal.id,
+                  });
               }}
             />
           )}
@@ -77,12 +82,17 @@ export function PrincipalListEditor({
               aria-label={t('principals.role')}
               value={undefined}
               placeholder={t('principals.chooseRole')}
-              onValueChange={(v) => add({ kind: 'role', ref: v, label: roles.find((r) => r.value === v)?.label ?? v })}
+              onValueChange={(v) =>
+                add({ kind: 'role', ref: v, label: roles.find((r) => r.value === v)?.label ?? v })
+              }
               options={roles}
             />
           )}
           {kind === 'unit' && (
-            <UnitSelect value={undefined} onChange={(v) => v && add({ kind: 'unit', ref: v, label: t('principals.unitAndBelow') })} />
+            <UnitSelect
+              value={undefined}
+              onChange={(v) => v && add({ kind: 'unit', ref: v, label: t('principals.unitAndBelow') })}
+            />
           )}
         </div>
       </div>

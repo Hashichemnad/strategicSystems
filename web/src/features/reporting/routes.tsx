@@ -4,12 +4,18 @@ import { DashboardPage } from './DashboardPage';
 import { ReportBuilderPage } from './ReportBuilderPage';
 
 const dashboardApi = getRouteApi('/app/dashboards/$key');
+const executiveApi = getRouteApi('/app/dashboards/executive');
 const reportApi = getRouteApi('/app/reports/$reportId');
 
 export function DashboardRoutePage() {
   const { key } = dashboardApi.useParams();
   const search = dashboardApi.useSearch();
   return <DashboardPage key={key} dashboardKey={key} search={search} />;
+}
+
+export function ExecutiveRoutePage() {
+  const search = executiveApi.useSearch();
+  return <DashboardPage dashboardKey="executive" search={search} />;
 }
 
 export function NewReportRoutePage() {

@@ -10,7 +10,13 @@ import { useGenerateBrief, useSaveBrief, type Brief } from './api';
 type Point = Brief['improved'][number];
 
 /** AI executive brief (ADR 0147): an AI-generated draft from the viewer's own executive dashboard, editable, saved by a person. */
-export function BriefPanel({ period, unitId }: { period: { kind: string; from: string; to: string }; unitId?: string }) {
+export function BriefPanel({
+  period,
+  unitId,
+}: {
+  period: { kind: string; from: string; to: string };
+  unitId?: string;
+}) {
   const { t, i18n } = useTranslation('reporting');
   const { t: tc } = useTranslation();
   const toast = useToast();
@@ -38,7 +44,14 @@ export function BriefPanel({ period, unitId }: { period: { kind: string; from: s
               onChange={(e) => {
                 setEdited(true);
                 setBrief((b) =>
-                  b ? { ...b, [key]: b[key].map((p, i) => (i === index ? { ...p, [ar ? 'textAr' : 'textEn']: e.target.value } : p)) } : b,
+                  b
+                    ? {
+                        ...b,
+                        [key]: b[key].map((p, i) =>
+                          i === index ? { ...p, [ar ? 'textAr' : 'textEn']: e.target.value } : p,
+                        ),
+                      }
+                    : b,
                 );
               }}
             />
@@ -74,7 +87,15 @@ export function BriefPanel({ period, unitId }: { period: { kind: string; from: s
             disabled={generate.isPending}
             data-testid="brief-generate"
             onClick={() =>
-              generate.mutate({ kind: period.kind, from: period.from, to: period.to, unitId }, { onSuccess: (b) => { setBrief(b); setEdited(false); } })
+              generate.mutate(
+                { kind: period.kind, from: period.from, to: period.to, unitId },
+                {
+                  onSuccess: (b) => {
+                    setBrief(b);
+                    setEdited(false);
+                  },
+                },
+              )
             }
           >
             <Sparkles className="size-4" aria-hidden />
@@ -86,7 +107,13 @@ export function BriefPanel({ period, unitId }: { period: { kind: string; from: s
               data-testid="brief-save"
               onClick={() =>
                 save.mutate(
-                  { periodKey: brief.periodKey, improved: brief.improved, attention: brief.attention, decisions: brief.decisions, aiGenerated: !edited },
+                  {
+                    periodKey: brief.periodKey,
+                    improved: brief.improved,
+                    attention: brief.attention,
+                    decisions: brief.decisions,
+                    aiGenerated: !edited,
+                  },
                   { onSuccess: () => toast({ title: t('brief.saved') }) },
                 )
               }

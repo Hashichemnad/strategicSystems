@@ -1,4 +1,13 @@
-import { DndContext, KeyboardSensor, PointerSensor, useDraggable, useDroppable, useSensor, useSensors, type DragEndEvent } from '@dnd-kit/core';
+import {
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  useDraggable,
+  useDroppable,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core';
 import { Link } from '@tanstack/react-router';
 import { ArrowDown, ArrowUp, Eye, EyeOff, GripVertical, LayoutGrid, TriangleAlert } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
@@ -19,7 +28,9 @@ export function moveItem<T>(items: readonly T[], from: number, to: number): T[] 
 }
 
 function toneOf(tone: string): Tone {
-  return (['neutral', 'info', 'success', 'warning', 'danger'] as const).includes(tone as Tone) ? (tone as Tone) : 'neutral';
+  return (['neutral', 'info', 'success', 'warning', 'danger'] as const).includes(tone as Tone)
+    ? (tone as Tone)
+    : 'neutral';
 }
 
 function Slot({ id, children }: { id: string; children: React.ReactNode }) {
@@ -48,7 +59,10 @@ function CardView({
 }) {
   const { t, i18n } = useTranslation('reporting');
   const { t: tc } = useTranslation();
-  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({ id: card.code, disabled: !editing });
+  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+    id: card.code,
+    disabled: !editing,
+  });
   const title = translateMessageKey(tc, `reporting.${card.titleKey}`) || card.code;
   const style = transform ? { transform: `translate3d(${transform.x}px, ${transform.y}px, 0)` } : undefined;
   return (
@@ -64,9 +78,7 @@ function CardView({
       )}
     >
       <header className="flex items-center justify-between gap-2">
-        <h2 className="font-semibold">
-          {card.state === 'unavailable' ? t('myWork.unavailable') : title}
-        </h2>
+        <h2 className="font-semibold">{card.state === 'unavailable' ? t('myWork.unavailable') : title}</h2>
         {editing ? (
           <div className="flex items-center gap-1">
             <button
@@ -78,7 +90,13 @@ function CardView({
             >
               <GripVertical className="size-4" aria-hidden />
             </button>
-            <Button size="sm" variant="ghost" aria-label={t('myWork.moveUp', { card: title })} disabled={index === 0} onClick={() => onMove(index, index - 1)}>
+            <Button
+              size="sm"
+              variant="ghost"
+              aria-label={t('myWork.moveUp', { card: title })}
+              disabled={index === 0}
+              onClick={() => onMove(index, index - 1)}
+            >
               <ArrowUp className="size-4" aria-hidden />
             </Button>
             <Button
@@ -90,8 +108,18 @@ function CardView({
             >
               <ArrowDown className="size-4" aria-hidden />
             </Button>
-            <Button size="sm" variant="ghost" aria-pressed={!card.hidden} aria-label={card.hidden ? t('myWork.show', { card: title }) : t('myWork.hide', { card: title })} onClick={onToggle}>
-              {card.hidden ? <EyeOff className="size-4" aria-hidden /> : <Eye className="size-4" aria-hidden />}
+            <Button
+              size="sm"
+              variant="ghost"
+              aria-pressed={!card.hidden}
+              aria-label={card.hidden ? t('myWork.show', { card: title }) : t('myWork.hide', { card: title })}
+              onClick={onToggle}
+            >
+              {card.hidden ? (
+                <EyeOff className="size-4" aria-hidden />
+              ) : (
+                <Eye className="size-4" aria-hidden />
+              )}
             </Button>
           </div>
         ) : (
@@ -114,8 +142,13 @@ function CardView({
         <ul className="flex flex-col divide-y">
           {card.items.map((item) => (
             <li key={`${item.resourceType}:${item.id}`} className="flex flex-col gap-0.5 py-2">
-              <Link to={item.link as '/'} className="truncate text-sm font-medium text-primary hover:underline">
-                {[item.number, pickText(i18n.language, item.titleAr, item.titleEn)].filter(Boolean).join(' · ')}
+              <Link
+                to={item.link as '/'}
+                className="truncate text-sm font-medium text-primary hover:underline"
+              >
+                {[item.number, pickText(i18n.language, item.titleAr, item.titleEn)]
+                  .filter(Boolean)
+                  .join(' · ')}
               </Link>
               <span className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                 {translateMessageKey(tc, item.messageKey)}
@@ -146,7 +179,10 @@ export function MyWorkCards() {
   useEffect(() => {
     if (cards.data) setOrder(cards.data.cards);
   }, [cards.data]);
-  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 4 } }), useSensor(KeyboardSensor));
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 4 } }),
+    useSensor(KeyboardSensor),
+  );
   const visible = useMemo(() => (editing ? order : order.filter((card) => !card.hidden)), [editing, order]);
 
   const persist = (next: MyWorkCardData[]) => {
@@ -167,7 +203,12 @@ export function MyWorkCards() {
     <section className="flex flex-col gap-3" aria-label={t('myWork.title')} data-testid="my-work-cards">
       <div className="flex items-center justify-between gap-2">
         <h2 className="text-lg font-semibold">{t('myWork.title')}</h2>
-        <Button size="sm" variant="outline" onClick={() => setEditing((value) => !value)} data-testid="my-work-customise">
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => setEditing((value) => !value)}
+          data-testid="my-work-customise"
+        >
           <LayoutGrid className="size-4" aria-hidden />
           {editing ? t('myWork.done') : t('myWork.customise')}
         </Button>
@@ -185,7 +226,9 @@ export function MyWorkCards() {
                   index={index}
                   count={order.length}
                   onMove={move}
-                  onToggle={() => persist(order.map((c) => (c.code === card.code ? { ...c, hidden: !c.hidden } : c)))}
+                  onToggle={() =>
+                    persist(order.map((c) => (c.code === card.code ? { ...c, hidden: !c.hidden } : c)))
+                  }
                 />
               </Slot>
             );

@@ -18,6 +18,7 @@ import {
   useSaveFilter,
   useUnpin,
   type DashboardSummary,
+  type WidgetConfig,
 } from './api';
 import { BriefPanel } from './BriefPanel';
 import { ScheduleDialog } from './ScheduleDialog';
@@ -51,7 +52,11 @@ export function DashboardPage({ dashboardKey, search }: { dashboardKey: string; 
   const navigate = useNavigate();
   const toast = useToast();
   const period = periodFrom(search);
-  const data = useDashboardData(dashboardKey, { kind: period.kind, from: period.from, to: period.to, compare: period.compare }, search.unit);
+  const data = useDashboardData(
+    dashboardKey,
+    { kind: period.kind, from: period.from, to: period.to, compare: period.compare },
+    search.unit,
+  );
   const pins = usePins();
   const pin = usePin();
   const unpin = useUnpin();
@@ -62,12 +67,27 @@ export function DashboardPage({ dashboardKey, search }: { dashboardKey: string; 
   const [filterName, setFilterName] = useState('');
 
   const setSearch = (next: Partial<DashboardSearch>) =>
-    void navigate({ to: '/dashboards/$key', params: { key: dashboardKey }, search: { ...search, ...next } as never, replace: true });
+    void navigate({
+      to: '/dashboards/$key',
+      params: { key: dashboardKey },
+      search: { ...search, ...next } as never,
+      replace: true,
+    });
 
   const pinned = pins.data?.find((p) => p.kind === 'dashboard' && p.refId === data.data?.id);
   const download = async (format: 'pdf' | 'xlsx') => {
     const { data: blob } = await api.GET('/api/v1/reporting/dashboards/{key}/export', {
-      params: { path: { key: dashboardKey }, query: { format, kind: period.kind, from: period.from, to: period.to, unit: search.unit, lang: i18n.language } },
+      params: {
+        path: { key: dashboardKey },
+        query: {
+          format,
+          kind: period.kind,
+          from: period.from,
+          to: period.to,
+          unit: search.unit,
+          lang: i18n.language,
+        },
+      },
       parseAs: 'blob',
     });
     if (!blob) throw new Error('export failed');
@@ -80,27 +100,50 @@ export function DashboardPage({ dashboardKey, search }: { dashboardKey: string; 
   };
 
   const ordered = useMemo(() => {
-    if (!data.data) return [];
-    return data.data.widgets
-      .map((config, index) => ({ config, data: data.data!.data[index]! }))
+    const loaded = data.data;
+    if (!loaded) return [];
+    return (loaded.widgets as WidgetConfig[])
+      .flatMap((config, index) => {
+        const widget = loaded.data[index];
+        return widget ? [{ config, data: widget }] : [];
+      })
       .sort((a, b) => a.config.y - b.config.y || a.config.x - b.config.x);
   }, [data.data]);
 
   if (data.isPending) return <Skeleton className="h-96 rounded-lg" />;
-  if (data.isError || !data.data) return <StatusBanner tone="danger" title={errorMessage(tc, data.error)} />;
+  if (data.isError) return <StatusBanner tone="danger" title={errorMessage(tc, data.error)} />;
   const dashboard = data.data;
   const selectedUnit = dashboard.units.find((u) => u.id === search.unit);
-  const asOf = dashboard.data.map((w) => w.asOf).filter(Boolean).sort().at(-1) ?? null;
+  const asOf =
+    dashboard.data
+      .map((w) => w.asOf)
+      .filter(Boolean)
+      .sort()
+      .at(-1) ?? null;
 
   return (
     <DashboardFrame
       testId={`dashboard-${dashboard.code}`}
       title={pickText(i18n.language, dashboard.titleAr, dashboard.titleEn)}
-      description={selectedUnit ? t('dashboards.filteredBy', { unit: pickText(i18n.language, selectedUnit.nameAr, selectedUnit.nameEn) }) : undefined}
+      description={
+        selectedUnit
+          ? t('dashboards.filteredBy', {
+              unit: pickText(i18n.language, selectedUnit.nameAr, selectedUnit.nameEn),
+            })
+          : undefined
+      }
       period={period}
       onPeriodChange={(p) => setSearch({ kind: p.kind, from: p.from, to: p.to, compare: p.compare })}
       asOf={asOf}
-      exports={canExport ? { onPdf: () => download('pdf'), onExcel: () => download('xlsx'), onError: (e) => toast({ tone: 'error', title: errorMessage(tc, e) }) } : undefined}
+      exports={
+        canExport
+          ? {
+              onPdf: () => download('pdf'),
+              onExcel: () => download('xlsx'),
+              onError: (e) => toast({ tone: 'error', title: errorMessage(tc, e) }),
+            }
+          : undefined
+      }
       filters={
         <div className="flex flex-wrap items-end gap-2">
           <div className="w-64">
@@ -113,7 +156,7 @@ export function DashboardPage({ dashboardKey, search }: { dashboardKey: string; 
                 placeholder={t('dashboards.savedFilters')}
                 value={undefined}
                 onValueChange={(id) => {
-                  const saved = filters.data?.find((f) => f.id === id);
+                  const saved = filters.data.find((f) => f.id === id);
                   if (saved) setSearch(saved.filters as DashboardSearch);
                 }}
                 options={filters.data.map((f) => ({ value: f.id, label: f.name }))}
@@ -133,8 +176,17 @@ export function DashboardPage({ dashboardKey, search }: { dashboardKey: string; 
             disabled={!filterName.trim()}
             onClick={() =>
               saveFilter.mutate(
-                { name: filterName.trim(), filters: { ...search, kind: period.kind, from: period.from, to: period.to }, isDefault: false },
-                { onSuccess: () => { setFilterName(''); toast({ title: t('dashboards.filterSaved') }); } },
+                {
+                  name: filterName.trim(),
+                  filters: { ...search, kind: period.kind, from: period.from, to: period.to },
+                  isDefault: false,
+                },
+                {
+                  onSuccess: () => {
+                    setFilterName('');
+                    toast({ title: t('dashboards.filterSaved') });
+                  },
+                },
               )
             }
           >
@@ -149,18 +201,28 @@ export function DashboardPage({ dashboardKey, search }: { dashboardKey: string; 
             variant="outline"
             data-testid="dashboard-pin"
             aria-pressed={!!pinned}
-            onClick={() => (pinned ? unpin.mutate(pinned.id) : pin.mutate({ kind: 'dashboard', refId: dashboard.id }))}
+            onClick={() =>
+              pinned ? unpin.mutate(pinned.id) : pin.mutate({ kind: 'dashboard', refId: dashboard.id })
+            }
           >
             {pinned ? <PinOff className="size-4" aria-hidden /> : <Pin className="size-4" aria-hidden />}
             {pinned ? t('dashboards.unpin') : t('dashboards.pin')}
           </Button>
-          {canSchedule && <ScheduleDialog targetKind="dashboard" targetId={dashboard.id} defaultName={pickText(i18n.language, dashboard.titleAr, dashboard.titleEn)} />}
+          {canSchedule && (
+            <ScheduleDialog
+              targetKind="dashboard"
+              targetId={dashboard.id}
+              defaultName={pickText(i18n.language, dashboard.titleAr, dashboard.titleEn)}
+            />
+          )}
         </div>
       }
     >
       {selectedUnit && (
         <div className="flex items-center gap-2">
-          <StatusChip tone="info">{pickText(i18n.language, selectedUnit.nameAr, selectedUnit.nameEn)}</StatusChip>
+          <StatusChip tone="info">
+            {pickText(i18n.language, selectedUnit.nameAr, selectedUnit.nameEn)}
+          </StatusChip>
           <Button size="sm" variant="ghost" onClick={() => setSearch({ unit: undefined })}>
             {t('dashboards.clearUnit')}
           </Button>
@@ -178,7 +240,13 @@ export function DashboardPage({ dashboardKey, search }: { dashboardKey: string; 
               className="col-span-12 md:col-span-6 lg:[grid-column:var(--span)]"
               style={{ ['--span' as string]: `span ${config.w} / span ${config.w}` }}
             >
-              <WidgetView config={config} data={widget} units={dashboard.units} unitId={search.unit} period={period} />
+              <WidgetView
+                config={config}
+                data={widget}
+                units={dashboard.units}
+                unitId={search.unit}
+                period={period}
+              />
             </div>
           ),
         )}
@@ -197,9 +265,17 @@ export function DashboardsPage() {
     return [
       { key: 'pinned', items: list.filter((d) => d.pinned) },
       { key: 'defaults', items: list.filter((d) => d.isRoleDefault && !d.pinned) },
-      { key: 'executive', items: list.filter((d) => d.level === 'executive' && !d.pinned && !d.isRoleDefault) },
+      {
+        key: 'executive',
+        items: list.filter((d) => d.level === 'executive' && !d.pinned && !d.isRoleDefault),
+      },
       { key: 'system', items: list.filter((d) => d.level === 'system' && !d.pinned && !d.isRoleDefault) },
-      { key: 'other', items: list.filter((d) => (d.level === 'role' || d.level === 'custom') && !d.pinned && !d.isRoleDefault) },
+      {
+        key: 'other',
+        items: list.filter(
+          (d) => (d.level === 'role' || d.level === 'custom') && !d.pinned && !d.isRoleDefault,
+        ),
+      },
     ].filter((g) => g.items.length > 0);
   }, [dashboards.data]);
   return (
@@ -222,7 +298,9 @@ export function DashboardsPage() {
       {dashboards.data?.length === 0 && <EmptyState icon={LayoutDashboard} title={t('dashboards.empty')} />}
       {groups.map((group) => (
         <section key={group.key} className="flex flex-col gap-3">
-          <h2 className="text-lg font-semibold">{t(`dashboards.groups.${group.key}` as 'dashboards.groups.system')}</h2>
+          <h2 className="text-lg font-semibold">
+            {t(`dashboards.groups.${group.key}` as 'dashboards.groups.system')}
+          </h2>
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {group.items.map((d) => (
               <Link
@@ -233,7 +311,9 @@ export function DashboardsPage() {
                 data-testid={`dashboard-link-${d.code}`}
               >
                 <span className="font-semibold">{pickText(i18n.language, d.titleAr, d.titleEn)}</span>
-                <span className="text-sm text-muted-foreground">{pickText(i18n.language, d.descriptionAr, d.descriptionEn)}</span>
+                <span className="text-sm text-muted-foreground">
+                  {pickText(i18n.language, d.descriptionAr, d.descriptionEn)}
+                </span>
                 {d.status !== 'published' && <StatusChip tone="warning">{t('dashboards.draft')}</StatusChip>}
               </Link>
             ))}

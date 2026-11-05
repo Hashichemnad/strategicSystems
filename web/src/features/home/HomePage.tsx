@@ -187,19 +187,18 @@ export function HomePage() {
               <p className="text-sm text-muted-foreground">{t('myWork.actionItems.empty')}</p>
             )}
             <ul className="flex flex-col divide-y">
-              {work.data?.actionItems
-                .map((item) => (
-                  <li key={`${item.resourceType}:${item.resourceId}`} className="flex flex-col gap-0.5 py-3">
-                    <Link to={item.link as '/'} className="font-medium text-primary hover:underline">
-                      {[item.number, pickText(i18n.language, item.titleAr, item.titleEn)]
-                        .filter(Boolean)
-                        .join(' · ')}
-                    </Link>
-                    <span className="text-sm text-muted-foreground">
-                      {translateMessageKey(tc, item.messageKey)}
-                    </span>
-                  </li>
-                ))}
+              {work.data?.actionItems.map((item) => (
+                <li key={`${item.resourceType}:${item.resourceId}`} className="flex flex-col gap-0.5 py-3">
+                  <Link to={item.link as '/'} className="font-medium text-primary hover:underline">
+                    {[item.number, pickText(i18n.language, item.titleAr, item.titleEn)]
+                      .filter(Boolean)
+                      .join(' · ')}
+                  </Link>
+                  <span className="text-sm text-muted-foreground">
+                    {translateMessageKey(tc, item.messageKey)}
+                  </span>
+                </li>
+              ))}
             </ul>
           </Card>
         </div>

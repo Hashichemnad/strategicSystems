@@ -22,7 +22,13 @@ import {
   TableRow,
   useToast,
 } from '@/ui';
-import { useRefreshStatus, useReportingSettings, useRequestRefresh, useSaveReportingSettings, type ReportingSettings } from './api';
+import {
+  useRefreshStatus,
+  useReportingSettings,
+  useRequestRefresh,
+  useSaveReportingSettings,
+  type ReportingSettings,
+} from './api';
 
 /** Settings → Reporting (docs/design/reporting.md §9, ADR 0146): department level, fiscal year, refresh, delivery, scorecard limits. */
 export function ReportingSettingsPage() {
@@ -37,7 +43,7 @@ export function ReportingSettingsPage() {
   const refresh = useRequestRefresh();
   const [value, setValue] = useState<ReportingSettings>();
   useEffect(() => {
-    if (doc.data?.value) setValue(doc.data.value);
+    if (doc.data?.value) setValue(doc.data.value as ReportingSettings);
   }, [doc.data]);
   if (doc.isPending || !value) return <Skeleton className="h-96" />;
   const set = (patch: Partial<ReportingSettings>) => setValue({ ...value, ...patch });
@@ -57,7 +63,10 @@ export function ReportingSettingsPage() {
             onClick={() =>
               save.mutate(
                 { settings: value, version: doc.data?.version ?? 0 },
-                { onSuccess: () => toast({ title: t('settings.saved') }), onError: (e) => toast({ tone: 'error', title: errorMessage(tc, e) }) },
+                {
+                  onSuccess: () => toast({ title: t('settings.saved') }),
+                  onError: (e) => toast({ tone: 'error', title: errorMessage(tc, e) }),
+                },
               )
             }
           >
@@ -71,23 +80,54 @@ export function ReportingSettingsPage() {
           <Select
             value={value.departmentLevelCode}
             onValueChange={(v) => set({ departmentLevelCode: v })}
-            options={(levels.data ?? []).map((l) => ({ value: l.code, label: pickText(i18n.language, l.nameAr, l.nameEn) || l.code }))}
+            options={(levels.data ?? []).map((l) => ({
+              value: l.code,
+              label: pickText(i18n.language, l.nameAr, l.nameEn) || l.code,
+            }))}
           />
         </FormField>
         <FormField label={t('settings.fiscalStart')}>
-          <Select value={String(value.fiscalStartMonth)} onValueChange={(v) => set({ fiscalStartMonth: Number(v) })} options={months} />
+          <Select
+            value={String(value.fiscalStartMonth)}
+            onValueChange={(v) => set({ fiscalStartMonth: Number(v) })}
+            options={months}
+          />
         </FormField>
         <FormField label={t('settings.refreshMinutes')} hint={t('settings.refreshHint')}>
-          <Input type="number" min={1} max={1440} value={value.refreshMinutes} onChange={(e) => set({ refreshMinutes: Number(e.target.value) })} />
+          <Input
+            type="number"
+            min={1}
+            max={1440}
+            value={value.refreshMinutes}
+            onChange={(e) => set({ refreshMinutes: Number(e.target.value) })}
+          />
         </FormField>
         <FormField label={t('settings.exportRowLimit')}>
-          <Input type="number" min={100} max={500000} value={value.exportRowLimit} onChange={(e) => set({ exportRowLimit: Number(e.target.value) })} />
+          <Input
+            type="number"
+            min={100}
+            max={500000}
+            value={value.exportRowLimit}
+            onChange={(e) => set({ exportRowLimit: Number(e.target.value) })}
+          />
         </FormField>
         <FormField label={t('settings.attachmentLimit')}>
-          <Input type="number" min={1} max={50} value={value.attachmentLimitMb} onChange={(e) => set({ attachmentLimitMb: Number(e.target.value) })} />
+          <Input
+            type="number"
+            min={1}
+            max={50}
+            value={value.attachmentLimitMb}
+            onChange={(e) => set({ attachmentLimitMb: Number(e.target.value) })}
+          />
         </FormField>
         <FormField label={t('settings.retention')}>
-          <Input type="number" min={1} max={365} value={value.deliveryRetentionDays} onChange={(e) => set({ deliveryRetentionDays: Number(e.target.value) })} />
+          <Input
+            type="number"
+            min={1}
+            max={365}
+            value={value.deliveryRetentionDays}
+            onChange={(e) => set({ deliveryRetentionDays: Number(e.target.value) })}
+          />
         </FormField>
         <Switch
           checked={value.deliveryMode === 'attachment'}
@@ -160,7 +200,12 @@ export function ReportingSettingsPage() {
         <section className="flex flex-col gap-3">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold">{t('settings.refresh')}</h2>
-            <Button variant="outline" onClick={() => refresh.mutate(undefined, { onSuccess: () => toast({ title: t('settings.refreshQueued') }) })}>
+            <Button
+              variant="outline"
+              onClick={() =>
+                refresh.mutate(undefined, { onSuccess: () => toast({ title: t('settings.refreshQueued') }) })
+              }
+            >
               <RefreshCw className="size-4" aria-hidden />
               {t('settings.refreshNow')}
             </Button>

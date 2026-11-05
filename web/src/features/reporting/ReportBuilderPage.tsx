@@ -98,7 +98,11 @@ export function ReportsPage() {
             {reports.data.map((report) => (
               <TableRow key={report.id}>
                 <TableCell>
-                  <Link to="/reports/$reportId" params={{ reportId: report.id }} className="text-primary hover:underline">
+                  <Link
+                    to="/reports/$reportId"
+                    params={{ reportId: report.id }}
+                    className="text-primary hover:underline"
+                  >
                     {report.name}
                   </Link>
                 </TableCell>
@@ -141,11 +145,12 @@ export function ReportBuilderPage({ reportId }: { reportId?: string }) {
 
   useEffect(() => {
     if (report.data) {
-      setDataset(report.data.definition.dataset);
-      setColumns(report.data.definition.columns);
-      setFilters(report.data.definition.filters.map((f) => ({ field: f.field, operator: f.operator, values: [...f.values] })));
-      setGroupBy(report.data.definition.groupBy);
-      setSort(report.data.definition.sort[0] ?? null);
+      const saved = report.data.definition as ReportDefinition;
+      setDataset(saved.dataset);
+      setColumns(saved.columns);
+      setFilters(saved.filters.map((f) => ({ field: f.field, operator: f.operator, values: [...f.values] })));
+      setGroupBy(saved.groupBy);
+      setSort(saved.sort[0] ?? null);
       setName(report.data.name);
     }
   }, [report.data]);
@@ -178,7 +183,9 @@ export function ReportBuilderPage({ reportId }: { reportId?: string }) {
       a.download = `${name || 'report'}.${format}`;
       a.click();
       URL.revokeObjectURL(url);
-    } else if (error) toast({ tone: 'error', title: t('errors.pdfFailed') });
+    } else {
+      toast({ tone: 'error', title: errorMessage(tc, error) });
+    }
   };
 
   if (datasets.isPending || (reportId && report.isPending)) return <Skeleton className="h-96" />;
@@ -190,19 +197,34 @@ export function ReportBuilderPage({ reportId }: { reportId?: string }) {
         description={t('builder.description')}
         actions={
           <div className="flex flex-wrap gap-2">
-            <Button onClick={() => execute(1)} disabled={!dataset || columns.length === 0 || run.isPending} data-testid="report-run">
+            <Button
+              onClick={() => execute(1)}
+              disabled={!dataset || columns.length === 0 || run.isPending}
+              data-testid="report-run"
+            >
               <Play className="size-4" aria-hidden />
               {t('builder.run')}
             </Button>
-            <Button variant="outline" onClick={() => void exportAs('xlsx')} disabled={!dataset || columns.length === 0} data-testid="report-export-xlsx">
+            <Button
+              variant="outline"
+              onClick={() => void exportAs('xlsx')}
+              disabled={!dataset || columns.length === 0}
+              data-testid="report-export-xlsx"
+            >
               <Download className="size-4" aria-hidden />
               Excel
             </Button>
-            <Button variant="outline" onClick={() => void exportAs('pdf')} disabled={!dataset || columns.length === 0}>
+            <Button
+              variant="outline"
+              onClick={() => void exportAs('pdf')}
+              disabled={!dataset || columns.length === 0}
+            >
               <Download className="size-4" aria-hidden />
               PDF
             </Button>
-            {reportId && canSchedule && <ScheduleDialog targetKind="report" targetId={reportId} defaultName={name} />}
+            {reportId && canSchedule && (
+              <ScheduleDialog targetKind="report" targetId={reportId} defaultName={name} />
+            )}
           </div>
         }
       />
@@ -221,7 +243,10 @@ export function ReportBuilderPage({ reportId }: { reportId?: string }) {
                 setSort(null);
               }}
               placeholder={t('builder.chooseObject')}
-              options={(datasets.data ?? []).map((d) => ({ value: d.code, label: pickText(i18n.language, d.labelAr, d.labelEn) }))}
+              options={(datasets.data ?? []).map((d) => ({
+                value: d.code,
+                label: pickText(i18n.language, d.labelAr, d.labelEn),
+              }))}
             />
           </FormField>
           {current && (
@@ -233,9 +258,10 @@ export function ReportBuilderPage({ reportId }: { reportId?: string }) {
                     key={f.code}
                     label={label(f)}
                     checked={columns.includes(f.code)}
-                    onCheckedChange={(checked) =>
-                      setColumns((cols) => (checked ? [...cols, f.code] : cols.filter((c) => c !== f.code)))
-                    }
+                    onChange={(e) => {
+                      const checked = e.target.checked;
+                      setColumns((cols) => (checked ? [...cols, f.code] : cols.filter((c) => c !== f.code)));
+                    }}
                   />
                 ))}
               </fieldset>
@@ -250,40 +276,69 @@ export function ReportBuilderPage({ reportId }: { reportId?: string }) {
                       <Select
                         aria-label={t('builder.field')}
                         value={filter.field || undefined}
-                        onValueChange={(v) => update({ field: v, operator: operatorsFor(fields.find((f) => f.code === v)?.type ?? 'text')[0] ?? 'eq', values: [] })}
-                        options={fields.filter((f) => f.filterable).map((f) => ({ value: f.code, label: label(f) }))}
+                        onValueChange={(v) =>
+                          update({
+                            field: v,
+                            operator:
+                              operatorsFor(fields.find((f) => f.code === v)?.type ?? 'text')[0] ?? 'eq',
+                            values: [],
+                          })
+                        }
+                        options={fields
+                          .filter((f) => f.filterable)
+                          .map((f) => ({ value: f.code, label: label(f) }))}
                       />
                       {field && (
                         <Select
                           aria-label={t('builder.operator')}
                           value={filter.operator}
                           onValueChange={(v) => update({ operator: v })}
-                          options={operatorsFor(field.type).map((op) => ({ value: op, label: t(`builder.operators.${op}` as 'builder.operators.eq') }))}
+                          options={operatorsFor(field.type).map((op) => ({
+                            value: op,
+                            label: t(`builder.operators.${op}` as 'builder.operators.eq'),
+                          }))}
                         />
                       )}
                       {field && !['empty', 'notEmpty'].includes(filter.operator) && (
                         <Input
                           aria-label={t('builder.value')}
                           value={filter.values.join(filter.operator === 'in' ? ',' : '|')}
-                          placeholder={filter.operator === 'between' ? t('builder.betweenHint') : filter.operator === 'in' ? t('builder.inHint') : ''}
+                          placeholder={
+                            filter.operator === 'between'
+                              ? t('builder.betweenHint')
+                              : filter.operator === 'in'
+                                ? t('builder.inHint')
+                                : ''
+                          }
                           onChange={(e) =>
                             update({
                               values: e.target.value
-                                .split(filter.operator === 'in' ? ',' : filter.operator === 'between' ? '|' : /\u0000/)
+
+                                .split(
+                                  filter.operator === 'in' ? ',' : filter.operator === 'between' ? '|' : '\n',
+                                )
                                 .map((v) => v.trim())
                                 .filter((v, i) => v.length > 0 || i === 0),
                             })
                           }
                         />
                       )}
-                      <Button size="sm" variant="ghost" onClick={() => setFilters((rows) => rows.filter((_, i) => i !== index))}>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => setFilters((rows) => rows.filter((_, i) => i !== index))}
+                      >
                         <Trash2 className="size-4" aria-hidden />
                         {t('builder.removeFilter')}
                       </Button>
                     </div>
                   );
                 })}
-                <Button size="sm" variant="outline" onClick={() => setFilters((rows) => [...rows, { field: '', operator: '', values: [] }])}>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setFilters((rows) => [...rows, { field: '', operator: '', values: [] }])}
+                >
                   <Plus className="size-4" aria-hidden />
                   {t('builder.addFilter')}
                 </Button>
@@ -304,8 +359,13 @@ export function ReportBuilderPage({ reportId }: { reportId?: string }) {
                   <Select
                     aria-label={t('builder.sort')}
                     value={sort?.field ?? '-'}
-                    onValueChange={(v) => setSort(v === '-' ? null : { field: v, descending: sort?.descending ?? false })}
-                    options={[{ value: '-', label: t('builder.noSort') }, ...fields.filter((f) => f.sortable).map((f) => ({ value: f.code, label: label(f) }))]}
+                    onValueChange={(v) =>
+                      setSort(v === '-' ? null : { field: v, descending: sort?.descending ?? false })
+                    }
+                    options={[
+                      { value: '-', label: t('builder.noSort') },
+                      ...fields.filter((f) => f.sortable).map((f) => ({ value: f.code, label: label(f) })),
+                    ]}
                   />
                   <Select
                     aria-label={t('builder.direction')}
@@ -321,7 +381,12 @@ export function ReportBuilderPage({ reportId }: { reportId?: string }) {
               {canBuild && (
                 <div className="flex flex-col gap-2 border-t pt-3">
                   <FormField label={t('builder.name')}>
-                    <Input value={name} onChange={(e) => setName(e.target.value)} maxLength={200} data-testid="report-name" />
+                    <Input
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      maxLength={200}
+                      data-testid="report-name"
+                    />
                   </FormField>
                   <Button
                     variant="outline"
@@ -333,7 +398,8 @@ export function ReportBuilderPage({ reportId }: { reportId?: string }) {
                         {
                           onSuccess: (saved) => {
                             toast({ title: t('builder.saved') });
-                            if (!reportId) void navigate({ to: '/reports/$reportId', params: { reportId: saved.id } });
+                            if (!reportId)
+                              void navigate({ to: '/reports/$reportId', params: { reportId: saved.id } });
                           },
                           onError: (e) => toast({ tone: 'error', title: errorMessage(tc, e) }),
                         },
@@ -354,7 +420,10 @@ export function ReportBuilderPage({ reportId }: { reportId?: string }) {
                     variant="outline"
                     onClick={() =>
                       share.mutate(
-                        { id: reportId, shares: shares.map((s) => ({ principalKind: s.kind, principalRef: s.ref })) },
+                        {
+                          id: reportId,
+                          shares: shares.map((s) => ({ principalKind: s.kind, principalRef: s.ref })),
+                        },
                         { onSuccess: () => toast({ title: t('builder.shared') }) },
                       )
                     }
@@ -381,7 +450,9 @@ export function ReportBuilderPage({ reportId }: { reportId?: string }) {
                   <TableHead>
                     <TableRow>
                       {result.columns.map((c) => (
-                        <TableHeaderCell key={c.code}>{pickText(i18n.language, c.labelAr, c.labelEn)}</TableHeaderCell>
+                        <TableHeaderCell key={c.code}>
+                          {pickText(i18n.language, c.labelAr, c.labelEn)}
+                        </TableHeaderCell>
                       ))}
                     </TableRow>
                   </TableHead>
@@ -392,10 +463,10 @@ export function ReportBuilderPage({ reportId }: { reportId?: string }) {
                           <TableCell key={i} dir="auto">
                             {i === 0 && row.link ? (
                               <Link to={row.link as '/'} className="text-primary hover:underline">
-                                {cell ?? '—'}
+                                {cell || '—'}
                               </Link>
                             ) : (
-                              (cell ?? '—')
+                              cell || '—'
                             )}
                           </TableCell>
                         ))}

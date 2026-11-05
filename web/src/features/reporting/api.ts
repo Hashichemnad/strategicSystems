@@ -3,28 +3,36 @@ import { api, unwrap } from '@/api/client';
 import type { components } from '@/api/schema';
 
 export type DashboardSummary = components['schemas']['DashboardSummaryDto'];
-export type Dashboard = components['schemas']['DashboardDto'];
+export type Dashboard = components['schemas']['ReportingDashboardDto'];
 export type DashboardData = components['schemas']['DashboardDataDto'];
 export type DashboardInput = components['schemas']['DashboardInput'];
-export type DashboardDefinition = components['schemas']['DashboardDefinition'];
-export type WidgetConfig = components['schemas']['WidgetConfig'];
+/** Widget configuration; the server always sends identity and layout (C# init defaults make them optional in the schema). */
+export type WidgetConfig = components['schemas']['WidgetConfig'] & {
+  id: string;
+  type: string;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+};
+export type DashboardDefinition = { widgets: WidgetConfig[] };
 export type WidgetData = components['schemas']['WidgetDataDto'];
 export type ScorecardData = components['schemas']['ScorecardDto'];
-export type Catalogue = components['schemas']['CatalogueDto'];
+export type Catalogue = components['schemas']['ReportingCatalogueDto'];
 export type MetricCatalogue = components['schemas']['MetricCatalogueDto'];
 export type MyWorkCards = components['schemas']['MyWorkCardsDto'];
 export type MyWorkCardData = components['schemas']['MyWorkCardDto'];
 export type Dataset = components['schemas']['DatasetDto'];
-export type ReportDefinition = components['schemas']['ReportDefinition'];
+export type ReportDefinition = Required<components['schemas']['ReportDefinition']>;
 export type ReportRun = components['schemas']['ReportRunDto'];
 export type SavedReport = components['schemas']['SavedReportDto'];
 export type Schedule = components['schemas']['ScheduleDto'];
 export type ScheduleInput = components['schemas']['ScheduleInput'];
-export type Delivery = components['schemas']['DeliveryDto'];
+export type Delivery = components['schemas']['ScheduleDeliveryDto'];
 export type Brief = components['schemas']['BriefDto'];
 export type BriefInput = components['schemas']['BriefInput'];
 export type ReportingSettingsDoc = components['schemas']['SettingsDocumentOfReportingSettings'];
-export type ReportingSettings = components['schemas']['ReportingSettings'];
+export type ReportingSettings = Required<components['schemas']['ReportingSettings']>;
 export type ShareInput = components['schemas']['ShareInput'];
 
 /** The period a dashboard shows (whole months, ADR 0142). */
@@ -133,8 +141,16 @@ export function usePublishDashboard() {
 export function useSetDashboardRoles() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, roles }: { id: string; roles: { roleKey: string; sort: number; isDefault: boolean }[] }) =>
-      unwrap(await api.PUT('/api/v1/reporting/dashboards/{id}/roles', { params: { path: { id } }, body: roles })),
+    mutationFn: async ({
+      id,
+      roles,
+    }: {
+      id: string;
+      roles: { roleKey: string; sort: number; isDefault: boolean }[];
+    }) =>
+      unwrap(
+        await api.PUT('/api/v1/reporting/dashboards/{id}/roles', { params: { path: { id } }, body: roles }),
+      ),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: reportingKeys.all }),
   });
 }
@@ -165,8 +181,16 @@ export function usePins() {
 export function usePin() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (input: { kind: 'dashboard' | 'widget' | 'report'; refId: string; widgetId?: string | null }) =>
-      unwrap(await api.POST('/api/v1/reporting/pins', { body: { kind: input.kind, refId: input.refId, widgetId: input.widgetId ?? null } })),
+    mutationFn: async (input: {
+      kind: 'dashboard' | 'widget' | 'report';
+      refId: string;
+      widgetId?: string | null;
+    }) =>
+      unwrap(
+        await api.POST('/api/v1/reporting/pins', {
+          body: { kind: input.kind, refId: input.refId, widgetId: input.widgetId ?? null },
+        }),
+      ),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: reportingKeys.all }),
   });
 }
@@ -174,7 +198,8 @@ export function usePin() {
 export function useUnpin() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (id: string) => unwrap(await api.DELETE('/api/v1/reporting/pins/{id}', { params: { path: { id } } })),
+    mutationFn: async (id: string) =>
+      unwrap(await api.DELETE('/api/v1/reporting/pins/{id}', { params: { path: { id } } })),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: reportingKeys.all }),
   });
 }
@@ -185,7 +210,10 @@ export function useSavedFilters(dashboardId: string | undefined) {
     enabled: !!dashboardId,
     queryFn: async ({ signal }) =>
       unwrap(
-        await api.GET('/api/v1/reporting/dashboards/{id}/filters', { params: { path: { id: dashboardId! } }, signal }),
+        await api.GET('/api/v1/reporting/dashboards/{id}/filters', {
+          params: { path: { id: dashboardId ?? '' } },
+          signal,
+        }),
       ),
   });
 }
@@ -213,8 +241,12 @@ export function useDatasets() {
 
 export function useRunReport() {
   return useMutation({
-    mutationFn: async (input: { definition: ReportDefinition; page: number; pageSize: number; language: string }) =>
-      unwrap(await api.POST('/api/v1/reporting/reports/run', { body: input })),
+    mutationFn: async (input: {
+      definition: ReportDefinition;
+      page: number;
+      pageSize: number;
+      language: string;
+    }) => unwrap(await api.POST('/api/v1/reporting/reports/run', { body: input })),
   });
 }
 
@@ -230,15 +262,24 @@ export function useReport(id: string | undefined) {
     queryKey: reportingKeys.report(id ?? ''),
     enabled: !!id,
     queryFn: async ({ signal }) =>
-      unwrap(await api.GET('/api/v1/reporting/reports/{id}', { params: { path: { id: id! } }, signal })),
+      unwrap(await api.GET('/api/v1/reporting/reports/{id}', { params: { path: { id: id ?? '' } }, signal })),
   });
 }
 
 export function useSaveReport(id?: string) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (input: { name: string; description?: string | null; definition: ReportDefinition; version?: number }) => {
-      const report = { name: input.name, description: input.description ?? null, definition: input.definition };
+    mutationFn: async (input: {
+      name: string;
+      description?: string | null;
+      definition: ReportDefinition;
+      version?: number;
+    }) => {
+      const report = {
+        name: input.name,
+        description: input.description ?? null,
+        definition: input.definition,
+      };
       return id
         ? unwrap(
             await api.PUT('/api/v1/reporting/reports/{id}', {
@@ -255,7 +296,9 @@ export function useSaveReport(id?: string) {
 export function useShareReport() {
   return useMutation({
     mutationFn: async ({ id, shares }: { id: string; shares: ShareInput[] }) =>
-      unwrap(await api.PUT('/api/v1/reporting/reports/{id}/shares', { params: { path: { id } }, body: shares })),
+      unwrap(
+        await api.PUT('/api/v1/reporting/reports/{id}/shares', { params: { path: { id } }, body: shares }),
+      ),
   });
 }
 
@@ -288,7 +331,12 @@ export function useDeliveries(id: string | undefined) {
     queryKey: reportingKeys.deliveries(id ?? ''),
     enabled: !!id,
     queryFn: async ({ signal }) =>
-      unwrap(await api.GET('/api/v1/reporting/schedules/{id}/deliveries', { params: { path: { id: id! } }, signal })),
+      unwrap(
+        await api.GET('/api/v1/reporting/schedules/{id}/deliveries', {
+          params: { path: { id: id ?? '' } },
+          signal,
+        }),
+      ),
   });
 }
 
@@ -297,7 +345,12 @@ export function useGenerateBrief() {
     mutationFn: async (input: { kind: string; from?: string; to?: string; unitId?: string }) =>
       unwrap(
         await api.POST('/api/v1/reporting/brief', {
-          body: { kind: input.kind, from: input.from ?? null, to: input.to ?? null, unitId: input.unitId ?? null },
+          body: {
+            kind: input.kind,
+            from: input.from ?? null,
+            to: input.to ?? null,
+            unitId: input.unitId ?? null,
+          },
         }),
       ),
   });
@@ -306,7 +359,8 @@ export function useGenerateBrief() {
 export function useSaveBrief() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (input: BriefInput) => unwrap(await api.POST('/api/v1/reporting/briefs', { body: input })),
+    mutationFn: async (input: BriefInput) =>
+      unwrap(await api.POST('/api/v1/reporting/briefs', { body: input })),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: reportingKeys.briefs }),
   });
 }

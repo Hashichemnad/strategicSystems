@@ -69,6 +69,7 @@ public sealed class RiskModule : IModule
         services.AddCurrentStatusProvider<RiskCurrentStatus>();
         services.AddMyWorkSource<RiskMyWork>();
         services.AddReportingMetricSource<RiskMetricSource>();
+        services.AddReportingDimensionLabelSource<RiskDimensionLabels>();
         services.AddReportingListSource<RiskListSource>();
         services.AddReportingDatasetSource<RiskDatasetSource>();
         services.AddMyWorkCardSource<RiskMyWorkCards>();

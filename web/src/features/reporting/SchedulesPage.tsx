@@ -22,7 +22,8 @@ function Deliveries({ id }: { id: string }) {
   const { t, i18n } = useTranslation('reporting');
   const deliveries = useDeliveries(id);
   if (deliveries.isPending) return <Skeleton className="h-16" />;
-  if (!deliveries.data?.length) return <p className="text-sm text-muted-foreground">{t('schedules.noDeliveries')}</p>;
+  if (!deliveries.data?.length)
+    return <p className="text-sm text-muted-foreground">{t('schedules.noDeliveries')}</p>;
   return (
     <Table data-testid="schedule-deliveries">
       <TableHead>
@@ -39,7 +40,9 @@ function Deliveries({ id }: { id: string }) {
             <TableCell>{formatDateTime(d.at, i18n.language)}</TableCell>
             <TableCell>{d.periodKey}</TableCell>
             <TableCell>
-              <StatusChip tone={d.status === 'sent' ? 'success' : d.status === 'failed' ? 'danger' : 'neutral'}>
+              <StatusChip
+                tone={d.status === 'sent' ? 'success' : d.status === 'failed' ? 'danger' : 'neutral'}
+              >
                 {t(`schedules.statuses.${d.status}` as 'schedules.statuses.sent')}
               </StatusChip>
             </TableCell>
@@ -100,7 +103,12 @@ export function SchedulesPage() {
                         </Button>
                       }
                     />
-                    <Button size="sm" variant="ghost" aria-expanded={open === s.id} onClick={() => setOpen(open === s.id ? undefined : s.id)}>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      aria-expanded={open === s.id}
+                      onClick={() => setOpen(open === s.id ? undefined : s.id)}
+                    >
                       {t('schedules.deliveries')}
                     </Button>
                   </TableCell>

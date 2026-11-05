@@ -176,7 +176,12 @@ export const navigation: readonly NavSection[] = [
         icon: Presentation,
         permissions: ['reporting.executive.read'],
       },
-      { to: '/dashboards', labelKey: 'nav.dashboards', icon: ChartPie, permissions: ['reporting.dashboard.read'] },
+      {
+        to: '/dashboards',
+        labelKey: 'nav.dashboards',
+        icon: ChartPie,
+        permissions: ['reporting.dashboard.read'],
+      },
       { to: '/reports', labelKey: 'nav.reports', icon: Sheet, permissions: ['reporting.report.run'] },
       { to: '/tasks', labelKey: 'nav.tasks', icon: ListTodo, permissions: ['tasks.task.read'] },
       { to: '/teams', labelKey: 'nav.teams', icon: UsersRound, permissions: ['teams.team.read'] },

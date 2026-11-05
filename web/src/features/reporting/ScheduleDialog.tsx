@@ -2,11 +2,29 @@ import { CalendarClock } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { errorMessage } from '@/api/problem';
-import { Button, Dialog, DialogContent, DialogTrigger, FormField, Input, Select, StatusBanner, Switch, useToast } from '@/ui';
+import {
+  Button,
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  FormField,
+  Input,
+  Select,
+  StatusBanner,
+  Switch,
+  useToast,
+} from '@/ui';
 import { useSaveSchedule, type Schedule } from './api';
 import { PrincipalListEditor, type PrincipalRef } from './shared';
 
-export const periodRules = ['previous-month', 'current-month', 'previous-quarter', 'current-quarter', 'previous-year', 'current-year'] as const;
+export const periodRules = [
+  'previous-month',
+  'current-month',
+  'previous-quarter',
+  'current-quarter',
+  'previous-year',
+  'current-year',
+] as const;
 
 /** Schedule a dashboard or report by e-mail (ADR 0145): built as each recipient, in their language, at send time. */
 export function ScheduleDialog({
@@ -35,11 +53,15 @@ export function ScheduleDialog({
   const [format, setFormat] = useState(existing?.format ?? 'pdf');
   const [active, setActive] = useState(existing?.active ?? true);
   const [recipients, setRecipients] = useState<PrincipalRef[]>(
-    existing?.recipients.map((r) => ({ kind: r.kind as PrincipalRef['kind'], ref: r.ref, label: r.ref })) ?? [],
+    existing?.recipients.map((r) => ({ kind: r.kind as PrincipalRef['kind'], ref: r.ref, label: r.ref })) ??
+      [],
   );
   const days =
     frequency === 'weekly'
-      ? [0, 1, 2, 3, 4, 5, 6].map((d) => ({ value: String(d), label: t(`schedule.weekdays.${d}` as 'schedule.weekdays.0') }))
+      ? [0, 1, 2, 3, 4, 5, 6].map((d) => ({
+          value: String(d),
+          label: t(`schedule.weekdays.${d}` as 'schedule.weekdays.0'),
+        }))
       : Array.from({ length: 28 }, (_, i) => ({ value: String(i + 1), label: String(i + 1) }));
 
   const submit = () =>
@@ -81,7 +103,11 @@ export function ScheduleDialog({
         title={t('schedule.title')}
         description={t('schedule.description')}
         footer={
-          <Button onClick={submit} disabled={save.isPending || recipients.length === 0} data-testid="schedule-save">
+          <Button
+            onClick={submit}
+            disabled={save.isPending || recipients.length === 0}
+            data-testid="schedule-save"
+          >
             {t('schedule.save')}
           </Button>
         }
@@ -99,7 +125,10 @@ export function ScheduleDialog({
                   setFrequency(v);
                   setDay(v === 'weekly' ? '0' : '1');
                 }}
-                options={['daily', 'weekly', 'monthly'].map((f) => ({ value: f, label: t(`schedule.frequencies.${f}` as 'schedule.frequencies.daily') }))}
+                options={['daily', 'weekly', 'monthly'].map((f) => ({
+                  value: f,
+                  label: t(`schedule.frequencies.${f}` as 'schedule.frequencies.daily'),
+                }))}
               />
             </FormField>
             {frequency !== 'daily' && (
@@ -123,7 +152,10 @@ export function ScheduleDialog({
               <Select
                 value={format}
                 onValueChange={setFormat}
-                options={['pdf', 'xlsx', 'link'].map((f) => ({ value: f, label: t(`schedule.formats.${f}` as 'schedule.formats.pdf') }))}
+                options={['pdf', 'xlsx', 'link'].map((f) => ({
+                  value: f,
+                  label: t(`schedule.formats.${f}` as 'schedule.formats.pdf'),
+                }))}
               />
             </FormField>
           </div>

@@ -68,7 +68,10 @@
       "teams-teams": "My teams and evaluations",
       "capRemarksActions": "My CAP remarks and actions",
       "auditFollowUps": "Audit follow-ups due",
-      "benchStudies": "Benchmarking studies awaiting me"
+      "benchStudies": "Benchmarking studies awaiting me",
+      "myRisks": "My risks and treatment actions",
+      "myTasks": "My tasks",
+      "myRequests": "My requests"
     },
     "counts": {
       "pending": "Pending",
@@ -95,7 +98,18 @@
       "auditFollowUpsDue": "Follow-ups due",
       "auditRecommendationsLate": "Late recommendations",
       "benchStudiesToAct": "Study forms to complete",
-      "benchPlansReturned": "Returned plans"
+      "benchPlansReturned": "Returned plans",
+      "reviewsOverdue": "Overdue reviews",
+      "reviewsDue": "Reviews due",
+      "reassessment": "Reassessment required",
+      "actionsOverdue": "Overdue actions",
+      "kriBreaches": "KRI breaches",
+      "assigned": "Assigned to me",
+      "created": "Created by me",
+      "followUp": "Following up",
+      "inReview": "In review",
+      "inProgress": "In progress",
+      "drafts": "Drafts"
     },
     "items": {
       "approve": "Waiting for your decision",

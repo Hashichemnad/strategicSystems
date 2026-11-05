@@ -21,7 +21,7 @@ public sealed record MetricCatalogueDto(
 
 public sealed record ListCatalogueDto(string Code, string SystemCode, string LabelAr, string LabelEn);
 
-public sealed record CatalogueDto(IReadOnlyList<string> WidgetTypes, IReadOnlyList<MetricCatalogueDto> Metrics, IReadOnlyList<ListCatalogueDto> Lists);
+public sealed record ReportingCatalogueDto(IReadOnlyList<string> WidgetTypes, IReadOnlyList<MetricCatalogueDto> Metrics, IReadOnlyList<ListCatalogueDto> Lists);
 
 public sealed record DashboardBody(DashboardInput Dashboard, uint Version);
 
@@ -206,7 +206,7 @@ internal static class ReportingEndpoints
         return errors;
     }
 
-    private static async Task<Ok<CatalogueDto>> CatalogueAsync(ClaimsPrincipal user, MetricRegistry registry, MetricEvaluator evaluator, IAccessService access,
+    private static async Task<Ok<ReportingCatalogueDto>> CatalogueAsync(ClaimsPrincipal user, MetricRegistry registry, MetricEvaluator evaluator, IAccessService access,
         ILookupService lookups, CancellationToken ct)
     {
         var metrics = new List<MetricCatalogueDto>();
@@ -248,7 +248,7 @@ internal static class ReportingEndpoints
             }
         }
 
-        return TypedResults.Ok(new CatalogueDto(WidgetTypes.All, metrics, lists));
+        return TypedResults.Ok(new ReportingCatalogueDto(WidgetTypes.All, metrics, lists));
     }
 
     private static async Task<Results<FileContentHttpResult, ProblemHttpResult>> ExportDashboardAsync(

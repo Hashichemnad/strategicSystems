@@ -68,7 +68,10 @@
       "teams-teams": "فرقي والتقييمات المعلقة",
       "capRemarksActions": "ملاحظاتي وإجراءاتي في خطة العمل",
       "auditFollowUps": "متابعات التدقيق المستحقة",
-      "benchStudies": "دراسات المقارنة بانتظاري"
+      "benchStudies": "دراسات المقارنة بانتظاري",
+      "myRisks": "مخاطري وإجراءات المعالجة",
+      "myTasks": "مهامي",
+      "myRequests": "طلباتي"
     },
     "counts": {
       "pending": "معلّقة",
@@ -95,7 +98,18 @@
       "auditFollowUpsDue": "متابعات مستحقة",
       "auditRecommendationsLate": "توصيات متأخرة",
       "benchStudiesToAct": "نماذج دراسات بانتظار الإكمال",
-      "benchPlansReturned": "خطط معادة"
+      "benchPlansReturned": "خطط معادة",
+      "reviewsOverdue": "مراجعات متأخرة",
+      "reviewsDue": "مراجعات مستحقة",
+      "reassessment": "إعادة تقييم مطلوبة",
+      "actionsOverdue": "إجراءات متأخرة",
+      "kriBreaches": "تجاوزات مؤشرات المخاطر",
+      "assigned": "مسندة إليّ",
+      "created": "أنشأتها",
+      "followUp": "أتابعها",
+      "inReview": "قيد المراجعة",
+      "inProgress": "قيد التنفيذ",
+      "drafts": "مسودات"
     },
     "items": {
       "approve": "بانتظار قرارك",
