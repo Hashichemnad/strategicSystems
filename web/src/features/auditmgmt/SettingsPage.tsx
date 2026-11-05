@@ -2,9 +2,20 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { errorMessage } from '@/api/problem';
 import { KpiCardPicker } from '@/features/kpi/KpiCardPicker';
-import { Button, FormField, Input, PageHeader, Select, Skeleton, StatusBanner, Switch, useToast } from '@/ui';
+import {
+  Button,
+  FormField,
+  Input,
+  PageHeader,
+  Select,
+  Skeleton,
+  StatusBanner,
+  Switch,
+  useToast,
+  Section,
+} from '@/ui';
 import { auditApi, departmentScopes, useAuditMutation, useAuditSettings, type AuditSettings } from './api';
-import { Section, useAuditT } from './components';
+import { useAuditT } from './components';
 
 type CardKey =
   | 'kpiClosureRateCardId'

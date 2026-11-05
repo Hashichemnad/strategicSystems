@@ -19,6 +19,8 @@ import {
   TableHeaderCell,
   TableRow,
   Textarea,
+  ProgressBar,
+  Section,
 } from '@/ui';
 import {
   capApi,
@@ -32,8 +34,6 @@ import {
 } from './api';
 import {
   ActionStatusChip,
-  PctBar,
-  Section,
   SimpleDialog,
   ValidationChip,
   useCapT,
@@ -165,7 +165,11 @@ export function RemarkActionsTab({ remark: r, onSubmit }: { remark: CapRemark; o
                     {a.validationStatus === 'approved' ? <ActionStatusChip status={a.status} /> : '—'}
                   </TableCell>
                   <TableCell>
-                    <PctBar value={a.achievedPct} late={a.status === 'late'} />
+                    <ProgressBar
+                      value={a.achievedPct}
+                      tone={a.status === 'late' ? 'danger' : 'primary'}
+                      testId="cap-pct"
+                    />
                   </TableCell>
                   <TableCell>
                     <span className="flex flex-wrap justify-end gap-1">

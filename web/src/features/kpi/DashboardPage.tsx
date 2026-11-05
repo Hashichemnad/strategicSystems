@@ -6,7 +6,17 @@ import { errorMessage } from '@/api/problem';
 import { useCan } from '@/features/access/session';
 import { useAiFeature } from '@/features/ai/api';
 import { formatNumber, pickText } from '@/lib/format';
-import { Button, PageHeader, Select, Skeleton, StatusBanner, StatusChip, useToast } from '@/ui';
+import {
+  Button,
+  CountChart,
+  PageHeader,
+  Select,
+  Skeleton,
+  StatusBanner,
+  StatusChip,
+  Tile,
+  useToast,
+} from '@/ui';
 import {
   currentYear,
   exportUrl,
@@ -16,7 +26,7 @@ import {
   useKpiOptions,
   type KpiDashboard,
 } from './api';
-import { Bars, KpiPage, PerformanceValue, RagChip, ScoreBar, useKpiT, yearOptions } from './components';
+import { KpiPage, PerformanceValue, RagChip, ScoreBar, useKpiT, yearOptions } from './components';
 import { DataQualityTable } from './ReportsPage';
 
 /** KPI home dashboard (SPEC §2.5): totals, by type / department / objective, achievement distribution, backlog, top / bottom performers. */
@@ -63,7 +73,7 @@ export function KpiDashboardPage() {
           <>
             <Tiles data={dashboard.data} />
             <div className="grid gap-4 lg:grid-cols-2">
-              <Bars
+              <CountChart
                 title={t('dashboard.achievement')}
                 testId="kpi-achievement"
                 rows={dashboard.data.achievement.map((r) => ({
@@ -72,7 +82,7 @@ export function KpiDashboardPage() {
                   value: r.count,
                 }))}
               />
-              <Bars
+              <CountChart
                 title={t('dashboard.byType')}
                 rows={dashboard.data.byType.map((r) => ({ key: r.key, label: label(r), value: r.count }))}
               />
@@ -104,36 +114,22 @@ export function KpiDashboardPage() {
 function Tiles({ data }: { data: KpiDashboard }) {
   const { t, i18n } = useTranslation('kpi');
   const n = (v: number) => formatNumber(v, i18n.language);
-  const tiles: [string, React.ReactNode, string?][] = [
-    [t('dashboard.totalCards'), `${n(data.activeCards)} / ${n(data.totalCards)}`],
-    [
-      t('dashboard.organisationScore'),
-      <span key="score" className="flex items-center gap-2">
-        <PerformanceValue capped={data.organisationScore} />
-        <RagChip rag={data.organisationRag} />
-      </span>,
-    ],
-    [t('dashboard.pendingUpdates'), n(data.pendingUpdates), '/kpi/pending'],
-    [t('dashboard.overdue'), n(data.overdue)],
-    [t('dashboard.approvalBacklog'), n(data.approvalBacklog), '/kpi/approvals'],
-    [t('dashboard.approvedResults'), n(data.approvedResults)],
-  ];
   return (
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3" data-testid="kpi-tiles">
-      {tiles.map(([title, value, to]) => (
-        <div key={title} className="flex flex-col gap-1 rounded-lg border bg-card p-4">
-          <span className="text-sm text-muted-foreground">
-            {to ? (
-              <Link to={to as '/kpi/pending'} className="text-primary hover:underline">
-                {title}
-              </Link>
-            ) : (
-              title
-            )}
+      <Tile label={t('dashboard.totalCards')} value={`${n(data.activeCards)} / ${n(data.totalCards)}`} />
+      <Tile
+        label={t('dashboard.organisationScore')}
+        value={
+          <span className="flex items-center gap-2">
+            <PerformanceValue capped={data.organisationScore} />
+            <RagChip rag={data.organisationRag} />
           </span>
-          <span className="text-2xl font-semibold tabular-nums">{value}</span>
-        </div>
-      ))}
+        }
+      />
+      <Tile label={t('dashboard.pendingUpdates')} value={data.pendingUpdates} to="/kpi/pending" />
+      <Tile label={t('dashboard.overdue')} value={data.overdue} />
+      <Tile label={t('dashboard.approvalBacklog')} value={data.approvalBacklog} to="/kpi/approvals" />
+      <Tile label={t('dashboard.approvedResults')} value={data.approvedResults} />
     </div>
   );
 }

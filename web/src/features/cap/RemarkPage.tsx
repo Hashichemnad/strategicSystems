@@ -23,6 +23,7 @@ import {
   TabsList,
   TabsTrigger,
   Textarea,
+  Section,
 } from '@/ui';
 import { capApi, remarkStages, useCapOptions, useCapRemark, useKpiTrend, type CapRemark } from './api';
 import {
@@ -30,7 +31,6 @@ import {
   PriorityChip,
   RemarkStatusChip,
   Rows,
-  Section,
   SimpleDialog,
   lookupTypes,
   useCapLabels,

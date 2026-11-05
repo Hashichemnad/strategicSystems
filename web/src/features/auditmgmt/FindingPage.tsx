@@ -30,6 +30,8 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
+  ProgressBar,
+  Section,
 } from '@/ui';
 import {
   auditApi,
@@ -43,11 +45,9 @@ import {
 import {
   AuditPageLayout,
   FindingStatusChip,
-  PctBar,
   PriorityChip,
   RecommendationStatusChip,
   Rows,
-  Section,
   useAuditLabels,
   useAuditT,
   useDate,
@@ -125,7 +125,11 @@ export function AuditFindingPage() {
               {t('fields.responsibleUnit')}: {names.unit(f.responsibleUnit)}
             </span>
             <div className="w-40">
-              <PctBar value={f.completion} late={f.status === 'late'} />
+              <ProgressBar
+                value={f.completion}
+                tone={f.status === 'late' ? 'danger' : 'primary'}
+                testId="audit-pct"
+              />
             </div>
           </div>
         }
@@ -435,7 +439,11 @@ function RecommendationCard({
         <div>
           <dt className="text-muted-foreground">{t('fields.pct')}</dt>
           <dd>
-            <PctBar value={r.latestPct} late={r.status === 'late'} />
+            <ProgressBar
+              value={r.latestPct}
+              tone={r.status === 'late' ? 'danger' : 'primary'}
+              testId="audit-pct"
+            />
           </dd>
         </div>
         <div>

@@ -1,5 +1,4 @@
-import { Link } from '@tanstack/react-router';
-import type { EChartsOption } from 'echarts';
+import { Link, useNavigate } from '@tanstack/react-router';
 import { Sparkles } from 'lucide-react';
 import { useMemo, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -7,10 +6,19 @@ import { errorMessage } from '@/api/problem';
 import { AiBadge } from '@/features/ai/AiDraft';
 import { useAiFeature, type AiFeatureKey } from '@/features/ai/api';
 import { formatDate, formatNumber, pickText } from '@/lib/format';
-import { EChart, useRtl } from '@/ui/echart';
 import {
+  barOption,
+  bubbleOption,
   Button,
+  Chart,
   EmptyState,
+  funnelOption,
+  RagGrid,
+  token,
+  Tile,
+  type Rag,
+  type RagGridCell,
+  type RagGridRow,
   PageHeader,
   Skeleton,
   StatusBanner,
@@ -35,13 +43,8 @@ import {
   type PortfolioFilter,
 } from './viewsApi';
 
-/** Fixed RAG colours for the charts (ECharts needs concrete colours; readable on light and dark). */
-const ragColour: Record<string, string> = {
-  green: '#2f9e5b',
-  amber: '#d08a1c',
-  red: '#d64545',
-  grey: '#8a94a6',
-};
+/** Health RAG → chart tone (colours from the design tokens, light and dark). */
+const ragChartTone = { green: 'success', amber: 'warning', red: 'danger', grey: 'neutral' } as const;
 const dimensions = ['schedule', 'cost', 'scope', 'risk', 'overall'] as const;
 
 /** Portfolio → Dashboard (docs/design/portfolio.md §38): system-level view, numbers scoped to what the viewer may read. */
@@ -138,8 +141,8 @@ function Card({
 
 function DashboardBody({ data }: { data: PortfolioDashboard }) {
   const { t, i18n } = useTranslation('portfolioViews');
+  const navigate = useNavigate();
   const language = i18n.language;
-  const rtl = useRtl();
   const n = (value: number) => formatNumber(value, language);
   const pct = (ratio: number) =>
     t('percent', { value: formatNumber(Math.round(ratio * 1000) / 10, language) });
@@ -152,138 +155,102 @@ function DashboardBody({ data }: { data: PortfolioDashboard }) {
     });
   const projectName = (p: { nameAr: string | null; nameEn: string | null }) =>
     pickText(language, p.nameAr, p.nameEn);
-  const legendSide = rtl ? { right: 0 } : { left: 0 };
 
   const bubbles = useMemo(
     () => data.projects.filter((p) => p.value !== null && p.complexity !== null && p.status === 'active'),
     [data.projects],
   );
-  const bubbleOption = useMemo<EChartsOption>(() => {
-    const budgets = bubbles.map((p) => p.budget ?? 0);
-    const max = Math.max(...budgets, 1);
-    const series = (['green', 'amber', 'red', 'grey'] as const).map((rag) => ({
-      name: t(`rag.${rag}`),
-      type: 'scatter' as const,
-      itemStyle: { color: ragColour[rag], opacity: 0.8 },
-      data: bubbles
-        .filter((p) => (overallRag(p) ?? 'grey') === rag)
-        .map((p) => ({
-          value: [Math.round((p.value ?? 0) * 1000) / 10, p.complexity ?? 0, p.budget ?? 0],
-          name: `${p.number} ${projectName(p)}`,
-          symbolSize: p.budget === null ? 14 : 12 + Math.sqrt(p.budget / max) * 38,
+  const bubble = useMemo(
+    () =>
+      bubbleOption({
+        groups: (['green', 'amber', 'red', 'grey'] as const).map((rag) => ({
+          name: t(`rag.${rag}`),
+          color: token(ragChartTone[rag]),
+          points: bubbles
+            .filter((p) => (overallRag(p) ?? 'grey') === rag)
+            .map((p) => ({
+              key: p.id,
+              label: `${p.number} ${projectName(p)}`,
+              x: Math.round((p.value ?? 0) * 1000) / 10,
+              y: p.complexity ?? 0,
+              size: p.budget,
+            })),
         })),
-    }));
-    return {
-      grid: { top: 40, bottom: 48, left: 56, right: 24, containLabel: true },
-      legend: { top: 0, ...legendSide },
-      tooltip: {
-        trigger: 'item',
-        formatter: (params: unknown) => {
-          const p = params as { name: string; value: number[]; seriesName: string };
-          return [
-            p.name,
-            `${t('dashboard.bubble.value')}: ${t('percent', { value: n(p.value[0] ?? 0) })}`,
-            `${t('dashboard.bubble.complexity')}: ${n(p.value[1] ?? 0)}`,
-            `${t('dashboard.bubble.budget')}: ${p.value[2] ? n(p.value[2]) : t('dashboard.hidden')}`,
-            `${t('dashboard.bubble.health')}: ${p.seriesName}`,
-          ].join('<br/>');
+        x: {
+          name: t('dashboard.bubble.value'),
+          min: 0,
+          max: 100,
+          format: (v) => t('percent', { value: n(v) }),
         },
-      },
-      xAxis: {
-        type: 'value',
-        name: t('dashboard.bubble.value'),
-        nameLocation: 'middle',
-        nameGap: 28,
-        min: 0,
-        max: 100,
-        inverse: rtl,
-      },
-      yAxis: {
-        type: 'value',
-        name: t('dashboard.bubble.complexity'),
-        min: 0,
-        max: 5,
-        interval: 1,
-        position: rtl ? 'right' : 'left',
-      },
-      series,
-    };
+        y: { name: t('dashboard.bubble.complexity'), min: 0, max: 5, interval: 1, format: n },
+        size: { name: t('dashboard.bubble.budget'), format: n, hidden: t('dashboard.hidden') },
+        itemHeader: t('dashboard.table.project'),
+        groupHeader: t('dashboard.bubble.health'),
+      }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [bubbles, rtl, language]);
-
-  const budgetOption = useMemo<EChartsOption>(
-    () => ({
-      grid: { top: 40, bottom: 24, left: 16, right: 16, containLabel: true },
-      legend: { top: 0, ...legendSide },
-      tooltip: { trigger: 'axis' },
-      xAxis: {
-        type: 'category',
-        data: data.budget.map(unitName),
-        inverse: rtl,
-        axisLabel: { interval: 0, rotate: 20 },
-      },
-      yAxis: { type: 'value', position: rtl ? 'right' : 'left' },
-      series: [
-        {
-          name: t('dashboard.budget.budget'),
-          type: 'bar',
-          data: data.budget.map((b) => b.budget),
-          itemStyle: { color: '#3b82c4' },
-        },
-        {
-          name: t('dashboard.budget.actual'),
-          type: 'bar',
-          data: data.budget.map((b) => b.actual),
-          itemStyle: { color: '#d08a1c' },
-        },
-      ],
-    }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [data.budget, rtl, language],
+    [bubbles, language],
   );
 
-  const stageOption = useMemo<EChartsOption>(
-    () => ({
-      grid: { top: 16, bottom: 24, left: 16, right: 16, containLabel: true },
-      tooltip: { trigger: 'axis' },
-      xAxis: {
-        type: 'category',
-        data: data.byStage.map((s) => stageLabel(s.stage)),
-        inverse: rtl,
-        axisLabel: { interval: 0 },
-      },
-      yAxis: { type: 'value', minInterval: 1, position: rtl ? 'right' : 'left' },
-      series: [
-        {
-          name: t('dashboard.projects'),
-          type: 'bar',
-          data: data.byStage.map((s) => s.count),
-          itemStyle: { color: '#2a9d8f' },
-          label: { show: true, position: 'top' },
-        },
-      ],
-    }),
+  const budget = useMemo(
+    () =>
+      barOption({
+        categories: data.budget.map((b, i) => ({ key: b.unitId ?? `none-${i}`, label: unitName(b) })),
+        series: [
+          {
+            name: t('dashboard.budget.budget'),
+            values: data.budget.map((b) => b.budget),
+            color: token('info'),
+          },
+          {
+            name: t('dashboard.budget.actual'),
+            values: data.budget.map((b) => b.actual),
+            color: token('warning'),
+          },
+        ],
+        format: n,
+        categoryHeader: t('dashboard.heat.unit'),
+      }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [data.byStage, rtl, language],
+    [data.budget, language],
   );
 
-  const funnelSteps = [
-    ['submitted', data.funnel.submitted],
-    ['inApproval', data.funnel.inApproval],
-    ['approved', data.funnel.approved],
-    ['active', data.funnel.active],
-    ['completed', data.funnel.completed],
-  ] as const;
-  const funnelMax = Math.max(...funnelSteps.map(([, v]) => v), 1);
+  const stages = useMemo(
+    () =>
+      barOption({
+        categories: data.byStage.map((s) => ({ key: s.stage, label: stageLabel(s.stage) })),
+        series: [{ name: t('dashboard.projects'), values: data.byStage.map((s) => s.count) }],
+        integer: true,
+        format: n,
+        categoryHeader: t('dashboard.table.stage'),
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [data.byStage, language],
+  );
+
+  const funnel = useMemo(
+    () =>
+      funnelOption({
+        steps: (['submitted', 'inApproval', 'approved', 'active', 'completed'] as const).map((key) => ({
+          key,
+          label: t(`dashboard.funnel.${key}`),
+          value: data.funnel[key],
+        })),
+        format: n,
+        categoryHeader: t('dashboard.funnel.title'),
+        valueHeader: t('dashboard.projects'),
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [data.funnel, language],
+  );
 
   return (
     <>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4" data-testid="portfolio-tiles">
-        <Tile label={t('dashboard.tiles.total')} value={n(data.total)} />
-        <Tile label={t('dashboard.tiles.active')} value={n(data.active)} />
+        <Tile label={t('dashboard.tiles.total')} value={data.total} />
+        <Tile label={t('dashboard.tiles.active')} value={data.active} />
         <Tile
           label={t('dashboard.tiles.delayed')}
-          value={n(data.delayed)}
+          value={data.delayed}
           tone={data.delayed > 0 ? 'danger' : undefined}
         />
         <Tile label={t('dashboard.tiles.averageProgress')} value={pct(data.averageProgress)} />
@@ -300,10 +267,13 @@ function DashboardBody({ data }: { data: PortfolioDashboard }) {
           {bubbles.length === 0 ? (
             <p className="text-sm text-muted-foreground">{t('dashboard.bubble.empty')}</p>
           ) : (
-            <EChart
-              option={bubbleOption}
+            <Chart
+              {...bubble}
               height={320}
               label={t('dashboard.bubble.aria', { count: bubbles.length })}
+              onClick={(e) =>
+                e.key && void navigate({ to: '/portfolio/projects/$projectId', params: { projectId: e.key } })
+              }
             />
           )}
           <p className="text-xs text-muted-foreground">{t('dashboard.bubble.hint')}</p>
@@ -312,7 +282,7 @@ function DashboardBody({ data }: { data: PortfolioDashboard }) {
           {data.budget.length === 0 ? (
             <p className="text-sm text-muted-foreground">{t('dashboard.budget.empty')}</p>
           ) : (
-            <EChart option={budgetOption} height={320} label={t('dashboard.budget.title')} />
+            <Chart {...budget} height={320} label={t('dashboard.budget.title')} />
           )}
           {data.costsHidden > 0 && (
             <p className="text-xs text-muted-foreground" data-testid="portfolio-costs-hidden">
@@ -321,23 +291,10 @@ function DashboardBody({ data }: { data: PortfolioDashboard }) {
           )}
         </Card>
         <Card title={t('dashboard.stages.title')} testId="portfolio-stages">
-          <EChart option={stageOption} height={260} label={t('dashboard.stages.title')} />
+          <Chart {...stages} height={260} label={t('dashboard.stages.title')} />
         </Card>
         <Card title={t('dashboard.funnel.title')} testId="portfolio-funnel">
-          <ol className="flex flex-col gap-2">
-            {funnelSteps.map(([key, value]) => (
-              <li key={key} className="flex items-center gap-3 text-sm">
-                <span className="w-32 shrink-0 text-muted-foreground">{t(`dashboard.funnel.${key}`)}</span>
-                <span className="relative h-6 flex-1 rounded bg-muted">
-                  <span
-                    className="absolute inset-y-0 start-0 rounded bg-primary/70"
-                    style={{ width: `${(value / funnelMax) * 100}%` }}
-                  />
-                </span>
-                <span className="w-12 shrink-0 text-end font-medium tabular-nums">{n(value)}</span>
-              </li>
-            ))}
-          </ol>
+          <Chart {...funnel} height={260} label={t('dashboard.funnel.title')} />
         </Card>
         <Card title={t('dashboard.delayed.title')} testId="portfolio-delayed">
           {data.delayedProjects.length === 0 ? (
@@ -398,24 +355,6 @@ function DashboardBody({ data }: { data: PortfolioDashboard }) {
   );
 }
 
-function Tile({ label, value, tone }: { label: string; value: string; tone?: 'danger' | undefined }) {
-  return (
-    <div className="rounded-lg border bg-card p-4">
-      <p className="text-sm text-muted-foreground">{label}</p>
-      <p className={`mt-1 text-2xl font-semibold tabular-nums ${tone === 'danger' ? 'text-danger' : ''}`}>
-        {value}
-      </p>
-    </div>
-  );
-}
-
-const cellTone: Record<string, string> = {
-  red: 'bg-danger-soft text-danger',
-  amber: 'bg-warning-soft text-warning',
-  green: 'bg-success-soft text-success',
-  grey: 'bg-muted text-muted-foreground',
-};
-
 /** Departments × dimensions with R / A / G counts: the letters carry the meaning, the colour only repeats the worst. */
 function HeatMap({
   cells,
@@ -431,56 +370,39 @@ function HeatMap({
     const key = cell.unitId ?? '';
     units.set(key, [...(units.get(key) ?? []), cell]);
   }
+  const rows: RagGridRow[] = [...units.entries()].map(([key, list]) => {
+    const name = list[0] ? unitName(list[0]) : '';
+    const rowCells: Record<string, RagGridCell> = {};
+    for (const d of dimensions) {
+      const cell = list.find((c) => c.dimension === d);
+      if (!cell) continue;
+      const worst: Rag = cell.red ? 'red' : cell.amber ? 'amber' : cell.green ? 'green' : 'grey';
+      const text = t('dashboard.heat.cell', { red: n(cell.red), amber: n(cell.amber), green: n(cell.green) });
+      rowCells[d] = {
+        rag: worst,
+        value: text,
+        title: t('dashboard.heat.cellTitle', {
+          red: n(cell.red),
+          amber: n(cell.amber),
+          green: n(cell.green),
+          grey: n(cell.grey),
+        }),
+      };
+    }
+    return { key: key || 'none', label: name, text: name, cells: rowCells };
+  });
   return (
-    <div className="overflow-x-auto">
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableHeaderCell>{t('dashboard.heat.unit')}</TableHeaderCell>
-            {dimensions.map((d) => (
-              <TableHeaderCell key={d}>{t(`dimensions.${d}`)}</TableHeaderCell>
-            ))}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {[...units.entries()].map(([key, list]) => (
-            <TableRow key={key || 'none'}>
-              <TableCell className="font-medium">{list[0] ? unitName(list[0]) : ''}</TableCell>
-              {dimensions.map((d) => {
-                const cell = list.find((c) => c.dimension === d);
-                if (!cell) return <TableCell key={d}>—</TableCell>;
-                const worst = cell.red ? 'red' : cell.amber ? 'amber' : cell.green ? 'green' : 'grey';
-                const text = t('dashboard.heat.cell', {
-                  red: n(cell.red),
-                  amber: n(cell.amber),
-                  green: n(cell.green),
-                });
-                return (
-                  <TableCell key={d} className="p-1">
-                    <span
-                      className={`block rounded px-2 py-1.5 text-center text-xs font-medium tabular-nums ${cellTone[worst]}`}
-                      title={t('dashboard.heat.cellTitle', {
-                        red: n(cell.red),
-                        amber: n(cell.amber),
-                        green: n(cell.green),
-                        grey: n(cell.grey),
-                      })}
-                      data-testid={`heat-${d}`}
-                    >
-                      {text}
-                    </span>
-                  </TableCell>
-                );
-              })}
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      <p className="mt-2 text-xs text-muted-foreground">{t('dashboard.heat.legend')}</p>
+    <div className="flex flex-col gap-2">
+      <RagGrid
+        label={t('dashboard.heat.title')}
+        rowHeader={t('dashboard.heat.unit')}
+        columns={dimensions.map((d) => ({ key: d, label: t(`dimensions.${d}`) }))}
+        rows={rows}
+      />
+      <p className="text-xs text-muted-foreground">{t('dashboard.heat.legend')}</p>
     </div>
   );
 }
-
 function ProjectsTable({ projects, healthOn }: { projects: DashboardProject[]; healthOn: boolean }) {
   const { t, i18n } = useTranslation('portfolioViews');
   const language = i18n.language;

@@ -31,6 +31,8 @@ import {
   TabsTrigger,
   Textarea,
   useToast,
+  ProgressBar,
+  Section,
 } from '@/ui';
 import {
   auditApi,
@@ -46,11 +48,9 @@ import {
 import {
   AuditPageLayout,
   FindingStatusChip,
-  PctBar,
   PriorityChip,
   ReportStatusChip,
   Rows,
-  Section,
   SimpleDialog,
   isoToday,
   useAuditLabels,
@@ -217,7 +217,11 @@ export function AuditReportPage() {
                         <FindingStatusChip status={f.status} />
                       </TableCell>
                       <TableCell>
-                        <PctBar value={f.completion} late={f.status === 'late'} />
+                        <ProgressBar
+                          value={f.completion}
+                          tone={f.status === 'late' ? 'danger' : 'primary'}
+                          testId="audit-pct"
+                        />
                       </TableCell>
                       <TableCell>{date(f.nextDueOn)}</TableCell>
                     </TableRow>

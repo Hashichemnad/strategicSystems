@@ -22,6 +22,7 @@ import {
   TableHeaderCell,
   TableRow,
   useToast,
+  Section,
 } from '@/ui';
 import {
   kriBases,
@@ -35,7 +36,7 @@ import {
   type KriValues,
   type Risk,
 } from './api';
-import { Section, useNames, useNum, usePct, useRiskT } from './components';
+import { useNames, useNum, usePct, useRiskT } from './components';
 
 export function KrisTab({ risk }: { risk: Risk }) {
   const { t } = useTranslation('risk');

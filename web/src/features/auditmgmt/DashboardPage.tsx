@@ -2,13 +2,17 @@ import { Download, FileText, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { errorMessage } from '@/api/problem';
+import { formatMonth, formatNumber } from '@/lib/format';
 import { UnitSelect } from '@/features/access/pickers';
 import { useCan } from '@/features/access/session';
 import { AiBadge } from '@/features/ai/AiDraft';
 import { useAiFeature } from '@/features/ai/api';
-import { EChart, useRtl } from '@/ui/echart';
 import {
+  barOption,
   Button,
+  Chart,
+  isMonth,
+  lineOption,
   PageHeader,
   Select,
   Skeleton,
@@ -20,6 +24,8 @@ import {
   TableHeaderCell,
   TableRow,
   Textarea,
+  Section,
+  Tile,
 } from '@/ui';
 import {
   auditApi,
@@ -29,16 +35,7 @@ import {
   type AuditCount,
   type AuditSummaryDraft,
 } from './api';
-import {
-  AuditPageLayout,
-  Section,
-  Tile,
-  useAuditLabels,
-  useAuditT,
-  useNames,
-  usePct,
-  useToastMutation,
-} from './components';
+import { AuditPageLayout, useAuditLabels, useAuditT, useNames, usePct, useToastMutation } from './components';
 import { FindingsTable } from './FindingsPage';
 
 /**
@@ -47,12 +44,11 @@ import { FindingsTable } from './FindingsPage';
  */
 export function AuditDashboardPage() {
   const { t } = useTranslation('auditmgmt');
-  const { t: tc } = useTranslation();
+  const { t: tc, i18n } = useTranslation();
   const { k, language } = useAuditT();
   const labels = useAuditLabels();
   const names = useNames();
   const pct = usePct();
-  const rtl = useRtl();
   const year0 = new Date().getFullYear();
   const [unitId, setUnitId] = useState<string>();
   const [year, setYear] = useState<number>();
@@ -89,28 +85,15 @@ export function AuditDashboardPage() {
   };
 
   const bars = (rows: readonly AuditCount[], label: (code: string) => string, name: string) => (
-    <EChart
+    <Chart
       label={name}
       height={220}
-      option={{
-        grid: { left: 8, right: 8, top: 24, bottom: 8, containLabel: true },
-        xAxis: {
-          type: 'category',
-          data: rows.map((r) => label(r.code)),
-          inverse: rtl,
-          axisLabel: { interval: 0, width: 72, overflow: 'break' },
-        },
-        yAxis: { type: 'value', minInterval: 1, position: rtl ? 'right' : 'left' },
-        series: [
-          {
-            type: 'bar',
-            data: rows.map((r) => r.count),
-            label: { show: true, position: 'top' },
-            barMaxWidth: 40,
-          },
-        ],
-        tooltip: { trigger: 'axis' },
-      }}
+      {...barOption({
+        categories: rows.map((r) => ({ key: r.code, label: label(r.code) })),
+        series: [{ name, values: rows.map((r) => r.count) }],
+        integer: true,
+        format: (v) => formatNumber(v, i18n.language),
+      })}
     />
   );
 
@@ -243,18 +226,14 @@ export function AuditDashboardPage() {
               testId="audit-tile-findings"
             />
             <Tile label={t('dashboard.open')} value={dashboard.data.open} />
-            <Tile label={t('dashboard.late')} value={dashboard.data.late} tone="text-danger" />
-            <Tile label={t('dashboard.closed')} value={dashboard.data.closed} tone="text-success" />
-            <Tile
-              label={t('dashboard.riskAccepted')}
-              value={dashboard.data.riskAccepted}
-              tone="text-warning"
-            />
+            <Tile label={t('dashboard.late')} value={dashboard.data.late} tone="danger" />
+            <Tile label={t('dashboard.closed')} value={dashboard.data.closed} tone="success" />
+            <Tile label={t('dashboard.riskAccepted')} value={dashboard.data.riskAccepted} tone="warning" />
             <Tile label={t('dashboard.repeat')} value={dashboard.data.repeat} />
             <Tile
               label={t('dashboard.overdueRecommendations')}
               value={dashboard.data.overdueRecommendations}
-              tone="text-danger"
+              tone="danger"
             />
             <Tile label={t('dashboard.closureRate')} value={pct(dashboard.data.closureRate)} />
           </div>
@@ -283,28 +262,21 @@ export function AuditDashboardPage() {
               {bars(dashboard.data.ageing, (c) => t('dashboard.days', { range: c }), t('dashboard.ageing'))}
             </Section>
             <Section title={t('dashboard.trend')} testId="audit-trend">
-              <EChart
+              <Chart
                 label={t('dashboard.trend')}
                 height={220}
-                option={{
-                  grid: { left: 8, right: 8, top: 32, bottom: 8, containLabel: true },
-                  legend: { data: [t('dashboard.opened'), t('dashboard.closedSeries')] },
-                  xAxis: { type: 'category', data: dashboard.data.trend.map((m) => m.month), inverse: rtl },
-                  yAxis: { type: 'value', minInterval: 1, position: rtl ? 'right' : 'left' },
+                {...lineOption({
+                  categories: dashboard.data.trend.map((m) => ({
+                    key: m.month,
+                    label: isMonth(m.month) ? formatMonth(m.month, i18n.language) : m.month,
+                  })),
                   series: [
-                    {
-                      name: t('dashboard.opened'),
-                      type: 'line',
-                      data: dashboard.data.trend.map((m) => m.opened),
-                    },
-                    {
-                      name: t('dashboard.closedSeries'),
-                      type: 'line',
-                      data: dashboard.data.trend.map((m) => m.closed),
-                    },
+                    { name: t('dashboard.opened'), values: dashboard.data.trend.map((m) => m.opened) },
+                    { name: t('dashboard.closedSeries'), values: dashboard.data.trend.map((m) => m.closed) },
                   ],
-                  tooltip: { trigger: 'axis' },
-                }}
+                  integer: true,
+                  format: (v) => formatNumber(v, i18n.language),
+                })}
               />
             </Section>
           </div>

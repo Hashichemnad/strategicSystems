@@ -15,10 +15,11 @@ import {
   TableHead,
   TableHeaderCell,
   TableRow,
+  ProgressBar,
 } from '@/ui';
 import { useProjectRisks } from './api';
 import { projectRiskCategoryLabel } from './projectRiskLabels';
-import { ProgressBar, RatingChip, RiskPageLayout, useBands, useNames, useNum } from './components';
+import { RatingChip, RiskPageLayout, useBands, useNames, useNum } from './components';
 
 const ALL = '__all';
 
@@ -121,7 +122,7 @@ export function RiskProjectRisksPage() {
                   {r.implementationPct == null ? (
                     '—'
                   ) : (
-                    <ProgressBar ratio={r.implementationPct} label={t('projectRisks.implementation')} />
+                    <ProgressBar value={r.implementationPct} label={t('projectRisks.implementation')} />
                   )}
                 </TableCell>
                 <TableCell>{names.person(r.owner)}</TableCell>

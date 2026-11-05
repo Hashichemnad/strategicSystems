@@ -43,6 +43,16 @@ export function formatDate(value: string | Date, language: string, options?: For
   );
 }
 
+/** A calendar month ('YYYY-MM') as "March 2026" / "مارس 2026" (dashboard periods). */
+export function formatMonth(month: string, language: string, options?: FormatOptions): string {
+  const [year, m] = month.split('-').map(Number);
+  return new Intl.DateTimeFormat(locale(language, options ?? defaults), {
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'UTC',
+  }).format(new Date(Date.UTC(year ?? 1970, (m ?? 1) - 1, 15)));
+}
+
 /** Shows the user's language, falling back to the other one (bilingual `*_ar` / `*_en` fields). */
 export function pickText(
   language: string,

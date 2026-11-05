@@ -24,6 +24,7 @@ import {
   TableRow,
   Textarea,
   useToast,
+  Section,
 } from '@/ui';
 import {
   projectResidualRules,
@@ -44,7 +45,7 @@ import {
   type RiskCategory,
   type RiskSettingsValue,
 } from './api';
-import { RiskMatrix, Section, useNames, useNum, useRiskT } from './components';
+import { RiskMatrix, useNames, useNum, useRiskT } from './components';
 
 /** Settings → Risk framework (docs/design/risk.md §2, ADR 0100): versioned framework with live preview, categories, settings. */
 export function RiskFrameworkSettingsPage() {

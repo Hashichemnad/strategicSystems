@@ -104,23 +104,6 @@ export function PriorityChip({ priority }: { priority: string }) {
   return <StatusChip tone={priorityTone[priority] ?? 'neutral'}>{k(`priority.${priority}`)}</StatusChip>;
 }
 
-/** Achievement bar (ratio 0..1). */
-export function PctBar({ value, late }: { value: number; late?: boolean }) {
-  const pct = usePct();
-  const width = Math.max(0, Math.min(100, Math.round(value * 100)));
-  return (
-    <div className="flex min-w-28 items-center gap-2" data-testid="cap-pct">
-      <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted" aria-hidden>
-        <div
-          className={cn('h-full rounded-full', late ? 'bg-danger' : 'bg-primary')}
-          style={{ width: `${width}%` }}
-        />
-      </div>
-      <bdi className="text-xs tabular-nums">{pct(value)}</bdi>
-    </div>
-  );
-}
-
 export function Rows({ rows, className }: { rows: [string, ReactNode][]; className?: string }) {
   return (
     <dl className={cn('grid gap-4 rounded-lg border bg-card p-6 md:grid-cols-2', className)}>
@@ -131,52 +114,6 @@ export function Rows({ rows, className }: { rows: [string, ReactNode][]; classNa
         </div>
       ))}
     </dl>
-  );
-}
-
-export function Section({
-  title,
-  actions,
-  children,
-  testId,
-  className,
-}: {
-  title: ReactNode;
-  actions?: ReactNode;
-  children: ReactNode;
-  testId?: string;
-  className?: string;
-}) {
-  return (
-    <section
-      className={cn('flex flex-col gap-3 rounded-lg border bg-card p-5', className)}
-      data-testid={testId}
-    >
-      <header className="flex flex-wrap items-center justify-between gap-2">
-        <h2 className="font-semibold">{title}</h2>
-        {actions && <div className="flex flex-wrap gap-2">{actions}</div>}
-      </header>
-      {children}
-    </section>
-  );
-}
-
-export function Tile({
-  label,
-  value,
-  tone,
-  testId,
-}: {
-  label: string;
-  value: ReactNode;
-  tone?: string;
-  testId?: string;
-}) {
-  return (
-    <div className="rounded-lg border bg-card p-4" data-testid={testId}>
-      <div className="text-sm text-muted-foreground">{label}</div>
-      <div className={cn('mt-1 text-2xl font-semibold tabular-nums', tone)}>{value}</div>
-    </div>
   );
 }
 

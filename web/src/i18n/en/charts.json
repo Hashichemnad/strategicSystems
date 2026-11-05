@@ -1,0 +1,59 @@
+{
+  "showTable": "Show as table",
+  "hideTable": "Hide table",
+  "tableCaption": "Data of the chart: {{label}}",
+  "loading": "Loading chart…",
+  "unavailable": "The chart could not be displayed. The data is shown as a table.",
+  "notAvailable": "Not available",
+  "others": "Others",
+  "category": "Item",
+  "previous": "{{name}} (previous period)",
+  "noData": "No data for this period.",
+  "period": {
+    "label": "Period",
+    "kind": "Period type",
+    "kinds": {
+      "month": "Month",
+      "quarter": "Quarter",
+      "year": "Year",
+      "custom": "Custom range"
+    },
+    "from": "From month",
+    "to": "To month",
+    "previous": "Previous period",
+    "next": "Next period",
+    "compare": "Compare with previous period",
+    "quarterLabel": "Q{{quarter}} {{year}}",
+    "range": "{{from}} – {{to}}"
+  },
+  "export": {
+    "menu": "Export",
+    "pdf": "PDF",
+    "excel": "Excel",
+    "png": "Image (PNG)",
+    "failed": "The export failed. Try again."
+  },
+  "asOf": "As of {{time}}",
+  "delta": {
+    "up": "Up {{value}} on the previous period",
+    "down": "Down {{value}} on the previous period",
+    "same": "No change on the previous period"
+  },
+  "rag": {
+    "green": "On track",
+    "amber": "At risk",
+    "red": "Off track",
+    "grey": "No data"
+  },
+  "drill": "Show details",
+  "grid": {
+    "cellLabel": "{{row}}, {{column}}: {{value}}",
+    "empty": "no value"
+  },
+  "strategyMap": {
+    "label": "Strategy map",
+    "node": "{{name}}: {{score}}, {{rag}}",
+    "noScore": "no score",
+    "causes": "{{from}} drives {{to}}"
+  }
+}
