@@ -1,6 +1,6 @@
 # 0114 — Plan proposals, vendor update submissions, PM review with diff, monthly approval
 
-- **Status:** Proposed (Phase 11) — awaiting owner acceptance
+- **Status:** Accepted by the owner (Phase 11)
 - **Context:** SPEC §1.18 review flow and W3.2 / W4.2.
 
 ## Decision

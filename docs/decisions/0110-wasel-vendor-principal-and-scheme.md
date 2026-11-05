@@ -1,6 +1,6 @@
 # 0110 — Wasel: vendor principal and a separate authentication scheme
 
-- **Status:** Proposed (Phase 11) — awaiting owner acceptance
+- **Status:** Accepted by the owner (Phase 11)
 - **Context:** SPEC §1.18 / §0.0 / CLAUDE.md §7: vendors are external users with their own entry URL, separate session, mandatory MFA,
   optional UAE Pass, no internal SSO, no MCP / AI. The identity store already has `PrincipalType` (`internal` / `vendor`).
 

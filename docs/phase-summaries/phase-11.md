@@ -1,6 +1,6 @@
 # Phase 11 — Wasel vendor portal and Portfolio completion: summary
 
-**Status:** built and verified in this session (all gates green) · ADRs 0110–0117 proposed, awaiting owner acceptance
+**Status:** built and verified in this session (all gates green) · ADRs 0110–0117 accepted by the owner
 **Branch:** `claude/happy-planck-sl7tck`
 **Planning:** the plan is the Phase 11 part of [`docs/design/portfolio.md`](../design/portfolio.md) (§46–§62), committed before the code. As in earlier
 phases the session ran without an interactive approval step; open choices are ADRs 0110–0117. Phase 15 is built in a parallel session: shared
@@ -50,7 +50,7 @@ Manual penetration checklist (reviewed against the code): vendor cookie path `/a
 
 Existing tests updated for Phase 11 facts: job lists (integration and E2E) include `portfolio.wasel-access`; the endpoint catalogue accepts `VendorEndpoint` metadata; the MCP vendor test expects the earlier wall; three Vitest files type the `api.POST` spy loosely (TS2589 after the client grew).
 
-## Decisions (ADRs — proposed)
+## Decisions (ADRs — accepted by the owner)
 - [0110](../decisions/0110-wasel-vendor-principal-and-scheme.md) Vendor principal and a separate authentication scheme.
 - [0111](../decisions/0111-vendor-authorization-through-record-roles.md) Vendor authorization through `IAccessService` and record roles.
 - [0112](../decisions/0112-vendor-register-shared-supplier-master.md) Vendor register as the shared supplier master.

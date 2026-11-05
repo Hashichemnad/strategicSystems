@@ -1,6 +1,6 @@
 # 0112 — Vendor register as the shared supplier master
 
-- **Status:** Proposed (Phase 11) — awaiting owner acceptance
+- **Status:** Accepted by the owner (Phase 11)
 - **Context:** SPEC §1.18: the vendor register is master data, also the supplier list for Contracts / POs and the basis of supplier rating.
 
 ## Decision

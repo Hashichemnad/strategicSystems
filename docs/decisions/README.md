@@ -96,11 +96,11 @@ Write an ADR for every choice the SPEC or CLAUDE.md leaves open (CLAUDE.md §2 r
 | [0105](0105-risk-screens-charts-reports.md) | Risk screens: CSS / SVG heat-maps and charts; reports through the platform renderers | Accepted by the owner |
 | [0106](0106-risk-ai-and-mcp.md) | Risk AI features and MCP tools | Accepted by the owner |
 | [0107](0107-risk-office-role-and-system-ownership.md) | Risk Office is a role; owning unit configurable | Accepted by the owner |
-| [0110](0110-wasel-vendor-principal-and-scheme.md) | Wasel: vendor principal and a separate authentication scheme | Proposed |
-| [0111](0111-vendor-authorization-through-record-roles.md) | Vendor authorization through IAccessService and record roles | Proposed |
-| [0112](0112-vendor-register-shared-supplier-master.md) | Vendor register as the shared supplier master | Proposed |
-| [0113](0113-vendor-visible-fields-and-dtos.md) | Vendor-visible fields and separate vendor DTOs | Proposed |
-| [0114](0114-vendor-proposals-submissions-and-monthly.md) | Plan proposals, vendor submissions, PM review with diff, monthly approval | Proposed |
-| [0115](0115-vendor-access-expiry-notifications-rating.md) | Vendor access expiry, dormant accounts, notifications, rating | Proposed |
-| [0116](0116-capacity-view-and-portfolio-review.md) | Capacity view and quarterly portfolio review | Proposed |
-| [0117](0117-wasel-ai-gantt-font-sprint-notification.md) | Wasel AI, bundled Gantt export font, sprint review notification | Proposed |
+| [0110](0110-wasel-vendor-principal-and-scheme.md) | Wasel: vendor principal and a separate authentication scheme | Accepted by the owner |
+| [0111](0111-vendor-authorization-through-record-roles.md) | Vendor authorization through IAccessService and record roles | Accepted by the owner |
+| [0112](0112-vendor-register-shared-supplier-master.md) | Vendor register as the shared supplier master | Accepted by the owner |
+| [0113](0113-vendor-visible-fields-and-dtos.md) | Vendor-visible fields and separate vendor DTOs | Accepted by the owner |
+| [0114](0114-vendor-proposals-submissions-and-monthly.md) | Plan proposals, vendor submissions, PM review with diff, monthly approval | Accepted by the owner |
+| [0115](0115-vendor-access-expiry-notifications-rating.md) | Vendor access expiry, dormant accounts, notifications, rating | Accepted by the owner |
+| [0116](0116-capacity-view-and-portfolio-review.md) | Capacity view and quarterly portfolio review | Accepted by the owner |
+| [0117](0117-wasel-ai-gantt-font-sprint-notification.md) | Wasel AI, bundled Gantt export font, sprint review notification | Accepted by the owner |

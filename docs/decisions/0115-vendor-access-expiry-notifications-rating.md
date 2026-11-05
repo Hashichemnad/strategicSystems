@@ -1,6 +1,6 @@
 # 0115 — Vendor access expiry, dormant accounts, notifications and rating
 
-- **Status:** Proposed (Phase 11) — awaiting owner acceptance
+- **Status:** Accepted by the owner (Phase 11)
 
 ## Decision
 - `access_until` per assignment: from the linked contract's end date by default (`expiryRule = contract-end`), else entered by the PM;

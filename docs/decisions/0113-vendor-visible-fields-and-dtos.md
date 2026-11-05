@@ -1,6 +1,6 @@
 # 0113 — Vendor-visible fields and separate vendor DTOs
 
-- **Status:** Proposed (Phase 11) — awaiting owner acceptance
+- **Status:** Accepted by the owner (Phase 11)
 - **Context:** SPEC §1.18 "field-level vendor-visible flags per object"; CLAUDE.md §7 "never reuse internal DTOs".
 
 ## Decision

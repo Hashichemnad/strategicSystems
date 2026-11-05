@@ -1,6 +1,6 @@
 # 0111 — Vendor authorization through `IAccessService` and record roles
 
-- **Status:** Proposed (Phase 11) — awaiting owner acceptance
+- **Status:** Accepted by the owner (Phase 11)
 - **Context:** CLAUDE.md §7: one access service for every caller; vendors see only assigned projects; access ends at contract end / closure.
 
 ## Decision

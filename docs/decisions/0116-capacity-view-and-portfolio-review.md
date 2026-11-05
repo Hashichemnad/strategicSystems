@@ -1,6 +1,6 @@
 # 0116 — Capacity view and quarterly portfolio review
 
-- **Status:** Proposed (Phase 11) — awaiting owner acceptance
+- **Status:** Accepted by the owner (Phase 11)
 - **Context:** SPEC §1.12 items left by Phase 10 (ADR 0092).
 
 ## Decision

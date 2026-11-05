@@ -1,6 +1,6 @@
 # 0117 — Wasel AI (PM side), bundled Gantt export font, sprint review notification
 
-- **Status:** Proposed (Phase 11) — awaiting owner acceptance
+- **Status:** Accepted by the owner (Phase 11)
 
 ## Decision
 - Feature `portfolio-vendor-review` for the PM: server-computed inconsistency flags (100 % without evidence, progress jump > 30 % of the
