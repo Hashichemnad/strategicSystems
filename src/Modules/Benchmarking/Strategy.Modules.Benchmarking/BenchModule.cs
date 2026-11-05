@@ -7,6 +7,7 @@ using Strategy.Modules.Benchmarking.Application;
 using Strategy.Modules.Benchmarking.Infrastructure;
 using Strategy.Modules.Benchmarking.Jobs;
 using Strategy.Modules.Benchmarking.Mcp;
+using Strategy.Modules.Benchmarking.Reporting;
 using Strategy.Modules.Cap.Contracts;
 using Strategy.Modules.Requests.Contracts;
 using Strategy.Platform.Access;
@@ -18,6 +19,7 @@ using Strategy.Platform.Kernel;
 using Strategy.Platform.Links;
 using Strategy.Platform.Notifications;
 using Strategy.Platform.Persistence;
+using Strategy.Platform.Reporting;
 using Strategy.Platform.Scheduling;
 using Strategy.Platform.Settings;
 using Strategy.Platform.Workflow;
@@ -60,6 +62,9 @@ public sealed class BenchModule : IModule
         services.AddApprovalHook<BenchApprovalHook>();
         services.AddCurrentStatusProvider<StudyCurrentStatus>();
         services.AddMyWorkSource<BenchMyWork>();
+        services.AddReportingMetricSource<BenchMetricSource>();
+        services.AddReportingDatasetSource<BenchDatasetSource>();
+        services.AddMyWorkCardSource<BenchMyWorkCards>();
 
         services.AddFilePurpose(BenchFilePurposes.StudyDocument);
         services.AddFileOwnerAccess<StudyFiles>();
