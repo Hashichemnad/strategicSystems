@@ -42,7 +42,7 @@ ADRs **0130–0137** (status *Accepted*).
 | `tools/check-api-client.sh` · `tools/check-vulnerable.sh` | OpenAPI document and TS client up to date · no High / Critical |
 | `npm run lint` (incl. RTL class check) · `format:check` · `typecheck` · `npm test` | clean · **324 / 324** Vitest (new: Audit Management message keys and UI codes in AR and EN, the engagement team picker) |
 | `npm run build` · `npm audit --audit-level=high` · `npm run lint:licenses` | OK · no High / Critical (moderate advisories only, unchanged dependencies) · 617 packages allowed |
-| `npx playwright test e2e/audit.spec.ts` (ar + en) | **4 / 4** |
+| `npx playwright test e2e/audit.spec.ts` (ar + en) · `e2e/platform.spec.ts` | **4 / 4** · **10 / 10** (the job dashboard now lists 23 jobs with `auditmgmt.monitor`; the first CI run failed on the old count of 22) |
 
 ## Decisions (ADRs, *Accepted by the owner*)
 0130 record roles granted to units · 0131 data model, numbering and closure · 0132 Audit-Office-only write model ·
