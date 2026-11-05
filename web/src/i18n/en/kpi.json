@@ -621,5 +621,12 @@
     "valueRequired": "Enter the achieved value.",
     "windowDates": "The due date must not be before the opening date.",
     "windowRule": "Each period needs one window rule."
+  },
+  "picker": {
+    "change": "Change",
+    "clear": "Clear",
+    "search": "Search KPI by code or name",
+    "none": "No match",
+    "close": "Close"
   }
 }

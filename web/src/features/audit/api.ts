@@ -28,7 +28,9 @@ export type AuditedRecord =
   | 'capSource'
   | 'capRemark'
   | 'capAction'
-  | 'benchStudy';
+  | 'benchStudy'
+  | 'auditReport'
+  | 'auditFinding';
 
 interface HistoryQuery {
   page?: number;
@@ -76,6 +78,10 @@ async function fetchHistory(record: AuditedRecord, id: string, query: HistoryQue
       return unwrap(await api.GET('/api/v1/cap/actions/{id}/audit', { params, signal }));
     case 'benchStudy':
       return unwrap(await api.GET('/api/v1/bench/studies/{id}/audit', { params, signal }));
+    case 'auditReport':
+      return unwrap(await api.GET('/api/v1/auditmgmt/reports/{id}/audit', { params, signal }));
+    case 'auditFinding':
+      return unwrap(await api.GET('/api/v1/auditmgmt/findings/{id}/audit', { params, signal }));
   }
 }
 
@@ -118,6 +124,10 @@ async function fetchAsOf(record: AuditedRecord, id: string, at: string, signal: 
       return unwrap(await api.GET('/api/v1/cap/actions/{id}/audit/as-of', { params, signal }));
     case 'benchStudy':
       return unwrap(await api.GET('/api/v1/bench/studies/{id}/audit/as-of', { params, signal }));
+    case 'auditReport':
+      return unwrap(await api.GET('/api/v1/auditmgmt/reports/{id}/audit/as-of', { params, signal }));
+    case 'auditFinding':
+      return unwrap(await api.GET('/api/v1/auditmgmt/findings/{id}/audit/as-of', { params, signal }));
   }
 }
 

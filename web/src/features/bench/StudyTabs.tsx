@@ -6,8 +6,8 @@ import { useCan } from '@/features/access/session';
 import { AiBadge } from '@/features/ai/AiDraft';
 import { useAiFeature } from '@/features/ai/api';
 import { priorities } from '@/features/cap/api';
-import { Section, SimpleDialog, useDate, useNames } from '@/features/cap/components';
-import { useKpiCards } from '@/features/kpi/api';
+import { Section, SimpleDialog, useCapLabels, useDate, useNames } from '@/features/cap/components';
+import { KpiCardPicker } from '@/features/kpi/KpiCardPicker';
 import { EmployeePicker } from '@/features/org/EmployeePicker';
 import {
   Button,
@@ -768,8 +768,7 @@ export function AnalysisTab({ study: s }: { study: BenchStudy }) {
   const { k } = useBenchT();
   const { t: tcap } = useTranslation('cap');
   const analysis = useStudyAnalysis(s.id);
-  const kpis = useKpiCards({ pageSize: 200 });
-  const names = useNames();
+  const capLabels = useCapLabels();
   const [v, setV] = useState<BenchAnalysisInput>();
   const [notes, setNotes] = useState('');
   const [aiUsed, setAiUsed] = useState(false);
@@ -793,7 +792,7 @@ export function AnalysisTab({ study: s }: { study: BenchStudy }) {
           unitId: p.unit?.id ?? null,
           dueOn: p.dueOn,
           priority: p.priority,
-          actionTypeCode: p.actionTypeCode,
+          actionTypeCode: p.actionTypeCode ?? 'improvement',
           budgetRequired: p.budgetRequired,
         })),
       });
@@ -889,7 +888,7 @@ export function AnalysisTab({ study: s }: { study: BenchStudy }) {
                               unitId: s.responsibleUnit?.id ?? null,
                               dueOn: null,
                               priority: a.priority,
-                              actionTypeCode: null,
+                              actionTypeCode: 'improvement',
                               budgetRequired: false,
                             })),
                           ],
@@ -1072,18 +1071,12 @@ export function AnalysisTab({ study: s }: { study: BenchStudy }) {
                     />
                   </TableCell>
                   <TableCell className="min-w-48">
-                    <Select
+                    <KpiCardPicker
                       aria-label={t('analysis.kpi')}
                       disabled={!editable}
-                      value={x.kpiCardId ?? '-'}
-                      onValueChange={(id) => setRow('indicators', i, { kpiCardId: id === '-' ? null : id })}
-                      options={[
-                        { value: '-', label: '—' },
-                        ...(kpis.data?.items ?? []).map((c) => ({
-                          value: c.id,
-                          label: `${c.code} ${names.text(c.nameAr, c.nameEn)}`.trim(),
-                        })),
-                      ]}
+                      value={x.kpiCardId}
+                      onChange={(id) => setRow('indicators', i, { kpiCardId: id })}
+                      testId="bench-indicator-kpi"
                     />
                   </TableCell>
                   <TableCell>
@@ -1159,7 +1152,7 @@ export function AnalysisTab({ study: s }: { study: BenchStudy }) {
                       unitId: s.responsibleUnit?.id ?? null,
                       dueOn: null,
                       priority: 'medium',
-                      actionTypeCode: null,
+                      actionTypeCode: 'improvement',
                       budgetRequired: false,
                     },
                   ],
@@ -1228,6 +1221,15 @@ export function AnalysisTab({ study: s }: { study: BenchStudy }) {
                   value={p.priority ?? undefined}
                   onValueChange={(priority) => setRow('planItems', i, { priority })}
                   options={priorities.map((x) => ({ value: x, label: tcap(`priority.${x}`) }))}
+                />
+              </FormField>
+              <FormField label={t('analysis.actionType')}>
+                <Select
+                  disabled={!editable}
+                  value={p.actionTypeCode ?? 'improvement'}
+                  onValueChange={(actionTypeCode) => setRow('planItems', i, { actionTypeCode })}
+                  options={capLabels.lookupOptions('cap.action-type')}
+                  data-testid="bench-plan-item-type"
                 />
               </FormField>
               <Checkbox

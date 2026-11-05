@@ -8,6 +8,9 @@ import { renderWithProviders } from '@/test/render';
 import type { FormSchema, FormValues } from './api';
 import { FormRenderer, FormValuesView, plainText } from './FormRenderer';
 
+/** The generated client is too large for TypeScript to infer the spy's types (TS2589). */
+type LooseGetApi = { GET: (...args: unknown[]) => Promise<unknown> };
+
 const schema: FormSchema = {
   sections: [
     {
@@ -50,11 +53,11 @@ function Harness({ onValues }: { onValues: (values: FormValues) => void }) {
 }
 
 async function render(node: React.ReactNode, language: 'ar' | 'en' = 'en') {
-  vi.spyOn(api, 'GET').mockResolvedValue({
+  vi.spyOn(api as unknown as LooseGetApi, 'GET').mockResolvedValue({
     data: [],
     error: undefined,
     response: new Response(null, { status: 200 }),
-  } as never);
+  });
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   await renderWithProviders(<QueryClientProvider client={client}>{node}</QueryClientProvider>, { language });
 }

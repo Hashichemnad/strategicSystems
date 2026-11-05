@@ -7,6 +7,9 @@ import { renderWithProviders } from '@/test/render';
 import type { HeatCell, RatingBand } from './api';
 import { HeatMap, RiskMatrix } from './components';
 
+/** The generated client is too large for TypeScript to infer the spy's types (TS2589). */
+type LooseGetApi = { GET: (...args: unknown[]) => Promise<unknown> };
+
 const bands: RatingBand[] = [
   {
     code: 'low',
@@ -65,7 +68,9 @@ function cells(): HeatCell[] {
 
 async function render(ui: React.ReactElement, language: 'ar' | 'en' = 'en') {
   // The band labels come from the props; options are not needed (the request never resolves).
-  vi.spyOn(api, 'GET').mockReturnValue(new Promise(() => {}) as never);
+  vi.spyOn(api as unknown as LooseGetApi, 'GET').mockReturnValue(
+    new Promise(() => {}),
+  );
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return renderWithProviders(<QueryClientProvider client={client}>{ui}</QueryClientProvider>, { language });
 }

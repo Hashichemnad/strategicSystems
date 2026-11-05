@@ -147,6 +147,10 @@
     "bench": {
       "title": "Benchmarking",
       "description": "Search notice before the quarter, impact follow-up and KPI benchmark update."
+    },
+    "auditmgmt": {
+      "title": "Audit management",
+      "description": "Department visibility, department notices, follow-up review, reminders, improvement observations to CAP and audit KPI publishing."
     }
   },
   "title": "Settings",

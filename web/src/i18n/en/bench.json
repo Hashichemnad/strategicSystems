@@ -227,7 +227,8 @@
     "priority": "Priority",
     "budgetRequired": "Needs a budget",
     "remarkCreated": "CAP remark created",
-    "submit": "Submit analysis to the PMO"
+    "submit": "Submit analysis to the PMO",
+    "actionType": "Action type"
   },
   "actions": {
     "title": "Corrective actions from this study",

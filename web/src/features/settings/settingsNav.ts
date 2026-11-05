@@ -1,5 +1,6 @@
 import {
   ClipboardList,
+  FileSearch,
   Bell,
   BriefcaseBusiness,
   Bot,
@@ -48,6 +49,7 @@ export type SettingsPageKey =
   | 'ip'
   | 'cap'
   | 'bench'
+  | 'auditmgmt'
   | 'regional'
   | 'branding'
   | 'systems'
@@ -101,6 +103,7 @@ export type SettingsPath =
   | '/settings/ip'
   | '/settings/cap'
   | '/settings/bench'
+  | '/settings/audit-management'
   | '/settings/tasks/reassign'
   | '/settings/business-hours'
   | '/settings/holidays'
@@ -226,6 +229,12 @@ export const settingsGroups: readonly SettingsGroup[] = [
       { key: 'ip', to: '/settings/ip', icon: Lightbulb, permissions: ['ip.settings.manage'] },
       { key: 'cap', to: '/settings/cap', icon: ClipboardList, permissions: ['cap.settings.manage'] },
       { key: 'bench', to: '/settings/bench', icon: Scale, permissions: ['bench.settings.manage'] },
+      {
+        key: 'auditmgmt',
+        to: '/settings/audit-management',
+        icon: FileSearch,
+        permissions: ['auditmgmt.settings.manage'],
+      },
     ],
   },
   {

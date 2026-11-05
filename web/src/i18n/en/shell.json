@@ -42,7 +42,8 @@
     "portfolioCapacity": "Capacity",
     "portfolioReviews": "Portfolio reviews",
     "cap": "Corrective actions",
-    "bench": "Benchmarking"
+    "bench": "Benchmarking",
+    "audit": "Audit management"
   },
   "language": {
     "label": "Language",

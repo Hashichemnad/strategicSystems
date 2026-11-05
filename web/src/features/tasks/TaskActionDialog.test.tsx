@@ -6,17 +6,20 @@ import { api } from '@/api/client';
 import { renderWithProviders } from '@/test/render';
 import { TaskActionDialog } from './TaskActionDialog';
 
+/** The generated client is too large for TypeScript to infer the spy's types (TS2589). */
+type LooseGetApi = { GET: (...args: unknown[]) => Promise<unknown> };
+
 /** The generated paths type is too deep for vitest's MockInstance inference: spy on a loosely typed view of the client. */
 type LooseApi = { POST: (...args: unknown[]) => Promise<unknown> };
 
 const task = { id: 'task-1', version: 7, template: 'full' };
 
 async function renderDialog(action: 'approve' | 'reject' | 'return', language: 'ar' | 'en' = 'en') {
-  vi.spyOn(api, 'GET').mockResolvedValue({
+  vi.spyOn(api as unknown as LooseGetApi, 'GET').mockResolvedValue({
     data: { enabled: false, features: {} },
     error: undefined,
     response: new Response(null, { status: 200 }),
-  } as never);
+  });
   const post = vi.spyOn(api as unknown as LooseApi, 'POST').mockResolvedValue({
     data: { id: 'task-1' },
     error: undefined,

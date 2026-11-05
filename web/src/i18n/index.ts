@@ -80,7 +80,9 @@ import arPortfolioGov from './ar/portfolioGov.json';
 import enPortfolioGov from './en/portfolioGov.json';
 import arCap from './ar/cap.json';
 import enCap from './en/cap.json';
+import arAuditMgmt from './ar/auditmgmt.json';
 import arBench from './ar/bench.json';
+import enAuditMgmt from './en/auditmgmt.json';
 import enBench from './en/bench.json';
 import { readPreference } from '@/lib/preferences';
 
@@ -130,6 +132,7 @@ export const resources = {
     ip: arIp,
     cap: arCap,
     bench: arBench,
+    auditmgmt: arAuditMgmt,
   },
   en: {
     common: enCommon,
@@ -173,6 +176,7 @@ export const resources = {
     ip: enIp,
     cap: enCap,
     bench: enBench,
+    auditmgmt: enAuditMgmt,
   },
 } as const;
 

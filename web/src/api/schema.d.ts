@@ -11460,6 +11460,870 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/auditmgmt/options': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetAuditOptions'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/settings': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetAuditSettings'];
+    put: operations['SaveAuditSettings'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/dashboard': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetAuditDashboard'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/department-view': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetAuditDepartmentView'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/calendar': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetAuditCalendar'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/exports/{kind}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ExportAuditReport'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/reports': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListAuditReports'];
+    put?: never;
+    post: operations['CreateAuditReport'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/reports/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetAuditReport'];
+    put: operations['UpdateAuditReport'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/reports/{id}/issue': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['IssueAuditReport'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/reports/{id}/cancel': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CancelAuditReport'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/reports/{id}/findings': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CreateAuditFinding'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/reports/{id}/findings/batch': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CreateAuditFindingsBatch'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/import/template': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetAuditImportTemplate'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/reports/{id}/import': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ImportAuditFindings'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/reports/{id}/import/report': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['GetAuditImportReport'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/findings': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListAuditFindings'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/findings/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetAuditFinding'];
+    put: operations['UpdateAuditFinding'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/findings/{id}/cancel': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CancelAuditFinding'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/findings/{id}/recommendations': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListAuditRecommendations'];
+    put?: never;
+    post: operations['CreateAuditRecommendation'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/findings/{id}/similar': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListSimilarAuditFindings'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/findings/{id}/risks': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['LinkAuditFindingRisk'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/findings/{id}/risks/{linkId}/remove': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['UnlinkAuditFindingRisk'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/findings/{id}/send-to-cap': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SendAuditFindingToCap'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/recommendations/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetAuditRecommendation'];
+    put: operations['UpdateAuditRecommendation'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/recommendations/{id}/revise': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ReviseAuditRecommendation'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/recommendations/{id}/accept-risk': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['AcceptAuditRecommendationRisk'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/recommendations/{id}/reopen': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ReopenAuditRecommendation'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/recommendations/{id}/cancel': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CancelAuditRecommendation'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/recommendations/{id}/follow-ups': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RecordAuditFollowUp'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/lookups/risks': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['SearchAuditRiskOptions'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/lookups/risks/{riskId}/controls': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListAuditRiskControlOptions'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/lookups/documents': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['SearchAuditDocumentOptions'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/reports/{id}/audit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetAuditReportAuditTrail'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/reports/{id}/audit/as-of': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetAuditReportAsOf'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/findings/{id}/audit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetAuditFindingAuditTrail'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/findings/{id}/audit/as-of': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetAuditFindingAsOf'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/ai/reports/{id}/extract': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ExtractAuditFindingsWithAi'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/ai/reports/{id}/extract/document': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ExtractAuditFindingsFromDocumentWithAi'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/ai/recommendations/{id}/evidence-review': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ReviewAuditEvidenceWithAi'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/ai/findings/{id}/repeat': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CheckAuditRepeatFindingWithAi'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/ai/summary': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['DraftAuditCommitteeSummaryWithAi'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/lifecycle/universe': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListAuditUniverse'];
+    put?: never;
+    post: operations['CreateAuditableEntity'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/lifecycle/universe/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateAuditableEntity'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/lifecycle/universe/sync': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SyncAuditUniverse'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/lifecycle/plans': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListAuditPlans'];
+    put?: never;
+    post: operations['CreateAuditPlan'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/lifecycle/plans/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetAuditPlan'];
+    put: operations['UpdateAuditPlan'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/lifecycle/plans/{id}/submit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SubmitAuditPlan'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/lifecycle/engagements': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListAuditEngagements'];
+    put?: never;
+    post: operations['CreateAuditEngagement'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/lifecycle/engagements/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetAuditEngagement'];
+    put: operations['UpdateAuditEngagement'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/lifecycle/engagements/{id}/transition': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['TransitionAuditEngagement'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/lifecycle/engagements/{id}/survey': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RecordAuditEngagementSurvey'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/lifecycle/engagements/{id}/work-papers': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListAuditWorkPapers'];
+    put?: never;
+    post: operations['CreateAuditWorkPaper'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/lifecycle/engagements/{id}/work-papers/{paperId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateAuditWorkPaper'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/lifecycle/engagements/{id}/work-papers/{paperId}/action': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ActOnAuditWorkPaper'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -12178,6 +13042,217 @@ export interface components {
       status: string;
       note: null | string;
     };
+    AuditableEntityValues: {
+      kindCode: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      /** Format: uuid */
+      unitId: null | string;
+      /** Format: uuid */
+      riskId: null | string;
+      inherentRating: null | string;
+      /** Format: date */
+      lastAuditedOn: null | string;
+      active: boolean;
+    };
+    AuditBatchInput: {
+      findings: components['schemas']['NewFindingInput'][];
+    };
+    AuditCalendarItemDto: {
+      /** Format: date */
+      date: string;
+      kind: string;
+      /** Format: uuid */
+      recommendationId: string;
+      recommendationNumber: string;
+      actionAr: null | string;
+      actionEn: null | string;
+      /** Format: uuid */
+      findingId: string;
+      findingNumber: string;
+      priority: string;
+      unit: null | components['schemas']['AuditUnitDto'];
+      auditor: null | components['schemas']['AuditPersonDto'];
+      /** Format: double */
+      latestPct: number;
+      status: string;
+      overdue: boolean;
+    };
+    AuditCapRemarkDto: {
+      /** Format: uuid */
+      remarkId: string;
+      number: string;
+      status: null | string;
+      stage: null | string;
+      link: string;
+    };
+    AuditControlOptionDto: {
+      /** Format: uuid */
+      id: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      effectivenessCode: null | string;
+    };
+    AuditCountDto: {
+      code: string;
+      /** Format: int32 */
+      count: number;
+    };
+    AuditDashboardDto: {
+      /** Format: int32 */
+      findings: number;
+      /** Format: int32 */
+      open: number;
+      /** Format: int32 */
+      late: number;
+      /** Format: int32 */
+      closed: number;
+      /** Format: int32 */
+      riskAccepted: number;
+      /** Format: int32 */
+      cancelled: number;
+      /** Format: int32 */
+      repeat: number;
+      /** Format: int32 */
+      overdueRecommendations: number;
+      /** Format: double */
+      closureRate: number;
+      /** Format: int32 */
+      reports: number;
+      byStatus: components['schemas']['AuditCountDto'][];
+      byPriority: components['schemas']['AuditCountDto'][];
+      byYear: components['schemas']['AuditCountDto'][];
+      byReportType: components['schemas']['AuditCountDto'][];
+      byDepartment: components['schemas']['AuditUnitCountDto'][];
+      trend: components['schemas']['AuditTrendDto'][];
+      ageing: components['schemas']['AuditCountDto'][];
+      overdue: components['schemas']['AuditFindingListItemDto'][];
+      repeatFindings: components['schemas']['AuditFindingListItemDto'][];
+      riskAcceptedFindings: components['schemas']['AuditFindingListItemDto'][];
+    };
+    AuditDepartmentViewDto: {
+      units: components['schemas']['AuditUnitDto'][];
+      /** Format: int32 */
+      audits: number;
+      /** Format: int32 */
+      auditsClosed: number;
+      /** Format: int32 */
+      auditsActive: number;
+      /** Format: int32 */
+      findings: number;
+      /** Format: int32 */
+      activeFindings: number;
+      /** Format: int32 */
+      lateFindings: number;
+      /** Format: int32 */
+      closedFindings: number;
+      active: components['schemas']['AuditFindingListItemDto'][];
+      dueSoon: components['schemas']['AuditDueItemDto'][];
+      scope: string;
+    };
+    AuditDocumentOptionDto: {
+      /** Format: uuid */
+      id: string;
+      documentNo: null | string;
+      nameAr: null | string;
+      nameEn: null | string;
+      status: string;
+    };
+    AuditDueItemDto: {
+      /** Format: uuid */
+      recommendationId: string;
+      number: string;
+      actionAr: null | string;
+      actionEn: null | string;
+      /** Format: uuid */
+      findingId: string;
+      findingNumber: string;
+      /** Format: date */
+      dueOn: string;
+      /** Format: double */
+      latestPct: number;
+      status: string;
+    };
+    AuditEngagementBody: {
+      values: components['schemas']['EngagementValues'];
+      /** Format: uint32 */
+      version: number;
+    };
+    AuditEngagementDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      /** Format: uuid */
+      planId: null | string;
+      values: components['schemas']['EngagementValues'];
+      stage: string;
+      /** Format: double */
+      riskScore: number;
+      /** Format: date */
+      fieldworkEndOn: null | string;
+      /** Format: uuid */
+      reportId: null | string;
+      reportNumber: null | string;
+      reportStatus: null | string;
+      /** Format: int32 */
+      satisfaction: null | number;
+      satisfactionComment: null | string;
+      cancelReason: null | string;
+      team: null | components['schemas']['AuditTeamDto'];
+      leadAuditor: null | components['schemas']['AuditPersonDto'];
+      entityNameAr: null | string;
+      entityNameEn: null | string;
+      /** Format: int32 */
+      workPapers: number;
+      /** Format: int32 */
+      workPapersReviewed: number;
+      nextActions: string[];
+      /** Format: uint32 */
+      version: number;
+    };
+    AuditEngagementInput: {
+      /** Format: uuid */
+      planId: null | string;
+      values: components['schemas']['EngagementValues'];
+    };
+    AuditEngagementListItemDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      titleAr: null | string;
+      titleEn: null | string;
+      stage: string;
+      /** Format: int32 */
+      plannedQuarter: null | number;
+      /** Format: date */
+      plannedStart: null | string;
+      /** Format: date */
+      plannedEnd: null | string;
+      /** Format: double */
+      riskScore: number;
+      entityNameAr: null | string;
+      entityNameEn: null | string;
+      leadAuditor: null | components['schemas']['AuditPersonDto'];
+      /** Format: uuid */
+      reportId: null | string;
+    };
+    AuditEntityBody: {
+      values: components['schemas']['AuditableEntityValues'];
+      /** Format: uint32 */
+      version: number;
+    };
+    AuditEntityDto: {
+      /** Format: uuid */
+      id: string;
+      values: components['schemas']['AuditableEntityValues'];
+      unit: null | components['schemas']['AuditUnitDto'];
+      riskNumber: null | string;
+      origin: string;
+      /** Format: double */
+      riskScore: number;
+      /** Format: uint32 */
+      version: number;
+    };
     /** @description An entry as shown on History tabs and the Audit Log. */
     AuditEntryDto: {
       /** Format: uuid */
@@ -12211,6 +13286,540 @@ export interface components {
       reason: null | string;
       success: null | boolean;
       data: null | string;
+    };
+    AuditExportInput: {
+      format: string;
+      language: null | string;
+      /** Format: uuid */
+      reportId: null | string;
+      /** Format: uuid */
+      unitId: null | string;
+      /** Format: int32 */
+      year: null | number;
+      summaryAr: null | string;
+      summaryEn: null | string;
+    };
+    AuditExtractInput: {
+      text: null | string;
+    };
+    AuditFileDto: {
+      /** Format: uuid */
+      id: string;
+      name: string;
+      contentType: string;
+      /** Format: int64 */
+      sizeBytes: number;
+    };
+    AuditFindingBody: {
+      values: components['schemas']['FindingValues'];
+      /** Format: uint32 */
+      version: number;
+    };
+    AuditFindingDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      /** Format: uuid */
+      reportId: string;
+      reportNumber: string;
+      reportTitleAr: null | string;
+      reportTitleEn: null | string;
+      reportTypeCode: string;
+      reportStatus: string;
+      values: components['schemas']['FindingValues'];
+      responsibleUnit: null | components['schemas']['AuditUnitDto'];
+      department: null | components['schemas']['AuditUnitDto'];
+      auditor: null | components['schemas']['AuditPersonDto'];
+      repeatOf: null | components['schemas']['AuditFindingRefDto'];
+      criteriaDocument: null | components['schemas']['DocumentBadge'];
+      status: string;
+      /** Format: double */
+      completion: number;
+      /** Format: date */
+      actualClosedOn: null | string;
+      cancelReason: null | string;
+      capRemark: null | components['schemas']['AuditCapRemarkDto'];
+      risks: components['schemas']['AuditFindingRiskDto'][];
+      can: components['schemas']['AuditFindingPermissionsDto'];
+      /** Format: uint32 */
+      version: number;
+    };
+    AuditFindingListItemDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      /** Format: uuid */
+      reportId: string;
+      reportNumber: string;
+      reportTypeCode: string;
+      titleAr: null | string;
+      titleEn: null | string;
+      typeCode: string;
+      priority: string;
+      status: string;
+      /** Format: double */
+      completion: number;
+      responsibleUnit: null | components['schemas']['AuditUnitDto'];
+      department: null | components['schemas']['AuditUnitDto'];
+      /** Format: date */
+      findingDate: string;
+      /** Format: int32 */
+      year: number;
+      /** Format: date */
+      expectedClosingOn: null | string;
+      /** Format: date */
+      actualClosedOn: null | string;
+      repeat: boolean;
+      /** Format: int32 */
+      recommendations: number;
+      /** Format: int32 */
+      openRecommendations: number;
+      /** Format: date */
+      nextDueOn: null | string;
+      /** Format: date */
+      nextFollowUpOn: null | string;
+      lastComment: null | string;
+      auditor: null | components['schemas']['AuditPersonDto'];
+    };
+    AuditFindingPermissionsDto: {
+      edit: boolean;
+      cancel: boolean;
+      addRecommendation: boolean;
+      linkRisk: boolean;
+      sendToCap: boolean;
+      followUp: boolean;
+    };
+    AuditFindingRefDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      titleAr: null | string;
+      titleEn: null | string;
+      status: string;
+    };
+    AuditFindingRiskDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      riskId: string;
+      riskNumber: null | string;
+      riskTitleAr: null | string;
+      riskTitleEn: null | string;
+      riskStatus: null | string;
+      residualBand: null | string;
+      /** Format: uuid */
+      controlId: null | string;
+      controlNameAr: null | string;
+      controlNameEn: null | string;
+      controlEffectiveness: null | string;
+      flagged: boolean;
+      controlLoweredTo: null | string;
+      visible: boolean;
+      link: null | string;
+    };
+    AuditFollowUpDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      /** Format: uuid */
+      recommendationId: string;
+      /** Format: date */
+      followUpOn: string;
+      /** Format: date */
+      achievedOn: null | string;
+      /** Format: double */
+      pct: number;
+      actionsImplemented: null | string;
+      evidenceText: null | string;
+      /** Format: date */
+      nextFollowUpOn: null | string;
+      comment: null | string;
+      recordedBy: null | components['schemas']['AuditPersonDto'];
+      reviewStatus: string;
+      reviewNote: null | string;
+      applied: boolean;
+      /** Format: date-time */
+      createdAt: string;
+      files: components['schemas']['AuditFileDto'][];
+    };
+    AuditImportIssueDto: {
+      /** Format: int32 */
+      row: number;
+      column: null | string;
+      code: string;
+    };
+    AuditImportReportDto: {
+      committed: boolean;
+      /** Format: int32 */
+      totalRows: number;
+      /** Format: int32 */
+      findings: number;
+      /** Format: int32 */
+      recommendations: number;
+      issues: components['schemas']['AuditImportIssueDto'][];
+      createdNumbers: string[];
+    };
+    AuditLogDto: {
+      /** Format: uuid */
+      id: string;
+      kind: string;
+      /** Format: date */
+      previousDueOn: null | string;
+      /** Format: date */
+      newDueOn: null | string;
+      justification: string;
+      reference: null | string;
+      recordedBy: null | components['schemas']['AuditPersonDto'];
+      /** Format: date-time */
+      at: string;
+    };
+    /** @description Settings → Audit management (docs/design/audit.md §2.1). */
+    AuditMgmtSettings: {
+      departmentScope?: string;
+      departmentLevelCode?: string;
+      notifyDepartments?: boolean;
+      followUpReview?: boolean;
+      /** Format: int32 */
+      followUpReminderDays?: number;
+      /** Format: int32 */
+      dueReminderDays?: number;
+      reminderWorkingDays?: boolean;
+      capObservations?: string;
+      /** Format: uuid */
+      kpiClosureRateCardId?: null | string;
+      /** Format: uuid */
+      kpiOverdueCardId?: null | string;
+      /** Format: uuid */
+      kpiPlanCompletionCardId?: null | string;
+      /** Format: uuid */
+      kpiReportTimelinessCardId?: null | string;
+      /** Format: uuid */
+      kpiSatisfactionCardId?: null | string;
+      /** Format: int32 */
+      reportTimelinessDays?: number;
+    };
+    AuditOptionDto: {
+      code: string;
+      labelAr: null | string;
+      labelEn: null | string;
+    };
+    AuditOptionsDto: {
+      lookups: {
+        [key: string]: components['schemas']['AuditOptionDto'][];
+      };
+      isOffice: boolean;
+      canDashboard: boolean;
+      canExport: boolean;
+      canSettings: boolean;
+      lifecycleEnabled: boolean;
+      canLifecycle: boolean;
+      canWorkPapers: boolean;
+      followUpReview: boolean;
+      capObservations: string;
+      capAvailable: boolean;
+      riskAvailable: boolean;
+      documentsAvailable: boolean;
+    };
+    AuditPersonDto: {
+      /** Format: uuid */
+      id: string;
+      nameAr: null | string;
+      nameEn: null | string;
+    };
+    AuditPlanBody: {
+      titleAr: null | string;
+      titleEn: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
+    AuditPlanDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: int32 */
+      year: number;
+      titleAr: null | string;
+      titleEn: null | string;
+      status: string;
+      note: null | string;
+      /** Format: date-time */
+      approvedAt: null | string;
+      engagements: components['schemas']['AuditEngagementListItemDto'][];
+      qaip: components['schemas']['AuditQaipDto'];
+      quarterStatus: {
+        [key: string]: {
+          [key: string]: number;
+        };
+      };
+      canEdit: boolean;
+      /** Format: uint32 */
+      version: number;
+    };
+    AuditPlanInput: {
+      /** Format: int32 */
+      year: number;
+      titleAr: null | string;
+      titleEn: null | string;
+    };
+    AuditQaipDto: {
+      /** Format: double */
+      planCompletion: number;
+      /** Format: double */
+      reportTimeliness: number;
+      /** Format: double */
+      closureRate: number;
+      /** Format: double */
+      satisfaction: null | number;
+      /** Format: int32 */
+      engagements: number;
+      /** Format: int32 */
+      completed: number;
+      /** Format: int32 */
+      reportsIssued: number;
+      /** Format: int32 */
+      reportsTimely: number;
+    };
+    AuditReasonInput: {
+      reason: null | string;
+    };
+    AuditRecommendationBody: {
+      values: components['schemas']['RecommendationValues'];
+      /** Format: uint32 */
+      version: number;
+    };
+    AuditRecommendationDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      /** Format: uuid */
+      findingId: string;
+      values: components['schemas']['RecommendationValues'];
+      contact: null | components['schemas']['AuditPersonDto'];
+      status: string;
+      /** Format: double */
+      latestPct: number;
+      /** Format: date */
+      effectiveDue: string;
+      /** Format: date */
+      revisedDueOn: null | string;
+      revisedReason: null | string;
+      /** Format: date */
+      completedOn: null | string;
+      /** Format: date */
+      lastFollowUpOn: null | string;
+      /** Format: date */
+      nextFollowUpOn: null | string;
+      lastComment: null | string;
+      riskAcceptanceJustification: null | string;
+      riskAcceptanceReference: null | string;
+      /** Format: date */
+      riskAcceptedOn: null | string;
+      cancelReason: null | string;
+      pendingReview: boolean;
+      followUps: components['schemas']['AuditFollowUpDto'][];
+      log: components['schemas']['AuditLogDto'][];
+      /** Format: uint32 */
+      version: number;
+    };
+    AuditReportBody: {
+      values: components['schemas']['AuditReportValues'];
+      /** Format: uint32 */
+      version: number;
+    };
+    AuditReportDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      values: components['schemas']['AuditReportValues'];
+      auditedUnits: components['schemas']['AuditUnitDto'][];
+      distribution: components['schemas']['AuditPersonDto'][];
+      leadAuditor: null | components['schemas']['AuditPersonDto'];
+      status: string;
+      /** Format: date-time */
+      issuedAt: null | string;
+      /** Format: date-time */
+      closedAt: null | string;
+      cancelReason: null | string;
+      /** Format: uuid */
+      engagementId: null | string;
+      /** Format: int32 */
+      findings: number;
+      /** Format: int32 */
+      openFindings: number;
+      /** Format: int32 */
+      closedFindings: number;
+      can: components['schemas']['AuditReportPermissionsDto'];
+      /** Format: uint32 */
+      version: number;
+    };
+    AuditReportListItemDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      titleAr: null | string;
+      titleEn: null | string;
+      typeCode: string;
+      auditorBody: null | string;
+      /** Format: date */
+      reportDate: null | string;
+      status: string;
+      leadAuditor: null | components['schemas']['AuditPersonDto'];
+      /** Format: int32 */
+      findings: number;
+      /** Format: int32 */
+      openFindings: number;
+      /** Format: int32 */
+      lateFindings: number;
+      /** Format: int32 */
+      closedFindings: number;
+    };
+    AuditReportPermissionsDto: {
+      edit: boolean;
+      issue: boolean;
+      cancel: boolean;
+      addFinding: boolean;
+    };
+    AuditReportValues: {
+      titleAr: null | string;
+      titleEn: null | string;
+      typeCode: string;
+      auditorBody: null | string;
+      /** Format: uuid */
+      leadAuditorEmployeeId: null | string;
+      auditedUnitIds: null | string[];
+      /** Format: date */
+      periodFrom: null | string;
+      /** Format: date */
+      periodTo: null | string;
+      /** Format: date */
+      reportDate: null | string;
+      distributionEmployeeIds: null | string[];
+      distributionNote: null | string;
+      summary: null | string;
+    };
+    AuditReviseInput: {
+      /** Format: date */
+      newDueOn: string;
+      reason: null | string;
+    };
+    AuditRiskAcceptInput: {
+      justification: null | string;
+      reference: null | string;
+    };
+    AuditRiskLinkInput: {
+      /** Format: uuid */
+      riskId: string;
+      /** Format: uuid */
+      controlId: null | string;
+      flagForReassessment: boolean;
+      lowerControl: boolean;
+    };
+    AuditRiskOptionDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      titleAr: null | string;
+      titleEn: null | string;
+      status: string;
+      residualBand: null | string;
+    };
+    AuditSettingsInput: {
+      settings: components['schemas']['AuditMgmtSettings'];
+      /** Format: uint32 */
+      version: number;
+    };
+    AuditSimilarFindingDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      titleAr: null | string;
+      titleEn: null | string;
+      unit: null | components['schemas']['AuditUnitDto'];
+      /** Format: int32 */
+      year: number;
+      status: string;
+      /** Format: double */
+      score: number;
+    };
+    AuditSummaryDraftDto: {
+      summaryAr: string;
+      summaryEn: string;
+      /** Format: uuid */
+      usageId: string;
+    };
+    AuditSummaryInput: {
+      /** Format: uuid */
+      unitId: null | string;
+      /** Format: int32 */
+      year: null | number;
+    };
+    AuditSurveyInput: {
+      /** Format: int32 */
+      score: number;
+      comment: null | string;
+    };
+    AuditTeamDto: {
+      /** Format: uuid */
+      id: string;
+      number: null | string;
+      nameAr: null | string;
+      nameEn: null | string;
+      status: string;
+      members: components['schemas']['AuditPersonDto'][];
+    };
+    AuditTransitionInput: {
+      action: string;
+      reason: null | string;
+    };
+    AuditTrendDto: {
+      month: string;
+      /** Format: int32 */
+      opened: number;
+      /** Format: int32 */
+      closed: number;
+    };
+    AuditUnitCountDto: {
+      unit: null | components['schemas']['AuditUnitDto'];
+      /** Format: int32 */
+      findings: number;
+      /** Format: int32 */
+      open: number;
+      /** Format: int32 */
+      late: number;
+      /** Format: int32 */
+      closed: number;
+      /** Format: int32 */
+      riskAccepted: number;
+      /** Format: double */
+      closureRate: number;
+    };
+    AuditUnitDto: {
+      /** Format: uuid */
+      id: string;
+      code: null | string;
+      nameAr: null | string;
+      nameEn: null | string;
+    };
+    AuditWorkPaperActionInput: {
+      action: string;
+    };
+    AuditWorkPaperBody: {
+      values: components['schemas']['WorkPaperValues'];
+      /** Format: uint32 */
+      version: number;
+    };
+    AuditWorkPaperDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      engagementId: string;
+      values: components['schemas']['WorkPaperValues'];
+      status: string;
+      preparedBy: null | components['schemas']['AuditPersonDto'];
+      reviewedBy: null | components['schemas']['AuditPersonDto'];
+      /** Format: date-time */
+      reviewedAt: null | string;
+      /** Format: uint32 */
+      version: number;
     };
     AuthEventDto: {
       /** Format: uuid */
@@ -14503,6 +16112,17 @@ export interface components {
        */
       ackRequired: boolean;
     };
+    /** @description A document as another system may show it (only when the user may see it — sensitivity clearance, ADR 0083). */
+    DocumentBadge: {
+      /** Format: uuid */
+      id: string;
+      documentNo: null | string;
+      nameAr: null | string;
+      nameEn: null | string;
+      status: string;
+      currentVersion: null | string;
+      link: string;
+    };
     DocumentCapabilities: {
       confirmValid: boolean;
       newVersion: boolean;
@@ -14792,6 +16412,26 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    EngagementValues: {
+      titleAr: null | string;
+      titleEn: null | string;
+      /** Format: uuid */
+      entityId: null | string;
+      objectives: null | string;
+      scope: null | string;
+      /** Format: uuid */
+      teamId: null | string;
+      /** Format: uuid */
+      leadAuditorEmployeeId: null | string;
+      /** Format: int32 */
+      plannedQuarter: null | number;
+      /** Format: date */
+      plannedStart: null | string;
+      /** Format: date */
+      plannedEnd: null | string;
+      /** Format: int32 */
+      budgetHours: null | number;
+    };
     /** @description Result of a completed MFA enrolment: signed in, plus the recovery codes to show once. */
     EnrolmentResultDto: {
       status: string;
@@ -14993,6 +16633,14 @@ export interface components {
       unitId: null | string;
       riskIds: string[];
     };
+    EvidenceReviewDto: {
+      support: string;
+      gaps: string[];
+      commentAr: string;
+      commentEn: string;
+      /** Format: uuid */
+      usageId: string;
+    };
     EvmDto: {
       values: components['schemas']['EarnedValue'];
       /** Format: int32 */
@@ -15022,6 +16670,24 @@ export interface components {
       /** Format: int32 */
       locationNumber: null | number;
       fromScan: boolean;
+    };
+    ExtractedFindingDto: {
+      titleAr: null | string;
+      titleEn: null | string;
+      condition: null | string;
+      criteria: null | string;
+      cause: null | string;
+      effect: null | string;
+      /** Format: uuid */
+      responsibleUnitId: null | string;
+      unitCode: null | string;
+      priority: string;
+      typeCode: string;
+      recommendations: components['schemas']['ExtractedRecommendationDto'][];
+    };
+    ExtractedRecommendationDto: {
+      actionAr: null | string;
+      actionEn: null | string;
     };
     ExtractedRemarkDto: {
       textAr: null | string;
@@ -15151,6 +16817,37 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    /** @description Draft findings — nothing is saved until the Audit Office confirms the rows it keeps (ADR 0134). */
+    FindingExtractionDto: {
+      findings: components['schemas']['ExtractedFindingDto'][];
+      /** Format: int32 */
+      characters: number;
+      /** Format: uuid */
+      usageId: string;
+    };
+    FindingValues: {
+      titleAr: null | string;
+      titleEn: null | string;
+      typeCode: string;
+      condition: null | string;
+      criteria: null | string;
+      /** Format: uuid */
+      criteriaDocumentId: null | string;
+      cause: null | string;
+      effect: null | string;
+      /** Format: date */
+      findingDate: string;
+      /** Format: uuid */
+      responsibleUnitId: string;
+      priority: string;
+      repeat: boolean;
+      /** Format: uuid */
+      repeatOfFindingId: null | string;
+      /** Format: date */
+      expectedClosingOn: null | string;
+      /** Format: uuid */
+      auditorEmployeeId: null | string;
+    };
     FlowPoint: {
       /** Format: date */
       date: string;
@@ -15174,6 +16871,19 @@ export interface components {
       /** Format: uuid */
       employeeId: null | string;
       canUpload: null | boolean;
+    };
+    FollowUpValues: {
+      /** Format: date */
+      followUpOn: string;
+      /** Format: date */
+      achievedOn: null | string;
+      /** Format: double */
+      pct: number;
+      actionsImplemented: null | string;
+      evidenceText: null | string;
+      /** Format: date */
+      nextFollowUpOn: null | string;
+      comment: null | string;
     };
     ForgotPasswordInput: {
       login: null | string;
@@ -17801,6 +19511,11 @@ export interface components {
       narrativeAr: null | string;
       narrativeEn: null | string;
     };
+    /** @description A recommendation entered together with its finding (form, import, AI confirmation). */
+    NewFindingInput: {
+      finding: components['schemas']['FindingValues'];
+      recommendations: null | components['schemas']['RecommendationValues'][];
+    };
     NotificationDto: {
       /** Format: uuid */
       id: string;
@@ -18014,6 +19729,30 @@ export interface components {
     /** @description One page of items plus the total count across all pages. */
     PagedResultOfAuditEntryDto: {
       items: components['schemas']['AuditEntryDto'][];
+      /** Format: int32 */
+      page: number;
+      /** Format: int32 */
+      pageSize: number;
+      /** Format: int32 */
+      totalCount: number;
+      /** Format: int32 */
+      totalPages?: number;
+    };
+    /** @description One page of items plus the total count across all pages. */
+    PagedResultOfAuditFindingListItemDto: {
+      items: components['schemas']['AuditFindingListItemDto'][];
+      /** Format: int32 */
+      page: number;
+      /** Format: int32 */
+      pageSize: number;
+      /** Format: int32 */
+      totalCount: number;
+      /** Format: int32 */
+      totalPages?: number;
+    };
+    /** @description One page of items plus the total count across all pages. */
+    PagedResultOfAuditReportListItemDto: {
+      items: components['schemas']['AuditReportListItemDto'][];
       /** Format: int32 */
       page: number;
       /** Format: int32 */
@@ -19801,6 +21540,18 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    RecommendationValues: {
+      actionAr: null | string;
+      actionEn: null | string;
+      managementResponseCode: null | string;
+      managementComment: null | string;
+      implementationPlan: null | string;
+      /** Format: uuid */
+      contactEmployeeId: null | string;
+      /** Format: date */
+      dueOn: string;
+      notes: null | string;
+    };
     RecordRolePermissionsInput: {
       permissions: null | string[];
       /** Format: uint32 */
@@ -19950,6 +21701,14 @@ export interface components {
       certificateFileId: null | string;
       /** Format: uint32 */
       version: number;
+    };
+    RepeatCheckDto: {
+      similar: components['schemas']['AuditSimilarFindingDto'][];
+      repeatOf: null | string;
+      rationaleAr: null | string;
+      rationaleEn: null | string;
+      /** Format: uuid */
+      usageId: null | string;
     };
     ReportDto: {
       /** Format: uuid */
@@ -21009,6 +22768,11 @@ export interface components {
       ipAddress: null | string;
       userAgent: null | string;
       current: boolean;
+    };
+    SettingsDocumentOfAuditMgmtSettings: {
+      value: null | components['schemas']['AuditMgmtSettings'];
+      /** Format: uint32 */
+      version: number;
     };
     SettingsDocumentOfBenchSettings: {
       value: null | components['schemas']['BenchSettings'];
@@ -23441,6 +25205,14 @@ export interface components {
       late: number;
       /** Format: double */
       lateRate: null | number;
+    };
+    WorkPaperValues: {
+      reference: null | string;
+      title: null | string;
+      testStep: null | string;
+      sample: null | string;
+      result: null | string;
+      conclusion: null | string;
     };
   };
   responses: never;
@@ -51230,6 +53002,2217 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['PracticeSearchDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetAuditOptions: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditOptionsDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetAuditSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SettingsDocumentOfAuditMgmtSettings'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SaveAuditSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AuditSettingsInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SettingsDocumentOfAuditMgmtSettings'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetAuditDashboard: {
+    parameters: {
+      query?: {
+        unitId?: string;
+        year?: number;
+        priority?: string;
+        reportType?: string;
+        reportId?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditDashboardDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetAuditDepartmentView: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditDepartmentViewDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetAuditCalendar: {
+    parameters: {
+      query?: {
+        from?: string;
+        to?: string;
+        auditorEmployeeId?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditCalendarItemDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ExportAuditReport: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        kind: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AuditExportInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListAuditReports: {
+    parameters: {
+      query?: {
+        page?: number;
+        pageSize?: number;
+        search?: string;
+        type?: string;
+        status?: string;
+        year?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PagedResultOfAuditReportListItemDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateAuditReport: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AuditReportValues'];
+      };
+    };
+    responses: {
+      /** @description Created */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditReportDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetAuditReport: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditReportDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateAuditReport: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AuditReportBody'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditReportDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  IssueAuditReport: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditReportDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CancelAuditReport: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AuditReasonInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditReportDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateAuditFinding: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['NewFindingInput'];
+      };
+    };
+    responses: {
+      /** @description Created */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditFindingDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateAuditFindingsBatch: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AuditBatchInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditFindingListItemDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetAuditImportTemplate: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ImportAuditFindings: {
+    parameters: {
+      query?: {
+        mode?: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'multipart/form-data': {
+          file: components['schemas']['IFormFile'];
+        };
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditImportReportDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetAuditImportReport: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'multipart/form-data': {
+          file: components['schemas']['IFormFile'];
+        };
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListAuditFindings: {
+    parameters: {
+      query?: {
+        page?: number;
+        pageSize?: number;
+        sort?: string;
+        view?: string;
+        search?: string;
+        reportId?: string;
+        status?: string;
+        priority?: string;
+        unitId?: string;
+        year?: number;
+        reportType?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PagedResultOfAuditFindingListItemDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetAuditFinding: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditFindingDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateAuditFinding: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AuditFindingBody'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditFindingDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CancelAuditFinding: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AuditReasonInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditFindingDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListAuditRecommendations: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditRecommendationDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateAuditRecommendation: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RecommendationValues'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditRecommendationDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListSimilarAuditFindings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditSimilarFindingDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  LinkAuditFindingRisk: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AuditRiskLinkInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditFindingDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UnlinkAuditFindingRisk: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        linkId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditFindingDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SendAuditFindingToCap: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditFindingDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetAuditRecommendation: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditRecommendationDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateAuditRecommendation: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AuditRecommendationBody'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditRecommendationDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ReviseAuditRecommendation: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AuditReviseInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditRecommendationDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  AcceptAuditRecommendationRisk: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AuditRiskAcceptInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditRecommendationDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ReopenAuditRecommendation: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AuditReasonInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditRecommendationDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CancelAuditRecommendation: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AuditReasonInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditRecommendationDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RecordAuditFollowUp: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['FollowUpValues'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditRecommendationDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SearchAuditRiskOptions: {
+    parameters: {
+      query?: {
+        search?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditRiskOptionDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListAuditRiskControlOptions: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        riskId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditControlOptionDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SearchAuditDocumentOptions: {
+    parameters: {
+      query?: {
+        search?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditDocumentOptionDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetAuditReportAuditTrail: {
+    parameters: {
+      query?: {
+        page?: number;
+        pageSize?: number;
+        field?: string;
+        userId?: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PagedResultOfAuditEntryDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetAuditReportAsOf: {
+    parameters: {
+      query: {
+        at: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RecordSnapshotDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetAuditFindingAuditTrail: {
+    parameters: {
+      query?: {
+        page?: number;
+        pageSize?: number;
+        field?: string;
+        userId?: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PagedResultOfAuditEntryDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetAuditFindingAsOf: {
+    parameters: {
+      query: {
+        at: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RecordSnapshotDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ExtractAuditFindingsWithAi: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AuditExtractInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['FindingExtractionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ExtractAuditFindingsFromDocumentWithAi: {
+    parameters: {
+      query?: {
+        text?: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'multipart/form-data': {
+          file: components['schemas']['IFormFile'];
+        };
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['FindingExtractionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ReviewAuditEvidenceWithAi: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'multipart/form-data': {
+          /** Format: double */
+          pct: number;
+        } & {
+          actionsImplemented?: string;
+        } & {
+          evidenceText?: string;
+        } & {
+          file?: components['schemas']['IFormFile'];
+        };
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['EvidenceReviewDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CheckAuditRepeatFindingWithAi: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RepeatCheckDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  DraftAuditCommitteeSummaryWithAi: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AuditSummaryInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditSummaryDraftDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListAuditUniverse: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditEntityDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateAuditableEntity: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AuditableEntityValues'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditEntityDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateAuditableEntity: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AuditEntityBody'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditEntityDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SyncAuditUniverse: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditEntityDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListAuditPlans: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditPlanDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateAuditPlan: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AuditPlanInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditPlanDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetAuditPlan: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditPlanDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateAuditPlan: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AuditPlanBody'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditPlanDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SubmitAuditPlan: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AuditReasonInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditPlanDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListAuditEngagements: {
+    parameters: {
+      query?: {
+        planId?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditEngagementListItemDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateAuditEngagement: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AuditEngagementInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditEngagementDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetAuditEngagement: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditEngagementDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateAuditEngagement: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AuditEngagementBody'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditEngagementDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  TransitionAuditEngagement: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AuditTransitionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditEngagementDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RecordAuditEngagementSurvey: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AuditSurveyInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditEngagementDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListAuditWorkPapers: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditWorkPaperDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateAuditWorkPaper: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['WorkPaperValues'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditWorkPaperDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateAuditWorkPaper: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        paperId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AuditWorkPaperBody'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditWorkPaperDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ActOnAuditWorkPaper: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        paperId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AuditWorkPaperActionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditWorkPaperDto'];
         };
       };
       /** @description Problem Details (RFC 9457) */
