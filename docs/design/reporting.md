@@ -86,6 +86,26 @@ The fiscal-year start month is a Settings → Reporting value (default January).
   refresh, never runs it in the request).
 - Idempotent: recomputing replaces the same rows. A failing module source is logged, its previous facts stay with their timestamp.
 
+### 2.5 Metric, list, dataset and card catalogue (codes are stable; seeded dashboards use them)
+
+Unit = the unit column of the metric's scope permission (the module's `ScopeMap`). Dimension values are codes (lookups or fixed labels
+declared on the metric). Stock = current state stamped on the current month (snapshots freeze past months); Flow = by the record's date.
+
+| System | Metrics (kind; dimensions) | Lists | Datasets | My Work cards |
+|---|---|---|---|---|
+| Portfolio | `portfolio.projects` (stock; stage, health `green·amber·red·none`, status, delayed `true·false`, classification) · `portfolio.health` (stock ratio: green ÷ active projects with a health) · `portfolio.budget` (stock, partition `costs`; kind `planned·actual`) · `portfolio.requests` (stock; stage) · `portfolio.milestones` (flow by planned end; status `completed·open`, onTime) | `portfolio.delayed-projects`, `portfolio.upcoming-milestones` | projects, milestones, program requests | my projects & milestones due; Wasel submissions to review |
+| KPI | `kpi.score` (flow ratio by result period: Σ weight·capped ÷ Σ weight; objective, perspective) · `kpi.results` (flow; rag `green·amber·red·not-reported`) · `kpi.submissions-on-time` (flow ratio: submitted by the deadline ÷ results due) · `kpi.cards` (stock; type, objective, status) · `kpi.pending` (stock; status) | `kpi.top-performers`, `kpi.bottom-performers` | KPI cards, KPI results | my KPI results to submit |
+| Risk | `risk.risks` (stock; band, severe `true·false` = the framework's two highest bands, appetite `inside·outside`, category, status, type) · `risk.heat` (stock; kind `inherent·residual`, likelihood, impact) · `risk.movement` (flow; direction `improved·worsened·unchanged`) · `risk.actions` (stock; status, overdue) · `risk.reviews-overdue` (stock) · `risk.kri-breaches` (flow) | `risk.top10`, `risk.outside-appetite`, `risk.critical` | risks, treatment actions | my risks & actions |
+| Teams | `teams.teams` (stock; type, status, committee) · `teams.evaluations` (stock; status) · `teams.score` (stock ratio) | — | teams, team members | my teams & pending evaluations |
+| Tasks | `tasks.tasks` (stock, partition `confidential`; status, priority, source, overdue) · `tasks.completed` (flow; onTime) · `tasks.on-time` (flow ratio) · `tasks.hours-to-accept`, `tasks.hours-to-complete` (flow ratio) | `tasks.overdue` | tasks | my tasks |
+| Requests | `requests.requests` (stock; type, status) · `requests.cycle-days` (flow ratio) | — | requests | my requests (documents / IP / benchmarks) |
+| Document Registry | `docreg.documents` (stock, partition `sensitivity:<code>`; level, type, status, expiring) | `docreg.expiring` | documents | (via Requests) |
+| IP | `ip.records` (stock; type, protection, status, expiring) | `ip.expiring` | IP records | (via Requests) |
+| Benchmarking | `bench.studies` (stock; stage, quarter) · `bench.actions` (stock; status) · `bench.practices-adopted` (flow) | — | studies | (via Requests) |
+| CAP | `cap.remarks` (stock; status, source, priority, overdue) · `cap.actions` (stock; status `not-started·in-progress·late·completed`, budget) · `cap.closure` (stock ratio: completed ÷ live actions) · `cap.actions-on-time` (flow ratio) | `cap.overdue-remarks` | remarks, actions | my CAP remarks & actions |
+| Audit Management | `auditmgmt.findings` (stock, partition `office` for draft reports; status, priority, age, reportType) · `auditmgmt.recommendations` (stock; status, overdue) · `auditmgmt.closure` (stock ratio: closed ÷ live findings) | `auditmgmt.late-findings`, `auditmgmt.overdue-recommendations` | findings, recommendations | audit follow-ups due (Audit Office) |
+| Workflow / Notifications / Reporting | — | — | — | pending approvals · notifications · pinned dashboards |
+
 ## 3. Widget catalogue and dashboards (ADR 0143)
 
 ### 3.1 Widget types (one React component each in `web/src/ui/dashboard/`, all ECharts except tiles / tables / lists / heat-grid)
