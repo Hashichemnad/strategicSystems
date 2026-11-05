@@ -35,11 +35,11 @@ Status: **built — awaiting owner acceptance**. Design notes: [`docs/design/cap
 | Gate | Result |
 |---|---|
 | `dotnet build Strategy.slnx -c Release` · `dotnet format --verify-no-changes` | 0 warnings, 0 errors · clean |
-| Tests (real PostgreSQL 16) | CAP + Benchmarking integration **11 / 11**; architecture **30 / 30**; unit **1 756 / 1 763** — the 7 failures are the OCR tests: Tesseract is not installed in this container (unrelated to this phase). Authorization matrix, job dashboard and access-administration tests updated and green. New: 20 unit test methods (lifecycles, derived status, quality flags, settings / root-cause rule, study stages, quarters), 11 integration tests |
-| `tools/check-api-client.sh` · `tools/check-vulnerable.sh` | OpenAPI document and TS client up to date · no High / Critical |
-| `npm run lint` (incl. RTL class check) · `format:check` · `typecheck` · `npm test` | clean · **300 / 300** Vitest (new: CAP and Benchmarking message keys in AR and EN, codes shown in the UI) |
+| `dotnet test --solution Strategy.slnx` (after the rebase on Phase 11) | **4 350 / 4 350** — unit, architecture and integration on real PostgreSQL with the Mailpit / Gotenberg / Keycloak / OpenLDAP containers and Tesseract (OCR). New in this phase: 20 unit test methods (lifecycles, derived status, quality flags, settings / root-cause rule, study stages, quarters) and 11 integration tests; authorization matrix, job dashboard (now with `portfolio.wasel-access`, `cap.monitor`, `bench.monitor`) and access-administration tests updated |
+| `tools/check-api-client.sh` · `tools/check-vulnerable.sh` | OpenAPI document and TS client regenerated after the rebase and up to date · no High / Critical |
+| `npm run lint` (incl. RTL class check) · `format:check` · `typecheck` · `npm test` | clean · **316 / 316** Vitest (new: CAP and Benchmarking message keys in AR and EN, codes shown in the UI) |
 | `npm run build` · `npm audit --audit-level=high` · `npm run lint:licenses` | OK · no High / Critical (8 moderate advisories, unchanged dependencies) · 617 packages allowed |
-| `npx playwright test e2e/cap-bench.spec.ts` | **4 / 4** (ar + en); `platform.spec.ts` job dashboard now expects 21 jobs (re-run green) |
+| `npx playwright test` (full suite, ar + en, fresh database) | re-run in progress (first full run: 97 / 98, the export test fixed above) |
 
 ## Decisions (ADRs, *Proposed*)
 0120 data model and numbering · 0121 lifecycle and approvals · 0122 due dates, late status and reminders · 0123 source-system contract ·
@@ -75,9 +75,13 @@ cd web && npm ci && npm run dev        # http://localhost:5173
 5. Benchmarking: Ahmed → *New study request* (catalogue) → Mariam approves the request → Annual plan → *Circulate*. Fill the search form, visit info and the analysis with a development plan; Mariam approves each gate; the study's *Linked CAP actions* tab lists the new remarks and actions.
 
 ## Cloud environment notes
-- PostgreSQL 16 local (`STRATEGY_TEST_POSTGRES`); no Docker daemon in this container (no Gotenberg / Mailpit, no Tesseract): OCR unit tests
-  and PDF rendering not exercised here. E2E against database `strategy` with `E2E_BASE_URL=http://localhost:5080` and
-  `E2E_CHROMIUM_PATH=/opt/pw-browsers/chromium-1243/chrome-linux64/chrome`.
+- PostgreSQL 16 local (`STRATEGY_TEST_POSTGRES`, `max_connections = 600`); Docker started manually for Gotenberg / Mailpit and the
+  Testcontainers images through `mirror.gcr.io/`; Tesseract and poppler-utils installed. E2E against database `strategy` with
+  `E2E_BASE_URL=http://localhost:5080` and `E2E_CHROMIUM_PATH=/opt/pw-browsers/chromium-1243/chrome-linux64/chrome`.
+- Rebased on Phase 11 (Wasel): conflicts in the ADR index, job lists, shell translations, the i18n index and three Vitest files (main's
+  shared `LooseApi` helper kept); the CAP navigation icon differs from Portfolio reviews. The platform E2E History / Documents test now
+  exports only its own record's audit entries: exporting the whole log (up to 10 000 rows once the earlier specs have run) as a PDF
+  exceeded the Gotenberg timeout.
 - Screenshots (`E2E_SCREENSHOTS=phase-15`) in [`docs/screenshots/phase-15/`](../screenshots/phase-15/) as `ar-*` / `en-*` pairs:
   `cap-remarks-source`, `cap-remark-accept-reject`, `cap-remark-reject`, `cap-root-cause`, `cap-action-budget-routing`,
   `cap-remark-actions`, `cap-pmo-validation`, `cap-budget-routed`, `cap-achievement-update`, `cap-extension-request`, `cap-dashboard`,
