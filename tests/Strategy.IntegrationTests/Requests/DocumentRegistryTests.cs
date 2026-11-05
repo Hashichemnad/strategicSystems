@@ -11,6 +11,7 @@ using Strategy.Modules.Requests.Application;
 using Strategy.Platform.Access;
 using Strategy.Platform.AI.Tools;
 using Strategy.Platform.Kernel.Context;
+using Strategy.Platform.Settings;
 
 namespace Strategy.IntegrationTests.Requests;
 
@@ -198,7 +199,14 @@ public sealed class DocumentRegistryTests(RequestsFixture fixture) : IClassFixtu
     public async Task Expiry_reminders_at_60_and_30_days_then_expired_and_confirmation_extends()
     {
         var w = await WorldAsync(fixture);
-        var start = DateOnly.FromDateTime(fixture.Clock.UtcNow.UtcDateTime);
+        DateOnly start;
+        await using (var settingsScope = w.Factory.Services.CreateAsyncScope())
+        {
+            // The installation's date (Regional settings time zone), as the module computes "today" — not the UTC date.
+            var zoneId = (await settingsScope.ServiceProvider.GetRequiredService<ISettingsStore>().GetAsync<RegionalSettings>(CancellationToken.None)).TimeZone;
+            start = DateOnly.FromDateTime(TimeZoneInfo.ConvertTime(fixture.Clock.UtcNow, TimeZoneInfo.FindSystemTimeZoneById(zoneId)).DateTime);
+        }
+
         var (documentId, _) = await PublishAsync(w, w.EmployeeA, "Expiring procedure " + Guid.CreateVersion7().ToString("N")[^5..], "internal", type: "procedure",
             effectiveDate: start.AddMonths(-1).ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture), expiryDate: start.AddDays(70).ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture));
 
