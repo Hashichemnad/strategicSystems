@@ -12,18 +12,12 @@ import {
   TableHead,
   TableHeaderCell,
   TableRow,
-} from '@/ui';
-import { useDepartmentView } from './api';
-import {
-  AuditPageLayout,
-  PctBar,
-  RecommendationStatusChip,
+  ProgressBar,
   Section,
   Tile,
-  useAuditT,
-  useDate,
-  useNames,
-} from './components';
+} from '@/ui';
+import { useDepartmentView } from './api';
+import { AuditPageLayout, RecommendationStatusChip, useAuditT, useDate, useNames } from './components';
 import { FindingsTable } from './FindingsPage';
 
 /**
@@ -56,11 +50,11 @@ export function AuditDepartmentViewPage() {
       />
       <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4" data-testid="audit-department-tiles">
         <Tile label={t('department.audits')} value={d.audits} />
-        <Tile label={t('department.auditsClosed')} value={d.auditsClosed} tone="text-success" />
+        <Tile label={t('department.auditsClosed')} value={d.auditsClosed} tone="success" />
         <Tile label={t('department.auditsActive')} value={d.auditsActive} />
         <Tile label={t('department.activeFindings')} value={d.activeFindings} />
-        <Tile label={t('department.lateFindings')} value={d.lateFindings} tone="text-danger" />
-        <Tile label={t('department.closedFindings')} value={d.closedFindings} tone="text-success" />
+        <Tile label={t('department.lateFindings')} value={d.lateFindings} tone="danger" />
+        <Tile label={t('department.closedFindings')} value={d.closedFindings} tone="success" />
       </div>
       <Section title={t('department.active')} testId="audit-department-active">
         {d.active.length === 0 ? (
@@ -100,7 +94,11 @@ export function AuditDepartmentViewPage() {
                   </TableCell>
                   <TableCell>{date(r.dueOn)}</TableCell>
                   <TableCell>
-                    <PctBar value={r.latestPct} late={r.status === 'late'} />
+                    <ProgressBar
+                      value={r.latestPct}
+                      tone={r.status === 'late' ? 'danger' : 'primary'}
+                      testId="audit-pct"
+                    />
                   </TableCell>
                   <TableCell>
                     <RecommendationStatusChip status={r.status} />

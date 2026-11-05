@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/cn';
 import { formatNumber, pickText } from '@/lib/format';
-import { StatusChip } from '@/ui';
+import { HeatGrid, StatusChip } from '@/ui';
 import {
   useRiskOptions,
   type HeatCell,
@@ -154,33 +154,6 @@ export function Rows({ rows, className }: { rows: [string, ReactNode][]; classNa
   );
 }
 
-export function Section({
-  title,
-  actions,
-  children,
-  testId,
-  className,
-}: {
-  title: ReactNode;
-  actions?: ReactNode;
-  children: ReactNode;
-  testId?: string;
-  className?: string;
-}) {
-  return (
-    <section
-      className={cn('flex flex-col gap-3 rounded-lg border bg-card p-5', className)}
-      data-testid={testId}
-    >
-      <header className="flex flex-wrap items-center justify-between gap-2">
-        <h2 className="font-semibold">{title}</h2>
-        {actions && <div className="flex flex-wrap gap-2">{actions}</div>}
-      </header>
-      {children}
-    </section>
-  );
-}
-
 const navItems = [
   { to: '/risk', key: 'dashboard', exact: true },
   { to: '/risk/risks', key: 'register' },
@@ -249,8 +222,8 @@ function range(max: number): number[] {
 }
 
 /**
- * Heat-map (docs/design/risk.md §12, ADR 0105): a CSS grid of buttons, likelihood rows top = highest, impact columns from the start
- * side (mirrors in RTL by itself), each cell coloured by its band and showing the count (enterprise · P project).
+ * Heat-map (docs/design/risk.md §12, ADR 0105, 0148): the shared accessible HeatGrid — likelihood rows top = highest, impact columns
+ * from the start side (mirrors in RTL by itself), each cell coloured by its band and showing the count (enterprise · P project).
  */
 export function HeatMap({
   kind,
@@ -274,86 +247,49 @@ export function HeatMap({
   const maxI = Math.max(5, ...cells.map((c) => c.impact));
   const cell = (l: number, i: number) => cells.find((c) => c.likelihood === l && c.impact === i);
   return (
-    <div className="flex flex-col gap-2" data-testid={`risk-heatmap-${kind}`}>
-      <div className="flex items-stretch gap-2">
-        <div className="flex items-center">
-          <span className="text-xs text-muted-foreground [writing-mode:vertical-rl] rotate-180">
-            {t('heatmap.likelihood')}
-          </span>
-        </div>
-        <div
-          className="grid flex-1 gap-1"
-          style={{ gridTemplateColumns: `auto repeat(${maxI}, minmax(2.5rem, 1fr))` }}
-          role="grid"
-          aria-label={t(`heatmap.${kind}`)}
-        >
-          {range(maxL)
-            .reverse()
-            .map((l) => (
-              <div key={l} role="row" className="contents">
-                <span
-                  className="flex items-center justify-end pe-1 text-xs text-muted-foreground tabular-nums"
-                  title={axis?.likelihood?.(l)}
-                >
-                  {l}
-                </span>
-                {range(maxI).map((i) => {
-                  const c = cell(l, i);
-                  const enterprise = c?.enterprise ?? 0;
-                  const project = c?.project ?? 0;
-                  const color = band(c?.band)?.color;
-                  const active = selected?.likelihood === l && selected.impact === i;
-                  return (
-                    <button
-                      key={i}
-                      type="button"
-                      role="gridcell"
-                      data-testid={`risk-heat-${kind}-${l}-${i}`}
-                      aria-label={t('heatmap.cellLabel', {
-                        likelihood: l,
-                        impact: i,
-                        band: c ? label(c.band) : '—',
-                        count: enterprise,
-                        project,
-                      })}
-                      aria-selected={active}
-                      onClick={() => onSelect?.(l, i)}
-                      className={cn(
-                        'flex h-11 items-center justify-center rounded text-sm font-semibold tabular-nums outline-offset-2 transition hover:opacity-90',
-                        active && 'ring-2 ring-foreground ring-offset-2',
-                        enterprise + project === 0 && 'opacity-60',
-                      )}
-                      style={color ? { backgroundColor: color, color: textOn(color) } : undefined}
-                    >
-                      {enterprise + project > 0 && (
-                        <span>
-                          {num(enterprise)}
-                          {project > 0 && (
-                            <span className="ms-1 text-xs font-normal">
-                              · {t('heatmap.projectShort', { count: project })}
-                            </span>
-                          )}
-                        </span>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-            ))}
-          <span />
-          {range(maxI).map((i) => (
-            <span
-              key={i}
-              className="text-center text-xs text-muted-foreground tabular-nums"
-              title={axis?.impact?.(i)}
-            >
-              {i}
-            </span>
-          ))}
-        </div>
-      </div>
-      <span className="text-center text-xs text-muted-foreground">{t('heatmap.impact')}</span>
-    </div>
+    <HeatGrid
+      testId={`risk-heatmap-${kind}`}
+      label={t(`heatmap.${kind}`)}
+      rowAxisLabel={t('heatmap.likelihood')}
+      columnAxisLabel={t('heatmap.impact')}
+      rows={range(maxL)
+        .reverse()
+        .map((l) => ({ key: String(l), label: l, title: axis?.likelihood?.(l) }))}
+      columns={range(maxI).map((i) => ({ key: String(i), label: i, title: axis?.impact?.(i) }))}
+      selected={selected ? { row: String(selected.likelihood), column: String(selected.impact) } : undefined}
+      onCellClick={(row, column) => onSelect?.(Number(row), Number(column))}
+      cell={(row, column) => {
+        const l = Number(row.key);
+        const i = Number(column.key);
+        const c = cell(l, i);
+        const enterprise = c?.enterprise ?? 0;
+        const project = c?.project ?? 0;
+        const color = band(c?.band)?.color;
+        return {
+          testId: `risk-heat-${kind}-${l}-${i}`,
+          label: t('heatmap.cellLabel', {
+            likelihood: l,
+            impact: i,
+            band: c ? label(c.band) : '—',
+            count: enterprise,
+            project,
+          }),
+          muted: enterprise + project === 0,
+          ...(color ? { background: color, color: textOn(color) } : {}),
+          content:
+            enterprise + project > 0 ? (
+              <span>
+                {num(enterprise)}
+                {project > 0 && (
+                  <span className="ms-1 text-xs font-normal">
+                    · {t('heatmap.projectShort', { count: project })}
+                  </span>
+                )}
+              </span>
+            ) : undefined,
+        };
+      }}
+    />
   );
 }
 
@@ -506,27 +442,4 @@ export function useAxisLabels() {
       return l ? pickText(language, l.labelAr, l.labelEn) : String(v);
     },
   };
-}
-
-/** A progress bar 0–100 %. */
-export function ProgressBar({ ratio, label }: { ratio: number; label: string }) {
-  const pct = usePct();
-  return (
-    <span className="flex min-w-24 items-center gap-2" title={label}>
-      <span
-        className="flex h-2 flex-1 overflow-hidden rounded bg-muted"
-        role="progressbar"
-        aria-label={label}
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-valuenow={Math.round(ratio * 100)}
-      >
-        <span
-          className="h-full bg-primary"
-          style={{ inlineSize: `${Math.max(0, Math.min(1, ratio)) * 100}%` }}
-        />
-      </span>
-      <span className="text-xs tabular-nums text-muted-foreground">{pct(ratio)}</span>
-    </span>
-  );
 }

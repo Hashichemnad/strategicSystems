@@ -31,11 +31,16 @@ export default defineConfig({
     rollupOptions: {
       output: {
         // Vendor code changes rarely: separate chunks stay cached across releases.
-        manualChunks: {
-          react: ['react', 'react-dom'],
-          tanstack: ['@tanstack/react-query', '@tanstack/react-router'],
-          i18n: ['i18next', 'react-i18next'],
-          forms: ['zod', 'react-hook-form', '@hookform/resolvers'],
+        // ECharts (with zrender) is its own chunk, loaded only when a chart renders (ADR 0148).
+        manualChunks(id) {
+          const pkg = /node_modules\/((?:@[^/]+\/)?[^/]+)\//.exec(id)?.[1];
+          if (!pkg) return undefined;
+          if (pkg === 'echarts' || pkg === 'zrender') return 'echarts';
+          if (pkg === 'react' || pkg === 'react-dom' || pkg === 'scheduler') return 'react';
+          if (pkg.startsWith('@tanstack/')) return 'tanstack';
+          if (pkg === 'i18next' || pkg === 'react-i18next') return 'i18n';
+          if (pkg === 'zod' || pkg === 'react-hook-form' || pkg === '@hookform/resolvers') return 'forms';
+          return undefined;
         },
       },
     },

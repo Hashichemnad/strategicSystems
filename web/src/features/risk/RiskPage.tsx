@@ -43,7 +43,11 @@ import {
   TabsList,
   TabsTrigger,
   Textarea,
+  Chart,
+  lineOption,
+  token,
   useToast,
+  Section,
 } from '@/ui';
 import { ActionsTab } from './ActionsTab';
 import {
@@ -63,7 +67,6 @@ import {
   RiskMatrix,
   RiskPageLayout,
   Rows,
-  Section,
   useAxisLabels,
   useBands,
   useNames,
@@ -566,7 +569,7 @@ function AssessmentTab({ risk: r }: { risk: Risk }) {
   );
 }
 
-/** Inherent and residual score over the assessment snapshots (accessible SVG; mirrored in RTL so time runs from the start side). */
+/** Inherent and residual score over the assessment snapshots (shared ECharts wrapper: time runs from the start side in both directions). */
 export function HistoryChart({ rows }: { rows: readonly RiskAssessment[] }) {
   const { t } = useTranslation('risk');
   const { language } = useRiskT();
@@ -574,81 +577,33 @@ export function HistoryChart({ rows }: { rows: readonly RiskAssessment[] }) {
   const { bands } = useBands();
   const points = [...rows].sort((a, b) => a.at.localeCompare(b.at));
   if (points.length === 0) return <p className="text-sm text-muted-foreground">{t('common.noData')}</p>;
-  const width = 480;
-  const height = 200;
-  const pad = 28;
   const max = Math.max(
     1,
     ...bands.map((b) => b.max),
     ...points.map((p) => Math.max(p.inherentScore, p.residualScore)),
   );
-  const x = (i: number) =>
-    points.length === 1 ? width / 2 : pad + (i * (width - 2 * pad)) / (points.length - 1);
-  const y = (score: number) => height - pad - (score / max) * (height - 2 * pad);
-  const line = (key: 'inherentScore' | 'residualScore') =>
-    points.map((p, i) => `${x(i)},${y(p[key])}`).join(' ');
-  const rtl = language === 'ar';
+  const spec = lineOption({
+    categories: points.map((p) => ({ key: p.id, label: formatDate(p.at, language) })),
+    series: [
+      { name: t('rating.inherent'), values: points.map((p) => p.inherentScore), color: token('danger') },
+      { name: t('rating.residual'), values: points.map((p) => p.residualScore), color: token('primary') },
+    ],
+    format: (v) => num(v),
+    min: 0,
+    max,
+    categoryHeader: t('assessment.at'),
+  });
   return (
-    <figure className="flex flex-col gap-2">
-      <svg
-        viewBox={`0 0 ${width} ${height}`}
-        className="h-auto w-full"
-        role="img"
-        aria-label={t('assessment.chartLabel', {
-          values: points
-            .map((p) => `${formatDate(p.at, language)}: ${num(p.inherentScore)} / ${num(p.residualScore)}`)
-            .join('; '),
-        })}
-        style={rtl ? { transform: 'scaleX(-1)' } : undefined}
-      >
-        {[0, 0.25, 0.5, 0.75, 1].map((f) => (
-          <line
-            key={f}
-            x1={pad}
-            x2={width - pad}
-            y1={y(max * f)}
-            y2={y(max * f)}
-            stroke="currentColor"
-            className="text-border"
-            strokeWidth={1}
-          />
-        ))}
-        <polyline
-          points={line('inherentScore')}
-          fill="none"
-          stroke="currentColor"
-          className="text-danger"
-          strokeWidth={2.5}
-        />
-        <polyline
-          points={line('residualScore')}
-          fill="none"
-          stroke="currentColor"
-          className="text-primary"
-          strokeWidth={2.5}
-        />
-        {points.map((p, i) => (
-          <g key={p.id}>
-            <circle cx={x(i)} cy={y(p.inherentScore)} r={4} className="fill-danger" />
-            <circle cx={x(i)} cy={y(p.residualScore)} r={4} className="fill-primary" />
-          </g>
-        ))}
-      </svg>
-      <figcaption className="flex flex-wrap gap-4 text-xs text-muted-foreground">
-        <span className="flex items-center gap-1">
-          <span className="inline-block size-2.5 rounded-full bg-danger" aria-hidden />
-          {t('rating.inherent')}
-        </span>
-        <span className="flex items-center gap-1">
-          <span className="inline-block size-2.5 rounded-full bg-primary" aria-hidden />
-          {t('rating.residual')}
-        </span>
-        <span>
-          {formatDate(points[0]?.at ?? '', language)} –{' '}
-          {formatDate(points[points.length - 1]?.at ?? '', language)}
-        </span>
-      </figcaption>
-    </figure>
+    <Chart
+      {...spec}
+      height={220}
+      label={t('assessment.history')}
+      description={t('assessment.chartLabel', {
+        values: points
+          .map((p) => `${formatDate(p.at, language)}: ${num(p.inherentScore)} / ${num(p.residualScore)}`)
+          .join('; '),
+      })}
+    />
   );
 }
 

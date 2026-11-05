@@ -6,7 +6,7 @@ import { useCan } from '@/features/access/session';
 import { AiBadge } from '@/features/ai/AiDraft';
 import { useAiFeature } from '@/features/ai/api';
 import { priorities } from '@/features/cap/api';
-import { Section, SimpleDialog, useCapLabels, useDate, useNames } from '@/features/cap/components';
+import { SimpleDialog, useCapLabels, useDate, useNames } from '@/features/cap/components';
 import { KpiCardPicker } from '@/features/kpi/KpiCardPicker';
 import { EmployeePicker } from '@/features/org/EmployeePicker';
 import {
@@ -25,6 +25,7 @@ import {
   TableHeaderCell,
   TableRow,
   Textarea,
+  Section,
 } from '@/ui';
 import {
   benchApi,

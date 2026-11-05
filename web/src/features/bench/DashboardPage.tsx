@@ -3,9 +3,12 @@ import { Plus } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { errorMessage } from '@/api/problem';
-import { Section, Tile, useNames } from '@/features/cap/components';
+import { formatNumber } from '@/lib/format';
+import { useNames } from '@/features/cap/components';
 import {
+  barOption,
   Button,
+  Chart,
   PageHeader,
   Select,
   Skeleton,
@@ -16,45 +19,36 @@ import {
   TableHead,
   TableHeaderCell,
   TableRow,
+  Section,
+  Tile,
 } from '@/ui';
-import { EChart, useRtl } from '@/ui/echart';
 import { useBenchDashboard, useBenchOptions, type BenchDashboard } from './api';
 import { BenchPageLayout, useBenchT } from './components';
 
 /** Benchmarking dashboard (SPEC §8.6): studies by stage / quarter / unit, linked actions, adopted practices. */
 export function BenchDashboardPage() {
   const { t } = useTranslation('bench');
-  const { t: tc } = useTranslation();
+  const { t: tc, i18n } = useTranslation();
   const { k } = useBenchT();
   const options = useBenchOptions();
   const names = useNames();
-  const rtl = useRtl();
   const year0 = new Date().getFullYear();
   const [year, setYear] = useState<number>();
   const dashboard = useBenchDashboard(year ? { year } : {});
-  const bars = (rows: BenchDashboard['byStage'], label: (code: string) => string, name: string) => (
-    <EChart
+  const bars = (
+    rows: readonly BenchDashboard['byStage'][number][],
+    label: (code: string) => string,
+    name: string,
+  ) => (
+    <Chart
       label={name}
       height={220}
-      option={{
-        grid: { left: 8, right: 8, top: 24, bottom: 8, containLabel: true },
-        xAxis: {
-          type: 'category',
-          data: rows.map((r) => label(r.code)),
-          inverse: rtl,
-          axisLabel: { interval: 0, width: 72, overflow: 'break' },
-        },
-        yAxis: { type: 'value', minInterval: 1, position: rtl ? 'right' : 'left' },
-        series: [
-          {
-            type: 'bar',
-            data: rows.map((r) => r.count),
-            label: { show: true, position: 'top' },
-            barMaxWidth: 40,
-          },
-        ],
-        tooltip: { trigger: 'axis' },
-      }}
+      {...barOption({
+        categories: rows.map((r) => ({ key: r.code, label: label(r.code) })),
+        series: [{ name, values: rows.map((r) => r.count) }],
+        integer: true,
+        format: (v) => formatNumber(v, i18n.language),
+      })}
     />
   );
 
@@ -98,15 +92,15 @@ export function BenchDashboardPage() {
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
             <Tile label={t('dashboard.studies')} value={dashboard.data.studies} testId="bench-tile-studies" />
             <Tile label={t('dashboard.active')} value={dashboard.data.active} />
-            <Tile label={t('dashboard.completed')} value={dashboard.data.completed} tone="text-success" />
+            <Tile label={t('dashboard.completed')} value={dashboard.data.completed} tone="success" />
             <Tile label={t('dashboard.cancelled')} value={dashboard.data.cancelled} />
             <Tile label={t('dashboard.actions')} value={dashboard.data.actions} />
             <Tile
               label={t('dashboard.actionsCompleted')}
               value={dashboard.data.actionsCompleted}
-              tone="text-success"
+              tone="success"
             />
-            <Tile label={t('dashboard.actionsLate')} value={dashboard.data.actionsLate} tone="text-danger" />
+            <Tile label={t('dashboard.actionsLate')} value={dashboard.data.actionsLate} tone="danger" />
             <Tile label={t('dashboard.practicesAdopted')} value={dashboard.data.practicesAdopted} />
           </div>
           <div className="grid gap-4 xl:grid-cols-2">

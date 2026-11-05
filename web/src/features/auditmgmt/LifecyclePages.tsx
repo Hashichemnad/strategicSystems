@@ -26,6 +26,9 @@ import {
   TableHeaderCell,
   TableRow,
   Textarea,
+  ProgressBar,
+  Section,
+  Tile,
 } from '@/ui';
 import {
   auditApi,
@@ -45,12 +48,9 @@ import {
 } from './api';
 import {
   AuditPageLayout,
-  PctBar,
   ReportStatusChip,
   Rows,
-  Section,
   SimpleDialog,
-  Tile,
   useAuditLabels,
   useAuditT,
   useDate,
@@ -399,7 +399,7 @@ export function AuditPlanPage() {
             return (
               <div key={q} className="rounded-md border p-3">
                 <div className="font-semibold">Q{q}</div>
-                <PctBar value={total ? done / total : 0} />
+                <ProgressBar value={total ? done / total : 0} testId="audit-pct" />
                 <div className="text-xs text-muted-foreground">
                   {t('lifecycle.quarterCounts', { done, total })}
                 </div>

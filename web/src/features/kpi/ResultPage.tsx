@@ -29,6 +29,10 @@ import {
   TabsTrigger,
   Textarea,
   Wizard,
+  Chart,
+  lineOption,
+  Section,
+  token,
   useToast,
 } from '@/ui';
 import {
@@ -43,7 +47,7 @@ import {
   type KpiEntryInput,
   type KpiResult,
 } from './api';
-import { KpiPage, PerformanceValue, RagChip, ScoreBar, useKpiT, useNumber } from './components';
+import { KpiPage, PerformanceValue, RagChip, ScoreBar, useKpiT, useNumber, usePercent } from './components';
 
 const route = getRouteApi('/app/kpi/results/$resultId');
 
@@ -621,27 +625,40 @@ function History({ result }: { result: KpiResult }) {
   const { t } = useTranslation('kpi');
   const { k } = useKpiT();
   const num = useNumber();
+  const pct = usePercent();
+  const label = (h: KpiResult['history'][number]) => `${k(`period.${h.periodCode}`)} ${h.year}`;
+  const spec = lineOption({
+    categories: result.history.map((h) => ({ key: h.resultId, label: label(h) })),
+    series: [
+      {
+        name: t('result.trend'),
+        values: result.history.map((h) => h.capped ?? null),
+        color: token('primary'),
+      },
+    ],
+    format: (v) => pct(v),
+    min: 0,
+  });
   return (
-    <section className="flex flex-col gap-2 rounded-lg border bg-card p-5" data-testid="kpi-history-trend">
-      <h2 className="font-semibold">{t('result.trend')}</h2>
+    <Section title={t('result.trend')} testId="kpi-history-trend">
       {result.history.length === 0 ? (
         <p className="text-sm text-muted-foreground">{t('common.noData')}</p>
       ) : (
-        <ul className="flex flex-col gap-2 text-sm">
-          {result.history.map((h) => (
-            <li key={h.resultId} className="grid grid-cols-[5rem_1fr_auto] items-center gap-2">
-              <span>
-                {k(`period.${h.periodCode}`)} {h.year}
-              </span>
-              <ScoreBar score={h.capped} rag={h.rag} />
-              <span className="tabular-nums text-muted-foreground">
-                {h.notApplicable ? t('result.na') : num(h.achieve)}
-              </span>
-            </li>
-          ))}
-        </ul>
+        <Chart
+          {...spec}
+          height={220}
+          label={t('result.trend')}
+          table={{
+            columns: [t('fields.period'), t('result.trend'), t('fields.achieve')],
+            rows: result.history.map((h) => [
+              label(h),
+              pct(h.capped),
+              h.notApplicable ? t('result.na') : num(h.achieve),
+            ]),
+          }}
+        />
       )}
-    </section>
+    </Section>
   );
 }
 

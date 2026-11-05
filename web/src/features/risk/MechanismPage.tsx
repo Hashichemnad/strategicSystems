@@ -13,9 +13,10 @@ import {
   TableHead,
   TableHeaderCell,
   TableRow,
+  Section,
 } from '@/ui';
 import { mechanismPdfUrl, useMechanism } from './api';
-import { RatingChip, RiskMatrix, RiskPageLayout, Section, useNum, useRiskT } from './components';
+import { RatingChip, RiskMatrix, RiskPageLayout, useNum, useRiskT } from './components';
 
 /** Risk Assessment Mechanism (docs/design/risk.md §12): generated from the current framework, bilingual, printable / PDF. */
 export function RiskMechanismPage() {

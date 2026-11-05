@@ -17,6 +17,7 @@ import {
   TableHead,
   TableHeaderCell,
   TableRow,
+  ProgressBar,
 } from '@/ui';
 import {
   findingStatuses,
@@ -28,7 +29,6 @@ import {
 import {
   AuditPageLayout,
   FindingStatusChip,
-  PctBar,
   PriorityChip,
   useAuditLabels,
   useAuditT,
@@ -220,7 +220,11 @@ export function FindingsTable({
               <FindingStatusChip status={f.status} />
             </TableCell>
             <TableCell>
-              <PctBar value={f.completion} late={f.status === 'late'} />
+              <ProgressBar
+                value={f.completion}
+                tone={f.status === 'late' ? 'danger' : 'primary'}
+                testId="audit-pct"
+              />
             </TableCell>
             <TableCell>{date(f.nextDueOn)}</TableCell>
             {showComment && (

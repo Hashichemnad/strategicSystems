@@ -12,9 +12,10 @@ import {
   Switch,
   Textarea,
   useToast,
+  Section,
 } from '@/ui';
 import { capApi, raiseModes, useCapMutation, useCapSettings, type CapSettings } from './api';
-import { Section, useCapT } from './components';
+import { useCapT } from './components';
 
 /** Settings → Corrective action plan (docs/design/cap.md §2.1): every threshold is configuration with a seeded default. */
 export function CapSettingsPage() {

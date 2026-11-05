@@ -6,6 +6,8 @@ import { useAiFeature } from '@/features/ai/api';
 import { useLookupValues } from '@/features/settings/lookups';
 import { formatNumber, pickText } from '@/lib/format';
 import {
+  barOption,
+  Chart,
   EmptyState,
   PageHeader,
   Skeleton,
@@ -16,63 +18,52 @@ import {
   TableHead,
   TableHeaderCell,
   TableRow,
+  Section,
+  Tile,
+  token,
 } from '@/ui';
 import { useTaskDashboard, useWorkloadInsights, type TaskDashboard } from './api';
 import { defaultTasksSearch } from './api';
 import { useStatusLabel } from './TaskChips';
 
 type CountBy = TaskDashboard['byUnit'][number];
+type TileKey =
+  'open' | 'overdue' | 'dueSoon' | 'closed90' | 'avgAccept' | 'avgComplete' | 'onTimeRate' | 'avgFeedback';
 
-/** Horizontal bars (open, with the overdue share in red) — logical properties, so they grow from the start edge in both directions. */
+/** Open tasks per key as horizontal stacked bars: on time and overdue (ECharts through the shared wrapper, ADR 0148). */
 function Bars({ title, rows, label }: { title: string; rows: CountBy[]; label: (key: string) => string }) {
   const { t, i18n } = useTranslation('tasks');
-  const max = Math.max(1, ...rows.map((r) => r.open));
+  const f = (v: number) => formatNumber(v, i18n.language);
   return (
-    <section className="flex flex-col gap-3 rounded-lg border bg-card p-5" aria-label={title}>
-      <h2 className="font-semibold">{title}</h2>
+    <Section title={title}>
       {rows.length === 0 ? (
         <p className="text-sm text-muted-foreground">{t('dashboard.empty')}</p>
       ) : (
-        <ul className="flex flex-col gap-2">
-          {rows.map((row) => (
-            <li
-              key={row.key}
-              className="grid grid-cols-[minmax(6rem,10rem)_1fr_auto] items-center gap-2 text-sm"
-            >
-              <span className="truncate" title={label(row.key)}>
-                {label(row.key)}
-              </span>
-              <span className="flex h-4 overflow-hidden rounded bg-muted" aria-hidden>
-                <span
-                  className="h-full bg-sky-500"
-                  style={{ inlineSize: `${((row.open - row.overdue) / max) * 100}%` }}
-                />
-                <span className="h-full bg-red-500" style={{ inlineSize: `${(row.overdue / max) * 100}%` }} />
-              </span>
-              <span className="tabular-nums text-muted-foreground">
-                {formatNumber(row.open, i18n.language)}
-                {row.overdue > 0 && (
-                  <span className="text-red-600 dark:text-red-400">
-                    {' '}
-                    ({formatNumber(row.overdue, i18n.language)})
-                  </span>
-                )}
-              </span>
-            </li>
-          ))}
-        </ul>
+        <Chart
+          label={title}
+          height={Math.max(160, rows.length * 34 + 60)}
+          {...barOption({
+            orientation: 'horizontal',
+            stacked: true,
+            categories: rows.map((r) => ({ key: r.key, label: label(r.key) })),
+            series: [
+              {
+                name: t('dashboard.legendOpen'),
+                values: rows.map((r) => r.open - r.overdue),
+                color: token('info'),
+              },
+              {
+                name: t('dashboard.legendOverdue'),
+                values: rows.map((r) => r.overdue),
+                color: token('danger'),
+              },
+            ],
+            integer: true,
+            format: f,
+          })}
+        />
       )}
-      <p className="flex gap-4 text-xs text-muted-foreground">
-        <span className="flex items-center gap-1">
-          <span className="size-2 rounded-sm bg-sky-500" aria-hidden />
-          {t('dashboard.legendOpen')}
-        </span>
-        <span className="flex items-center gap-1">
-          <span className="size-2 rounded-sm bg-red-500" aria-hidden />
-          {t('dashboard.legendOverdue')}
-        </span>
-      </p>
-    </section>
+    </Section>
   );
 }
 
@@ -92,19 +83,19 @@ export function TaskDashboardPage() {
     value === null || value === undefined
       ? '—'
       : t('dashboard.hours', { value: formatNumber(value, i18n.language) });
-  const tiles = [
-    ['open', formatNumber(d.open, i18n.language)],
-    ['overdue', formatNumber(d.overdue, i18n.language)],
-    ['dueSoon', formatNumber(d.dueSoon, i18n.language)],
-    ['closed90', formatNumber(d.closedLast90Days, i18n.language)],
+  const tiles: [TileKey, number | string, ('danger' | undefined)?][] = [
+    ['open', d.open],
+    ['overdue', d.overdue, d.overdue > 0 ? 'danger' : undefined],
+    ['dueSoon', d.dueSoon],
+    ['closed90', d.closedLast90Days],
     ['avgAccept', hours(d.averageHoursToAccept)],
     ['avgComplete', hours(d.averageHoursToComplete)],
     [
       'onTimeRate',
       d.onTimeRate === null ? '—' : `${formatNumber(Math.round(d.onTimeRate * 100), i18n.language)}%`,
     ],
-    ['avgFeedback', d.averageFeedback === null ? '—' : formatNumber(d.averageFeedback, i18n.language)],
-  ] as const;
+    ['avgFeedback', d.averageFeedback === null ? '—' : d.averageFeedback],
+  ];
   return (
     <div className="flex flex-col gap-6">
       <Link
@@ -116,18 +107,11 @@ export function TaskDashboardPage() {
         {t('title')}
       </Link>
       <PageHeader title={t('dashboard.title')} description={t('dashboard.description')} />
-      <dl className="grid grid-cols-2 gap-3 md:grid-cols-4" data-testid="task-dashboard">
-        {tiles.map(([key, value]) => (
-          <div key={key} className="rounded-lg border bg-card p-4">
-            <dt className="text-sm text-muted-foreground">{t(`dashboard.${key}`)}</dt>
-            <dd
-              className={`mt-1 text-2xl font-semibold tabular-nums ${key === 'overdue' && d.overdue > 0 ? 'text-red-700 dark:text-red-300' : ''}`}
-            >
-              {value}
-            </dd>
-          </div>
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-4" data-testid="task-dashboard">
+        {tiles.map(([key, value, tone]) => (
+          <Tile key={key} label={t(`dashboard.${key}`)} value={value} tone={tone} />
         ))}
-      </dl>
+      </div>
       <div className="grid gap-4 lg:grid-cols-2">
         <Bars
           title={t('dashboard.byUnit')}

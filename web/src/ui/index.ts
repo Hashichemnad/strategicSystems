@@ -41,6 +41,8 @@ export { OtpInput } from './otp-input';
 export { Checkbox, Switch } from './toggle';
 export { buildTree, type FlatNode, type TreeNode } from './tree';
 export { TreeView } from './tree-view';
+export * from './charts';
+export * from './dashboard';
 export {
   Gantt,
   exportGanttPdf,

@@ -1,10 +1,10 @@
 import { Link } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { errorMessage } from '@/api/problem';
-import { formatNumber, pickText } from '@/lib/format';
-import { PageHeader, Skeleton, StatusBanner, StatusChip } from '@/ui';
+import { pickText } from '@/lib/format';
+import { CountChart, PageHeader, Skeleton, StatusBanner, StatusChip, Tile, type TileTone } from '@/ui';
 import { ipLookups, useIpDashboard, type IpDashboard } from './api';
-import { Bars, IpPage, IpStatusChip, useDate, useIpT, useLookupLabel } from './components';
+import { IpPage, IpStatusChip, useDate, useIpT, useLookupLabel } from './components';
 
 /** IP dashboard (docs/design/requests.md §4.8): totals, by type / protection / year / unit, upcoming expiries. */
 export function IpDashboardPage() {
@@ -26,7 +26,7 @@ export function IpDashboardPage() {
           <>
             <Tiles data={dashboard.data} />
             <div className="grid gap-4 lg:grid-cols-2">
-              <Bars
+              <CountChart
                 title={t('dashboard.byType')}
                 testId="ip-by-type"
                 rows={dashboard.data.byType.map((r) => ({
@@ -35,7 +35,7 @@ export function IpDashboardPage() {
                   value: r.count,
                 }))}
               />
-              <Bars
+              <CountChart
                 title={t('dashboard.byProtection')}
                 rows={dashboard.data.byProtection.map((r) => ({
                   key: r.code,
@@ -43,11 +43,11 @@ export function IpDashboardPage() {
                   value: r.count,
                 }))}
               />
-              <Bars
+              <CountChart
                 title={t('dashboard.byYear')}
                 rows={dashboard.data.byYear.map((r) => ({ key: r.code, label: r.code, value: r.count }))}
               />
-              <Bars
+              <CountChart
                 title={t('dashboard.byUnit')}
                 rows={dashboard.data.byUnit.map((r) => ({
                   key: r.id,
@@ -65,25 +65,28 @@ export function IpDashboardPage() {
 }
 
 function Tiles({ data }: { data: IpDashboard }) {
-  const { t, i18n } = useTranslation('ip');
-  const tiles: [string, number, string][] = [
-    ['total', data.total, 'neutral'],
-    ['registered', data.registered, 'success'],
-    ['pending', data.pending, 'info'],
-    ['expiringSoon', data.expiringSoon, 'warning'],
-    ['expired', data.expired, 'danger'],
+  const { t } = useTranslation('ip');
+  const tiles: [
+    key: 'total' | 'registered' | 'pending' | 'expiringSoon' | 'expired',
+    value: number,
+    tone?: TileTone,
+  ][] = [
+    ['total', data.total],
+    ['registered', data.registered],
+    ['pending', data.pending],
+    ['expiringSoon', data.expiringSoon, data.expiringSoon > 0 ? 'warning' : undefined],
+    ['expired', data.expired, data.expired > 0 ? 'danger' : undefined],
   ];
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5" data-testid="ip-tiles">
-      {tiles.map(([key, value]) => (
-        <div
+      {tiles.map(([key, value, tone]) => (
+        <Tile
           key={key}
-          className="flex flex-col gap-1 rounded-lg border bg-card p-4"
-          data-testid={`ip-tile-${key}`}
-        >
-          <span className="text-sm text-muted-foreground">{t(`dashboard.tiles.${key as 'total'}`)}</span>
-          <span className="text-2xl font-semibold tabular-nums">{formatNumber(value, i18n.language)}</span>
-        </div>
+          label={t(`dashboard.tiles.${key}`)}
+          value={value}
+          tone={tone}
+          testId={`ip-tile-${key}`}
+        />
       ))}
     </div>
   );

@@ -22,9 +22,10 @@ import {
   TableRow,
   Textarea,
   useToast,
+  Section,
 } from '@/ui';
 import { riskApi, todayIso, useRiskEvents, useRiskMutation, type EventValues, type Risk } from './api';
-import { Section, useNum, useRiskT } from './components';
+import { useNum, useRiskT } from './components';
 
 export function EventsTab({ risk }: { risk: Risk }) {
   const { t } = useTranslation('risk');

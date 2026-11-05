@@ -4,16 +4,14 @@ import { useTranslation } from 'react-i18next';
 import { errorMessage } from '@/api/problem';
 import { useCan } from '@/features/access/session';
 import { pickText } from '@/lib/format';
-import { PageHeader, Skeleton, StatusBanner } from '@/ui';
+import { CountChart, PageHeader, Skeleton, StatusBanner, Tile } from '@/ui';
 import { useDocDashboard, type DocDashboard, type DocumentListItem } from './api';
 import {
-  Bars,
   DocRegPage,
   documentName,
   SensitivityChip,
   useFormatDate,
   useLookupLabel,
-  useNumber,
   ValidityChips,
 } from './components';
 
@@ -36,7 +34,7 @@ export function DocumentDashboardPage() {
         <>
           <Tiles data={dashboard.data} />
           <div className="grid gap-4 lg:grid-cols-3">
-            <Bars
+            <CountChart
               title={t('dashboard.byLevel')}
               testId="docreg-by-level"
               rows={dashboard.data.byLevel.map((r) => ({
@@ -45,7 +43,7 @@ export function DocumentDashboardPage() {
                 value: r.count,
               }))}
             />
-            <Bars
+            <CountChart
               title={t('dashboard.byType')}
               testId="docreg-by-type"
               rows={dashboard.data.byType.map((r) => ({
@@ -54,7 +52,7 @@ export function DocumentDashboardPage() {
                 value: r.count,
               }))}
             />
-            <Bars
+            <CountChart
               title={t('dashboard.byUnit')}
               testId="docreg-by-unit"
               rows={dashboard.data.byUnit.map((r) => ({
@@ -86,7 +84,6 @@ export function DocumentDashboardPage() {
 
 function Tiles({ data }: { data: DocDashboard }) {
   const { t } = useTranslation('docreg');
-  const num = useNumber();
   const canQueue = useCan('docreg.request.process');
   const tiles: [string, number, ReactNode?][] = [
     [t('dashboard.published'), data.published],
@@ -106,11 +103,7 @@ function Tiles({ data }: { data: DocDashboard }) {
   return (
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5" data-testid="docreg-tiles">
       {tiles.map(([title, value, extra]) => (
-        <div key={title} className="flex flex-col gap-1 rounded-lg border bg-card p-4">
-          <span className="text-sm text-muted-foreground">{title}</span>
-          <span className="text-2xl font-semibold tabular-nums">{num(value)}</span>
-          {extra}
-        </div>
+        <Tile key={title} label={title} value={value} footer={extra} />
       ))}
     </div>
   );

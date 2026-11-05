@@ -3,13 +3,15 @@ import { Download, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { errorMessage } from '@/api/problem';
+import { formatNumber } from '@/lib/format';
 import { UnitSelect } from '@/features/access/pickers';
 import { AiBadge } from '@/features/ai/AiDraft';
 import { useCan } from '@/features/access/session';
 import { useAiFeature } from '@/features/ai/api';
-import { EChart, useRtl } from '@/ui/echart';
 import {
+  barOption,
   Button,
+  Chart,
   PageHeader,
   Select,
   Skeleton,
@@ -20,6 +22,9 @@ import {
   TableHead,
   TableHeaderCell,
   TableRow,
+  ProgressBar,
+  Section,
+  Tile,
 } from '@/ui';
 import {
   capApi,
@@ -32,9 +37,6 @@ import {
 import {
   ActionStatusChip,
   CapPageLayout,
-  PctBar,
-  Section,
-  Tile,
   lookupTypes,
   useCapLabels,
   useCapT,
@@ -47,7 +49,7 @@ import {
 /** CAP dashboard (SPEC §9.7): totals, by source type / status / priority, ageing, by department, budget-dependent actions, AI summary. */
 export function CapDashboardPage() {
   const { t } = useTranslation('cap');
-  const { t: tc } = useTranslation();
+  const { t: tc, i18n } = useTranslation();
   const { k, language } = useCapT();
   const options = useCapOptions();
   const labels = useCapLabels();
@@ -63,31 +65,17 @@ export function CapDashboardPage() {
   const aiOn = aiFeature && aiAllowed;
   const summary = useToastMutation(capApi.summary);
   const [draft, setDraft] = useState<CapSummaryDraft>();
-  const rtl = useRtl();
 
   const bars = (rows: readonly CapCount[], label: (code: string) => string, name: string) => (
-    <EChart
+    <Chart
       label={name}
       height={220}
-      option={{
-        grid: { left: 8, right: 8, top: 24, bottom: 8, containLabel: true },
-        xAxis: {
-          type: 'category',
-          data: rows.map((r) => label(r.code)),
-          inverse: rtl,
-          axisLabel: { interval: 0, width: 72, overflow: 'break' },
-        },
-        yAxis: { type: 'value', minInterval: 1, position: rtl ? 'right' : 'left' },
-        series: [
-          {
-            type: 'bar',
-            data: rows.map((r) => r.count),
-            label: { show: true, position: 'top' },
-            barMaxWidth: 40,
-          },
-        ],
-        tooltip: { trigger: 'axis' },
-      }}
+      {...barOption({
+        categories: rows.map((r) => ({ key: r.code, label: label(r.code) })),
+        series: [{ name, values: rows.map((r) => r.count) }],
+        integer: true,
+        format: (v) => formatNumber(v, i18n.language),
+      })}
     />
   );
 
@@ -169,19 +157,15 @@ export function CapDashboardPage() {
             <Tile
               label={t('dashboard.completedRemarks')}
               value={dashboard.data.completedRemarks}
-              tone="text-success"
+              tone="success"
             />
-            <Tile
-              label={t('dashboard.overdueRemarks')}
-              value={dashboard.data.overdueRemarks}
-              tone="text-danger"
-            />
+            <Tile label={t('dashboard.overdueRemarks')} value={dashboard.data.overdueRemarks} tone="danger" />
             <Tile label={t('dashboard.actions')} value={dashboard.data.actions} />
-            <Tile label={t('dashboard.lateActions')} value={dashboard.data.lateActions} tone="text-danger" />
+            <Tile label={t('dashboard.lateActions')} value={dashboard.data.lateActions} tone="danger" />
             <Tile
               label={t('dashboard.completedActions')}
               value={dashboard.data.completedActions}
-              tone="text-success"
+              tone="success"
             />
             <Tile label={t('dashboard.budgetActions')} value={dashboard.data.budgetActions} />
           </div>
@@ -302,7 +286,11 @@ export function CapDashboardPage() {
                         <ActionStatusChip status={a.status} />
                       </TableCell>
                       <TableCell>
-                        <PctBar value={a.achievedPct} late={a.status === 'late'} />
+                        <ProgressBar
+                          value={a.achievedPct}
+                          tone={a.status === 'late' ? 'danger' : 'primary'}
+                          testId="cap-pct"
+                        />
                       </TableCell>
                       <TableCell>{date(a.effectiveEnd)}</TableCell>
                     </TableRow>
