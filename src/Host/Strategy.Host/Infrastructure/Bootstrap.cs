@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using Strategy.Platform.Access;
 using Strategy.Platform.Access.Application;
 using Strategy.Platform.AI.Application;
@@ -35,7 +36,16 @@ internal static partial class Bootstrap
         }
 
         var password = (await File.ReadAllTextAsync(passwordFile)).TrimEnd('\r', '\n');
-        await services.GetRequiredService<ModuleMigrator>().MigrateAllAsync();
+
+        // Never migrate here: the application role may not create schemas on a two-role install (ADR 0018). Program applies pending
+        // migrations as the owner first when ConnectionStrings:StrategyMigrations is configured; otherwise `--migrate` must run first.
+        if (await services.GetRequiredService<ModuleMigrator>().HasPendingMigrationsAsync())
+        {
+            await output.WriteLineAsync(
+                "The database is not up to date. Run --migrate first (as the owner role: ConnectionStrings__StrategyMigrations), then --create-admin.");
+            return 3;
+        }
+
         await using var scope = services.CreateAsyncScope();
         scope.ServiceProvider.GetRequiredService<RequestContext>().Initialise(Guid.CreateVersion7().ToString("N"), Channels.System, StrategyClaims.CreateSystemPrincipal());
         await scope.ServiceProvider.GetRequiredService<IdentitySettingsCache>().ReloadAsync();
@@ -63,6 +73,23 @@ internal static partial class Bootstrap
 
         await output.WriteLineAsync($"System administrator {email} created. Multi-factor sign-in is set up at the first sign-in.");
         return 0;
+    }
+
+    /// <summary>
+    /// True when <c>ConnectionStrings:StrategyMigrations</c> names another database role than <c>ConnectionStrings:Strategy</c> (two-role
+    /// install, ADR 0018): migrations must then run on that owner connection, never on the runtime one.
+    /// </summary>
+    public static bool HasSeparateOwnerConnection(IConfiguration configuration)
+    {
+        var owner = configuration.GetConnectionString(PersistenceServiceCollectionExtensions.MigrationsConnectionStringName);
+        if (string.IsNullOrWhiteSpace(owner))
+        {
+            return false;
+        }
+
+        var runtime = configuration.GetConnectionString(PersistenceServiceCollectionExtensions.ConnectionStringName);
+        return string.IsNullOrWhiteSpace(runtime) ||
+            !string.Equals(new NpgsqlConnectionStringBuilder(owner).Username, new NpgsqlConnectionStringBuilder(runtime).Username, StringComparison.Ordinal);
     }
 
     /// <summary>

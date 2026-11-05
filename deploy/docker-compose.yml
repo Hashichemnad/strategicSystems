@@ -46,9 +46,12 @@ services:
       - "${MAILPIT_SMTP_PORT:-1025}:1025"
 
   # One-shot: applies every module's pending migrations, then exits. The app waits for it.
+  # strategy-app is built locally, never pulled: `migrate` builds it (pull_policy: build) and `app` reuses that image
+  # (pull_policy: never), so `--profile app up -d --build` works on a fresh machine without "pull access denied".
   migrate:
     profiles: ["app"]
     image: strategy-app:${APP_VERSION:-dev}
+    pull_policy: build
     build:
       context: ..
       dockerfile: deploy/Dockerfile
@@ -69,6 +72,7 @@ services:
   app:
     profiles: ["app"]
     image: strategy-app:${APP_VERSION:-dev}
+    pull_policy: never
     restart: unless-stopped
     environment:
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Production}
