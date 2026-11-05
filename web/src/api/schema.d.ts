@@ -10148,6 +10148,1318 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/cap/options': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetCapOptions'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/settings': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetCapSettings'];
+    put: operations['SaveCapSettings'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/dashboard': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetCapDashboard'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/reports/{kind}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ExportCapReport'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/sources': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListCapSources'];
+    put?: never;
+    post: operations['CreateCapSource'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/sources/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetCapSource'];
+    put: operations['UpdateCapSource'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/sources/{id}/close': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CloseCapSource'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/sources/{id}/reopen': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ReopenCapSource'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/sources/{id}/remarks': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CreateCapRemark'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/remarks': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListCapRemarks'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/remarks/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetCapRemark'];
+    put: operations['UpdateCapRemark'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/remarks/{id}/accept': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['AcceptCapRemark'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/remarks/{id}/reject': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RejectCapRemark'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/remarks/{id}/confirm-rejection': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ConfirmCapRemarkRejection'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/remarks/{id}/reassign': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ReassignCapRemark'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/remarks/{id}/root-cause': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['SaveCapRootCause'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/remarks/{id}/submit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SubmitCapRemarkActions'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/remarks/{id}/cancel': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CancelCapRemark'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/remarks/{id}/verify': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['VerifyCapRemark'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/remarks/{id}/kpi-trend': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetCapRemarkKpiTrend'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/remarks/{id}/actions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListCapRemarkActions'];
+    put?: never;
+    post: operations['CreateCapAction'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/remarks/{id}/link-action': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['LinkCapAction'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/remarks/{id}/unlink-action': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['UnlinkCapAction'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/remarks/{id}/linkable-actions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['SearchCapLinkableActions'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/remarks/{id}/validation': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetCapValidationView'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/actions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListCapActions'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/actions/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetCapAction'];
+    put: operations['UpdateCapAction'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/actions/{id}/validate': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ValidateCapAction'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/actions/{id}/link-project': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['LinkCapActionProject'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/actions/{id}/progress': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['UpdateCapActionAchievement'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/actions/{id}/updates': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListCapActionUpdates'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/actions/{id}/updates/{updateId}/confirm': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ConfirmCapActionUpdate'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/actions/{id}/request-completion': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RequestCapActionCompletion'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/actions/{id}/extensions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListCapActionExtensions'];
+    put?: never;
+    post: operations['RequestCapActionExtension'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/actions/{id}/cancel': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CancelCapAction'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/projects': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['SearchCapProjects'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/suggestions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListCapSuggestions'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/suggestions/{id}/raise': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RaiseCapSuggestion'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/suggestions/{id}/dismiss': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['DismissCapSuggestion'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/sources/{id}/audit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetCapSourceAuditTrail'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/sources/{id}/audit/as-of': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetCapSourceAsOf'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/remarks/{id}/audit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetCapRemarkAuditTrail'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/remarks/{id}/audit/as-of': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetCapRemarkAsOf'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/actions/{id}/audit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetCapActionAuditTrail'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/actions/{id}/audit/as-of': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetCapActionAsOf'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/ai/sources/{id}/extract': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ExtractCapRemarksWithAi'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/ai/sources/{id}/extract/document': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ExtractCapRemarksFromDocumentWithAi'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/ai/remarks/{id}/root-cause': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['DraftCapRootCauseWithAi'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/ai/remarks/{id}/suggestions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SuggestCapActionsWithAi'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/ai/actions/{id}/quality': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CheckCapActionQuality'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/ai/summary': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['DraftCapSummaryWithAi'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/bench/options': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetBenchOptions'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/bench/settings': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetBenchSettings'];
+    put: operations['SaveBenchSettings'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/bench/dashboard': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetBenchDashboard'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/bench/plan': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetBenchPlan'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/bench/plan/{year}/circulate': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CirculateBenchPlan'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/bench/studies': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListBenchStudies'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/bench/studies/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetBenchStudy'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/bench/studies/{id}/search': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetBenchStudySearch'];
+    put: operations['SaveBenchStudySearch'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/bench/studies/{id}/search/submit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SubmitBenchStudySearch'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/bench/studies/{id}/outreach': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['AddBenchStudyOutreach'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/bench/studies/{id}/ratings': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RateBenchStudyComparator'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/bench/studies/{id}/visits': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetBenchStudyVisits'];
+    put: operations['SaveBenchStudyVisits'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/bench/studies/{id}/send-to-analysis': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SendBenchStudyToAnalysis'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/bench/studies/{id}/analysis': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetBenchStudyAnalysis'];
+    put: operations['SaveBenchStudyAnalysis'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/bench/studies/{id}/analysis/submit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SubmitBenchStudyAnalysis'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/bench/studies/{id}/actions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetBenchStudyActions'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/bench/studies/{id}/request-closure': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RequestBenchStudyClosure'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/bench/studies/{id}/cancel': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CancelBenchStudy'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/bench/studies/{id}/team': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['LinkBenchStudyTeam'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/bench/studies/{id}/impact': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetBenchStudyImpact'];
+    put?: never;
+    post: operations['RecordBenchStudyImpact'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/bench/comparators': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListBenchComparators'];
+    put?: never;
+    post: operations['CreateBenchComparator'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/bench/comparators/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetBenchComparator'];
+    put: operations['UpdateBenchComparator'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/bench/practices': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['SearchBenchPractices'];
+    put?: never;
+    post: operations['CreateBenchPractice'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/bench/practices/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateBenchPractice'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/bench/studies/{id}/audit': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetBenchStudyAuditTrail'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/bench/studies/{id}/audit/as-of': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetBenchStudyAsOf'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/bench/ai/studies/{id}/comparators': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SuggestBenchComparatorsWithAi'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/bench/ai/studies/{id}/questionnaire': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['DraftBenchQuestionnaireWithAi'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/bench/ai/studies/{id}/analysis': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['AnalyseBenchVisitNotesWithAi'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/bench/ai/studies/{id}/summary': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SummariseBenchStudyWithAi'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/bench/ai/practices/search': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SearchBenchPracticesWithAi'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -10259,6 +11571,20 @@ export interface components {
       version: number;
       comment: null | string;
       form: null | components['schemas']['JsonObject'];
+    };
+    ActionQualityDto: {
+      flags: string[];
+      issues: string[];
+      rewriteAr: null | string;
+      rewriteEn: null | string;
+      /** Format: uuid */
+      usageId: null | string;
+    };
+    ActionSuggestionDto: {
+      actions: components['schemas']['SuggestedCapActionDto'][];
+      duplicates: components['schemas']['DuplicateActionDto'][];
+      /** Format: uuid */
+      usageId: null | string;
     };
     ActionUpdateDto: {
       /** Format: uuid */
@@ -10938,6 +12264,499 @@ export interface components {
       /** Format: double */
       cost: null | number;
     };
+    BenchAnalysisDto: {
+      practices: components['schemas']['BenchPracticeDto'][];
+      indicators: components['schemas']['BenchIndicatorDto'][];
+      planItems: components['schemas']['BenchPlanItemDto'][];
+    };
+    BenchAnalysisInput: {
+      practices: components['schemas']['BenchPracticeInput'][];
+      indicators: components['schemas']['BenchIndicatorInput'][];
+      planItems: components['schemas']['BenchPlanItemInput'][];
+    };
+    BenchBestPracticeDto: {
+      /** Format: uuid */
+      id: string;
+      values: components['schemas']['BenchPracticeValues'];
+      origin: string;
+      /** Format: uuid */
+      studyId: null | string;
+      studyNumber: null | string;
+      /** Format: uuid */
+      comparatorId: null | string;
+      comparatorNameAr: null | string;
+      comparatorNameEn: null | string;
+      /** Format: double */
+      score: number;
+      /** Format: uint32 */
+      version: number;
+    };
+    BenchCandidateDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      comparatorId: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      country: null | string;
+      scope: string;
+      sectorCode: null | string;
+      selected: boolean;
+      reason: null | string;
+      availableInfo: null | string;
+      contact: null | string;
+      codeOfConductAck: boolean;
+      /** Format: int32 */
+      rating: null | number;
+      ratingNote: null | string;
+      outreach: components['schemas']['BenchOutreachDto'][];
+    };
+    BenchCandidateInput: {
+      /** Format: uuid */
+      comparatorId: null | string;
+      newComparator: null | components['schemas']['ComparatorValues'];
+      selected: boolean;
+      reason: null | string;
+      availableInfo: null | string;
+      contact: null | string;
+      codeOfConductAck: boolean;
+    };
+    BenchCandidatesInput: {
+      candidates: components['schemas']['BenchCandidateInput'][];
+    };
+    BenchCirculationDto: {
+      /** Format: int32 */
+      year: number;
+      /** Format: date-time */
+      circulatedAt: string;
+      /** Format: int32 */
+      recipients: number;
+      /** Format: int32 */
+      studies: number;
+    };
+    BenchCommentInput: {
+      comment: null | string;
+    };
+    BenchComparatorBody: {
+      values: components['schemas']['ComparatorValues'];
+      /** Format: uint32 */
+      version: null | number;
+    };
+    BenchComparatorDto: {
+      /** Format: uuid */
+      id: string;
+      values: components['schemas']['ComparatorValues'];
+      /** Format: int32 */
+      studies: number;
+      /** Format: double */
+      averageRating: null | number;
+      history: components['schemas']['BenchComparatorStudyDto'][];
+      /** Format: uint32 */
+      version: number;
+    };
+    BenchComparatorStudyDto: {
+      /** Format: uuid */
+      studyId: string;
+      number: string;
+      titleAr: null | string;
+      titleEn: null | string;
+      /** Format: int32 */
+      targetYear: number;
+      stage: string;
+      selected: boolean;
+      /** Format: int32 */
+      rating: null | number;
+    };
+    BenchCountDto: {
+      code: string;
+      /** Format: int32 */
+      count: number;
+    };
+    BenchDashboardDto: {
+      /** Format: int32 */
+      studies: number;
+      /** Format: int32 */
+      active: number;
+      /** Format: int32 */
+      completed: number;
+      /** Format: int32 */
+      cancelled: number;
+      byStage: components['schemas']['BenchCountDto'][];
+      byQuarter: components['schemas']['BenchCountDto'][];
+      byUnit: components['schemas']['BenchUnitCountDto'][];
+      /** Format: int32 */
+      actions: number;
+      /** Format: int32 */
+      actionsCompleted: number;
+      /** Format: int32 */
+      actionsLate: number;
+      /** Format: int32 */
+      practicesAdopted: number;
+      /** Format: int32 */
+      comparators: number;
+    };
+    BenchImpactDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: date */
+      dueOn: null | string;
+      implemented: boolean;
+      kpisMoved: boolean;
+      notes: null | string;
+      /** Format: date-time */
+      reviewedAt: string;
+    };
+    BenchImpactInput: {
+      implemented: boolean;
+      kpisMoved: boolean;
+      notes: null | string;
+    };
+    BenchIndicatorDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      kpiCardId: null | string;
+      kpiCardCode: null | string;
+      indicator: string;
+      /** Format: double */
+      ourValue: null | number;
+      /** Format: double */
+      theirValue: null | number;
+      period: null | string;
+      source: null | string;
+      updateKpiBenchmark: boolean;
+      /** Format: int32 */
+      sort: number;
+    };
+    BenchIndicatorInput: {
+      /** Format: uuid */
+      id: null | string;
+      /** Format: uuid */
+      kpiCardId: null | string;
+      indicator: null | string;
+      /** Format: double */
+      ourValue: null | number;
+      /** Format: double */
+      theirValue: null | number;
+      period: null | string;
+      source: null | string;
+      updateKpiBenchmark: boolean;
+    };
+    BenchNotesInput: {
+      notes: null | string;
+    };
+    BenchOptionDto: {
+      code: string;
+      labelAr: null | string;
+      labelEn: null | string;
+    };
+    BenchOptionsDto: {
+      lookups: {
+        [key: string]: components['schemas']['BenchOptionDto'][];
+      };
+      canOffice: boolean;
+      canDashboard: boolean;
+      canManageComparators: boolean;
+      canManagePractices: boolean;
+      canSettings: boolean;
+      canCreate: boolean;
+      requestTypeCode: string;
+    };
+    BenchOutreachDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: date */
+      on: string;
+      channel: string;
+      summary: null | string;
+      response: string;
+      /** Format: date-time */
+      createdAt: string;
+    };
+    BenchOutreachInput: {
+      /** Format: uuid */
+      studyEntityId: string;
+      /** Format: date */
+      on: string;
+      channel: string;
+      summary: null | string;
+      response: string;
+    };
+    BenchPersonDto: {
+      /** Format: uuid */
+      id: string;
+      nameAr: null | string;
+      nameEn: null | string;
+    };
+    BenchPlanDto: {
+      /** Format: int32 */
+      year: number;
+      studies: components['schemas']['BenchStudyListItemDto'][];
+      circulations: components['schemas']['BenchCirculationDto'][];
+      canCirculate: boolean;
+    };
+    BenchPlanItemDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      topicId: null | string;
+      titleAr: null | string;
+      titleEn: null | string;
+      description: null | string;
+      owner: null | components['schemas']['BenchPersonDto'];
+      unit: null | components['schemas']['BenchUnitDto'];
+      /** Format: date */
+      dueOn: null | string;
+      priority: string;
+      actionTypeCode: null | string;
+      budgetRequired: boolean;
+      /** Format: uuid */
+      remarkId: null | string;
+      /** Format: int32 */
+      sort: number;
+    };
+    BenchPlanItemInput: {
+      /** Format: uuid */
+      id: null | string;
+      /** Format: uuid */
+      topicId: null | string;
+      titleAr: null | string;
+      titleEn: null | string;
+      description: null | string;
+      /** Format: uuid */
+      ownerEmployeeId: null | string;
+      /** Format: uuid */
+      unitId: null | string;
+      /** Format: date */
+      dueOn: null | string;
+      priority: null | string;
+      actionTypeCode: null | string;
+      budgetRequired: boolean;
+    };
+    BenchPracticeBody: {
+      values: components['schemas']['BenchPracticeValues'];
+      /** Format: uint32 */
+      version: null | number;
+    };
+    BenchPracticeDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      topicId: null | string;
+      subject: string;
+      ourPractice: null | string;
+      theirPractice: null | string;
+      category: string;
+      applicable: boolean;
+      addToLibrary: boolean;
+      /** Format: int32 */
+      sort: number;
+    };
+    BenchPracticeInput: {
+      /** Format: uuid */
+      id: null | string;
+      /** Format: uuid */
+      topicId: null | string;
+      subject: null | string;
+      ourPractice: null | string;
+      theirPractice: null | string;
+      category: string;
+      applicable: boolean;
+      addToLibrary: boolean;
+    };
+    BenchPracticeValues: {
+      titleAr: null | string;
+      titleEn: null | string;
+      description: null | string;
+      topic: null | string;
+      tags: null | string[];
+      applicability: null | string;
+      sectorCode: null | string;
+      active: boolean;
+    };
+    BenchQuestionInput: {
+      question: null | string;
+    };
+    BenchQuestionnaireInput: {
+      /** Format: uuid */
+      comparatorId: null | string;
+    };
+    BenchRatingInput: {
+      /** Format: uuid */
+      studyEntityId: string;
+      /** Format: int32 */
+      rating: null | number;
+      note: null | string;
+    };
+    BenchReasonInput: {
+      reason: null | string;
+    };
+    /** @description Settings → Benchmarking (docs/design/benchmarking.md §4). */
+    BenchSettings: {
+      /** Format: int32 */
+      searchNoticeDays?: number;
+      countWorkingDays?: boolean;
+      /** Format: int32 */
+      impactFollowUpMonths?: number;
+      kpiBenchmarkUpdate?: boolean;
+    };
+    BenchSettingsInput: {
+      settings: components['schemas']['BenchSettings'];
+      /** Format: uint32 */
+      version: number;
+    };
+    BenchStudyDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      /** Format: uuid */
+      requestId: string;
+      requestNumber: null | string;
+      titleAr: null | string;
+      titleEn: null | string;
+      responsibleUnit: null | components['schemas']['BenchUnitDto'];
+      section: null | components['schemas']['BenchUnitDto'];
+      responsibleEmployee: null | components['schemas']['BenchPersonDto'];
+      requester: null | components['schemas']['BenchPersonDto'];
+      /** Format: int32 */
+      targetYear: number;
+      /** Format: int32 */
+      targetQuarter: number;
+      comparisonTypeCode: null | string;
+      purposeCode: null | string;
+      scope: null | string;
+      stage: string;
+      status: string;
+      pendingProcess: null | string;
+      returned: boolean;
+      returnComment: null | string;
+      searchSubmitted: boolean;
+      /** Format: date */
+      searchNoticeOn: null | string;
+      /** Format: date-time */
+      searchNotifiedAt: null | string;
+      team: null | components['schemas']['BenchTeamDto'];
+      /** Format: uuid */
+      capSourceId: null | string;
+      /** Format: date-time */
+      planApprovedAt: null | string;
+      /** Format: date-time */
+      analysisApprovedAt: null | string;
+      /** Format: date-time */
+      closedAt: null | string;
+      /** Format: date */
+      impactDueOn: null | string;
+      cancelReason: null | string;
+      topics: components['schemas']['BenchTopicDto'][];
+      can: components['schemas']['BenchStudyPermissionsDto'];
+      /** Format: uint32 */
+      version: number;
+    };
+    BenchStudyListItemDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      titleAr: null | string;
+      titleEn: null | string;
+      responsibleUnit: null | components['schemas']['BenchUnitDto'];
+      responsibleEmployee: null | components['schemas']['BenchPersonDto'];
+      /** Format: int32 */
+      targetYear: number;
+      /** Format: int32 */
+      targetQuarter: number;
+      comparisonTypeCode: null | string;
+      stage: string;
+      status: string;
+      pendingProcess: null | string;
+      returned: boolean;
+      analysisApproved: boolean;
+    };
+    BenchStudyPermissionsDto: {
+      editSearch: boolean;
+      submitSearch: boolean;
+      outreach: boolean;
+      editVisits: boolean;
+      sendToAnalysis: boolean;
+      editAnalysis: boolean;
+      submitAnalysis: boolean;
+      requestClosure: boolean;
+      cancel: boolean;
+      linkTeam: boolean;
+      impact: boolean;
+      office: boolean;
+    };
+    BenchTeamDto: {
+      /** Format: uuid */
+      id: string;
+      number: null | string;
+      nameAr: null | string;
+      nameEn: null | string;
+      status: string;
+    };
+    BenchTeamInput: {
+      /** Format: uuid */
+      teamId: null | string;
+    };
+    BenchTopicDto: {
+      /** Format: uuid */
+      id: string;
+      title: string;
+      owner: null | components['schemas']['BenchPersonDto'];
+      description: null | string;
+      /** Format: int32 */
+      sort: number;
+    };
+    BenchUnitCountDto: {
+      unit: null | components['schemas']['BenchUnitDto'];
+      /** Format: int32 */
+      studies: number;
+      /** Format: int32 */
+      completed: number;
+    };
+    BenchUnitDto: {
+      /** Format: uuid */
+      id: string;
+      code: null | string;
+      nameAr: null | string;
+      nameEn: null | string;
+    };
+    BenchVisitDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      comparatorId: string;
+      comparatorNameAr: null | string;
+      comparatorNameEn: null | string;
+      /** Format: date */
+      agreedOn: null | string;
+      method: string;
+      participants: components['schemas']['BenchPersonDto'][];
+      /** Format: uuid */
+      teamId: null | string;
+      questionnaire: null | string;
+      /** Format: date */
+      questionnaireSentOn: null | string;
+      notes: null | string;
+    };
+    BenchVisitInput: {
+      /** Format: uuid */
+      id: null | string;
+      /** Format: uuid */
+      comparatorId: string;
+      /** Format: date */
+      agreedOn: null | string;
+      method: string;
+      participantIds: null | string[];
+      /** Format: uuid */
+      teamId: null | string;
+      questionnaire: null | string;
+      /** Format: date */
+      questionnaireSentOn: null | string;
+      notes: null | string;
+    };
+    BenchVisitsInput: {
+      visits: components['schemas']['BenchVisitInput'][];
+    };
     BenefitDto: {
       /** Format: uuid */
       id: string;
@@ -11151,6 +12970,22 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    CapAchievementUpdateDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: double */
+      pct: number;
+      note: null | string;
+      /** Format: date */
+      actualStart: null | string;
+      /** Format: date */
+      actualEnd: null | string;
+      /** Format: date-time */
+      at: string;
+      /** Format: uuid */
+      by: null | string;
+      draft: boolean;
+    };
     CapacityAllocationDto: {
       source: string;
       /** Format: uuid */
@@ -11191,6 +13026,602 @@ export interface components {
       /** Format: int32 */
       notSet: number;
       allocations: components['schemas']['CapacityAllocationDto'][];
+    };
+    CapActionBody: {
+      values: components['schemas']['CapActionValues'];
+      /** Format: uint32 */
+      version: null | number;
+    };
+    CapActionDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      /** Format: uuid */
+      homeRemarkId: string;
+      values: components['schemas']['CapActionValues'];
+      validationStatus: string;
+      validationNote: null | string;
+      status: string;
+      /** Format: double */
+      achievedPct: number;
+      /** Format: date */
+      actualStart: null | string;
+      /** Format: date */
+      actualEnd: null | string;
+      /** Format: date */
+      revisedEnd: null | string;
+      /** Format: date */
+      effectiveEnd: null | string;
+      assignee: null | components['schemas']['CapPersonDto'];
+      remarks: components['schemas']['CapActionRemarkRefDto'][];
+      /** Format: uuid */
+      projectId: null | string;
+      project: null | components['schemas']['PortfolioRecordBadge'];
+      /** Format: uuid */
+      programRequestId: null | string;
+      programRequestNumber: null | string;
+      programRequest: null | components['schemas']['PortfolioRecordBadge'];
+      pendingProcess: null | string;
+      completionNote: null | string;
+      /** Format: date-time */
+      completedAt: null | string;
+      cancelReason: null | string;
+      /** Format: int32 */
+      evidenceCount: number;
+      qualityFlags: string[];
+      can: components['schemas']['CapActionPermissionsDto'];
+      /** Format: uint32 */
+      version: number;
+    };
+    CapActionListItemDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      detailsAr: null | string;
+      detailsEn: null | string;
+      /** Format: uuid */
+      homeRemarkId: string;
+      homeRemarkNumber: string;
+      validationStatus: string;
+      status: string;
+      /** Format: double */
+      achievedPct: number;
+      /** Format: date */
+      effectiveEnd: null | string;
+      assignee: null | components['schemas']['CapPersonDto'];
+      budgetRequired: boolean;
+      budgetAvailable: null | boolean;
+      programRequestNumber: null | string;
+      /** Format: uuid */
+      programRequestId: null | string;
+      pendingProcess: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
+    CapActionPermissionsDto: {
+      edit: boolean;
+      progress: boolean;
+      requestCompletion: boolean;
+      requestExtension: boolean;
+      cancel: boolean;
+      linkProject: boolean;
+      validate: boolean;
+      unlink: boolean;
+    };
+    /** @description An action as a source system shows it (live, read-only). */
+    CapActionProgress: {
+      /** Format: uuid */
+      actionId: string;
+      number: string;
+      detailsAr: null | string;
+      detailsEn: null | string;
+      validationStatus: string;
+      status: string;
+      /** Format: double */
+      achievedPct: number;
+      hasEvidence: boolean;
+      /** Format: date */
+      plannedEnd: null | string;
+      /** Format: date */
+      revisedEnd: null | string;
+      /** Format: uuid */
+      assignedEmployeeId: null | string;
+      link: string;
+    };
+    CapActionRemarkRefDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      home: boolean;
+    };
+    CapActionValues: {
+      detailsAr: null | string;
+      detailsEn: null | string;
+      typeCode: null | string;
+      budgetRequired: boolean;
+      budgetAvailable: null | boolean;
+      /** Format: double */
+      estimatedCost: null | number;
+      relatedProcess: null | string;
+      /** Format: uuid */
+      assignedEmployeeId: null | string;
+      /** Format: date */
+      plannedStart: null | string;
+      /** Format: date */
+      plannedEnd: null | string;
+    };
+    CapCommentInput: {
+      comment: null | string;
+    };
+    CapConfirmInput: {
+      confirm: boolean;
+      note: null | string;
+    };
+    CapCountDto: {
+      code: string;
+      /** Format: int32 */
+      count: number;
+    };
+    CapDashboardDto: {
+      /** Format: int32 */
+      remarks: number;
+      /** Format: int32 */
+      openRemarks: number;
+      /** Format: int32 */
+      completedRemarks: number;
+      /** Format: int32 */
+      overdueRemarks: number;
+      /** Format: int32 */
+      actions: number;
+      /** Format: int32 */
+      lateActions: number;
+      /** Format: int32 */
+      completedActions: number;
+      /** Format: int32 */
+      budgetActions: number;
+      /** Format: int32 */
+      openSuggestions: number;
+      bySourceType: components['schemas']['CapCountDto'][];
+      byStatus: components['schemas']['CapCountDto'][];
+      byPriority: components['schemas']['CapCountDto'][];
+      actionsByStatus: components['schemas']['CapCountDto'][];
+      ageing: components['schemas']['CapCountDto'][];
+      byDepartment: components['schemas']['CapUnitCountDto'][];
+      budgetDependent: components['schemas']['CapActionListItemDto'][];
+      /** Format: int32 */
+      effective: number;
+      /** Format: int32 */
+      notEffective: number;
+      /** Format: int32 */
+      awaitingVerification: number;
+    };
+    CapExtensionDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: date */
+      previousEnd: null | string;
+      /** Format: date */
+      requestedEnd: string;
+      justification: string;
+      status: string;
+      /** Format: date-time */
+      decidedAt: null | string;
+      decisionNote: null | string;
+      /** Format: date-time */
+      createdAt: string;
+    };
+    CapExtensionInput: {
+      /** Format: date */
+      requestedEnd: string;
+      justification: null | string;
+    };
+    CapExtractInput: {
+      text: null | string;
+    };
+    CapKpiTrendDto: {
+      /** Format: uuid */
+      cardId: string;
+      code: null | string;
+      nameAr: null | string;
+      nameEn: null | string;
+      /** Format: int32 */
+      year: number;
+      /** Format: double */
+      achieved: null | number;
+      /** Format: double */
+      capped: null | number;
+      rag: string;
+      /** Format: int32 */
+      approvedPeriods: number;
+      /** Format: int32 */
+      totalPeriods: number;
+    };
+    CapLinkActionInput: {
+      /** Format: uuid */
+      actionId: string;
+    };
+    CapLinkProjectInput: {
+      /** Format: uuid */
+      projectId: null | string;
+    };
+    CapNoteInput: {
+      note: null | string;
+    };
+    CapOptionDto: {
+      code: string;
+      labelAr: null | string;
+      labelEn: null | string;
+    };
+    CapOptionsDto: {
+      lookups: {
+        [key: string]: components['schemas']['CapOptionDto'][];
+      };
+      fishboneCategories: string[];
+      canManageSources: boolean;
+      canOffice: boolean;
+      canDashboard: boolean;
+      canExport: boolean;
+      canSettings: boolean;
+      rejectionNeedsPmoConfirmation: boolean;
+      effectivenessVerification: boolean;
+    };
+    CapPersonDto: {
+      /** Format: uuid */
+      id: string;
+      nameAr: null | string;
+      nameEn: null | string;
+    };
+    CapProgressInput: {
+      /** Format: double */
+      pct: number;
+      note: null | string;
+      /** Format: date */
+      actualStart: null | string;
+      /** Format: date */
+      actualEnd: null | string;
+      /** Format: uint32 */
+      version: number;
+      /** @default false */
+      fromMcp: boolean;
+    };
+    CapProjectOptionDto: {
+      /** Format: uuid */
+      id: string;
+      number: null | string;
+      nameAr: null | string;
+      nameEn: null | string;
+      status: string;
+    };
+    CapRaiseInput: {
+      /** Format: uuid */
+      unitId: null | string;
+    };
+    CapReasonInput: {
+      reason: null | string;
+    };
+    CapReassignInput: {
+      /** Format: uuid */
+      ownerEmployeeId: string;
+    };
+    CapRemarkBody: {
+      values: components['schemas']['CapRemarkValues'];
+      /** Format: uint32 */
+      version: number;
+    };
+    CapRemarkDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      values: components['schemas']['CapRemarkValues'];
+      /** Format: uuid */
+      sourceId: string;
+      sourceNumber: string;
+      sourceTitleAr: null | string;
+      sourceTitleEn: null | string;
+      sourceTypeCode: string;
+      sourceLinked: null | components['schemas']['LinkView'];
+      linked: null | components['schemas']['LinkView'];
+      department: null | components['schemas']['CapUnitDto'];
+      section: null | components['schemas']['CapUnitDto'];
+      owner: null | components['schemas']['CapPersonDto'];
+      /** Format: date */
+      assignedOn: string;
+      /** Format: date */
+      dueOn: string;
+      /** Format: date-time */
+      dueAt: string;
+      overdue: boolean;
+      /** Format: date-time */
+      respondedAt: null | string;
+      status: string;
+      stage: string;
+      rejectionReason: null | string;
+      pmoDecision: null | string;
+      pmoDecisionNote: null | string;
+      rootCause: components['schemas']['CapRootCauseDto'];
+      allRejected: boolean;
+      /** Format: int32 */
+      reopenedCount: number;
+      /** Format: date-time */
+      completedAt: null | string;
+      /** Format: date */
+      verificationDueOn: null | string;
+      cancelReason: null | string;
+      can: components['schemas']['CapRemarkPermissionsDto'];
+      /** Format: uint32 */
+      version: number;
+    };
+    CapRemarkListItemDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      textAr: null | string;
+      textEn: null | string;
+      /** Format: uuid */
+      sourceId: string;
+      sourceNumber: string;
+      sourceTypeCode: string;
+      typeCode: string;
+      priority: string;
+      criterionCode: null | string;
+      department: null | components['schemas']['CapUnitDto'];
+      section: null | components['schemas']['CapUnitDto'];
+      owner: null | components['schemas']['CapPersonDto'];
+      status: string;
+      stage: string;
+      /** Format: date */
+      dueOn: string;
+      overdue: boolean;
+      /** Format: int32 */
+      actions: number;
+      /** Format: int32 */
+      completedActions: number;
+    };
+    CapRemarkPermissionsDto: {
+      respond: boolean;
+      reassign: boolean;
+      rootCause: boolean;
+      manageActions: boolean;
+      submit: boolean;
+      confirmRejection: boolean;
+      edit: boolean;
+      cancel: boolean;
+      verify: boolean;
+      validate: boolean;
+    };
+    CapRemarkProgress: {
+      /** Format: uuid */
+      remarkId: string;
+      number: string;
+      externalKey: null | string;
+      textAr: null | string;
+      textEn: null | string;
+      status: string;
+      stage: string;
+      /** Format: uuid */
+      ownerEmployeeId: null | string;
+      /** Format: date */
+      dueOn: null | string;
+      actions: components['schemas']['CapActionProgress'][];
+      link: string;
+    };
+    CapRemarkValues: {
+      textAr: null | string;
+      textEn: null | string;
+      criterionCode: null | string;
+      typeCode: string;
+      priority: string;
+      /** Format: uuid */
+      departmentUnitId: string;
+      /** Format: uuid */
+      sectionUnitId: null | string;
+      /** Format: uuid */
+      ownerEmployeeId: null | string;
+    };
+    CapRootCauseBody: {
+      values: components['schemas']['CapRootCauseValues'];
+      /** Format: uint32 */
+      version: number;
+    };
+    CapRootCauseDto: {
+      method: null | string;
+      whys: string[];
+      fishbone: {
+        [key: string]: string[];
+      };
+      text: null | string;
+      required: boolean;
+    };
+    CapRootCauseValues: {
+      method: string;
+      whys: null | string[];
+      fishbone: null | {
+        [key: string]: string[];
+      };
+      text: null | string;
+    };
+    /** @description Settings → CAP (docs/design/cap.md §2.1). */
+    CapSettings: {
+      /** Format: int32 */
+      dueDaysCritical?: number;
+      /** Format: int32 */
+      dueDaysHigh?: number;
+      /** Format: int32 */
+      dueDaysMedium?: number;
+      /** Format: int32 */
+      dueDaysLow?: number;
+      countWorkingDays?: boolean;
+      rejectionNeedsPmoConfirmation?: boolean;
+      rootCauseRule?: string;
+      effectivenessVerification?: boolean;
+      /** Format: int32 */
+      effectivenessMonths?: number;
+      /** Format: int32 */
+      monthlyReminderDay?: number;
+      /** Format: int32 */
+      escalatePmoWorkingDays?: number;
+      mirrorProjectProgress?: boolean;
+      kpiMissMode?: string;
+      /** Format: int32 */
+      kpiMissConsecutive?: number;
+      riskEventMode?: string;
+      riskControlMode?: string;
+      reassignWithinUnit?: boolean;
+    };
+    CapSettingsInput: {
+      settings: components['schemas']['CapSettings'];
+      /** Format: uint32 */
+      version: number;
+    };
+    CapSourceBody: {
+      values: components['schemas']['CapSourceValues'];
+      /** Format: uint32 */
+      version: number;
+    };
+    CapSourceDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      values: components['schemas']['CapSourceValues'];
+      origin: string;
+      linkedType: null | string;
+      /** Format: uuid */
+      linkedId: null | string;
+      linked: null | components['schemas']['LinkView'];
+      owner: null | components['schemas']['CapPersonDto'];
+      unit: null | components['schemas']['CapUnitDto'];
+      status: string;
+      viewers: components['schemas']['CapPersonDto'][];
+      can: components['schemas']['CapSourcePermissionsDto'];
+      /** Format: uint32 */
+      version: number;
+    };
+    CapSourceListItemDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      titleAr: null | string;
+      titleEn: null | string;
+      sourceTypeCode: string;
+      /** Format: date */
+      receivedOn: string;
+      unit: null | components['schemas']['CapUnitDto'];
+      origin: string;
+      status: string;
+      /** Format: int32 */
+      remarks: number;
+      /** Format: int32 */
+      openRemarks: number;
+      /** Format: int32 */
+      completedRemarks: number;
+    };
+    CapSourcePermissionsDto: {
+      edit: boolean;
+      addRemark: boolean;
+      close: boolean;
+    };
+    /**
+     * @description Live progress of a source (ADR 0123). bool CapSourceProgress.AllActionsCompleted: at least one completed action, every remark final and every
+     *     approved action completed — completion requires evidence, so this means "completed with evidence".
+     */
+    CapSourceProgress: {
+      /** Format: uuid */
+      sourceId: string;
+      number: string;
+      remarks: components['schemas']['CapRemarkProgress'][];
+      /** Format: int32 */
+      actionCount: number;
+      /** Format: int32 */
+      completedCount: number;
+      allActionsCompleted: boolean;
+      link: string;
+    };
+    CapSourceValues: {
+      titleAr: null | string;
+      titleEn: null | string;
+      sourceTypeCode: string;
+      description: null | string;
+      /** Format: date */
+      receivedOn: string;
+      /** Format: uuid */
+      ownerEmployeeId: null | string;
+      /** Format: uuid */
+      unitId: null | string;
+      /** Format: uuid */
+      teamId: null | string;
+    };
+    CapSuggestionDto: {
+      /** Format: uuid */
+      id: string;
+      kind: string;
+      resourceType: string;
+      /** Format: uuid */
+      resourceId: string;
+      parentType: string;
+      /** Format: uuid */
+      parentId: string;
+      parentNumber: null | string;
+      titleAr: null | string;
+      titleEn: null | string;
+      details: components['schemas']['JsonElement'];
+      unit: null | components['schemas']['CapUnitDto'];
+      priority: string;
+      status: string;
+      /** Format: uuid */
+      remarkId: null | string;
+      dismissReason: null | string;
+      /** Format: date-time */
+      createdAt: string;
+    };
+    CapSummaryDraftDto: {
+      summaryAr: string;
+      summaryEn: string;
+      lateUnitsAr: string;
+      lateUnitsEn: string;
+      /** Format: uuid */
+      usageId: string;
+    };
+    CapSummaryInput: {
+      /** Format: uuid */
+      unitId: null | string;
+      /** Format: int32 */
+      year: null | number;
+    };
+    CapUnitCountDto: {
+      unit: null | components['schemas']['CapUnitDto'];
+      /** Format: int32 */
+      remarks: number;
+      /** Format: int32 */
+      completed: number;
+      /** Format: int32 */
+      open: number;
+      /** Format: int32 */
+      overdue: number;
+      /** Format: int32 */
+      lateActions: number;
+      /** Format: double */
+      closureRate: number;
+    };
+    CapUnitDto: {
+      /** Format: uuid */
+      id: string;
+      code: null | string;
+      nameAr: null | string;
+      nameEn: null | string;
+    };
+    CapValidateInput: {
+      decision: string;
+      comment: null | string;
+      /** Format: uuid */
+      projectId: null | string;
+    };
+    CapValidationViewDto: {
+      remark: components['schemas']['CapRemarkDto'];
+      actions: components['schemas']['CapActionDto'][];
+    };
+    CapVerifyInput: {
+      effective: boolean;
+      comment: null | string;
     };
     /** @description Everything an author sets on a card (form / API / AI builder). */
     CardValues: {
@@ -11590,6 +14021,24 @@ export interface components {
       ownerEmployeeId: null | string;
       /** Format: date */
       nextDue: null | string;
+    };
+    ComparatorSuggestionDto: {
+      entities: components['schemas']['SuggestedComparatorDto'][];
+      /** Format: uuid */
+      usageId: string;
+    };
+    ComparatorValues: {
+      nameAr: null | string;
+      nameEn: null | string;
+      sectorCode: null | string;
+      country: null | string;
+      scope: string;
+      website: null | string;
+      contactName: null | string;
+      contactEmail: null | string;
+      contactPhone: null | string;
+      notes: null | string;
+      active: boolean;
     };
     CompareDto: {
       /** Format: uuid */
@@ -12156,6 +14605,16 @@ export interface components {
       /** Format: int32 */
       points: number;
     };
+    DuplicateActionDto: {
+      /** Format: uuid */
+      id: string;
+      number: string;
+      detailsAr: null | string;
+      detailsEn: null | string;
+      status: string;
+      /** Format: double */
+      score: number;
+    };
     DuplicateCheckDto: {
       findings: components['schemas']['OverlapDto'][];
       /** Format: int32 */
@@ -12563,6 +15022,15 @@ export interface components {
       /** Format: int32 */
       locationNumber: null | number;
       fromScan: boolean;
+    };
+    ExtractedRemarkDto: {
+      textAr: null | string;
+      textEn: null | string;
+      criterionCode: null | string;
+      typeCode: null | string;
+      priority: null | string;
+      /** Format: uuid */
+      departmentUnitId: null | string;
     };
     ExtractionResultDto: {
       formKey: string;
@@ -15568,6 +18036,90 @@ export interface components {
       totalPages?: number;
     };
     /** @description One page of items plus the total count across all pages. */
+    PagedResultOfBenchBestPracticeDto: {
+      items: components['schemas']['BenchBestPracticeDto'][];
+      /** Format: int32 */
+      page: number;
+      /** Format: int32 */
+      pageSize: number;
+      /** Format: int32 */
+      totalCount: number;
+      /** Format: int32 */
+      totalPages?: number;
+    };
+    /** @description One page of items plus the total count across all pages. */
+    PagedResultOfBenchComparatorDto: {
+      items: components['schemas']['BenchComparatorDto'][];
+      /** Format: int32 */
+      page: number;
+      /** Format: int32 */
+      pageSize: number;
+      /** Format: int32 */
+      totalCount: number;
+      /** Format: int32 */
+      totalPages?: number;
+    };
+    /** @description One page of items plus the total count across all pages. */
+    PagedResultOfBenchStudyListItemDto: {
+      items: components['schemas']['BenchStudyListItemDto'][];
+      /** Format: int32 */
+      page: number;
+      /** Format: int32 */
+      pageSize: number;
+      /** Format: int32 */
+      totalCount: number;
+      /** Format: int32 */
+      totalPages?: number;
+    };
+    /** @description One page of items plus the total count across all pages. */
+    PagedResultOfCapActionListItemDto: {
+      items: components['schemas']['CapActionListItemDto'][];
+      /** Format: int32 */
+      page: number;
+      /** Format: int32 */
+      pageSize: number;
+      /** Format: int32 */
+      totalCount: number;
+      /** Format: int32 */
+      totalPages?: number;
+    };
+    /** @description One page of items plus the total count across all pages. */
+    PagedResultOfCapRemarkListItemDto: {
+      items: components['schemas']['CapRemarkListItemDto'][];
+      /** Format: int32 */
+      page: number;
+      /** Format: int32 */
+      pageSize: number;
+      /** Format: int32 */
+      totalCount: number;
+      /** Format: int32 */
+      totalPages?: number;
+    };
+    /** @description One page of items plus the total count across all pages. */
+    PagedResultOfCapSourceListItemDto: {
+      items: components['schemas']['CapSourceListItemDto'][];
+      /** Format: int32 */
+      page: number;
+      /** Format: int32 */
+      pageSize: number;
+      /** Format: int32 */
+      totalCount: number;
+      /** Format: int32 */
+      totalPages?: number;
+    };
+    /** @description One page of items plus the total count across all pages. */
+    PagedResultOfCapSuggestionDto: {
+      items: components['schemas']['CapSuggestionDto'][];
+      /** Format: int32 */
+      page: number;
+      /** Format: int32 */
+      pageSize: number;
+      /** Format: int32 */
+      totalCount: number;
+      /** Format: int32 */
+      totalPages?: number;
+    };
+    /** @description One page of items plus the total count across all pages. */
     PagedResultOfDeliveryDto: {
       items: components['schemas']['DeliveryDto'][];
       /** Format: int32 */
@@ -16119,6 +18671,17 @@ export interface components {
       nameAr: null | string;
       nameEn: null | string;
     };
+    /** @description A program request or project as another module may show it (badge), for a caller who may read it. */
+    PortfolioRecordBadge: {
+      resourceType: string;
+      /** Format: uuid */
+      id: string;
+      number: null | string;
+      nameAr: null | string;
+      nameEn: null | string;
+      status: string;
+      classification: null | string;
+    };
     PortfolioReviewDecisionInput: {
       decision: string;
       comment: null | string;
@@ -16250,6 +18813,12 @@ export interface components {
       code: string;
       nameAr: null | string;
       nameEn: null | string;
+    };
+    PracticeSearchDto: {
+      keywords: string[];
+      results: components['schemas']['PagedResultOfBenchBestPracticeDto'];
+      /** Format: uuid */
+      usageId: null | string;
     };
     PreferencesInput: {
       language: null | string;
@@ -16995,6 +19564,12 @@ export interface components {
     QuestionInput: {
       question: null | string;
     };
+    QuestionnaireDraftDto: {
+      questionsAr: string;
+      questionsEn: string;
+      /** Format: uuid */
+      usageId: string;
+    };
     RaciEntryDto: {
       /** Format: uuid */
       id: string;
@@ -17359,6 +19934,11 @@ export interface components {
        * @default 0
        */
       sort: number;
+    };
+    RemarkExtractionDto: {
+      remarks: components['schemas']['ExtractedRemarkDto'][];
+      /** Format: uuid */
+      usageId: string;
     };
     RenewalInput: {
       registrationNo: null | string;
@@ -18301,6 +20881,17 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    RootCauseCauseDto: {
+      categoryCode: string;
+      text: string;
+    };
+    RootCauseDraftDto: {
+      whys: string[];
+      causes: components['schemas']['RootCauseCauseDto'][];
+      analysis: null | string;
+      /** Format: uuid */
+      usageId: string;
+    };
     /** @description An employee holding the item's "editor" record role. */
     SampleEditorDto: {
       /** Format: uuid */
@@ -18419,8 +21010,18 @@ export interface components {
       userAgent: null | string;
       current: boolean;
     };
+    SettingsDocumentOfBenchSettings: {
+      value: null | components['schemas']['BenchSettings'];
+      /** Format: uint32 */
+      version: number;
+    };
     SettingsDocumentOfBrandingSettings: {
       value: null | components['schemas']['BrandingSettings'];
+      /** Format: uint32 */
+      version: number;
+    };
+    SettingsDocumentOfCapSettings: {
+      value: null | components['schemas']['CapSettings'];
       /** Format: uint32 */
       version: number;
     };
@@ -18831,6 +21432,12 @@ export interface components {
       /** Format: uuid */
       sprintId: null | string;
     };
+    StudySummaryDto: {
+      summaryAr: string;
+      summaryEn: string;
+      /** Format: uuid */
+      usageId: string;
+    };
     SubjectApprovalsDto: {
       resourceType: string;
       /** Format: uuid */
@@ -18865,10 +21472,26 @@ export interface components {
       titleAr: null | string;
       titleEn: null | string;
     };
+    SuggestedCapActionDto: {
+      detailsAr: null | string;
+      detailsEn: null | string;
+      typeCode: null | string;
+      /** Format: int32 */
+      durationDays: null | number;
+    };
     SuggestedClassificationDto: {
       value: null | string;
       reasoning: null | string;
       computed: string;
+    };
+    SuggestedComparatorDto: {
+      nameAr: null | string;
+      nameEn: null | string;
+      country: null | string;
+      scope: null | string;
+      reason: null | string;
+      /** Format: uuid */
+      registerId: null | string;
     };
     SuggestedControlDto: {
       nameAr: null | string;
@@ -18882,9 +21505,22 @@ export interface components {
       /** Format: double */
       target: null | number;
     };
+    SuggestedPlanItemDto: {
+      titleAr: null | string;
+      titleEn: null | string;
+      priority: string;
+    };
     SuggestedPlanningItemDto: {
       category: string;
       description: string;
+    };
+    SuggestedPracticeDto: {
+      /** Format: uuid */
+      topicId: null | string;
+      subject: null | string;
+      ourPractice: null | string;
+      theirPractice: null | string;
+      category: string;
     };
     SuggestedPriorityDto: {
       scores: {
@@ -20646,6 +23282,13 @@ export interface components {
       createdByName: null | string;
       /** Format: int32 */
       stepCount: number;
+    };
+    VisitAnalysisDto: {
+      practices: components['schemas']['SuggestedPracticeDto'][];
+      gaps: string[];
+      actions: components['schemas']['SuggestedPlanItemDto'][];
+      /** Format: uuid */
+      usageId: string;
     };
     WaselAssignmentDto: {
       /** Format: uuid */
@@ -45338,6 +47981,3255 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['RiskReportDraftDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetCapOptions: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapOptionsDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetCapSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SettingsDocumentOfCapSettings'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SaveCapSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CapSettingsInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SettingsDocumentOfCapSettings'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetCapDashboard: {
+    parameters: {
+      query?: {
+        unitId?: string;
+        year?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapDashboardDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ExportCapReport: {
+    parameters: {
+      query: {
+        format: string;
+        unitId?: string;
+        sourceId?: string;
+        sourceType?: string;
+        year?: number;
+        language?: string;
+      };
+      header?: never;
+      path: {
+        kind: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListCapSources: {
+    parameters: {
+      query?: {
+        page?: number;
+        pageSize?: number;
+        search?: string;
+        sourceType?: string;
+        status?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PagedResultOfCapSourceListItemDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateCapSource: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CapSourceValues'];
+      };
+    };
+    responses: {
+      /** @description Created */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapSourceDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetCapSource: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapSourceDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateCapSource: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CapSourceBody'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapSourceDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CloseCapSource: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapSourceDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ReopenCapSource: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapSourceDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateCapRemark: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CapRemarkValues'];
+      };
+    };
+    responses: {
+      /** @description Created */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapRemarkDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListCapRemarks: {
+    parameters: {
+      query?: {
+        page?: number;
+        pageSize?: number;
+        sort?: string;
+        view?: string;
+        search?: string;
+        sourceId?: string;
+        status?: string;
+        priority?: string;
+        unitId?: string;
+        sourceType?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PagedResultOfCapRemarkListItemDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetCapRemark: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapRemarkDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateCapRemark: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CapRemarkBody'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapRemarkDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  AcceptCapRemark: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapRemarkDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RejectCapRemark: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CapReasonInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapRemarkDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ConfirmCapRemarkRejection: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CapConfirmInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapRemarkDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ReassignCapRemark: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CapReassignInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapRemarkDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SaveCapRootCause: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CapRootCauseBody'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapRemarkDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SubmitCapRemarkActions: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CapCommentInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapRemarkDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CancelCapRemark: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CapReasonInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapRemarkDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  VerifyCapRemark: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CapVerifyInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapRemarkDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetCapRemarkKpiTrend: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapKpiTrendDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListCapRemarkActions: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapActionDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateCapAction: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CapActionValues'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapActionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  LinkCapAction: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CapLinkActionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapActionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UnlinkCapAction: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CapLinkActionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': boolean;
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SearchCapLinkableActions: {
+    parameters: {
+      query?: {
+        search?: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapActionListItemDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetCapValidationView: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapValidationViewDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListCapActions: {
+    parameters: {
+      query?: {
+        page?: number;
+        pageSize?: number;
+        view?: string;
+        search?: string;
+        status?: string;
+        unitId?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PagedResultOfCapActionListItemDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetCapAction: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapActionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateCapAction: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CapActionBody'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapActionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ValidateCapAction: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CapValidateInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapActionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  LinkCapActionProject: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CapLinkProjectInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapActionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateCapActionAchievement: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CapProgressInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapActionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListCapActionUpdates: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapAchievementUpdateDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ConfirmCapActionUpdate: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        updateId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapActionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RequestCapActionCompletion: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CapNoteInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapActionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListCapActionExtensions: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapExtensionDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RequestCapActionExtension: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CapExtensionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapActionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CancelCapAction: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CapReasonInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapActionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SearchCapProjects: {
+    parameters: {
+      query?: {
+        search?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapProjectOptionDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListCapSuggestions: {
+    parameters: {
+      query?: {
+        page?: number;
+        pageSize?: number;
+        status?: string;
+        kind?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PagedResultOfCapSuggestionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RaiseCapSuggestion: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CapRaiseInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapSuggestionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  DismissCapSuggestion: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CapReasonInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapSuggestionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetCapSourceAuditTrail: {
+    parameters: {
+      query?: {
+        page?: number;
+        pageSize?: number;
+        field?: string;
+        userId?: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PagedResultOfAuditEntryDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetCapSourceAsOf: {
+    parameters: {
+      query: {
+        at: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RecordSnapshotDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetCapRemarkAuditTrail: {
+    parameters: {
+      query?: {
+        page?: number;
+        pageSize?: number;
+        field?: string;
+        userId?: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PagedResultOfAuditEntryDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetCapRemarkAsOf: {
+    parameters: {
+      query: {
+        at: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RecordSnapshotDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetCapActionAuditTrail: {
+    parameters: {
+      query?: {
+        page?: number;
+        pageSize?: number;
+        field?: string;
+        userId?: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PagedResultOfAuditEntryDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetCapActionAsOf: {
+    parameters: {
+      query: {
+        at: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RecordSnapshotDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ExtractCapRemarksWithAi: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CapExtractInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RemarkExtractionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ExtractCapRemarksFromDocumentWithAi: {
+    parameters: {
+      query?: {
+        text?: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'multipart/form-data': {
+          file: components['schemas']['IFormFile'];
+        };
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RemarkExtractionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  DraftCapRootCauseWithAi: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RootCauseDraftDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SuggestCapActionsWithAi: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ActionSuggestionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CheckCapActionQuality: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ActionQualityDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  DraftCapSummaryWithAi: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CapSummaryInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapSummaryDraftDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetBenchOptions: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BenchOptionsDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetBenchSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SettingsDocumentOfBenchSettings'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SaveBenchSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['BenchSettingsInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SettingsDocumentOfBenchSettings'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetBenchDashboard: {
+    parameters: {
+      query?: {
+        year?: number;
+        unitId?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BenchDashboardDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetBenchPlan: {
+    parameters: {
+      query: {
+        year: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BenchPlanDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CirculateBenchPlan: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        year: number;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BenchPlanDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListBenchStudies: {
+    parameters: {
+      query?: {
+        page?: number;
+        pageSize?: number;
+        view?: string;
+        search?: string;
+        year?: number;
+        quarter?: number;
+        stage?: string;
+        status?: string;
+        unitId?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PagedResultOfBenchStudyListItemDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetBenchStudy: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BenchStudyDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetBenchStudySearch: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BenchCandidateDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SaveBenchStudySearch: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['BenchCandidatesInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BenchCandidateDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SubmitBenchStudySearch: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['BenchCommentInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BenchStudyDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  AddBenchStudyOutreach: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['BenchOutreachInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BenchCandidateDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RateBenchStudyComparator: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['BenchRatingInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BenchCandidateDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetBenchStudyVisits: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BenchVisitDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SaveBenchStudyVisits: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['BenchVisitsInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BenchVisitDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SendBenchStudyToAnalysis: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BenchStudyDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetBenchStudyAnalysis: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BenchAnalysisDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SaveBenchStudyAnalysis: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['BenchAnalysisInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BenchAnalysisDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SubmitBenchStudyAnalysis: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['BenchCommentInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BenchStudyDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetBenchStudyActions: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapSourceProgress'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RequestBenchStudyClosure: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['BenchCommentInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BenchStudyDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CancelBenchStudy: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['BenchReasonInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BenchStudyDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  LinkBenchStudyTeam: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['BenchTeamInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BenchStudyDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetBenchStudyImpact: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BenchImpactDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RecordBenchStudyImpact: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['BenchImpactInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BenchImpactDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListBenchComparators: {
+    parameters: {
+      query?: {
+        page?: number;
+        pageSize?: number;
+        search?: string;
+        scope?: string;
+        sector?: string;
+        includeInactive?: boolean;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PagedResultOfBenchComparatorDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateBenchComparator: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['BenchComparatorBody'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BenchComparatorDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetBenchComparator: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BenchComparatorDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateBenchComparator: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['BenchComparatorBody'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BenchComparatorDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SearchBenchPractices: {
+    parameters: {
+      query?: {
+        page?: number;
+        pageSize?: number;
+        search?: string;
+        topic?: string;
+        sector?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PagedResultOfBenchBestPracticeDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateBenchPractice: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['BenchPracticeBody'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BenchBestPracticeDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateBenchPractice: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['BenchPracticeBody'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BenchBestPracticeDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetBenchStudyAuditTrail: {
+    parameters: {
+      query?: {
+        page?: number;
+        pageSize?: number;
+        field?: string;
+        userId?: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PagedResultOfAuditEntryDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetBenchStudyAsOf: {
+    parameters: {
+      query: {
+        at: string;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RecordSnapshotDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SuggestBenchComparatorsWithAi: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ComparatorSuggestionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  DraftBenchQuestionnaireWithAi: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['BenchQuestionnaireInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['QuestionnaireDraftDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  AnalyseBenchVisitNotesWithAi: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['BenchNotesInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VisitAnalysisDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SummariseBenchStudyWithAi: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['StudySummaryDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SearchBenchPracticesWithAi: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['BenchQuestionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PracticeSearchDto'];
         };
       };
       /** @description Problem Details (RFC 9457) */

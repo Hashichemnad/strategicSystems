@@ -1,4 +1,5 @@
 import {
+  ClipboardList,
   Bell,
   BriefcaseBusiness,
   Bot,
@@ -223,7 +224,7 @@ export const settingsGroups: readonly SettingsGroup[] = [
       },
       { key: 'docreg', to: '/settings/docreg', icon: Library, permissions: ['docreg.settings.manage'] },
       { key: 'ip', to: '/settings/ip', icon: Lightbulb, permissions: ['ip.settings.manage'] },
-      { key: 'cap', to: '/settings/cap', icon: ClipboardCheck, permissions: ['cap.settings.manage'] },
+      { key: 'cap', to: '/settings/cap', icon: ClipboardList, permissions: ['cap.settings.manage'] },
       { key: 'bench', to: '/settings/bench', icon: Scale, permissions: ['bench.settings.manage'] },
     ],
   },

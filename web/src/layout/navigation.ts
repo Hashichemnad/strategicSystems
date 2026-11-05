@@ -1,4 +1,5 @@
 import {
+  ClipboardList,
   Boxes,
   BriefcaseBusiness,
   FolderKanban,
@@ -23,9 +24,8 @@ import {
   ShieldAlert,
   ShieldCheck,
   UsersRound,
-  type LucideIcon,
-  ClipboardCheck,
   Scale,
+  type LucideIcon,
 } from 'lucide-react';
 import type { MyAccess } from '@/features/access/session';
 
@@ -268,7 +268,7 @@ export const navigation: readonly NavSection[] = [
       {
         to: '/cap',
         labelKey: 'nav.cap',
-        icon: ClipboardCheck,
+        icon: ClipboardList,
         system: 'cap',
         permissions: ['cap.remark.read'],
       },
