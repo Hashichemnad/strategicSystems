@@ -39,7 +39,7 @@ Status: **built — awaiting owner acceptance**. Design notes: [`docs/design/cap
 | `tools/check-api-client.sh` · `tools/check-vulnerable.sh` | OpenAPI document and TS client regenerated after the rebase and up to date · no High / Critical |
 | `npm run lint` (incl. RTL class check) · `format:check` · `typecheck` · `npm test` | clean · **316 / 316** Vitest (new: CAP and Benchmarking message keys in AR and EN, codes shown in the UI) |
 | `npm run build` · `npm audit --audit-level=high` · `npm run lint:licenses` | OK · no High / Critical (8 moderate advisories, unchanged dependencies) · 617 packages allowed |
-| `npx playwright test` (full suite, ar + en, fresh database) | **98 / 98** (49 specs × ar + en; the first run had 97 / 98 — the History / Documents export test, fixed as noted below) |
+| `npx playwright test` (full suite, ar + en, fresh database) | **98 / 98** (49 tests × ar + en; the first run had 97 / 98 — the History / Documents export test, fixed as noted below) |
 
 ## Decisions (ADRs, *Proposed*)
 0120 data model and numbering · 0121 lifecycle and approvals · 0122 due dates, late status and reminders · 0123 source-system contract ·
