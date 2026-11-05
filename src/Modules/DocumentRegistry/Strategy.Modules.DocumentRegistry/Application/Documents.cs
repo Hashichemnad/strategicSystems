@@ -418,16 +418,41 @@ internal sealed class DocumentService(
         return await ToDtoAsync(document, ct).ConfigureAwait(false);
     }
 
-    public async Task<DashboardDto> DashboardAsync(CancellationToken ct)
+    /// <summary>
+    /// The dashboard. <paramref name="from"/> / <paramref name="to"/> (inclusive month range, design note reporting.md §3.3): documents published in
+    /// the range, and "expiring" = published documents whose expiry date falls in the range (instead of the next <see cref="SoonDays"/> days).
+    /// </summary>
+    public async Task<DashboardDto> DashboardAsync(CancellationToken ct, DateOnly? from = null, DateOnly? to = null)
     {
         var visible = await visibility.VisibleAsync(context.User, ct).ConfigureAwait(false);
         var today = await calendar.TodayAsync(ct).ConfigureAwait(false);
         var soon = today.AddDays(SoonDays);
-        var active = visible.Where(d => d.Status == DocumentStatuses.Published || d.Status == DocumentStatuses.Expired);
+        var start = from is { } f ? new DateOnly(f.Year, f.Month, 1) : (DateOnly?)null;
+        var end = to is { } t ? new DateOnly(t.Year, t.Month, 1).AddMonths(1) : (DateOnly?)null;
+        var all = visible.Where(d => d.Status == DocumentStatuses.Published || d.Status == DocumentStatuses.Expired);
+        var active = all;
+        var expiringSource = all.Where(d => d.Status == DocumentStatuses.Published && d.ExpiryDate != null);
+        if (start is { } s)
+        {
+            var at = new DateTimeOffset(s.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero);
+            active = active.Where(d => d.PublishedAt >= at);
+            expiringSource = expiringSource.Where(d => d.ExpiryDate >= s);
+        }
+
+        if (end is { } e)
+        {
+            var at = new DateTimeOffset(e.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero);
+            active = active.Where(d => d.PublishedAt < at);
+            expiringSource = expiringSource.Where(d => d.ExpiryDate < e);
+        }
+        else if (start is null)
+        {
+            expiringSource = expiringSource.Where(d => d.ExpiryDate <= soon);
+        }
+
         var published = await active.CountAsync(d => d.Status == DocumentStatuses.Published, ct).ConfigureAwait(false);
         var expired = await active.CountAsync(d => d.Status == DocumentStatuses.Expired, ct).ConfigureAwait(false);
-        var expiring = await active.Where(d => d.Status == DocumentStatuses.Published && d.ExpiryDate != null && d.ExpiryDate <= soon).OrderBy(d => d.ExpiryDate).Take(20)
-            .ToListAsync(ct).ConfigureAwait(false);
+        var expiring = await expiringSource.OrderBy(d => d.ExpiryDate).Take(20).ToListAsync(ct).ConfigureAwait(false);
         var ids = visible.Select(d => d.Id);
         var pending = await db.Versions.CountAsync(v => ids.Contains(v.DocumentId) && (v.Status == VersionStatuses.UnderReview || v.Status == VersionStatuses.Submitted), ct)
             .ConfigureAwait(false);
