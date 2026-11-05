@@ -80,7 +80,9 @@ public sealed class ExecutivePerformanceTests(PostgresFixture postgres) : IAsync
         }
 
         var median = timings.Order().ElementAt(1);
-        TestContext.Current.SendDiagnosticMessage($"seed {seed.ElapsedMilliseconds} ms, refresh {refresh.ElapsedMilliseconds} ms, executive {string.Join("/", timings)} ms");
+        var line = $"seed {seed.ElapsedMilliseconds} ms, refresh {refresh.ElapsedMilliseconds} ms, executive {string.Join("/", timings)} ms";
+        TestContext.Current.SendDiagnosticMessage(line);
+        await File.WriteAllTextAsync(Path.Combine(Path.GetTempPath(), "strategy-executive-performance.txt"), line);
         median.ShouldBeLessThan(3000, $"executive dashboard took {string.Join("/", timings)} ms");
 
         decimal? Tile(JsonElement d, string id) =>

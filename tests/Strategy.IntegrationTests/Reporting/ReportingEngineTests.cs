@@ -380,48 +380,6 @@ public class ReportingEngineTests(ApiFixture api) : IClassFixture<ApiFixture>
     }
 
     [Fact]
-    public async Task The_ai_executive_brief_is_a_draft_and_only_cites_evidence_from_the_viewers_own_dashboard()
-    {
-        var w = await WorldAsync();
-        var provider = await w.AdminClient.PostAsJsonAsync("/api/v1/ai/providers", new { name = "Demo " + Guid.CreateVersion7(), type = "demo", defaultModel = "demo-large" });
-        provider.StatusCode.ShouldBe(HttpStatusCode.Created, await provider.Content.ReadAsStringAsync());
-        var providerId = (await provider.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("id").GetGuid();
-        var current = System.Text.Json.Nodes.JsonNode.Parse(await w.AdminClient.GetStringAsync("/api/v1/ai/settings"))!;
-        current["settings"]!["enabled"] = true;
-        current["settings"]!["defaultProviderId"] = providerId.ToString("D");
-        (await w.AdminClient.PutAsJsonAsync("/api/v1/ai/settings", current)).StatusCode.ShouldBe(HttpStatusCode.OK);
-
-        var response = await w.AdminClient.PostAsJsonAsync("/api/v1/reporting/brief", new { kind = "month" });
-        response.StatusCode.ShouldBe(HttpStatusCode.OK, await response.Content.ReadAsStringAsync());
-        var brief = await response.Content.ReadFromJsonAsync<JsonElement>();
-        brief.GetProperty("aiGenerated").GetBoolean().ShouldBeTrue();
-        brief.GetProperty("id").ValueKind.ShouldBe(JsonValueKind.Null, "a draft is not saved until a person saves it");
-        brief.GetProperty("attention").GetArrayLength().ShouldBeGreaterThan(0);
-        foreach (var point in brief.GetProperty("improved").EnumerateArray().Concat(brief.GetProperty("attention").EnumerateArray()))
-        {
-            point.GetProperty("textAr").GetString().ShouldNotBeNullOrWhiteSpace();
-            point.GetProperty("textEn").GetString().ShouldNotBeNullOrWhiteSpace();
-            foreach (var evidence in point.GetProperty("evidence").EnumerateArray())
-            {
-                evidence.GetProperty("link").GetString()!.ShouldStartWith("/"); // mapped server-side from the viewer's own lists
-            }
-        }
-
-        // Users without the brief permission are refused; saving keeps the edited text.
-        (await w.UnitClient.PostAsJsonAsync("/api/v1/reporting/brief", new { kind = "month" })).StatusCode.ShouldBe(HttpStatusCode.Forbidden);
-        var saved = await w.AdminClient.PostAsJsonAsync("/api/v1/reporting/briefs", new
-        {
-            periodKey = brief.GetProperty("periodKey").GetString(),
-            improved = brief.GetProperty("improved"),
-            attention = brief.GetProperty("attention"),
-            decisions = brief.GetProperty("decisions"),
-            aiGenerated = false,
-        });
-        saved.StatusCode.ShouldBe(HttpStatusCode.OK, await saved.Content.ReadAsStringAsync());
-        (await w.AdminClient.GetFromJsonAsync<JsonElement>("/api/v1/reporting/briefs")).GetArrayLength().ShouldBe(1);
-    }
-
-    [Fact]
     public async Task My_work_cards_follow_system_access_and_the_users_layout()
     {
         var w = await WorldAsync();
@@ -499,3 +457,52 @@ public class ReportingRefreshTests(PostgresFixture postgres)
         }
     }
 }
+
+/// <summary>AI executive brief (ADR 0147) on a host with the offline demo provider.</summary>
+public class ReportingBriefTests(PostgresFixture postgres)
+{
+    [Fact]
+    public async Task The_ai_executive_brief_is_a_draft_and_only_cites_evidence_from_the_viewers_own_dashboard()
+    {
+        await using var factory = await ApiFactory.CreateAsync(postgres, settings: new Dictionary<string, string?> { ["AI:EnableDemoProvider"] = "true" });
+        var admin = await factory.SignInAsync(await factory.CreateUserAsync(admin: true, roles: ["reporting.executive-viewer", "sample.viewer"]));
+        var other = await factory.SignInAsync(await factory.CreateUserAsync(roles: "sample.viewer"));
+        var provider = await admin.PostAsJsonAsync("/api/v1/ai/providers", new { name = "Demo " + Guid.CreateVersion7(), type = "demo", defaultModel = "demo-large" });
+        provider.StatusCode.ShouldBe(HttpStatusCode.OK, await provider.Content.ReadAsStringAsync());
+        var providerId = (await provider.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("id").GetGuid();
+        var current = System.Text.Json.Nodes.JsonNode.Parse(await admin.GetStringAsync("/api/v1/ai/settings"))!;
+        current["settings"]!["enabled"] = true;
+        current["settings"]!["defaultProviderId"] = providerId.ToString("D");
+        (await admin.PutAsJsonAsync("/api/v1/ai/settings", current)).StatusCode.ShouldBe(HttpStatusCode.OK);
+
+        var response = await admin.PostAsJsonAsync("/api/v1/reporting/brief", new { kind = "month" });
+        response.StatusCode.ShouldBe(HttpStatusCode.OK, await response.Content.ReadAsStringAsync());
+        var brief = await response.Content.ReadFromJsonAsync<JsonElement>();
+        brief.GetProperty("aiGenerated").GetBoolean().ShouldBeTrue();
+        brief.GetProperty("id").ValueKind.ShouldBe(JsonValueKind.Null, "a draft is not saved until a person saves it");
+        brief.GetProperty("attention").GetArrayLength().ShouldBeGreaterThan(0);
+        foreach (var point in brief.GetProperty("improved").EnumerateArray().Concat(brief.GetProperty("attention").EnumerateArray()))
+        {
+            point.GetProperty("textAr").GetString().ShouldNotBeNullOrWhiteSpace();
+            point.GetProperty("textEn").GetString().ShouldNotBeNullOrWhiteSpace();
+            foreach (var evidence in point.GetProperty("evidence").EnumerateArray())
+            {
+                evidence.GetProperty("link").GetString()!.ShouldStartWith("/"); // mapped server-side from the viewer's own lists
+            }
+        }
+
+        // Users without the brief permission are refused; saving keeps the edited text.
+        (await other.PostAsJsonAsync("/api/v1/reporting/brief", new { kind = "month" })).StatusCode.ShouldBe(HttpStatusCode.Forbidden);
+        var saved = await admin.PostAsJsonAsync("/api/v1/reporting/briefs", new
+        {
+            periodKey = brief.GetProperty("periodKey").GetString(),
+            improved = brief.GetProperty("improved"),
+            attention = brief.GetProperty("attention"),
+            decisions = brief.GetProperty("decisions"),
+            aiGenerated = false,
+        });
+        saved.StatusCode.ShouldBe(HttpStatusCode.OK, await saved.Content.ReadAsStringAsync());
+        (await admin.GetFromJsonAsync<JsonElement>("/api/v1/reporting/briefs")).GetArrayLength().ShouldBe(1);
+    }
+}
+
