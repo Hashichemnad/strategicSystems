@@ -64,7 +64,8 @@ internal sealed class JobRunListener(IServiceScopeFactory scopes, IClock clock) 
             JobKey = context.JobDetail.Key.Name,
             FiredAt = clock.UtcNow,
             Instance = context.Scheduler.SchedulerInstanceId,
-            TriggeredBy = Guid.TryParse(context.MergedJobDataMap.GetString(TriggeredByKey), out var user) ? user : null,
+            // Only manual runs carry the key; GetString throws on a missing key, which would make Quartz skip every scheduled run.
+            TriggeredBy = context.MergedJobDataMap.TryGetString(TriggeredByKey, out var by) && Guid.TryParse(by, out var user) ? user : null,
         };
         context.Put(RunIdKey, run.Id);
         await using var scope = scopes.CreateAsyncScope();

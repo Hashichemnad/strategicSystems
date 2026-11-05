@@ -3,6 +3,8 @@ using System.Net.Http.Json;
 using Strategy.IntegrationTests.Infrastructure;
 using Strategy.IntegrationTests.Notifications;
 using Strategy.Platform.Kernel.Paging;
+using Microsoft.Extensions.DependencyInjection;
+using Quartz;
 using Strategy.Platform.Scheduling.Application;
 
 namespace Strategy.IntegrationTests.Scheduling;
@@ -34,6 +36,19 @@ public class JobDashboardTests(ApiFixture api) : IClassFixture<ApiFixture>
 
         var audit = await admin.GetFromJsonAsync<PagedResult<Strategy.Platform.Audit.AuditEntryDto>>("/api/v1/audit/entries?action=job.run");
         audit!.Items.ShouldContain(e => e.RecordId == "audit.verify-chain");
+    }
+
+    [Fact]
+    public async Task A_run_fired_by_the_schedule_without_a_requesting_user_executes_and_is_recorded()
+    {
+        // Schedule-fired triggers carry no "triggeredBy"; the run listener must not veto them (it did: every cron run was skipped).
+        var admin = await api.AdminClientAsync();
+        var scheduler = await api.Factory.Services.GetRequiredService<ISchedulerFactory>().GetScheduler(CancellationToken.None);
+        await scheduler.TriggerJob(new JobKey("scheduling.cleanup", JobScheduleSynchroniser.Group), CancellationToken.None);
+        var runs = await NotificationTests.EventuallyAsync(
+            () => admin.GetFromJsonAsync<List<JobRunDto>>("/api/v1/scheduling/jobs/scheduling.cleanup/runs"),
+            r => r!.Any(x => x.TriggeredBy is null && x.Status != "running"), timeoutSeconds: 30);
+        runs!.First(x => x.TriggeredBy is null).Status.ShouldBe("succeeded");
     }
 
     [Fact]
