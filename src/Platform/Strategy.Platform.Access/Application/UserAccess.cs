@@ -35,6 +35,9 @@ internal sealed class UserAccess
     /// <summary>The user and the users of their direct reports.</summary>
     public required IReadOnlyList<Guid> TeamUserIds { get; init; }
 
+    /// <summary>Units whose unit record-role grants match the user (ADR 0130): the placement path from the root and the headed units.</summary>
+    public IReadOnlyList<Guid> RecordUnitIds { get; init; } = [];
+
     public bool RequiresMfa => Roles.Any(r => r.RequiresMfa);
 }
 
@@ -138,6 +141,7 @@ internal sealed class UserAccessLoader(
             SubtreeUnitIds = [.. subtree.Distinct()],
             TeamEmployeeIds = teamEmployees,
             TeamUserIds = teamUsers.Distinct().ToList(),
+            RecordUnitIds = [.. ancestors.Concat(scopeUnits).Distinct()],
         };
     }
 }

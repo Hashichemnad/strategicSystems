@@ -48,6 +48,18 @@ internal sealed class OrgDirectory(OrgDbContext db, IClock clock) : IOrgDirector
     public async Task<Guid?> GetHeadOfUnitAsync(Guid unitId, DateOnly? asOf = null, CancellationToken cancellationToken = default) =>
         await VersionOn(unitId, asOf ?? clock.Today).Select(v => v.HeadEmployeeId).FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
 
+    public async Task<UnitReference?> GetUnitByCodeAsync(string code, CancellationToken cancellationToken = default)
+    {
+        var pattern = code.Trim().Replace("\\", "\\\\", StringComparison.Ordinal).Replace("%", "\\%", StringComparison.Ordinal)
+            .Replace("_", "\\_", StringComparison.Ordinal);
+        var unit = await db.Units.AsNoTracking().FirstOrDefaultAsync(u => EF.Functions.ILike(u.Code, pattern, "\\"), cancellationToken).ConfigureAwait(false);
+        return unit is null ? null : new UnitReference(unit.Id, unit.Code, unit.NameAr, unit.NameEn, unit.LevelCode, unit.ParentId, unit.Active);
+    }
+
+    public async Task<IReadOnlyList<UnitReference>> ListActiveUnitsAtLevelAsync(string levelCode, CancellationToken cancellationToken = default) =>
+        await db.Units.AsNoTracking().Where(u => u.Active && u.LevelCode == levelCode).OrderBy(u => u.Code)
+            .Select(u => new UnitReference(u.Id, u.Code, u.NameAr, u.NameEn, u.LevelCode, u.ParentId, u.Active)).ToListAsync(cancellationToken).ConfigureAwait(false);
+
     private IQueryable<OrgUnitVersion> VersionOn(Guid unitId, DateOnly date) =>
         db.UnitVersions.AsNoTracking().Where(v => v.UnitId == unitId && v.ValidFrom <= date && (v.ValidTo == null || v.ValidTo > date));
 }

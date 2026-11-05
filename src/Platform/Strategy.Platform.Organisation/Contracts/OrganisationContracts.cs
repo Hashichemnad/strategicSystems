@@ -29,6 +29,12 @@ public interface IOrgDirectory
     Task<IReadOnlyList<Guid>> GetUnitsHeadedByAsync(Guid employeeId, CancellationToken cancellationToken = default);
 
     Task<Guid?> GetHeadOfUnitAsync(Guid unitId, DateOnly? asOf = null, CancellationToken cancellationToken = default);
+
+    /// <summary>The unit with this code (case-insensitive), e.g. for imports (Audit Phase 16).</summary>
+    Task<UnitReference?> GetUnitByCodeAsync(string code, CancellationToken cancellationToken = default);
+
+    /// <summary>Active units at an organisation level (e.g. every department), ordered by code.</summary>
+    Task<IReadOnlyList<UnitReference>> ListActiveUnitsAtLevelAsync(string levelCode, CancellationToken cancellationToken = default);
 }
 
 public interface IEmployeeDirectory

@@ -39818,6 +39818,3240 @@
           }
         }
       }
+    },
+    "/api/v1/auditmgmt/options": {
+      "get": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "GetAuditOptions",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditOptionsDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/settings": {
+      "get": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "GetAuditSettings",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingsDocumentOfAuditMgmtSettings"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "SaveAuditSettings",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuditSettingsInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingsDocumentOfAuditMgmtSettings"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/dashboard": {
+      "get": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "GetAuditDashboard",
+        "parameters": [
+          {
+            "name": "unitId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "year",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "priority",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "reportType",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "reportId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditDashboardDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/department-view": {
+      "get": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "GetAuditDepartmentView",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditDepartmentViewDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/calendar": {
+      "get": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "GetAuditCalendar",
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "auditorEmployeeId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AuditCalendarItemDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/exports/{kind}": {
+      "post": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "ExportAuditReport",
+        "parameters": [
+          {
+            "name": "kind",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuditExportInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/reports": {
+      "get": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "ListAuditReports",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "year",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResultOfAuditReportListItemDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "CreateAuditReport",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuditReportValues"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditReportDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/reports/{id}": {
+      "get": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "GetAuditReport",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditReportDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "UpdateAuditReport",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuditReportBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditReportDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/reports/{id}/issue": {
+      "post": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "IssueAuditReport",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditReportDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/reports/{id}/cancel": {
+      "post": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "CancelAuditReport",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuditReasonInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditReportDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/reports/{id}/findings": {
+      "post": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "CreateAuditFinding",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NewFindingInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditFindingDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/reports/{id}/findings/batch": {
+      "post": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "CreateAuditFindingsBatch",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuditBatchInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AuditFindingListItemDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/import/template": {
+      "get": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "GetAuditImportTemplate",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/reports/{id}/import": {
+      "post": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "ImportAuditFindings",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "mode",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "file"
+                ],
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "$ref": "#/components/schemas/IFormFile"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditImportReportDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/reports/{id}/import/report": {
+      "post": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "GetAuditImportReport",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "file"
+                ],
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "$ref": "#/components/schemas/IFormFile"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/findings": {
+      "get": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "ListAuditFindings",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "view",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "reportId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "priority",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "unitId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "year",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "reportType",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResultOfAuditFindingListItemDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/findings/{id}": {
+      "get": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "GetAuditFinding",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditFindingDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "UpdateAuditFinding",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuditFindingBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditFindingDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/findings/{id}/cancel": {
+      "post": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "CancelAuditFinding",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuditReasonInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditFindingDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/findings/{id}/recommendations": {
+      "get": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "ListAuditRecommendations",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AuditRecommendationDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "CreateAuditRecommendation",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecommendationValues"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditRecommendationDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/findings/{id}/similar": {
+      "get": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "ListSimilarAuditFindings",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AuditSimilarFindingDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/findings/{id}/risks": {
+      "post": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "LinkAuditFindingRisk",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuditRiskLinkInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditFindingDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/findings/{id}/risks/{linkId}/remove": {
+      "post": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "UnlinkAuditFindingRisk",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "linkId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditFindingDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/findings/{id}/send-to-cap": {
+      "post": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "SendAuditFindingToCap",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditFindingDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/recommendations/{id}": {
+      "get": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "GetAuditRecommendation",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditRecommendationDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "UpdateAuditRecommendation",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuditRecommendationBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditRecommendationDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/recommendations/{id}/revise": {
+      "post": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "ReviseAuditRecommendation",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuditReviseInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditRecommendationDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/recommendations/{id}/accept-risk": {
+      "post": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "AcceptAuditRecommendationRisk",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuditRiskAcceptInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditRecommendationDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/recommendations/{id}/reopen": {
+      "post": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "ReopenAuditRecommendation",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuditReasonInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditRecommendationDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/recommendations/{id}/cancel": {
+      "post": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "CancelAuditRecommendation",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuditReasonInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditRecommendationDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/recommendations/{id}/follow-ups": {
+      "post": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "RecordAuditFollowUp",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FollowUpValues"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditRecommendationDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/lookups/risks": {
+      "get": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "SearchAuditRiskOptions",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AuditRiskOptionDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/lookups/risks/{riskId}/controls": {
+      "get": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "ListAuditRiskControlOptions",
+        "parameters": [
+          {
+            "name": "riskId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AuditControlOptionDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/lookups/documents": {
+      "get": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "SearchAuditDocumentOptions",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AuditDocumentOptionDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/reports/{id}/audit": {
+      "get": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "GetAuditReportAuditTrail",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "field",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResultOfAuditEntryDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/reports/{id}/audit/as-of": {
+      "get": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "GetAuditReportAsOf",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "at",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecordSnapshotDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/findings/{id}/audit": {
+      "get": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "GetAuditFindingAuditTrail",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "field",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "userId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResultOfAuditEntryDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/findings/{id}/audit/as-of": {
+      "get": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "GetAuditFindingAsOf",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "at",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecordSnapshotDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/ai/reports/{id}/extract": {
+      "post": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "ExtractAuditFindingsWithAi",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuditExtractInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindingExtractionDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/ai/reports/{id}/extract/document": {
+      "post": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "ExtractAuditFindingsFromDocumentWithAi",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "text",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "file"
+                ],
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "$ref": "#/components/schemas/IFormFile"
+                  }
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindingExtractionDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/ai/recommendations/{id}/evidence-review": {
+      "post": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "ReviewAuditEvidenceWithAi",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "required": [
+                  "pct"
+                ],
+                "type": "object",
+                "allOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "pct": {
+                        "type": "number",
+                        "format": "double"
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "actionsImplemented": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "evidenceText": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "file": {
+                        "$ref": "#/components/schemas/IFormFile"
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvidenceReviewDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/ai/findings/{id}/repeat": {
+      "post": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "CheckAuditRepeatFindingWithAi",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepeatCheckDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/ai/summary": {
+      "post": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "DraftAuditCommitteeSummaryWithAi",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuditSummaryInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditSummaryDraftDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/lifecycle/universe": {
+      "get": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "ListAuditUniverse",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AuditEntityDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "CreateAuditableEntity",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuditableEntityValues"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditEntityDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/lifecycle/universe/{id}": {
+      "put": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "UpdateAuditableEntity",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuditEntityBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditEntityDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/lifecycle/universe/sync": {
+      "post": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "SyncAuditUniverse",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AuditEntityDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/lifecycle/plans": {
+      "get": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "ListAuditPlans",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AuditPlanDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "CreateAuditPlan",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuditPlanInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditPlanDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/lifecycle/plans/{id}": {
+      "get": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "GetAuditPlan",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditPlanDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "UpdateAuditPlan",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuditPlanBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditPlanDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/lifecycle/plans/{id}/submit": {
+      "post": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "SubmitAuditPlan",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuditReasonInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditPlanDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/lifecycle/engagements": {
+      "get": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "ListAuditEngagements",
+        "parameters": [
+          {
+            "name": "planId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AuditEngagementListItemDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "CreateAuditEngagement",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuditEngagementInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditEngagementDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/lifecycle/engagements/{id}": {
+      "get": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "GetAuditEngagement",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditEngagementDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "UpdateAuditEngagement",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuditEngagementBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditEngagementDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/lifecycle/engagements/{id}/transition": {
+      "post": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "TransitionAuditEngagement",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuditTransitionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditEngagementDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/lifecycle/engagements/{id}/survey": {
+      "post": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "RecordAuditEngagementSurvey",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuditSurveyInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditEngagementDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/lifecycle/engagements/{id}/work-papers": {
+      "get": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "ListAuditWorkPapers",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AuditWorkPaperDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "CreateAuditWorkPaper",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkPaperValues"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditWorkPaperDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/lifecycle/engagements/{id}/work-papers/{paperId}": {
+      "put": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "UpdateAuditWorkPaper",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "paperId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuditWorkPaperBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditWorkPaperDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auditmgmt/lifecycle/engagements/{id}/work-papers/{paperId}/action": {
+      "post": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "ActOnAuditWorkPaper",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "paperId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuditWorkPaperActionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditWorkPaperDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -42634,6 +45868,876 @@
           }
         }
       },
+      "AuditableEntityValues": {
+        "required": [
+          "kindCode",
+          "nameAr",
+          "nameEn",
+          "unitId",
+          "riskId",
+          "inherentRating",
+          "lastAuditedOn",
+          "active"
+        ],
+        "type": "object",
+        "properties": {
+          "kindCode": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "unitId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "riskId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "inherentRating": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "lastAuditedOn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "active": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AuditBatchInput": {
+        "required": [
+          "findings"
+        ],
+        "type": "object",
+        "properties": {
+          "findings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NewFindingInput"
+            }
+          }
+        }
+      },
+      "AuditCalendarItemDto": {
+        "required": [
+          "date",
+          "kind",
+          "recommendationId",
+          "recommendationNumber",
+          "actionAr",
+          "actionEn",
+          "findingId",
+          "findingNumber",
+          "priority",
+          "unit",
+          "auditor",
+          "latestPct",
+          "status",
+          "overdue"
+        ],
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "recommendationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "recommendationNumber": {
+            "type": "string"
+          },
+          "actionAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "actionEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "findingId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "findingNumber": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "string"
+          },
+          "unit": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/AuditUnitDto"
+              }
+            ]
+          },
+          "auditor": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/AuditPersonDto"
+              }
+            ]
+          },
+          "latestPct": {
+            "type": "number",
+            "format": "double"
+          },
+          "status": {
+            "type": "string"
+          },
+          "overdue": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AuditCapRemarkDto": {
+        "required": [
+          "remarkId",
+          "number",
+          "status",
+          "stage",
+          "link"
+        ],
+        "type": "object",
+        "properties": {
+          "remarkId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": "string"
+          },
+          "status": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "stage": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "link": {
+            "type": "string"
+          }
+        }
+      },
+      "AuditControlOptionDto": {
+        "required": [
+          "id",
+          "nameAr",
+          "nameEn",
+          "effectivenessCode"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "effectivenessCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "AuditCountDto": {
+        "required": [
+          "code",
+          "count"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "AuditDashboardDto": {
+        "required": [
+          "findings",
+          "open",
+          "late",
+          "closed",
+          "riskAccepted",
+          "cancelled",
+          "repeat",
+          "overdueRecommendations",
+          "closureRate",
+          "reports",
+          "byStatus",
+          "byPriority",
+          "byYear",
+          "byReportType",
+          "byDepartment",
+          "trend",
+          "ageing",
+          "overdue",
+          "repeatFindings",
+          "riskAcceptedFindings"
+        ],
+        "type": "object",
+        "properties": {
+          "findings": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "open": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "late": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "closed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "riskAccepted": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cancelled": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "repeat": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "overdueRecommendations": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "closureRate": {
+            "type": "number",
+            "format": "double"
+          },
+          "reports": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "byStatus": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditCountDto"
+            }
+          },
+          "byPriority": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditCountDto"
+            }
+          },
+          "byYear": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditCountDto"
+            }
+          },
+          "byReportType": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditCountDto"
+            }
+          },
+          "byDepartment": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditUnitCountDto"
+            }
+          },
+          "trend": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditTrendDto"
+            }
+          },
+          "ageing": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditCountDto"
+            }
+          },
+          "overdue": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditFindingListItemDto"
+            }
+          },
+          "repeatFindings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditFindingListItemDto"
+            }
+          },
+          "riskAcceptedFindings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditFindingListItemDto"
+            }
+          }
+        }
+      },
+      "AuditDepartmentViewDto": {
+        "required": [
+          "units",
+          "audits",
+          "auditsClosed",
+          "auditsActive",
+          "findings",
+          "activeFindings",
+          "lateFindings",
+          "closedFindings",
+          "active",
+          "dueSoon",
+          "scope"
+        ],
+        "type": "object",
+        "properties": {
+          "units": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditUnitDto"
+            }
+          },
+          "audits": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "auditsClosed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "auditsActive": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "findings": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "activeFindings": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lateFindings": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "closedFindings": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "active": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditFindingListItemDto"
+            }
+          },
+          "dueSoon": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditDueItemDto"
+            }
+          },
+          "scope": {
+            "type": "string"
+          }
+        }
+      },
+      "AuditDocumentOptionDto": {
+        "required": [
+          "id",
+          "documentNo",
+          "nameAr",
+          "nameEn",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "documentNo": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "AuditDueItemDto": {
+        "required": [
+          "recommendationId",
+          "number",
+          "actionAr",
+          "actionEn",
+          "findingId",
+          "findingNumber",
+          "dueOn",
+          "latestPct",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "recommendationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": "string"
+          },
+          "actionAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "actionEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "findingId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "findingNumber": {
+            "type": "string"
+          },
+          "dueOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "latestPct": {
+            "type": "number",
+            "format": "double"
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "AuditEngagementBody": {
+        "required": [
+          "values",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "values": {
+            "$ref": "#/components/schemas/EngagementValues"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "AuditEngagementDto": {
+        "required": [
+          "id",
+          "number",
+          "planId",
+          "values",
+          "stage",
+          "riskScore",
+          "fieldworkEndOn",
+          "reportId",
+          "reportNumber",
+          "reportStatus",
+          "satisfaction",
+          "satisfactionComment",
+          "cancelReason",
+          "team",
+          "leadAuditor",
+          "entityNameAr",
+          "entityNameEn",
+          "workPapers",
+          "workPapersReviewed",
+          "nextActions",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": "string"
+          },
+          "planId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "values": {
+            "$ref": "#/components/schemas/EngagementValues"
+          },
+          "stage": {
+            "type": "string"
+          },
+          "riskScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "fieldworkEndOn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "reportId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "reportNumber": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "reportStatus": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "satisfaction": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "satisfactionComment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "cancelReason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "team": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/AuditTeamDto"
+              }
+            ]
+          },
+          "leadAuditor": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/AuditPersonDto"
+              }
+            ]
+          },
+          "entityNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "entityNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "workPapers": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "workPapersReviewed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nextActions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "AuditEngagementInput": {
+        "required": [
+          "planId",
+          "values"
+        ],
+        "type": "object",
+        "properties": {
+          "planId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "values": {
+            "$ref": "#/components/schemas/EngagementValues"
+          }
+        }
+      },
+      "AuditEngagementListItemDto": {
+        "required": [
+          "id",
+          "number",
+          "titleAr",
+          "titleEn",
+          "stage",
+          "plannedQuarter",
+          "plannedStart",
+          "plannedEnd",
+          "riskScore",
+          "entityNameAr",
+          "entityNameEn",
+          "leadAuditor",
+          "reportId"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": "string"
+          },
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "stage": {
+            "type": "string"
+          },
+          "plannedQuarter": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "plannedStart": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "plannedEnd": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "riskScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "entityNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "entityNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "leadAuditor": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/AuditPersonDto"
+              }
+            ]
+          },
+          "reportId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          }
+        }
+      },
+      "AuditEntityBody": {
+        "required": [
+          "values",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "values": {
+            "$ref": "#/components/schemas/AuditableEntityValues"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "AuditEntityDto": {
+        "required": [
+          "id",
+          "values",
+          "unit",
+          "riskNumber",
+          "origin",
+          "riskScore",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "values": {
+            "$ref": "#/components/schemas/AuditableEntityValues"
+          },
+          "unit": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/AuditUnitDto"
+              }
+            ]
+          },
+          "riskNumber": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "origin": {
+            "type": "string"
+          },
+          "riskScore": {
+            "type": "number",
+            "format": "double"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
       "AuditEntryDto": {
         "required": [
           "id",
@@ -42804,6 +46908,2194 @@
           }
         },
         "description": "An entry as shown on History tabs and the Audit Log."
+      },
+      "AuditExportInput": {
+        "required": [
+          "format",
+          "language",
+          "reportId",
+          "unitId",
+          "year",
+          "summaryAr",
+          "summaryEn"
+        ],
+        "type": "object",
+        "properties": {
+          "format": {
+            "type": "string"
+          },
+          "language": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "reportId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "unitId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "year": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "summaryAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "summaryEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "AuditExtractInput": {
+        "required": [
+          "text"
+        ],
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "AuditFileDto": {
+        "required": [
+          "id",
+          "name",
+          "contentType",
+          "sizeBytes"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "contentType": {
+            "type": "string"
+          },
+          "sizeBytes": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "AuditFindingBody": {
+        "required": [
+          "values",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "values": {
+            "$ref": "#/components/schemas/FindingValues"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "AuditFindingDto": {
+        "required": [
+          "id",
+          "number",
+          "reportId",
+          "reportNumber",
+          "reportTitleAr",
+          "reportTitleEn",
+          "reportTypeCode",
+          "reportStatus",
+          "values",
+          "responsibleUnit",
+          "department",
+          "auditor",
+          "repeatOf",
+          "criteriaDocument",
+          "status",
+          "completion",
+          "actualClosedOn",
+          "cancelReason",
+          "capRemark",
+          "risks",
+          "can",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": "string"
+          },
+          "reportId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reportNumber": {
+            "type": "string"
+          },
+          "reportTitleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "reportTitleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "reportTypeCode": {
+            "type": "string"
+          },
+          "reportStatus": {
+            "type": "string"
+          },
+          "values": {
+            "$ref": "#/components/schemas/FindingValues"
+          },
+          "responsibleUnit": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/AuditUnitDto"
+              }
+            ]
+          },
+          "department": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/AuditUnitDto"
+              }
+            ]
+          },
+          "auditor": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/AuditPersonDto"
+              }
+            ]
+          },
+          "repeatOf": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/AuditFindingRefDto"
+              }
+            ]
+          },
+          "criteriaDocument": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/DocumentBadge"
+              }
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "completion": {
+            "type": "number",
+            "format": "double"
+          },
+          "actualClosedOn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "cancelReason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "capRemark": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/AuditCapRemarkDto"
+              }
+            ]
+          },
+          "risks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditFindingRiskDto"
+            }
+          },
+          "can": {
+            "$ref": "#/components/schemas/AuditFindingPermissionsDto"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "AuditFindingListItemDto": {
+        "required": [
+          "id",
+          "number",
+          "reportId",
+          "reportNumber",
+          "reportTypeCode",
+          "titleAr",
+          "titleEn",
+          "typeCode",
+          "priority",
+          "status",
+          "completion",
+          "responsibleUnit",
+          "department",
+          "findingDate",
+          "year",
+          "expectedClosingOn",
+          "actualClosedOn",
+          "repeat",
+          "recommendations",
+          "openRecommendations",
+          "nextDueOn",
+          "nextFollowUpOn",
+          "lastComment",
+          "auditor"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": "string"
+          },
+          "reportId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "reportNumber": {
+            "type": "string"
+          },
+          "reportTypeCode": {
+            "type": "string"
+          },
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "typeCode": {
+            "type": "string"
+          },
+          "priority": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "completion": {
+            "type": "number",
+            "format": "double"
+          },
+          "responsibleUnit": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/AuditUnitDto"
+              }
+            ]
+          },
+          "department": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/AuditUnitDto"
+              }
+            ]
+          },
+          "findingDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "expectedClosingOn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "actualClosedOn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "repeat": {
+            "type": "boolean"
+          },
+          "recommendations": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "openRecommendations": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nextDueOn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "nextFollowUpOn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "lastComment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "auditor": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/AuditPersonDto"
+              }
+            ]
+          }
+        }
+      },
+      "AuditFindingPermissionsDto": {
+        "required": [
+          "edit",
+          "cancel",
+          "addRecommendation",
+          "linkRisk",
+          "sendToCap",
+          "followUp"
+        ],
+        "type": "object",
+        "properties": {
+          "edit": {
+            "type": "boolean"
+          },
+          "cancel": {
+            "type": "boolean"
+          },
+          "addRecommendation": {
+            "type": "boolean"
+          },
+          "linkRisk": {
+            "type": "boolean"
+          },
+          "sendToCap": {
+            "type": "boolean"
+          },
+          "followUp": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AuditFindingRefDto": {
+        "required": [
+          "id",
+          "number",
+          "titleAr",
+          "titleEn",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": "string"
+          },
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "type": "string"
+          }
+        }
+      },
+      "AuditFindingRiskDto": {
+        "required": [
+          "id",
+          "riskId",
+          "riskNumber",
+          "riskTitleAr",
+          "riskTitleEn",
+          "riskStatus",
+          "residualBand",
+          "controlId",
+          "controlNameAr",
+          "controlNameEn",
+          "controlEffectiveness",
+          "flagged",
+          "controlLoweredTo",
+          "visible",
+          "link"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "riskId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "riskNumber": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "riskTitleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "riskTitleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "riskStatus": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "residualBand": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "controlId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "controlNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "controlNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "controlEffectiveness": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "flagged": {
+            "type": "boolean"
+          },
+          "controlLoweredTo": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "visible": {
+            "type": "boolean"
+          },
+          "link": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "AuditFollowUpDto": {
+        "required": [
+          "id",
+          "number",
+          "recommendationId",
+          "followUpOn",
+          "achievedOn",
+          "pct",
+          "actionsImplemented",
+          "evidenceText",
+          "nextFollowUpOn",
+          "comment",
+          "recordedBy",
+          "reviewStatus",
+          "reviewNote",
+          "applied",
+          "createdAt",
+          "files"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": "string"
+          },
+          "recommendationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "followUpOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "achievedOn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "pct": {
+            "type": "number",
+            "format": "double"
+          },
+          "actionsImplemented": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "evidenceText": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nextFollowUpOn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "comment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "recordedBy": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/AuditPersonDto"
+              }
+            ]
+          },
+          "reviewStatus": {
+            "type": "string"
+          },
+          "reviewNote": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "applied": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "files": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditFileDto"
+            }
+          }
+        }
+      },
+      "AuditImportIssueDto": {
+        "required": [
+          "row",
+          "column",
+          "code"
+        ],
+        "type": "object",
+        "properties": {
+          "row": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "column": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "code": {
+            "type": "string"
+          }
+        }
+      },
+      "AuditImportReportDto": {
+        "required": [
+          "committed",
+          "totalRows",
+          "findings",
+          "recommendations",
+          "issues",
+          "createdNumbers"
+        ],
+        "type": "object",
+        "properties": {
+          "committed": {
+            "type": "boolean"
+          },
+          "totalRows": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "findings": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "recommendations": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "issues": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditImportIssueDto"
+            }
+          },
+          "createdNumbers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "AuditLogDto": {
+        "required": [
+          "id",
+          "kind",
+          "previousDueOn",
+          "newDueOn",
+          "justification",
+          "reference",
+          "recordedBy",
+          "at"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "previousDueOn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "newDueOn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "justification": {
+            "type": "string"
+          },
+          "reference": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "recordedBy": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/AuditPersonDto"
+              }
+            ]
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "AuditMgmtSettings": {
+        "type": "object",
+        "properties": {
+          "departmentScope": {
+            "type": "string"
+          },
+          "departmentLevelCode": {
+            "type": "string"
+          },
+          "notifyDepartments": {
+            "type": "boolean"
+          },
+          "followUpReview": {
+            "type": "boolean"
+          },
+          "followUpReminderDays": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "dueReminderDays": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "reminderWorkingDays": {
+            "type": "boolean"
+          },
+          "capObservations": {
+            "type": "string"
+          },
+          "kpiClosureRateCardId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "kpiOverdueCardId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "kpiPlanCompletionCardId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "kpiReportTimelinessCardId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "kpiSatisfactionCardId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "reportTimelinessDays": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "description": "Settings → Audit management (docs/design/audit.md §2.1)."
+      },
+      "AuditOptionDto": {
+        "required": [
+          "code",
+          "labelAr",
+          "labelEn"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "labelAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "labelEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "AuditOptionsDto": {
+        "required": [
+          "lookups",
+          "isOffice",
+          "canDashboard",
+          "canExport",
+          "canSettings",
+          "lifecycleEnabled",
+          "canLifecycle",
+          "canWorkPapers",
+          "followUpReview",
+          "capObservations",
+          "capAvailable",
+          "riskAvailable",
+          "documentsAvailable"
+        ],
+        "type": "object",
+        "properties": {
+          "lookups": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/AuditOptionDto"
+              }
+            }
+          },
+          "isOffice": {
+            "type": "boolean"
+          },
+          "canDashboard": {
+            "type": "boolean"
+          },
+          "canExport": {
+            "type": "boolean"
+          },
+          "canSettings": {
+            "type": "boolean"
+          },
+          "lifecycleEnabled": {
+            "type": "boolean"
+          },
+          "canLifecycle": {
+            "type": "boolean"
+          },
+          "canWorkPapers": {
+            "type": "boolean"
+          },
+          "followUpReview": {
+            "type": "boolean"
+          },
+          "capObservations": {
+            "type": "string"
+          },
+          "capAvailable": {
+            "type": "boolean"
+          },
+          "riskAvailable": {
+            "type": "boolean"
+          },
+          "documentsAvailable": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AuditPersonDto": {
+        "required": [
+          "id",
+          "nameAr",
+          "nameEn"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "AuditPlanBody": {
+        "required": [
+          "titleAr",
+          "titleEn",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "AuditPlanDto": {
+        "required": [
+          "id",
+          "year",
+          "titleAr",
+          "titleEn",
+          "status",
+          "note",
+          "approvedAt",
+          "engagements",
+          "qaip",
+          "quarterStatus",
+          "canEdit",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "note": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "approvedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "engagements": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditEngagementListItemDto"
+            }
+          },
+          "qaip": {
+            "$ref": "#/components/schemas/AuditQaipDto"
+          },
+          "quarterStatus": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          },
+          "canEdit": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "AuditPlanInput": {
+        "required": [
+          "year",
+          "titleAr",
+          "titleEn"
+        ],
+        "type": "object",
+        "properties": {
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "AuditQaipDto": {
+        "required": [
+          "planCompletion",
+          "reportTimeliness",
+          "closureRate",
+          "satisfaction",
+          "engagements",
+          "completed",
+          "reportsIssued",
+          "reportsTimely"
+        ],
+        "type": "object",
+        "properties": {
+          "planCompletion": {
+            "type": "number",
+            "format": "double"
+          },
+          "reportTimeliness": {
+            "type": "number",
+            "format": "double"
+          },
+          "closureRate": {
+            "type": "number",
+            "format": "double"
+          },
+          "satisfaction": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "engagements": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "completed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "reportsIssued": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "reportsTimely": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "AuditReasonInput": {
+        "required": [
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "AuditRecommendationBody": {
+        "required": [
+          "values",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "values": {
+            "$ref": "#/components/schemas/RecommendationValues"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "AuditRecommendationDto": {
+        "required": [
+          "id",
+          "number",
+          "findingId",
+          "values",
+          "contact",
+          "status",
+          "latestPct",
+          "effectiveDue",
+          "revisedDueOn",
+          "revisedReason",
+          "completedOn",
+          "lastFollowUpOn",
+          "nextFollowUpOn",
+          "lastComment",
+          "riskAcceptanceJustification",
+          "riskAcceptanceReference",
+          "riskAcceptedOn",
+          "cancelReason",
+          "pendingReview",
+          "followUps",
+          "log",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": "string"
+          },
+          "findingId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "values": {
+            "$ref": "#/components/schemas/RecommendationValues"
+          },
+          "contact": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/AuditPersonDto"
+              }
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "latestPct": {
+            "type": "number",
+            "format": "double"
+          },
+          "effectiveDue": {
+            "type": "string",
+            "format": "date"
+          },
+          "revisedDueOn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "revisedReason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "completedOn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "lastFollowUpOn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "nextFollowUpOn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "lastComment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "riskAcceptanceJustification": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "riskAcceptanceReference": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "riskAcceptedOn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "cancelReason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "pendingReview": {
+            "type": "boolean"
+          },
+          "followUps": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditFollowUpDto"
+            }
+          },
+          "log": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditLogDto"
+            }
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "AuditReportBody": {
+        "required": [
+          "values",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "values": {
+            "$ref": "#/components/schemas/AuditReportValues"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "AuditReportDto": {
+        "required": [
+          "id",
+          "number",
+          "values",
+          "auditedUnits",
+          "distribution",
+          "leadAuditor",
+          "status",
+          "issuedAt",
+          "closedAt",
+          "cancelReason",
+          "engagementId",
+          "findings",
+          "openFindings",
+          "closedFindings",
+          "can",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": "string"
+          },
+          "values": {
+            "$ref": "#/components/schemas/AuditReportValues"
+          },
+          "auditedUnits": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditUnitDto"
+            }
+          },
+          "distribution": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditPersonDto"
+            }
+          },
+          "leadAuditor": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/AuditPersonDto"
+              }
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "issuedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "closedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "cancelReason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "engagementId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "findings": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "openFindings": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "closedFindings": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "can": {
+            "$ref": "#/components/schemas/AuditReportPermissionsDto"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "AuditReportListItemDto": {
+        "required": [
+          "id",
+          "number",
+          "titleAr",
+          "titleEn",
+          "typeCode",
+          "auditorBody",
+          "reportDate",
+          "status",
+          "leadAuditor",
+          "findings",
+          "openFindings",
+          "lateFindings",
+          "closedFindings"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": "string"
+          },
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "typeCode": {
+            "type": "string"
+          },
+          "auditorBody": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "reportDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "status": {
+            "type": "string"
+          },
+          "leadAuditor": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/AuditPersonDto"
+              }
+            ]
+          },
+          "findings": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "openFindings": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lateFindings": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "closedFindings": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "AuditReportPermissionsDto": {
+        "required": [
+          "edit",
+          "issue",
+          "cancel",
+          "addFinding"
+        ],
+        "type": "object",
+        "properties": {
+          "edit": {
+            "type": "boolean"
+          },
+          "issue": {
+            "type": "boolean"
+          },
+          "cancel": {
+            "type": "boolean"
+          },
+          "addFinding": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AuditReportValues": {
+        "required": [
+          "titleAr",
+          "titleEn",
+          "typeCode",
+          "auditorBody",
+          "leadAuditorEmployeeId",
+          "auditedUnitIds",
+          "periodFrom",
+          "periodTo",
+          "reportDate",
+          "distributionEmployeeIds",
+          "distributionNote",
+          "summary"
+        ],
+        "type": "object",
+        "properties": {
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "typeCode": {
+            "type": "string"
+          },
+          "auditorBody": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "leadAuditorEmployeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "auditedUnitIds": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "periodFrom": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "periodTo": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "reportDate": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "distributionEmployeeIds": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "distributionNote": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "summary": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "AuditReviseInput": {
+        "required": [
+          "newDueOn",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "newDueOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "AuditRiskAcceptInput": {
+        "required": [
+          "justification",
+          "reference"
+        ],
+        "type": "object",
+        "properties": {
+          "justification": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "reference": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "AuditRiskLinkInput": {
+        "required": [
+          "riskId",
+          "controlId",
+          "flagForReassessment",
+          "lowerControl"
+        ],
+        "type": "object",
+        "properties": {
+          "riskId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "controlId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "flagForReassessment": {
+            "type": "boolean"
+          },
+          "lowerControl": {
+            "type": "boolean"
+          }
+        }
+      },
+      "AuditRiskOptionDto": {
+        "required": [
+          "id",
+          "number",
+          "titleAr",
+          "titleEn",
+          "status",
+          "residualBand"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": "string"
+          },
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "residualBand": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "AuditSettingsInput": {
+        "required": [
+          "settings",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "settings": {
+            "$ref": "#/components/schemas/AuditMgmtSettings"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "AuditSimilarFindingDto": {
+        "required": [
+          "id",
+          "number",
+          "titleAr",
+          "titleEn",
+          "unit",
+          "year",
+          "status",
+          "score"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": "string"
+          },
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "unit": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/AuditUnitDto"
+              }
+            ]
+          },
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "status": {
+            "type": "string"
+          },
+          "score": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "AuditSummaryDraftDto": {
+        "required": [
+          "summaryAr",
+          "summaryEn",
+          "usageId"
+        ],
+        "type": "object",
+        "properties": {
+          "summaryAr": {
+            "type": "string"
+          },
+          "summaryEn": {
+            "type": "string"
+          },
+          "usageId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "AuditSummaryInput": {
+        "required": [
+          "unitId",
+          "year"
+        ],
+        "type": "object",
+        "properties": {
+          "unitId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "year": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          }
+        }
+      },
+      "AuditSurveyInput": {
+        "required": [
+          "score",
+          "comment"
+        ],
+        "type": "object",
+        "properties": {
+          "score": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "comment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "AuditTeamDto": {
+        "required": [
+          "id",
+          "number",
+          "nameAr",
+          "nameEn",
+          "status",
+          "members"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "members": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditPersonDto"
+            }
+          }
+        }
+      },
+      "AuditTransitionInput": {
+        "required": [
+          "action",
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string"
+          },
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "AuditTrendDto": {
+        "required": [
+          "month",
+          "opened",
+          "closed"
+        ],
+        "type": "object",
+        "properties": {
+          "month": {
+            "type": "string"
+          },
+          "opened": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "closed": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "AuditUnitCountDto": {
+        "required": [
+          "unit",
+          "findings",
+          "open",
+          "late",
+          "closed",
+          "riskAccepted",
+          "closureRate"
+        ],
+        "type": "object",
+        "properties": {
+          "unit": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/AuditUnitDto"
+              }
+            ]
+          },
+          "findings": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "open": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "late": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "closed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "riskAccepted": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "closureRate": {
+            "type": "number",
+            "format": "double"
+          }
+        }
+      },
+      "AuditUnitDto": {
+        "required": [
+          "id",
+          "code",
+          "nameAr",
+          "nameEn"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "AuditWorkPaperActionInput": {
+        "required": [
+          "action"
+        ],
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string"
+          }
+        }
+      },
+      "AuditWorkPaperBody": {
+        "required": [
+          "values",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "values": {
+            "$ref": "#/components/schemas/WorkPaperValues"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "AuditWorkPaperDto": {
+        "required": [
+          "id",
+          "engagementId",
+          "values",
+          "status",
+          "preparedBy",
+          "reviewedBy",
+          "reviewedAt",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "engagementId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "values": {
+            "$ref": "#/components/schemas/WorkPaperValues"
+          },
+          "status": {
+            "type": "string"
+          },
+          "preparedBy": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/AuditPersonDto"
+              }
+            ]
+          },
+          "reviewedBy": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/AuditPersonDto"
+              }
+            ]
+          },
+          "reviewedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
       },
       "AuthEventDto": {
         "required": [
@@ -52452,6 +58744,55 @@
         },
         "description": "Validity and behaviour of a document type (ADR 0084, 0087)."
       },
+      "DocumentBadge": {
+        "required": [
+          "id",
+          "documentNo",
+          "nameAr",
+          "nameEn",
+          "status",
+          "currentVersion",
+          "link"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "documentNo": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "currentVersion": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "link": {
+            "type": "string"
+          }
+        },
+        "description": "A document as another system may show it (only when the user may see it — sensitivity clearance, ADR 0083)."
+      },
       "DocumentCapabilities": {
         "required": [
           "confirmValid",
@@ -53721,6 +60062,97 @@
           }
         }
       },
+      "EngagementValues": {
+        "required": [
+          "titleAr",
+          "titleEn",
+          "entityId",
+          "objectives",
+          "scope",
+          "teamId",
+          "leadAuditorEmployeeId",
+          "plannedQuarter",
+          "plannedStart",
+          "plannedEnd",
+          "budgetHours"
+        ],
+        "type": "object",
+        "properties": {
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "entityId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "objectives": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "scope": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "teamId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "leadAuditorEmployeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "plannedQuarter": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "plannedStart": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "plannedEnd": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "budgetHours": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          }
+        }
+      },
       "EnrolmentResultDto": {
         "required": [
           "status",
@@ -54545,6 +60977,37 @@
           }
         }
       },
+      "EvidenceReviewDto": {
+        "required": [
+          "support",
+          "gaps",
+          "commentAr",
+          "commentEn",
+          "usageId"
+        ],
+        "type": "object",
+        "properties": {
+          "support": {
+            "type": "string"
+          },
+          "gaps": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "commentAr": {
+            "type": "string"
+          },
+          "commentEn": {
+            "type": "string"
+          },
+          "usageId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
       "EvmDto": {
         "required": [
           "values",
@@ -54649,6 +61112,106 @@
           }
         },
         "description": "One proposed value: never saved by the server; the review UI shows it as a draft (docs/design/ai.md §4.1). Where the source was found:\n`LocationKind``page` / `slide` / `image` with its number, and `FromScan` when the text came from OCR (ADR 0033)."
+      },
+      "ExtractedFindingDto": {
+        "required": [
+          "titleAr",
+          "titleEn",
+          "condition",
+          "criteria",
+          "cause",
+          "effect",
+          "responsibleUnitId",
+          "unitCode",
+          "priority",
+          "typeCode",
+          "recommendations"
+        ],
+        "type": "object",
+        "properties": {
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "condition": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "criteria": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "cause": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "effect": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "responsibleUnitId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "unitCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "priority": {
+            "type": "string"
+          },
+          "typeCode": {
+            "type": "string"
+          },
+          "recommendations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExtractedRecommendationDto"
+            }
+          }
+        }
+      },
+      "ExtractedRecommendationDto": {
+        "required": [
+          "actionAr",
+          "actionEn"
+        ],
+        "type": "object",
+        "properties": {
+          "actionAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "actionEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
       },
       "ExtractedRemarkDto": {
         "required": [
@@ -55055,6 +61618,134 @@
           }
         }
       },
+      "FindingExtractionDto": {
+        "required": [
+          "findings",
+          "characters",
+          "usageId"
+        ],
+        "type": "object",
+        "properties": {
+          "findings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExtractedFindingDto"
+            }
+          },
+          "characters": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "usageId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "description": "Draft findings — nothing is saved until the Audit Office confirms the rows it keeps (ADR 0134)."
+      },
+      "FindingValues": {
+        "required": [
+          "titleAr",
+          "titleEn",
+          "typeCode",
+          "condition",
+          "criteria",
+          "criteriaDocumentId",
+          "cause",
+          "effect",
+          "findingDate",
+          "responsibleUnitId",
+          "priority",
+          "repeat",
+          "repeatOfFindingId",
+          "expectedClosingOn",
+          "auditorEmployeeId"
+        ],
+        "type": "object",
+        "properties": {
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "typeCode": {
+            "type": "string"
+          },
+          "condition": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "criteria": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "criteriaDocumentId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "cause": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "effect": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "findingDate": {
+            "type": "string",
+            "format": "date"
+          },
+          "responsibleUnitId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "priority": {
+            "type": "string"
+          },
+          "repeat": {
+            "type": "boolean"
+          },
+          "repeatOfFindingId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "expectedClosingOn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "auditorEmployeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          }
+        }
+      },
       "FlowPoint": {
         "required": [
           "date",
@@ -55135,6 +61826,60 @@
             "type": [
               "null",
               "boolean"
+            ]
+          }
+        }
+      },
+      "FollowUpValues": {
+        "required": [
+          "followUpOn",
+          "achievedOn",
+          "pct",
+          "actionsImplemented",
+          "evidenceText",
+          "nextFollowUpOn",
+          "comment"
+        ],
+        "type": "object",
+        "properties": {
+          "followUpOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "achievedOn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "pct": {
+            "type": "number",
+            "format": "double"
+          },
+          "actionsImplemented": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "evidenceText": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nextFollowUpOn": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date"
+          },
+          "comment": {
+            "type": [
+              "null",
+              "string"
             ]
           }
         }
@@ -65782,6 +72527,28 @@
           }
         }
       },
+      "NewFindingInput": {
+        "required": [
+          "finding",
+          "recommendations"
+        ],
+        "type": "object",
+        "properties": {
+          "finding": {
+            "$ref": "#/components/schemas/FindingValues"
+          },
+          "recommendations": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/RecommendationValues"
+            }
+          }
+        },
+        "description": "A recommendation entered together with its finding (form, import, AI confirmation)."
+      },
       "NotificationDto": {
         "required": [
           "id",
@@ -66635,6 +73402,74 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/AuditEntryDto"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "description": "One page of items plus the total count across all pages."
+      },
+      "PagedResultOfAuditFindingListItemDto": {
+        "required": [
+          "items",
+          "page",
+          "pageSize",
+          "totalCount"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditFindingListItemDto"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "description": "One page of items plus the total count across all pages."
+      },
+      "PagedResultOfAuditReportListItemDto": {
+        "required": [
+          "items",
+          "page",
+          "pageSize",
+          "totalCount"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditReportListItemDto"
             }
           },
           "page": {
@@ -73595,6 +80430,68 @@
           }
         }
       },
+      "RecommendationValues": {
+        "required": [
+          "actionAr",
+          "actionEn",
+          "managementResponseCode",
+          "managementComment",
+          "implementationPlan",
+          "contactEmployeeId",
+          "dueOn",
+          "notes"
+        ],
+        "type": "object",
+        "properties": {
+          "actionAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "actionEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "managementResponseCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "managementComment": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "implementationPlan": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "contactEmployeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "dueOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "notes": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "RecordRolePermissionsInput": {
         "required": [
           "permissions",
@@ -74133,6 +81030,49 @@
           "version": {
             "type": "integer",
             "format": "uint32"
+          }
+        }
+      },
+      "RepeatCheckDto": {
+        "required": [
+          "similar",
+          "repeatOf",
+          "rationaleAr",
+          "rationaleEn",
+          "usageId"
+        ],
+        "type": "object",
+        "properties": {
+          "similar": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuditSimilarFindingDto"
+            }
+          },
+          "repeatOf": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "rationaleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "rationaleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "usageId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
           }
         }
       },
@@ -78513,6 +85453,29 @@
           },
           "current": {
             "type": "boolean"
+          }
+        }
+      },
+      "SettingsDocumentOfAuditMgmtSettings": {
+        "required": [
+          "value",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "value": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/AuditMgmtSettings"
+              }
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
           }
         }
       },
@@ -88755,6 +95718,55 @@
             "format": "double"
           }
         }
+      },
+      "WorkPaperValues": {
+        "required": [
+          "reference",
+          "title",
+          "testStep",
+          "sample",
+          "result",
+          "conclusion"
+        ],
+        "type": "object",
+        "properties": {
+          "reference": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "title": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "testStep": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sample": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "result": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "conclusion": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
       }
     }
   },
@@ -88836,6 +95848,9 @@
     },
     {
       "name": "bench"
+    },
+    {
+      "name": "auditmgmt"
     }
   ]
 }

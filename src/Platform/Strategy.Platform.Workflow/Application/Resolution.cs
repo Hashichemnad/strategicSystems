@@ -217,7 +217,7 @@ internal sealed class ApproverResolver(
             case ApproverRuleKinds.RecordRole:
                 foreach (var holder in await recordRoles.GetHoldersAsync(context.Subject.ResourceType, context.Subject.ResourceId, ct).ConfigureAwait(false))
                 {
-                    if (holder.RoleCode != rule.RoleCode)
+                    if (holder.RoleCode != rule.RoleCode || holder.PrincipalKind == RecordPrincipalKinds.Unit)
                     {
                         continue;
                     }

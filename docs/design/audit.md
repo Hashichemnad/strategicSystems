@@ -30,8 +30,8 @@ KPI (`IKpiCatalog`, new `IKpiResultFeed` — QAIP / closure-rate publishing). No
   setting (ADR 0130). The approval engine ignores unit holders when resolving record-role approvers.
 - **Risk.Contracts** `IRiskDirectory`: `ListControlsAsync(riskId, user)`, `LowerControlEffectivenessAsync(controlId, reason)` (one level
   down the framework's effectiveness scale, audited, flags the risk for reassessment; ineffective → existing `RiskControlRatedIneffective`).
-- **Kpi.Contracts** `IKpiResultFeed.ProposeAsync(cardId, year, periodCode, achieve, note)`: writes the value as a **machine draft** on the
-  open result of that period (the existing `DraftFromMcp` flag); the KPI owner reviews and submits as usual (ADR 0135).
+- **Kpi.Contracts** `IKpiResultFeed.ProposeAsync(cardId, asOf, achieve, note)`: writes the value as a **machine draft** on the
+  latest open result whose period has ended (the existing `DraftFromMcp` flag); the KPI owner reviews and submits as usual (ADR 0135).
 - **Phase 15 fixes:** benchmark study KPI picker searches as you type (server search, no 200-card list); actions proposed from a benchmark
   development plan default to the CAP action type `improvement` (editable).
 
