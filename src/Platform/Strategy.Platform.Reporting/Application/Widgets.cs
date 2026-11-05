@@ -233,7 +233,8 @@ public sealed class WidgetValidator(MetricRegistry registry, MetricEvaluator eva
 
 /// <summary>Evaluates widgets for a viewer (ADR 0141 / 0143): every figure through <see cref="MetricEvaluator"/>, lists through the modules.</summary>
 public sealed class WidgetEvaluator(
-    MetricRegistry registry, MetricEvaluator evaluator, ILookupService lookups, IAccessService access, ScorecardBuilder scorecards, ISettingsStore settings)
+    MetricRegistry registry, MetricEvaluator evaluator, ILookupService lookups, IAccessService access, ScorecardBuilder scorecards, ISettingsStore settings,
+    IEnumerable<IReportingDimensionLabelSource> labelSources)
 {
     public IEnumerable<string> ScopePermissionsOf(string systemCode) =>
         registry.Metrics.Where(m => m.SystemCode == systemCode).Select(m => m.ScopePermission).Distinct(StringComparer.Ordinal);
@@ -449,6 +450,11 @@ public sealed class WidgetEvaluator(
 
                 labels.AddRange(codes.Select(c => values.FirstOrDefault(v => v.Code == c) is { } v
                     ? new DimensionLabelDto(dim, c, v.LabelAr, v.LabelEn) : new DimensionLabelDto(dim, c, null, null)));
+            }
+            else if (labelSources.FirstOrDefault(s => s.SystemCode == def.SystemCode) is { } source)
+            {
+                var found = await source.LabelsAsync(dim, codes, ct).ConfigureAwait(false);
+                labels.AddRange(codes.Select(c => found.TryGetValue(c, out var l) ? new DimensionLabelDto(dim, c, l.Ar, l.En) : new DimensionLabelDto(dim, c, null, null)));
             }
         }
 

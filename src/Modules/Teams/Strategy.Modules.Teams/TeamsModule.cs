@@ -75,6 +75,7 @@ public sealed class TeamsModule : IModule
 
         // Phase 17 — reporting sources (docs/design/reporting.md §2.5, §6, §7).
         services.AddReportingMetricSource<TeamsMetricSource>();
+        services.AddReportingDimensionLabelSource<TeamsDimensionLabels>();
         services.AddReportingDatasetSource<TeamsDatasetSource>();
         services.AddMyWorkCardSource<TeamsMyWorkCards>();
 

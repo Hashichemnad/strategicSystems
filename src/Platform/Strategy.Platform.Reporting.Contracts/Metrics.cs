@@ -176,3 +176,14 @@ public interface IReportingMetricSource
     /// </summary>
     Task<IReadOnlyCollection<string>> VisiblePartitionsAsync(ClaimsPrincipal user, CancellationToken cancellationToken);
 }
+
+/// <summary>
+/// Labels of dimension values kept in module tables (e.g. KPI strategic objectives, team types), for codes neither a lookup nor fixed labels
+/// cover. Optional; implemented by the module that owns the codes.
+/// </summary>
+public interface IReportingDimensionLabelSource
+{
+    string SystemCode { get; }
+
+    Task<IReadOnlyDictionary<string, DimensionLabel>> LabelsAsync(string dimension, IReadOnlyCollection<string> codes, CancellationToken cancellationToken);
+}

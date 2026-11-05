@@ -72,6 +72,7 @@ public sealed class KpiModule : IModule
 
         // Phase 17 — reporting sources (docs/design/reporting.md §2.5, §6, §7).
         services.AddReportingMetricSource<KpiMetricSource>();
+        services.AddReportingDimensionLabelSource<KpiDimensionLabels>();
         services.AddReportingListSource<KpiListSource>();
         services.AddReportingDatasetSource<KpiDatasetSource>();
         services.AddMyWorkCardSource<KpiMyWorkCards>();

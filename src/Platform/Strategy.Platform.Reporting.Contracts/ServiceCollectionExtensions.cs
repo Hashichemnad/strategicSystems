@@ -16,6 +16,10 @@ public static class ReportingSourceServiceCollectionExtensions
         where TSource : class, IReportingDatasetSource =>
         services.AddScoped<IReportingDatasetSource, TSource>();
 
+    public static IServiceCollection AddReportingDimensionLabelSource<TSource>(this IServiceCollection services)
+        where TSource : class, IReportingDimensionLabelSource =>
+        services.AddScoped<IReportingDimensionLabelSource, TSource>();
+
     public static IServiceCollection AddMyWorkCardSource<TSource>(this IServiceCollection services)
         where TSource : class, IMyWorkCardSource =>
         services.AddScoped<IMyWorkCardSource, TSource>();
