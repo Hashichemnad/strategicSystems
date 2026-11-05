@@ -35,6 +35,8 @@ public partial class AuthorizationMatrixTests(ApiFixture api) : IClassFixture<Ap
         // Phase 7: the seeded Teams "Employee" role (assigned to everyone): own teams, request a team, own memberships, AI assists.
         "teams.team.read", "teams.team.request", "teams.membership.read", "teams.ai.formation", "teams.ai.members", "teams.ai.evaluation",
         "teams.ai.minutes",
+        // Phase 17: the seeded "Dashboard user" role (assigned to everyone): dashboards, My Work cards, run and export reports.
+        "reporting.dashboard.read", "reporting.report.run", "reporting.report.export",
     ];
 
     public static TheoryData<string, string> NonPublicEndpoints() => Endpoints(e => e.Metadata.GetMetadata<PublicEndpoint>() is null);

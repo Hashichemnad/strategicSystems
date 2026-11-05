@@ -1,6 +1,6 @@
 # 0141 — Scope-correct cached aggregates: unit partitions, additive components, live fallback
 
-- **Status:** Proposed (Phase 17)
+- **Status:** Accepted by the owner (Phase 17)
 - **Context:** SPEC §0.4: "the same dashboard shows different data to different people"; CLAUDE.md §7: lists filtered by scope in the
   database. A global cache cannot know the viewer; a per-user cache cannot meet < 3 s for leadership on 10 000 tasks after every change.
   Scopes are unit-based (Unit, UnitAndBelow, All) plus Own / Team and record roles; some records are restricted beyond scope

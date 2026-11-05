@@ -1,6 +1,6 @@
 # 0148 — Apache ECharts as the single chart library; shared dashboard UI kit
 
-- **Status:** Proposed (Phase 17)
+- **Status:** Accepted by the owner (Phase 17)
 - **Context:** ADR 0096 added ECharts for Portfolio / agile; Phases 6, 7, 12, 13 used interim CSS / SVG charts "until Phase 17"; tiles,
   sections and bars are duplicated in five feature folders; the wrapper imports the whole library.
 

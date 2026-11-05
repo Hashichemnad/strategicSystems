@@ -1,6 +1,6 @@
 # 0144 — Report builder: module datasets, field permissions, run-time scope
 
-- **Status:** Proposed (Phase 17)
+- **Status:** Accepted by the owner (Phase 17)
 - **Context:** SPEC §0.4: report builder (object, columns, filters, grouping) with export and scheduling. The builder must not expose fields
   or records the user may not see; reports are shared and scheduled.
 

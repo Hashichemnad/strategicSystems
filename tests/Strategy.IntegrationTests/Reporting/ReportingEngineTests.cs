@@ -24,8 +24,9 @@ public class ReportingEngineTests(ApiFixture api) : IClassFixture<ApiFixture>
         TestUser AllReader, HttpClient AllClient, TestUser UnitReader, HttpClient UnitClient, TestUser OwnReader, HttpClient OwnClient,
         Guid UnitA, Guid UnitB, string UnitRole, string OwnRole, IReadOnlyList<Guid> ItemsA, IReadOnlyList<Guid> ItemsB, Guid OwnItem);
 
-    private World? _world;
-    private readonly SemaphoreSlim _gate = new(1, 1);
+    // xUnit creates a class instance per test: the world is built once per fixture (one host and database for the class).
+    private static readonly System.Runtime.CompilerServices.ConditionalWeakTable<ApiFixture, World> Worlds = new();
+    private static readonly SemaphoreSlim Gate = new(1, 1);
 
     private ApiFactory Factory => api.Factory;
 
@@ -35,12 +36,12 @@ public class ReportingEngineTests(ApiFixture api) : IClassFixture<ApiFixture>
     /// </summary>
     private async Task<World> WorldAsync()
     {
-        await _gate.WaitAsync();
+        await Gate.WaitAsync();
         try
         {
-            if (_world is not null)
+            if (Worlds.TryGetValue(api, out var known))
             {
-                return _world;
+                return known;
             }
 
             var admin = await Factory.CreateUserAsync(admin: true, roles: ["reporting.administrator", "reporting.executive-viewer", "sample.viewer"]);
@@ -72,13 +73,14 @@ public class ReportingEngineTests(ApiFixture api) : IClassFixture<ApiFixture>
             var itemsB = new List<Guid> { await Item(editorBClient, "B0", 50), await Item(editorBClient, "B1", 50) };
             var own = await Item(ownClient, "Own", 10);
             await RefreshAsync();
-            _world = new World(admin, adminClient, editorA, editorAClient, editorB, editorBClient, allReader, await Factory.SignInAsync(allReader), unitReader,
+            var world = new World(admin, adminClient, editorA, editorAClient, editorB, editorBClient, allReader, await Factory.SignInAsync(allReader), unitReader,
                 await Factory.SignInAsync(unitReader), ownReader, ownClient, editorA.UnitId!.Value, editorB.UnitId!.Value, unitRole, ownRole, itemsA, itemsB, own);
-            return _world;
+            Worlds.Add(api, world);
+            return world;
         }
         finally
         {
-            _gate.Release();
+            Gate.Release();
         }
     }
 

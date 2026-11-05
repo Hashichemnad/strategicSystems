@@ -1,6 +1,6 @@
 # 0143 — Widget catalogue, dashboard definitions, role defaults and builder security
 
-- **Status:** Proposed (Phase 17)
+- **Status:** Accepted by the owner (Phase 17)
 - **Context:** SPEC §0.4 dashboard builder: admins arrange default dashboards per role and publish without code; users pin favourites and
   save filters; users can only build on data they may see.
 

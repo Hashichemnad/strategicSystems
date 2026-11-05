@@ -1,6 +1,6 @@
 # 0140 — Reporting read model: module metric sources through Contracts, facts in the `reporting` schema
 
-- **Status:** Proposed (Phase 17)
+- **Status:** Accepted by the owner (Phase 17)
 - **Context:** SPEC §0.4 asks for cross-system dashboards on cached aggregates ("refreshed by the scheduler and on relevant changes",
   executive load < 3 s). CLAUDE.md §5 forbids cross-schema SQL and references to other modules' internals. Today each module computes its
   dashboard live in its own handler; no Contract exposes aggregates.

@@ -1,6 +1,6 @@
 # 0142 — Month-grain periods, comparison, snapshots and refresh triggers
 
-- **Status:** Proposed (Phase 17)
+- **Status:** Accepted by the owner (Phase 17)
 - **Context:** SPEC §0.4: period selectors (month / quarter / year / custom) and comparison with the previous period on every dashboard,
   "risk movement since last quarter", KPI trends; aggregates refreshed by the scheduler and on relevant changes. Module dashboards today
   filter by year only, each on a different date field.

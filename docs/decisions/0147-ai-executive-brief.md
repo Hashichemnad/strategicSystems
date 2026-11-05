@@ -1,6 +1,6 @@
 # 0147 — AI executive brief
 
-- **Status:** Proposed (Phase 17)
+- **Status:** Accepted by the owner (Phase 17)
 - **Context:** SPEC §0.4: bilingual narrative of the period (improved, needs attention, recommended decisions) with links to evidence;
   CLAUDE.md §12: AI drafts, structured output, untrusted text as data, data controls.
 

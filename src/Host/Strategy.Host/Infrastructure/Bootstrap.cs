@@ -225,6 +225,9 @@ internal static partial class Bootstrap
                          "requests.office", "requests.type-administrator", "docreg.office", "docreg.administrator", "ip.office", "ip.administrator",
                          "risk.risk-office", "risk.risk-committee", "cap.cap-office", "bench.bench-office", "auditmgmt.audit-office",
                          "auditmgmt.audit-committee",
+
+                         // Phase 17: Mariam is the demo Director General — executive dashboard, AI brief, dashboard and report builder.
+                         "reporting.executive-viewer", "reporting.administrator", "reporting.report-author",
                      })
             {
                 await AccessGrants.AssignRoleAsync(provider, role, AccessGrants.User, adminUser.Id);

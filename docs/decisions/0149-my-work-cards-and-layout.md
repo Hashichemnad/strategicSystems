@@ -1,6 +1,6 @@
 # 0149 — My Work cards from every system and the per-user layout
 
-- **Status:** Proposed (Phase 17)
+- **Status:** Accepted by the owner (Phase 17)
 - **Context:** SPEC §0.4 level 1 lists the cards; only cards for accessible systems are shown; Phase 4 delivered approvals, action items
   and submissions through `IMyWorkSource` (items, no per-system cards). There is no per-user preference store beyond language and theme.
 

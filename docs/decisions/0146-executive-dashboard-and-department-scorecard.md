@@ -1,6 +1,6 @@
 # 0146 — Executive dashboard and department comparison scorecard
 
-- **Status:** Proposed (Phase 17)
+- **Status:** Accepted by the owner (Phase 17)
 - **Context:** SPEC §0.4 level 4 lists the sections but not the department level, the scorecard columns' thresholds or who may open it.
 
 ## Decision

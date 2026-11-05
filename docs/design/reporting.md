@@ -3,7 +3,7 @@
 SPEC §0.4 (all four levels, dashboard builder, report builder, period selectors, performance), §0.2 (access, data scope, audit),
 §0.5 (AI principles), the Screens sections §1.8 / §1.12, §2.5, §3.6, §4.6, §6.4, §7.4, §8.5, §9.6, §10.3 C, §11.7, and Appendix A
 (Q-P8: "as specified in §0.4 and each module's Screens section"). Written **before the code**; open choices are ADRs **0140–0149**
-(status *Proposed* until the owner accepts the plan).
+(accepted by the owner).
 
 **Goal.** One reporting layer for the whole suite: every number on every dashboard, report and scheduled email comes from the module
 that owns the data, through its Contracts, filtered by the viewer's access (system access → system-role permission within data scope →

@@ -1,6 +1,6 @@
 # 0145 — Scheduled dashboards and reports: built as the recipient, in their language; email attachments
 
-- **Status:** Proposed (Phase 17)
+- **Status:** Accepted by the owner (Phase 17)
 - **Context:** SPEC §0.4: dashboards and reports can be emailed on a schedule. The notification pipeline has no attachments. Gotenberg must
   not run client JavaScript from our pages (ADR 0096).
 
