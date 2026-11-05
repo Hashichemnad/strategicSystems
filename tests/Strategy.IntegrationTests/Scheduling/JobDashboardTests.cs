@@ -1,10 +1,10 @@
 using System.Net;
 using System.Net.Http.Json;
+using Microsoft.Extensions.DependencyInjection;
+using Quartz;
 using Strategy.IntegrationTests.Infrastructure;
 using Strategy.IntegrationTests.Notifications;
 using Strategy.Platform.Kernel.Paging;
-using Microsoft.Extensions.DependencyInjection;
-using Quartz;
 using Strategy.Platform.Scheduling.Application;
 
 namespace Strategy.IntegrationTests.Scheduling;
