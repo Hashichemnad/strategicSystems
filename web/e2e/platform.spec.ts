@@ -64,9 +64,10 @@ test.describe('as a sample editor', () => {
     ).toBeVisible();
     await shot('record-history', { fullPage: true });
 
-    // A bilingual PDF produced by the server (Audit Log export through Gotenberg) becomes a document of the record.
+    // A bilingual PDF produced by the server (Audit Log export through Gotenberg) becomes a document of the record. The export is
+    // scoped to this record: the whole log (up to 10 000 rows after the earlier specs) is too large to render within the timeout.
     const pdf = await adminApi.get('/api/v1/audit/entries/export', {
-      params: { format: 'pdf', lang: language, kind: 'change', pageSize: '20' },
+      params: { format: 'pdf', lang: language, kind: 'change', recordId: item.id },
     });
     expect(pdf.status()).toBe(200);
     expect(pdf.headers()['content-type']).toContain('application/pdf');
