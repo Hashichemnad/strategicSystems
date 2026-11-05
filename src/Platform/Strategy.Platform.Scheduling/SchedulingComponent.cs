@@ -27,6 +27,8 @@ public sealed class SchedulingComponent : IPlatformComponent
         services.AddSingleton<OutboxDispatcher>();
         services.AddHostedService<OutboxWorker>();
         services.AddSingleton<JobRunListener>();
+        services.AddSingleton(new ScheduleSwitch(configuration.GetValue("Scheduling:RunSchedules", true)));
+        services.AddSingleton<ScheduleSwitchListener>();
         services.AddScoped<JobAdministration>();
         services.AddScheduledJob(SchedulingCleanupJob.Definition);
 
@@ -52,6 +54,7 @@ public sealed class SchedulingComponent : IPlatformComponent
                 store.UseClustering(cluster => cluster.CheckinInterval = TimeSpan.FromSeconds(20));
             });
             quartz.AddJobListener<JobRunListener>();
+            quartz.AddTriggerListener<ScheduleSwitchListener>();
         });
         services.AddHostedService<JobScheduleSynchroniser>();
         services.AddQuartzHostedService(options =>

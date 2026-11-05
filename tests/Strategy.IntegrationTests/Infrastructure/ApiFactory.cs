@@ -62,6 +62,7 @@ public sealed class ApiFactory(
         builder.UseSetting("RateLimiting:AuthPermitLimit", "100000");
         builder.UseSetting("Files:LocalPath", FilesPath);
         builder.UseSetting("Scheduling:SchedulerName", "test-" + Guid.CreateVersion7().ToString("N")); // Quartz names are per process
+        builder.UseSetting("Scheduling:RunSchedules", "false"); // tests run jobs explicitly; cron firings would race them
         foreach (var (key, value) in settings ?? new Dictionary<string, string?>())
         {
             builder.UseSetting(key, value);

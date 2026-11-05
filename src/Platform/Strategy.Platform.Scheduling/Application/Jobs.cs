@@ -113,3 +113,25 @@ internal sealed class SchedulingCleanupJob(RequestContext requestContext, Schedu
         return $"outbox={outbox} runs={runs}";
     }
 }
+
+/// <summary><c>Scheduling:RunSchedules</c> (default true): false stops runs fired by the job schedules; runs started on request still execute.</summary>
+internal sealed record ScheduleSwitch(bool RunSchedules);
+
+/// <summary>
+/// Vetoes schedule-fired runs when <see cref="ScheduleSwitch.RunSchedules"/> is off (integration-test hosts, which invoke jobs
+/// explicitly and must not race a job firing every minute). Manual runs use Quartz's own trigger group and are never vetoed.
+/// </summary>
+internal sealed class ScheduleSwitchListener(ScheduleSwitch schedule) : ITriggerListener
+{
+    public string Name => "strategy-schedule-switch";
+
+    public Task<bool> VetoJobExecution(ITrigger trigger, IJobExecutionContext context, CancellationToken cancellationToken = default) =>
+        Task.FromResult(!schedule.RunSchedules && trigger.Key.Group == Application.JobScheduleSynchroniser.Group);
+
+    public Task TriggerFired(ITrigger trigger, IJobExecutionContext context, CancellationToken cancellationToken = default) => Task.CompletedTask;
+
+    public Task TriggerMisfired(ITrigger trigger, CancellationToken cancellationToken = default) => Task.CompletedTask;
+
+    public Task TriggerComplete(ITrigger trigger, IJobExecutionContext context, SchedulerInstruction triggerInstructionCode, CancellationToken cancellationToken = default) =>
+        Task.CompletedTask;
+}
