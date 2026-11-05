@@ -134,6 +134,59 @@ internal sealed class AccessService(UserAccessLoader loader, AccessModelCache mo
         return builder.Build() is { } predicate ? query.Where(predicate) : query.Where(_ => false);
     }
 
+    public async Task<EffectiveScope> GetScopeAsync(ClaimsPrincipal principal, string permission, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(principal);
+        ArgumentException.ThrowIfNullOrEmpty(permission);
+        if (principal.IsSystem())
+        {
+            return EffectiveScope.Everything;
+        }
+
+        if (!principal.IsInternal() || principal.UserId() is not { } userId || IsVendorPermission(permission))
+        {
+            return EffectiveScope.None;
+        }
+
+        var (model, access) = await SnapshotAsync(userId, principal.EmployeeIdOf(), cancellationToken).ConfigureAwait(false);
+        if (!SystemOpen(model, access, permission, out var info))
+        {
+            return EffectiveScope.None;
+        }
+
+        var scopes = access.Permissions.GetValueOrDefault(permission);
+        var recordRoles = model.RecordRolesFor(permission);
+        var grantTypes = new List<string>();
+        if (recordRoles.Count > 0)
+        {
+            var types = recordRoles.Keys.ToList();
+            var candidates = await ActiveRecordRoles(access).Where(g => types.Contains(g.ResourceType))
+                .Select(g => new { g.ResourceType, g.RoleCode }).Distinct().ToListAsync(cancellationToken).ConfigureAwait(false);
+            grantTypes.AddRange(candidates.Where(c => recordRoles[c.ResourceType].Contains(c.RoleCode, StringComparer.Ordinal))
+                .Select(c => c.ResourceType).Distinct(StringComparer.Ordinal));
+        }
+
+        if (scopes is not null && (!info.Scopable || scopes.Contains(DataScope.All)))
+        {
+            return new EffectiveScope(true, true, new HashSet<Guid>(), false, grantTypes);
+        }
+
+        var units = new HashSet<Guid>();
+        if (scopes?.Contains(DataScope.Unit) == true)
+        {
+            units.UnionWith(access.ScopeUnitIds);
+        }
+
+        if (scopes?.Contains(DataScope.UnitAndBelow) == true)
+        {
+            units.UnionWith(access.SubtreeUnitIds);
+        }
+
+        var ownOrTeam = scopes is not null && (scopes.Contains(DataScope.Own) || scopes.Contains(DataScope.Team));
+        var allowed = scopes is not null || grantTypes.Count > 0;
+        return new EffectiveScope(allowed, false, units, ownOrTeam, grantTypes);
+    }
+
     private static bool IsVendor(ClaimsPrincipal principal) =>
         principal.IsAuthenticated() && principal.FindFirst(StrategyClaims.PrincipalType)?.Value == StrategyClaims.VendorPrincipal;
 

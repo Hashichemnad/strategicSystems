@@ -26,7 +26,13 @@ internal sealed class SmtpEmailTransport(ISmtpSettingsSource settings) : IEmailT
         mime.From.Add(new MailboxAddress(string.Join(" | ", new[] { smtp.FromNameAr, smtp.FromNameEn }.Where(n => !string.IsNullOrWhiteSpace(n))), smtp.FromAddress!));
         mime.To.Add(MailboxAddress.Parse(message.To));
         mime.Subject = message.Subject;
-        mime.Body = new BodyBuilder { HtmlBody = message.Html, TextBody = message.Text }.ToMessageBody();
+        var body = new BodyBuilder { HtmlBody = message.Html, TextBody = message.Text };
+        foreach (var attachment in message.Attachments ?? [])
+        {
+            body.Attachments.Add(attachment.FileName, attachment.Content, MimeKit.ContentType.Parse(attachment.ContentType));
+        }
+
+        mime.Body = body.ToMessageBody();
 
         using var client = new SmtpClient { Timeout = 15_000 };
         try

@@ -9,6 +9,7 @@ using Strategy.Platform.Notifications.Application;
 using Strategy.Platform.Notifications.Email;
 using Strategy.Platform.Notifications.Infrastructure;
 using Strategy.Platform.Persistence;
+using Strategy.Platform.Reporting;
 using Strategy.Platform.Scheduling;
 
 namespace Strategy.Platform.Notifications;
@@ -28,6 +29,7 @@ public sealed class NotificationsComponent : IPlatformComponent
         services.AddScoped<IEmailTransport, SmtpEmailTransport>();
         services.AddScoped<ITestEmailSender, TestEmailSender>();
         services.AddScoped<NotificationAdministration>();
+        services.AddMyWorkCardSource<NotificationsMyWorkCard>();
         services.AddAppTool<Mcp.MyNotificationsTool>();
         services.AddScoped<IDatabaseSeeder, NotificationSeeder>();
         services.AddOutboxHandler<EmailOutboxHandler>();

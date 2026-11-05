@@ -93,6 +93,12 @@ public interface IUserRoleQuery
     /// <summary>True when deactivating this user would leave no active access administrator.</summary>
     Task<bool> IsLastAccessAdministratorAsync(Guid userId, CancellationToken cancellationToken = default);
 
+    /// <summary>The user's active roles as <c>system.code</c> keys (direct, unit and everyone assignments), e.g. for role default dashboards.</summary>
+    Task<IReadOnlyList<string>> RoleKeysOfAsync(Guid userId, Guid? employeeId, CancellationToken cancellationToken = default);
+
+    /// <summary>Systems the user may open now: enabled and granted (platform systems are always included).</summary>
+    Task<IReadOnlySet<string>> OpenSystemsAsync(Guid userId, Guid? employeeId, CancellationToken cancellationToken = default);
+
     /// <summary>Grants the platform administrator roles to a user (install command).</summary>
     Task GrantPlatformAdministratorAsync(Guid userId, CancellationToken cancellationToken = default);
 

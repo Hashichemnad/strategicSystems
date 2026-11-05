@@ -7,6 +7,8 @@
     <ProjectReference Include="..\Strategy.Platform.Kernel\Strategy.Platform.Kernel.csproj" />
     <ProjectReference Include="..\Strategy.Platform.AI.Contracts\Strategy.Platform.AI.Contracts.csproj" />
     <ProjectReference Include="..\Strategy.Platform.Notifications.Contracts\Strategy.Platform.Notifications.Contracts.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Files.Contracts\Strategy.Platform.Files.Contracts.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Reporting.Contracts\Strategy.Platform.Reporting.Contracts.csproj" />
     <ProjectReference Include="..\Strategy.Platform.Access.Contracts\Strategy.Platform.Access.Contracts.csproj" />
     <ProjectReference Include="..\Strategy.Platform.Audit.Contracts\Strategy.Platform.Audit.Contracts.csproj" />
     <ProjectReference Include="..\Strategy.Platform.Persistence\Strategy.Platform.Persistence.csproj" />

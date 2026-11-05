@@ -7,6 +7,7 @@ using Strategy.Platform.AI.Tools;
 using Strategy.Platform.Http.Modules;
 using Strategy.Platform.Notifications;
 using Strategy.Platform.Persistence;
+using Strategy.Platform.Reporting;
 using Strategy.Platform.Scheduling;
 using Strategy.Platform.Workflow.Api;
 using Strategy.Platform.Workflow.Application;
@@ -32,6 +33,7 @@ public sealed class WorkflowComponent : IPlatformComponent
         services.AddScoped<ApprovalEngine>();
         services.AddScoped<IApprovalEngine>(sp => sp.GetRequiredService<ApprovalEngine>());
         services.AddScoped<ApprovalQueries>();
+        services.AddMyWorkCardSource<ApprovalsMyWorkCard>();
         services.AddScoped<ProcessAdministration>();
         services.AddScoped<SlaEscalation>();
         services.AddScoped<IRoleTransferHook, ApprovalRoleTransferHook>();

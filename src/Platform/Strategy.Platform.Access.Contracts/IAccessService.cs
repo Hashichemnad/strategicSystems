@@ -28,6 +28,24 @@ public interface IAccessService
         ScopeMap<T> scope,
         CancellationToken cancellationToken = default)
         where T : class;
+
+    /// <summary>
+    /// The principal's effective scope for <paramref name="permission"/> (reporting read model, ADR 0141): whether it applies at all, to every
+    /// record, to the records of a set of units, to own / team records, and on which resource types record-role grants add records.
+    /// Same snapshot and rules as <see cref="ApplyScopeAsync{T}"/>.
+    /// </summary>
+    Task<EffectiveScope> GetScopeAsync(ClaimsPrincipal principal, string permission, CancellationToken cancellationToken = default);
+}
+
+/// <summary>
+/// See <see cref="IAccessService.GetScopeAsync"/>. <c>UnitIds</c>: the expanded units of the Unit / UnitAndBelow grants.
+/// <c>RecordGrantTypes</c>: resource types on which the principal holds active record roles that give the permission.
+/// </summary>
+public sealed record EffectiveScope(bool Allowed, bool All, IReadOnlySet<Guid> UnitIds, bool OwnOrTeam, IReadOnlyCollection<string> RecordGrantTypes)
+{
+    public static readonly EffectiveScope None = new(false, false, new HashSet<Guid>(), false, []);
+
+    public static readonly EffectiveScope Everything = new(true, true, new HashSet<Guid>(), false, []);
 }
 
 /// <summary>

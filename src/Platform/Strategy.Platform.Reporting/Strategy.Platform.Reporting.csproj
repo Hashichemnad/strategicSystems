@@ -1,5 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <!-- PDF rendering through the Gotenberg sidecar (headless Chromium, correct Arabic shaping) and Excel export helpers. -->
+  <!-- Dashboards and reporting (docs/design/reporting.md, ADRs 0140–0149): read model of module aggregates (schema reporting), dashboards and builder,
+       executive dashboard and scorecard, report builder, schedules, AI executive brief, My Work cards; PDF rendering through the Gotenberg sidecar
+       (headless Chromium, correct Arabic shaping) and Excel export helpers. -->
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
@@ -7,6 +9,17 @@
     <ProjectReference Include="..\Strategy.Platform.Kernel\Strategy.Platform.Kernel.csproj" />
     <ProjectReference Include="..\Strategy.Platform.Reporting.Contracts\Strategy.Platform.Reporting.Contracts.csproj" />
     <ProjectReference Include="..\Strategy.Platform.Persistence\Strategy.Platform.Persistence.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Http\Strategy.Platform.Http.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Access.Contracts\Strategy.Platform.Access.Contracts.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Audit.Contracts\Strategy.Platform.Audit.Contracts.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Settings\Strategy.Platform.Settings.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Organisation\Strategy.Platform.Organisation.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Scheduling\Strategy.Platform.Scheduling.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Notifications.Contracts\Strategy.Platform.Notifications.Contracts.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Files.Contracts\Strategy.Platform.Files.Contracts.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.AI\Strategy.Platform.AI.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.AI.Contracts\Strategy.Platform.AI.Contracts.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Identity\Strategy.Platform.Identity.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ClosedXML" />
@@ -14,6 +27,7 @@
   <ItemGroup>
     <!-- IBM Plex Sans Arabic (SIL OFL 1.1, Pdf/Fonts/OFL.txt): Arabic and Latin subsets, regular and bold. -->
     <EmbeddedResource Include="Pdf\Fonts\*.woff2" />
+    <EmbeddedResource Include="Ai\Prompts\*.md" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Strategy.UnitTests" />
