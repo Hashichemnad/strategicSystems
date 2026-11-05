@@ -413,7 +413,11 @@
     "applyChange": "طبّق طلب التغيير المعتمد",
     "uploadLpo": "ارفع أمر الشراء وتفاصيل العقد",
     "formTeam": "شكّل فريق المشروع",
-    "confirmCompletion": "أكّد اكتمال المبادرة"
+    "confirmCompletion": "أكّد اكتمال المبادرة",
+    "milestoneDue": "معلم مستحق قريبًا",
+    "milestoneOverdue": "معلم متأخر",
+    "waselSubmission": "تقديم تقدم من المورد للمراجعة",
+    "waselProposal": "مقترح خطة من المورد للمراجعة"
   },
   "errors": {
     "yearCostsMismatch": "يجب أن تساوي تكاليف السنوات 1–4 ({{total}}) الميزانية التقديرية ({{budget}}).",

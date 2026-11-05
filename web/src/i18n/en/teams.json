@@ -433,7 +433,9 @@
     "evaluationReturned": "Team evaluation returned to you",
     "reportDue": "Periodic team report due",
     "recommendationOverdue": "Your team recommendation is overdue",
-    "formationReturned": "Formation request returned to you"
+    "formationReturned": "Formation request returned to you",
+    "member": "You are a member of this team",
+    "leading": "You lead this team"
   },
   "errors": {
     "invalidTransition": "This action is not possible in the current status.",

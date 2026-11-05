@@ -37,7 +37,7 @@ function cardKeys(): string[] {
       else if (name.endsWith('.cs')) {
         const text = readFileSync(path, 'utf8');
         if (!text.includes('IMyWorkCardSource')) continue;
-        for (const match of text.matchAll(/"(myWork\.cards\.[A-Za-z]+)"/g)) if (match[1]) keys.add(`reporting.${match[1]}`);
+        for (const match of text.matchAll(/"(myWork\.cards\.[A-Za-z-]+)"/g)) if (match[1]) keys.add(`reporting.${match[1]}`);
         for (const match of text.matchAll(/new MyWorkCount\("([A-Za-z]+)"/g)) if (match[1]) keys.add(`reporting.myWork.counts.${match[1]}`);
       }
     }

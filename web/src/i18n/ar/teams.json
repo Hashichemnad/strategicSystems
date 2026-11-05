@@ -433,7 +433,9 @@
     "evaluationReturned": "أُعيد إليك تقييم فريق",
     "reportDue": "تقرير فريق دوري مستحق",
     "recommendationOverdue": "توصية فريق مسندة إليك متأخرة",
-    "formationReturned": "أُعيد إليك طلب تشكيل"
+    "formationReturned": "أُعيد إليك طلب تشكيل",
+    "member": "أنت عضو في هذا الفريق",
+    "leading": "أنت قائد هذا الفريق"
   },
   "errors": {
     "invalidTransition": "لا يمكن تنفيذ هذا الإجراء في الحالة الحالية.",
