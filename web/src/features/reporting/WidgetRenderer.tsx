@@ -314,21 +314,23 @@ export function WidgetView({
             {items.map((item) => (
               <li
                 key={`${item.resourceType}:${item.id}`}
-                className="flex items-center justify-between gap-2 py-2 text-sm"
+                className="flex flex-wrap items-center justify-between gap-x-2 gap-y-0.5 py-2 text-sm"
               >
                 <Link
                   to={item.link as '/'}
-                  className="min-w-0 truncate text-primary hover:underline"
+                  className="min-w-0 max-w-full truncate text-primary hover:underline"
                   data-testid="widget-list-link"
                 >
                   {[item.number, pickText(i18n.language, item.titleAr, item.titleEn)]
                     .filter(Boolean)
                     .join(' · ')}
                 </Link>
-                <span className="flex shrink-0 items-center gap-2 text-xs text-muted-foreground">
-                  {pickText(i18n.language, item.detailAr, item.detailEn)}
+                <span className="flex min-w-0 max-w-full items-center gap-2 text-xs text-muted-foreground">
+                  <span className="min-w-0 truncate">
+                    {pickText(i18n.language, item.detailAr, item.detailEn)}
+                  </span>
                   {item.date && (
-                    <span>
+                    <span className="shrink-0">
                       {new Intl.DateTimeFormat(i18n.language).format(new Date(`${item.date}T00:00:00`))}
                     </span>
                   )}

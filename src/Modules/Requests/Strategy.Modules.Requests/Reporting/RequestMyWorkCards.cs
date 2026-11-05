@@ -50,10 +50,10 @@ internal sealed class RequestMyWorkCards(RequestsDbContext db) : IMyWorkCardSour
         [
             new MyWorkCard(Code, SystemCode, "myWork.cards.myRequests",
             [
-                new MyWorkCount("myWork.counts.returned", returned, returned > 0 ? "warning" : "neutral", "/requests/mine"),
-                new MyWorkCount("myWork.counts.inReview", inReview, "info", "/requests/mine"),
-                new MyWorkCount("myWork.counts.inProgress", inProgress, "info", "/requests/mine"),
-                new MyWorkCount("myWork.counts.drafts", drafts, "neutral", "/requests/mine"),
+                new MyWorkCount("returned", returned, returned > 0 ? "warning" : "neutral", "/requests/mine"),
+                new MyWorkCount("inReview", inReview, "info", "/requests/mine"),
+                new MyWorkCount("inProgress", inProgress, "info", "/requests/mine"),
+                new MyWorkCount("drafts", drafts, "neutral", "/requests/mine"),
             ],
             items.Select(r => new MyWorkCardItem(Domain.Request.EntityType, r.Id, r.Number, r.TitleAr, r.TitleEn, "requests.status." + r.Status, $"/requests/{r.Id:D}"))
                 .ToList(),

@@ -237,10 +237,10 @@ public sealed class TaskReportingTests(TaskReportingFixture fx) : IClassFixture<
         (card.Code, card.TitleKey, card.Link).ShouldBe((TaskMyWorkCards.Code, "myWork.cards.myTasks", "/tasks"));
         card.Counts.ToDictionary(c => c.Key, c => c.Value).ShouldBe(new Dictionary<string, int>
         {
-            ["myWork.counts.assigned"] = 1,
-            ["myWork.counts.created"] = 1,
-            ["myWork.counts.followUp"] = 0,
-            ["myWork.counts.overdue"] = 1,
+            ["assigned"] = 1,
+            ["created"] = 1,
+            ["followUp"] = 0,
+            ["overdue"] = 1,
         });
         card.Items.ShouldContain(i => i.Id == s.Overdue && i.Overdue && i.Link == $"/tasks/{s.Overdue:D}");
         card.Items.Count.ShouldBeLessThanOrEqualTo(5);

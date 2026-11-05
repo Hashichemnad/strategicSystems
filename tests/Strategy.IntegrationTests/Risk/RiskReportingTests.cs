@@ -175,7 +175,7 @@ public sealed class RiskReportingTests(RiskFixture fx) : IClassFixture<RiskFixtu
         var cards = scope.ServiceProvider.GetServices<IMyWorkCardSource>().Single(s => s.SystemCode == RiskPermissions.SystemCode);
         var card = (await cards.GetCardsAsync(PrincipalOf(w.ActionOwner), CancellationToken.None)).Single();
         (card.Code, card.TitleKey).ShouldBe((RiskMyWorkCards.Code, "myWork.cards.myRisks"));
-        card.Counts.Single(c => c.Key == "myWork.counts.actionsOverdue").Value.ShouldBe(1);
+        card.Counts.Single(c => c.Key == "actionsOverdue").Value.ShouldBe(1);
         card.Items.Single().Overdue.ShouldBeTrue();
         card.Items.Single().Link.ShouldStartWith("/risk/my-actions?action=");
         (await cards.GetCardsAsync(PrincipalOf(w.Outsider), CancellationToken.None)).ShouldBeEmpty();

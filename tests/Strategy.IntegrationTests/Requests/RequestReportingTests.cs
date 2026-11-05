@@ -113,7 +113,7 @@ public sealed class RequestReportingTests(RequestsFixture fixture) : IClassFixtu
         (item.Id, item.MessageKey, item.Link).ShouldBe((ipRequest.Id, "requests.status." + ipRequest.Status, $"/requests/{ipRequest.Id:D}"));
         cardB.Counts.Sum(c => c.Value).ShouldBe(1);
         var cardA = (await cards.GetCardsAsync(P(w.EmployeeA), CancellationToken.None)).Single();
-        cardA.Counts.Single(c => c.Key == "myWork.counts.drafts").Value.ShouldBe(1);
+        cardA.Counts.Single(c => c.Key == "drafts").Value.ShouldBe(1);
         (await w.C(w.EmployeeA).GetAsync($"/api/v1{cardA.Items.Single().Link}")).StatusCode.ShouldBe(HttpStatusCode.OK);
         (await cards.GetCardsAsync(P(w.Outsider), CancellationToken.None)).ShouldBeEmpty();
     }

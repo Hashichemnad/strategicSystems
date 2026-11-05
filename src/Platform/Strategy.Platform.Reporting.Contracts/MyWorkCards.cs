@@ -18,8 +18,9 @@ public sealed record MyWorkCardItem(
     bool Overdue = false);
 
 /// <summary>
-/// A My Work card (SPEC §0.4 level 1, ADR 0149). <paramref name="TitleKey"/> and count keys are translation keys (web namespace
-/// <c>reporting</c>, <c>myWork.cards.*</c>). Return no card when there is nothing relevant for the user in this system.
+/// A My Work card (SPEC §0.4 level 1, ADR 0149). <paramref name="TitleKey"/> is a translation key (web namespace
+/// <c>reporting</c>, <c>myWork.cards.*</c>); each <see cref="MyWorkCount.Key"/> is a bare code that the web client looks up
+/// under <c>reporting:myWork.counts.&lt;key&gt;</c> (e.g. <c>"overdue"</c>, not <c>"myWork.counts.overdue"</c>). Return no card when there is nothing relevant for the user in this system.
 /// </summary>
 public sealed record MyWorkCard(
     string Code,

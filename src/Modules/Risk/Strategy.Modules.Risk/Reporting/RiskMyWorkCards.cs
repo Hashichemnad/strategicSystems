@@ -58,12 +58,12 @@ internal sealed class RiskMyWorkCards(RiskDbContext db, IAccessService access, I
         [
             new MyWorkCard(Code, SystemCode, "myWork.cards.myRisks",
             [
-                new MyWorkCount("myWork.counts.reviewsOverdue", reviewsOverdue, reviewsOverdue > 0 ? "danger" : "neutral", "/risk/risks?view=overdue-review"),
-                new MyWorkCount("myWork.counts.reviewsDue", reviewsDue, reviewsDue > 0 ? "warning" : "neutral", "/risk/risks?view=mine"),
-                new MyWorkCount("myWork.counts.reassessment", reassessment, reassessment > 0 ? "warning" : "neutral", "/risk/risks?view=reassessment"),
-                new MyWorkCount("myWork.counts.returned", returned, returned > 0 ? "warning" : "neutral", "/risk/risks?view=mine"),
-                new MyWorkCount("myWork.counts.actionsOverdue", actionsOverdue, actionsOverdue > 0 ? "danger" : "neutral", "/risk/my-actions"),
-                new MyWorkCount("myWork.counts.kriBreaches", kriBreaches, kriBreaches > 0 ? "danger" : "neutral", "/risk/risks?view=mine"),
+                new MyWorkCount("reviewsOverdue", reviewsOverdue, reviewsOverdue > 0 ? "danger" : "neutral", "/risk/risks?view=overdue-review"),
+                new MyWorkCount("reviewsDue", reviewsDue, reviewsDue > 0 ? "warning" : "neutral", "/risk/risks?view=mine"),
+                new MyWorkCount("reassessment", reassessment, reassessment > 0 ? "warning" : "neutral", "/risk/risks?view=reassessment"),
+                new MyWorkCount("returned", returned, returned > 0 ? "warning" : "neutral", "/risk/risks?view=mine"),
+                new MyWorkCount("actionsOverdue", actionsOverdue, actionsOverdue > 0 ? "danger" : "neutral", "/risk/my-actions"),
+                new MyWorkCount("kriBreaches", kriBreaches, kriBreaches > 0 ? "danger" : "neutral", "/risk/risks?view=mine"),
             ],
             top, "/risk/risks?view=mine", 40),
         ];

@@ -158,7 +158,7 @@ test.describe('dashboards and reporting', () => {
     await expect(page.getByTestId('builder-widget')).toHaveCount(2);
     await shot('dashboard-builder', { fullPage: true });
     await page.getByTestId('builder-publish').click();
-    await expect(page.getByText(r('builder2.published'))).toBeVisible();
+    await expect(page.getByText(r('builder2.published'), { exact: true })).toBeVisible();
 
     // ---- Report builder: object → columns → run → save → schedule ----------------------------------------------
     await page.goto('/reports/new');

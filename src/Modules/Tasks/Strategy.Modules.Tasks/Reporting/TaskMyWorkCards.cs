@@ -49,10 +49,10 @@ internal sealed class TaskMyWorkCards(TasksDbContext db, TaskVisibility visibili
         [
             new MyWorkCard(Code, SystemCode, "myWork.cards.myTasks",
             [
-                new MyWorkCount("myWork.counts.assigned", assigned, "info", "/tasks?tab=assigned"),
-                new MyWorkCount("myWork.counts.created", created, "neutral", "/tasks?tab=created"),
-                new MyWorkCount("myWork.counts.followUp", followed, "neutral", "/tasks?tab=follow-up"),
-                new MyWorkCount("myWork.counts.overdue", overdue, overdue > 0 ? "danger" : "neutral", "/tasks?tab=assigned&indicator=overdue"),
+                new MyWorkCount("assigned", assigned, "info", "/tasks?tab=assigned"),
+                new MyWorkCount("created", created, "neutral", "/tasks?tab=created"),
+                new MyWorkCount("followUp", followed, "neutral", "/tasks?tab=follow-up"),
+                new MyWorkCount("overdue", overdue, overdue > 0 ? "danger" : "neutral", "/tasks?tab=assigned&indicator=overdue"),
             ],
             top, "/tasks", 20),
         ];
