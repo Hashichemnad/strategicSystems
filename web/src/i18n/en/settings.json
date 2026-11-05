@@ -151,6 +151,14 @@
     "auditmgmt": {
       "title": "Audit management",
       "description": "Department visibility, department notices, follow-up review, reminders, improvement observations to CAP and audit KPI publishing."
+    },
+    "dashboards": {
+      "title": "Dashboards",
+      "description": "Arrange the default dashboards of each role from the widget catalogue and publish them without code."
+    },
+    "reporting": {
+      "title": "Reporting",
+      "description": "Department level, fiscal year, refresh of aggregates, scheduled delivery and the department scorecard limits."
     }
   },
   "title": "Settings",

@@ -199,6 +199,9 @@ public sealed partial class FactRefresher(
             await strategy.ExecuteAsync(async () =>
             {
                 await using var transaction = await db.Database.BeginTransactionAsync(ct).ConfigureAwait(false);
+
+                // One writer per system at a time (refresh, snapshot, rebuild and a manual refresh may overlap): released at commit.
+                await db.Database.ExecuteSqlAsync($"SELECT pg_advisory_xact_lock(hashtext({"reporting:" + source.SystemCode}))", ct).ConfigureAwait(false);
                 if (flow.Count > 0)
                 {
                     await db.Facts.Where(f => flow.Contains(f.Metric) && f.Month >= from && f.Month <= to).ExecuteDeleteAsync(ct).ConfigureAwait(false);

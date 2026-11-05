@@ -19,6 +19,8 @@ import {
   Layers,
   Library,
   Lightbulb,
+  LayoutDashboard,
+  ChartColumn,
   ListChecks,
   ListTodo,
   Mail,
@@ -51,6 +53,8 @@ export type SettingsPageKey =
   | 'bench'
   | 'auditmgmt'
   | 'regional'
+  | 'dashboards'
+  | 'reporting'
   | 'branding'
   | 'systems'
   | 'features'
@@ -81,6 +85,8 @@ export type SettingsPageKey =
 
 export type SettingsPath =
   | '/settings/regional'
+  | '/settings/dashboards'
+  | '/settings/reporting'
   | '/settings/branding'
   | '/settings/systems'
   | '/settings/features'
@@ -146,6 +152,18 @@ export const settingsGroups: readonly SettingsGroup[] = [
         permissions: ['settings.general.manage'],
       },
       { key: 'branding', to: '/settings/branding', icon: Palette, permissions: ['settings.general.manage'] },
+      {
+        key: 'dashboards',
+        to: '/settings/dashboards',
+        icon: LayoutDashboard,
+        permissions: ['reporting.dashboard.manage', 'reporting.dashboard.build'],
+      },
+      {
+        key: 'reporting',
+        to: '/settings/reporting',
+        icon: ChartColumn,
+        permissions: ['reporting.settings.manage', 'reporting.aggregate.refresh'],
+      },
       { key: 'systems', to: '/settings/systems', icon: SquareStack, permissions: ['access.system.read'] },
       { key: 'features', to: '/settings/features', icon: Flag, permissions: ['settings.feature.manage'] },
       {

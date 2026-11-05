@@ -280,7 +280,7 @@ Setting `reporting.deliveryMode = attachment | link` for installations that forb
 | `reporting.dashboard.manage` (system / role defaults, publish, role assignments) | Reporting administrator (new role, MFA), platform administrator |
 | `reporting.report.run` / `reporting.report.build` / `reporting.report.share` / `reporting.report.export` | run + export everyone; build + share Report author |
 | `reporting.schedule.manage` | Report author (own items), Reporting administrator (all) |
-| `reporting.refresh` (request refresh, rebuild) | Reporting administrator |
+| `reporting.aggregate.refresh` (request refresh, rebuild) | Reporting administrator |
 | `reporting.brief.generate` | Executive viewer |
 | `reporting.settings.manage` (department level, thresholds, refresh interval, delivery mode, limits) | Reporting administrator |
 
@@ -345,3 +345,28 @@ builds), so `docker compose --profile app up -d --build` never tries to pull `st
 ## 15. Out of scope / later
 Employee performance dashboard (SPEC §0.1, "to be specified"); real-time SignalR push of widget updates (dashboards poll "as of" every
 5 min when visible); Hijri period selectors (display only, Settings toggle); geographic maps.
+
+## 16. As built (Phase 17)
+
+Differences from the plan above, all within the accepted ADRs:
+- **Refresh cadence:** one job `reporting.refresh` runs **every minute**: it refreshes the systems marked dirty at least 20 s ago (the
+  settle time lets a burst of saves commit) and, every `RefreshMinutes` (default 10), every system's current month (`full`). Each write
+  of a system's facts takes a PostgreSQL advisory lock (`pg_advisory_xact_lock`) so refresh, snapshot, rebuild and a manual refresh never
+  interleave. Dirty marks live in memory (`ReportingChangeTracker`, an `ISaveChangesObserver` called by the audit interceptor after a
+  module context commits); a lost mark only waits for the next full refresh. Request Framework changes also mark docreg, ip and bench.
+- **Dashboard export:** one route for every dashboard, `GET /api/v1/reporting/dashboards/{code}/export?format=pdf|xlsx` (Level 2 module
+  pages link to their system dashboard for exports); module export routes are unchanged.
+- **Permission names** follow `<system>.<object>.<action>`: `reporting.aggregate.refresh` (not `reporting.refresh`); schedule
+  administration is `reporting.schedule.administer`. Default role `reporting.user` (everyone): dashboard read, report run and export.
+- **Templates:** `reporting.scheduled` and `reporting.shared`; delivery failures are visible in the schedule's delivery log
+  (`reporting.delivery`, status `failed` with the error code) instead of a separate e-mail.
+- **My Work cards:** Workflow (`workflow.approvals`), Notifications (`notifications.latest`; notifications are not an access-catalogue
+  system, every signed-in user has them) and Reporting (`reporting.pins`) register card sources like the modules. Card titles are keys
+  of the web `reporting` namespace (`myWork.cards.*`, counts `myWork.counts.*`); item message keys are full keys of their system.
+- **Sample module** implements the reporting sources as the template for new modules (`sample.items`, `sample.amount` in the `costs`
+  partition, `sample.created`, `sample.approved-share`, list `sample.largest`, dataset `sample.items`); the engine tests use it.
+- **Scope query:** `IAccessService.GetScopeAsync` returns the effective scope (`EffectiveScope`); `IUserRoleQuery` gained
+  `RoleKeysOfAsync` (role default dashboards, shares) and `OpenSystemsAsync` (My Work cards).
+- **Notifications:** `NotificationRequest.AttachmentFileIds` / `EmailMessage.Attachments` (MailKit attachments); delivered files are stored
+  with purpose `reporting.delivery`, readable only by their recipient, deleted after `DeliveryRetentionDays`.
+

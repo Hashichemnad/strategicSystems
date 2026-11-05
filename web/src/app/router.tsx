@@ -94,6 +94,54 @@ const appLayout = createRoute({
 
 const homeRoute = createRoute({ getParentRoute: () => appLayout, path: '/', component: HomePage });
 
+// ---- Dashboards and reporting (Phase 17, docs/design/reporting.md) --------------------------------------
+
+const dashboardSearch = z.object({
+  kind: z.enum(['month', 'quarter', 'year', 'custom']).optional().catch(undefined),
+  from: z.string().regex(/^\d{4}-\d{2}$/).optional().catch(undefined),
+  to: z.string().regex(/^\d{4}-\d{2}$/).optional().catch(undefined),
+  compare: z.boolean().optional().catch(undefined),
+  unit: z.string().uuid().optional().catch(undefined),
+});
+
+export const dashboardsRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/dashboards',
+  component: lazyRouteComponent(() => import('@/features/reporting/DashboardPage'), 'DashboardsPage'),
+});
+
+export const dashboardRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/dashboards/$key',
+  validateSearch: dashboardSearch,
+  component: lazyRouteComponent(() => import('@/features/reporting/routes'), 'DashboardRoutePage'),
+});
+
+export const reportsRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/reports',
+  component: lazyRouteComponent(() => import('@/features/reporting/ReportBuilderPage'), 'ReportsPage'),
+});
+
+export const reportNewRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/reports/new',
+  component: lazyRouteComponent(() => import('@/features/reporting/routes'), 'NewReportRoutePage'),
+});
+
+export const reportSchedulesRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/reports/schedules',
+  component: lazyRouteComponent(() => import('@/features/reporting/SchedulesPage'), 'SchedulesPage'),
+});
+
+export const reportRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/reports/$reportId',
+  component: lazyRouteComponent(() => import('@/features/reporting/routes'), 'ReportRoutePage'),
+});
+
+
 /** OAuth consent for MCP clients (docs/design/mcp.md §2): a signed-in page in the sign-in layout. */
 const consentLayout = createRoute({
   getParentRoute: () => rootRoute,
@@ -1338,6 +1386,18 @@ const ipSettingsRoute = createRoute({
   component: lazyRouteComponent(() => import('@/features/ip/SettingsPage'), 'IpSettingsPage'),
 });
 
+const dashboardsSettingsRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/dashboards',
+  component: lazyRouteComponent(() => import('@/features/reporting/routes'), 'DashboardBuilderRoutePage'),
+});
+
+const reportingSettingsRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/reporting',
+  component: lazyRouteComponent(() => import('@/features/reporting/ReportingSettingsPage'), 'ReportingSettingsPage'),
+});
+
 const capSettingsRoute = createRoute({
   getParentRoute: () => settingsLayout,
   path: '/cap',
@@ -1424,6 +1484,12 @@ const routeTree = rootRoute.addChildren([
   ]),
   appLayout.addChildren([
     homeRoute,
+    dashboardsRoute,
+    dashboardRoute,
+    reportsRoute,
+    reportNewRoute,
+    reportSchedulesRoute,
+    reportRoute,
     sampleRoute,
     sampleItemRoute,
     tasksRoute,
@@ -1533,6 +1599,8 @@ const routeTree = rootRoute.addChildren([
       settingsHubRoute,
       regionalRoute,
       brandingRoute,
+      dashboardsSettingsRoute,
+      reportingSettingsRoute,
       systemsRoute,
       featuresRoute,
       lookupsRoute,

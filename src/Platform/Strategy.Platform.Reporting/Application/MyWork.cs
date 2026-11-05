@@ -130,7 +130,7 @@ internal sealed class PinsMyWorkCards(DashboardService dashboards) : IMyWorkCard
         }
 
         var items = pins.Take(5).Select(p => new MyWorkCardItem(
-            p.Kind == "report" ? "reporting.report" : "reporting.dashboard", p.RefId, null, p.TitleAr, p.TitleEn, "myWork.items.pinned",
+            p.Kind == "report" ? "reporting.report" : "reporting.dashboard", p.RefId, null, p.TitleAr, p.TitleEn, "reporting.myWork.items.pinned",
             p.Kind == "report" ? $"/reports/{p.RefId:D}" : $"/dashboards/{p.Code}")).ToList();
         return [new MyWorkCard("reporting.pins", SystemCode, "myWork.cards.pins", [new MyWorkCount("pinned", pins.Count)], items, "/dashboards", 900)];
     }

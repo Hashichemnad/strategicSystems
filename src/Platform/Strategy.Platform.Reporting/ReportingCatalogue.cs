@@ -16,7 +16,7 @@ public static class ReportingPermissions
     public const string ReportExport = "reporting.report.export";
     public const string ScheduleManage = "reporting.schedule.manage";
     public const string ScheduleAdminister = "reporting.schedule.administer";
-    public const string Refresh = "reporting.refresh";
+    public const string Refresh = "reporting.aggregate.refresh";
     public const string BriefGenerate = "reporting.brief.generate";
     public const string SettingsManage = "reporting.settings.manage";
 

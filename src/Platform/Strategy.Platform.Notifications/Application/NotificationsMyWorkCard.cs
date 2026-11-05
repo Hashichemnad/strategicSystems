@@ -23,7 +23,7 @@ internal sealed class NotificationsMyWorkCard(NotifyDbContext db) : IMyWorkCardS
         var unread = db.Notifications.AsNoTracking().Where(n => n.UserId == userId && n.ReadAt == null);
         var count = await unread.CountAsync(cancellationToken).ConfigureAwait(false);
         var latest = await unread.OrderByDescending(n => n.CreatedAt).Take(5).ToListAsync(cancellationToken).ConfigureAwait(false);
-        var items = latest.Select(n => new MyWorkCardItem("notifications.item", n.Id, null, n.TitleAr, n.TitleEn, "myWork.items.notification",
+        var items = latest.Select(n => new MyWorkCardItem("notifications.item", n.Id, null, n.TitleAr, n.TitleEn, "reporting.myWork.items.notification",
             n.Link ?? "/notifications", DateOnly.FromDateTime(n.CreatedAt.UtcDateTime))).ToList();
         return [new MyWorkCard("notifications.latest", Code, "myWork.cards.notifications", [new MyWorkCount("unread", count, count > 0 ? "info" : "neutral")], items, "/notifications", 800)];
     }

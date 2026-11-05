@@ -17,7 +17,7 @@ internal sealed class ApprovalsMyWorkCard(ApprovalQueries queries) : IMyWorkCard
         }
 
         var items = work.Approvals.OrderByDescending(a => a.Overdue).ThenBy(a => a.DueAt ?? DateTimeOffset.MaxValue).Take(5)
-            .Select(a => new MyWorkCardItem(a.ResourceType, a.ResourceId, a.Number, a.TitleAr, a.TitleEn, "myWork.items.approve", a.Link,
+            .Select(a => new MyWorkCardItem(a.ResourceType, a.ResourceId, a.Number, a.TitleAr, a.TitleEn, "reporting.myWork.items.approve", a.Link,
                 a.DueAt is { } due ? DateOnly.FromDateTime(due.UtcDateTime) : null, a.Overdue))
             .ToList();
         return
