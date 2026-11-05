@@ -1,4 +1,5 @@
 import {
+  ClipboardList,
   Bell,
   BriefcaseBusiness,
   Bot,
@@ -24,6 +25,7 @@ import {
   Palette,
   Paperclip,
   Repeat,
+  Scale,
   UserRoundX,
   UsersRound,
   ShieldAlert,
@@ -44,6 +46,8 @@ export type SettingsPageKey =
   | 'requestTypes'
   | 'docreg'
   | 'ip'
+  | 'cap'
+  | 'bench'
   | 'regional'
   | 'branding'
   | 'systems'
@@ -95,6 +99,8 @@ export type SettingsPath =
   | '/settings/request-types'
   | '/settings/docreg'
   | '/settings/ip'
+  | '/settings/cap'
+  | '/settings/bench'
   | '/settings/tasks/reassign'
   | '/settings/business-hours'
   | '/settings/holidays'
@@ -218,6 +224,8 @@ export const settingsGroups: readonly SettingsGroup[] = [
       },
       { key: 'docreg', to: '/settings/docreg', icon: Library, permissions: ['docreg.settings.manage'] },
       { key: 'ip', to: '/settings/ip', icon: Lightbulb, permissions: ['ip.settings.manage'] },
+      { key: 'cap', to: '/settings/cap', icon: ClipboardList, permissions: ['cap.settings.manage'] },
+      { key: 'bench', to: '/settings/bench', icon: Scale, permissions: ['bench.settings.manage'] },
     ],
   },
   {

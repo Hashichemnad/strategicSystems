@@ -40,7 +40,17 @@ export type AiFeatureKey =
   | 'risk-suggest'
   | 'risk-duplicates'
   | 'risk-review-assistant'
-  | 'risk-report';
+  | 'risk-report'
+  | 'cap-extract'
+  | 'cap-root-cause'
+  | 'cap-suggest'
+  | 'cap-quality'
+  | 'cap-summary'
+  | 'bench-comparators'
+  | 'bench-questionnaire'
+  | 'bench-analysis'
+  | 'bench-summary'
+  | 'bench-search';
 
 export const aiKeys = {
   all: ['ai'] as const,

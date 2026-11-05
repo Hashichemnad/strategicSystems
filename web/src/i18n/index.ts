@@ -78,6 +78,10 @@ import arVendors from './ar/vendors.json';
 import enVendors from './en/vendors.json';
 import arPortfolioGov from './ar/portfolioGov.json';
 import enPortfolioGov from './en/portfolioGov.json';
+import arCap from './ar/cap.json';
+import enCap from './en/cap.json';
+import arBench from './ar/bench.json';
+import enBench from './en/bench.json';
 import { readPreference } from '@/lib/preferences';
 
 export const languages = ['ar', 'en'] as const;
@@ -124,6 +128,8 @@ export const resources = {
     requests: arRequests,
     docreg: arDocreg,
     ip: arIp,
+    cap: arCap,
+    bench: arBench,
   },
   en: {
     common: enCommon,
@@ -165,6 +171,8 @@ export const resources = {
     requests: enRequests,
     docreg: enDocreg,
     ip: enIp,
+    cap: enCap,
+    bench: enBench,
   },
 } as const;
 

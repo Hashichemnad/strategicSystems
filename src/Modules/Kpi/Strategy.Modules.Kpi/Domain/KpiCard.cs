@@ -258,6 +258,13 @@ public sealed class KpiCard : AuditableEntity
 
     public void SetMaxAchieved(decimal? value) => MaxAchieved = value;
 
+    /// <summary>Benchmark fields from an approved benchmarking analysis (ADR 0128): not a definition change, audited as any card change.</summary>
+    public void SetBenchmark(string? description, decimal? result)
+    {
+        BenchmarkDescription = StrategyElement.Clean(description) ?? BenchmarkDescription;
+        BenchmarkResult = result ?? BenchmarkResult;
+    }
+
     public string Snapshot() => JsonSerializer.Serialize(new
     {
         Code,

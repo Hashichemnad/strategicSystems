@@ -114,3 +114,12 @@ public interface IKpiStrategyCatalog
     /// <summary>Creates the objectives whose code does not exist yet (as top-level objectives); never changes existing elements. Returns the number created.</summary>
     Task<int> EnsureObjectivesAsync(IReadOnlyList<StrategicObjective> objectives, CancellationToken cancellationToken = default);
 }
+
+/// <summary>
+/// Updates the benchmark description / result of a KPI card from an approved benchmarking analysis (SPEC §8.3, ADR 0128). An audited
+/// change of those two fields only. Returns false when the card does not exist.
+/// </summary>
+public interface IKpiBenchmarkWriter
+{
+    Task<bool> UpdateBenchmarkAsync(Guid cardId, string? description, decimal? result, object? transactionContext = null, CancellationToken cancellationToken = default);
+}

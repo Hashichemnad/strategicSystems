@@ -24,7 +24,11 @@ export type AuditedRecord =
   | 'risk'
   | 'serviceRequest'
   | 'document'
-  | 'ipRecord';
+  | 'ipRecord'
+  | 'capSource'
+  | 'capRemark'
+  | 'capAction'
+  | 'benchStudy';
 
 interface HistoryQuery {
   page?: number;
@@ -64,6 +68,14 @@ async function fetchHistory(record: AuditedRecord, id: string, query: HistoryQue
       return unwrap(await api.GET('/api/v1/docreg/documents/{id}/audit', { params, signal }));
     case 'ipRecord':
       return unwrap(await api.GET('/api/v1/ip/records/{id}/audit', { params, signal }));
+    case 'capSource':
+      return unwrap(await api.GET('/api/v1/cap/sources/{id}/audit', { params, signal }));
+    case 'capRemark':
+      return unwrap(await api.GET('/api/v1/cap/remarks/{id}/audit', { params, signal }));
+    case 'capAction':
+      return unwrap(await api.GET('/api/v1/cap/actions/{id}/audit', { params, signal }));
+    case 'benchStudy':
+      return unwrap(await api.GET('/api/v1/bench/studies/{id}/audit', { params, signal }));
   }
 }
 
@@ -98,6 +110,14 @@ async function fetchAsOf(record: AuditedRecord, id: string, at: string, signal: 
       return unwrap(await api.GET('/api/v1/docreg/documents/{id}/audit/as-of', { params, signal }));
     case 'ipRecord':
       return unwrap(await api.GET('/api/v1/ip/records/{id}/audit/as-of', { params, signal }));
+    case 'capSource':
+      return unwrap(await api.GET('/api/v1/cap/sources/{id}/audit/as-of', { params, signal }));
+    case 'capRemark':
+      return unwrap(await api.GET('/api/v1/cap/remarks/{id}/audit/as-of', { params, signal }));
+    case 'capAction':
+      return unwrap(await api.GET('/api/v1/cap/actions/{id}/audit/as-of', { params, signal }));
+    case 'benchStudy':
+      return unwrap(await api.GET('/api/v1/bench/studies/{id}/audit/as-of', { params, signal }));
   }
 }
 

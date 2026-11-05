@@ -40,7 +40,9 @@
     "ip": "الملكية الفكرية",
     "portfolioVendors": "الموردون (واصل)",
     "portfolioCapacity": "السعة",
-    "portfolioReviews": "مراجعات المحفظة"
+    "portfolioReviews": "مراجعات المحفظة",
+    "cap": "الإجراءات التصحيحية",
+    "bench": "المقارنات المرجعية"
   },
   "language": {
     "label": "اللغة",

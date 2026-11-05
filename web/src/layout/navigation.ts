@@ -1,4 +1,5 @@
 import {
+  ClipboardList,
   Boxes,
   BriefcaseBusiness,
   FolderKanban,
@@ -23,6 +24,7 @@ import {
   ShieldAlert,
   ShieldCheck,
   UsersRound,
+  Scale,
   type LucideIcon,
 } from 'lucide-react';
 import type { MyAccess } from '@/features/access/session';
@@ -37,6 +39,8 @@ export interface NavItem {
     | '/requests'
     | '/documents'
     | '/ip'
+    | '/cap'
+    | '/bench'
     | '/sample'
     | '/portfolio/requests'
     | '/portfolio/projects'
@@ -68,6 +72,8 @@ export interface NavItem {
     | 'nav.requests'
     | 'nav.documents'
     | 'nav.ip'
+    | 'nav.cap'
+    | 'nav.bench'
     | 'nav.sample'
     | 'nav.portfolioRequests'
     | 'nav.portfolioProjects'
@@ -259,6 +265,20 @@ export const navigation: readonly NavSection[] = [
         permissions: ['docreg.document.read'],
       },
       { to: '/ip', labelKey: 'nav.ip', icon: Lightbulb, system: 'ip', permissions: ['ip.record.read'] },
+      {
+        to: '/cap',
+        labelKey: 'nav.cap',
+        icon: ClipboardList,
+        system: 'cap',
+        permissions: ['cap.remark.read'],
+      },
+      {
+        to: '/bench',
+        labelKey: 'nav.bench',
+        icon: Scale,
+        system: 'bench',
+        permissions: ['bench.study.read'],
+      },
       { to: '/sample', labelKey: 'nav.sample', icon: Boxes, system: 'sample' },
     ],
   },

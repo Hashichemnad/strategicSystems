@@ -297,6 +297,7 @@ internal sealed class PortfolioAccessCatalogue : IAccessCatalogueSource
             new("questionnaire", "استبيان", "Questionnaire"),
             new("meeting-outputs", "مخرجات اجتماع", "Meeting outputs"),
             new("leadership-guidance", "توجيهات القيادة", "Leadership guidance"),
+            new(Contracts.PortfolioSuggestionSources.ActionPlan, "خطة العمل التصحيحية", "Action Plan"),
             new(OtherCode.Value, "أخرى", "Others"),
         ]),
         new(PortfolioPermissions.ProgramTypeLookup, PortfolioPermissions.SystemCode, "أنواع البرامج", "Program types",

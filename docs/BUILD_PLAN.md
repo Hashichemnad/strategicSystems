@@ -524,7 +524,7 @@ Implement, then run the full hardening review and fix findings, run performance 
 | 12 | Performance Management | ☑ built — awaiting owner acceptance | |
 | 13 | Risk Management | ☑ built — awaiting owner acceptance | |
 | 14 | Requests, Document Registry, IP | ☑ built — awaiting owner acceptance | |
-| 15 | CAP & Benchmarking | ☐ | |
+| 15 | CAP & Benchmarking | ☑ built — awaiting owner acceptance | |
 | 16 | Audit Management | ☐ | |
 | 17 | Dashboards & reporting | ☐ | |
 | 18 | Installer, hardening, docs, release | ☐ | |

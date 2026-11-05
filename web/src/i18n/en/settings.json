@@ -139,6 +139,14 @@
     "ip": {
       "title": "Intellectual property",
       "description": "Protection terms, internal-only protection, renewal reminders and the MOET form header."
+    },
+    "cap": {
+      "title": "Corrective action plan",
+      "description": "Due days by priority, rejection confirmation, root-cause rule, reminders, escalation, effectiveness verification and automatic remarks from KPIs and risks."
+    },
+    "bench": {
+      "title": "Benchmarking",
+      "description": "Search notice before the quarter, impact follow-up and KPI benchmark update."
     }
   },
   "title": "Settings",
