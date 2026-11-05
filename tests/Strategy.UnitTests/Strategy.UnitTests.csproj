@@ -15,6 +15,7 @@
     <ProjectReference Include="..\..\src\Modules\Kpi\Strategy.Modules.Kpi\Strategy.Modules.Kpi.csproj" />
     <ProjectReference Include="..\..\src\Modules\Risk\Strategy.Modules.Risk\Strategy.Modules.Risk.csproj" />
     <ProjectReference Include="..\..\src\Modules\Cap\Strategy.Modules.Cap\Strategy.Modules.Cap.csproj" />
+    <ProjectReference Include="..\..\src\Modules\AuditManagement\Strategy.Modules.AuditManagement\Strategy.Modules.AuditManagement.csproj" />
     <ProjectReference Include="..\..\src\Modules\Benchmarking\Strategy.Modules.Benchmarking\Strategy.Modules.Benchmarking.csproj" />
     <ProjectReference Include="..\..\src\Modules\Requests\Strategy.Modules.Requests\Strategy.Modules.Requests.csproj" />
     <ProjectReference Include="..\..\src\Modules\DocumentRegistry\Strategy.Modules.DocumentRegistry\Strategy.Modules.DocumentRegistry.csproj" />

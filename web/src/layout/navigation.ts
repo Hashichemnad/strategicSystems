@@ -1,5 +1,6 @@
 import {
   ClipboardList,
+  FileSearch,
   Boxes,
   BriefcaseBusiness,
   FolderKanban,
@@ -41,6 +42,7 @@ export interface NavItem {
     | '/ip'
     | '/cap'
     | '/bench'
+    | '/audit-management'
     | '/sample'
     | '/portfolio/requests'
     | '/portfolio/projects'
@@ -74,6 +76,7 @@ export interface NavItem {
     | 'nav.ip'
     | 'nav.cap'
     | 'nav.bench'
+    | 'nav.audit'
     | 'nav.sample'
     | 'nav.portfolioRequests'
     | 'nav.portfolioProjects'
@@ -278,6 +281,13 @@ export const navigation: readonly NavSection[] = [
         icon: Scale,
         system: 'bench',
         permissions: ['bench.study.read'],
+      },
+      {
+        to: '/audit-management',
+        labelKey: 'nav.audit',
+        icon: FileSearch,
+        system: 'auditmgmt',
+        permissions: ['auditmgmt.finding.read'],
       },
       { to: '/sample', labelKey: 'nav.sample', icon: Boxes, system: 'sample' },
     ],

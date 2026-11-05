@@ -68,7 +68,7 @@ internal sealed class RecordRoleService(AccessDbContext db, AccessModelCache mod
         string resourceType, Guid resourceId, string principalKind, Guid principalId, string roleCode,
         DateTimeOffset? validFrom = null, DateTimeOffset? validTo = null, CancellationToken cancellationToken = default)
     {
-        if (principalKind is not (RecordPrincipalKinds.Employee or RecordPrincipalKinds.User))
+        if (principalKind is not (RecordPrincipalKinds.Employee or RecordPrincipalKinds.User or RecordPrincipalKinds.Unit))
         {
             throw new ArgumentException($"Unknown principal kind '{principalKind}'.", nameof(principalKind));
         }

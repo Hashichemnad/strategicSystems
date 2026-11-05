@@ -247,10 +247,12 @@ internal sealed class AccessService(UserAccessLoader loader, AccessModelCache mo
         var now = clock.UtcNow;
         var employeeId = access.EmployeeId;
         var userId = access.UserId;
+        var units = access.RecordUnitIds;
         return db.RecordRoles.AsNoTracking().Where(g =>
             g.ValidFrom <= now && (g.ValidTo == null || g.ValidTo > now)
             && ((g.PrincipalKind == RecordPrincipalKinds.Employee && employeeId != null && g.PrincipalId == employeeId)
-                || (g.PrincipalKind == RecordPrincipalKinds.User && g.PrincipalId == userId)));
+                || (g.PrincipalKind == RecordPrincipalKinds.User && g.PrincipalId == userId)
+                || (g.PrincipalKind == RecordPrincipalKinds.Unit && units.Contains(g.PrincipalId))));
     }
 }
 

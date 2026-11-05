@@ -59,6 +59,7 @@ public sealed class KpiModule : IModule
         services.AddScoped<IKpiStrategyCatalog, KpiStrategyCatalog>();
         services.AddScoped<IKpiPerformance, KpiPerformance>();
         services.AddScoped<IKpiBenchmarkWriter, KpiBenchmarkWriter>();
+        services.AddScoped<IKpiResultFeed, KpiResultFeed>();
 
         services.AddApprovalProcess(ResultApprovalProcess.Definition);
         services.AddApprovalProcess(DefinitionChangeProcess.Definition);

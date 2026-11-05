@@ -6,6 +6,9 @@ import { renderWithProviders } from '@/test/render';
 import type { AuditEntry, AuditPage } from './api';
 import { HistoryTab } from './HistoryTab';
 
+/** The generated client is too large for TypeScript to infer the spy's types (TS2589). */
+type LooseGetApi = { GET: (...args: unknown[]) => Promise<unknown> };
+
 function entry(overrides: Partial<AuditEntry>): AuditEntry {
   return {
     id: crypto.randomUUID(),
@@ -39,11 +42,11 @@ function entry(overrides: Partial<AuditEntry>): AuditEntry {
 
 function stubHistory(items: AuditEntry[]) {
   const page: AuditPage = { items, page: 1, pageSize: 50, totalCount: items.length, totalPages: 1 };
-  vi.spyOn(api, 'GET').mockResolvedValue({
+  vi.spyOn(api as unknown as LooseGetApi, 'GET').mockResolvedValue({
     data: page,
     error: undefined,
     response: new Response(null, { status: 200 }),
-  } as never);
+  });
 }
 
 async function renderTab(language: 'ar' | 'en') {

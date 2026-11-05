@@ -24,6 +24,10 @@
     <Project Path="src/Modules/Benchmarking/Strategy.Modules.Benchmarking.Contracts/Strategy.Modules.Benchmarking.Contracts.csproj" />
     <Project Path="src/Modules/Benchmarking/Strategy.Modules.Benchmarking/Strategy.Modules.Benchmarking.csproj" />
   </Folder>
+  <Folder Name="/src/Modules/AuditManagement/">
+    <Project Path="src/Modules/AuditManagement/Strategy.Modules.AuditManagement.Contracts/Strategy.Modules.AuditManagement.Contracts.csproj" />
+    <Project Path="src/Modules/AuditManagement/Strategy.Modules.AuditManagement/Strategy.Modules.AuditManagement.csproj" />
+  </Folder>
   <Folder Name="/src/Modules/Cap/">
     <Project Path="src/Modules/Cap/Strategy.Modules.Cap.Contracts/Strategy.Modules.Cap.Contracts.csproj" />
     <Project Path="src/Modules/Cap/Strategy.Modules.Cap/Strategy.Modules.Cap.csproj" />

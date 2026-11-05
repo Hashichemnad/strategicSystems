@@ -476,8 +476,8 @@ public sealed class CapApiTests(CapFixture fx) : IClassFixture<CapFixture>
         }
         finally
         {
-            await w.SettingsAsync(s => s with { CountWorkingDays = false });
             fx.Clock.Frozen = null;
+            await w.SettingsAsync(s => s with { CountWorkingDays = false });
         }
     }
 

@@ -123,3 +123,22 @@ public interface IKpiBenchmarkWriter
 {
     Task<bool> UpdateBenchmarkAsync(Guid cardId, string? description, decimal? result, object? transactionContext = null, CancellationToken cancellationToken = default);
 }
+
+/// <summary>Outcome of <see cref="IKpiResultFeed.ProposeAsync"/>.</summary>
+public static class KpiFeedOutcomes
+{
+    public const string Drafted = "drafted";
+    public const string NoOpenResult = "no-open-result";
+    public const string Unchanged = "unchanged";
+    public const string Failed = "failed";
+}
+
+/// <summary>
+/// Another module proposes a measured value for a KPI card (Audit Phase 16, ADR 0135). The value is saved as a machine draft on the card's latest
+/// result that is open for update and whose period ended on or before <c>asOf</c>; the KPI owner reviews and submits it through the normal
+/// approval. Never submits or approves.
+/// </summary>
+public interface IKpiResultFeed
+{
+    Task<string> ProposeAsync(Guid cardId, DateOnly asOf, decimal achieve, string? note, CancellationToken cancellationToken = default);
+}

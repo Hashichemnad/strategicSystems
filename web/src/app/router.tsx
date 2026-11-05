@@ -649,6 +649,109 @@ export const capSuggestionsRoute = createRoute({
 });
 
 // Benchmarking (Phase 15, docs/design/benchmarking.md §9): dashboard, annual plan, studies, comparator register, best-practice library.
+// Audit Management (Phase 16, docs/design/audit.md §10): dashboard, department view, reports, findings, calendar; Layer 2 behind the switch.
+const auditSearch = z.object({
+  tab: z.enum(['overview', 'recommendations', 'evidence', 'links', 'history']).optional().catch(undefined),
+});
+
+export const auditDashboardRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/audit-management',
+  component: lazyRouteComponent(() => import('@/features/auditmgmt/HomePage'), 'AuditHomePage'),
+});
+
+export const auditDepartmentRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/audit-management/my-department',
+  component: lazyRouteComponent(
+    () => import('@/features/auditmgmt/DepartmentViewPage'),
+    'AuditDepartmentViewPage',
+  ),
+});
+
+export const auditReportsRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/audit-management/reports',
+  validateSearch: z.object({
+    page: z.coerce.number().int().min(1).optional().catch(undefined),
+    search: z.string().max(200).optional().catch(undefined),
+    type: z.string().max(100).optional().catch(undefined),
+    status: z.string().max(40).optional().catch(undefined),
+  }),
+  component: lazyRouteComponent(() => import('@/features/auditmgmt/ReportsPage'), 'AuditReportsPage'),
+});
+
+export const auditReportRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/audit-management/reports/$reportId',
+  component: lazyRouteComponent(() => import('@/features/auditmgmt/ReportPage'), 'AuditReportPage'),
+});
+
+export const auditFindingsRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/audit-management/findings',
+  validateSearch: z.object({
+    page: z.coerce.number().int().min(1).optional().catch(undefined),
+    view: z
+      .enum(['all', 'open', 'late', 'closed', 'risk-accepted', 'mine', 'my-unit', 'repeat', 'due-soon'])
+      .optional()
+      .catch(undefined),
+    search: z.string().max(200).optional().catch(undefined),
+    status: z.string().max(40).optional().catch(undefined),
+    priority: z.string().max(40).optional().catch(undefined),
+    unitId: z.uuid().optional().catch(undefined),
+    year: z.coerce.number().int().optional().catch(undefined),
+    reportType: z.string().max(100).optional().catch(undefined),
+  }),
+  component: lazyRouteComponent(() => import('@/features/auditmgmt/FindingsPage'), 'AuditFindingsPage'),
+});
+
+export const auditFindingRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/audit-management/findings/$findingId',
+  validateSearch: auditSearch,
+  component: lazyRouteComponent(() => import('@/features/auditmgmt/FindingPage'), 'AuditFindingPage'),
+});
+
+export const auditRecommendationRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/audit-management/recommendations/$recommendationId',
+  component: lazyRouteComponent(
+    () => import('@/features/auditmgmt/LifecyclePages'),
+    'AuditRecommendationRedirect',
+  ),
+});
+
+export const auditCalendarRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/audit-management/calendar',
+  component: lazyRouteComponent(() => import('@/features/auditmgmt/CalendarPage'), 'AuditCalendarPage'),
+});
+
+export const auditUniverseRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/audit-management/universe',
+  component: lazyRouteComponent(() => import('@/features/auditmgmt/LifecyclePages'), 'AuditUniversePage'),
+});
+
+export const auditPlansRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/audit-management/plans',
+  component: lazyRouteComponent(() => import('@/features/auditmgmt/LifecyclePages'), 'AuditPlansPage'),
+});
+
+export const auditPlanRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/audit-management/plans/$planId',
+  component: lazyRouteComponent(() => import('@/features/auditmgmt/LifecyclePages'), 'AuditPlanPage'),
+});
+
+export const auditEngagementRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/audit-management/engagements/$engagementId',
+  component: lazyRouteComponent(() => import('@/features/auditmgmt/LifecyclePages'), 'AuditEngagementPage'),
+});
+
 export const benchDashboardRoute = createRoute({
   getParentRoute: () => appLayout,
   path: '/bench',
@@ -1241,6 +1344,12 @@ const capSettingsRoute = createRoute({
   component: lazyRouteComponent(() => import('@/features/cap/SettingsPage'), 'CapSettingsPage'),
 });
 
+const auditSettingsRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/audit-management',
+  component: lazyRouteComponent(() => import('@/features/auditmgmt/SettingsPage'), 'AuditSettingsPage'),
+});
+
 const benchSettingsRoute = createRoute({
   getParentRoute: () => settingsLayout,
   path: '/bench',
@@ -1364,6 +1473,18 @@ const routeTree = rootRoute.addChildren([
     capActionsRoute,
     capActionRoute,
     capSuggestionsRoute,
+    auditDashboardRoute,
+    auditDepartmentRoute,
+    auditReportsRoute,
+    auditReportRoute,
+    auditFindingsRoute,
+    auditFindingRoute,
+    auditRecommendationRoute,
+    auditCalendarRoute,
+    auditUniverseRoute,
+    auditPlansRoute,
+    auditPlanRoute,
+    auditEngagementRoute,
     benchDashboardRoute,
     benchPlanRoute,
     benchStudiesRoute,
@@ -1437,6 +1558,7 @@ const routeTree = rootRoute.addChildren([
       ipSettingsRoute,
       capSettingsRoute,
       benchSettingsRoute,
+      auditSettingsRoute,
       taskReassignRoute,
       rolesRoute,
       assignmentsRoute,

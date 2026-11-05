@@ -24,6 +24,9 @@ public sealed record RiskSummary(
     Guid Id, string Number, string? TitleAr, string? TitleEn, string Status, Guid UnitId, Guid? OwnerEmployeeId, decimal? ResidualScore, string? ResidualBand,
     string Link);
 
+/// <summary>A control of a risk as other modules see it (Audit Phase 16). Effectiveness is a framework level code.</summary>
+public sealed record RiskControlSummary(Guid Id, Guid RiskId, string? NameAr, string? NameEn, string? EffectivenessCode, string Status);
+
 /// <summary>A logged risk event / incident (SPEC §3.4 F).</summary>
 public sealed record RiskEventSummary(
     Guid Id, string Number, DateOnly OccurredOn, string? Description, decimal? FinancialImpact, bool NearMiss, Guid? UnitId, IReadOnlyList<Guid> RiskIds, Guid? CapRemarkId,
@@ -43,6 +46,15 @@ public interface IRiskDirectory
 
     /// <summary>Audit (Phase 16): a finding was linked — flag the risk for an unscheduled review. False when the risk does not exist.</summary>
     Task<bool> FlagForReassessmentAsync(Guid riskId, string reason, CancellationToken cancellationToken = default);
+
+    /// <summary>Audit (Phase 16): the active controls of a risk the user may read (empty when the risk is not readable).</summary>
+    Task<IReadOnlyList<RiskControlSummary>> ListControlsAsync(Guid riskId, ClaimsPrincipal user, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Audit (Phase 16, ADR 0135): an audit finding lowers the control's effectiveness one level on the framework scale (audited) and flags the
+    /// risk for reassessment. Returns the new level, or null when the control does not exist or is already at the lowest level.
+    /// </summary>
+    Task<string?> LowerControlEffectivenessAsync(Guid controlId, string reason, CancellationToken cancellationToken = default);
 }
 
 /// <summary>Recalculation choice when a framework version is saved (ADR 0100).</summary>

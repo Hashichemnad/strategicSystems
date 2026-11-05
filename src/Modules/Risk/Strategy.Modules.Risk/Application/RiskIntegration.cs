@@ -157,6 +157,57 @@ internal sealed class RiskDirectory(RiskDbContext db, RiskReader reader, IServic
         return true;
     }
 
+    public async Task<IReadOnlyList<RiskControlSummary>> ListControlsAsync(Guid riskId, ClaimsPrincipal user, CancellationToken cancellationToken = default)
+    {
+        if (await reader.RiskAsync(riskId, user, cancellationToken).ConfigureAwait(false) is null)
+        {
+            return [];
+        }
+
+        return await db.Controls.AsNoTracking().Where(c => c.RiskId == riskId && c.Status == ControlStatuses.Active).OrderBy(c => c.NameEn ?? c.NameAr)
+            .Select(c => new RiskControlSummary(c.Id, c.RiskId, c.NameAr, c.NameEn, c.EffectivenessCode, c.Status)).ToListAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    public async Task<string?> LowerControlEffectivenessAsync(Guid controlId, string reason, CancellationToken cancellationToken = default)
+    {
+        await using var scope = Jobs.RiskJobScope.Create(scopes);
+        var services = scope.ServiceProvider;
+        var scoped = services.GetRequiredService<RiskDbContext>();
+        var control = await scoped.Controls.FirstOrDefaultAsync(c => c.Id == controlId && c.Status == ControlStatuses.Active, cancellationToken).ConfigureAwait(false);
+        if (control is null)
+        {
+            return null;
+        }
+
+        var scorer = await services.GetRequiredService<FrameworkStore>().ScorerAsync(cancellationToken).ConfigureAwait(false);
+        var levels = scorer.Content.ControlEffectiveness.OrderByDescending(e => e.Factor).Select(e => e.Code).ToList();
+        var index = control.EffectivenessCode is { } current ? levels.IndexOf(current) : -1;
+        var next = index < 0 ? levels.Count > 1 ? levels[1] : null : index + 1 < levels.Count ? levels[index + 1] : null;
+        if (next is null)
+        {
+            return null;
+        }
+
+        var risk = await scoped.Risks.FirstAsync(r => r.Id == control.RiskId, cancellationToken).ConfigureAwait(false);
+        var today = DateOnly.FromDateTime(services.GetRequiredService<IClock>().UtcNow.UtcDateTime);
+        await using var transaction = await scoped.Database.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
+        control.Rate(next, today);
+        if (risk.Status == RiskStatuses.Active)
+        {
+            risk.FlagReassessment(ReassessmentReasons.All.Contains(reason) ? reason : ReassessmentReasons.AuditFinding);
+        }
+
+        if (next == scorer.LowestEffectiveness)
+        {
+            await services.GetRequiredService<IIntegrationEventPublisher>().PublishAsync(new RiskControlRatedIneffective(control.Id, risk.Id, risk.Number, control.NameAr,
+                control.NameEn, risk.UnitId, control.OwnerEmployeeId, services.GetRequiredService<IClock>().UtcNow), scoped, cancellationToken).ConfigureAwait(false);
+        }
+
+        await scoped.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+        return next;
+    }
+
     private static RiskSummary Summary(RiskRecord r) =>
         new(r.Id, r.Number, r.TitleAr, r.TitleEn, r.Status, r.UnitId, r.OwnerEmployeeId, r.ResidualScore, r.ResidualBand, $"/risk/risks/{r.Id:D}");
 }

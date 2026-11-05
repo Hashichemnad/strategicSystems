@@ -1,3 +1,4 @@
+using Strategy.Modules.AuditManagement;
 using Strategy.Modules.Benchmarking;
 using Strategy.Modules.Cap;
 using Strategy.Modules.DocumentRegistry;
@@ -29,5 +30,6 @@ internal static class ModuleCatalog
         new RiskModule(),
         new CapModule(),
         new BenchModule(),
+        new AuditMgmtModule(),
     ];
 }

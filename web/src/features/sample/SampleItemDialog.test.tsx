@@ -7,6 +7,9 @@ import type { AiCapabilities, ExtractionResult } from '@/features/ai/api';
 import { renderWithProviders } from '@/test/render';
 import { SampleItemDialog } from './SampleItemDialog';
 
+/** The generated client is too large for TypeScript to infer the spy's types (TS2589). */
+type LooseGetApi = { GET: (...args: unknown[]) => Promise<unknown> };
+
 const on: AiCapabilities = {
   enabled: true,
   features: { extract: true, translate: true, similar: false, brief: true, ask: true },
@@ -54,10 +57,10 @@ const extraction: ExtractionResult = {
 type LooseApi = { POST: (...args: unknown[]) => Promise<unknown> };
 
 function mockApi(capabilities: AiCapabilities): { mock: { calls: unknown[][] } } {
-  vi.spyOn(api, 'GET').mockResolvedValue({
+  vi.spyOn(api as unknown as LooseGetApi, 'GET').mockResolvedValue({
     data: capabilities,
     response: new Response(null, { status: 200 }),
-  } as never);
+  });
   return vi
     .spyOn(api as unknown as LooseApi, 'POST')
     .mockImplementation(((path: string) =>
@@ -126,10 +129,10 @@ describe('SampleItemDialog with AI', () => {
   });
 
   it('offers translation and marks the translated text as a draft in Arabic', async () => {
-    vi.spyOn(api, 'GET').mockResolvedValue({
+    vi.spyOn(api as unknown as LooseGetApi, 'GET').mockResolvedValue({
       data: on,
       response: new Response(null, { status: 200 }),
-    } as never);
+    });
     vi.spyOn(api as unknown as LooseApi, 'POST').mockResolvedValue({
       data: { translation: 'الأرشيف الرقمي', from: 'en', to: 'ar', usageId: 'u' },
       response: new Response(null, { status: 200 }),

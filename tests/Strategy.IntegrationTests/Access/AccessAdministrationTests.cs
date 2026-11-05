@@ -68,7 +68,7 @@ public class AccessAdministrationTests(ApiFixture api) : IClassFixture<ApiFixtur
             .ShouldBeProblemAsync(HttpStatusCode.Conflict, "access.assignment.overlap");
 
         var effective = await admin.GetFromJsonAsync<JsonElement>($"{Access}/users/{user.Id}/effective");
-        effective.GetProperty("roles").EnumerateArray().Select(r => r.GetString()).ShouldBe(["org.viewer", "ai.user", "tasks.employee", "tasks.manager", "teams.employee", "portfolio.requester", "kpi.owner", "requests.requester", "docreg.reader", "ip.requester", "risk.owner", "cap.participant", "bench.participant", $"org.{code}"], ignoreOrder: true); // org.viewer, ai.user, the two task roles, the Teams employee, the Portfolio requester, the KPI owner, the requester, the document reader and the IP requester roles are assigned to everyone
+        effective.GetProperty("roles").EnumerateArray().Select(r => r.GetString()).ShouldBe(["org.viewer", "ai.user", "tasks.employee", "tasks.manager", "teams.employee", "portfolio.requester", "kpi.owner", "requests.requester", "docreg.reader", "ip.requester", "risk.owner", "cap.participant", "bench.participant", "auditmgmt.department-user", $"org.{code}"], ignoreOrder: true); // org.viewer, ai.user, the two task roles, the Teams employee, the Portfolio requester, the KPI owner, the requester, the document reader and the IP requester roles are assigned to everyone
 
         // Ending the assignment (last day yesterday) removes the access at once.
         var a = await assignment.Content.ReadFromJsonAsync<JsonElement>();

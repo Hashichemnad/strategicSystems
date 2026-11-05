@@ -135,10 +135,12 @@ internal sealed partial class AccessReporting(
 
         var (_, access) = await loader.LoadAsync(user.Id, user.EmployeeId, ct).ConfigureAwait(false);
         var now = clock.UtcNow;
+        var units = access.RecordUnitIds;
         var recordRoles = await db.RecordRoles.AsNoTracking()
             .Where(g => g.ValidFrom <= now && (g.ValidTo == null || g.ValidTo > now)
                 && ((g.PrincipalKind == RecordPrincipalKinds.User && g.PrincipalId == user.Id)
-                    || (g.PrincipalKind == RecordPrincipalKinds.Employee && user.EmployeeId != null && g.PrincipalId == user.EmployeeId)))
+                    || (g.PrincipalKind == RecordPrincipalKinds.Employee && user.EmployeeId != null && g.PrincipalId == user.EmployeeId)
+                    || (g.PrincipalKind == RecordPrincipalKinds.Unit && units.Contains(g.PrincipalId))))
             .OrderBy(g => g.ResourceType).ThenBy(g => g.ValidFrom).Take(1000)
             .Select(g => new EffectiveRecordRoleDto(g.ResourceType, g.ResourceId, g.RoleCode, g.ValidFrom, g.ValidTo))
             .ToListAsync(ct).ConfigureAwait(false);

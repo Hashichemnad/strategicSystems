@@ -28,6 +28,8 @@ internal sealed class DemoAdapter : IAiProviderAdapter
 
 internal sealed partial class DemoChatClient(string model) : IChatClient
 {
+    private static readonly string[] AuditGaps = ["(Draft) The evidence covers one period only."];
+
     private static readonly string[] CapWhysAr = ["لأن الإجراء غير موثق.", "لأنه لم يُحدَّد مالك للعملية.", "لأن الأدوار والمسؤوليات غير معتمدة."];
 
     private static readonly string[] CapWhysEn =
@@ -286,6 +288,60 @@ internal sealed partial class DemoChatClient(string model) : IChatClient
                 issues = new[] { arabic ? "حدد مخرجاً قابلاً للقياس وتاريخاً واقعياً." : "Name a measurable output and a realistic date." },
                 rewriteAr = "(مسودة) نشر الإجراء المعتمد وتدريب 100% من موظفي القسم قبل التاريخ المحدد",
                 rewriteEn = "(Draft) Publish the approved procedure and train 100% of the section staff by the due date",
+            });
+        }
+        else if (system.Contains("You extract audit findings from an audit report", StringComparison.Ordinal))
+        {
+            // Phase 16 (auditmgmt-extract): one finding per list line of the report (at most 5), else one finding from the text.
+            var document = Document().Match(user) is { Success: true } d ? d.Groups[1].Value.Trim() : string.Empty;
+            var lines = document.Split('\n').Select(l => ListItem().Match(l.Trim())).Where(m => m.Success).Select(m => m.Groups[1].Value.Trim()).Take(5).ToList();
+            if (lines.Count == 0)
+            {
+                lines.Add(document.Length > 160 ? document[..160] : document);
+            }
+
+            text = JsonSerializer.Serialize(new
+            {
+                findings = lines.Select(l => new
+                {
+                    titleAr = $"ملاحظة: {(l.Length > 60 ? l[..60] : l)}",
+                    titleEn = l.Length > 80 ? l[..80] : l,
+                    condition = l,
+                    criteria = "",
+                    cause = "",
+                    effect = "",
+                    unitCode = "",
+                    priority = "medium",
+                    typeCode = "finding",
+                    recommendations = new[] { new { actionAr = "(مسودة) معالجة الملاحظة ووضع ضابط رقابي", actionEn = "(Draft) Address the finding and put a control in place" } },
+                }),
+            });
+        }
+        else if (system.Contains("You help an internal auditor review the evidence", StringComparison.Ordinal))
+        {
+            text = JsonSerializer.Serialize(new
+            {
+                support = "partly",
+                gaps = AuditGaps,
+                commentAr = "(مسودة) اطلع مكتب التدقيق على الأدلة المقدمة، وهي تدعم جزءاً من الإنجاز المسجل. يُطلب استكمال الأدلة للفترة المتبقية.",
+                commentEn = "(Draft) The Audit Office reviewed the evidence provided; it supports part of the recorded progress. Evidence for the remaining period is requested.",
+            });
+        }
+        else if (system.Contains("You compare an audit finding with earlier findings", StringComparison.Ordinal))
+        {
+            text = JsonSerializer.Serialize(new
+            {
+                repeatOf = "",
+                rationaleAr = "(مسودة) الملاحظات المشابهة لا تتطابق في المعيار والوضع القائم.",
+                rationaleEn = "(Draft) The similar findings do not share the same condition and criteria.",
+            });
+        }
+        else if (system.Contains("You write the audit committee summary", StringComparison.Ordinal))
+        {
+            text = JsonSerializer.Serialize(new
+            {
+                summaryAr = "(مسودة) ملخص حالة ملاحظات التدقيق والمتأخر منها عالي الخطورة وقبول المخاطر من الإدارة، وفق الأرقام المرفقة.",
+                summaryEn = "(Draft) Status of the audit findings, the overdue high-risk ones and the risk acceptances by management, from the figures given.",
             });
         }
         else if (system.Contains("You write the monthly corrective action plan summary", StringComparison.Ordinal))

@@ -374,6 +374,27 @@ internal sealed class TeamsDirectory(TeamReader reader) : ITeamsDirectory
         return new TeamSummary(team.Id, team.Number, team.NameAr, team.NameEn, team.Status, team.LeaderEmployeeId,
             members.Where(m => m.EmployeeId is not null).Select(m => m.EmployeeId!.Value).Distinct().ToList());
     }
+
+    public async Task<IReadOnlyList<TeamListEntry>> SearchTeamsAsync(
+        string? text, ClaimsPrincipal user, int limit = 20, bool includeEnded = false, CancellationToken cancellationToken = default)
+    {
+        var source = await reader.VisibleAsync(user, cancellationToken).ConfigureAwait(false);
+        if (!includeEnded)
+        {
+            source = source.Where(t => t.Status != TeamStatuses.Closed && t.Status != TeamStatuses.Cancelled && t.Status != TeamStatuses.Replaced);
+        }
+
+        if (!string.IsNullOrWhiteSpace(text))
+        {
+            var pattern = Like.Pattern(text.Trim());
+            source = source.Where(t => EF.Functions.ILike(t.NameAr ?? string.Empty, pattern, "\\") || EF.Functions.ILike(t.NameEn ?? string.Empty, pattern, "\\")
+                || EF.Functions.ILike(t.Number ?? string.Empty, pattern, "\\"));
+        }
+
+        return await source.OrderBy(t => t.Number).ThenBy(t => t.NameEn).Take(Math.Clamp(limit, 1, 50))
+            .Select(t => new TeamListEntry(t.Id, t.Number, t.NameAr, t.NameEn, t.Status))
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
+    }
 }
 
 /// <summary>

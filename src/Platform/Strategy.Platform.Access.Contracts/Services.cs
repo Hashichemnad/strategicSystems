@@ -32,6 +32,9 @@ public static class RecordPrincipalKinds
 {
     public const string Employee = "employee";
     public const string User = "user";
+
+    /// <summary>Every internal user whose employee is placed in the unit or below it, or who heads it (ADR 0130).</summary>
+    public const string Unit = "unit";
 }
 
 /// <summary>Record roles, granted and revoked by the owning module only (CLAUDE.md §7), never by SQL.</summary>

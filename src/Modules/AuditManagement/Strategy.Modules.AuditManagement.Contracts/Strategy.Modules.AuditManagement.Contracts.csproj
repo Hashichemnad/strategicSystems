@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Public surface of Audit Management other modules may use (constants, integration events). No EF Core, no module internals. -->
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Platform\Strategy.Platform.Kernel\Strategy.Platform.Kernel.csproj" />
+  </ItemGroup>
+</Project>
