@@ -1,6 +1,6 @@
 # 0135 — Audit integrations: Risk controls, Document Registry, CAP, KPI, Teams
 
-- **Status:** Proposed (Phase 16)
+- **Status:** Accepted by the owner (Phase 16)
 - **Context:** SPEC §10.5.
 
 ## Decision
@@ -13,6 +13,8 @@
 - **KPI:** new `IKpiResultFeed.ProposeAsync` writes a measure value as a machine draft on the open result of the period (existing
   `DraftFromMcp` flag); the KPI owner submits through the normal approval. Mapping measure → card in Settings; empty = off.
 - **Teams:** an engagement references an existing team (`ITeamsDirectory`), no copy.
+  The engagement team picker searches teams by name or number through `ITeamsDirectory.SearchTeamsAsync`, filtered in the database by
+  the user's `teams.team.read` scope (a team the user may not read is neither listed nor accepted on save).
 
 ## Consequences
 Every integration is optional at run time (service resolved only while the other module is enabled).

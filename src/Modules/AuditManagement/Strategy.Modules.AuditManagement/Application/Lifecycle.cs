@@ -239,6 +239,22 @@ internal sealed class AuditLifecycle(
 
     // ---- Engagements ----
 
+    /// <summary>
+    /// Engagement team picker: teams the current user may read (Teams contract, filtered by the Teams read scope), searched by name or number.
+    /// Empty when the Teams module is not installed.
+    /// </summary>
+    public async Task<Result<IReadOnlyList<TeamListEntry>>> TeamsAsync(string? search, CancellationToken ct)
+    {
+        if (!await CanAsync(AuditPermissions.Lifecycle, ct).ConfigureAwait(false))
+        {
+            return Error.Forbidden();
+        }
+
+        return services.GetService(typeof(ITeamsDirectory)) is ITeamsDirectory teams
+            ? Result<IReadOnlyList<TeamListEntry>>.Success(await teams.SearchTeamsAsync(search, context.User, 20, cancellationToken: ct).ConfigureAwait(false))
+            : Result<IReadOnlyList<TeamListEntry>>.Success([]);
+    }
+
     public async Task<Result<IReadOnlyList<AuditEngagementListItemDto>>> EngagementsAsync(Guid? planId, CancellationToken ct)
     {
         if (!await CanAsync(AuditPermissions.Lifecycle, ct).ConfigureAwait(false))

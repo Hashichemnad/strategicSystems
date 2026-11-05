@@ -1,6 +1,6 @@
 # 0133 — Follow-ups, late status, reminders and the optional review step
 
-- **Status:** Proposed (Phase 16)
+- **Status:** Accepted by the owner (Phase 16)
 - **Context:** SPEC §10.3 B steps 2–5: the Audit Office records each follow-up; reminders before each next follow-up date and before
   due dates; late when past the due date below 100 %; optional internal review (auditor → CAE), off by default.
 

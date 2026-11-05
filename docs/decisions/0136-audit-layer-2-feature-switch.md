@@ -1,6 +1,6 @@
 # 0136 — Layer 2 (audit lifecycle) behind a feature switch
 
-- **Status:** Proposed (Phase 16)
+- **Status:** Accepted by the owner (Phase 16)
 - **Context:** SPEC §10.4 / §10.8: universe, risk-based plan, engagements, programmes and working papers, reporting, QAIP — switchable,
   off by default.
 

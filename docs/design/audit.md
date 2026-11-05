@@ -220,6 +220,8 @@ with Phase 16 screenshots.
 - Layer 2 endpoints check the permission first (403) and then the switch (404 `auditmgmt.lifecycleOff`), so the authorization matrix holds.
 - Non-office readers never see findings of **draft** reports (the report is the Audit Office's until issued).
 - Updating a recommendation's original due date is allowed until its first follow-up; afterwards only a logged revision.
-- Team of an engagement: the Teams module id (no team search contract exists yet); the team and its members are shown live.
+- Team of an engagement: chosen with a search-as-you-type picker (name or number) backed by the Teams contract
+  `ITeamsDirectory.SearchTeamsAsync` (filtered by the Teams read scope, closed / cancelled / replaced teams left out) through
+  `GET /api/v1/auditmgmt/lifecycle/teams?search=`; the team and its members are shown live.
 - Web: `web/src/features/auditmgmt/*`, KPI card picker with search as you type (`features/kpi/KpiCardPicker`, also used by Benchmarking —
   Phase 15 fix), Benchmarking plan items default to the CAP action type *Improvement* (editable).

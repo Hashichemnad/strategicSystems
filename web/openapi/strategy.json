@@ -42567,6 +42567,48 @@
         }
       }
     },
+    "/api/v1/auditmgmt/lifecycle/teams": {
+      "get": {
+        "tags": [
+          "auditmgmt"
+        ],
+        "operationId": "SearchAuditEngagementTeams",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TeamListEntry"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/auditmgmt/lifecycle/engagements": {
       "get": {
         "tags": [
@@ -89876,6 +89918,44 @@
             "format": "uuid"
           }
         }
+      },
+      "TeamListEntry": {
+        "required": [
+          "id",
+          "number",
+          "nameAr",
+          "nameEn",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "description": "A team in a picker list: identity and status only (no members, never evaluation results)."
       },
       "TeamListItemDto": {
         "required": [

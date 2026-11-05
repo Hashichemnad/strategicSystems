@@ -39,6 +39,7 @@ import {
   useUniverse,
   useWorkPapers,
   type AuditEngagementValues,
+  type AuditTeamOption,
   type AuditEntityValues,
   type AuditWorkPaperValues,
 } from './api';
@@ -58,6 +59,7 @@ import {
   usePct,
   useToastMutation,
 } from './components';
+import { AuditTeamPicker } from './TeamPicker';
 
 /** Shown instead of a Layer 2 page while the switch is off (the API answers 404 as well). */
 function LifecycleOff() {
@@ -429,6 +431,7 @@ function EngagementDialog({ planId, onClose }: { planId: string | null; onClose:
     plannedEnd: null,
     budgetHours: null,
   });
+  const [team, setTeam] = useState<AuditTeamOption | null>(null);
   const m = useDialogMutation(auditApi.createEngagement, onClose);
   const set = (patch: Partial<AuditEngagementValues>) => setV((x) => ({ ...x, ...patch }));
   return (
@@ -503,8 +506,15 @@ function EngagementDialog({ planId, onClose }: { planId: string | null; onClose:
       <FormField label={t('fields.scope')}>
         <Textarea value={v.scope ?? ''} onChange={(e) => set({ scope: e.target.value })} />
       </FormField>
-      <FormField label={t('fields.teamId')} hint={t('lifecycle.teamHint')}>
-        <Input value={v.teamId ?? ''} onChange={(e) => set({ teamId: e.target.value.trim() || null })} />
+      <FormField label={t('fields.team')} hint={t('lifecycle.teamHint')}>
+        <AuditTeamPicker
+          value={team}
+          onChange={(picked) => {
+            setTeam(picked);
+            set({ teamId: picked?.id ?? null });
+          }}
+          testId="audit-engagement-team"
+        />
       </FormField>
     </SimpleDialog>
   );

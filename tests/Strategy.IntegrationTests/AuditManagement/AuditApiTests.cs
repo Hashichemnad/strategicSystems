@@ -18,6 +18,7 @@ using Strategy.Modules.AuditManagement.Contracts;
 using Strategy.Modules.AuditManagement.Domain;
 using Strategy.Modules.AuditManagement.Jobs;
 using Strategy.Modules.Risk.Application;
+using Strategy.Modules.Teams.Contracts;
 using Strategy.Platform.Access;
 using Strategy.Platform.Access.Application;
 using Strategy.Platform.AI.Application;
@@ -807,6 +808,74 @@ public sealed class AuditApiTests(AuditFixture fx) : IClassFixture<AuditFixture>
         }
 
         await (await w.C(w.Office).GetAsync($"{Base}/lifecycle/plans")).ShouldBeProblemAsync(HttpStatusCode.NotFound, "auditmgmt.lifecycleOff");
+    }
+
+    [Fact]
+    public async Task The_engagement_team_picker_searches_teams_by_name_or_number_and_lists_only_teams_the_user_may_read()
+    {
+        var w = await AuditWorld.CreateAsync(fx.Factory);
+        var tag = Guid.NewGuid().ToString("N")[..8];
+        var today = await w.TodayAsync();
+        object TeamRequest(string name, TestUser member) => new
+        {
+            typeCode = "standing-committee",
+            nameAr = "فريق " + name,
+            nameEn = name,
+            permanent = true,
+            subject = "Audit support",
+            objectives = "Support the engagement",
+            mandate = "Fieldwork",
+            owningUnitId = w.D,
+            memoMode = "generate",
+            startDate = today,
+            workload = "medium",
+            members = new[] { new { employeeId = member.EmployeeId, roleCode = "member", responsibilities = "Fieldwork" } },
+        };
+        async Task<Guid> RequestTeamAsync(TestUser requester, string name)
+        {
+            var response = await w.C(requester).PostAsJsonAsync("/api/v1/teams", TeamRequest(name, w.StaffS1));
+            response.StatusCode.ShouldBe(HttpStatusCode.Created, await response.Content.ReadAsStringAsync());
+            return (await response.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("id").GetGuid();
+        }
+
+        // The requester reads their own team request (Teams "Employee" role, own scope); the Audit Office holds no wider Teams scope.
+        var mine = await RequestTeamAsync(w.Office, $"Revenue squad {tag}");
+        var hidden = await RequestTeamAsync(w.StaffS2, $"Revenue crew {tag}");
+        var number = (await w.C(w.Office).GetFromJsonAsync<JsonElement>($"/api/v1/teams/{mine}")).GetProperty("number").GetString();
+
+        await (await w.C(w.Office).GetAsync($"{Base}/lifecycle/teams?search={tag}")).ShouldBeProblemAsync(HttpStatusCode.NotFound, "auditmgmt.lifecycleOff");
+        await fx.SetFeatureAsync(AuditPermissions.LifecycleFeature, true);
+        try
+        {
+            var found = await AuditWorld.OkAsync<List<TeamListEntry>>(w.C(w.Office).GetAsync($"{Base}/lifecycle/teams?search={tag}"));
+            found.Select(t => t.Id).ShouldBe([mine]);
+            found[0].NameEn.ShouldBe($"Revenue squad {tag}");
+            (await AuditWorld.OkAsync<List<TeamListEntry>>(w.C(w.Office).GetAsync($"{Base}/lifecycle/teams?search={Uri.EscapeDataString("فريق Revenue squad " + tag)}")))
+                .Select(t => t.Id).ShouldBe([mine]);
+            number.ShouldNotBeNullOrWhiteSpace();
+            var byNumber = await AuditWorld.OkAsync<List<TeamListEntry>>(w.C(w.Office).GetAsync($"{Base}/lifecycle/teams?search={Uri.EscapeDataString(number)}"));
+            byNumber.Select(t => t.Id).ShouldContain(mine);
+            byNumber.Select(t => t.Id).ShouldNotContain(hidden);
+
+            (await AuditWorld.OkAsync<List<TeamListEntry>>(w.C(w.Office).GetAsync($"{Base}/lifecycle/teams?search=no-such-team-{tag}"))).ShouldBeEmpty();
+            (await w.C(w.StaffS2).GetAsync($"{Base}/lifecycle/teams?search={tag}")).StatusCode.ShouldBe(HttpStatusCode.Forbidden);
+
+            // A team the Audit Office may not read is refused on the engagement; a readable one is shown live with its members.
+            var year = (await w.TodayAsync()).Year + 1 + Random.Shared.Next(0, 50);
+            var plan = await AuditWorld.OkAsync<AuditPlanDto>(w.C(w.Office).PostAsJsonAsync($"{Base}/lifecycle/plans", new { year, titleEn = $"Audit plan {year}" }));
+            object Engagement(Guid teamId) => new { planId = plan.Id, values = new { titleEn = "Revenue cycle audit", plannedQuarter = 1, teamId } };
+            var refused = await w.C(w.Office).PostAsJsonAsync($"{Base}/lifecycle/engagements", Engagement(hidden));
+            refused.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+            (await refused.Content.ReadAsStringAsync()).ShouldContain("teamId");
+            var engagement = await AuditWorld.OkAsync<AuditEngagementDto>(w.C(w.Office).PostAsJsonAsync($"{Base}/lifecycle/engagements", Engagement(mine)));
+            engagement.Team.ShouldNotBeNull();
+            engagement.Team.Id.ShouldBe(mine);
+            engagement.Team.Members.Select(m => (Guid?)m.Id).ShouldBe([w.StaffS1.EmployeeId]);
+        }
+        finally
+        {
+            await fx.SetFeatureAsync(AuditPermissions.LifecycleFeature, false);
+        }
     }
 
     [Fact]

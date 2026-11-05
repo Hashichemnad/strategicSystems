@@ -114,11 +114,11 @@ Write an ADR for every choice the SPEC or CLAUDE.md leaves open (CLAUDE.md §2 r
 | [0127](0127-benchmarking-plan-and-pre-quarter-notice.md) | Annual benchmarking plan and the pre-quarter search notification | Proposed |
 | [0128](0128-benchmarking-to-cap-closure-kpi-library.md) | Analysis → CAP, closure rule, KPI benchmark update, library, impact follow-up | Proposed |
 | [0129](0129-cap-and-benchmarking-ai-and-mcp.md) | CAP and Benchmarking AI features and MCP tools | Proposed |
-| [0130](0130-record-roles-granted-to-units.md) | Record roles granted to a unit (audit department scope) | Proposed |
-| [0131](0131-audit-data-model-numbering-and-closure.md) | Audit data model, numbering and closure rules | Proposed |
-| [0132](0132-audit-office-only-write-model.md) | Audit-Office-only write model and read-only department users | Proposed |
-| [0133](0133-audit-follow-ups-late-and-reminders.md) | Audit follow-ups, late status, reminders, optional review | Proposed |
-| [0134](0134-audit-excel-import-and-ai-extraction.md) | Excel import of findings and AI report-to-findings extraction | Proposed |
-| [0135](0135-audit-integrations-risk-docreg-cap-kpi-teams.md) | Audit integrations: Risk controls, Document Registry, CAP, KPI, Teams | Proposed |
-| [0136](0136-audit-layer-2-feature-switch.md) | Audit Layer 2 (lifecycle) behind a feature switch | Proposed |
-| [0137](0137-audit-ai-mcp-and-reports.md) | Audit AI features, MCP tools, reports and committee pack | Proposed |
+| [0130](0130-record-roles-granted-to-units.md) | Record roles granted to a unit (audit department scope) | Accepted |
+| [0131](0131-audit-data-model-numbering-and-closure.md) | Audit data model, numbering and closure rules | Accepted |
+| [0132](0132-audit-office-only-write-model.md) | Audit-Office-only write model and read-only department users | Accepted |
+| [0133](0133-audit-follow-ups-late-and-reminders.md) | Audit follow-ups, late status, reminders, optional review | Accepted |
+| [0134](0134-audit-excel-import-and-ai-extraction.md) | Excel import of findings and AI report-to-findings extraction | Accepted |
+| [0135](0135-audit-integrations-risk-docreg-cap-kpi-teams.md) | Audit integrations: Risk controls, Document Registry, CAP, KPI, Teams | Accepted |
+| [0136](0136-audit-layer-2-feature-switch.md) | Audit Layer 2 (lifecycle) behind a feature switch | Accepted |
+| [0137](0137-audit-ai-mcp-and-reports.md) | Audit AI features, MCP tools, reports and committee pack | Accepted |

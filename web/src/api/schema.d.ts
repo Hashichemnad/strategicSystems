@@ -12212,6 +12212,22 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/auditmgmt/lifecycle/teams': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['SearchAuditEngagementTeams'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/auditmgmt/lifecycle/engagements': {
     parameters: {
       query?: never;
@@ -23783,6 +23799,15 @@ export interface components {
       linkedType?: null | string;
       /** Format: uuid */
       linkedId?: null | string;
+    };
+    /** @description A team in a picker list: identity and status only (no members, never evaluation results). */
+    TeamListEntry: {
+      /** Format: uuid */
+      id: string;
+      number: null | string;
+      nameAr: null | string;
+      nameEn: null | string;
+      status: string;
     };
     TeamListItemDto: {
       /** Format: uuid */
@@ -54875,6 +54900,37 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['AuditPlanDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SearchAuditEngagementTeams: {
+    parameters: {
+      query?: {
+        search?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TeamListEntry'][];
         };
       };
       /** @description Problem Details (RFC 9457) */

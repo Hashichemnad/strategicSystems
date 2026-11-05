@@ -1,6 +1,6 @@
 # 0134 — Excel import of findings and AI report-to-findings extraction
 
-- **Status:** Proposed (Phase 16)
+- **Status:** Accepted by the owner (Phase 16)
 - **Context:** SPEC §10.3 B step 1 and §10.7: findings are recorded by form, Excel import or AI extraction from the report file.
 
 ## Decision

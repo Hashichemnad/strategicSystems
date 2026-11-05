@@ -1,7 +1,7 @@
 # Phase 16 — Audit Management: summary
 
-Status: **built — awaiting owner acceptance**. Design note: [`docs/design/audit.md`](../design/audit.md) (§13 "As built").
-ADRs **0130–0137** (status *Proposed*).
+Status: **built — awaiting owner acceptance** (ADRs 0130–0137 accepted). Design note: [`docs/design/audit.md`](../design/audit.md) (§13 "As built").
+ADRs **0130–0137** (status *Accepted*).
 
 ## What was built
 
@@ -11,7 +11,7 @@ ADRs **0130–0137** (status *Proposed*).
 | **Layer 1 — findings follow-up** | **Reports** (internal / external audit, special, revenue audit, consultancy… — lookup), **findings** `AR-NNNN` (department, priority, criteria, cause, effect, risk links), **recommendations** `AA-NNNN` (owner unit, **no default due date** — the auditor sets it), **follow-ups** `AAQ-NNNN` (percentage, actions implemented, evidence, comment; **next follow-up date required below 100 %**), optional review step by the Chief audit executive (approval process `auditmgmt.follow-up-review`, off by default). **Log** of due-date revisions and risk acceptances (reason + approver); **cancel with a reason**. Derived status: recommendation *late* after its due date; finding *closed* when every recommendation is completed, risk-accepted or cancelled; report *closed* when all findings are. The original due date may change until the first follow-up, afterwards only through a logged revision. **Excel import** of findings + recommendations with a row-by-row validation report, all or nothing. **Follow-up calendar** and reminders to the auditor (job `auditmgmt.monitor`, once per item and day), optional **notices to departments** (setting, off by default) |
 | **Screens and reports** | Home, reports list and report page (findings, issue, AI extraction review), findings register (views: all, open, late, closed, risk accepted, mine, my unit, repeat, due soon), finding page (stepper, current status, recommendations with follow-up form and log, risks, documents, tasks, history), department read-only view, calendar, dashboard (tiles, by department / priority / ageing, trends), Settings → Audit management. **Exports** in PDF and Excel: findings register, department follow-up, revenue audit full report, **audit committee pack** (with AI summary draft) |
 | **Layer 2 — audit lifecycle** (platform feature `auditmgmt.lifecycle`, **off by default**; endpoints answer 403 first, then 404 `auditmgmt.lifecycleOff`) | **Audit universe** (auditable entities pulled from the organisation, rating, last audit), **risk-based annual plan** (score = rating weight × (1 + years since last audit, capped at 5)) with approval `auditmgmt.plan`, **engagements** with stages (planned → planning → fieldwork → reporting → follow-up → closed, or cancelled with a reason; transition table), **working papers** visible to the Audit Office only, sign-off that refuses self-review, **draft-to-final report** (moving to *reporting* creates the engagement's draft report in Layer 1; issuing it makes it final and starts the follow-up), **QAIP KPIs** (plan completion, report timeliness, findings closure rate, client satisfaction) published to KPI cards through `IKpiResultFeed` |
-| **Integrations** | **Risk**: findings link to risks and controls; a link flags the risk for reassessment and can lower the control effectiveness one level (`LowerControlEffectivenessAsync`; the lowest level raises *control rated ineffective*). **Document Registry**: criteria links to registry documents. **CAP**: *improvement observations* become remarks through the Phase 15 source contract (`ICapRemarkSources`), live link back. **Teams**: engagement team (shown live). **KPI**: QAIP results proposed as drafts on the latest open period. Links registry (task-able, remark source), My Work (follow-ups due, findings to follow), search, current-status messages, History |
+| **Integrations** | **Risk**: findings link to risks and controls; a link flags the risk for reassessment and can lower the control effectiveness one level (`LowerControlEffectivenessAsync`; the lowest level raises *control rated ineffective*). **Document Registry**: criteria links to registry documents. **CAP**: *improvement observations* become remarks through the Phase 15 source contract (`ICapRemarkSources`), live link back. **Teams**: engagement team chosen with a search-as-you-type picker (name or number) through the new Teams contract query `ITeamsDirectory.SearchTeamsAsync`, filtered by the user's Teams read scope; the team and its members are shown live. **KPI**: QAIP results proposed as drafts on the latest open period. Links registry (task-able, remark source), My Work (follow-ups due, findings to follow), search, current-status messages, History |
 | **AI and MCP** | AI features `auditmgmt-extract` (findings from a report file / text — drafts reviewed and confirmed by the office, nothing saved before), `auditmgmt-evidence` (evidence review and follow-up comment draft), `auditmgmt-repeat` (repeat-finding detection with trigram similarity), `auditmgmt-summary` (committee summary). MCP read tools on: `audit_findings_by_department`, `audit_overdue_findings`, `audit_my_finding_status`, `audit_finding_details`, `audit_followups_due`; write tool `audit_record_follow_up_draft` **off by default** and Audit-Office only |
 | **Phase 15 fixes** | The Benchmarking KPI indicator picker is now a **search-as-you-type** picker (`features/kpi/KpiCardPicker`, server search, 20 matches); actions created from a benchmark development plan default to the CAP action type **Improvement**, editable in the plan row |
 | **Web** (AR + EN, RTL / LTR) | `web/src/features/auditmgmt/*`, namespace `auditmgmt` in both languages (message-key test against the C# sources), sidebar entry, settings page, History records, AI feature keys |
@@ -30,6 +30,7 @@ ADRs **0130–0137** (status *Proposed*).
 | AI extraction never saves without confirmation | `Ai_extraction_returns_drafts_and_nothing_is_saved_until_the_audit_office_confirms` |
 | Optional review step | `The_optional_review_step_applies_a_follow_up_only_after_the_chief_audit_executive_approves` |
 | Integrations (Risk, CAP) and exports | `Risk_links_flag_the_risk_and_lower_the_control_improvement_observations_go_to_cap_and_reports_export` |
+| Engagement team search (owner follow-up) | `The_engagement_team_picker_searches_teams_by_name_or_number_and_lists_only_teams_the_user_may_read` (Arabic / English name and number; a team the Audit Office may not read is neither listed nor accepted on the engagement; department user 403; switch off 404); Vitest `TeamPicker.test.tsx` (ar + en) |
 | E2E (ar + en) | `web/e2e/audit.spec.ts`: Layer 1 flow (report, AI extraction review, finding, follow-up, calendar, dashboard, department view, committee pack) and Layer 2 (switch on → plan → engagement with working papers → switch off hides it) |
 
 ## Quality gates run
@@ -37,13 +38,13 @@ ADRs **0130–0137** (status *Proposed*).
 | Gate | Result |
 |---|---|
 | `dotnet build Strategy.slnx -c Release` · `dotnet format --verify-no-changes` | 0 warnings, 0 errors · clean |
-| `dotnet test --solution Strategy.slnx` | **4 645 / 4 645** — unit, architecture and integration on real PostgreSQL with the Mailpit / Gotenberg / Keycloak / OpenLDAP containers and Tesseract (OCR). New in this phase: 15 unit test methods (88 cases: derived statuses, closure, follow-up validation, engagement transitions, risk score, sign-off) and 9 integration tests; authorization matrix, job dashboard (`auditmgmt.monitor`) and access-administration tests updated |
+| `dotnet test --solution Strategy.slnx` | **4 645 / 4 645** before the team search; after it, the affected classes re-run: authorization matrix + `AuditApiTests` **2 415 / 2 415** (the new endpoint is in the matrix) — unit, architecture and integration on real PostgreSQL with the Mailpit / Gotenberg / Keycloak / OpenLDAP containers and Tesseract (OCR). New in this phase: 15 unit test methods (88 cases: derived statuses, closure, follow-up validation, engagement transitions, risk score, sign-off) and 10 integration tests; authorization matrix, job dashboard (`auditmgmt.monitor`) and access-administration tests updated |
 | `tools/check-api-client.sh` · `tools/check-vulnerable.sh` | OpenAPI document and TS client up to date · no High / Critical |
-| `npm run lint` (incl. RTL class check) · `format:check` · `typecheck` · `npm test` | clean · **322 / 322** Vitest (new: Audit Management message keys and UI codes in AR and EN) |
+| `npm run lint` (incl. RTL class check) · `format:check` · `typecheck` · `npm test` | clean · **324 / 324** Vitest (new: Audit Management message keys and UI codes in AR and EN, the engagement team picker) |
 | `npm run build` · `npm audit --audit-level=high` · `npm run lint:licenses` | OK · no High / Critical (moderate advisories only, unchanged dependencies) · 617 packages allowed |
 | `npx playwright test e2e/audit.spec.ts` (ar + en) | **4 / 4** |
 
-## Decisions (ADRs, *Proposed*)
+## Decisions (ADRs, *Accepted by the owner*)
 0130 record roles granted to units · 0131 data model, numbering and closure · 0132 Audit-Office-only write model ·
 0133 follow-ups, late status and reminders · 0134 Excel import and AI extraction · 0135 integrations (Risk, Document Registry, CAP, KPI,
 Teams) · 0136 Layer 2 behind a feature switch · 0137 AI, MCP and reports.
@@ -57,11 +58,11 @@ Teams) · 0136 Layer 2 behind a feature switch · 0137 AI, MCP and reports.
   lower effectiveness), KPI contract (`IKpiResultFeed`), demo AI answers, Host module catalogue / appsettings / dev seed (everyone may open
   `auditmgmt`; Mariam holds the Audit Office and Audit committee roles), web router, sidebar, settings navigation, History records, AI
   feature keys, i18n index, Benchmarking study tabs. Test lists updated: job dashboard (`auditmgmt.monitor`), access administration
-  (`auditmgmt.department-user`), the authorization-matrix request builder (multipart body for `/evidence-review`). The CAP due-date
+  (`auditmgmt.department-user`), the authorization-matrix request builder (multipart body for `/evidence-review`). Teams contract:
+  `ITeamsDirectory.SearchTeamsAsync` + `TeamListEntry` (additive; implemented in `TeamsDirectory` on the Teams read scope). The CAP due-date
   test now releases its frozen clock before restoring settings (it previously relied on test ordering).
 
 ## Known gaps
-- Engagement teams are chosen by Teams id: no team search contract exists yet (the team and its members are shown live).
 - The follow-up calendar lists dates by week / month and auditor; it has no drag-and-drop rescheduling.
 - QAIP KPI results are proposed as drafts; the KPI owner submits them as usual.
 

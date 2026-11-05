@@ -1,6 +1,6 @@
 # 0131 — Audit data model, numbering and closure rules
 
-- **Status:** Proposed (Phase 16)
+- **Status:** Accepted by the owner (Phase 16)
 - **Context:** SPEC §10.3 A / B: reports, findings (AR-NNNN), recommendations (AA-NNNN), progress updates (AAQ-NNNN), revision and
   risk-acceptance log; statuses partly computed.
 

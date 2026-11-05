@@ -1,6 +1,6 @@
 # 0132 — Audit-Office-only write model and read-only department users
 
-- **Status:** Proposed (Phase 16)
+- **Status:** Accepted by the owner (Phase 16)
 - **Context:** SPEC §10.1 / §10.6 / §10.8: the system is operated only by the Audit Office; department users are read-only for their own
   section / department; audit data confidential by default; working papers Audit-Office-only.
 

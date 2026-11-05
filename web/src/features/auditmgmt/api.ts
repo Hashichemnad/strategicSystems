@@ -289,6 +289,23 @@ export function useUniverse(enabled: boolean) {
   });
 }
 
+export type AuditTeamOption = S['TeamListEntry'];
+
+/** Engagement team picker: teams the user may read (Teams read scope, server-side), by name or number — 20 matches at a time. */
+export function useAuditTeams(search: string, enabled: boolean) {
+  return useQuery({
+    queryKey: [...auditKeys.all, 'teams', search],
+    queryFn: async ({ signal }) =>
+      unwrap(
+        await api.GET('/api/v1/auditmgmt/lifecycle/teams', {
+          params: { query: search ? { search } : {} },
+          signal,
+        }),
+      ),
+    enabled,
+  });
+}
+
 export function usePlans(enabled: boolean) {
   return useQuery({
     queryKey: [...auditKeys.all, 'plans'],

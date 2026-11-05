@@ -1,6 +1,6 @@
 # 0137 — Audit AI features, MCP tools, reports and committee pack
 
-- **Status:** Proposed (Phase 16)
+- **Status:** Accepted by the owner (Phase 16)
 - **Context:** SPEC §10.3 C (reports), §10.7 (AI, MCP), CLAUDE.md §12 / §13.
 
 ## Decision

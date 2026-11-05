@@ -106,7 +106,6 @@
     "status": "Status",
     "summary": "Summary",
     "team": "Audit team",
-    "teamId": "Team (Teams module id)",
     "testStep": "Test step",
     "title": "Title",
     "titleAr": "Title (Arabic)",
@@ -447,7 +446,7 @@
     "noEngagements": "No engagements in the plan.",
     "quarterStatus": "Quarterly status",
     "quarterCounts": "{{done}} of {{total}} at follow-up or closed",
-    "teamHint": "An existing team from the Teams module.",
+    "teamHint": "Search the Teams module; only teams you may read are listed.",
     "workPapers": "Programme and working papers ({{reviewed}} of {{count}} reviewed)",
     "workPapersPrivate": "Working papers are visible to the Audit Office only.",
     "addWorkPaper": "Add working paper",
@@ -500,5 +499,12 @@
     "findingsOpen": "The report still has open findings.",
     "workPaperNotPrepared": "Mark the working paper prepared first.",
     "selfReview": "The reviewer must be someone other than the preparer."
+  },
+  "teamPicker": {
+    "search": "Search teams by name or number",
+    "change": "Change",
+    "clear": "Clear",
+    "none": "No team you can see matches",
+    "close": "Close"
   }
 }

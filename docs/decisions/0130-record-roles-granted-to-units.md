@@ -1,6 +1,6 @@
 # 0130 — Record roles granted to a unit (audit department scope)
 
-- **Status:** Proposed (Phase 16)
+- **Status:** Accepted by the owner (Phase 16)
 - **Context:** SPEC §10.6: department users see the findings of their own section / department — configurable "section only, or department
   and below". The data scopes (ADR 0015) start from the user's own unit (and the units they head): staff of a section can never reach a
   finding addressed to their department or to a sibling section. CLAUDE.md §7 asks for one access service; a module-side widening would

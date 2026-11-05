@@ -247,6 +247,8 @@ internal static class AuditEndpoints
         lifecycle.MapPost("/plans/{id:guid}/submit", async (Guid id, AuditReasonInput b, AuditLifecycle l, CancellationToken ct) =>
                 (await l.SubmitPlanAsync(id, b.Reason, ct)).ToOk())
             .WithName("SubmitAuditPlan").RequireLifecycle(Manage).WithIdempotency();
+        lifecycle.MapGet("/teams", async (string? search, AuditLifecycle l, CancellationToken ct) => (await l.TeamsAsync(search, ct)).ToOk())
+            .WithName("SearchAuditEngagementTeams").RequireLifecycle(Manage);
         lifecycle.MapGet("/engagements", async (Guid? planId, AuditLifecycle l, CancellationToken ct) => (await l.EngagementsAsync(planId, ct)).ToOk())
             .WithName("ListAuditEngagements").RequireLifecycle(Manage);
         lifecycle.MapPost("/engagements", async (AuditEngagementInput b, AuditLifecycle l, CancellationToken ct) => (await l.CreateEngagementAsync(b, ct)).ToOk())
