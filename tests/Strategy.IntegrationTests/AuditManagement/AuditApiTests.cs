@@ -166,8 +166,21 @@ internal sealed class AuditWorld
 
         return new AuditWorld
         {
-            Factory = factory, Suffix = suffix, Organisation = o, D = d, S1 = s1, S2 = s2, E = e, Office = office, Chief = chief, Committee = committee,
-            Director = director, StaffS1 = staffS1, StaffS2 = staffS2, Outsider = outsider, Clients = clients,
+            Factory = factory,
+            Suffix = suffix,
+            Organisation = o,
+            D = d,
+            S1 = s1,
+            S2 = s2,
+            E = e,
+            Office = office,
+            Chief = chief,
+            Committee = committee,
+            Director = director,
+            StaffS1 = staffS1,
+            StaffS2 = staffS2,
+            Outsider = outsider,
+            Clients = clients,
         };
     }
 
@@ -442,7 +455,10 @@ public sealed class AuditApiTests(AuditFixture fx) : IClassFixture<AuditFixture>
         (await w.RecsAsync(mine.Id))[0].LatestPct.ShouldBe(0m);
         var recorded = await CallAsync(office, "audit_record_follow_up_draft", new()
         {
-            ["recommendationId"] = recommendation.Id.ToString(), ["achievedPercent"] = 40, ["comment"] = "Partly done", ["nextFollowUpOn"] = today.AddDays(14).ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture),
+            ["recommendationId"] = recommendation.Id.ToString(),
+            ["achievedPercent"] = 40,
+            ["comment"] = "Partly done",
+            ["nextFollowUpOn"] = today.AddDays(14).ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture),
         });
         recorded.GetProperty("achievedPercent").GetDecimal().ShouldBe(40m);
         (await CallAsync(office, "audit_followups_due", new() { ["days"] = 30 })).GetProperty("total").GetInt32().ShouldBeGreaterThan(0);
@@ -672,8 +688,17 @@ public sealed class AuditApiTests(AuditFixture fx) : IClassFixture<AuditFixture>
         {
             finding = new
             {
-                titleAr = extracted.TitleAr, titleEn = extracted.TitleEn, typeCode = extracted.TypeCode, condition = extracted.Condition, criteria = extracted.Criteria,
-                cause = extracted.Cause, effect = extracted.Effect, findingDate = today, responsibleUnitId = extracted.ResponsibleUnitId, priority = extracted.Priority, repeat = false,
+                titleAr = extracted.TitleAr,
+                titleEn = extracted.TitleEn,
+                typeCode = extracted.TypeCode,
+                condition = extracted.Condition,
+                criteria = extracted.Criteria,
+                cause = extracted.Cause,
+                effect = extracted.Effect,
+                findingDate = today,
+                responsibleUnitId = extracted.ResponsibleUnitId,
+                priority = extracted.Priority,
+                repeat = false,
             },
             recommendations = new[] { new { actionAr = extracted.Recommendations[0].ActionAr, actionEn = extracted.Recommendations[0].ActionEn, dueOn = due } },
         };
@@ -721,8 +746,18 @@ public sealed class AuditApiTests(AuditFixture fx) : IClassFixture<AuditFixture>
             var engagement = await AuditWorld.OkAsync<AuditEngagementDto>(w.C(w.Office).PostAsJsonAsync($"{Base}/lifecycle/engagements", new
             {
                 planId = plan.Id,
-                values = new { titleEn = "Revenue cycle audit", entityId = entity.Id, objectives = "Assess revenue controls", scope = "Collections and billing", plannedQuarter = 2,
-                    plannedStart = new DateOnly(year, 4, 1), plannedEnd = new DateOnly(year, 5, 31), budgetHours = 240, leadAuditorEmployeeId = w.Office.EmployeeId },
+                values = new
+                {
+                    titleEn = "Revenue cycle audit",
+                    entityId = entity.Id,
+                    objectives = "Assess revenue controls",
+                    scope = "Collections and billing",
+                    plannedQuarter = 2,
+                    plannedStart = new DateOnly(year, 4, 1),
+                    plannedEnd = new DateOnly(year, 5, 31),
+                    budgetHours = 240,
+                    leadAuditorEmployeeId = w.Office.EmployeeId
+                },
             }));
             engagement.Number.ShouldStartWith("ENG-");
             engagement.RiskScore.ShouldBeGreaterThan(0m);

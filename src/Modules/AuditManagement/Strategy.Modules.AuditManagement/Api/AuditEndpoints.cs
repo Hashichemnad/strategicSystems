@@ -227,58 +227,51 @@ internal static class AuditEndpoints
     /// <summary>Layer 2 (ADR 0136): 404 while the switch is off.</summary>
     private static void MapLifecycle(RouteGroupBuilder lifecycle)
     {
-        lifecycle.AddEndpointFilter(async (context, next) =>
-        {
-            var features = context.HttpContext.RequestServices.GetRequiredService<IFeatureFlags>();
-            return await features.IsEnabledAsync(AuditPermissions.LifecycleFeature, context.HttpContext.RequestAborted).ConfigureAwait(false)
-                ? await next(context).ConfigureAwait(false)
-                : Error.NotFound("auditmgmt.lifecycleOff").ToProblem();
-        });
         const string Manage = AuditPermissions.Lifecycle;
         lifecycle.MapGet("/universe", async (AuditLifecycle l, CancellationToken ct) => (await l.UniverseAsync(ct)).ToOk())
-            .WithName("ListAuditUniverse").RequirePermission(Manage);
+            .WithName("ListAuditUniverse").RequireLifecycle(Manage);
         lifecycle.MapPost("/universe", async (AuditableEntityValues b, AuditLifecycle l, CancellationToken ct) => (await l.SaveEntityAsync(null, b, 0, ct)).ToOk())
-            .WithName("CreateAuditableEntity").RequirePermission(Manage);
+            .WithName("CreateAuditableEntity").RequireLifecycle(Manage);
         lifecycle.MapPut("/universe/{id:guid}", async (Guid id, AuditEntityBody b, AuditLifecycle l, CancellationToken ct) => (await l.SaveEntityAsync(id, b.Values, b.Version, ct)).ToOk())
-            .WithName("UpdateAuditableEntity").RequirePermission(Manage);
+            .WithName("UpdateAuditableEntity").RequireLifecycle(Manage);
         lifecycle.MapPost("/universe/sync", async (AuditLifecycle l, CancellationToken ct) => (await l.SyncUniverseAsync(ct)).ToOk())
-            .WithName("SyncAuditUniverse").RequirePermission(Manage);
+            .WithName("SyncAuditUniverse").RequireLifecycle(Manage);
         lifecycle.MapGet("/plans", async (AuditLifecycle l, CancellationToken ct) => (await l.PlansAsync(ct)).ToOk())
-            .WithName("ListAuditPlans").RequirePermission(AuditPermissions.PlanRead);
+            .WithName("ListAuditPlans").RequireLifecycle(AuditPermissions.PlanRead);
         lifecycle.MapPost("/plans", async (AuditPlanInput b, AuditLifecycle l, CancellationToken ct) => (await l.CreatePlanAsync(b, ct)).ToOk())
-            .WithName("CreateAuditPlan").RequirePermission(Manage);
+            .WithName("CreateAuditPlan").RequireLifecycle(Manage);
         lifecycle.MapGet("/plans/{id:guid}", async (Guid id, AuditLifecycle l, CancellationToken ct) => (await l.PlanAsync(id, ct)).ToOk())
-            .WithName("GetAuditPlan").RequirePermission(AuditPermissions.PlanRead);
+            .WithName("GetAuditPlan").RequireLifecycle(AuditPermissions.PlanRead);
         lifecycle.MapPut("/plans/{id:guid}", async (Guid id, AuditPlanBody b, AuditLifecycle l, CancellationToken ct) => (await l.UpdatePlanAsync(id, b, ct)).ToOk())
-            .WithName("UpdateAuditPlan").RequirePermission(Manage);
+            .WithName("UpdateAuditPlan").RequireLifecycle(Manage);
         lifecycle.MapPost("/plans/{id:guid}/submit", async (Guid id, AuditReasonInput b, AuditLifecycle l, CancellationToken ct) =>
                 (await l.SubmitPlanAsync(id, b.Reason, ct)).ToOk())
-            .WithName("SubmitAuditPlan").RequirePermission(Manage).WithIdempotency();
+            .WithName("SubmitAuditPlan").RequireLifecycle(Manage).WithIdempotency();
         lifecycle.MapGet("/engagements", async (Guid? planId, AuditLifecycle l, CancellationToken ct) => (await l.EngagementsAsync(planId, ct)).ToOk())
-            .WithName("ListAuditEngagements").RequirePermission(Manage);
+            .WithName("ListAuditEngagements").RequireLifecycle(Manage);
         lifecycle.MapPost("/engagements", async (AuditEngagementInput b, AuditLifecycle l, CancellationToken ct) => (await l.CreateEngagementAsync(b, ct)).ToOk())
-            .WithName("CreateAuditEngagement").RequirePermission(Manage);
+            .WithName("CreateAuditEngagement").RequireLifecycle(Manage);
         lifecycle.MapGet("/engagements/{id:guid}", async (Guid id, AuditLifecycle l, CancellationToken ct) => (await l.EngagementAsync(id, ct)).ToOk())
-            .WithName("GetAuditEngagement").RequirePermission(Manage);
+            .WithName("GetAuditEngagement").RequireLifecycle(Manage);
         lifecycle.MapPut("/engagements/{id:guid}", async (Guid id, AuditEngagementBody b, AuditLifecycle l, CancellationToken ct) =>
                 (await l.UpdateEngagementAsync(id, b, ct)).ToOk())
-            .WithName("UpdateAuditEngagement").RequirePermission(Manage);
+            .WithName("UpdateAuditEngagement").RequireLifecycle(Manage);
         lifecycle.MapPost("/engagements/{id:guid}/transition", async (Guid id, AuditTransitionInput b, AuditLifecycle l, CancellationToken ct) =>
                 (await l.TransitionAsync(id, b, ct)).ToOk())
-            .WithName("TransitionAuditEngagement").RequirePermission(Manage);
+            .WithName("TransitionAuditEngagement").RequireLifecycle(Manage);
         lifecycle.MapPost("/engagements/{id:guid}/survey", async (Guid id, AuditSurveyInput b, AuditLifecycle l, CancellationToken ct) => (await l.SurveyAsync(id, b, ct)).ToOk())
-            .WithName("RecordAuditEngagementSurvey").RequirePermission(Manage);
+            .WithName("RecordAuditEngagementSurvey").RequireLifecycle(Manage);
         lifecycle.MapGet("/engagements/{id:guid}/work-papers", async (Guid id, AuditLifecycle l, CancellationToken ct) => (await l.WorkPapersAsync(id, ct)).ToOk())
-            .WithName("ListAuditWorkPapers").RequirePermission(AuditPermissions.WorkPapers);
+            .WithName("ListAuditWorkPapers").RequireLifecycle(AuditPermissions.WorkPapers);
         lifecycle.MapPost("/engagements/{id:guid}/work-papers", async (Guid id, WorkPaperValues b, AuditLifecycle l, CancellationToken ct) =>
                 (await l.SaveWorkPaperAsync(id, null, b, 0, ct)).ToOk())
-            .WithName("CreateAuditWorkPaper").RequirePermission(AuditPermissions.WorkPapers);
+            .WithName("CreateAuditWorkPaper").RequireLifecycle(AuditPermissions.WorkPapers);
         lifecycle.MapPut("/engagements/{id:guid}/work-papers/{paperId:guid}", async (Guid id, Guid paperId, AuditWorkPaperBody b, AuditLifecycle l, CancellationToken ct) =>
                 (await l.SaveWorkPaperAsync(id, paperId, b.Values, b.Version, ct)).ToOk())
-            .WithName("UpdateAuditWorkPaper").RequirePermission(AuditPermissions.WorkPapers);
+            .WithName("UpdateAuditWorkPaper").RequireLifecycle(AuditPermissions.WorkPapers);
         lifecycle.MapPost("/engagements/{id:guid}/work-papers/{paperId:guid}/action", async (Guid id, Guid paperId, AuditWorkPaperActionInput b, AuditLifecycle l,
                 CancellationToken ct) => (await l.WorkPaperActionAsync(id, paperId, b.Action, ct)).ToOk())
-            .WithName("ActOnAuditWorkPaper").RequirePermission(AuditPermissions.WorkPapers);
+            .WithName("ActOnAuditWorkPaper").RequireLifecycle(AuditPermissions.WorkPapers);
     }
 
     private static async Task<Results<Ok<AuditImportReportDto>, ProblemHttpResult>> ImportAsync(
@@ -351,5 +344,22 @@ internal static class AuditEndpoints
         }
 
         return (await service.EvidenceAsync(id, new EvidenceReviewInput(pct, actionsImplemented, evidenceText), bytes, file?.FileName, ct)).ToOk();
+    }
+}
+
+internal static class LifecycleEndpointExtensions
+{
+    /// <summary>The permission first (403 for users without it), then the Layer 2 switch (404 problem <c>auditmgmt.lifecycleOff</c> while off).</summary>
+    public static RouteHandlerBuilder RequireLifecycle(this RouteHandlerBuilder builder, string permission)
+    {
+        builder.RequirePermission(permission);
+        builder.AddEndpointFilter(async (context, next) =>
+        {
+            var features = context.HttpContext.RequestServices.GetRequiredService<IFeatureFlags>();
+            return await features.IsEnabledAsync(AuditPermissions.LifecycleFeature, context.HttpContext.RequestAborted).ConfigureAwait(false)
+                ? await next(context).ConfigureAwait(false)
+                : Error.NotFound("auditmgmt.lifecycleOff").ToProblem();
+        });
+        return builder;
     }
 }

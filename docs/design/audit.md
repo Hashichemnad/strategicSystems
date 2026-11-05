@@ -206,3 +206,20 @@ clock and reminders once; next follow-up required below 100 %; optional review; 
 invisible to non-audit users; Excel import with validation report (all-or-nothing); AI extraction returns drafts and saves nothing until
 confirmed; risk link flags reassessment and lowers the control; CAP send for improvement observations; committee pack PDF. E2E (ar + en)
 with Phase 16 screenshots.
+
+## 13. As built (Phase 16)
+
+- Module `Strategy.Modules.AuditManagement` (+ `.Contracts`), DbContext `AuditMgmtDbContext`, migration `InitialAuditMgmt`, configuration key
+  `Modules:AuditMgmt`. Application files: `AuditAccess` (catalogue, settings, processes, notifications), `AuditReader` (scope, deadlines,
+  notifier), `AuditService` (creation, follow-ups, derivation, department grants), `Queries`, `Commands`, `Import`, `Dashboard`,
+  `Integration` (approval hook, current status, My Work, links, files, search), `Lifecycle` (Layer 2).
+- Additive platform changes: `RecordPrincipalKinds.Unit` (ADR 0130); `IOrgDirectory.GetUnitByCodeAsync` and `ListActiveUnitsAtLevelAsync`
+  (import, universe pull); `IRiskDirectory.ListControlsAsync` / `LowerControlEffectivenessAsync`; `IKpiResultFeed.ProposeAsync(cardId, asOf, …)`
+  (the latest open result whose period ended); demo AI answers for the four audit prompts.
+- The approval engine is resolved lazily in `AuditService` (the engine depends on the approval hooks, the audit hook on the service).
+- Layer 2 endpoints check the permission first (403) and then the switch (404 `auditmgmt.lifecycleOff`), so the authorization matrix holds.
+- Non-office readers never see findings of **draft** reports (the report is the Audit Office's until issued).
+- Updating a recommendation's original due date is allowed until its first follow-up; afterwards only a logged revision.
+- Team of an engagement: the Teams module id (no team search contract exists yet); the team and its members are shown live.
+- Web: `web/src/features/auditmgmt/*`, KPI card picker with search as you type (`features/kpi/KpiCardPicker`, also used by Benchmarking —
+  Phase 15 fix), Benchmarking plan items default to the CAP action type *Improvement* (editable).

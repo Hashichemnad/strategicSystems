@@ -185,7 +185,8 @@ internal static partial class Bootstrap
             foreach (var role in new[]
                      {
                          "requests.office", "requests.type-administrator", "docreg.office", "docreg.administrator", "ip.office", "ip.administrator",
-                         "risk.risk-office", "risk.risk-committee", "cap.cap-office", "bench.bench-office",
+                         "risk.risk-office", "risk.risk-committee", "cap.cap-office", "bench.bench-office", "auditmgmt.audit-office",
+                         "auditmgmt.audit-committee",
                      })
             {
                 await AccessGrants.AssignRoleAsync(provider, role, AccessGrants.User, adminUser.Id);
@@ -202,6 +203,10 @@ internal static partial class Bootstrap
 
         // Phase 15 demo: everyone may open Benchmarking (annual plan, library, own studies); Mariam is the office (role assignment above).
         await AccessGrants.GrantSystemAccessAsync(provider, "bench", AccessGrants.Everyone, null);
+
+        // Phase 16 demo: everyone may open Audit Management (department users read their own unit's findings); Mariam is the Audit Office and
+        // sits on the audit committee (role assignment above).
+        await AccessGrants.GrantSystemAccessAsync(provider, "auditmgmt", AccessGrants.Everyone, null);
 
         // Phase 9 (ADR 0075): strategic objectives live in the KPI strategy hierarchy, shared by Portfolio and Performance Management.
         if (provider.GetService<Strategy.Modules.Kpi.Contracts.IKpiStrategyCatalog>() is { } strategyCatalog)
