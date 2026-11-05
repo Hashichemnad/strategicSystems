@@ -16,7 +16,11 @@ using Strategy.Platform.Settings;
 
 namespace Strategy.Modules.Risk.Application;
 
-public sealed record RiskFilter(Guid? UnitId, string? Category, string? ResidualStatus, int? Year, bool? IncludeProjectRisks);
+/// <summary>
+/// Dashboard filters. <paramref name="From"/> / <paramref name="To"/>: an inclusive month range on the risks' identification date (design note
+/// reporting.md §3.3, Level 2); project risks have no such date in their summary and are left out when a range is given.
+/// </summary>
+public sealed record RiskFilter(Guid? UnitId, string? Category, string? ResidualStatus, int? Year, bool? IncludeProjectRisks, DateOnly? From = null, DateOnly? To = null);
 
 public sealed record RiskCountDto(string Code, int Count);
 
@@ -90,6 +94,18 @@ internal sealed class DashboardHandlers(
             source = source.Where(r => r.RegisterYear == year);
         }
 
+        if (f.From is { } from)
+        {
+            var start = new DateOnly(from.Year, from.Month, 1);
+            source = source.Where(r => r.IdentifiedOn >= start);
+        }
+
+        if (f.To is { } to)
+        {
+            var end = new DateOnly(to.Year, to.Month, 1).AddMonths(1);
+            source = source.Where(r => r.IdentifiedOn < end);
+        }
+
         return source;
     }
 
@@ -97,6 +113,7 @@ internal sealed class DashboardHandlers(
     {
         var include = f.IncludeProjectRisks ?? (await reader.SettingsAsync(ct).ConfigureAwait(false)).IncludeProjectRisksByDefault;
         if (!include || (!string.IsNullOrWhiteSpace(f.Category) && f.Category != RiskPermissions.ProjectCategory) || f.UnitId is not null || f.ResidualStatus is not null
+            || f.From is not null || f.To is not null
             || services.GetService(typeof(IProjectRiskDirectory)) is not IProjectRiskDirectory directory
             || !await reader.CanAsync(context.User, RiskPermissions.ProjectRisksRead, ct).ConfigureAwait(false))
         {
@@ -179,18 +196,18 @@ internal sealed class DashboardHandlers(
         var worse = new List<RiskRecord>();
         foreach (var r in active)
         {
-            if (!baseline.TryGetValue(r.Id, out var score) || score == r.ResidualScore)
+            switch (Reporting.RiskMovement.Direction(baseline.TryGetValue(r.Id, out var score) ? score : null, r.ResidualScore))
             {
-                unchanged++;
-            }
-            else if (r.ResidualScore < score)
-            {
-                improved++;
-            }
-            else
-            {
-                worsened++;
-                worse.Add(r);
+                case Reporting.RiskMovement.Improved:
+                    improved++;
+                    break;
+                case Reporting.RiskMovement.Worsened:
+                    worsened++;
+                    worse.Add(r);
+                    break;
+                default:
+                    unchanged++;
+                    break;
             }
         }
 
