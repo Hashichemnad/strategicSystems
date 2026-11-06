@@ -259,7 +259,7 @@ dotnet run --project src/Host/Strategy.Host -- --verify-audit-chain            #
 ./deploy/install.sh                     # Windows: deploy\install.ps1 · ports APP_PORT / POSTGRES_PORT / GOTENBERG_PORT · prints the setup token
 ./deploy/backup.sh · ./deploy/restore.sh <folder> · ./deploy/upgrade.sh    # PowerShell twins: backup.ps1 · restore.ps1 · upgrade.ps1
 ./deploy/sbom.sh [--scan]               # CycloneDX SBOM (Syft) and Trivy scan of the image (ADR 0156)
-tests/perf/run.sh                       # k6 load tests against a host with the volume seed (docs/performance.md)
+tests/perf/run.sh                       # k6 load tests: seeds its own database (test-only bulk seed), Release host, Mailpit (docs/performance.md, ADR 0158)
 ```
 CI resolves `global.json` (`rollForward: latestFeature`) to the newest .NET 10 SDK, whose analyzers can be stricter than an
 older local SDK (e.g. IDE0005): check `dotnet --version` and keep the local SDK current (the Docker image's SDK is the reference:
