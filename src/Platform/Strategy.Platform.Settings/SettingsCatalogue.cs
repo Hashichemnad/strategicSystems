@@ -13,6 +13,9 @@ public static class SettingsPermissions
     public const string FileManage = "settings.file.manage";
     public const string JobView = "settings.job.view";
     public const string JobManage = "settings.job.manage";
+
+    /// <summary>Administrator Health page (ADR 0151).</summary>
+    public const string HealthView = "settings.health.view";
 }
 
 internal sealed class SettingsCatalogue : IAccessCatalogueSource
@@ -30,6 +33,7 @@ internal sealed class SettingsCatalogue : IAccessCatalogueSource
         new(SettingsPermissions.FileManage, "إعدادات الملفات والمرفقات", "File and attachment settings", Scopable: false),
         new(SettingsPermissions.JobView, "عرض المهام المجدولة", "View scheduled jobs", Scopable: false),
         new(SettingsPermissions.JobManage, "تشغيل المهام المجدولة وإيقافها", "Run and pause scheduled jobs", Scopable: false),
+        new(SettingsPermissions.HealthView, "عرض صحة النظام", "View system health", Scopable: false),
     ];
 
     public IEnumerable<RoleSeed> DefaultRoles =>
@@ -37,7 +41,8 @@ internal sealed class SettingsCatalogue : IAccessCatalogueSource
         new("administrator", "مسؤول الإعدادات", "Settings administrator",
             [new(SettingsPermissions.GeneralManage), new(SettingsPermissions.LookupManage), new(SettingsPermissions.NumberingManage),
              new(SettingsPermissions.FeatureManage), new(SettingsPermissions.TranslationManage), new(SettingsPermissions.NotificationManage),
-             new(SettingsPermissions.FileManage), new(SettingsPermissions.JobView), new(SettingsPermissions.JobManage)],
+             new(SettingsPermissions.FileManage), new(SettingsPermissions.JobView), new(SettingsPermissions.JobManage),
+             new(SettingsPermissions.HealthView)],
             RequiresMfa: true),
     ];
 }

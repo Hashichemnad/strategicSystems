@@ -14,6 +14,7 @@ import {
   FormInput,
   Gauge,
   Hash,
+  HeartPulse,
   KeyRound,
   Languages,
   Layers,
@@ -64,6 +65,7 @@ export type SettingsPageKey =
   | 'notifications'
   | 'files'
   | 'jobs'
+  | 'health'
   | 'approvals'
   | 'ai'
   | 'mcp'
@@ -96,6 +98,7 @@ export type SettingsPath =
   | '/settings/notifications'
   | '/settings/files'
   | '/settings/jobs'
+  | '/settings/health'
   | '/settings/approvals'
   | '/settings/ai'
   | '/settings/mcp'
@@ -204,6 +207,7 @@ export const settingsGroups: readonly SettingsGroup[] = [
       },
       { key: 'files', to: '/settings/files', icon: Paperclip, permissions: ['settings.file.manage'] },
       { key: 'jobs', to: '/settings/jobs', icon: Timer, permissions: ['settings.job.view'] },
+      { key: 'health', to: '/settings/health', icon: HeartPulse, permissions: ['settings.health.view'] },
       {
         key: 'approvals',
         to: '/settings/approvals',

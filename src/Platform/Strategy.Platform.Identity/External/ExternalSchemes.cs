@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Strategy.Platform.Identity.Domain;
 using Strategy.Platform.Identity.Infrastructure;
+using Strategy.Platform.Kernel.Net;
 using Sustainsys.Saml2.AspNetCore2;
 using Sustainsys.Saml2.Configuration;
 using Sustainsys.Saml2.Metadata;
@@ -172,7 +173,8 @@ internal static class RemoteCookies
     }
 }
 
-internal sealed class OidcOptionsSetup(ExternalSchemeRegistry registry, ISecretProtector protector) : IConfigureNamedOptions<OpenIdConnectOptions>
+internal sealed class OidcOptionsSetup(ExternalSchemeRegistry registry, ISecretProtector protector, OutboundUrlPolicy outbound)
+    : IConfigureNamedOptions<OpenIdConnectOptions>
 {
     public void Configure(OpenIdConnectOptions options)
     {
@@ -205,6 +207,9 @@ internal sealed class OidcOptionsSetup(ExternalSchemeRegistry registry, ISecretP
         options.MapInboundClaims = false;
         options.GetClaimsFromUserInfoEndpoint = provider.SettingFlag("getClaimsFromUserInfo", fallback: true);
         options.RequireHttpsMetadata = !provider.SettingFlag("allowInsecureHttp");
+
+        // Discovery, keys, token and user-info calls go to administrator-entered URLs: outbound guard, no redirects (ADR 0155).
+        options.BackchannelHttpHandler = outbound.CreateHandler();
         options.SaveTokens = false;
         options.TokenValidationParameters.NameClaimType = provider.Setting("claimUserName") ?? "name";
         RemoteCookies.Configure(options, formPost);
@@ -215,7 +220,8 @@ internal sealed class OidcOptionsSetup(ExternalSchemeRegistry registry, ISecretP
 }
 
 /// <summary>UAE Pass: OAuth 2.0 authorization code + userinfo (its token response has no id_token, so the plain OAuth handler is used).</summary>
-internal sealed class UaePassOptionsSetup(ExternalSchemeRegistry registry, ISecretProtector protector) : IConfigureNamedOptions<OAuthOptions>
+internal sealed class UaePassOptionsSetup(ExternalSchemeRegistry registry, ISecretProtector protector, OutboundUrlPolicy outbound)
+    : IConfigureNamedOptions<OAuthOptions>
 {
     public void Configure(OAuthOptions options)
     {
@@ -238,6 +244,7 @@ internal sealed class UaePassOptionsSetup(ExternalSchemeRegistry registry, ISecr
         options.CallbackPath = ExternalPaths.OidcCallback(name);
         options.UsePkce = true;
         options.SaveTokens = false;
+        options.BackchannelHttpHandler = outbound.CreateHandler();
         options.Scope.Clear();
         foreach (var scope in (provider.Setting("scopes") ?? string.Empty).Split(' ', StringSplitOptions.RemoveEmptyEntries))
         {

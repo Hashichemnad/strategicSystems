@@ -10,6 +10,7 @@ using Strategy.Platform.AI.Features;
 using Strategy.Platform.AI.Infrastructure;
 using Strategy.Platform.AI.Providers;
 using Strategy.Platform.AI.Tools;
+using Strategy.Platform.Http.Health;
 using Strategy.Platform.Http.Modules;
 using Strategy.Platform.Persistence;
 
@@ -36,10 +37,12 @@ public sealed class AiComponent : IPlatformComponent
     {
         services.AddModuleDbContext<AiDbContext>(AiDbContext.SchemaName);
         services.AddHttpContextAccessor();
+        services.AddSingleton<AiOutboundHttp>();
         services.AddSingleton<IAiProviderAdapter, AnthropicAdapter>();
-        services.AddSingleton<IAiProviderAdapter>(new OpenAiFamilyAdapter(AiProviderTypes.OpenAi));
-        services.AddSingleton<IAiProviderAdapter>(new OpenAiFamilyAdapter(AiProviderTypes.AzureOpenAi));
-        services.AddSingleton<IAiProviderAdapter>(new OpenAiFamilyAdapter(AiProviderTypes.OpenAiCompatible));
+        foreach (var type in new[] { AiProviderTypes.OpenAi, AiProviderTypes.AzureOpenAi, AiProviderTypes.OpenAiCompatible })
+        {
+            services.AddSingleton<IAiProviderAdapter>(sp => new OpenAiFamilyAdapter(type, sp.GetRequiredService<AiOutboundHttp>()));
+        }
         if (configuration.GetValue("AI:EnableDemoProvider", defaultValue: false))
         {
             services.AddSingleton<IAiProviderAdapter, DemoAdapter>();
@@ -48,6 +51,7 @@ public sealed class AiComponent : IPlatformComponent
         services.AddSingleton<PromptLibrary>();
         services.AddScoped<AiGateway>();
         services.AddScoped<AiAdministration>();
+        services.AddAdminHealthContributor<AiHealthContributor>();
         services.AddScoped<ExtractionService>();
         services.AddSingleton<IOcrEngine, TesseractOcrEngine>();
         services.AddScoped<BriefService>();

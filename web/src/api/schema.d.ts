@@ -324,6 +324,22 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/settings/health': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetAdminHealth'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/settings/regional': {
     parameters: {
       query?: never;
@@ -12980,6 +12996,38 @@ export interface components {
       outcome: string;
       nextStepNameAr: null | string;
       nextStepNameEn: null | string;
+    };
+    /**
+     * @description One check on the administrator Health page. Never English text: MessageKey and Params are translated by
+     *     the client (namespace `health`). Params values are invariant strings (numbers, ISO 8601 dates, codes); never secrets.
+     */
+    AdminHealthCheck: {
+      code: string;
+      group: string;
+      status: string;
+      messageKey: string;
+      params?: null | {
+        [key: string]: string;
+      };
+      items?: null | components['schemas']['AdminHealthItem'][];
+    };
+    /** @description A line inside a check (e.g. one scheduled job, one module's migrations). Labels are AR / EN where the item has a name. */
+    AdminHealthItem: {
+      code: string;
+      status: string;
+      messageKey: string;
+      params?: null | {
+        [key: string]: string;
+      };
+      labelAr?: null | string;
+      labelEn?: null | string;
+    };
+    /** @description The Health page (ADR 0151): overall status (worst of all checks), when it was checked and every check. */
+    AdminHealthReport: {
+      status: string;
+      /** Format: date-time */
+      checkedAt: string;
+      checks: components['schemas']['AdminHealthCheck'][];
     };
     AffectedRiskDto: {
       /** Format: uuid */
@@ -27127,6 +27175,35 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['TranslationOverridesDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetAdminHealth: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminHealthReport'];
         };
       };
       /** @description Problem Details (RFC 9457) */

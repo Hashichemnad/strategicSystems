@@ -23,4 +23,12 @@ public static class ProblemAssertions
 
         return problem;
     }
+
+    /// <summary>A 400 <c>validation.failed</c> problem with an error on <paramref name="field"/> carrying <paramref name="messageKey"/>.</summary>
+    public static async Task ShouldBeValidationProblemAsync(this HttpResponseMessage response, string field, string messageKey)
+    {
+        var problem = await response.ShouldBeProblemAsync(HttpStatusCode.BadRequest, "validation.failed");
+        problem.GetProperty("errors").EnumerateArray().Select(e => (e.GetProperty("field").GetString(), e.GetProperty("messageKey").GetString()))
+            .ShouldContain((field, messageKey));
+    }
 }

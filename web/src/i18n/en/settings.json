@@ -84,6 +84,10 @@
       "title": "Scheduled jobs",
       "description": "Background jobs, their runs and the message queue."
     },
+    "health": {
+      "title": "System health",
+      "description": "Database, jobs, queue, e-mail, AI, storage, audit chain and certificates at a glance."
+    },
     "approvals": {
       "title": "Approvals",
       "description": "Approval chains of every system: steps, approvers, conditions, deadlines."

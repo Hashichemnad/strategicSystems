@@ -8,6 +8,7 @@ using Strategy.Platform.AI.Infrastructure;
 using Strategy.Platform.AI.Providers;
 using Strategy.Platform.Audit;
 using Strategy.Platform.Identity.Infrastructure;
+using Strategy.Platform.Kernel.Net;
 using Strategy.Platform.Kernel.Paging;
 using Strategy.Platform.Kernel.Results;
 using Strategy.Platform.Kernel.Time;
@@ -59,6 +60,7 @@ public sealed record AiCapabilitiesDto(bool Enabled, IReadOnlyDictionary<string,
 
 /// <summary>Settings → AI use cases (docs/design/ai.md §2–3, §8). Keys go through <see cref="ISecretProtector"/> and are never returned.</summary>
 public sealed partial class AiAdministration(
+    OutboundUrlPolicy outbound,
     AiDbContext db,
     ISettingsEditor editor,
     ISettingsStore store,
@@ -175,7 +177,8 @@ public sealed partial class AiAdministration(
             }
             catch (Exception exception) when (exception is not OperationCanceledException)
             {
-                result = new AiProviderTestDto(false, (int)watch.ElapsedMilliseconds, model, "ai.errors.providerError", null);
+                result = new AiProviderTestDto(false, (int)watch.ElapsedMilliseconds, model,
+                    IsRefused(exception) ? "ai.errors.endpointRefused" : "ai.errors.providerError", null);
             }
         }
 
@@ -299,6 +302,20 @@ public sealed partial class AiAdministration(
             settings.Quota.MonthlyRequestsPerUser, byFeature.OrderBy(f => f.Feature, StringComparer.Ordinal).ToList());
     }
 
+    /// <summary>True when the outbound policy refused the connection (ADR 0155), wherever the SDK wrapped the exception.</summary>
+    private static bool IsRefused(Exception? exception)
+    {
+        for (var current = exception; current is not null; current = current.InnerException)
+        {
+            if (current is OutboundRefusedException)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private List<FieldError> Validate(AiProviderInput input)
     {
         var errors = new List<FieldError>();
@@ -317,6 +334,12 @@ public sealed partial class AiAdministration(
             && (!Uri.TryCreate(input.Endpoint.Trim(), UriKind.Absolute, out var uri) || uri.Scheme is not ("http" or "https")))
         {
             errors.Add(new FieldError("endpoint", "ai.validation.endpoint", "ai.validation.endpoint"));
+        }
+        else if (!string.IsNullOrWhiteSpace(input.Endpoint) && outbound.Check(input.Endpoint) is var refusal and not OutboundRefusal.None)
+        {
+            // ADR 0155: no endpoint on the host itself, link-local / cloud metadata or (when configured) private networks.
+            errors.Add(new FieldError("endpoint", OutboundUrlPolicy.MessageKey, OutboundUrlPolicy.MessageKey,
+                new Dictionary<string, object?> { ["reason"] = refusal.ToString() }));
         }
         else if (adapter is { RequiresEndpoint: true } && string.IsNullOrWhiteSpace(input.Endpoint))
         {

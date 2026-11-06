@@ -20,6 +20,7 @@ using Strategy.Platform.Identity.Application;
 using Strategy.Platform.Identity.Authentication;
 using Strategy.Platform.Identity.Domain;
 using Strategy.Platform.Identity.Infrastructure;
+using Strategy.Platform.Kernel.Net;
 using Strategy.Platform.Kernel.Results;
 using Strategy.Platform.Kernel.Time;
 using Sustainsys.Saml2.AspNetCore2;
@@ -36,7 +37,9 @@ public static class ExternalServiceCollectionExtensions
         services.AddScoped<AccountLinker>();
         services.AddScoped<LdapDirectory>();
         services.AddScoped<IDirectoryPasswordSignIn>(sp => sp.GetRequiredService<LdapDirectory>());
-        services.AddHttpClient(ProviderTester.HttpClientName, client => client.Timeout = TimeSpan.FromSeconds(10));
+        // Test connection calls administrator-entered URLs: through the outbound guard, no redirects (ADR 0155).
+        services.AddHttpClient(ProviderTester.HttpClientName, client => client.Timeout = TimeSpan.FromSeconds(10))
+            .ConfigurePrimaryHttpMessageHandler(sp => sp.GetRequiredService<OutboundUrlPolicy>().CreateHandler());
         services.AddScoped<ProviderTester>();
         services.AddScoped<ProviderAdministration>();
 
@@ -242,6 +245,7 @@ public sealed record ProviderTestResultDto(bool Ok, string MessageKey, IReadOnly
 
 /// <summary>Create / update / enable / test identity providers. Secrets are encrypted and never returned.</summary>
 internal sealed class ProviderAdministration(
+    OutboundUrlPolicy outbound,
     IdentityStoreDbContext db,
     ISecretProtector protector,
     ExternalSchemeRegistry registry,
@@ -327,7 +331,7 @@ internal sealed class ProviderAdministration(
 
         if (enabled)
         {
-            var errors = ProviderSchema.Validate(provider.Type, provider.Settings, provider.SecretProtected is not null);
+            var errors = ProviderSchema.Validate(provider.Type, provider.Settings, provider.SecretProtected is not null, outbound);
             if (errors.Count > 0)
             {
                 return Error.Validation(errors);
@@ -397,7 +401,7 @@ internal sealed class ProviderAdministration(
         var settings = ProviderSchema.Normalise(provider.Type, input.Settings);
         var secretAllowed = ProviderSchema.For(provider.Type)!.HasSecret;
         var hasSecret = secretAllowed && (input.ClearSecret ? false : !string.IsNullOrEmpty(input.Secret) || provider.SecretProtected is not null);
-        fields.AddRange(ProviderSchema.Validate(provider.Type, settings, hasSecret));
+        fields.AddRange(ProviderSchema.Validate(provider.Type, settings, hasSecret, outbound));
         if (input.Secret?.Length > 4096)
         {
             fields.Add(new FieldError("secret", "validation.maximumLength", "validation.maximumLength", new Dictionary<string, object?> { ["maxLength"] = 4096 }));
@@ -443,13 +447,13 @@ internal sealed class ProviderAdministration(
 }
 
 /// <summary>"Test connection": OIDC discovery, UAE Pass endpoint reachability, SAML metadata, LDAP bind + search.</summary>
-internal sealed class ProviderTester(IHttpClientFactory httpClients, LdapDirectory ldap)
+internal sealed class ProviderTester(IHttpClientFactory httpClients, LdapDirectory ldap, OutboundUrlPolicy outbound)
 {
     public const string HttpClientName = "identity-provider-test";
 
     public async Task<ProviderTestResultDto> TestAsync(IdentityProvider provider, string? testUserName, CancellationToken cancellationToken)
     {
-        var errors = ProviderSchema.Validate(provider.Type, provider.Settings, provider.SecretProtected is not null);
+        var errors = ProviderSchema.Validate(provider.Type, provider.Settings, provider.SecretProtected is not null, outbound);
         if (errors.Count > 0)
         {
             return new ProviderTestResultDto(false, "admin.providers.test.invalidSettings", null);

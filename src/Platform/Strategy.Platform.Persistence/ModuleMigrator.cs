@@ -9,6 +9,9 @@ namespace Strategy.Platform.Persistence;
 /// <summary>A module DbContext registered for migration and health checks.</summary>
 public sealed record ModuleDatabase(Type ContextType, string Schema);
 
+/// <summary>Migrations of one module schema not yet applied; <paramref name="HistoryExists"/> is false before the first migration.</summary>
+public sealed record PendingMigrations(string Schema, int Pending, bool HistoryExists);
+
 /// <summary>
 /// Reference data written after all migrations ran (permission catalogue, default roles, lookup types, numbering formats…).
 /// Must be idempotent: it runs on every <c>--migrate</c> and every start with <c>Database:MigrateOnStartup</c>.
@@ -56,6 +59,24 @@ public sealed partial class ModuleMigrator(
         }
 
         return false;
+    }
+
+    /// <summary>Pending migrations per module schema (health page, ADR 0151). Reads only.</summary>
+    public async Task<IReadOnlyList<PendingMigrations>> PendingMigrationsAsync(CancellationToken cancellationToken = default)
+    {
+        var result = new List<PendingMigrations>();
+        foreach (var database in databases)
+        {
+            await using var scope = scopeFactory.CreateAsyncScope();
+            var context = (DbContext)scope.ServiceProvider.GetRequiredService(database.ContextType);
+            var exists = await context.GetService<IHistoryRepository>().ExistsAsync(cancellationToken).ConfigureAwait(false);
+            var pending = exists
+                ? (await context.Database.GetPendingMigrationsAsync(cancellationToken).ConfigureAwait(false)).Count()
+                : context.Database.GetMigrations().Count();
+            result.Add(new PendingMigrations(database.Schema, pending, exists));
+        }
+
+        return result;
     }
 
     public async Task SeedAllAsync(CancellationToken cancellationToken = default)

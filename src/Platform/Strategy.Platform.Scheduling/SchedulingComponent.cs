@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;
+using Strategy.Platform.Http.Health;
 using Strategy.Platform.Http.Modules;
 using Strategy.Platform.Persistence;
 using Strategy.Platform.Scheduling.Api;
@@ -30,6 +31,7 @@ public sealed class SchedulingComponent : IPlatformComponent
         services.AddSingleton(new ScheduleSwitch(configuration.GetValue("Scheduling:RunSchedules", true)));
         services.AddSingleton<ScheduleSwitchListener>();
         services.AddScoped<JobAdministration>();
+        services.AddAdminHealthContributor<SchedulingHealthContributor>();
         services.AddScheduledJob(SchedulingCleanupJob.Definition);
 
         var connectionString = configuration.GetConnectionString(PersistenceServiceCollectionExtensions.ConnectionStringName) ?? string.Empty;
