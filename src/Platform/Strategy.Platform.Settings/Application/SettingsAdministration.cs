@@ -79,7 +79,7 @@ internal sealed partial class SettingsAdministration(SettingsDbContext db, Setti
             errors.Add(new FieldError("dateFormat", "validation.unknownCode", "validation.unknownCode"));
         }
 
-        if (value.DefaultLanguage is null || !RegionalSettings.Languages.Contains(value.DefaultLanguage))
+        if (value.DefaultLanguage is not null && !RegionalSettings.Languages.Contains(value.DefaultLanguage))
         {
             errors.Add(new FieldError("defaultLanguage", "validation.unknownCode", "validation.unknownCode"));
         }

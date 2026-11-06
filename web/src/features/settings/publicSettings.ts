@@ -4,7 +4,8 @@ import { useTranslation } from 'react-i18next';
 import { api, unwrap } from '@/api/client';
 import type { components } from '@/api/schema';
 import { useTheme } from '@/app/theme';
-import { resources } from '@/i18n';
+import { isLanguage, resources } from '@/i18n';
+import { readPreference } from '@/lib/preferences';
 import { pickText, setFormatDefaults } from '@/lib/format';
 
 export type PublicSettings = components['schemas']['PublicSettingsDto'];
@@ -106,6 +107,17 @@ export function SettingsEffects(): null {
       root.style.setProperty('--brand-primary', settings.primaryColor);
     else root.style.removeProperty('--brand-primary');
   }, [settings]);
+
+  // The installation's default language (setup wizard, Settings → Regional) applies until this browser or the profile has a choice.
+  const defaultLanguage = settings?.regional.defaultLanguage;
+  useEffect(() => {
+    if (
+      isLanguage(defaultLanguage) &&
+      !isLanguage(readPreference('language')) &&
+      i18n.language !== defaultLanguage
+    )
+      void i18n.changeLanguage(defaultLanguage);
+  }, [defaultLanguage, i18n]);
 
   useEffect(() => {
     if (overrides) applyTranslationOverrides(i18n, overrides);

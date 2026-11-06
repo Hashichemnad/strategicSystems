@@ -92,6 +92,18 @@ export function unwrap<T>(result: { data?: T; error?: unknown; response: Respons
   return result.data as T;
 }
 
+/**
+ * Headers the typed client adds to a state-changing call (antiforgery token, client marker), for the rare call to a path that is not
+ * in the generated OpenAPI document (an optional endpoint probed at run time).
+ */
+export async function platformRequestHeaders(): Promise<Record<string, string>> {
+  return {
+    [XSRF_HEADER]: await getAntiforgeryToken(),
+    'X-Client': 'spa',
+    'Content-Type': 'application/json',
+  };
+}
+
 function toProblem(error: unknown, status: number): Problem {
   if (error && typeof error === 'object' && 'code' in error && 'messageKey' in error) {
     return error as Problem;

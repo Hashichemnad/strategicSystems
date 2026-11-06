@@ -22454,8 +22454,7 @@ export interface components {
       currencyCode: string;
       /** @default dd/MM/yyyy */
       dateFormat: string;
-      /** @default ar */
-      defaultLanguage: string;
+      defaultLanguage?: null | string;
     };
     RegistrationInput: {
       registrationNo: null | string;

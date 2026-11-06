@@ -83815,8 +83815,10 @@
             "default": "dd/MM/yyyy"
           },
           "defaultLanguage": {
-            "type": "string",
-            "default": "ar"
+            "type": [
+              "null",
+              "string"
+            ]
           }
         },
         "description": "Regional settings (SPEC §0, §0.2 localisation). Hijri display is off by default."

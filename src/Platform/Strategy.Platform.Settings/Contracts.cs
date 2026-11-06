@@ -16,13 +16,13 @@ public sealed record RegionalSettings(
     bool ArabicIndicDigits = false,
     string CurrencyCode = "AED",
     string DateFormat = "dd/MM/yyyy",
-    string DefaultLanguage = "ar") : ISettingsArea
+    string? DefaultLanguage = null) : ISettingsArea
 {
     public static string Key => "regional";
 
     public static readonly IReadOnlyList<string> DateFormats = ["dd/MM/yyyy", "yyyy-MM-dd", "MM/dd/yyyy"];
 
-    /// <summary>Interface languages; the default is used until a user chooses one (setup wizard, Settings → Regional).</summary>
+    /// <summary>Interface languages. <c>DefaultLanguage</c> (null: follow the browser) is used until a user chooses one (ADR 0150).</summary>
     public static readonly IReadOnlyList<string> Languages = ["ar", "en"];
 }
 
