@@ -26,9 +26,19 @@ on the same machine). ADR 0157. Image `strategy-app:1.0.0` built from commit `9b
 | 12 | Image facts | `docker image inspect` | user `app` (non-root), healthcheck, OCI labels (title, version 1.0.0, revision); 606 MB (Phase 17: 1.35 GB — publish for the image's architecture only) |
 | 13 | Script syntax | `shellcheck -x deploy/*.sh`, `tools/check-powershell.ps1 deploy` | clean |
 
+## Full multi-stage build and clean install (main thread, after all streams were merged)
+
+| # | Check | Result |
+|---|---|---|
+| 14 | `./deploy/install.sh` from a fresh clone (commit `5f271d4`), **full multi-stage `docker build`** (SPA + publish + runtime), empty volumes, ports 8095 / 5442 / 3010 | first attempt **failed**: SDK 10.0.403 in `mcr.microsoft.com/dotnet/sdk:10.0` flagged an unused `using` (IDE0005) that the older local SDK (10.0.114) did not — fixed in `5f271d4`; the local SDK was switched to 10.0.403 (copied from the image). Second run: exit 0, image `strategy-app:1.0.0` 607 MB, user 1654 (non-root), healthy, label version 1.0.0 |
+| 15 | Setup token on that container | wrong 403 · printed 204 · bootstrap 200 · reuse 403 · status `needsSetup: false` |
+| 16 | First administrator | login 200 `mfaEnrolmentRequired` → TOTP enrolment → `signedIn` with 10 recovery codes |
+| 17 | *Settings → System health* as that administrator | 200; database, migrations, scheduler, outbox, PDF, storage, Data Protection, version **ok**; e-mail / AI / OCR / antivirus / certificates **not configured** (fresh install); audit chain **warning** (never verified yet — the daily job has not run); disk **error** (the sandbox disk was 94 % full — correct). Found and fixed: the empty 512 MB `/tmp` tmpfs was reported as a warning (absolute 2 GB floor) — floors are now capped for small volumes |
+| 18 | Security headers on `/` | CSP `default-src 'self' …`, `X-Frame-Options: DENY`, `Referrer-Policy`, no `Server` header |
+
 ## Not verified here
 - **Windows with Docker Desktop**: the PowerShell scripts were run with PowerShell 7 on Linux (same compose, same Docker). Windows
   specifics handled in the scripts but not executed on Windows: PowerShell 5.1 quoting of native arguments (SQL passed on standard input),
   `Get-NetTCPConnection` port check, ACL of the backup folder. To be confirmed on the owner's Windows machine (installation guide steps).
-- Full multi-stage `docker build` (CI `docker` job) and an HTTPS reverse proxy with a real certificate.
+- An HTTPS reverse proxy with a real certificate (nginx configuration reviewed).
 - Non-Docker install (`deploy/linux/README.md`): commands reviewed, not executed end to end.
