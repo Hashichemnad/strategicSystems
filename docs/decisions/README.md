@@ -132,3 +132,5 @@ Write an ADR for every choice the SPEC or CLAUDE.md leaves open (CLAUDE.md §2 r
 | [0147](0147-ai-executive-brief.md) | AI executive brief | Accepted |
 | [0148](0148-echarts-single-chart-library.md) | Apache ECharts as the single chart library; shared dashboard UI kit | Accepted |
 | [0149](0149-my-work-cards-and-layout.md) | My Work cards from every system and the per-user layout | Accepted |
+| [0156](0156-performance-and-scanning-tools.md) | Performance, image-scanning and SBOM tools (k6, Trivy, Syft) — external, never distributed | Proposed |
+| [0157](0157-backup-restore-upgrade-format.md) | Packaging, install, backup / restore / upgrade format | Proposed |

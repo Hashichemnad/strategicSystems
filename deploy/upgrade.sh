@@ -4,6 +4,7 @@
 #
 #   ./deploy/upgrade.sh                              # build the new image from this folder
 #   ./deploy/upgrade.sh --image strategy-app-1.0.1.tar   # offline: load the new image
+#   ./deploy/upgrade.sh --no-build                   # the new image strategy-app:<version> is already on this machine
 #   ./deploy/upgrade.sh --no-backup                  # only when a backup was just taken
 #
 # Rollback (printed again on failure): APP_VERSION=<previous version> ./deploy/restore.sh <pre-upgrade backup> --yes
@@ -13,11 +14,13 @@ set -euo pipefail
 
 IMAGE_ARCHIVE=""
 BACKUP=true
+SKIP_BUILD=false
 while [ $# -gt 0 ]; do
   case "$1" in
     --image) IMAGE_ARCHIVE="${2:?--image needs the path of a saved image}"; shift 2 ;;
     --no-backup) BACKUP=false; shift ;;
-    -h | --help) sed -n '2,10p' "$0"; exit 0 ;;
+    --no-build) SKIP_BUILD=true; shift ;;
+    -h | --help) sed -n '2,11p' "$0"; exit 0 ;;
     *) die "Unknown option: $1 (see --help)" 2 ;;
   esac
 done
@@ -54,6 +57,8 @@ if [ -n "$IMAGE_ARCHIVE" ]; then
   info "Loading the new image"
   docker load -i "$IMAGE_ARCHIVE"
   docker image inspect "strategy-app:$NEW_VERSION" > /dev/null 2>&1 || die "The archive does not contain strategy-app:$NEW_VERSION." 4
+elif [ "$SKIP_BUILD" = true ]; then
+  docker image inspect "strategy-app:$NEW_VERSION" > /dev/null 2>&1 || die "--no-build: image strategy-app:$NEW_VERSION is not on this machine." 4
 else
   info "Building strategy-app:$NEW_VERSION"
   prepare_build_ca

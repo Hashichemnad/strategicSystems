@@ -5,12 +5,14 @@
 .EXAMPLE
   .\deploy\upgrade.ps1
 .EXAMPLE
+  .\deploy\upgrade.ps1 -NoBuild                         # the new image strategy-app:<version> is already loaded
+.EXAMPLE
   .\deploy\upgrade.ps1 -Image strategy-app-1.0.1.tar     # offline: load the new image
 .NOTES
   Rollback (printed again on failure): $env:APP_VERSION='<previous>'; .\deploy\restore.ps1 -Backup <pre-upgrade backup> -Yes
 #>
 [CmdletBinding()]
-param([string]$Image = '', [switch]$NoBackup)
+param([string]$Image = '', [switch]$NoBackup, [switch]$NoBuild)
 . (Join-Path $PSScriptRoot 'lib.ps1')
 
 Assert-Docker
@@ -48,6 +50,9 @@ try {
         Write-Step 'Loading the new image'
         & docker load -i $Image
         if ($LASTEXITCODE -ne 0) { throw 'docker load failed.' }
+    } elseif ($NoBuild) {
+        & docker image inspect "strategy-app:$newVersion" *> $null
+        if ($LASTEXITCODE -ne 0) { throw "-NoBuild: image strategy-app:$newVersion is not on this machine." }
     } else {
         Write-Step "Building strategy-app:$newVersion"
         $env:GIT_REVISION = ''

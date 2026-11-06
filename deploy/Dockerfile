@@ -47,7 +47,9 @@ LABEL org.opencontainers.image.title="Integrated Strategy System" \
 # Licence notices: the copyright file of every package the OCR install adds (Tesseract and the OS libraries it loads, some LGPL) is copied
 # to /app/licenses/ocr/ with a package list (name, version); the build fails if one is missing. docs/THIRD_PARTY_LICENSES.md lists them.
 ARG INSTALL_OCR=true
+# Security updates of the base image's OS packages first (Trivy gate: no High / Critical with a fix, ADR 0156).
 RUN apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get upgrade -y --no-install-recommends \
     && (apt-get install -y --no-install-recommends libldap2 || apt-get install -y --no-install-recommends libldap-2.5-0) \
     && if [ "$INSTALL_OCR" = "true" ]; then \
          dpkg-query -W -f='${Package}\n' | sort > /tmp/before \
