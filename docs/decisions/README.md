@@ -138,4 +138,6 @@ Write an ADR for every choice the SPEC or CLAUDE.md leaves open (CLAUDE.md §2 r
 | [0153](0153-seed-packs-and-removable-demo-pack.md) | Seed packs: neutral defaults and a removable demo pack | Proposed |
 | [0154](0154-uae-pass-for-wasel-vendors.md) | UAE Pass sign-in for Wasel vendors (match by e-mail, second factor still required) | Proposed |
 | [0155](0155-outbound-url-policy-ssrf.md) | Outbound URL policy: SSRF guard on save and at connect time | Proposed |
+| [0156](0156-performance-and-scanning-tools.md) | Performance, image-scanning and SBOM tools (k6, Trivy, Syft) — external, never distributed | Proposed |
+| [0157](0157-backup-restore-upgrade-format.md) | Packaging, install, backup / restore / upgrade format | Proposed |
 | [0158](0158-load-testing-with-k6.md) | Load testing with k6 (test-only container) against a seeded Release host | Proposed |

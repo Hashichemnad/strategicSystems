@@ -1,0 +1,48 @@
+# Integrated Strategy System — systemd unit for a non-Docker Linux install (deploy/linux/README.md, ADR 0157).
+# Install: copy to /etc/systemd/system/strategy.service, create /etc/strategy/strategy.env (mode 640, root:strategy), then
+#   systemctl daemon-reload && systemctl enable --now strategy
+[Unit]
+Description=Integrated Strategy System
+Documentation=file:///opt/strategy/docs/guides/en/installation.md
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=exec
+User=strategy
+Group=strategy
+WorkingDirectory=/opt/strategy/app
+# Connection strings, Gotenberg URL, file path, time zone… (see deploy/linux/strategy.env.example). Never put secrets in this unit file.
+EnvironmentFile=/etc/strategy/strategy.env
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=ASPNETCORE_URLS=http://127.0.0.1:8080
+Environment=DOTNET_NOLOGO=1
+Environment=DOTNET_CLI_TELEMETRY_OPTOUT=1
+Environment=TMPDIR=/var/tmp/strategy
+ExecStart=/usr/bin/dotnet /opt/strategy/app/Strategy.Host.dll
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=30
+KillSignal=SIGINT
+SyslogIdentifier=strategy
+
+# Hardening: the process may write only its files folder and its temporary folder.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/strategy /var/tmp/strategy
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+LockPersonality=true
+RestrictRealtime=true
+RestrictNamespaces=true
+CapabilityBoundingSet=
+AmbientCapabilities=
+SystemCallArchitectures=native
+UMask=0027
+
+[Install]
+WantedBy=multi-user.target

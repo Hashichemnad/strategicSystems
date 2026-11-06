@@ -50,6 +50,12 @@ if (args.Contains("--setup-db-roles", StringComparer.Ordinal))
     return await Bootstrap.SetupDatabaseRolesAsync(app.Services, Console.Out);
 }
 
+// `--verify-audit-chain` walks the whole audit hash chain and exits 0 when intact, 4 when broken (restore verification, ADR 0157).
+if (args.Contains("--verify-audit-chain", StringComparer.Ordinal))
+{
+    return await Bootstrap.VerifyAuditChainAsync(app.Services, Console.Out);
+}
+
 // `--create-admin --email <e> --password-file <f>` creates the first system administrator and exits (install step).
 if (args.Contains("--create-admin", StringComparer.Ordinal))
 {

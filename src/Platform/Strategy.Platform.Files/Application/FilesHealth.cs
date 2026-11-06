@@ -85,8 +85,13 @@ internal sealed class FilesHealthContributor(
     public static string DiskStatus(long free, long total, double warningPercent)
     {
         var percent = total > 0 ? free * 100d / total : 0;
-        return percent < 5 || free < Gigabyte / 2 ? AdminHealthStatuses.Error
-            : percent < warningPercent || free < 2 * Gigabyte ? AdminHealthStatuses.Warning
+
+        // The absolute floors (500 MB / 2 GB) are capped for small volumes (e.g. the 512 MB /tmp tmpfs of the container), which would
+        // otherwise always warn even when empty.
+        var errorFloor = Math.Min(Gigabyte / 2, total / 5);
+        var warningFloor = Math.Min(2 * Gigabyte, total / 2);
+        return percent < 5 || free < errorFloor ? AdminHealthStatuses.Error
+            : percent < warningPercent || free < warningFloor ? AdminHealthStatuses.Warning
             : AdminHealthStatuses.Ok;
     }
 
