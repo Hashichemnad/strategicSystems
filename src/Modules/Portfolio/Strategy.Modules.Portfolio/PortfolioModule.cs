@@ -35,6 +35,7 @@ public sealed class PortfolioModule : IModule
     {
         services.AddModuleDbContext<PortfolioDbContext>(PortfolioDbContext.SchemaName);
         services.AddRequestHandlersFrom(typeof(PortfolioModule).Assembly);
+        services.AddScoped<Strategy.Platform.Kernel.Demo.IDemoPackContributor, Demo.PortfolioDemoPack>();
         services.AddAccessCatalogue(new PortfolioAccessCatalogue());
         services.AddNumberingFormat(PortfolioAccessCatalogue.RequestNumbering);
         services.AddNumberingFormat(PortfolioAccessCatalogue.ProjectNumbering);

@@ -3636,6 +3636,38 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/setup/demo-pack/status': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetDemoPack'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/setup/demo-pack': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['LoadDemoPack'];
+    delete: operations['RemoveDemoPack'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/sample/items': {
     parameters: {
       query?: never;
@@ -16834,6 +16866,24 @@ export interface components {
       error: null | string;
       /** Format: date-time */
       at: string;
+    };
+    /** @description Request body of `POST /setup/demo-pack`: the password the demo users sign in with. */
+    DemoPackLoadInput: {
+      password: null | string;
+    };
+    /** @description State of the demo pack: per contributor, the number of records it created that are not removed. */
+    DemoPackStatusDto: {
+      loaded: boolean;
+      version: string;
+      contributors: components['schemas']['DemoPackStepDto'][];
+    };
+    /** @description Outcome of one contributor in a demo pack run. */
+    DemoPackStepDto: {
+      code: string;
+      status: string;
+      /** Format: int32 */
+      records: number;
+      errorCode: null | string;
     };
     DependencyInput: {
       /** Format: uuid */
@@ -35324,6 +35374,97 @@ export interface operations {
           [name: string]: unknown;
         };
         content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetDemoPack: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DemoPackStatusDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  LoadDemoPack: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['DemoPackLoadInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DemoPackStatusDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RemoveDemoPack: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DemoPackStatusDto'];
+        };
       };
       /** @description Problem Details (RFC 9457) */
       default: {

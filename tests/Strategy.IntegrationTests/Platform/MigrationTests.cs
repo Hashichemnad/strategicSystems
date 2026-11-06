@@ -315,7 +315,7 @@ public class MigrationTests(PostgresFixture postgres)
 
         var runtime = new NpgsqlConnectionStringBuilder(owner) { Username = role, Password = "App#Pass1" }.ConnectionString;
         var passwordFile = Path.GetTempFileName();
-        await File.WriteAllTextAsync(passwordFile, "First#Admin2026\n");
+        await File.WriteAllTextAsync(passwordFile, "First#Owner-2026\n");
         var appService = new Dictionary<string, string?> { ["Database:MigrateOnStartup"] = "false" };
         var migrateService = new Dictionary<string, string?>
         {
@@ -373,7 +373,7 @@ public class MigrationTests(PostgresFixture postgres)
         await using var running = new ApiFactory(runtime, settings: appService);
         var client = running.CreateClient();
         await client.RefreshAntiforgeryAsync();
-        var login = await client.PostAsJsonAsync("/api/v1/identity/auth/login", new { login = "admin@example.org", password = "First#Admin2026" });
+        var login = await client.PostAsJsonAsync("/api/v1/identity/auth/login", new { login = "admin@example.org", password = "First#Owner-2026" });
         login.StatusCode.ShouldBe(HttpStatusCode.OK, await login.Content.ReadAsStringAsync());
     }
 

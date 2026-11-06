@@ -7,6 +7,7 @@
     "passwordRequiresNonAlphanumeric": "Add a symbol.",
     "passwordRequiresUniqueChars": "Use more different characters.",
     "passwordReused": "Choose a password you have not used recently.",
+    "passwordCommon": "This password is too common or contains your e-mail name. Choose a less predictable one.",
     "passwordMismatch": "The current password is incorrect.",
     "passwordManagedExternally": "Your password is managed by your organisation's directory.",
     "invalidUserName": "The user name contains characters that are not allowed.",

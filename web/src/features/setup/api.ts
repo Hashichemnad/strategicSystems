@@ -1,5 +1,5 @@
 import { queryOptions } from '@tanstack/react-query';
-import { api, ApiError, platformRequestHeaders, type Problem, unwrap } from '@/api/client';
+import { api, ApiError, unwrap } from '@/api/client';
 import type { components } from '@/api/schema';
 
 export type SetupStatus = components['schemas']['SetupStatusDto'];
@@ -38,35 +38,15 @@ export async function completeSetup() {
   return unwrap(await api.POST('/api/v1/setup/complete'));
 }
 
-/**
- * The optional demo pack (another part of Phase 18). The endpoint is not part of every build: a 404 means "not available" and the
- * wizard hides the step. Called without the typed client on purpose, as the path may be absent from the OpenAPI document.
- */
-export const DEMO_PACK_PATH = '/api/v1/setup/demo-pack';
-
-/** A GET on the POST-only route answers 405 when the demo pack exists and 404 when it does not. */
+/** The optional demo pack (ADR 0153): available when its status endpoint answers (a build without it answers 404). */
 export async function demoPackAvailable(signal?: AbortSignal): Promise<boolean> {
-  // eslint-disable-next-line no-restricted-syntax -- optional endpoint that may be absent from this build's OpenAPI document
-  const response = await fetch(DEMO_PACK_PATH, { method: 'GET', credentials: 'same-origin', signal });
-  return response.status !== 404;
+  const result = await api.GET('/api/v1/setup/demo-pack/status', { signal });
+  return result.response.status !== 404;
 }
 
 /** Loads the demo pack with the password the demo users get. Throws {@link ApiError} with the server's problem on failure. */
 export async function loadDemoPack(password: string): Promise<void> {
-  // eslint-disable-next-line no-restricted-syntax -- optional endpoint that may be absent from this build's OpenAPI document
-  const response = await fetch(DEMO_PACK_PATH, {
-    method: 'POST',
-    credentials: 'same-origin',
-    headers: await platformRequestHeaders(),
-    body: JSON.stringify({ password }),
-  });
-  if (!response.ok) {
-    const problem = (await response.json().catch(() => null)) as Problem | null;
-    throw new ApiError(
-      response.status,
-      problem ?? { status: response.status, code: 'unexpected', messageKey: 'errors.unexpected' },
-    );
-  }
+  unwrap(await api.POST('/api/v1/setup/demo-pack', { body: { password } }));
 }
 
 export function isForbidden(error: unknown): boolean {

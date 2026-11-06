@@ -114,7 +114,7 @@ user refused, inactive vendor refused, MFA still required; E2E with a mock OIDC 
 
 k6 (AGPL-3.0, run as an external container, never distributed — dev / test tool only) scripts in `tests/perf/`: record page API set,
 Gantt data for a 30-milestone project, executive dashboard, My Work, lists; 500 active projects seeded by the existing volume seeder
-(`ExecutivePerformanceTests` data) exposed as `--seed-volume` (Development only). Notification latency: outbox dispatch measured from
+(`ExecutivePerformanceTests` data), seeded by the test-project runner `Performance/PerformanceVolumeSeed` instead of a host command (ADR 0158: the seeders write with COPY, test databases only). Notification latency: outbox dispatch measured from
 event to Mailpit receipt. Report with p50 / p95 / p99 per NFR in `docs/performance.md`.
 
 ## 10. Accessibility

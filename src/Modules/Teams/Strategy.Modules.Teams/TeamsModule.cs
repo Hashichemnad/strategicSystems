@@ -34,6 +34,7 @@ public sealed class TeamsModule : IModule
     {
         services.AddModuleDbContext<TeamsDbContext>(TeamsDbContext.SchemaName);
         services.AddRequestHandlersFrom(typeof(TeamsModule).Assembly);
+        services.AddScoped<Strategy.Platform.Kernel.Demo.IDemoPackContributor, Demo.TeamsDemoPack>();
         services.AddAccessCatalogue(new TeamsAccessCatalogue());
         foreach (var numbering in new[]
                  {

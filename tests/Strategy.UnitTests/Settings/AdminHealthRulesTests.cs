@@ -42,6 +42,9 @@ public class AdminHealthRulesTests
     [InlineData(1 * Gb, 4 * Gb, "warning")] // below 2 GB
     [InlineData(4 * Gb, 100 * Gb, "error")] // below 5 %
     [InlineData(Gb / 4, 2 * Gb, "error")] // below 500 MB
+    [InlineData(Gb / 2, Gb / 2, "ok")] // an empty 512 MB tmpfs: the absolute floors are capped for small volumes
+    [InlineData(Gb / 8, Gb / 2, "warning")] // 25 % free of a 512 MB tmpfs: below half the volume
+    [InlineData(Gb / 16, Gb / 2, "error")] // 12.5 % free of a 512 MB tmpfs: below a fifth of the volume
     public void Disk_status(long free, long total, string expected) => FilesHealthContributor.DiskStatus(free, total, 15).ShouldBe(expected);
 
     [Fact]

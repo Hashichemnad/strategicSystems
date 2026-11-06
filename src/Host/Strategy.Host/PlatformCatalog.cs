@@ -23,5 +23,5 @@ namespace Strategy.Host;
 internal static class PlatformCatalog
 {
     public static readonly IReadOnlyList<IPlatformComponent> All =
-        [new AuditComponent(), new SchedulingComponent(), new FilesComponent(), new SettingsComponent(), new NotificationsComponent(), new AccessComponent(), new OrganisationComponent(), new IdentityComponent(), new CalendarComponent(), new WorkflowComponent(), new AiComponent(), new McpComponent(), new LinksComponent(), new ReportingComponent()];
+        [new AuditComponent(), new SchedulingComponent(), new FilesComponent(), new SettingsComponent(), new NotificationsComponent(), new AccessComponent(), new OrganisationComponent(), new IdentityComponent(), new CalendarComponent(), new WorkflowComponent(), new AiComponent(), new McpComponent(), new LinksComponent(), new ReportingComponent(), new Demo.DemoPackComponent()];
 }

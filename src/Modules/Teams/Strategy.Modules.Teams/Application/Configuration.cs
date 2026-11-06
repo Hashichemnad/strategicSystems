@@ -85,6 +85,11 @@ internal sealed class ConfigurationHandlers(TeamsDbContext db, ISettingsEditor e
 
     public async Task<Result<TeamConfigurationDto>> HandleAsync(SaveTeamType command, CancellationToken cancellationToken)
     {
+        if (command.Values is null)
+        {
+            return Error.Validation([new FieldError("values", "validation.required", "validation.required")]);
+        }
+
         var v = command.Values;
         var roles = await db.Roles.AsNoTracking().Select(r => r.Code).ToListAsync(cancellationToken).ConfigureAwait(false);
         var teamAble = (await links.TypesAsync(LinkCapabilities.TeamAble, cancellationToken).ConfigureAwait(false)).Select(t => t.ResourceType).ToList();

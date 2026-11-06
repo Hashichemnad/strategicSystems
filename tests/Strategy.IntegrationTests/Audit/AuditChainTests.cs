@@ -4,6 +4,7 @@ using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
+using Strategy.Host.Infrastructure;
 using Strategy.IntegrationTests.Infrastructure;
 using Strategy.Platform.Notifications.Infrastructure;
 using Strategy.Platform.Persistence;
@@ -48,6 +49,25 @@ public class AuditChainTests(PostgresFixture postgres)
             var db = scope.ServiceProvider.GetRequiredService<NotifyDbContext>();
             return await db.Notifications.AnyAsync(n => n.UserId == adminId && n.TemplateKey == "audit.chainBroken");
         });
+    }
+
+    [Fact]
+    public async Task The_verify_audit_chain_command_exits_zero_on_an_intact_chain_and_non_zero_after_tampering()
+    {
+        await using var factory = await ApiFactory.CreateAsync(postgres);
+        await (await factory.CreateSignedInClientAsync(roles: TestIdentity.SampleEditor)).PostAsJsonAsync("/api/v1/sample/items", new { nameEn = "Restored" });
+
+        // `dotnet Strategy.Host.dll --verify-audit-chain` (restore verification, ADR 0157).
+        var output = new StringWriter();
+        (await Bootstrap.VerifyAuditChainAsync(factory.Services, output)).ShouldBe(0, output.ToString());
+        output.ToString().ShouldContain("Audit chain intact");
+
+        var target = await ScalarAsync(factory, "select seq from audit.entry where entity_type = 'sample.item' and action = 'create' order by seq desc limit 1");
+        await ExecuteAsTamperingDbaAsync(factory, $"update audit.entry set new_value = replace(new_value, 'Restored', 'Forged') where seq = {target}");
+
+        output = new StringWriter();
+        (await Bootstrap.VerifyAuditChainAsync(factory.Services, output)).ShouldBe(4, output.ToString());
+        output.ToString().ShouldContain($"BROKEN at entry {target}");
     }
 
     [Fact]

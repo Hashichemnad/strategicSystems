@@ -8,14 +8,13 @@ Contents: [1. First-run setup wizard](#1-first-run-setup-wizard) · [2. The Sett
 [6. Approvals](#6-approvals-the-approval-settings-centre) · [7. System settings](#7-settings-of-each-system) ·
 [8. AI and integrations](#8-ai-and-integrations) · [9. Access](#9-access-roles-and-permissions) ·
 [10. Users and sign-in](#10-users-and-sign-in) · [11. Organisation](#11-organisation) · [12. Audit log](#12-audit-log-and-chain-verification) ·
-[13. Health page](#13-health-page) · [14. Good practice](#14-good-practice)
+[13. System health](#13-system-health) · [14. Good practice](#14-good-practice)
 
 ---
 
 ## 1. First-run setup wizard
 
-A new installation has no administrator. Until one exists, the application opens the **setup wizard** at `/setup` (Phase 18 design,
-[`docs/design/release.md`](../../design/release.md) §2).
+A new installation has no administrator. Until one exists, the application opens the **setup wizard** at `/setup` (ADR 0150; the sign-in page sends you there).
 
 **Stage 1 — with the setup token (before any administrator exists)**
 
@@ -31,13 +30,29 @@ A new installation has no administrator. Until one exists, the application opens
 3. The wizard creates the administrator with the platform administrator roles and **consumes the token**. Every token attempt is
    recorded in the audit trail.
 
+![Setup token](../../screenshots/phase-18/en-setup-01-token.png)
+![Organisation profile](../../screenshots/phase-18/en-setup-02-organisation.png)
+![First administrator](../../screenshots/phase-18/en-setup-05-administrator.png)
+
 **Stage 2 — signed in as the administrator**
 
 Sign in; two-step verification is set up at once (required for administrators). The wizard continues with optional steps — each can be
 skipped and done later in Settings: **Email server** (with *Send test email*), **authentication provider**, **AI provider** (with *Test
 connection*), **business hours and holidays**, **organisation-structure import** (download the templates, import units, then
 employees), **systems to enable**, and, for presentations only, the optional **demo data**. **Finish** marks the setup as completed; until
-then the wizard can be reopened from Settings.
+then the wizard can be reopened from **Settings → Setup wizard** (permission *First-run setup wizard*, held by the Settings administrator
+role).
+
+![Guided configuration: e-mail server](../../screenshots/phase-18/en-setup-08-configure-email.png)
+![Setup finished](../../screenshots/phase-18/en-setup-14-finished.png)
+
+**Demo data.** **Settings → Demo data** loads a demo organisation, eight demo people (`<name>@demo.example.org`, with the password you
+enter) and a few records in every system, created through each system's normal actions (audited, channel *import*). **Remove demo data**
+cancels or deactivates those records, locks the demo users and deactivates the demo units — nothing is hard-deleted, so cancelled demo
+records stay visible as such. Use it on presentation installations only (ADR 0153). Command-line equivalents: `--seed-demo
+--password-file /dev/stdin` and `--remove-demo`.
+
+**Version and release notes.** *About* in the user menu shows the version and the release notes of the installed version.
 
 The scripted alternative to stage 1 is the `--create-admin` host command (see `deploy/README.md`); once an administrator exists the
 token stage is closed.
@@ -258,10 +273,9 @@ permission changes, AI and MCP calls. Nobody, including administrators, can chan
 ![Audit log](../../screenshots/phase-3/en-audit-log.png)
 ![Audit verification](../../screenshots/phase-3/en-audit-verification.png)
 
-## 13. Health page
+## 13. System health
 
-**Settings → Health** (Phase 18 design, [`docs/design/release.md`](../../design/release.md) §3; permission *view health*, held by the
-platform administrator role) shows one line per check with *OK*, *Warning*, *Error* or *Not configured*:
+**Settings → System health** (ADR 0151; permission *View system health*, held by the Settings administrator role) shows one line per check with *OK*, *Warning*, *Error* or *Not configured*:
 
 database (latency, version, size) · pending migrations per system · scheduler and every job (last run, status, next run, failures in 24 h) ·
 message queue (pending, failed, oldest pending) · e-mail (configured, last delivery, failures) · AI provider · OCR (Tesseract and
@@ -269,7 +283,11 @@ languages) · file storage (writable, free disk space) · PDF service (Gotenberg
 version and uptime.
 
 Check it after every upgrade and whenever users report missing e-mails or reminders. The infrastructure probes `/health/live` and
-`/health/ready` remain for load balancers and containers.
+`/health/ready` remain for load balancers and containers. A check that fails or takes longer than 10 seconds is shown as an error under its
+own name; the others are still shown. Certificate files to watch for expiry are listed in the host setting `Health:CertificatePaths`; the
+disk warning threshold is `Health:DiskWarningPercent`.
+
+![System health](../../screenshots/phase-18/en-health-page.png)
 
 ## 14. Good practice
 

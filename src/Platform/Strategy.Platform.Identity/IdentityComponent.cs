@@ -87,6 +87,7 @@ public sealed class IdentityComponent : IPlatformComponent
             .AddSignInManager<StrategySignInManager>()
             .AddClaimsPrincipalFactory<StrategyClaimsFactory>()
             .AddPasswordValidator<PasswordHistoryValidator>()
+            .AddPasswordValidator<CommonPasswordValidator>()
             .AddDefaultTokenProviders()
             // Replaces the built-in authenticator provider: same codes and window, but each time step is accepted once.
             .AddTokenProvider<ReplayProtectedAuthenticatorTokenProvider>(TokenOptions.DefaultAuthenticatorProvider);

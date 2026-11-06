@@ -50,10 +50,22 @@ if (args.Contains("--setup-db-roles", StringComparer.Ordinal))
     return await Bootstrap.SetupDatabaseRolesAsync(app.Services, Console.Out);
 }
 
+// `--verify-audit-chain` walks the whole audit hash chain and exits 0 when intact, 4 when broken (restore verification, ADR 0157).
+if (args.Contains("--verify-audit-chain", StringComparer.Ordinal))
+{
+    return await Bootstrap.VerifyAuditChainAsync(app.Services, Console.Out);
+}
+
 // `--create-admin --email <e> --password-file <f>` creates the first system administrator and exits (install step).
 if (args.Contains("--create-admin", StringComparer.Ordinal))
 {
     return await Bootstrap.CreateAdminAsync(app.Services, args, Console.Out);
+}
+
+// `--seed-demo --password-file <f>` loads the optional demo pack; `--remove-demo` deactivates it again (ADR 0153). Run after `--migrate`.
+if (args.Contains("--seed-demo", StringComparer.Ordinal) || args.Contains("--remove-demo", StringComparer.Ordinal))
+{
+    return await Strategy.Host.Demo.DemoPackCommands.RunAsync(app.Services, args, Console.Out);
 }
 
 // `--setup-token` issues a new one-time setup token for the first-run wizard (ADR 0150) and prints it; refused once an administrator exists.

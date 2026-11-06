@@ -5,6 +5,7 @@ using Strategy.Platform.Access;
 using Strategy.Platform.Access.Application;
 using Strategy.Platform.AI.Application;
 using Strategy.Platform.AI.Domain;
+using Strategy.Platform.Audit.Application;
 using Strategy.Platform.Identity.Application;
 using Strategy.Platform.Identity.Domain;
 using Strategy.Platform.Identity.Infrastructure;
@@ -107,6 +108,31 @@ internal static partial class Bootstrap
 
         await output.WriteLineAsync($"Setup token (open /setup in the browser): {token}");
         return 0;
+    }
+
+    /// <summary>
+    /// <c>--verify-audit-chain</c>: full walk of the audit hash chain (restore verification, ADR 0157). Exit 0 intact, 3 database not up
+    /// to date, 4 broken. The run is recorded like one started from the verification screen.
+    /// </summary>
+    public static async Task<int> VerifyAuditChainAsync(IServiceProvider services, TextWriter output)
+    {
+        if (await services.GetRequiredService<ModuleMigrator>().HasPendingMigrationsAsync())
+        {
+            await output.WriteLineAsync("The database is not up to date. Run --migrate first.");
+            return 3;
+        }
+
+        await using var scope = services.CreateAsyncScope();
+        scope.ServiceProvider.GetRequiredService<RequestContext>().Initialise(Guid.CreateVersion7().ToString("N"), Channels.System, StrategyClaims.CreateSystemPrincipal());
+        var result = await scope.ServiceProvider.GetRequiredService<IAuditChainVerification>().VerifyFullAsync();
+        if (result.Ok)
+        {
+            await output.WriteLineAsync(FormattableString.Invariant($"Audit chain intact: {result.EntriesChecked} entries checked, last entry {result.LastSeq}."));
+            return 0;
+        }
+
+        await output.WriteLineAsync(FormattableString.Invariant($"Audit chain BROKEN at entry {result.BrokenSeq} ({result.MessageKey}); {result.EntriesChecked} entries checked before it."));
+        return 4;
     }
 
     /// <summary>

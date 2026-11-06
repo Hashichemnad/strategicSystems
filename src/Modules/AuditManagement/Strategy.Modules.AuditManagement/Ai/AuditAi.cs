@@ -125,7 +125,14 @@ internal sealed class AuditAiService(
             return call.Error;
         }
 
-        var byCode = units.ToDictionary(u => u.Code, u => u.Id, StringComparer.OrdinalIgnoreCase);
+        // Unit codes are unique as stored but compared case-insensitively here (the model may change the case): keep the first of codes
+        // that differ only in case instead of failing the whole extraction.
+        var byCode = new Dictionary<string, Guid>(StringComparer.OrdinalIgnoreCase);
+        foreach (var u in units)
+        {
+            byCode.TryAdd(u.Code, u.Id);
+        }
+
         var findings = new List<ExtractedFindingDto>();
         if (call.Value.Output.TryGetProperty("findings", out var array) && array.ValueKind == JsonValueKind.Array)
         {

@@ -138,12 +138,34 @@ jobs:
           retention-days: 14
 
   docker:
-    name: Container image builds
+    name: Container image (build, scan, SBOM, deploy scripts)
     needs: [backend, frontend]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-      - name: Build image (not pushed)
-        run: docker build -f deploy/Dockerfile -t strategy-app:ci .
+      - name: Build the versioned image (not pushed)
+        run: |
+          VERSION="$(cat deploy/VERSION)"
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+          docker build -f deploy/Dockerfile -t "strategy-app:$VERSION" \
+            --build-arg APP_VERSION="$VERSION" --build-arg GIT_REVISION="${GITHUB_SHA::7}" \
+            --build-arg BUILD_CREATED="$(date -u +%Y-%m-%dT%H:%M:%SZ)" .
+      - name: Image runs as non-root with labels and a healthcheck
+        run: |
+          test "$(docker image inspect -f '{{.Config.User}}' "strategy-app:$VERSION")" != "root"
+          test -n "$(docker image inspect -f '{{.Config.Healthcheck}}' "strategy-app:$VERSION")"
+          test "$(docker image inspect -f '{{index .Config.Labels "org.opencontainers.image.version"}}' "strategy-app:$VERSION")" = "$VERSION"
+      - name: Vulnerability scan (Trivy — High / Critical with a fix fail, ADR 0156) and CycloneDX SBOM
+        run: IMAGE="strategy-app:$VERSION" ./deploy/sbom.sh --scan
+      - name: Upload SBOM (CycloneDX)
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom
+          path: release/sbom/
+          retention-days: 90
       - name: Compose file is valid
         run: docker compose -f deploy/docker-compose.yml --profile app --profile dev --profile search --profile antivirus --profile ai config -q
+      - name: Deploy scripts (shellcheck, PowerShell parser)
+        run: |
+          shellcheck -x deploy/*.sh deploy/postgres/init-roles.sh
+          pwsh -NoProfile -File tools/check-powershell.ps1 deploy

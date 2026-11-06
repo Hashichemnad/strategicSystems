@@ -145,6 +145,11 @@ internal sealed class ProjectItems(
 
     public async Task<Result<ProjectKpiDto>> SaveKpiAsync(Guid projectId, Guid? itemId, KpiInput input, CancellationToken ct)
     {
+        if (input.Values is null)
+        {
+            return MissingValues();
+        }
+
         var v = input.Values;
         var errors = new List<FieldError>();
         Code(errors, "nature", v.Nature, KpiNatures.All);
@@ -181,6 +186,11 @@ internal sealed class ProjectItems(
 
     public async Task<Result<ProjectRiskDto>> SaveRiskAsync(Guid projectId, Guid? itemId, RiskInput input, CancellationToken ct)
     {
+        if (input.Values is null)
+        {
+            return MissingValues();
+        }
+
         var v = input.Values;
         var errors = new List<FieldError>();
         Range(errors, "probability", v.Probability, 1, 5);
@@ -214,6 +224,11 @@ internal sealed class ProjectItems(
 
     public async Task<Result<StakeholderDto>> SaveStakeholderAsync(Guid projectId, Guid? itemId, StakeholderInput input, CancellationToken ct)
     {
+        if (input.Values is null)
+        {
+            return MissingValues();
+        }
+
         var v = input.Values;
         var errors = new List<FieldError>();
         if (string.IsNullOrWhiteSpace(v.Name))
@@ -237,6 +252,11 @@ internal sealed class ProjectItems(
 
     public async Task<Result<ProposedMemberDto>> SaveMemberAsync(Guid projectId, Guid? itemId, ProposedMemberInput input, CancellationToken ct)
     {
+        if (input.Values is null)
+        {
+            return MissingValues();
+        }
+
         var v = input.Values;
         var errors = new List<FieldError>();
         var people = await reader.PeopleAsync([v.EmployeeId], ct).ConfigureAwait(false);
@@ -257,6 +277,11 @@ internal sealed class ProjectItems(
 
     public async Task<Result<PlanningItemDto>> SavePlanningItemAsync(Guid projectId, Guid? itemId, PlanningItemInput input, CancellationToken ct)
     {
+        if (input.Values is null)
+        {
+            return MissingValues();
+        }
+
         var v = input.Values;
         var errors = new List<FieldError>();
         Code(errors, "category", v.Category, PlanningCategories.All);
@@ -272,6 +297,11 @@ internal sealed class ProjectItems(
 
     public async Task<Result<ChallengeDto>> SaveChallengeAsync(Guid projectId, Guid? itemId, ChallengeInput input, CancellationToken ct)
     {
+        if (input.Values is null)
+        {
+            return MissingValues();
+        }
+
         var v = input.Values;
         var errors = new List<FieldError>();
         if (string.IsNullOrWhiteSpace(v.Challenge))
@@ -296,6 +326,11 @@ internal sealed class ProjectItems(
 
     public async Task<Result<LessonDto>> SaveLessonAsync(Guid projectId, Guid? itemId, LessonInput input, CancellationToken ct)
     {
+        if (input.Values is null)
+        {
+            return MissingValues();
+        }
+
         var v = input.Values;
         var errors = new List<FieldError>();
         if (string.IsNullOrWhiteSpace(v.Lesson))
@@ -312,6 +347,11 @@ internal sealed class ProjectItems(
 
     public async Task<Result<ProjectMeetingDto>> SaveMeetingAsync(Guid projectId, Guid? itemId, ProjectMeetingInput input, CancellationToken ct)
     {
+        if (input.Values is null)
+        {
+            return MissingValues();
+        }
+
         var v = input.Values with { Notes = RichText.Sanitise(input.Values.Notes) };
         var errors = new List<FieldError>();
         if (string.IsNullOrWhiteSpace(v.Title))
@@ -326,6 +366,11 @@ internal sealed class ProjectItems(
 
     public async Task<Result<ContractDto>> SaveContractAsync(Guid projectId, Guid? itemId, ContractInput input, CancellationToken ct)
     {
+        if (input.Values is null)
+        {
+            return MissingValues();
+        }
+
         var v = input.Values;
         var errors = new List<FieldError>();
         if (string.IsNullOrWhiteSpace(v.Name))
@@ -562,6 +607,9 @@ internal sealed class ProjectItems(
     private static ContractDto ContractDto(Contract c) => new(c.Id, c.Name, c.Number, c.Supplier, c.IssueDate, c.Amount, c.ContractStatus, c.Status, c.Version, c.VendorId, c.EndDate);
 
     private static void Add(List<FieldError> errors, string field, string key) => errors.Add(new FieldError(field, key, key));
+
+    /// <summary>A body without <c>values</c> (e.g. <c>{}</c>): a validation problem, never a null dereference.</summary>
+    private static Error MissingValues() => Error.Validation([new FieldError("values", "validation.required", "validation.required")]);
 
     private static void Range(List<FieldError> errors, string field, int value, int from, int to)
     {

@@ -50,6 +50,7 @@ public sealed class RequestsModule : IModule
         services.AddScoped<RequestEngine>();
         services.AddScoped<RequestQueries>();
         services.AddScoped<RequestCommands>();
+        services.AddScoped<Strategy.Platform.Kernel.Demo.IDemoPackContributor, Demo.RequestsDemoPack>();
         services.AddScoped<TypeAdministration>();
         services.AddScoped<RequestPdf>();
         services.AddScoped<IRequestDirectory, RequestDirectory>();

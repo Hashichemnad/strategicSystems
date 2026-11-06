@@ -252,11 +252,18 @@ dotnet run --project src/Host/Strategy.Host -- --setup-token                  # 
 # E2E screenshots go to docs/screenshots/$E2E_SCREENSHOTS (default phase-4); Phase 17: E2E_SCREENSHOTS=phase-17 npx playwright test e2e/reporting.spec.ts (after the other specs, so every system has data). A sandbox Chromium of another revision: E2E_CHROMIUM_PATH=/opt/pw-browsers/chromium
 # The Teams E2E renders the generated memo / certificate PDFs to PNG with pdftoppm (poppler-utils, test machine only)
 
-# Containerised install (http://localhost:8080)
-docker compose -f deploy/docker-compose.yml --profile app up -d --build
+dotnet run --project src/Host/Strategy.Host -- --seed-demo --password-file <f>   # optional demo pack (ADR 0153); --remove-demo cancels / deactivates it
+dotnet run --project src/Host/Strategy.Host -- --verify-audit-chain            # exit 0 when the audit hash chain is intact (restore verification)
+
+# Containerised install (http://localhost:8080) and operations (ADR 0157, docs/guides/en/installation.md)
+./deploy/install.sh                     # Windows: deploy\install.ps1 · ports APP_PORT / POSTGRES_PORT / GOTENBERG_PORT · prints the setup token
+./deploy/backup.sh · ./deploy/restore.sh <folder> · ./deploy/upgrade.sh    # PowerShell twins: backup.ps1 · restore.ps1 · upgrade.ps1
+./deploy/sbom.sh [--scan]               # CycloneDX SBOM (Syft) and Trivy scan of the image (ADR 0156)
+tests/perf/run.sh                       # k6 load tests: seeds its own database (test-only bulk seed), Release host, Mailpit (docs/performance.md, ADR 0158)
 ```
 CI resolves `global.json` (`rollForward: latestFeature`) to the newest .NET 10 SDK, whose analyzers can be stricter than an
-older local SDK (e.g. IDE0005): check `dotnet --version` and keep the local SDK current.
+older local SDK (e.g. IDE0005): check `dotnet --version` and keep the local SDK current (the Docker image's SDK is the reference:
+`docker create mcr.microsoft.com/dotnet/sdk:10.0` and copy `/usr/share/dotnet` out when the installer cannot be downloaded).
 OCR tests (unit + integration, ADR 0033) need Tesseract with Arabic and English data on the machine:
 `sudo apt-get install tesseract-ocr tesseract-ocr-ara tesseract-ocr-eng` (CI installs it; the app image includes it).
 Integration tests also start Mailpit and Gotenberg containers (Mailpit delivery, PDF snapshot); `UPDATE_SNAPSHOTS=1` rewrites the PDF layout snapshot.
