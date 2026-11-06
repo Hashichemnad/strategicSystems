@@ -1,3 +1,4 @@
+import { expectAccessible } from './a11y';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 import type { APIRequestContext, Browser, Page } from '@playwright/test';
@@ -152,6 +153,7 @@ async function vendorSignsIn(
   await page.getByTestId('wasel-login-password').fill(vendorPassword);
   await page.getByTestId('wasel-login-submit').click();
   await expect(page.getByTestId('wasel-mfa-enrol')).toBeVisible();
+  await expectAccessible(page, 'wasel-login-mfa');
   await page.evaluate(() => document.fonts.ready);
   await page.screenshot({ path: screenshotPath(language, 'wasel-login-mfa') });
 
@@ -171,6 +173,8 @@ async function vendorSignsIn(
 }
 
 async function vendorShot(page: Page, language: Language, name: string, fullPage = false) {
+  // The vendor area is checked against WCAG 2.1 AA on every screen it photographs (docs/accessibility.md).
+  await expectAccessible(page, `wasel-${name}`);
   await page.evaluate(() => document.fonts.ready);
   await page.screenshot({ path: screenshotPath(language, name), fullPage });
 }

@@ -61,5 +61,11 @@
     "expand_many": "إظهار {{count}} وحدة",
     "expand_other": "إظهار {{count}} وحدة",
     "collapse": "إخفاء"
+  },
+  "heatGrid": {
+    "empty": "لا توجد بيانات للعرض."
+  },
+  "a11y": {
+    "scrollRegion": "محتوى قابل للتمرير"
   }
 }

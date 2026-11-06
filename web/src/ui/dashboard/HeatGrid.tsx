@@ -81,7 +81,7 @@ export function HeatGrid({
   testId,
   className,
 }: HeatGridProps) {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const rtl = i18n.dir() === 'rtl';
   const initial = selected
     ? {
@@ -104,6 +104,15 @@ export function HeatGrid({
     setFocus(next);
     refs.current.get(`${next.row}:${next.column}`)?.focus();
   };
+  if (rows.length === 0 || columns.length === 0) {
+    // A grid needs rows and cells (WCAG 4.1.2): with nothing to show, say so instead of an empty grid.
+    return (
+      <p className={cn('text-sm text-muted-foreground', className)} data-testid={testId}>
+        <span className="sr-only">{label}: </span>
+        {t('heatGrid.empty')}
+      </p>
+    );
+  }
   return (
     <div className={cn('flex flex-col gap-2', className)} data-testid={testId}>
       <div className="flex items-stretch gap-2">

@@ -328,6 +328,8 @@ export function RiskMatrix({
   const num = useNum();
   const maxL = Math.max(1, ...cells.map((c) => c.likelihood));
   const maxI = Math.max(1, ...cells.map((c) => c.impact));
+  // Read-only: a grid of rows (rowheader + gridcells) and a header row; editable: a radio group (WCAG 4.1.2).
+  const grid = !onChange;
   return (
     <div className="flex flex-col gap-2" data-testid={`risk-matrix-${prefix}`}>
       <div
@@ -339,8 +341,11 @@ export function RiskMatrix({
         {range(maxL)
           .reverse()
           .map((l) => (
-            <div key={l} className="contents">
-              <span className="flex items-center justify-end pe-1 text-end text-xs text-muted-foreground">
+            <div key={l} className="contents" role={grid ? 'row' : undefined}>
+              <span
+                className="flex items-center justify-end pe-1 text-end text-xs text-muted-foreground"
+                role={grid ? 'rowheader' : undefined}
+              >
                 <span>
                   <bdi className="tabular-nums">{l}</bdi>
                   {axis?.likelihood && <span className="ms-1 hidden sm:inline">{axis.likelihood(l)}</span>}
@@ -411,13 +416,19 @@ export function RiskMatrix({
               })}
             </div>
           ))}
-        <span />
-        {range(maxI).map((i) => (
-          <span key={i} className="text-center text-xs text-muted-foreground">
-            <bdi className="tabular-nums">{i}</bdi>
-            {axis?.impact && <span className="hidden truncate sm:block">{axis.impact(i)}</span>}
-          </span>
-        ))}
+        <div className="contents" role={grid ? 'row' : undefined}>
+          <span />
+          {range(maxI).map((i) => (
+            <span
+              key={i}
+              className="text-center text-xs text-muted-foreground"
+              role={grid ? 'columnheader' : undefined}
+            >
+              <bdi className="tabular-nums">{i}</bdi>
+              {axis?.impact && <span className="hidden truncate sm:block">{axis.impact(i)}</span>}
+            </span>
+          ))}
+        </div>
       </div>
       <div className="flex justify-between text-xs text-muted-foreground">
         <span>↑ {t('heatmap.likelihood')}</span>

@@ -578,7 +578,8 @@ function RiskMatrixPanel({ project }: { project: ProjectFull }) {
                       'flex aspect-square min-h-10 flex-col items-center justify-center rounded-md border text-sm font-semibold tabular-nums focus-visible:outline-2 focus-visible:outline-primary',
                       bandCell[c.band],
                       active && 'ring-2 ring-primary',
-                      c.count === 0 && 'opacity-60',
+                      // Empty cells are told apart by a dashed border, not by fading the text (WCAG 1.4.3).
+                      c.count === 0 && 'border-dashed',
                     )}
                   >
                     {formatNumber(c.count, lang)}

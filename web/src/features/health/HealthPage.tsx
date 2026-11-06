@@ -8,6 +8,7 @@ import { formatDateTime, pickText } from '@/lib/format';
 import {
   Button,
   PageHeader,
+  ScrollRegion,
   Skeleton,
   StatusBanner,
   StatusChip,
@@ -96,7 +97,7 @@ function CheckCard({ check }: { check: Check }) {
   const wide = check.code === 'scheduler' || check.code === 'migrations';
   return (
     <article
-      className={`flex flex-col gap-3 rounded-lg border bg-card p-4 ${wide ? 'lg:col-span-2' : ''}`}
+      className={`flex min-w-0 flex-col gap-3 rounded-lg border bg-card p-4 ${wide ? 'lg:col-span-2' : ''}`}
       data-testid={`health-check-${check.code}`}
       aria-labelledby={`health-check-${check.code}-title`}
     >
@@ -108,20 +109,23 @@ function CheckCard({ check }: { check: Check }) {
           {t(`statuses.${check.status}`, { defaultValue: check.status })}
         </StatusChip>
       </div>
-      <p className="text-sm">
+      <p className="text-sm [overflow-wrap:anywhere]">
         {t(messagePath(check.messageKey), {
           ...formatParams(check.params, i18n.language),
           defaultValue: check.messageKey,
         })}
       </p>
       {check.items && check.items.length > 0 && (
-        <div className="max-h-96 overflow-auto rounded-md border">
+        <ScrollRegion
+          className="max-h-96 overflow-auto rounded-md border"
+          label={t(`checks.${check.code}`, { defaultValue: check.code })}
+        >
           {check.code === 'scheduler' ? (
             <JobTable items={check.items} />
           ) : (
             <ItemTable items={check.items} translateCodes={check.code !== 'migrations'} />
           )}
-        </div>
+        </ScrollRegion>
       )}
     </article>
   );

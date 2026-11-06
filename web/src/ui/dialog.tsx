@@ -1,6 +1,6 @@
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
-import type { ReactNode } from 'react';
+import { useRef, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/cn';
 import { Button } from './button';
@@ -20,6 +20,9 @@ interface DialogContentProps {
 /** Modal dialog: focus trapped, Escape closes, title and description announced. */
 export function DialogContent({ title, description, children, footer, className }: DialogContentProps) {
   const { t } = useTranslation();
+  // The element that opened the dialog, noted when the content mounts (before focus moves in). Radix returns focus only to a
+  // DialogTrigger; dialogs opened from state (a table row action, a toolbar button) return it here instead (WCAG 2.4.3).
+  const opener = useRef<HTMLElement | null>(null);
   return (
     <DialogPrimitive.Portal>
       <DialogPrimitive.Overlay className="fixed inset-0 z-40 bg-black/40 backdrop-blur-[1px]" />
@@ -29,6 +32,16 @@ export function DialogContent({ title, description, children, footer, className 
           className,
         )}
         {...(description ? {} : { 'aria-describedby': undefined })}
+        onOpenAutoFocus={() => {
+          opener.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+        }}
+        onCloseAutoFocus={(event) => {
+          const target = opener.current;
+          if (target && target !== document.body && target.isConnected) {
+            event.preventDefault();
+            target.focus();
+          }
+        }}
       >
         <div className="flex items-start justify-between gap-4">
           <div className="flex flex-col gap-1">

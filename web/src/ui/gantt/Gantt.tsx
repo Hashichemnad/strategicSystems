@@ -187,7 +187,8 @@ export function Gantt({
           <div className="relative" style={{ width: layout.width }}>
             <svg
               ref={svgRef}
-              role="img"
+              // A named group, not an image: its rows are focusable buttons (WCAG 4.1.2, axe nested-interactive).
+              role="group"
               aria-label={t('gantt.ariaLabel', { title, count: layout.rows.length })}
               width={layout.width}
               height={layout.height}
@@ -329,7 +330,8 @@ export function Gantt({
                         strokeWidth={2}
                       />
                     )}
-                    <g clipPath={`url(#${clipId}-labels)`}>
+                    {/* The row's accessible name is its summary (label, dates, achieved, status); the drawn text repeats it. */}
+                    <g clipPath={`url(#${clipId}-labels)`} aria-hidden>
                       {r.hasChildren && (
                         <text
                           x={rtl ? r.labelX + 2 : r.labelX - 2}
@@ -437,6 +439,7 @@ export function Gantt({
                         textAnchor={rtl ? 'end' : 'start'}
                         fontSize={11}
                         className={r.row.delayed ? 'fill-danger' : 'fill-muted-foreground'}
+                        aria-hidden
                       >
                         {percent(r.row.achieved)}
                       </text>

@@ -53,5 +53,9 @@ describe('risk scoring preview', () => {
     expect(textOn('#ffff00')).toBe('#111827');
     expect(textOn('#7f1d1d')).toBe('#ffffff');
     expect(textOn('red')).toBe('inherit');
+    // Mid-tone orange: white gives 2.8:1, dark text 6.2:1 (WCAG 1.4.3).
+    expect(textOn('#f97316')).toBe('#111827');
+    expect(textOn('#16a34a')).toBe('#111827');
+    expect(textOn('#1d4ed8')).toBe('#ffffff');
   });
 });

@@ -17,6 +17,9 @@ interface WizardProps {
   onFinish: () => void | Promise<void>;
   onSaveDraft?: () => void | Promise<void>;
   finishLabel?: string;
+  /** Names for Back / Next when the wizard contains another one (e.g. the setup wizard's import step), so both can be told apart. */
+  backLabel?: string;
+  nextLabel?: string;
   busy?: boolean;
   /** Blocks finishing and saving a draft (e.g. AI-filled values still to review) while steps stay navigable. */
   finishDisabled?: boolean;
@@ -29,6 +32,8 @@ export function Wizard({
   onFinish,
   onSaveDraft,
   finishLabel,
+  backLabel,
+  nextLabel,
   busy,
   finishDisabled,
   className,
@@ -69,10 +74,10 @@ export function Wizard({
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={() => setIndex((i) => i - 1)} disabled={index === 0 || busy}>
-            {t('actions.back')}
+            {backLabel ?? t('actions.back')}
           </Button>
           <Button onClick={() => void next()} loading={busy} disabled={last && finishDisabled}>
-            {last ? (finishLabel ?? t('actions.finish')) : t('actions.next')}
+            {last ? (finishLabel ?? t('actions.finish')) : (nextLabel ?? t('actions.next'))}
           </Button>
         </div>
       </div>

@@ -23,8 +23,9 @@ export function StageStepper({ stages, current, className }: StageStepperProps) 
   );
 
   return (
-    <nav aria-label={t('stepper.label')} className={cn('w-full overflow-x-auto', className)}>
-      <ol className="flex min-w-max items-center gap-2">
+    <nav aria-label={t('stepper.label')} className={cn('w-full', className)}>
+      {/* Wraps instead of scrolling: every stage stays visible at any width and in both directions. */}
+      <ol className="flex flex-wrap items-center gap-x-2 gap-y-3">
         {stages.map((stage, index) => {
           const state = index < currentIndex ? 'completed' : index === currentIndex ? 'current' : 'upcoming';
           return (

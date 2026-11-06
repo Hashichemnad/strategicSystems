@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
@@ -216,6 +217,62 @@ describe('Select', () => {
       />,
     );
     expect(screen.getByRole('combobox', { name: 'Status' })).toHaveTextContent('Active');
+  });
+
+  it('is never unnamed: outside a form field it is named after its chosen option (WCAG 4.1.2)', async () => {
+    await renderWithProviders(
+      <Select
+        value="open"
+        onValueChange={() => undefined}
+        options={[
+          { value: 'open', label: 'All open' },
+          { value: 'closed', label: 'Closed' },
+        ]}
+      />,
+    );
+    expect(screen.getByRole('combobox', { name: 'All open' })).toBeInTheDocument();
+  });
+});
+
+describe('accessibility safeguards (docs/accessibility.md)', () => {
+  it('filter tabs do not point to a panel that does not exist', async () => {
+    await renderWithProviders(
+      <Tabs value="mine">
+        <TabsList aria-label="Views">
+          <TabsTrigger filter value="mine">
+            Mine
+          </TabsTrigger>
+          <TabsTrigger filter value="all">
+            All
+          </TabsTrigger>
+        </TabsList>
+      </Tabs>,
+    );
+    for (const tab of screen.getAllByRole('tab')) expect(tab).not.toHaveAttribute('aria-controls');
+  });
+
+  it('returns focus to the button that opened a dialog from state (WCAG 2.4.3)', async () => {
+    function Opener() {
+      const [open, setOpen] = useState(false);
+      return (
+        <>
+          <Button onClick={() => setOpen(true)}>Open it</Button>
+          <ConfirmDialog
+            open={open}
+            onOpenChange={setOpen}
+            title="Sure?"
+            description="Really"
+            confirmLabel="Yes"
+            onConfirm={() => setOpen(false)}
+          />
+        </>
+      );
+    }
+    await renderWithProviders(<Opener />);
+    await userEvent.click(screen.getByRole('button', { name: 'Open it' }));
+    expect(await screen.findByRole('dialog')).toBeInTheDocument();
+    await userEvent.keyboard('{Escape}');
+    expect(screen.getByRole('button', { name: 'Open it' })).toHaveFocus();
   });
 });
 

@@ -53,5 +53,11 @@
     "expand_one": "Show {{count}} unit",
     "expand_other": "Show {{count}} units",
     "collapse": "Hide"
+  },
+  "heatGrid": {
+    "empty": "No data to show."
+  },
+  "a11y": {
+    "scrollRegion": "Scrollable content"
   }
 }

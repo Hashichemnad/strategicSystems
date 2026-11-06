@@ -4,12 +4,13 @@ import { useTranslation } from 'react-i18next';
 import { cn } from '@/lib/cn';
 import { formatNumber } from '@/lib/format';
 import { Button } from './button';
+import { ScrollRegion } from './scroll-region';
 
 export function Table({ className, ...props }: HTMLAttributes<HTMLTableElement>) {
   return (
-    <div className="w-full overflow-x-auto rounded-lg border bg-card">
+    <ScrollRegion className="w-full overflow-x-auto rounded-lg border bg-card">
       <table className={cn('w-full border-collapse text-sm', className)} {...props} />
-    </div>
+    </ScrollRegion>
   );
 }
 

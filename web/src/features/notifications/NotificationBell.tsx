@@ -38,7 +38,10 @@ export function NotificationBell() {
         >
           <Bell aria-hidden />
           {unread > 0 && (
-            <span className="absolute end-1 top-1 inline-flex min-w-4 items-center justify-center rounded-full bg-danger px-1 text-[10px] font-semibold text-white">
+            <span
+              aria-hidden
+              className="absolute end-1 top-1 inline-flex min-w-4 items-center justify-center rounded-full bg-danger px-1 text-[10px] font-semibold text-danger-foreground"
+            >
               {unread > 99 ? '99+' : formatNumber(unread, i18n.language)}
             </span>
           )}

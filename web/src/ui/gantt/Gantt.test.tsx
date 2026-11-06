@@ -80,7 +80,7 @@ describe('Gantt', () => {
         { language },
       );
       const elapsed = performance.now() - started;
-      const svg = screen.getByRole('img', { name: /PROJ-001/ });
+      const svg = screen.getByRole('group', { name: /PROJ-001/ });
       expect(svg).toBeInTheDocument();
       expect(screen.getAllByTestId('gantt-row')).toHaveLength(35);
       expect(svg.querySelectorAll('[data-part="diamond"]')).toHaveLength(5);
@@ -98,7 +98,7 @@ describe('Gantt', () => {
     const props = { rows, start: '2026-01-01', end: '2026-12-31', today: '2026-05-01', title: 'P' };
     const { unmount } = await renderWithProviders(<Gantt {...props} />, { language: 'en' });
     const ltrToday = Number(screen.getByTestId('gantt-today').querySelector('line')?.getAttribute('x1'));
-    const width = Number(screen.getByRole('img').getAttribute('width'));
+    const width = Number(document.querySelector('svg[data-gantt]')?.getAttribute('width'));
     unmount();
     await renderWithProviders(<Gantt {...props} />, { language: 'ar' });
     const rtlToday = Number(screen.getByTestId('gantt-today').querySelector('line')?.getAttribute('x1'));
@@ -132,9 +132,11 @@ describe('Gantt', () => {
         initialWidth={800}
       />,
     );
-    const quarterWidth = Number(screen.getByRole('img').getAttribute('width'));
+    const quarterWidth = Number(document.querySelector('svg[data-gantt]')?.getAttribute('width'));
     fireEvent.click(screen.getByTestId('gantt-zoom-month'));
     expect(screen.getByTestId('gantt-zoom-month')).toHaveAttribute('aria-pressed', 'true');
-    expect(Number(screen.getByRole('img').getAttribute('width'))).toBeGreaterThan(quarterWidth);
+    expect(Number(document.querySelector('svg[data-gantt]')?.getAttribute('width'))).toBeGreaterThan(
+      quarterWidth,
+    );
   });
 });

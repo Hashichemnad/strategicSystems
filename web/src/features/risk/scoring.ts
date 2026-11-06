@@ -47,12 +47,32 @@ function round2(value: number): number {
   return Math.round(value * 100) / 100;
 }
 
-/** Readable text colour (dark or light) on a band colour such as `#f59e0b`. */
+/** WCAG 2.1 relative luminance of an sRGB channel triple (0–255). */
+function luminance(r: number, g: number, b: number): number {
+  const channel = (value: number) => {
+    const c = value / 255;
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  };
+  return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
+}
+
+const darkText = '#111827';
+const lightText = '#ffffff';
+const darkTextLuminance = luminance(0x11, 0x18, 0x27);
+
+/**
+ * Readable text colour (dark or light) on an administrator-chosen band colour such as `#f59e0b`: the one with the higher
+ * WCAG contrast ratio, so a mid-tone colour (orange, amber) gets dark text instead of white (WCAG 1.4.3).
+ */
 export function textOn(color: string | null | undefined): string {
   const hex = (color ?? '').replace('#', '');
   if (!/^[0-9a-f]{6}$/i.test(hex)) return 'inherit';
-  const r = parseInt(hex.slice(0, 2), 16);
-  const g = parseInt(hex.slice(2, 4), 16);
-  const b = parseInt(hex.slice(4, 6), 16);
-  return (r * 299 + g * 587 + b * 114) / 1000 > 150 ? '#111827' : '#ffffff';
+  const background = luminance(
+    parseInt(hex.slice(0, 2), 16),
+    parseInt(hex.slice(2, 4), 16),
+    parseInt(hex.slice(4, 6), 16),
+  );
+  const withWhite = 1.05 / (background + 0.05);
+  const withDark = (background + 0.05) / (darkTextLuminance + 0.05);
+  return withDark >= withWhite ? darkText : lightText;
 }

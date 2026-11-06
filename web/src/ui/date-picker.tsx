@@ -41,13 +41,16 @@ export function DatePicker({ value, onChange, id, placeholder, disabled, ...aria
         id={id}
         disabled={disabled}
         {...aria}
-        aria-label={selected ? undefined : t('datePicker.open')}
         className={cn(
           'flex h-10 w-full items-center justify-between gap-2 rounded-md border border-input bg-card px-3 text-sm aria-invalid:border-danger disabled:opacity-50',
           !selected && 'text-muted-foreground',
         )}
       >
-        {selected ? formatDate(selected, i18n.language) : (placeholder ?? t('datePicker.placeholder'))}
+        <span>
+          {selected ? formatDate(selected, i18n.language) : (placeholder ?? t('datePicker.placeholder'))}
+          {/* The visible text stays part of the accessible name (WCAG 2.5.3); the action is added for screen readers. */}
+          <span className="sr-only"> — {t('datePicker.open')}</span>
+        </span>
         <CalendarDays className="size-4 opacity-60" aria-hidden />
       </PopoverPrimitive.Trigger>
       <PopoverPrimitive.Portal>

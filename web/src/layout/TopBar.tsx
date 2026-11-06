@@ -30,7 +30,7 @@ import {
 export function TopBar({ onOpenMenu }: { onOpenMenu: () => void }) {
   const { t } = useTranslation('shell');
   return (
-    <header className="sticky top-0 z-20 flex h-16 items-center gap-2 border-b bg-background/90 px-4 backdrop-blur md:px-8">
+    <header className="sticky top-0 z-20 flex h-16 items-center gap-1 border-b bg-background/90 px-2 backdrop-blur sm:gap-2 sm:px-4 md:px-8">
       <Button
         variant="ghost"
         size="icon"
@@ -71,7 +71,9 @@ export function LanguageToggle({ saveToProfile = false }: { saveToProfile?: bool
       data-testid="language-toggle"
     >
       <Languages aria-hidden />
-      <span lang={next}>{t('language.switchTo')}</span>
+      <span lang={next} className="hidden sm:inline">
+        {t('language.switchTo')}
+      </span>
     </Button>
   );
 }
