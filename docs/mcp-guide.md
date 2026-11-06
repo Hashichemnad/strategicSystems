@@ -1,5 +1,8 @@
 # Connecting Claude and other MCP clients
 
+> Superseded by the bilingual MCP guide with the release 1.0 tool list: [English](guides/en/mcp.md) · [العربية](guides/ar/mcp.md).
+> This page is kept for reference.
+
 The Integrated Strategy System includes a **Model Context Protocol (MCP) server**. An MCP client — Claude Desktop, claude.ai,
 Claude Code or any other MCP-capable assistant — can connect to your installation and use its tools to read data: your pending approvals,
 your notifications, the status of a record, a search across the records you may see.
