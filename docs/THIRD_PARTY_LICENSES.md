@@ -107,6 +107,12 @@ Tools: `dotnet-ef` (MIT), local tool in `dotnet-tools.json`.
 Transitive dev-only packages under BlueOak-1.0.0, Python-2.0, CC-BY-4.0 and CC0-1.0 are accepted for tooling only,
 as accepted by the owner in [ADR 0007](decisions/0007-licence-notes.md).
 
+## Bundled data
+
+| Data | Licence | Used for |
+|---|---|---|
+| SecLists `Passwords/Common-Credentials/10k-most-common.txt` (© 2018 Daniel Miessler), embedded in `Strategy.Platform.Identity` | MIT | offline common-password check (ASVS V2.1.7) |
+
 ## Operating-system packages in the product image (`deploy/Dockerfile`)
 
 | Package | Licence | Used for |
