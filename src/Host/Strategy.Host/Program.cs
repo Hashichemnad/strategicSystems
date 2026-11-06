@@ -56,6 +56,12 @@ if (args.Contains("--create-admin", StringComparer.Ordinal))
     return await Bootstrap.CreateAdminAsync(app.Services, args, Console.Out);
 }
 
+// `--seed-demo --password-file <f>` loads the optional demo pack; `--remove-demo` deactivates it again (ADR 0153). Run after `--migrate`.
+if (args.Contains("--seed-demo", StringComparer.Ordinal) || args.Contains("--remove-demo", StringComparer.Ordinal))
+{
+    return await Strategy.Host.Demo.DemoPackCommands.RunAsync(app.Services, args, Console.Out);
+}
+
 if (app.Configuration.GetValue("Database:MigrateOnStartup", defaultValue: false))
 {
     await app.Services.GetRequiredService<ModuleMigrator>().MigrateAllAsync();
