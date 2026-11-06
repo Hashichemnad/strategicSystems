@@ -30,7 +30,7 @@ Version 1.0. The same guides exist in Arabic: [`../ar/README.md`](../ar/README.m
 |---|---|
 | [Administrator guide](administration.md) | first-run setup wizard, every Settings area, roles and permissions, approvals, business hours, AI and MCP, identity providers, audit log, health page |
 | [Connecting Claude and other MCP clients](mcp.md) | Claude Desktop, claude.ai, Claude Code, other clients; OAuth and personal access tokens |
-| Installation guide | written with the installer (see [`deploy/README.md`](../../../deploy/README.md) until then) |
+| [Installation guide](installation.md) | Windows and Linux, ports, setup wizard, HTTPS reverse proxy, backup / restore / upgrade, non-Docker install |
 
 Reference documents: [identity providers](../../identity-providers.md) · [SPEC](../../SPEC.md) · [design notes](../../design/).
 
