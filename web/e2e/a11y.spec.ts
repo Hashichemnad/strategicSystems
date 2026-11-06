@@ -136,15 +136,15 @@ const settingsScreens: Screen[] = [
 const projectHref = /^\/portfolio\/projects\/[0-9a-f-]{36}$/u;
 
 /** Record pages: the first record of a list, with every tab of the record. */
-const records: { name: string; list: string; href: RegExp }[] = [
+const records: { name: string; list: string; href: RegExp; optional?: boolean }[] = [
   { name: 'portfolio-request', list: '/portfolio/requests', href: /^\/portfolio\/requests\/[0-9a-f-]{36}$/u },
   { name: 'portfolio-project', list: '/portfolio/projects', href: projectHref },
   { name: 'portfolio-vendor', list: '/portfolio/vendors', href: /^\/portfolio\/vendors\/[0-9a-f-]{36}$/u },
   { name: 'kpi-card', list: '/kpi/cards', href: /^\/kpi\/cards\/[0-9a-f-]{36}$/u },
   { name: 'risk', list: '/risk/risks', href: /^\/risk\/risks\/[0-9a-f-]{36}$/u },
   { name: 'team', list: '/teams', href: /^\/teams\/[0-9a-f-]{36}$/u },
-  { name: 'task', list: '/tasks', href: /^\/tasks\/[0-9a-f-]{36}$/u },
-  { name: 'request', list: '/requests/queue', href: /^\/requests\/[0-9a-f-]{36}$/u },
+  { name: 'task', list: '/tasks?tab=created', href: /^\/tasks\/[0-9a-f-]{36}$/u },
+  { name: 'request', list: '/requests/queue', href: /^\/requests\/[0-9a-f-]{36}$/u, optional: true },
   { name: 'document', list: '/documents', href: /^\/documents\/[0-9a-f-]{36}$/u },
   { name: 'ip-record', list: '/ip', href: /^\/ip\/records\/[0-9a-f-]{36}$/u },
   { name: 'bench-study', list: '/bench/studies', href: /^\/bench\/studies\/[0-9a-f-]{36}$/u },
@@ -159,6 +159,7 @@ const records: { name: string; list: string; href: RegExp }[] = [
     name: 'audit-plan',
     list: '/audit-management/plans',
     href: /^\/audit-management\/plans\/[0-9a-f-]{36}$/u,
+    optional: true,
   },
   { name: 'employee', list: '/org/employees', href: /^\/org\/employees\/[0-9a-f-]{36}$/u },
   { name: 'sample-item', list: '/sample', href: /^\/sample\/items\/[0-9a-f-]{36}$/u },
@@ -232,7 +233,10 @@ test.describe('accessibility — WCAG 2.1 AA (axe-core)', () => {
     for (const record of records) {
       const href = await firstRecordHref(page, record.list, record.href);
       if (!href) {
-        missing.push(record.name);
+        // Optional: the main suite does not always leave one (no open request in the queue, no audit plan).
+        if (record.optional)
+          test.info().annotations.push({ type: 'skipped record', description: record.name });
+        else missing.push(record.name);
         continue;
       }
       await auditRecord(page, record.name, href);
