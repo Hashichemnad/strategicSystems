@@ -36,6 +36,13 @@ on the same machine). ADR 0157. Image `strategy-app:1.0.0` built from commit `9b
 | 17 | *Settings → System health* as that administrator | 200; database, migrations, scheduler, outbox, PDF, storage, Data Protection, version **ok**; e-mail / AI / OCR / antivirus / certificates **not configured** (fresh install); audit chain **warning** (never verified yet — the daily job has not run); disk **error** (the sandbox disk was 94 % full — correct). Found and fixed: the empty 512 MB `/tmp` tmpfs was reported as a warning (absolute 2 GB floor) — floors are now capped for small volumes |
 | 18 | Security headers on `/` | CSP `default-src 'self' …`, `X-Frame-Options: DENY`, `Referrer-Policy`, no `Server` header |
 
+## Release image
+
+| # | Check | Result |
+|---|---|---|
+| 19 | Final image `strategy-app:1.0.0` built from `673e092` (full multi-stage Dockerfile) | 607 MB; SBOM regenerated (`release/sbom/strategy-app-1.0.0.cdx.json`, 4 645 components); Trivy 0.76.2: **0** High / Critical with a fix (OS packages and .NET dependencies clean) |
+| 20 | Backup → delete all volumes → new install (new passwords) → `restore.sh` on that image | restore verified: 230 tables / 3 115 rows identical, audit chain intact (1 540 entries); screenshots `docs/screenshots/phase-18/*-ops-*.png` |
+
 ## Not verified here
 - **Windows with Docker Desktop**: the PowerShell scripts were run with PowerShell 7 on Linux (same compose, same Docker). Windows
   specifics handled in the scripts but not executed on Windows: PowerShell 5.1 quoting of native arguments (SQL passed on standard input),
