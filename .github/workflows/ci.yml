@@ -43,7 +43,15 @@ jobs:
       - name: Format
         run: dotnet format Strategy.slnx --verify-no-changes --no-restore
       - name: Tests (unit, architecture, integration with Testcontainers)
-        run: dotnet test --solution Strategy.slnx -c Release --no-build
+        # TRX per test project: the job log is too long to show which test failed; the results are uploaded below.
+        run: dotnet test --solution Strategy.slnx -c Release --no-build --report-xunit-trx --results-directory ${{ github.workspace }}/TestResults
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dotnet-test-results
+          path: TestResults/**/*.trx
+          retention-days: 14
       - name: Vulnerable packages (High / Critical fail)
         run: tools/check-vulnerable.sh
       - name: OpenAPI document and generated TS client are committed
