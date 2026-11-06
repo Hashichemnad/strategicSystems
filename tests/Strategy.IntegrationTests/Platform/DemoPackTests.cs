@@ -5,8 +5,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Strategy.Host.Demo;
 using Strategy.IntegrationTests.Infrastructure;
+using Strategy.Platform.Access.Infrastructure;
 using Strategy.Platform.Audit.Infrastructure;
+using Strategy.Platform.Notifications.Infrastructure;
 using Strategy.Platform.Organisation.Infrastructure;
+using Strategy.Platform.Settings.Infrastructure;
 
 namespace Strategy.IntegrationTests.Platform;
 
@@ -22,6 +25,32 @@ public sealed class DemoPackTests(PostgresFixture postgres) : IAsyncLifetime
     public async ValueTask InitializeAsync() => _factory = await ApiFactory.CreateAsync(postgres);
 
     public async ValueTask DisposeAsync() => await _factory.DisposeAsync();
+
+    [Fact]
+    public async Task A_fresh_installation_contains_the_neutral_default_pack_and_no_organisation_data()
+    {
+        await using var scope = TestAccess.SystemScope(_factory);
+        var services = scope.ServiceProvider;
+        var settings = services.GetRequiredService<SettingsDbContext>();
+        var access = services.GetRequiredService<AccessDbContext>();
+        var notify = services.GetRequiredService<NotifyDbContext>();
+        var org = services.GetRequiredService<OrgDbContext>();
+
+        // Neutral defaults (ADR 0153): catalogues, roles, lookups, numbering formats and notification templates are seeded on start.
+        (await settings.LookupTypes.CountAsync()).ShouldBeGreaterThan(20);
+        (await settings.LookupValues.CountAsync()).ShouldBeGreaterThan(100);
+        (await settings.NumberingFormats.CountAsync()).ShouldBeGreaterThan(5);
+        (await access.Systems.CountAsync()).ShouldBeGreaterThanOrEqualTo(11);
+        (await access.Permissions.CountAsync()).ShouldBeGreaterThan(200);
+        (await access.Roles.CountAsync()).ShouldBeGreaterThan(20);
+        (await access.RolePermissions.CountAsync()).ShouldBeGreaterThan(200);
+        (await notify.Templates.CountAsync()).ShouldBeGreaterThan(50);
+
+        // …and nothing organisation-specific: no units, employees, demo records or role holders.
+        (await org.Units.CountAsync()).ShouldBe(0);
+        (await org.Employees.CountAsync()).ShouldBe(0);
+        (await org.DemoRecords.CountAsync()).ShouldBe(0);
+    }
 
     [Fact]
     public async Task Only_set_up_administrators_may_load_or_remove_the_demo_pack()

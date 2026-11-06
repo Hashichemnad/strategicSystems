@@ -27,6 +27,7 @@ import {
   MapPinned,
   Palette,
   Paperclip,
+  Presentation,
   Repeat,
   Scale,
   UserRoundX,
@@ -64,6 +65,7 @@ export type SettingsPageKey =
   | 'notifications'
   | 'files'
   | 'jobs'
+  | 'demoPack'
   | 'approvals'
   | 'ai'
   | 'mcp'
@@ -96,6 +98,7 @@ export type SettingsPath =
   | '/settings/notifications'
   | '/settings/files'
   | '/settings/jobs'
+  | '/settings/demo-data'
   | '/settings/approvals'
   | '/settings/ai'
   | '/settings/mcp'
@@ -204,6 +207,12 @@ export const settingsGroups: readonly SettingsGroup[] = [
       },
       { key: 'files', to: '/settings/files', icon: Paperclip, permissions: ['settings.file.manage'] },
       { key: 'jobs', to: '/settings/jobs', icon: Timer, permissions: ['settings.job.view'] },
+      {
+        key: 'demoPack',
+        to: '/settings/demo-data',
+        icon: Presentation,
+        permissions: ['platform.setup.manage'],
+      },
       {
         key: 'approvals',
         to: '/settings/approvals',

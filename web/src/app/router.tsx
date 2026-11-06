@@ -1303,6 +1303,13 @@ const filesSettingsRoute = createRoute({
   component: lazyRouteComponent(() => import('@/features/files/FilesSettingsPage'), 'FilesSettingsPage'),
 });
 
+// Optional demo data for presentations (ADR 0153).
+const demoPackRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/demo-data',
+  component: lazyRouteComponent(() => import('@/features/settings/DemoPackPage'), 'DemoPackPage'),
+});
+
 const jobsRoute = createRoute({
   getParentRoute: () => settingsLayout,
   path: '/jobs',
@@ -1627,6 +1634,7 @@ const routeTree = rootRoute.addChildren([
       notificationTemplatesRoute,
       filesSettingsRoute,
       jobsRoute,
+      demoPackRoute,
       businessHoursRoute,
       holidaysRoute,
       approvalSettingsRoute,
