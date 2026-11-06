@@ -15,7 +15,7 @@ Threat model: [`threat-model.md`](threat-model.md). Scan results: [`scan-results
 | Chapter | Met | Partial | N/A | Residual | Operator |
 |---|---|---|---|---|---|
 | V1 Architecture | 37 | 3 | 1 | 0 | 0 |
-| V2 Authentication | 40 | 7 | 5 | 2 | 0 |
+| V2 Authentication | 41 | 7 | 5 | 1 | 0 |
 | V3 Session management | 17 | 1 | 2 | 0 | 0 |
 | V4 Access control | 9 | 0 | 0 | 0 | 0 |
 | V5 Validation, sanitisation, encoding | 30 | 2 | 2 | 0 | 0 |
@@ -28,10 +28,10 @@ Threat model: [`threat-model.md`](threat-model.md). Scan results: [`scan-results
 | V12 Files and resources | 14 | 1 | 2 | 0 | 0 |
 | V13 API and web service | 10 | 0 | 2 | 0 | 0 |
 | V14 Configuration | 26 | 2 | 0 | 0 | 2 |
-| **Total** | **234** | **22** | **15** | **2** | **6** |
+| **Total** | **235** | **22** | **15** | **1** | **6** |
 
-No open **high** finding. The two residual items (V2.1.7 breached-password check, V2.1.9 composition rules on by default) are low risk with
-the compensating controls listed below and are configurable or planned.
+No open **high** finding. The one residual item (V2.1.9 composition rules on by default) is low risk, configurable, and listed below.
+V2.1.7 (common passwords) was closed in Phase 18 with an offline list.
 
 Findings fixed in Phase 18: SSRF on administrator-entered URLs (ADR 0155, V5.2.6 / V12.6.1); no `Secure` flag on session cookies behind a
 TLS proxy that forwards plain HTTP without `X-Forwarded-Proto` (`Security:SecureCookies`, V3.4.1); base-image `apt` HIGH CVE
@@ -96,7 +96,7 @@ TLS proxy that forwards plain HTTP without `X-Forwarded-Proto` (`Security:Secure
 | 2.1.4 | Any Unicode character allowed | No character restrictions | ASP.NET Core Identity | Met |
 | 2.1.5 | Users can change their password | Profile → change password (current password required) | IT `Password_change_needs_the_current_password_and_signs_out_other_sessions` | Met |
 | 2.1.6 | Change requires current and new password | as above | same | Met |
-| 2.1.7 | Check against breached / common passwords | Not implemented: installations are often offline (no HIBP); history (5) and minimum length mitigate | — | **Residual** (planned: bundled common-password list) |
+| 2.1.7 | Check against breached / common passwords | Offline check (installations are often in restricted networks, no breach API): `CommonPasswordValidator` refuses the 10 000 most common passwords (SecLists, MIT, embedded), the same with leading / trailing digits and symbols removed (`Password2026!`), and passwords containing the e-mail name | `CommonPasswordValidatorTests`, `src/Platform/Strategy.Platform.Identity/Application/CommonPasswordValidator.cs` | Met |
 | 2.1.8 | Password strength meter | Policy hints shown on the set-password forms | `web/src/features/auth` | Partial — rule list, no strength estimator |
 | 2.1.9 | No composition rules | Upper / lower / digit / symbol required **by default** (customer request, SPEC identity defaults); each can be switched off in Settings → Security | `SecuritySettings` | **Residual** (configurable; documented in the administrator guide) |
 | 2.1.10 | No periodic rotation or history requirement imposed | No forced expiry; history only prevents reuse | `SecuritySettings.PasswordHistory` | Met |
@@ -395,7 +395,6 @@ TLS proxy that forwards plain HTTP without `X-Forwarded-Proto` (`Security:Secure
 
 | Item | Risk | Why accepted / mitigation | Plan |
 |---|---|---|---|
-| V2.1.7 breached-password check | Users can pick a well-known password that meets the rules | Offline installations cannot call breach APIs; minimum length 12, complexity, history 5, lockout, MFA for administrators by default; SSO / LDAP common in target customers | Bundle an offline common-password list (OSI-licensed) in 1.1 |
 | V2.1.9 composition rules on by default | Users choose predictable patterns | Matches customers' existing policies; can be switched off in Settings → Security | Recommend "length only" in the administrator guide |
 | SAML metadata, LDAP, SMTP outbound connections (ADR 0155) | DNS rebinding could reach a refused address after the save-time check | Administrator-only settings, audited; save-time check on literal addresses and `localhost` | Wrap when the libraries expose their HTTP / socket factories |
 | Sidecars without authentication (Gotenberg, ClamAV) | A process on the compose network can call them | Internal compose network; do not publish `GOTENBERG_PORT` beyond 127.0.0.1 in production | — |
