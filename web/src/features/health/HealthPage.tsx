@@ -116,14 +116,19 @@ function CheckCard({ check }: { check: Check }) {
       </p>
       {check.items && check.items.length > 0 && (
         <div className="max-h-96 overflow-auto rounded-md border">
-          {check.code === 'scheduler' ? <JobTable items={check.items} /> : <ItemTable items={check.items} />}
+          {check.code === 'scheduler' ? (
+            <JobTable items={check.items} />
+          ) : (
+            <ItemTable items={check.items} translateCodes={check.code !== 'migrations'} />
+          )}
         </div>
       )}
     </article>
   );
 }
 
-function ItemTable({ items }: { items: Item[] }) {
+/** Migration items are schema codes, shown as they are; other item codes have labels in `items.*`. */
+function ItemTable({ items, translateCodes }: { items: Item[]; translateCodes: boolean }) {
   const { t, i18n } = useTranslation('health');
   return (
     <Table>
@@ -140,7 +145,9 @@ function ItemTable({ items }: { items: Item[] }) {
             <TableCell>
               {item.labelAr || item.labelEn
                 ? pickText(i18n.language, item.labelAr, item.labelEn)
-                : t(`items.${item.code}`, { defaultValue: item.code })}
+                : translateCodes
+                  ? t(`items.${item.code}`, { defaultValue: item.code })
+                  : item.code}
             </TableCell>
             <TableCell>
               <StatusChip tone={statusTone[item.status] ?? 'neutral'}>
