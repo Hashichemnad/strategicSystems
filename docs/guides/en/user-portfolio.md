@@ -80,7 +80,7 @@ The PM Office sees the **Proposal Assessment** tab (AI-drafted assessment, versi
 - Submit the monthly update → approval (default **Department Director → PM Office**, Q-P1). Approved values are locked; project progress
   is recalculated. Returned → correct the same window.
 - Progress status is **Delayed** when approved progress is more than 5 points below planned-to-date progress, or a milestone is past its
-  planned end below 100 %; otherwise **On Track**.
+  planned end below 100 %; otherwise **On track**.
 - With **Status report** on, the approved month can be downloaded as a bilingual PDF (the narrative can be drafted by AI and edited by you).
 
 ![Monthly update](../../screenshots/phase-9/en-monthly-update-evidence.png)
