@@ -25,12 +25,16 @@ public sealed class DemoRecord : AuditableEntity
     /// <summary>Optional lookup key for other contributors (e.g. <c>kpi.card.1</c>, <c>person:director</c>).</summary>
     public string? Key { get; private set; }
 
+    /// <summary>Demo person key who created the record and removes it again.</summary>
+    public string? Actor { get; private set; }
+
     public string PackVersion { get; private set; } = null!;
 
     public DateTimeOffset? RemovedAt { get; private set; }
 
-    public static DemoRecord Create(string contributor, string resourceType, Guid resourceId, string? key, string packVersion) => new()
+    public static DemoRecord Create(string contributor, string resourceType, Guid resourceId, string? key, string? actor, string packVersion) => new()
     {
+        Actor = actor,
         Contributor = contributor,
         ResourceType = resourceType,
         ResourceId = resourceId,
@@ -50,6 +54,7 @@ internal sealed class DemoRecordConfiguration : IEntityTypeConfiguration<DemoRec
         builder.Property(x => x.Contributor).HasMaxLength(DemoRecord.CodeMaxLength);
         builder.Property(x => x.ResourceType).HasMaxLength(DemoRecord.CodeMaxLength);
         builder.Property(x => x.Key).HasMaxLength(DemoRecord.CodeMaxLength * 2);
+        builder.Property(x => x.Actor).HasMaxLength(DemoRecord.CodeMaxLength);
         builder.Property(x => x.PackVersion).HasMaxLength(20);
         builder.HasIndex(x => new { x.Contributor, x.ResourceType, x.ResourceId }).IsUnique();
         builder.HasIndex(x => x.Key);
@@ -59,7 +64,8 @@ internal sealed class DemoRecordConfiguration : IEntityTypeConfiguration<DemoRec
 /// <summary>Tracker of the demo pack's records. Saves immediately: each record is tracked right after its own module saved it.</summary>
 internal sealed class DemoRecordStore(OrgDbContext db, IClock clock) : IDemoRecordStore
 {
-    public async Task TrackAsync(string contributor, string resourceType, Guid resourceId, string? key, string packVersion, CancellationToken cancellationToken)
+    public async Task TrackAsync(
+        string contributor, string resourceType, Guid resourceId, string? key, string? actor, string packVersion, CancellationToken cancellationToken)
     {
         if (await db.DemoRecords.AnyAsync(r => r.Contributor == contributor && r.ResourceType == resourceType && r.ResourceId == resourceId, cancellationToken)
                 .ConfigureAwait(false))
@@ -67,15 +73,15 @@ internal sealed class DemoRecordStore(OrgDbContext db, IClock clock) : IDemoReco
             return;
         }
 
-        db.DemoRecords.Add(DemoRecord.Create(contributor, resourceType, resourceId, key, packVersion));
+        db.DemoRecords.Add(DemoRecord.Create(contributor, resourceType, resourceId, key, actor, packVersion));
         await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
     public async Task<IReadOnlyList<DemoRecordRef>> ActiveAsync(string? contributor, CancellationToken cancellationToken) =>
         await db.DemoRecords.AsNoTracking()
             .Where(r => r.RemovedAt == null && (contributor == null || r.Contributor == contributor))
-            .OrderBy(r => r.Id)
-            .Select(r => new DemoRecordRef(r.Contributor, r.ResourceType, r.ResourceId, r.Key))
+            .OrderBy(r => r.CreatedAt).ThenBy(r => r.Id)
+            .Select(r => new DemoRecordRef(r.Contributor, r.ResourceType, r.ResourceId, r.Key, r.Actor))
             .ToListAsync(cancellationToken).ConfigureAwait(false);
 
     public async Task MarkRemovedAsync(string contributor, CancellationToken cancellationToken)

@@ -67,13 +67,13 @@ public sealed partial class DemoPackService(IServiceScopeFactory scopes, ILogger
             {
                 var context = await CreateContextAsync(scope.ServiceProvider, code, password, cancellationToken).ConfigureAwait(false);
                 await contributor.LoadAsync(context, cancellationToken).ConfigureAwait(false);
-                await context.ActAsSystemAsync().ConfigureAwait(false);
-                steps.Add(new DemoPackStepDto(code, Loaded, (await store.ActiveAsync(code, cancellationToken).ConfigureAwait(false)).Count, null));
+                                steps.Add(new DemoPackStepDto(code, Loaded, (await store.ActiveAsync(code, cancellationToken).ConfigureAwait(false)).Count, null));
             }
-            catch (DemoPackException ex)
+            catch (Exception ex) when (ex is not OperationCanceledException)
             {
-                LogFailed(logger, code, ex.ErrorCode, ex);
-                steps.Add(new DemoPackStepDto(code, Failed, (await store.ActiveAsync(code, cancellationToken).ConfigureAwait(false)).Count, ex.ErrorCode));
+                var errorCode = ex is DemoPackException demo ? demo.ErrorCode : "demo.unexpected";
+                LogFailed(logger, code, errorCode, ex);
+                steps.Add(new DemoPackStepDto(code, Failed, (await store.ActiveAsync(code, cancellationToken).ConfigureAwait(false)).Count, errorCode));
                 if (code == PlatformDemoPack.ContributorCode)
                 {
                     break; // nothing else can be loaded without the demo people
@@ -110,14 +110,14 @@ public sealed partial class DemoPackService(IServiceScopeFactory scopes, ILogger
             {
                 var context = await CreateContextAsync(scope.ServiceProvider, code, null, cancellationToken).ConfigureAwait(false);
                 await contributor.RemoveAsync(context, cancellationToken).ConfigureAwait(false);
-                await context.ActAsSystemAsync().ConfigureAwait(false);
-                await store.MarkRemovedAsync(code, cancellationToken).ConfigureAwait(false);
+                                await store.MarkRemovedAsync(code, cancellationToken).ConfigureAwait(false);
                 steps.Add(new DemoPackStepDto(code, Removed, count, null));
             }
-            catch (DemoPackException ex)
+            catch (Exception ex) when (ex is not OperationCanceledException)
             {
-                LogFailed(logger, code, ex.ErrorCode, ex);
-                steps.Add(new DemoPackStepDto(code, Failed, count, ex.ErrorCode));
+                var errorCode = ex is DemoPackException demo ? demo.ErrorCode : "demo.unexpected";
+                LogFailed(logger, code, errorCode, ex);
+                steps.Add(new DemoPackStepDto(code, Failed, count, errorCode));
             }
         }
 
@@ -137,41 +137,39 @@ public sealed partial class DemoPackService(IServiceScopeFactory scopes, ILogger
         return scope;
     }
 
-    private static async Task<DemoPackContext> CreateContextAsync(IServiceProvider services, string code, string? password, CancellationToken cancellationToken)
+    private async Task<DemoPackContext> CreateContextAsync(IServiceProvider services, string code, string? password, CancellationToken cancellationToken)
     {
         var store = services.GetRequiredService<IDemoRecordStore>();
         var records = await store.ActiveAsync(PlatformDemoPack.ContributorCode, cancellationToken).ConfigureAwait(false);
         var people = PlatformDemoPack.PeopleFrom(records);
         var units = PlatformDemoPack.UnitsFrom(records);
-        var requestContext = services.GetRequiredService<RequestContext>();
-        var users = services.GetRequiredService<StrategyUserManager>();
-        var claims = services.GetRequiredService<IUserClaimsPrincipalFactory<StrategyUser>>();
         var principals = new Dictionary<Guid, ClaimsPrincipal>();
 
-        async Task ActAs(DemoPerson? person)
+        // Each call is one unit of work in its own scope (like one HTTP request): DbContexts, transactions and the request context are fresh.
+        async Task<object?> Run(DemoPerson? person, Func<IServiceProvider, Task<object?>> work)
         {
-            if (person is null)
+            await using var scope = CreateScope();
+            if (person is not null)
             {
-                requestContext.SetUser(StrategyClaims.CreateSystemPrincipal());
-                return;
+                if (!principals.TryGetValue(person.UserId, out var principal))
+                {
+                    var user = await scope.ServiceProvider.GetRequiredService<StrategyUserManager>().FindByIdAsync(person.UserId.ToString()).ConfigureAwait(false)
+                        ?? throw new DemoPackException("demo.personMissing", $"Demo user {person.Key} does not exist.");
+                    var created = await scope.ServiceProvider.GetRequiredService<IUserClaimsPrincipalFactory<StrategyUser>>().CreateAsync(user).ConfigureAwait(false);
+                    var identity = new ClaimsIdentity(created.Claims, "strategy-demo", ClaimTypes.Name, ClaimTypes.Role);
+                    identity.AddClaim(new Claim(StrategyClaims.AuthMethod, "mfa"));
+                    principal = new ClaimsPrincipal(identity);
+                    principals[person.UserId] = principal;
+                }
+
+                scope.ServiceProvider.GetRequiredService<RequestContext>().SetUser(principal);
             }
 
-            if (!principals.TryGetValue(person.UserId, out var principal))
-            {
-                var user = await users.FindByIdAsync(person.UserId.ToString()).ConfigureAwait(false)
-                    ?? throw new DemoPackException("demo.personMissing", $"Demo user {person.Key} does not exist.");
-                var created = await claims.CreateAsync(user).ConfigureAwait(false);
-                var identity = new ClaimsIdentity(created.Claims, "strategy-demo", ClaimTypes.Name, ClaimTypes.Role);
-                identity.AddClaim(new Claim(StrategyClaims.AuthMethod, "mfa"));
-                principal = new ClaimsPrincipal(identity);
-                principals[person.UserId] = principal;
-            }
-
-            requestContext.SetUser(principal);
+            return await work(scope.ServiceProvider).ConfigureAwait(false);
         }
 
         var today = await TodayAsync(services, cancellationToken).ConfigureAwait(false);
-        return new DemoPackContext(code, DemoPackContext.PackVersion, today, store, people, units, ActAs, password);
+        return new DemoPackContext(code, DemoPackContext.PackVersion, today, store, people, units, Run, password);
     }
 
     private static async Task<DateOnly> TodayAsync(IServiceProvider services, CancellationToken cancellationToken)

@@ -1,3 +1,4 @@
+using Microsoft.Extensions.DependencyInjection;
 using Strategy.Platform.Kernel.Results;
 
 namespace Strategy.Platform.Kernel.Demo;
@@ -29,12 +30,17 @@ public interface IDemoPackContributor
 public sealed record DemoPerson(string Key, Guid UserId, Guid EmployeeId, Guid UnitId, string Email, string NameAr, string NameEn);
 
 /// <summary>A record created by the demo pack, as tracked in <c>core.demo_record</c>.</summary>
-public sealed record DemoRecordRef(string Contributor, string ResourceType, Guid ResourceId, string? Key);
+/// <param name="Contributor">The contributor that created it.</param>
+/// <param name="ResourceType">Module record type, e.g. <c>tasks.task</c>.</param>
+/// <param name="ResourceId">The record's id.</param>
+/// <param name="Key">Optional lookup key for other contributors.</param>
+/// <param name="Actor">Key of the demo person who created it and removes it again (e.g. the creator who may cancel a task).</param>
+public sealed record DemoRecordRef(string Contributor, string ResourceType, Guid ResourceId, string? Key, string? Actor);
 
 /// <summary>Stores what the demo pack created, so that it can be listed and removed (implemented by Platform.Organisation).</summary>
 public interface IDemoRecordStore
 {
-    Task TrackAsync(string contributor, string resourceType, Guid resourceId, string? key, string packVersion, CancellationToken cancellationToken);
+    Task TrackAsync(string contributor, string resourceType, Guid resourceId, string? key, string? actor, string packVersion, CancellationToken cancellationToken);
 
     /// <summary>Records not yet removed; <paramref name="contributor"/> null means all.</summary>
     Task<IReadOnlyList<DemoRecordRef>> ActiveAsync(string? contributor, CancellationToken cancellationToken);
@@ -44,7 +50,8 @@ public interface IDemoRecordStore
 
 /// <summary>
 /// What a contributor gets: the demo people, a way to act as one of them (so records have realistic creators and owners and go through the
-/// same record-level checks as in the UI) and the tracker.
+/// same record-level checks as in the UI) and the tracker. Every <see cref="SendAsync{TResult}"/> / <see cref="RunAsync{T}"/> call runs in its own
+/// service scope, like one HTTP request: channel <c>import</c>, the current person (or the system), the audit reason "demo pack".
 /// </summary>
 public sealed class DemoPackContext(
     string contributor,
@@ -53,7 +60,7 @@ public sealed class DemoPackContext(
     IDemoRecordStore store,
     IReadOnlyDictionary<string, DemoPerson> people,
     IReadOnlyDictionary<string, Guid> units,
-    Func<DemoPerson?, Task> actAs,
+    Func<DemoPerson?, Func<IServiceProvider, Task<object?>>, Task<object?>> run,
     string? password = null)
 {
     public const string PackVersion = "1.0";
@@ -78,13 +85,45 @@ public sealed class DemoPackContext(
         People.TryGetValue(key, out var person) ? person : throw new InvalidOperationException($"Demo person '{key}' is not loaded.");
 
     /// <summary>Runs the following commands as this demo person (channel stays <c>import</c>).</summary>
-    public Task ActAsAsync(string personKey) => actAs(Person(personKey));
+    public Task ActAsAsync(string personKey)
+    {
+        _person = Person(personKey);
+        CurrentActor = personKey;
+        return Task.CompletedTask;
+    }
 
     /// <summary>Runs the following commands as the system principal (seeding without a person).</summary>
-    public Task ActAsSystemAsync() => actAs(null);
+    public Task ActAsSystemAsync()
+    {
+        _person = null;
+        CurrentActor = null;
+        return Task.CompletedTask;
+    }
 
-    public Task TrackAsync(string resourceType, Guid resourceId, string? key = null, CancellationToken cancellationToken = default) =>
-        store.TrackAsync(Contributor, resourceType, resourceId, key, Version, cancellationToken);
+    private DemoPerson? _person;
+
+    /// <summary>Sends a command or query of the contributor's module through the dispatcher, in a new scope, as the current person.</summary>
+    public async Task<Result<TResult>> SendAsync<TResult>(Messaging.IRequest<TResult> request, CancellationToken cancellationToken = default) =>
+        (Result<TResult>)(await run(_person, async services =>
+            (object?)await services.GetRequiredService<Messaging.IDispatcher>().SendAsync(request, cancellationToken).ConfigureAwait(false)).ConfigureAwait(false))!;
+
+    /// <summary>Runs other work (e.g. a file upload through <c>IFileService</c>) in a new scope, as the current person.</summary>
+    public async Task<T> RunAsync<T>(Func<IServiceProvider, Task<T>> work) =>
+        (T)(await run(_person, async services => (object?)await work(services).ConfigureAwait(false)).ConfigureAwait(false))!;
+
+    /// <summary>Records a created record; <paramref name="actor"/> is the demo person who removes it again (default: the person acted as).</summary>
+    public Task TrackAsync(string resourceType, Guid resourceId, string? key = null, string? actor = null, CancellationToken cancellationToken = default) =>
+        store.TrackAsync(Contributor, resourceType, resourceId, key, actor ?? CurrentActor, Version, cancellationToken);
+
+    /// <summary>Key of the demo person the contributor currently acts as (null: system).</summary>
+    public string? CurrentActor { get; private set; }
+
+    /// <summary>Acts as the person who created <paramref name="record"/> (or as the system when none was recorded).</summary>
+    public Task ActAsAsync(DemoRecordRef record)
+    {
+        ArgumentNullException.ThrowIfNull(record);
+        return record.Actor is { } key && People.ContainsKey(key) ? ActAsAsync(key) : ActAsSystemAsync();
+    }
 
     /// <summary>This contributor's records not yet removed, newest last.</summary>
     public async Task<IReadOnlyList<DemoRecordRef>> TrackedAsync(string? resourceType = null, CancellationToken cancellationToken = default)

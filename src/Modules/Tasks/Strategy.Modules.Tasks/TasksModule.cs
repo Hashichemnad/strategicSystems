@@ -34,6 +34,7 @@ public sealed class TasksModule : IModule
     {
         services.AddModuleDbContext<TasksDbContext>(TasksDbContext.SchemaName);
         services.AddRequestHandlersFrom(typeof(TasksModule).Assembly);
+        services.AddScoped<Strategy.Platform.Kernel.Demo.IDemoPackContributor, Demo.TasksDemoPack>();
         services.AddAccessCatalogue(new TasksAccessCatalogue());
         services.AddNumberingFormat(TasksAccessCatalogue.TaskNumbering);
         services.AddNumberingFormat(TasksAccessCatalogue.TimesheetNumbering);

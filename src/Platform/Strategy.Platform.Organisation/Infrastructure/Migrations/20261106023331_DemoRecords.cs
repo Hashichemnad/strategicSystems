@@ -21,6 +21,7 @@ namespace Strategy.Platform.Organisation.Infrastructure.Migrations
                     resource_type = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     resource_id = table.Column<Guid>(type: "uuid", nullable: false),
                     key = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    actor = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: true),
                     pack_version = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
                     removed_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
                     created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),

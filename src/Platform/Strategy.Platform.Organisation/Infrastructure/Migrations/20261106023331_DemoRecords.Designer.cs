@@ -13,7 +13,7 @@ using Strategy.Platform.Organisation.Infrastructure;
 namespace Strategy.Platform.Organisation.Infrastructure.Migrations
 {
     [DbContext(typeof(OrgDbContext))]
-    [Migration("20261106021729_DemoRecords")]
+    [Migration("20261106023331_DemoRecords")]
     partial class DemoRecords
     {
         /// <inheritdoc />
@@ -33,6 +33,11 @@ namespace Strategy.Platform.Organisation.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid")
                         .HasColumnName("id");
+
+                    b.Property<string>("Actor")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("actor");
 
                     b.Property<string>("Contributor")
                         .IsRequired()

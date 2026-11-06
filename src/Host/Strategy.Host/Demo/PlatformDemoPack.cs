@@ -4,7 +4,6 @@ using Strategy.Platform.Identity.Application;
 using Strategy.Platform.Identity.Domain;
 using Strategy.Platform.Identity.Infrastructure;
 using Strategy.Platform.Kernel.Demo;
-using Strategy.Platform.Kernel.Messaging;
 using Strategy.Platform.Organisation.Application;
 using Strategy.Platform.Organisation.Domain;
 
@@ -16,8 +15,7 @@ namespace Strategy.Host.Demo;
 /// access to every system and the office roles of the demo Director General. Codes start with <c>DEMO-</c>, names say "(demo)".
 /// Removal: employees marked as left, accounts deactivated and locked, units deactivated (deepest first).
 /// </summary>
-internal sealed class PlatformDemoPack(IDispatcher dispatcher, StrategyUserManager users, UserAdministration administration,
-    IdentitySettingsCache identitySettings, IServiceProvider services) : IDemoPackContributor
+internal sealed class PlatformDemoPack : IDemoPackContributor
 {
     public const string ContributorCode = "platform";
     private const string UnitType = "org.unit";
@@ -73,6 +71,7 @@ internal sealed class PlatformDemoPack(IDispatcher dispatcher, StrategyUserManag
     [
         ("strategyHead", "kpi.strategy-office"), ("pm", "portfolio.pm-office"), ("auditHead", "auditmgmt.audit-office"),
         ("auditor", "auditmgmt.audit-office"), ("financeHead", "portfolio.budget-section"),
+        ("strategyHead", "risk.coordinator"), ("financeHead", "risk.coordinator"), ("auditHead", "risk.coordinator"),
     ];
 
     public string Code => ContributorCode;
@@ -109,25 +108,29 @@ internal sealed class PlatformDemoPack(IDispatcher dispatcher, StrategyUserManag
             throw new DemoPackException("demo.passwordRequired", "A password for the demo users is required.");
         }
 
-        await identitySettings.ReloadAsync(cancellationToken).ConfigureAwait(false);
+        await context.RunAsync(async services =>
+        {
+            await services.GetRequiredService<IdentitySettingsCache>().ReloadAsync(cancellationToken).ConfigureAwait(false);
+            return true;
+        }).ConfigureAwait(false);
         var effective = new DateOnly(context.Today.Year - 1, 1, 1);
         var units = new Dictionary<string, Guid>(StringComparer.Ordinal);
         foreach (var seed in UnitSeeds)
         {
-            var unit = (await dispatcher.SendAsync(new CreateUnit(seed.Code, seed.NameAr, seed.NameEn, seed.Level,
+            var unit = (await context.SendAsync(new CreateUnit(seed.Code, seed.NameAr, seed.NameEn, seed.Level,
                 seed.Parent is null ? null : units[seed.Parent], null, null, null, effective), cancellationToken).ConfigureAwait(false)).Require("unit " + seed.Code);
             units[seed.Key] = unit.Id;
-            await context.TrackAsync(UnitType, unit.Id, "unit:" + seed.Key, cancellationToken).ConfigureAwait(false);
+            await context.TrackAsync(UnitType, unit.Id, "unit:" + seed.Key, cancellationToken: cancellationToken).ConfigureAwait(false);
         }
 
         var employees = new Dictionary<string, Guid>(StringComparer.Ordinal);
         foreach (var seed in PersonSeeds)
         {
-            var employee = (await dispatcher.SendAsync(new CreateEmployee(seed.Number, seed.NameAr, seed.NameEn, Email(seed.Key), null, seed.TitleAr, seed.TitleEn,
+            var employee = (await context.SendAsync(new CreateEmployee(seed.Number, seed.NameAr, seed.NameEn, Email(seed.Key), null, seed.TitleAr, seed.TitleEn,
                 null, units[seed.Unit], seed.Manager is null ? null : employees[seed.Manager], effective), cancellationToken).ConfigureAwait(false))
                 .Require("employee " + seed.Number);
             employees[seed.Key] = employee.Id;
-            await context.TrackAsync(EmployeeType, employee.Id, "employee:" + seed.Key, cancellationToken).ConfigureAwait(false);
+            await context.TrackAsync(EmployeeType, employee.Id, "employee:" + seed.Key, cancellationToken: cancellationToken).ConfigureAwait(false);
 
             var user = new StrategyUser
             {
@@ -137,28 +140,35 @@ internal sealed class PlatformDemoPack(IDispatcher dispatcher, StrategyUserManag
                 EmployeeId = employee.Id,
                 CreatedAt = DateTimeOffset.UtcNow,
             };
-            var created = await users.CreateAsync(user, context.Password).ConfigureAwait(false);
+            var password = context.Password;
+            var created = await context.RunAsync(services => services.GetRequiredService<StrategyUserManager>().CreateAsync(user, password)).ConfigureAwait(false);
             if (!created.Succeeded)
             {
                 throw new DemoPackException("demo.userRefused", "Demo user refused: " + string.Join(", ", created.Errors.Select(e => e.Code)));
             }
 
-            await context.TrackAsync(UserType, user.Id, "user:" + seed.Key, cancellationToken).ConfigureAwait(false);
-            foreach (var system in Systems)
+            await context.TrackAsync(UserType, user.Id, "user:" + seed.Key, cancellationToken: cancellationToken).ConfigureAwait(false);
+            var roles = seed.Key == "director" ? DirectorRoles : PersonRoles.Where(r => r.Person == seed.Key).Select(r => r.Role).ToArray();
+            await context.RunAsync(async services =>
             {
-                await AccessGrants.GrantSystemAccessAsync(services, system, AccessGrants.User, user.Id, cancellationToken).ConfigureAwait(false);
-            }
+                foreach (var system in Systems)
+                {
+                    await AccessGrants.GrantSystemAccessAsync(services, system, AccessGrants.User, user.Id, cancellationToken).ConfigureAwait(false);
+                }
 
-            foreach (var role in seed.Key == "director" ? DirectorRoles : PersonRoles.Where(r => r.Person == seed.Key).Select(r => r.Role))
-            {
-                await AccessGrants.AssignRoleAsync(services, role, AccessGrants.User, user.Id, cancellationToken).ConfigureAwait(false);
-            }
+                foreach (var role in roles)
+                {
+                    await AccessGrants.AssignRoleAsync(services, role, AccessGrants.User, user.Id, cancellationToken).ConfigureAwait(false);
+                }
+
+                return true;
+            }).ConfigureAwait(false);
         }
 
         foreach (var (unitKey, head) in Heads)
         {
-            var unit = (await dispatcher.SendAsync(new GetUnit(units[unitKey]), cancellationToken).ConfigureAwait(false)).Require("unit " + unitKey);
-            (await dispatcher.SendAsync(new UpdateUnit(unit.Id, unit.Code, unit.NameAr, unit.NameEn, unit.LevelCode, employees[head], null, unit.CostCentre, null,
+            var unit = (await context.SendAsync(new GetUnit(units[unitKey]), cancellationToken).ConfigureAwait(false)).Require("unit " + unitKey);
+            (await context.SendAsync(new UpdateUnit(unit.Id, unit.Code, unit.NameAr, unit.NameEn, unit.LevelCode, employees[head], null, unit.CostCentre, null,
                 unit.Version), cancellationToken).ConfigureAwait(false)).Require("head of " + unitKey);
         }
     }
@@ -168,27 +178,33 @@ internal sealed class PlatformDemoPack(IDispatcher dispatcher, StrategyUserManag
         var records = await context.TrackedAsync(cancellationToken: cancellationToken).ConfigureAwait(false);
         foreach (var record in records.Where(r => r.ResourceType == UserType))
         {
-            if (await users.FindByIdAsync(record.ResourceId.ToString()) is not { } user)
+            var id = record.ResourceId;
+            if (await context.RunAsync(services => services.GetRequiredService<StrategyUserManager>().FindByIdAsync(id.ToString())).ConfigureAwait(false) is not { } found)
             {
                 continue;
             }
 
-            if (user.Active)
+            if (found.Active)
             {
-                (await administration.SetActiveAsync(user.Id, false, cancellationToken).ConfigureAwait(false)).Require("deactivate " + user.UserName);
-                user = (await users.FindByIdAsync(record.ResourceId.ToString()).ConfigureAwait(false))!;
+                (await context.RunAsync(services => services.GetRequiredService<UserAdministration>().SetActiveAsync(id, false, cancellationToken)).ConfigureAwait(false))
+                    .Require("deactivate " + found.UserName);
             }
 
-            await users.SetLockoutEnabledAsync(user, true).ConfigureAwait(false);
-            await users.SetLockoutEndDateAsync(user, DateTimeOffset.MaxValue).ConfigureAwait(false);
+            await context.RunAsync(async services =>
+            {
+                var users = services.GetRequiredService<StrategyUserManager>();
+                var user = (await users.FindByIdAsync(id.ToString()).ConfigureAwait(false))!;
+                await users.SetLockoutEnabledAsync(user, true).ConfigureAwait(false);
+                return await users.SetLockoutEndDateAsync(user, DateTimeOffset.MaxValue).ConfigureAwait(false);
+            }).ConfigureAwait(false);
         }
 
         foreach (var record in records.Where(r => r.ResourceType == EmployeeType))
         {
-            var employee = await dispatcher.SendAsync(new GetEmployee(record.ResourceId), cancellationToken).ConfigureAwait(false);
+            var employee = await context.SendAsync(new GetEmployee(record.ResourceId), cancellationToken: cancellationToken).ConfigureAwait(false);
             if (employee.IsSuccess && employee.Value.Status != EmployeeStatus.Left)
             {
-                (await dispatcher.SendAsync(new ChangeEmployeeStatus(record.ResourceId, EmployeeStatus.Left, employee.Value.Version), cancellationToken)
+                (await context.SendAsync(new ChangeEmployeeStatus(record.ResourceId, EmployeeStatus.Left, employee.Value.Version), cancellationToken)
                     .ConfigureAwait(false)).Require("employee left");
             }
         }
@@ -196,10 +212,10 @@ internal sealed class PlatformDemoPack(IDispatcher dispatcher, StrategyUserManag
         // Children were created after their parents: deactivate in reverse order.
         foreach (var record in records.Where(r => r.ResourceType == UnitType).Reverse())
         {
-            var unit = await dispatcher.SendAsync(new GetUnit(record.ResourceId), cancellationToken).ConfigureAwait(false);
+            var unit = await context.SendAsync(new GetUnit(record.ResourceId), cancellationToken: cancellationToken).ConfigureAwait(false);
             if (unit.IsSuccess && unit.Value.Active)
             {
-                (await dispatcher.SendAsync(new DeactivateUnit(record.ResourceId, null, unit.Value.Version), cancellationToken).ConfigureAwait(false))
+                (await context.SendAsync(new DeactivateUnit(record.ResourceId, null, unit.Value.Version), cancellationToken).ConfigureAwait(false))
                     .Require("deactivate unit " + unit.Value.Code);
             }
         }

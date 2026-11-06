@@ -33,6 +33,7 @@ public sealed class AuditMgmtModule : IModule
     {
         services.AddModuleDbContext<AuditMgmtDbContext>(AuditMgmtDbContext.SchemaName);
         services.AddRequestHandlersFrom(typeof(AuditMgmtModule).Assembly);
+        services.AddScoped<Strategy.Platform.Kernel.Demo.IDemoPackContributor, Demo.AuditDemoPack>();
         services.AddAccessCatalogue(new AuditAccessCatalogue());
         foreach (var numbering in AuditAccessCatalogue.Numbering)
         {

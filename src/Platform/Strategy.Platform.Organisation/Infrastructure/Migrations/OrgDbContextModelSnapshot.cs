@@ -31,6 +31,11 @@ namespace Strategy.Platform.Organisation.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("id");
 
+                    b.Property<string>("Actor")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("actor");
+
                     b.Property<string>("Contributor")
                         .IsRequired()
                         .HasMaxLength(100)
