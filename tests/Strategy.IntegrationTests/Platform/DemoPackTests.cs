@@ -48,6 +48,9 @@ public sealed class DemoPackTests(PostgresFixture postgres) : IAsyncLifetime
         var status = JsonSerializer.Deserialize<DemoPackStatusDto>(body, JsonSerializerOptions.Web)!;
         status.Contributors.Where(c => c.Status != DemoPackService.Loaded).ShouldBeEmpty(body);
         status.Contributors.ShouldAllBe(c => c.Records > 0);
+        status.Contributors.Select(c => c.Code).ShouldBe(
+            ["platform", "tasks", "teams", "kpi", "risk", "portfolio", "requests", "cap", "auditmgmt"], ignoreOrder: true,
+            "every system gets demo data (Requests covers Document Registry, IP and Benchmarking)");
 
         int tracked;
         await using (var scope = TestAccess.SystemScope(_factory))
