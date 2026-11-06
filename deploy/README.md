@@ -2,25 +2,73 @@
 
 | File | Purpose |
 |---|---|
-| `docker-compose.yml` | Dev dependencies (`postgres`, `gotenberg`, `mailpit`) and a containerised install (profile `app`). Optional profiles: `search`, `antivirus`, `ai`. |
-| `Dockerfile` | Multi-stage build of the single deployable (SPA + host), non-root runtime, built-in healthcheck. |
-| `.env.example` | Settings for compose. Copy to `.env`. |
-| `empty-ca.pem` | Intentionally empty default for the optional `build_ca` secret (see `BUILD_CA_FILE`). |
+| `install.sh` / `install.ps1` | One-command install (Linux / Windows Server or Docker Desktop): `.env` with generated passwords, port check, build or load the image, start, print the setup address and token |
+| `backup.sh` / `backup.ps1` | Consistent backup: database (incl. Data Protection keys), files volume, `.env`, optional certificate; manifest with checksums and row counts |
+| `restore.sh` / `restore.ps1` | Restore with verification: checksums, row count of every table, audit hash chain |
+| `upgrade.sh` / `upgrade.ps1` | In-place upgrade: pre-upgrade backup, new image, migrations as the owner, runtime-role grants, health check, rollback command |
+| `lib.sh` / `lib.ps1` | Helpers shared by the scripts |
+| `VERSION` | Version of this release folder = image tag `strategy-app:<version>` |
+| `docker-compose.yml` | Dev dependencies (`postgres`, `gotenberg`, `mailpit`) and the containerised install (profile `app`). Optional profiles: `search`, `antivirus`, `ai` |
+| `Dockerfile` | Multi-stage build of the single deployable (SPA + host): non-root, read-only-root friendly, OCI labels, healthcheck |
+| `.env.example` | Settings for compose (the installer copies it to `.env`) |
+| `sbom.sh` | CycloneDX SBOM of the image (Syft) and `--scan` vulnerability scan (Trivy) — ADR 0156 |
+| `nginx/strategy.conf` | HTTPS reverse proxy (forwarded headers, SignalR WebSockets, upload size) |
+| `systemd/strategy.service`, `linux/` | Non-Docker install on Linux ([`linux/README.md`](linux/README.md)) |
+| `postgres/init-roles.sh` | Creates the runtime database role on the first start of an empty volume (ADR 0018) |
+| `empty-ca.pem` | Intentionally empty default for the optional `build_ca` secret (see `BUILD_CA_FILE`) |
 
-## First start
+Decisions: ADR 0157 (packaging, scripts, backup format), ADR 0018 (database roles). Verification of this release:
+[`docs/operations/verification-1.0.md`](../docs/operations/verification-1.0.md).
+
+## Requirements
+
+Docker Engine 24+ with Compose v2 (Linux), or Docker Desktop 4.30+ with Linux containers (Windows 10 / 11, Windows Server with WSL 2).
+4 vCPU, 8 GB RAM, 50 GB disk for up to ~500 users; the image build needs about 10 GB free temporarily. Outbound HTTPS only for the AI
+provider you configure (none by default). Offline installs: save the image on a connected machine
+(`docker save strategy-app:1.0.0 -o strategy-app-1.0.0.tar`, plus `postgres:16-alpine` and `gotenberg/gotenberg:8`), load the base images
+with `docker load`, then `./deploy/install.sh --image strategy-app-1.0.0.tar`.
+
+## Install
 
 ```bash
-cp deploy/.env.example deploy/.env          # change the passwords
-docker compose -f deploy/docker-compose.yml --profile app up -d --build
+./deploy/install.sh                       # Linux
+```
+```powershell
+powershell -ExecutionPolicy Bypass -File deploy\install.ps1     # Windows (PowerShell 5.1 or 7)
 ```
 
-The image `strategy-app` is **built locally, never pulled**: the `migrate` service builds it (`pull_policy: build`) and the `app` service
-reuses it (`pull_policy: never`), so the command above works on a fresh machine (no "pull access denied for strategy-app"). `APP_VERSION`
-only tags the locally built image. `migrate` applies the migrations as the database owner, grants the runtime role (ADR 0018) and exits;
-`app` starts after it.
+The installer creates `deploy/.env` with **generated passwords** (kept on later runs; example passwords are refused), checks that the
+ports are free, builds `strategy-app:<version>` (or loads `--image <archive>`), starts PostgreSQL, Gotenberg, `migrate` (migrations as the
+owner, grants for the runtime role) and the application, waits until it is healthy and prints the address and the **one-time setup token**
+for the setup wizard (`/setup`). It is safe to run again.
 
-Create the first administrator (once). It holds the platform administrator roles (ADR 0016). The password is read from standard input,
-never from the command line or a file left on disk:
+**Ports.** Only the application is reachable from the network: `APP_PORT` (default 8080) on `APP_BIND` (default all addresses; set
+`127.0.0.1` when a reverse proxy on the same host is the only entry). PostgreSQL (`POSTGRES_PORT`, 5432) and Gotenberg (`GOTENBERG_PORT`,
+3000) are published on **127.0.0.1 only** — for development and local tools; the application reaches them over the internal network, so
+changing them never affects it. When a port is taken the installer stops before starting anything and says which variable to change:
+
+```
+  Port 8080 (APP_PORT, the application) is already in use on this machine.
+  Choose a free port and run the installer again, for example:
+      APP_PORT=8090 ./deploy/install.sh
+  or set APP_PORT=<port> in deploy/.env. (Find the program using it: sudo ss -ltnp 'sport = :8080')
+```
+On Windows: `$env:APP_PORT = 8090; .\deploy\install.ps1`. The chosen ports are saved in `deploy/.env`. Ports held by this installation's own
+containers (a second run) are not reported.
+
+**Image.** `strategy-app` is built locally (or loaded), never pulled: `migrate` has the build section and both services use
+`pull_policy: never`, so the image is built only when its tag is missing (or with `--build`) and `docker compose … run --rm app …` reuses it
+(Phase 17's `pull_policy: build` rebuilt the image on every `run`). The manual equivalent of the installer is still:
+`cp deploy/.env.example deploy/.env` (change the passwords), then `docker compose -f deploy/docker-compose.yml --profile app up -d --build`.
+
+The container runs as a non-root user with a read-only root file system (writable: `/tmp` as tmpfs and the files volume), no Linux
+capabilities and `no-new-privileges`. Logs rotate (`LOG_MAX_SIZE`, `LOG_MAX_FILES`).
+
+### First administrator
+
+Use the **setup wizard** with the token the installer printed
+(`docker compose -f deploy/docker-compose.yml --profile app logs app | grep 'Setup token:'`). Scripted alternative — it holds the platform
+administrator roles (ADR 0016); the password is read from standard input, never from the command line or a file left on disk:
 
 ```bash
 read -rsp 'Administrator password: ' ADMIN_PASSWORD && echo
@@ -33,12 +81,86 @@ unset ADMIN_PASSWORD
 `docker compose … run --rm migrate` on an upgrade — when the database is up to date; otherwise it stops with "Run --migrate first" and
 changes nothing. Run in the `migrate` service instead (`… run --rm -T migrate --create-admin …`), it first applies pending migrations as
 the owner. The application runs as a non-root user, so a password file mounted from the host must be readable by that user; standard
-input avoids the question.
+input avoids the question. A running application recognises the new administrator's roles within a minute (access cache).
 
 The administrator sets up two-step verification at the first sign-in (required for administrators by default).
 Then, in the application (**Settings**): **Email server** (SMTP and the public address used in email links),
 **Import** (units, then employees), **Users**, **Role assignments** and **System access** (who may open each system),
 and optionally **Identity providers** (see [`docs/identity-providers.md`](../docs/identity-providers.md)).
+
+### HTTPS
+
+Put a TLS reverse proxy in front of the application ([`nginx/strategy.conf`](nginx/strategy.conf)) and set in `deploy/.env`:
+`FORWARDED_HEADERS_ENABLED=true`, `FORWARDED_HEADERS_PROXY=<proxy IP as the app sees it>`, and `APP_BIND=127.0.0.1` for a proxy on the
+same host.
+
+## Backup
+
+```bash
+./deploy/backup.sh                         # → backups/strategy-<version>-<UTC time>/   (Windows: .\deploy\backup.ps1)
+./deploy/backup.sh --output /srv/backups
+```
+
+The application is stopped for the dump (seconds for small databases) so database, files and row counts are one point in time, and started
+again afterwards — also when the backup fails. `--online` skips the stop (the row counts are then informative only). A backup folder holds:
+
+| Part | Content |
+|---|---|
+| `database.dump` | `pg_dump -Fc` of the whole database as the owner — includes the **Data Protection key ring** (`core.data_protection_keys`), so stored secrets and authenticator keys stay readable |
+| `files.tar.gz` | the files volume (`FILES_PROVIDER=local`; with S3 storage back up the bucket with the storage's own tools) |
+| `env` | `deploy/.env` (passwords) |
+| `dataprotection.pfx` | the Data Protection certificate, when `deploy/secrets/dataprotection.pfx` exists or `--certificate <file>` is given |
+| `table-counts.tsv` | exact row count of every table (Quartz runtime tables excluded) |
+| `SHA256SUMS`, `manifest.json` | checksums; version, time, sizes, totals, whether the backup is consistent |
+
+The folder is readable by its owner only. Copy it off the machine and protect the copy (it contains passwords and keys). Schedule it with
+cron or Task Scheduler, e.g. `15 1 * * * cd /opt/strategy && ./deploy/backup.sh --output /srv/backups >> /var/log/strategy-backup.log 2>&1`.
+
+## Restore (verified)
+
+```bash
+./deploy/restore.sh backups/strategy-1.0.0-20261106T021500Z            # asks you to type RESTORE
+./deploy/restore.sh <folder> --yes --with-env                          # unattended; also restore deploy/.env
+```
+
+Checksums verified **before** anything changes → application stopped → database dropped and restored as the owner → **row count of every
+table compared with the backup** (a difference stops the restore; the application is not started) → files restored → `migrate` (upgrades an
+older backup's schema, re-grants the runtime role) → **audit hash chain verified** (`--verify-audit-chain`; a broken chain stops the
+restore) → application started and health-checked. On a new machine run `install.sh` first (new passwords are fine: the runtime role's
+grants come back with the dump), then `restore.sh`. Windows: `.\deploy\restore.ps1 -Backup <folder> [-Yes] [-WithEnv]`. Backups made by
+the bash and the PowerShell scripts are interchangeable.
+
+## Upgrade
+
+Unpack the new release folder over the old one (keep `deploy/.env`), then:
+
+```bash
+./deploy/upgrade.sh          # build from this folder;  --image <archive> offline;  --no-build when the image is already loaded
+```
+
+1. **Pre-upgrade backup** (mandatory; `--no-backup` only right after a backup). 2. New image `strategy-app:<new version>`. 3. Application
+stopped. 4. `migrate` as the **owner** (`ConnectionStrings__StrategyMigrations`): every module's migrations, then the runtime role's grants
+(`SELECT, INSERT` only on the audit trail). 5. `APP_VERSION` saved in `.env`, application started and health-checked.
+
+**Rollback.** On any failure the script prints the command; the previous image stays on the machine:
+
+```bash
+APP_VERSION=<previous version> ./deploy/restore.sh <pre-upgrade backup folder> --yes
+```
+
+Read the release notes before upgrading (About in the user menu).
+
+## Non-Docker install
+
+Linux service with PostgreSQL 16, Gotenberg and Tesseract: [`linux/README.md`](linux/README.md) (`systemd/strategy.service`,
+`linux/strategy.env.example`; the same `--migrate`, `--create-admin` and `--verify-audit-chain` commands; backup / restore / upgrade by hand).
+
+## Software bill of materials and image scan
+
+```bash
+./deploy/sbom.sh            # release/sbom/strategy-app-<version>.cdx.json (CycloneDX, Syft)
+./deploy/sbom.sh --scan     # + Trivy: exit 1 on High / Critical vulnerabilities that have a fix
+```
 
 ## Data Protection keys
 
@@ -89,7 +211,7 @@ strings set as environment variables.
 Until this step is done, the audit trail is still protected by its triggers (no UPDATE, DELETE or TRUNCATE for any role), but the
 application role, as owner, could switch them off.
 
-Install, backup and upgrade scripts arrive in Phase 18.
+Install, backup, restore and upgrade scripts: see above.
 
 ## AI and the MCP server (Phase 5)
 - **AI** is off until an administrator configures a provider in **Settings → AI** (Anthropic Claude, OpenAI, Azure OpenAI or a self-hosted
