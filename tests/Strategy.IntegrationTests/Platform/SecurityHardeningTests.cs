@@ -113,6 +113,30 @@ public class SecurityHardeningTests(PostgresFixture postgres)
         await ldap.ShouldBeValidationProblemAsync("settings.host", "validation.outboundUrlRefused");
     }
 
+    [Fact]
+    public async Task Provider_keys_are_never_returned_and_never_written_to_the_audit_trail()
+    {
+        await using var factory = await ApiFactory.CreateAsync(postgres);
+        var admin = await factory.CreateSignedInClientAsync(admin: true);
+        var secret = "sk-test-" + Guid.CreateVersion7().ToString("N");
+        var created = await admin.PostAsJsonAsync("/api/v1/ai/providers", new
+        {
+            name = "Anthropic",
+            type = "anthropic",
+            apiKey = secret,
+            defaultModel = "claude-model",
+            models = new[] { "claude-model" },
+            maxOutputTokens = 1000,
+            timeoutSeconds = 10,
+            active = true,
+        });
+        created.StatusCode.ShouldBe(HttpStatusCode.OK, await created.Content.ReadAsStringAsync());
+        (await created.Content.ReadAsStringAsync()).ShouldNotContain(secret);
+        (await admin.GetStringAsync("/api/v1/ai/settings")).ShouldNotContain(secret);
+        (await admin.GetStringAsync("/api/v1/audit/entries?system=ai&pageSize=200")).ShouldNotContain(secret);
+        (await admin.GetStringAsync($"/api/v1/audit/entries?text={secret}")).ShouldContain("\"totalCount\":0");
+    }
+
     private static async Task<List<string>> SignInCookiesAsync(ApiFactory factory, Uri baseAddress, TestUser user)
     {
         var client = factory.CreateClient(new WebApplicationFactoryClientOptions { BaseAddress = baseAddress, HandleCookies = false });

@@ -32,7 +32,9 @@ FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 # Licence notices: the copyright file of every package the OCR install adds (Tesseract and the OS libraries it loads, some LGPL) is copied
 # to /app/licenses/ocr/ with a package list (name, version); the build fails if one is missing. docs/THIRD_PARTY_LICENSES.md lists them.
 ARG INSTALL_OCR=true
+# apt-get upgrade: security fixes of the base image's packages published after the base image was built (Trivy, docs/security/scan-results.md).
 RUN apt-get update \
+    && apt-get upgrade -y --no-install-recommends \
     && (apt-get install -y --no-install-recommends libldap2 || apt-get install -y --no-install-recommends libldap-2.5-0) \
     && if [ "$INSTALL_OCR" = "true" ]; then \
          dpkg-query -W -f='${Package}\n' | sort > /tmp/before \
