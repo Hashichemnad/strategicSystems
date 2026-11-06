@@ -103,6 +103,12 @@ internal static class HostSetup
         app.MapStrategyHealthChecks();
         app.MapStrategyOpenApi();
         app.MapAntiforgeryEndpoint();
+        if (app.Environment.IsDevelopment() && app.Configuration.GetValue("Development:MockUaePass", defaultValue: false))
+        {
+            // Demonstrations and E2E only (ADR 0154): a stand-in UAE Pass issuer; never mapped outside Development.
+            app.MapMockUaePassIssuer();
+        }
+
         foreach (var component in components)
         {
             component.MapEndpoints(app);
