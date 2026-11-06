@@ -36,6 +36,7 @@ public sealed class CapModule : IModule
     {
         services.AddModuleDbContext<CapDbContext>(CapDbContext.SchemaName);
         services.AddRequestHandlersFrom(typeof(CapModule).Assembly);
+        services.AddScoped<Strategy.Platform.Kernel.Demo.IDemoPackContributor, Demo.CapDemoPack>();
         services.AddAccessCatalogue(new CapAccessCatalogue());
         services.AddNumberingFormat(CapAccessCatalogue.SourceNumbering);
         services.AddNumberingFormat(CapAccessCatalogue.RemarkNumbering);

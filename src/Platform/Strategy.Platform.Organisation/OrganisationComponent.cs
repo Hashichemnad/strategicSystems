@@ -34,6 +34,7 @@ public sealed class OrganisationComponent : IPlatformComponent
         services.AddScoped<EmployeeChange>();
         services.AddScoped<DelegationReader>();
         services.AddScoped<OrgImporter>();
+        services.AddScoped<Strategy.Platform.Kernel.Demo.IDemoRecordStore, Demo.DemoRecordStore>();
         services.AddScoped<IOrgDirectory, OrgDirectory>();
         services.AddScoped<IEmployeeDirectory, EmployeeDirectory>();
         services.AddScoped<IDelegationQuery, DelegationQuery>();

@@ -35,6 +35,7 @@ public sealed class RiskModule : IModule
     {
         services.AddModuleDbContext<RiskDbContext>(RiskDbContext.SchemaName);
         services.AddRequestHandlersFrom(typeof(RiskModule).Assembly);
+        services.AddScoped<Strategy.Platform.Kernel.Demo.IDemoPackContributor, Demo.RiskDemoPack>();
         services.AddAccessCatalogue(new RiskAccessCatalogue());
         services.AddNumberingFormat(RiskAccessCatalogue.RiskNumbering);
         services.AddNumberingFormat(RiskAccessCatalogue.ActionNumbering);

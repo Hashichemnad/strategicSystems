@@ -34,6 +34,7 @@ public sealed class KpiModule : IModule
     {
         services.AddModuleDbContext<KpiDbContext>(KpiDbContext.SchemaName);
         services.AddRequestHandlersFrom(typeof(KpiModule).Assembly);
+        services.AddScoped<Strategy.Platform.Kernel.Demo.IDemoPackContributor, Demo.KpiDemoPack>();
         services.AddAccessCatalogue(new KpiAccessCatalogue());
         services.AddNumberingFormat(KpiAccessCatalogue.CardNumbering);
         foreach (var lookup in KpiAccessCatalogue.Lookups)

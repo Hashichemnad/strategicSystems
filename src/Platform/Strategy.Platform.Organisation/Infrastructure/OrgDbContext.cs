@@ -29,6 +29,9 @@ public sealed class OrgDbContext(DbContextOptions<OrgDbContext> options) : Modul
 
     public DbSet<Delegation> Delegations => Set<Delegation>();
 
+    /// <summary>Records created by the optional demo pack (ADR 0153).</summary>
+    public DbSet<Demo.DemoRecord> DemoRecords => Set<Demo.DemoRecord>();
+
     /// <summary>Structure, placement and manager changes feed data scopes: tell the access cache (ADR 0015).</summary>
     public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
     {
