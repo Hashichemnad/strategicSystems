@@ -83,6 +83,7 @@ export function EmployeesPage() {
           onChange={(event) => setText(event.target.value)}
         />
         <Select
+          aria-label={t('fields.unit')}
           className="w-56"
           value={search.unitId ?? 'all'}
           onValueChange={(value) =>
@@ -97,6 +98,7 @@ export function EmployeesPage() {
           ]}
         />
         <Select
+          aria-label={t('fields.status')}
           className="w-44"
           value={search.status ?? 'all'}
           onValueChange={(value) =>

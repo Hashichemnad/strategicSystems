@@ -241,25 +241,17 @@ export function MonthlyHistoryExtras({ project, update }: { project: ProjectFull
       {reportOn && update.status === 'approved' && (
         <div className="flex flex-wrap items-center gap-2" data-testid="status-report-download">
           <span className="text-muted-foreground">{t('monthly.statusReport')}</span>
-          <Button
-            size="sm"
-            variant="outline"
-            loading={busy === 'ar'}
-            onClick={() => void download('ar')}
-            aria-label={t('monthly.downloadAr')}
-          >
+          <Button size="sm" variant="outline" loading={busy === 'ar'} onClick={() => void download('ar')}>
             <FileDown aria-hidden />
             <span lang="ar">العربية</span>
+            {/* Visible language first in the name (WCAG 2.5.3). */}
+            <span className="sr-only"> — {t('monthly.downloadAr')}</span>
           </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            loading={busy === 'en'}
-            onClick={() => void download('en')}
-            aria-label={t('monthly.downloadEn')}
-          >
+          <Button size="sm" variant="outline" loading={busy === 'en'} onClick={() => void download('en')}>
             <FileDown aria-hidden />
             <span lang="en">English</span>
+            {/* Visible language first in the name (WCAG 2.5.3). */}
+            <span className="sr-only"> — {t('monthly.downloadEn')}</span>
           </Button>
         </div>
       )}

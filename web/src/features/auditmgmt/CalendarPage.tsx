@@ -61,12 +61,13 @@ export function AuditCalendarPage() {
     <AuditPageLayout testId="audit-calendar">
       <PageHeader title={t('calendar.title')} description={t('calendar.description')} />
       <div className="flex flex-wrap items-end gap-3">
-        <div className="flex gap-1" role="tablist" aria-label={t('calendar.range')}>
+        <div className="flex gap-1" role="group" aria-label={t('calendar.range')}>
           {(['week', 'month', 'next-month'] as const).map((r) => (
             <Button
               key={r}
               size="sm"
               variant={range === r ? 'primary' : 'ghost'}
+              aria-pressed={range === r}
               onClick={() => setRange(r)}
               data-testid={`audit-calendar-${r}`}
             >

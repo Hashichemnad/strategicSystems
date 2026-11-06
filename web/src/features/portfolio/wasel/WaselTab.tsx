@@ -213,7 +213,7 @@ function AssignmentsSection({ project, panel }: { project: ProjectFull; panel: W
                 <Link
                   to="/portfolio/vendors/$vendorId"
                   params={{ vendorId: a.vendorId }}
-                  className="font-medium text-primary hover:underline"
+                  className="font-medium text-primary underline underline-offset-2"
                 >
                   {a.vendorNumber} · {pickText(lang, a.vendorNameAr, a.vendorNameEn)}
                 </Link>
@@ -1108,7 +1108,11 @@ export function EvidenceLinks({ files }: { files: { id: string; name: string; sc
     <ul className="flex flex-col gap-1">
       {files.map((f) => (
         <li key={f.id}>
-          <a className="text-primary hover:underline" href={contentUrl(f.id, undefined, true)} dir="auto">
+          <a
+            className="text-primary underline underline-offset-2"
+            href={contentUrl(f.id, undefined, true)}
+            dir="auto"
+          >
             {f.name}
           </a>
           {f.scanStatus !== 'clean' && f.scanStatus !== 'not-scanned' && (

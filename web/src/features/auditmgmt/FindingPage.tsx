@@ -401,13 +401,21 @@ function RecommendationCard({
                   <ShieldCheck aria-hidden />
                   {t('recommendation.acceptRisk')}
                 </Button>
-                <Button size="sm" variant="ghost" onClick={() => onDialog('edit-rec')}>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => onDialog('edit-rec')}
+                  aria-label={t('recommendation.edit')}
+                  title={t('recommendation.edit')}
+                >
                   <Pencil aria-hidden />
                 </Button>
                 <Button
                   size="sm"
                   variant="ghost"
                   onClick={() => onDialog('cancel-rec')}
+                  aria-label={t('recommendation.cancel')}
+                  title={t('recommendation.cancel')}
                   data-testid="audit-rec-cancel"
                 >
                   <Ban aria-hidden />

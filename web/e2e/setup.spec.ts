@@ -4,6 +4,7 @@ import { createWriteStream, existsSync, mkdirSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { expectAccessible } from './a11y';
 import { nextTotp, tr, type Language } from './fixtures';
 
 /**
@@ -124,6 +125,8 @@ function setupToken(language: Language): string {
 
 async function shot(page: Page, language: Language, name: string) {
   await page.waitForLoadState('networkidle');
+  // Every step of the wizard is also checked against WCAG 2.1 AA (docs/accessibility.md).
+  await expectAccessible(page, name);
   await page.screenshot({ path: join(screenshotDir, `${language}-${name}.png`), fullPage: true });
 }
 
@@ -132,12 +135,9 @@ test('a fresh installation is set up through the wizard and the first administra
 }, testInfo) => {
   const { language } = testInfo.project.metadata as { language: Language };
   const t = (key: string, params?: Record<string, string>) => tr(language, key, params);
-  // The last "Next": an embedded Settings screen (organisation import) has a wizard of its own.
-  const next = () =>
-    page
-      .getByRole('button', { name: t('common:actions.next') })
-      .last()
-      .click();
+  const next = () => page.getByRole('button', { name: t('common:actions.next'), exact: true }).click();
+  // Stage 2 names its buttons "Next setup step": an embedded Settings screen (organisation import) has a wizard of its own.
+  const nextStep = () => page.getByRole('button', { name: t('setup:configure.nextStep') }).click();
   const heading = (key: string) => page.getByRole('heading', { level: 2, name: t(key) });
   await page.addInitScript((lang) => {
     if (!sessionStorage.getItem('e2e.initialised')) {
@@ -223,11 +223,11 @@ test('a fresh installation is set up through the wizard and the first administra
     await expect(heading(`setup:configure.steps.${step}`)).toBeVisible();
     await expect(page.getByTestId(`setup-step-${step}`)).toBeVisible();
     await shot(page, language, `setup-${String(index + 8).padStart(2, '0')}-configure-${step}`);
-    await next();
+    await nextStep();
   }
 
   // The demo pack step appears only when this build offers it.
-  if (await heading('setup:configure.steps.demo').isVisible()) await next();
+  if (await heading('setup:configure.steps.demo').isVisible()) await nextStep();
   await expect(heading('setup:configure.steps.finish')).toBeVisible();
   await page.getByRole('button', { name: t('setup:configure.finish') }).click();
   await expect(page).toHaveURL(/\/$/u);

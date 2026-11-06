@@ -100,6 +100,7 @@ Tools: `dotnet-ef` (MIT), local tool in `dotnet-tools.json`.
 | eslint, @eslint/js, typescript-eslint, eslint-plugin-react-hooks, eslint-plugin-jsx-a11y, globals | MIT |
 | vitest, jsdom, @testing-library/react, @testing-library/user-event, @testing-library/jest-dom | MIT |
 | @playwright/test | Apache-2.0 |
+| @axe-core/playwright, axe-core (WCAG audit in the E2E suite, docs/accessibility.md) | MPL-2.0 |
 | openapi-typescript | MIT |
 | prettier | MIT |
 | @types/react, @types/react-dom, @types/node | MIT |

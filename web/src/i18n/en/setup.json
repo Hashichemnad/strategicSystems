@@ -91,7 +91,9 @@
       "passwordHint": "All demo users sign in with this password. Never use demo data in production.",
       "load": "Load demo data",
       "loaded": "Demo data loaded."
-    }
+    },
+    "previousStep": "Previous setup step",
+    "nextStep": "Next setup step"
   },
   "about": {
     "menu": "About",

@@ -102,7 +102,7 @@ export function VerificationPage() {
         />
       </dl>
 
-      <div className="overflow-x-auto rounded-lg border bg-card">
+      <div>
         <Table>
           <TableHead>
             <TableRow>

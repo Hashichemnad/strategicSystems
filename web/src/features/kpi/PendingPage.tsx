@@ -37,8 +37,12 @@ export function KpiPendingPage() {
       {canScope && (
         <Tabs value={view} onValueChange={(v) => setView(v as 'mine')}>
           <TabsList>
-            <TabsTrigger value="mine">{t('pending.mine')}</TabsTrigger>
-            <TabsTrigger value="scope">{t('pending.scope')}</TabsTrigger>
+            <TabsTrigger filter value="mine">
+              {t('pending.mine')}
+            </TabsTrigger>
+            <TabsTrigger filter value="scope">
+              {t('pending.scope')}
+            </TabsTrigger>
           </TabsList>
         </Tabs>
       )}

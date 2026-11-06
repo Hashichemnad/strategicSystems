@@ -331,15 +331,12 @@ function StoryCard({
         {story.canMove && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button
-                size="sm"
-                variant="ghost"
-                aria-label={t('board.moveCard', { code: story.code })}
-                data-testid="story-move-menu"
-              >
+              <Button size="sm" variant="ghost" data-testid="story-move-menu">
                 {/* Points along the reading direction: mirrored in Arabic. */}
                 <MoveRight className="rtl:-scale-x-100" aria-hidden />
                 <span className="sr-only sm:not-sr-only">{t('board.moveTo')}</span>
+                {/* "Move to…" stays first in the name; the card follows for screen readers (WCAG 2.5.3). */}
+                <span className="sr-only"> {story.code}</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>

@@ -6,6 +6,7 @@ import { errorMessage } from '@/api/problem';
 import { useCan } from '@/features/access/session';
 import {
   Button,
+  EmbeddedPage,
   EmptyState,
   FormField,
   Input,
@@ -78,7 +79,9 @@ export function ConfigurePage() {
     content: (
       <div className="flex flex-col gap-4" data-testid={`setup-step-${key}`}>
         <StatusBanner tone="info" title={t(`configure.hints.${key}`)} />
-        <Suspense fallback={<Skeleton className="h-64" />}>{content}</Suspense>
+        <EmbeddedPage>
+          <Suspense fallback={<Skeleton className="h-64" />}>{content}</Suspense>
+        </EmbeddedPage>
       </div>
     ),
   });
@@ -121,7 +124,14 @@ export function ConfigurePage() {
       {demo.isPending ? (
         <Skeleton className="h-96" />
       ) : (
-        <Wizard steps={steps} onFinish={finish} busy={busy} finishLabel={t('configure.finish')} />
+        <Wizard
+          steps={steps}
+          onFinish={finish}
+          busy={busy}
+          finishLabel={t('configure.finish')}
+          backLabel={t('configure.previousStep')}
+          nextLabel={t('configure.nextStep')}
+        />
       )}
     </div>
   );

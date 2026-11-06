@@ -132,7 +132,7 @@ export function TasksPage() {
         >
           <TabsList>
             {(['assigned', 'created', 'follow-up', 'team'] as const).map((tab) => (
-              <TabsTrigger key={tab} value={tab}>
+              <TabsTrigger filter key={tab} value={tab}>
                 {t(`tabs.${tab}`)}
               </TabsTrigger>
             ))}

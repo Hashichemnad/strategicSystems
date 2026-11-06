@@ -156,12 +156,14 @@ function CapacityRowView({ row, threshold }: { row: CapacityRow; threshold: numb
             size="sm"
             data-testid="capacity-toggle"
             aria-expanded={open}
-            aria-label={
-              open ? t('capacity.hideAllocations', { name }) : t('capacity.showAllocations', { name })
-            }
             onClick={() => setOpen((v) => !v)}
           >
             {formatNumber(row.allocations.length, language)}
+            {/* The visible count stays first in the accessible name (WCAG 2.5.3). */}
+            <span className="sr-only">
+              {' — '}
+              {open ? t('capacity.hideAllocations', { name }) : t('capacity.showAllocations', { name })}
+            </span>
             {open ? <ChevronUp aria-hidden /> : <ChevronDown aria-hidden />}
           </Button>
         </TableCell>

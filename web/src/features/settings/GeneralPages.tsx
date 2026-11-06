@@ -303,7 +303,9 @@ export function BrandingPage() {
                     className="h-16 object-contain"
                   />
                 ) : (
-                  <p className="text-sm text-slate-500">{t('branding.noLogo')}</p>
+                  <p className={kind === 'logo-dark' ? 'text-sm text-slate-300' : 'text-sm text-slate-600'}>
+                    {t('branding.noLogo')}
+                  </p>
                 )}
               </div>
               <FileDrop

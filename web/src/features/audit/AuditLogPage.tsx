@@ -198,7 +198,7 @@ export function AuditLogPage() {
         <EmptyState icon={ScrollText} title={t('log.empty')} />
       ) : (
         <>
-          <div className="overflow-x-auto rounded-lg border bg-card">
+          <div>
             <Table>
               <TableHead>
                 <TableRow>

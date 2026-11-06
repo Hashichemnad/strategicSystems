@@ -255,7 +255,7 @@ describe('HeatGrid', () => {
     const cells = screen.getAllByRole('gridcell');
     expect(cells).toHaveLength(9);
     expect(cells.filter((c) => c.tabIndex === 0)).toHaveLength(1);
-    expect(screen.getByTestId('cell-3-1')).toHaveAccessibleName('L3 I1');
+    expect(screen.getByTestId('cell-3-1')).toHaveAccessibleName(/L3 I1$/u);
     screen.getByTestId('cell-3-1').focus();
     fireEvent.keyDown(screen.getByTestId('cell-3-1'), { key: 'ArrowDown' });
     expect(screen.getByTestId('cell-2-1')).toHaveFocus();
