@@ -23,6 +23,7 @@ import {
   ChartColumn,
   ListChecks,
   ListTodo,
+  Rocket,
   Mail,
   MapPinned,
   Palette,
@@ -42,6 +43,7 @@ import {
 } from 'lucide-react';
 
 export type SettingsPageKey =
+  | 'setup'
   | 'teams'
   | 'portfolio'
   | 'kpi'
@@ -84,6 +86,7 @@ export type SettingsPageKey =
   | 'import';
 
 export type SettingsPath =
+  | '/setup/configure'
   | '/settings/regional'
   | '/settings/dashboards'
   | '/settings/reporting'
@@ -145,6 +148,7 @@ export const settingsGroups: readonly SettingsGroup[] = [
   {
     key: 'general',
     pages: [
+      { key: 'setup', to: '/setup/configure', icon: Rocket, permissions: ['settings.setup.manage'] },
       {
         key: 'regional',
         to: '/settings/regional',

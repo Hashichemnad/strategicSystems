@@ -86,6 +86,8 @@ import enAuditMgmt from './en/auditmgmt.json';
 import enBench from './en/bench.json';
 import arCharts from './ar/charts.json';
 import enCharts from './en/charts.json';
+import arSetup from './ar/setup.json';
+import enSetup from './en/setup.json';
 import { readPreference } from '@/lib/preferences';
 
 export const languages = ['ar', 'en'] as const;
@@ -136,6 +138,7 @@ export const resources = {
     bench: arBench,
     auditmgmt: arAuditMgmt,
     charts: arCharts,
+    setup: arSetup,
   },
   en: {
     common: enCommon,
@@ -181,6 +184,7 @@ export const resources = {
     bench: enBench,
     auditmgmt: enAuditMgmt,
     charts: enCharts,
+    setup: enSetup,
   },
 } as const;
 

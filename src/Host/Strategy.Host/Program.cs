@@ -56,6 +56,12 @@ if (args.Contains("--create-admin", StringComparer.Ordinal))
     return await Bootstrap.CreateAdminAsync(app.Services, args, Console.Out);
 }
 
+// `--setup-token` issues a new one-time setup token for the first-run wizard (ADR 0150) and prints it; refused once an administrator exists.
+if (args.Contains("--setup-token", StringComparer.Ordinal))
+{
+    return await Bootstrap.PrintSetupTokenAsync(app.Services, Console.Out);
+}
+
 if (app.Configuration.GetValue("Database:MigrateOnStartup", defaultValue: false))
 {
     await app.Services.GetRequiredService<ModuleMigrator>().MigrateAllAsync();

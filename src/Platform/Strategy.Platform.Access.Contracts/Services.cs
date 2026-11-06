@@ -103,6 +103,12 @@ public interface IUserRoleQuery
     Task GrantPlatformAdministratorAsync(Guid userId, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// True when an active user holds the access administrator role now (directly, or through a unit / everyone assignment). The first-run
+    /// setup wizard is open only while this is false (ADR 0150).
+    /// </summary>
+    Task<bool> AnyPlatformAdministratorAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Active users assigned (directly, as users) a current role holding <paramref name="permission"/>: recipients of administrative
     /// alerts such as a broken audit chain. Unit and everyone assignments are not expanded.
     /// </summary>

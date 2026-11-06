@@ -13,6 +13,8 @@ const connectionString =
  */
 export default defineConfig<E2eOptions>({
   testDir: './e2e',
+  // The first-run setup wizard needs an empty database and its own hosts: playwright.setup.config.ts.
+  testIgnore: 'setup.spec.ts',
   fullyParallel: false,
   workers: 1,
   forbidOnly: Boolean(process.env.CI),

@@ -8,6 +8,7 @@ using Strategy.Platform.AI.Domain;
 using Strategy.Platform.Identity.Application;
 using Strategy.Platform.Identity.Domain;
 using Strategy.Platform.Identity.Infrastructure;
+using Strategy.Platform.Identity.Setup;
 using Strategy.Platform.Kernel.Context;
 using Strategy.Platform.Kernel.Messaging;
 using Strategy.Platform.Mcp.Application;
@@ -83,6 +84,28 @@ internal static partial class Bootstrap
         }
 
         await output.WriteLineAsync($"System administrator {email} created. Multi-factor sign-in is set up at the first sign-in.");
+        return 0;
+    }
+
+    /// <summary><c>--setup-token</c> (ADR 0150): a new one-time token for the setup wizard, printed once; the previous one stops working.</summary>
+    public static async Task<int> PrintSetupTokenAsync(IServiceProvider services, TextWriter output)
+    {
+        if (await services.GetRequiredService<ModuleMigrator>().HasPendingMigrationsAsync())
+        {
+            await output.WriteLineAsync("The database is not up to date. Run --migrate first, then --setup-token.");
+            return 3;
+        }
+
+        await using var scope = services.CreateAsyncScope();
+        scope.ServiceProvider.GetRequiredService<RequestContext>().Initialise(Guid.CreateVersion7().ToString("N"), Channels.System, StrategyClaims.CreateSystemPrincipal());
+        var token = await scope.ServiceProvider.GetRequiredService<SetupService>().IssueTokenAsync();
+        if (token is null)
+        {
+            await output.WriteLineAsync("An administrator exists: the setup wizard is closed and no setup token is issued.");
+            return 1;
+        }
+
+        await output.WriteLineAsync($"Setup token (open /setup in the browser): {token}");
         return 0;
     }
 
@@ -282,6 +305,12 @@ internal static partial class Bootstrap
                 var aiSettings = await editor.GetDocumentAsync<AiSettings>();
                 await editor.SaveAsync(aiSettings.Value with { Enabled = true, DefaultProviderId = demo.Value.Id }, aiSettings.Version, _ => []);
             }
+        }
+
+        // The demo installation is set up: administrators are not sent to the first-run wizard (ADR 0150).
+        if (admin.Succeeded)
+        {
+            await provider.GetRequiredService<SetupService>().CompleteAsync(adminUser.Id);
         }
 
         var mcp = await provider.GetRequiredService<ISettingsEditor>().GetDocumentAsync<McpSettings>();
