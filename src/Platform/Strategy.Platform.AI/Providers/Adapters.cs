@@ -4,6 +4,7 @@ using Anthropic;
 using Microsoft.Extensions.AI;
 using OpenAI;
 using Strategy.Platform.AI.Domain;
+using Strategy.Platform.Kernel.Net;
 
 namespace Strategy.Platform.AI.Providers;
 
@@ -29,8 +30,19 @@ public interface IAiProviderAdapter
     Task<IReadOnlyList<string>> ListModelsAsync(ProviderConnection connection, CancellationToken cancellationToken);
 }
 
+/// <summary>
+/// The HTTP client every provider SDK uses (ADR 0155): connects only to addresses the outbound policy allows (checked at connect time, so a
+/// host name cannot be rebound to the metadata service) and follows no redirects. No client time-out: each SDK applies the provider's own.
+/// </summary>
+internal sealed class AiOutboundHttp(OutboundUrlPolicy policy) : IDisposable
+{
+    public HttpClient Client { get; } = new(policy.CreateHandler()) { Timeout = Timeout.InfiniteTimeSpan };
+
+    public void Dispose() => Client.Dispose();
+}
+
 /// <summary>Anthropic Claude through the official C# SDK (<c>Anthropic</c> NuGet, Apache-2.0).</summary>
-internal sealed class AnthropicAdapter : IAiProviderAdapter
+internal sealed class AnthropicAdapter(AiOutboundHttp http) : IAiProviderAdapter
 {
     public string Type => AiProviderTypes.Anthropic;
 
@@ -46,8 +58,9 @@ internal sealed class AnthropicAdapter : IAiProviderAdapter
         return page.Items.Select(m => m.ID).Order(StringComparer.Ordinal).ToList();
     }
 
-    private static AnthropicClient Client(ProviderConnection connection) => new()
+    private AnthropicClient Client(ProviderConnection connection) => new()
     {
+        HttpClient = http.Client,
         ApiKey = connection.ApiKey,
         MaxRetries = 1,
         Timeout = TimeSpan.FromSeconds(connection.TimeoutSeconds),
@@ -59,7 +72,7 @@ internal sealed class AnthropicAdapter : IAiProviderAdapter
 /// OpenAI, Azure OpenAI (v1 endpoint <c>https://&lt;resource&gt;.openai.azure.com/openai/v1/</c>, the deployment name as the model) and any
 /// OpenAI-compatible server (Ollama, vLLM) through the OpenAI SDK (MIT).
 /// </summary>
-internal sealed class OpenAiFamilyAdapter(string type) : IAiProviderAdapter
+internal sealed class OpenAiFamilyAdapter(string type, AiOutboundHttp http) : IAiProviderAdapter
 {
     public string Type => type;
 
@@ -77,7 +90,12 @@ internal sealed class OpenAiFamilyAdapter(string type) : IAiProviderAdapter
 
     private OpenAIClient Client(ProviderConnection connection)
     {
-        var options = new OpenAIClientOptions { NetworkTimeout = TimeSpan.FromSeconds(connection.TimeoutSeconds), RetryPolicy = new ClientRetryPolicy(1) };
+        var options = new OpenAIClientOptions
+        {
+            NetworkTimeout = TimeSpan.FromSeconds(connection.TimeoutSeconds),
+            RetryPolicy = new ClientRetryPolicy(1),
+            Transport = new HttpClientPipelineTransport(http.Client),
+        };
         if (!string.IsNullOrWhiteSpace(connection.Endpoint))
         {
             options.Endpoint = new Uri(connection.Endpoint);

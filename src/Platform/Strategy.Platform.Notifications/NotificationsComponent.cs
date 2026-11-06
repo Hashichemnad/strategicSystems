@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Strategy.Platform.AI.Tools;
+using Strategy.Platform.Http.Health;
 using Strategy.Platform.Http.Modules;
 using Strategy.Platform.Notifications.Api;
 using Strategy.Platform.Notifications.Application;
@@ -29,6 +30,7 @@ public sealed class NotificationsComponent : IPlatformComponent
         services.AddScoped<IEmailTransport, SmtpEmailTransport>();
         services.AddScoped<ITestEmailSender, TestEmailSender>();
         services.AddScoped<NotificationAdministration>();
+        services.AddAdminHealthContributor<EmailHealthContributor>();
         services.AddMyWorkCardSource<NotificationsMyWorkCard>();
         services.AddAppTool<Mcp.MyNotificationsTool>();
         services.AddScoped<IDatabaseSeeder, NotificationSeeder>();

@@ -85,6 +85,8 @@ import arBench from './ar/bench.json';
 import enAuditMgmt from './en/auditmgmt.json';
 import enBench from './en/bench.json';
 import arCharts from './ar/charts.json';
+import arHealth from './ar/health.json';
+import enHealth from './en/health.json';
 import enCharts from './en/charts.json';
 import arSetup from './ar/setup.json';
 import enSetup from './en/setup.json';
@@ -139,6 +141,7 @@ export const resources = {
     auditmgmt: arAuditMgmt,
     charts: arCharts,
     setup: arSetup,
+    health: arHealth,
   },
   en: {
     common: enCommon,
@@ -185,6 +188,7 @@ export const resources = {
     auditmgmt: enAuditMgmt,
     charts: enCharts,
     setup: enSetup,
+    health: enHealth,
   },
 } as const;
 

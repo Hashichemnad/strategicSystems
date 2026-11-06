@@ -2,6 +2,7 @@ using System.Net.Http.Headers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Strategy.Platform.Http.Health;
 
 namespace Strategy.Platform.Reporting.Pdf;
 
@@ -137,6 +138,40 @@ internal sealed class GotenbergHealthCheck(HttpClient http, GotenbergOptions opt
     }
 }
 
+/// <summary>Health page (ADR 0151): Gotenberg answers <c>/health</c> (round trip in ms), or PDF output is not configured.</summary>
+internal sealed class GotenbergAdminHealthContributor(IHttpClientFactory clients, GotenbergOptions options) : IAdminHealthContributor
+{
+    public const string ClientName = "gotenberg-health";
+
+    public string Code => "pdf";
+
+    public string Group => AdminHealthGroups.Integrations;
+
+    public int Order => 25;
+
+    public async Task<IReadOnlyList<AdminHealthCheck>> CheckAsync(CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(options.Url))
+        {
+            return [new AdminHealthCheck(Code, Group, AdminHealthStatuses.NotConfigured, "health.pdf.notConfigured")];
+        }
+
+        var watch = System.Diagnostics.Stopwatch.StartNew();
+        try
+        {
+            using var http = clients.CreateClient(ClientName);
+            using var response = await http.GetAsync(new Uri(new Uri(options.Url.TrimEnd('/') + "/"), "health"), cancellationToken).ConfigureAwait(false);
+            return response.IsSuccessStatusCode
+                ? [new AdminHealthCheck(Code, Group, AdminHealthStatuses.Ok, "health.pdf.ok", HealthParams.Of(("latencyMs", watch.ElapsedMilliseconds)))]
+                : [new AdminHealthCheck(Code, Group, AdminHealthStatuses.Error, "health.pdf.badStatus", HealthParams.Of(("status", (int)response.StatusCode)))];
+        }
+        catch (Exception exception) when (exception is HttpRequestException or TaskCanceledException && !cancellationToken.IsCancellationRequested)
+        {
+            return [new AdminHealthCheck(Code, Group, AdminHealthStatuses.Error, "health.pdf.unreachable", HealthParams.Of(("error", exception.GetType().Name)))];
+        }
+    }
+}
+
 public static class ReportingServiceCollectionExtensions
 {
     public const string OptionalTag = "optional";
@@ -148,6 +183,8 @@ public static class ReportingServiceCollectionExtensions
         services.AddHttpClient<IPdfRenderer, GotenbergPdfRenderer>(c => c.Timeout = TimeSpan.FromSeconds(Math.Max(5, options.TimeoutSeconds)));
         services.AddHttpClient<GotenbergHealthCheck>(c => c.Timeout = TimeSpan.FromSeconds(5));
         services.AddHealthChecks().AddCheck<GotenbergHealthCheck>("gotenberg", tags: [OptionalTag]);
+        services.AddHttpClient(GotenbergAdminHealthContributor.ClientName, c => c.Timeout = TimeSpan.FromSeconds(5));
+        services.AddAdminHealthContributor<GotenbergAdminHealthContributor>();
         return services;
     }
 }

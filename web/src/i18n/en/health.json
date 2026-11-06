@@ -1,0 +1,153 @@
+{
+  "title": "System health",
+  "description": "Database, scheduled jobs, message queue, e-mail, PDF, AI, storage, audit chain and certificates of this installation.",
+  "refresh": "Check again",
+  "checkedAt": "Checked {{at}}",
+  "item": "Item",
+  "status": "Status",
+  "details": "Details",
+  "overall": {
+    "ok": "All checks pass",
+    "warning": "Needs attention",
+    "error": "Problems found",
+    "notConfigured": "Not configured"
+  },
+  "statuses": {
+    "ok": "OK",
+    "warning": "Warning",
+    "error": "Error",
+    "notConfigured": "Not configured"
+  },
+  "groups": {
+    "platform": "Platform",
+    "jobs": "Scheduled jobs and queue",
+    "integrations": "Integrations",
+    "storage": "Storage",
+    "security": "Security"
+  },
+  "checks": {
+    "version": "Version",
+    "database": "Database",
+    "migrations": "Database migrations",
+    "scheduler": "Scheduler",
+    "outbox": "Message queue (outbox)",
+    "email": "E-mail server",
+    "pdf": "PDF rendering (Gotenberg)",
+    "ai": "AI provider",
+    "ocr": "Text recognition (OCR)",
+    "storage": "File storage",
+    "disk": "Disk space",
+    "antivirus": "Virus scan (ClamAV)",
+    "auditChain": "Audit trail integrity",
+    "dataProtection": "Data Protection keys",
+    "certificates": "Certificates"
+  },
+  "items": {
+    "files": "Files volume",
+    "temp": "Temporary folder",
+    "dataProtection": "Data Protection certificate"
+  },
+  "job": {
+    "name": "Job",
+    "lastRun": "Last run",
+    "nextRun": "Next run",
+    "failures": "Failures (24 h)",
+    "never": "Not run yet",
+    "ok": "Last run succeeded.",
+    "notRunYet": "Scheduled, not run yet.",
+    "recentFailures": "{{failures24h}} failed run(s) in the last 24 hours.",
+    "lastFailed": "The last run failed.",
+    "paused": "Paused.",
+    "noNextRun": "No next run is scheduled.",
+    "notScheduled": "Not scheduled — restart the application."
+  },
+  "common": {
+    "timedOut": "The check did not answer within {{seconds}} seconds.",
+    "failed": "The check could not run ({{error}})."
+  },
+  "version": {
+    "ok": "Version {{version}}, running since {{startedAt}} (.NET {{runtime}})."
+  },
+  "database": {
+    "ok": "PostgreSQL {{version}} answered in {{latencyMs}} ms; database size {{sizeBytes}}.",
+    "slow": "PostgreSQL {{version}} answered slowly ({{latencyMs}} ms); database size {{sizeBytes}}.",
+    "unreachable": "The database cannot be reached ({{error}})."
+  },
+  "migrations": {
+    "ok": "All {{schemas}} schemas are up to date.",
+    "pending": "{{count}} migration(s) not applied — run the upgrade (--migrate).",
+    "itemOk": "Up to date",
+    "itemPending": "{{count}} pending"
+  },
+  "scheduler": {
+    "ok": "Running; {{jobs}} jobs scheduled.",
+    "attention": "Running; {{failing}} of {{jobs}} jobs need attention.",
+    "stopped": "The scheduler is not running: reminders, escalations and e-mails are not sent.",
+    "schedulesOff": "Running, but scheduled runs are switched off (Scheduling:RunSchedules = false)."
+  },
+  "outbox": {
+    "ok": "{{pending}} message(s) waiting; {{processed24h}} sent in the last 24 hours.",
+    "dead": "{{dead}} message(s) failed permanently — re-queue them in Settings → Scheduled jobs.",
+    "late": "The oldest message has waited {{oldestPendingMinutes}} minutes ({{pending}} waiting): notifications are late."
+  },
+  "email": {
+    "notConfigured": "No e-mail server is configured: no e-mails are sent.",
+    "ok": "{{host}}:{{port}} — {{sent24h}} e-mail(s) sent in the last 24 hours.",
+    "idle": "{{host}}:{{port}} — no e-mails in the last 24 hours.",
+    "someFailed": "{{host}}:{{port}} — {{failed24h}} failed and {{sent24h}} sent in the last 24 hours.",
+    "lastFailed": "{{host}}:{{port}} — the last e-mail failed ({{lastAt}}). Use Send test e-mail in Settings → Email server."
+  },
+  "pdf": {
+    "notConfigured": "PDF output is not configured (Gotenberg:Url).",
+    "ok": "Gotenberg answered in {{latencyMs}} ms.",
+    "badStatus": "Gotenberg answered with status {{status}}.",
+    "unreachable": "Gotenberg cannot be reached: PDF exports and reports fail."
+  },
+  "ai": {
+    "off": "AI is switched off.",
+    "noProvider": "AI is on but its default provider is missing or inactive.",
+    "ok": "{{provider}} ({{model}}) — {{calls24h}} call(s) in the last 24 hours.",
+    "someFailed": "{{provider}} — {{failed24h}} of {{calls24h}} call(s) failed in the last 24 hours.",
+    "lastFailed": "{{provider}} — the last call failed ({{lastError}}). Use Test connection in Settings → AI."
+  },
+  "ocr": {
+    "offInstalled": "Text recognition is off; the engine is installed ({{languages}}).",
+    "offMissing": "Text recognition is off; the engine or its languages ({{languages}}) are not installed.",
+    "ok": "Tesseract with {{languages}} is installed.",
+    "missing": "Text recognition is on but Tesseract or its languages ({{languages}}) are missing: scanned documents cannot be read."
+  },
+  "storage": {
+    "ok": "Files can be written ({{provider}}).",
+    "notWritable": "Files cannot be written ({{provider}}): uploads fail."
+  },
+  "disk": {
+    "ok": "Enough free space.",
+    "low": "Free space is low.",
+    "item": "{{freeBytes}} free of {{totalBytes}}",
+    "unknown": "Free space unknown ({{path}})."
+  },
+  "antivirus": {
+    "off": "Virus scanning is off.",
+    "ok": "ClamAV at {{host}}:{{port}} answers.",
+    "unavailable": "ClamAV at {{host}}:{{port}} does not answer."
+  },
+  "auditChain": {
+    "never": "The audit chain has not been verified yet (daily job, or Audit → Verify).",
+    "ok": "Verified {{at}}: {{checked}} entries checked, chain intact.",
+    "stale": "Last verified {{at}} — more than 48 hours ago.",
+    "broken": "Verification on {{at}} found a break at entry {{brokenSeq}}: open Audit → Verify."
+  },
+  "dataProtection": {
+    "ok": "{{keys}} key(s); the current key is valid until {{expiresAt}}.",
+    "noCurrentKey": "No valid key ({{keys}} stored): sessions and stored secrets cannot be protected."
+  },
+  "certificates": {
+    "none": "No certificate is monitored (Health:CertificatePaths, DataProtection:CertificatePath).",
+    "ok": "All certificates are valid.",
+    "attention": "A certificate expires soon, has expired or cannot be read.",
+    "valid": "{{subject}} — valid until {{notAfter}} ({{daysLeft}} days).",
+    "expiresSoon": "{{subject}} — expires {{notAfter}} ({{daysLeft}} days left): renew it.",
+    "expired": "{{subject}} — expired on {{notAfter}}.",
+    "unreadable": "{{path}} cannot be read ({{error}})."
+  }
+}

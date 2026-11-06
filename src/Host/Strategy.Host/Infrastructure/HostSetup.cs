@@ -2,8 +2,10 @@ using System.Text.Json.Serialization;
 using Serilog;
 using Strategy.Platform.Http.Access;
 using Strategy.Platform.Http.Context;
+using Strategy.Platform.Http.Health;
 using Strategy.Platform.Http.Modules;
 using Strategy.Platform.Kernel;
+using Strategy.Platform.Kernel.Net;
 using Strategy.Platform.Persistence;
 using Strategy.Platform.Reporting.Pdf;
 
@@ -26,6 +28,8 @@ internal static class HostSetup
             .Enrich.FromLogContext());
         builder.AddStrategyObservability();
 
+        // SSRF guard for administrator-entered outbound URLs (ADR 0155), before the kernel's default.
+        services.AddSingleton(new OutboundUrlPolicy(configuration.GetSection("Outbound").Get<OutboundOptions>() ?? new OutboundOptions()));
         services.AddPlatformKernel();
         services.AddPlatformPersistence(configuration);
         services.AddStrategyDataProtection(configuration);
@@ -43,6 +47,7 @@ internal static class HostSetup
             options.IncludeSubDomains = true;
         });
         services.AddHealthChecks();
+        services.AddAdminHealthContributor<HostHealthContributor>();
         services.AddAuthorization();
         services.AddStrategyForwardedHeaders(configuration);
 
@@ -54,6 +59,14 @@ internal static class HostSetup
         foreach (var module in modules)
         {
             module.AddServices(services, configuration);
+        }
+
+        if (configuration.GetValue("Security:SecureCookies", defaultValue: false))
+        {
+            // Behind TLS (ASVS V3.4.1): session cookies carry Secure even if the proxy's last hop is plain HTTP without X-Forwarded-Proto.
+            // The antiforgery cookie keeps SameAsRequest (with Always ASP.NET Core refuses to issue it on an HTTP hop); it is not a credential.
+            services.PostConfigureAll<Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationOptions>(
+                options => options.Cookie.SecurePolicy = CookieSecurePolicy.Always);
         }
 
         if (IsGeneratingOpenApiDocument)

@@ -16,6 +16,7 @@ public static class KernelServiceCollectionExtensions
     {
         services.TryAddSingleton(TimeProvider.System);
         services.TryAddSingleton<IClock, SystemClock>();
+        services.TryAddSingleton(new Net.OutboundUrlPolicy(new Net.OutboundOptions()));
         services.TryAddScoped<RequestContext>();
         services.TryAddScoped<IRequestContext>(sp => sp.GetRequiredService<RequestContext>());
         services.TryAddScoped<IDispatcher, Dispatcher>();

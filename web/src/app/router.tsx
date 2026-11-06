@@ -1361,6 +1361,13 @@ const jobsRoute = createRoute({
   component: lazyRouteComponent(() => import('@/features/jobs/JobsPage'), 'JobsPage'),
 });
 
+// Administrator Health page (ADR 0151).
+const healthRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/health',
+  component: lazyRouteComponent(() => import('@/features/health/HealthPage'), 'HealthPage'),
+});
+
 // Business hours and holidays (ADR 0027).
 const businessHoursRoute = createRoute({
   getParentRoute: () => settingsLayout,
@@ -1681,6 +1688,7 @@ const routeTree = rootRoute.addChildren([
       notificationTemplatesRoute,
       filesSettingsRoute,
       jobsRoute,
+      healthRoute,
       businessHoursRoute,
       holidaysRoute,
       approvalSettingsRoute,

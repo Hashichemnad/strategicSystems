@@ -5,6 +5,7 @@ using Strategy.Platform.Access;
 using Strategy.Platform.Audit.Api;
 using Strategy.Platform.Audit.Application;
 using Strategy.Platform.Audit.Infrastructure;
+using Strategy.Platform.Http.Health;
 using Strategy.Platform.Http.Modules;
 using Strategy.Platform.Notifications;
 using Strategy.Platform.Persistence;
@@ -26,6 +27,7 @@ public sealed class AuditComponent : IPlatformComponent
         services.AddScoped<IAuditLog, AuditLog>();
         services.AddScoped<IAuditQuery, AuditQuery>();
         services.AddScoped<AuditVerifier>();
+        services.AddAdminHealthContributor<AuditHealthContributor>();
         services.AddScoped<AuditExport>();
         services.AddScoped<ChainAlert>();
         services.AddScheduledJob(AuditVerifyJob.Definition);

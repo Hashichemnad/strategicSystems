@@ -63,6 +63,7 @@ public sealed class ApiFactory(
         builder.UseSetting("Files:LocalPath", FilesPath);
         builder.UseSetting("Scheduling:SchedulerName", "test-" + Guid.CreateVersion7().ToString("N")); // Quartz names are per process
         builder.UseSetting("Scheduling:RunSchedules", "false"); // tests run jobs explicitly; cron firings would race them
+        builder.UseSetting("Outbound:AllowLoopback", "true"); // identity-provider and fake provider containers listen on localhost (ADR 0155)
         foreach (var (key, value) in settings ?? new Dictionary<string, string?>())
         {
             builder.UseSetting(key, value);

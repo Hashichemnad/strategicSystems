@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Strategy.Platform.Access;
 using Strategy.Platform.Files;
+using Strategy.Platform.Http.Health;
 using Strategy.Platform.Http.Modules;
 using Strategy.Platform.Persistence;
 using Strategy.Platform.Settings.Api;
@@ -32,6 +33,8 @@ public sealed class SettingsComponent : IPlatformComponent
         services.AddScoped<IDatabaseSeeder, SettingsSeeder>();
         services.AddFilePurpose(BrandingLogos.Purpose);
         services.AddAccessCatalogue(new SettingsCatalogue());
+        services.AddScoped<AdminHealthService>();
+        services.AddAdminHealthContributor<DatabaseHealthContributor>();
     }
 
     public void MapEndpoints(IEndpointRouteBuilder endpoints) => SettingsEndpoints.Map(endpoints.MapPlatformGroup(this));

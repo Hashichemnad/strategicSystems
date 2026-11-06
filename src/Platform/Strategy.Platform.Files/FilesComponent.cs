@@ -5,6 +5,7 @@ using Strategy.Platform.Files.Api;
 using Strategy.Platform.Files.Application;
 using Strategy.Platform.Files.Infrastructure;
 using Strategy.Platform.Files.Storage;
+using Strategy.Platform.Http.Health;
 using Strategy.Platform.Http.Modules;
 using Strategy.Platform.Persistence;
 using Strategy.Platform.Scheduling;
@@ -32,6 +33,7 @@ public sealed class FilesComponent : IPlatformComponent
 
         services.AddSingleton<IVirusScanner, ClamAvScanner>();
         services.AddScoped<IFileService, FileService>();
+        services.AddAdminHealthContributor<FilesHealthContributor>();
         services.AddScoped<IDatabaseSeeder, FilesSeeder>();
         services.AddScheduledJob(RescanJob.Definition);
     }
