@@ -27,6 +27,7 @@ public sealed class AuditComponent : IPlatformComponent
         services.AddScoped<IAuditLog, AuditLog>();
         services.AddScoped<IAuditQuery, AuditQuery>();
         services.AddScoped<AuditVerifier>();
+        services.AddScoped<IAuditChainVerification, AuditChainVerification>();
         services.AddAdminHealthContributor<AuditHealthContributor>();
         services.AddScoped<AuditExport>();
         services.AddScoped<ChainAlert>();

@@ -18,23 +18,43 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 COPY global.json Directory.Build.props Directory.Packages.props .editorconfig ./
 COPY src/ src/
+# Only the native libraries of the image's own architecture (linux-x64 or linux-arm64) are published: the multi-platform packages
+# (SkiaSharp, PDFium…) otherwise ship Windows / macOS / musl binaries the container never loads. Framework-dependent (aspnet base image).
+ARG TARGETARCH
 RUN --mount=type=secret,id=build_ca,required=false \
     if [ -s /run/secrets/build_ca ]; then export SSL_CERT_FILE=/run/secrets/build_ca; fi; \
-    dotnet restore src/Host/Strategy.Host/Strategy.Host.csproj
+    RID=linux-x64; if [ "$TARGETARCH" = "arm64" ]; then RID=linux-arm64; fi; \
+    dotnet restore src/Host/Strategy.Host/Strategy.Host.csproj -r "$RID"
 # The OpenAPI document is generated in the repository build, not inside the image.
-RUN dotnet publish src/Host/Strategy.Host/Strategy.Host.csproj -c Release -o /app --no-restore \
-    -p:OpenApiGenerateDocuments=false -p:UseAppHost=false
+# GIT_REVISION (optional) is stamped into the informational version ("1.0.0+<commit>") shown on the About and Health pages.
+ARG GIT_REVISION=
+RUN RID=linux-x64; if [ "$TARGETARCH" = "arm64" ]; then RID=linux-arm64; fi; \
+    dotnet publish src/Host/Strategy.Host/Strategy.Host.csproj -c Release -o /app --no-restore -r "$RID" --self-contained false \
+    -p:OpenApiGenerateDocuments=false -p:UseAppHost=false \
+    ${GIT_REVISION:+-p:SourceRevisionId=$GIT_REVISION}
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
+# OCI image labels (ADR 0157): the install / upgrade scripts pass APP_VERSION, GIT_REVISION and BUILD_CREATED.
+ARG APP_VERSION=1.0.0
+ARG GIT_REVISION=
+ARG BUILD_CREATED=
+LABEL org.opencontainers.image.title="Integrated Strategy System" \
+      org.opencontainers.image.description="Self-hosted, bilingual integrated strategy management suite (single deployable: host + SPA)" \
+      org.opencontainers.image.version="${APP_VERSION}" \
+      org.opencontainers.image.revision="${GIT_REVISION}" \
+      org.opencontainers.image.created="${BUILD_CREATED}" \
+      org.opencontainers.image.licenses="LicenseRef-Proprietary" \
+      org.opencontainers.image.source="https://github.com/Hashichemnad/strategicSystems" \
+      org.opencontainers.image.base.name="mcr.microsoft.com/dotnet/aspnet:10.0"
 # libldap: LDAP / Active Directory sign-in (System.DirectoryServices.Protocols needs the native library on Linux).
 # Tesseract OCR (Apache-2.0) with Arabic and English language data: text recognition of scanned documents, used only when switched on in
 # Settings → AI (ADR 0033). Build with --build-arg INSTALL_OCR=false to leave it out (about 40 MB smaller; scans then cannot be read).
 # Licence notices: the copyright file of every package the OCR install adds (Tesseract and the OS libraries it loads, some LGPL) is copied
 # to /app/licenses/ocr/ with a package list (name, version); the build fails if one is missing. docs/THIRD_PARTY_LICENSES.md lists them.
 ARG INSTALL_OCR=true
-# apt-get upgrade: security fixes of the base image's packages published after the base image was built (Trivy, docs/security/scan-results.md).
+# Security updates of the base image's OS packages first (Trivy gate: no High / Critical with a fix, ADR 0156).
 RUN apt-get update \
-    && apt-get upgrade -y --no-install-recommends \
+    && DEBIAN_FRONTEND=noninteractive apt-get upgrade -y --no-install-recommends \
     && (apt-get install -y --no-install-recommends libldap2 || apt-get install -y --no-install-recommends libldap-2.5-0) \
     && if [ "$INSTALL_OCR" = "true" ]; then \
          dpkg-query -W -f='${Package}\n' | sort > /tmp/before \
@@ -50,12 +70,19 @@ RUN apt-get update \
        fi \
     && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
+# TMPDIR: the only writable path besides the files volume, so the container can run with a read-only root file system
+# (compose: read_only + tmpfs /tmp). Data Protection keys live in the database, not in the home directory.
 ENV ASPNETCORE_URLS=http://+:8080 \
     ASPNETCORE_ENVIRONMENT=Production \
-    DOTNET_NOLOGO=1
+    DOTNET_NOLOGO=1 \
+    DOTNET_CLI_TELEMETRY_OPTOUT=1 \
+    TMPDIR=/tmp \
+    ASPNETCORE_HTTP_PORTS= \
+    APP_VERSION=${APP_VERSION}
 COPY --from=build /app ./
 COPY --from=web /src/web/dist ./wwwroot
 # File store (local provider): a volume outside the web root, owned by the app user.
+# /app stays owned by root (COPY default): the runtime user cannot change the application files.
 RUN mkdir -p /var/lib/strategy/files && chown -R $APP_UID /var/lib/strategy
 ENV Files__LocalPath=/var/lib/strategy/files
 USER $APP_UID
