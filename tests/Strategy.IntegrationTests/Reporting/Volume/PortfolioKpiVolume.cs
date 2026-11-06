@@ -29,7 +29,9 @@ internal static class PortfolioKpiVolume
     /// <summary>Quarterly results of these cards are approved (index % 10 below this), pending approval (== this) or still open.</summary>
     private const int ApprovedOutOfTen = 8;
 
-    public static async Task SeedAsync(ApiFactory factory, IReadOnlyList<Guid> unitIds, int projects = 500, int kpiCards = 1000, CancellationToken ct = default)
+    // firstProjectMilestones: milestones of the first project (the others get five); the Gantt performance check uses 30.
+    public static async Task SeedAsync(
+        ApiFactory factory, IReadOnlyList<Guid> unitIds, int projects = 500, int kpiCards = 1000, int firstProjectMilestones = 5, CancellationToken ct = default)
     {
         ArgumentNullException.ThrowIfNull(factory);
         ArgumentNullException.ThrowIfNull(unitIds);
@@ -44,7 +46,7 @@ internal static class PortfolioKpiVolume
         var run = Guid.CreateVersion7().ToString("N")[^6..].ToUpperInvariant();
 
         var portfolio = scope.ServiceProvider.GetRequiredService<PortfolioDbContext>();
-        var (requests, projectRows, milestones) = BuildPortfolio(run, unitIds, projects, now, today);
+        var (requests, projectRows, milestones) = BuildPortfolio(run, unitIds, projects, firstProjectMilestones, now, today);
         await CopyAsync(portfolio, requests, now, ct);
         await CopyAsync(portfolio, projectRows, now, ct);
         await CopyAsync(portfolio, milestones, now, ct);
@@ -60,7 +62,7 @@ internal static class PortfolioKpiVolume
     // ---- Portfolio ---------------------------------------------------------------------------------------------------------------------------
 
     private static (List<ProgramRequest>, List<Project>, List<Milestone>) BuildPortfolio(
-        string run, IReadOnlyList<Guid> units, int count, DateTimeOffset now, DateOnly today)
+        string run, IReadOnlyList<Guid> units, int count, int firstProjectMilestones, DateTimeOffset now, DateOnly today)
     {
         var requests = new List<ProgramRequest>(count);
         var projects = new List<Project>(count);
@@ -153,15 +155,17 @@ internal static class PortfolioKpiVolume
             projects.Add(project);
 
             // Five leaf milestones (weight 0.2 each) around today: done, overdue, due soon, upcoming and later.
-            for (var k = 0; k < 5; k++)
+            var milestoneCount = i == 0 ? Math.Max(1, firstProjectMilestones) : 5;
+            var weight = Math.Round(1m / milestoneCount, 4);
+            for (var k = 0; k < milestoneCount; k++)
             {
-                var due = today.AddDays(((k - 2) * 30) + (i % 20));
+                var due = milestoneCount == 5 ? today.AddDays(((k - 2) * 30) + (i % 20)) : today.AddDays(((k - (milestoneCount / 2)) * 14) + (i % 20));
                 var milestone = Milestone.Create(project.Id, $"{project.Number}-{k + 1}", new MilestoneValues(
                     "مرحلة " + (k + 1).ToString(CultureInfo.InvariantCulture), "Milestone " + (k + 1).ToString(CultureInfo.InvariantCulture), null, false, false,
-                    due.AddDays(-45), due, 0.2m, Math.Round(budget / 5, 2), k == 4, null, null, null, false, null, k));
+                    due.AddDays(-45), due, weight, Math.Round(budget / milestoneCount, 2), k == milestoneCount - 1, null, null, null, false, null, k));
                 if (project.Status == ProjectStatuses.Completed || (k == 0 && project.SubState == SubStates.Execution))
                 {
-                    milestone.RecordProgress(new MilestoneProgressValues(0.2m, due.AddDays(-45), due.AddDays(-(i % 3)), null, null, null));
+                    milestone.RecordProgress(new MilestoneProgressValues(weight, due.AddDays(-45), due.AddDays(-(i % 3)), null, null, null));
                     milestone.SubmitUpdate();
                     milestone.ApproveUpdate();
                 }
