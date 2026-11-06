@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # In-place upgrade of a Docker installation to the version of this release folder (ADR 0157):
-# pre-upgrade backup → new image → migrations as the owner + runtime-role grants → start → health check.
+# new image (built while the current version runs) → pre-upgrade backup → migrations as the owner + runtime-role grants → start → health check.
 #
 #   ./deploy/upgrade.sh                              # build the new image from this folder
 #   ./deploy/upgrade.sh --image strategy-app-1.0.1.tar   # offline: load the new image
@@ -30,15 +30,7 @@ require_docker
 OLD_VERSION="$(setting APP_VERSION dev)"
 NEW_VERSION="${NEW_VERSION:-$(release_version)}"
 info "Upgrade strategy-app $OLD_VERSION → $NEW_VERSION"
-
 BACKUP_DIR=""
-if [ "$BACKUP" = true ]; then
-  info "Pre-upgrade backup"
-  result="$(mktemp)"
-  BACKUP_RESULT_FILE="$result" "$DEPLOY_DIR/backup.sh" || { rm -f "$result"; die "The pre-upgrade backup failed; upgrade stopped, nothing changed." 6; }
-  BACKUP_DIR="$(cat "$result")"
-  rm -f "$result"
-fi
 
 rollback_help() {
   say ""
@@ -52,20 +44,36 @@ rollback_help() {
   say "  Logs: docker compose -f deploy/docker-compose.yml --profile app logs migrate app"
 }
 
-export APP_VERSION="$NEW_VERSION"
+# 1. New image first, while the current version keeps running (a failed build changes nothing).
 if [ -n "$IMAGE_ARCHIVE" ]; then
   info "Loading the new image"
   docker load -i "$IMAGE_ARCHIVE"
-  docker image inspect "strategy-app:$NEW_VERSION" > /dev/null 2>&1 || die "The archive does not contain strategy-app:$NEW_VERSION." 4
+  docker image inspect "strategy-app:$NEW_VERSION" > /dev/null 2>&1 || die "The archive does not contain strategy-app:$NEW_VERSION; nothing changed." 4
 elif [ "$SKIP_BUILD" = true ]; then
-  docker image inspect "strategy-app:$NEW_VERSION" > /dev/null 2>&1 || die "--no-build: image strategy-app:$NEW_VERSION is not on this machine." 4
+  docker image inspect "strategy-app:$NEW_VERSION" > /dev/null 2>&1 || die "--no-build: image strategy-app:$NEW_VERSION is not on this machine; nothing changed." 4
 else
-  info "Building strategy-app:$NEW_VERSION"
+  info "Building strategy-app:$NEW_VERSION (the current version keeps running)"
   prepare_build_ca
   revision="$( (git -C "$ROOT_DIR" rev-parse --short HEAD 2> /dev/null) || true)"
-  GIT_REVISION="$revision" BUILD_CREATED="$(date -u +%Y-%m-%dT%H:%M:%SZ)" compose build migrate || { rollback_help; die "Image build failed; the running version is unchanged." 4; }
+  APP_VERSION="$NEW_VERSION" GIT_REVISION="$revision" BUILD_CREATED="$(date -u +%Y-%m-%dT%H:%M:%SZ)" compose build migrate \
+    || die "Image build failed; the running version is unchanged." 4
 fi
 
+# 2. Pre-upgrade backup with the current version; the application stays stopped afterwards.
+if [ "$BACKUP" = true ]; then
+  info "Pre-upgrade backup"
+  result="$(mktemp)"
+  APP_VERSION="$OLD_VERSION" BACKUP_RESULT_FILE="$result" "$DEPLOY_DIR/backup.sh" --leave-stopped || {
+    rm -f "$result"
+    APP_VERSION="$OLD_VERSION" compose up -d --no-build > /dev/null 2>&1 || true
+    die "The pre-upgrade backup failed; upgrade stopped, the current version was started again." 6
+  }
+  BACKUP_DIR="$(cat "$result")"
+  rm -f "$result"
+fi
+
+# 3. Migrations as the owner (and runtime-role grants), then the new version.
+export APP_VERSION="$NEW_VERSION"
 info "Stopping the application"
 compose stop app > /dev/null 2>&1 || true
 info "Applying migrations as the database owner and granting the runtime role"

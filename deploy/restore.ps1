@@ -51,7 +51,12 @@ Invoke-Compose up -d --no-build postgres gotenberg
 Wait-Postgres
 
 Write-Step "3/7 Recreating database $db and restoring the dump"
-Invoke-Compose exec -T postgres psql -v ON_ERROR_STOP=1 -X -q -U $owner -d postgres -c "DROP DATABASE IF EXISTS `"$db`" WITH (FORCE);" -c "CREATE DATABASE `"$db`" OWNER `"$owner`";"
+# The SQL goes in on standard input: Windows PowerShell 5.1 strips double quotes inside native-command arguments.
+$sqlFile = [IO.Path]::GetTempFileName()
+try {
+    Write-Utf8Lines $sqlFile @("DROP DATABASE IF EXISTS `"$db`" WITH (FORCE);", "CREATE DATABASE `"$db`" OWNER `"$owner`";")
+    Invoke-ComposeBinary -Arguments @('exec', '-T', 'postgres', 'psql', '-v', 'ON_ERROR_STOP=1', '-X', '-q', '-U', $owner, '-d', 'postgres') -StdInFile $sqlFile
+} finally { Remove-Item -Force $sqlFile -ErrorAction SilentlyContinue }
 Invoke-ComposeBinary -Arguments @('exec', '-T', 'postgres', 'pg_restore', '-U', $owner, '-d', $db, '--exit-on-error', '--no-password') -StdInFile (Join-Path $Backup 'database.dump')
 
 Write-Step '4/7 Comparing the row count of every table with the backup'
@@ -89,9 +94,18 @@ Write-Step '6/7 Migrations (owner role) and runtime-role grants'
 Invoke-Compose run --rm --no-deps migrate
 
 Write-Step '7/7 Verifying the audit hash chain'
-& docker compose -f $script:ComposeFile --env-file $script:EnvFile --profile app run --rm --no-deps app --verify-audit-chain
-if ($LASTEXITCODE -ne 0) { Stop-WithError 'The audit chain of the restored database does not verify. The application was NOT started.' 9 }
+# Images before 1.0 (no "Integrated Strategy System" title label; the base image has its own version label) have no --verify-audit-chain command: a rollback to them verifies on the screen instead.
+# (No embedded double quotes in native arguments: Windows PowerShell 5.1 would strip them.)
+$labels = (& docker image inspect -f '{{json .Config.Labels}}' "strategy-app:$($env:APP_VERSION)" 2>$null) | ConvertFrom-Json
+if ($labels -and ($labels.PSObject.Properties.Name -contains 'org.opencontainers.image.title') -and $labels.'org.opencontainers.image.title' -eq 'Integrated Strategy System') {
+    & docker compose -f $script:ComposeFile --env-file $script:EnvFile --profile app run --rm --no-deps app --verify-audit-chain
+    if ($LASTEXITCODE -ne 0) { Stop-WithError 'The audit chain of the restored database does not verify. The application was NOT started.' 9 }
+} else {
+    Write-Warn "strategy-app:$($env:APP_VERSION) predates 1.0 and cannot verify the chain from the command line: after the start use Audit -> Verification -> Verify now."
+    $chainNote = "; audit chain: verify on the screen"
+}
 
 Invoke-Compose up -d --no-build app
 if (-not (Wait-App 300)) { Stop-WithError 'The application did not become healthy after the restore (docker compose ... logs app).' 5 }
-Write-Step 'Restore complete and verified (checksums, row counts, audit chain). The application is running.'
+if (-not (Get-Variable chainNote -ErrorAction SilentlyContinue)) { $chainNote = ', audit chain' }
+Write-Step "Restore complete and verified (checksums, row counts$chainNote). The application is running."

@@ -8,7 +8,7 @@
   .\deploy\backup.ps1 -Output D:\Backups -Online
 #>
 [CmdletBinding()]
-param([string]$Output = '', [switch]$Online, [string]$Certificate = '', [string]$ResultFile = '')
+param([string]$Output = '', [switch]$Online, [string]$Certificate = '', [string]$ResultFile = '', [switch]$LeaveStopped)
 . (Join-Path $PSScriptRoot 'lib.ps1')
 
 Assert-Docker
@@ -33,6 +33,7 @@ Wait-Postgres
 $running = Invoke-ComposeQuiet ps -q --status running app
 $appWasRunning = [bool]($running.Output | Select-Object -First 1)
 $stopped = $false
+$succeeded = $false
 try {
     if ($appWasRunning -and -not $Online) {
         Write-Step 'Stopping the application for a consistent backup'
@@ -65,8 +66,10 @@ try {
         if (-not (Test-Path $Certificate)) { Stop-WithError "Certificate $Certificate not found." 2 }
         Copy-Item $Certificate (Join-Path $out 'dataprotection.pfx')
     }
+    $succeeded = $true
 } finally {
-    if ($stopped) {
+    # -LeaveStopped (upgrade.ps1): the application stays stopped after a successful backup; after a failure it is always started again.
+    if ($stopped -and (-not $LeaveStopped -or -not $succeeded)) {
         Write-Step 'Starting the application again'
         Invoke-ComposeQuiet up -d --no-build --no-deps app | Out-Null
     }

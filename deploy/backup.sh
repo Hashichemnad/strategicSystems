@@ -14,11 +14,13 @@ set -euo pipefail
 
 OUTPUT_PARENT="$ROOT_DIR/backups"
 ONLINE=false
+LEAVE_STOPPED=false
 CERTIFICATE=""
 while [ $# -gt 0 ]; do
   case "$1" in
     --output) OUTPUT_PARENT="${2:?--output needs a folder}"; shift 2 ;;
     --online) ONLINE=true; shift ;;
+    --leave-stopped) LEAVE_STOPPED=true; shift ;;   # used by upgrade.sh: the application stays stopped after a successful backup
     --certificate) CERTIFICATE="${2:?--certificate needs the path of the .pfx}"; shift 2 ;;
     -h | --help) sed -n '2,10p' "$0"; exit 0 ;;
     *) die "Unknown option: $1 (see --help)" 2 ;;
@@ -78,7 +80,7 @@ if [ -n "$CERTIFICATE" ]; then
   cp "$CERTIFICATE" "$OUT/dataprotection.pfx"
 fi
 
-restart_app
+[ "$LEAVE_STOPPED" = true ] || restart_app
 trap - EXIT
 
 # Manifest: what restore.sh checks.

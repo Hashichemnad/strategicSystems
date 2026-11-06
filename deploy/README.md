@@ -91,7 +91,7 @@ and optionally **Identity providers** (see [`docs/identity-providers.md`](../doc
 ### HTTPS
 
 Put a TLS reverse proxy in front of the application ([`nginx/strategy.conf`](nginx/strategy.conf)) and set in `deploy/.env`:
-`FORWARDED_HEADERS_ENABLED=true`, `FORWARDED_HEADERS_PROXY=<proxy IP as the app sees it>`, and `APP_BIND=127.0.0.1` for a proxy on the
+`FORWARDED_HEADERS_ENABLED=true`, `FORWARDED_HEADERS_PROXY=<proxy IP as the app sees it>`, `SECURE_COOKIES=true`, and `APP_BIND=127.0.0.1` for a proxy on the
 same host.
 
 ## Backup

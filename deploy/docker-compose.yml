@@ -126,6 +126,10 @@ services:
       ForwardedHeaders__Enabled: ${FORWARDED_HEADERS_ENABLED:-false}
       ForwardedHeaders__KnownProxies__0: ${FORWARDED_HEADERS_PROXY:-}
       Mcp__RequireHttps: ${MCP_REQUIRE_HTTPS:-true}
+      # Behind the TLS reverse proxy set SECURE_COOKIES=true: cookies are then sent over HTTPS only (Secure flag).
+      Security__SecureCookies: ${SECURE_COOKIES:-false}
+      # Outbound calls to admin-entered URLs (AI, identity providers) may target private networks (on-prem providers); ADR 0155.
+      Outbound__AllowPrivateNetworks: ${OUTBOUND_ALLOW_PRIVATE_NETWORKS:-true}
     ports:
       - "${APP_BIND:-0.0.0.0}:${APP_PORT:-8080}:8080"
     volumes:

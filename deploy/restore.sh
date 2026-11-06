@@ -96,8 +96,14 @@ info "6/7 Migrations (owner role) and runtime-role grants"
 compose run --rm --no-deps migrate
 
 info "7/7 Verifying the audit hash chain"
-compose run --rm --no-deps app --verify-audit-chain || die "The audit chain of the restored database does not verify. The application was NOT started." 9
+# Images before 1.0 (no "Integrated Strategy System" title label; the base image has its own version label) have no --verify-audit-chain command: a rollback to them verifies on the screen instead.
+if docker image inspect -f '{{json .Config.Labels}}' "strategy-app:$APP_VERSION" 2> /dev/null | grep -q '"org.opencontainers.image.title":"Integrated Strategy System"'; then
+  compose run --rm --no-deps app --verify-audit-chain || die "The audit chain of the restored database does not verify. The application was NOT started." 9
+else
+  warn "strategy-app:$APP_VERSION predates 1.0 and cannot verify the chain from the command line: after the start use Audit → Verification → Verify now."
+  CHAIN_NOTE="; audit chain: verify on the screen"
+fi
 
 compose up -d --no-build app > /dev/null
 wait_for_app 300 || die "The application did not become healthy after the restore (docker compose … logs app)." 5
-info "Restore complete and verified (checksums, row counts, audit chain). The application is running."
+info "Restore complete and verified (checksums, row counts${CHAIN_NOTE:-, audit chain}). The application is running."

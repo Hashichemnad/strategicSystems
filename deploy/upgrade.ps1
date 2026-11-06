@@ -1,7 +1,7 @@
 <#
 .SYNOPSIS
   In-place upgrade of a Docker installation to the version of this release folder (ADR 0157):
-  pre-upgrade backup -> new image -> migrations as the owner + runtime-role grants -> start -> health check.
+  new image (built while the current version runs) -> pre-upgrade backup -> migrations as the owner + runtime-role grants -> start -> health check.
 .EXAMPLE
   .\deploy\upgrade.ps1
 .EXAMPLE
@@ -23,14 +23,6 @@ if (-not $newVersion) { $newVersion = Get-ReleaseVersion }
 Write-Step "Upgrade strategy-app $oldVersion -> $newVersion"
 
 $backupDir = ''
-if (-not $NoBackup) {
-    Write-Step 'Pre-upgrade backup'
-    $result = [IO.Path]::GetTempFileName()
-    & (Join-Path $script:DeployDir 'backup.ps1') -ResultFile $result
-    $backupDir = (Get-Content $result | Select-Object -First 1)
-    Remove-Item -Force $result
-    if (-not $backupDir) { Stop-WithError 'The pre-upgrade backup failed; upgrade stopped, nothing changed.' 6 }
-}
 
 function Show-Rollback {
     Write-Host ''
@@ -44,7 +36,7 @@ function Show-Rollback {
     Write-Host '  Logs: docker compose -f deploy\docker-compose.yml --profile app logs migrate app'
 }
 
-$env:APP_VERSION = $newVersion
+# 1. New image first, while the current version keeps running (a failed build changes nothing).
 try {
     if ($Image) {
         Write-Step 'Loading the new image'
@@ -54,13 +46,35 @@ try {
         & docker image inspect "strategy-app:$newVersion" *> $null
         if ($LASTEXITCODE -ne 0) { throw "-NoBuild: image strategy-app:$newVersion is not on this machine." }
     } else {
-        Write-Step "Building strategy-app:$newVersion"
+        Write-Step "Building strategy-app:$newVersion (the current version keeps running)"
         $env:GIT_REVISION = ''
         if (Get-Command git -ErrorAction SilentlyContinue) { $env:GIT_REVISION = (& git -C $script:RootDir rev-parse --short HEAD 2>$null) }
         $env:BUILD_CREATED = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')
         Initialize-BuildCa
+        $env:APP_VERSION = $newVersion
         Invoke-Compose build migrate
     }
+} catch {
+    Stop-WithError "$($_.Exception.Message) The running version is unchanged." 4
+}
+
+# 2. Pre-upgrade backup with the current version; the application stays stopped afterwards.
+$env:APP_VERSION = $oldVersion
+if (-not $NoBackup) {
+    Write-Step 'Pre-upgrade backup'
+    $result = [IO.Path]::GetTempFileName()
+    & (Join-Path $script:DeployDir 'backup.ps1') -ResultFile $result -LeaveStopped
+    $backupDir = (Get-Content $result | Select-Object -First 1)
+    Remove-Item -Force $result
+    if (-not $backupDir) {
+        Invoke-ComposeQuiet up -d --no-build | Out-Null
+        Stop-WithError 'The pre-upgrade backup failed; upgrade stopped, the current version was started again.' 6
+    }
+}
+
+# 3. Migrations as the owner (and runtime-role grants), then the new version.
+$env:APP_VERSION = $newVersion
+try {
     Write-Step 'Stopping the application'
     Invoke-ComposeQuiet stop app | Out-Null
     Write-Step 'Applying migrations as the database owner and granting the runtime role'

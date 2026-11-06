@@ -18,13 +18,18 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 COPY global.json Directory.Build.props Directory.Packages.props .editorconfig ./
 COPY src/ src/
+# Only the native libraries of the image's own architecture (linux-x64 or linux-arm64) are published: the multi-platform packages
+# (SkiaSharp, PDFium…) otherwise ship Windows / macOS / musl binaries the container never loads. Framework-dependent (aspnet base image).
+ARG TARGETARCH
 RUN --mount=type=secret,id=build_ca,required=false \
     if [ -s /run/secrets/build_ca ]; then export SSL_CERT_FILE=/run/secrets/build_ca; fi; \
-    dotnet restore src/Host/Strategy.Host/Strategy.Host.csproj
+    RID=linux-x64; if [ "$TARGETARCH" = "arm64" ]; then RID=linux-arm64; fi; \
+    dotnet restore src/Host/Strategy.Host/Strategy.Host.csproj -r "$RID"
 # The OpenAPI document is generated in the repository build, not inside the image.
 # GIT_REVISION (optional) is stamped into the informational version ("1.0.0+<commit>") shown on the About and Health pages.
 ARG GIT_REVISION=
-RUN dotnet publish src/Host/Strategy.Host/Strategy.Host.csproj -c Release -o /app --no-restore \
+RUN RID=linux-x64; if [ "$TARGETARCH" = "arm64" ]; then RID=linux-arm64; fi; \
+    dotnet publish src/Host/Strategy.Host/Strategy.Host.csproj -c Release -o /app --no-restore -r "$RID" --self-contained false \
     -p:OpenApiGenerateDocuments=false -p:UseAppHost=false \
     ${GIT_REVISION:+-p:SourceRevisionId=$GIT_REVISION}
 
