@@ -258,6 +258,7 @@ older local SDK (e.g. IDE0005): check `dotnet --version` and keep the local SDK 
 OCR tests (unit + integration, ADR 0033) need Tesseract with Arabic and English data on the machine:
 `sudo apt-get install tesseract-ocr tesseract-ocr-ara tesseract-ocr-eng` (CI installs it; the app image includes it).
 Integration tests also start Mailpit and Gotenberg containers (Mailpit delivery, PDF snapshot); `UPDATE_SNAPSHOTS=1` rewrites the PDF layout snapshot.
+The file-store tests (`Category=Containers`) start a real S3 server and ClamAV: `STRATEGY_TEST_S3_IMAGE` chooses the S3 image (default `chrislusf/seaweedfs:3.97`; a `…minio…` image is started as MinIO).
 Integration tests: `TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX=mirror.gcr.io/` behind a Docker Hub limit, or
 `STRATEGY_TEST_POSTGRES=<admin connection string>` to reuse a running server (raise its `max_connections`, e.g. 600: the parallel suite
 opens one host per test class). Keep this section accurate.
