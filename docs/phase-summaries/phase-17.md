@@ -42,13 +42,12 @@ Status: **built — awaiting owner acceptance** (ADRs 0140–0149 accepted by th
 |---|---|
 | `dotnet build Strategy.slnx -c Release` | 0 warnings, 0 errors |
 | `dotnet format Strategy.slnx --verify-no-changes` | clean |
-| Unit + architecture tests | 1 930 / 1 930 |
-| Integration tests (Testcontainers / local PostgreSQL 16) | 2 567 / 2 567 (a Document Registry test that compared against the UTC date failed between 20:00 and 24:00 UTC — fixed to use the installation's date; one CAP due-date test passed on re-run) |
+| `dotnet test --solution Strategy.slnx` (unit, architecture, integration) | 4 812 / 4 812 (after the fixes below; `CapApiTests.Due_dates_follow_the_priority_in_working_time` failed intermittently in two earlier full runs (403 when the test creates a remark) and passed on every re-run; cause not yet identified — listed under known gaps) |
 | Web: `lint`, `format:check`, `typecheck`, `test`, `build` | pass; Vitest 367 / 367 |
 | `npm audit --audit-level=high`, `lint:licenses` | no high / critical (8 moderate, dev tooling); 617 packages, all allowed licences |
-| `tools/check-vulnerable.sh`, `tools/check-api-client.sh` | E2E_GATE_VULN |
-| Playwright E2E (`ar` + `en`) | E2E_GATE_RESULT |
-| Fresh Docker install per `deploy/README.md` | DOCKER_GATE |
+| `tools/check-vulnerable.sh`, `tools/check-api-client.sh` | no High / Critical NuGet vulnerabilities; OpenAPI document and TS client up to date |
+| Playwright E2E (`ar` + `en`, fresh database) | 104 / 104 (whole suite incl. `reporting.spec.ts`); Phase 17 screenshots in `docs/screenshots/phase-17/` (22 pairs) |
+| Fresh Docker install per `deploy/README.md` | empty volumes, `up -d --build` (image built, nothing pulled for `strategy-app`), `migrate` exited 0, `--create-admin` via standard input in the `app` service created the administrator, `/health/ready` 200, sign-in → MFA enrolment, `/dashboards/kpi.scorecard` deep link served |
 
 ## Defects found while verifying (fixed in this phase)
 - **Scheduled jobs never ran on their schedule (since Phase 3).** `JobRunListener` read `triggeredBy` with `GetString`, which
@@ -90,6 +89,9 @@ Status: **built — awaiting owner acceptance** (ADRs 0140–0149 accepted by th
 - KPI weights: a card without a weight counts as weight 1 in `kpi.score` (facts must add up across units); identical to the scorecard
   unless weighted and unweighted cards are mixed in one set.
 - Dashboards poll every 5 minutes while visible; no SignalR push of widget updates.
+- `CapApiTests.Due_dates_follow_the_priority_in_working_time` is intermittent (see quality gates); not investigated further in this phase.
+- Scheduled jobs now run on their schedules for the first time (see defects): reminders, digests and escalations of earlier phases
+  will start sending on existing installations after the upgrade — worth announcing to administrators.
 
 ## How to demo
 ```bash
