@@ -36,6 +36,38 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/system/version': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetSystemVersion'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/system/release-notes': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListReleaseNotes'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/audit/entries': {
     parameters: {
       query?: never;
@@ -317,6 +349,22 @@ export interface paths {
     };
     get: operations['GetTranslationOverrides'];
     put: operations['SetTranslationOverride'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/settings/health': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetAdminHealth'];
+    put?: never;
     post?: never;
     delete?: never;
     options?: never;
@@ -2260,6 +2308,22 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/wasel/v1/auth/options': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetWaselSignInOptions'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/wasel/v1/me': {
     parameters: {
       query?: never;
@@ -2286,6 +2350,70 @@ export interface paths {
     get?: never;
     put: operations['UpdateWaselPreferences'];
     post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/setup/status': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetSetupStatus'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/setup/verify-token': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['VerifySetupToken'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/setup/bootstrap': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['BootstrapSetup'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/setup/complete': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CompleteSetup'];
     delete?: never;
     options?: never;
     head?: never;
@@ -12981,6 +13109,38 @@ export interface components {
       nextStepNameAr: null | string;
       nextStepNameEn: null | string;
     };
+    /**
+     * @description One check on the administrator Health page. Never English text: MessageKey and Params are translated by
+     *     the client (namespace `health`). Params values are invariant strings (numbers, ISO 8601 dates, codes); never secrets.
+     */
+    AdminHealthCheck: {
+      code: string;
+      group: string;
+      status: string;
+      messageKey: string;
+      params?: null | {
+        [key: string]: string;
+      };
+      items?: null | components['schemas']['AdminHealthItem'][];
+    };
+    /** @description A line inside a check (e.g. one scheduled job, one module's migrations). Labels are AR / EN where the item has a name. */
+    AdminHealthItem: {
+      code: string;
+      status: string;
+      messageKey: string;
+      params?: null | {
+        [key: string]: string;
+      };
+      labelAr?: null | string;
+      labelEn?: null | string;
+    };
+    /** @description The Health page (ADR 0151): overall status (worst of all checks), when it was checked and every check. */
+    AdminHealthReport: {
+      status: string;
+      /** Format: date-time */
+      checkedAt: string;
+      checks: components['schemas']['AdminHealthCheck'][];
+    };
     AffectedRiskDto: {
       /** Format: uuid */
       id: string;
@@ -22358,6 +22518,7 @@ export interface components {
       currencyCode: string;
       /** @default dd/MM/yyyy */
       dateFormat: string;
+      defaultLanguage?: null | string;
     };
     RegistrationInput: {
       registrationNo: null | string;
@@ -22399,6 +22560,12 @@ export interface components {
       values: components['schemas']['ReleaseValues'];
       /** Format: uint32 */
       version?: null | number;
+    };
+    /** @description Release notes of one version in one language (Markdown, shown in the About dialog). */
+    ReleaseNoteDto: {
+      version: string;
+      language: string;
+      markdown: string;
     };
     ReleaseValues: {
       nameAr: null | string;
@@ -23835,6 +24002,43 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    /**
+     * @description First stage of the setup wizard (ADR 0150): organisation profile, branding, languages and the first administrator, in one call
+     *     authorised by the one-time setup token.
+     */
+    SetupBootstrapInput: {
+      organisationNameAr: null | string;
+      organisationNameEn: null | string;
+      organisationCode: null | string;
+      timeZone: null | string;
+      currencyCode: null | string;
+      dateFormat: null | string;
+      primaryColor: null | string;
+      emailHeaderAr: null | string;
+      emailHeaderEn: null | string;
+      emailFooterAr: null | string;
+      emailFooterEn: null | string;
+      defaultLanguage: null | string;
+      hijriDisplay: boolean;
+      arabicIndicDigits: boolean;
+      adminEmail: null | string;
+      adminPassword: null | string;
+      adminNameAr: null | string;
+      adminNameEn: null | string;
+      adminEmployeeNo: null | string;
+      adminJobTitleAr: null | string;
+      adminJobTitleEn: null | string;
+    };
+    SetupBootstrapResultDto: {
+      /** Format: uuid */
+      userId: string;
+      userName: string;
+    };
+    /** @description Public state of the first-run setup (ADR 0150). Reveals nothing but whether the wizard is open. */
+    SetupStatusDto: {
+      needsSetup: boolean;
+      setupCompleted: boolean;
+    };
     ShareInput: {
       principalKind: string;
       principalRef: string;
@@ -24382,6 +24586,14 @@ export interface components {
       owningUnitId: null | string;
       /** Format: uint32 */
       version: number;
+    };
+    /** @description Version of this installation (ADR 0152): product version, source commit when known, build time of the host assembly. */
+    SystemVersionDto: {
+      version: string;
+      informationalVersion: string;
+      commit: null | string;
+      /** Format: date-time */
+      buildDate: string;
     };
     /** @description A target proposal with the reasons behind it (message keys with parameters). */
     TargetReason: {
@@ -26215,6 +26427,12 @@ export interface components {
       uaePassForVendors?: boolean;
       visibleFields?: components['schemas']['VendorVisibleFields'];
     };
+    /** @description Sign-in options the Wasel login page shows (public: says only whether the UAE Pass button is offered). */
+    WaselSignInOptionsDto: {
+      uaePass: boolean;
+      uaePassNameAr: null | string;
+      uaePassNameEn: null | string;
+    };
     /**
      * @description One widget of a dashboard definition (ADR 0143). Grid: 12 columns, `X` / `Y` / `W` / `H` in grid units.
      *     `Dimension`: breakdown (category axis, table rows, heat-map rows); `Series`: second breakdown (stacks, heat-map columns).
@@ -26387,6 +26605,66 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['AntiforgeryToken'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetSystemVersion: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SystemVersionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListReleaseNotes: {
+    parameters: {
+      query?: {
+        language?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReleaseNoteDto'][];
         };
       };
       /** @description Problem Details (RFC 9457) */
@@ -27127,6 +27405,35 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['TranslationOverridesDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetAdminHealth: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminHealthReport'];
         };
       };
       /** @description Problem Details (RFC 9457) */
@@ -31741,6 +32048,35 @@ export interface operations {
       };
     };
   };
+  GetWaselSignInOptions: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['WaselSignInOptionsDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
   GetWaselMe: {
     parameters: {
       query?: never;
@@ -31789,6 +32125,124 @@ export interface operations {
           [name: string]: unknown;
         };
         content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetSetupStatus: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SetupStatusDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  VerifySetupToken: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  BootstrapSetup: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SetupBootstrapInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SetupBootstrapResultDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CompleteSetup: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SetupStatusDto'];
+        };
       };
       /** @description Problem Details (RFC 9457) */
       default: {

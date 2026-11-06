@@ -13,6 +13,8 @@ const connectionString =
  */
 export default defineConfig<E2eOptions>({
   testDir: './e2e',
+  // The first-run setup wizard needs an empty database and its own hosts: playwright.setup.config.ts.
+  testIgnore: 'setup.spec.ts',
   fullyParallel: false,
   workers: 1,
   forbidOnly: Boolean(process.env.CI),
@@ -63,6 +65,8 @@ export default defineConfig<E2eOptions>({
           RateLimiting__AuthPermitLimit: '1000',
           // Known authenticator key for the seeded administrator, so tests can compute codes.
           Seed__AdminTotpKey: process.env.E2E_ADMIN_TOTP_KEY ?? 'JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP',
+          // Stand-in UAE Pass issuer for the vendor UAE Pass spec (ADR 0154); Development only.
+          Development__MockUaePass: 'true',
         },
       },
 });

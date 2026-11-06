@@ -84,6 +84,10 @@
       "title": "Scheduled jobs",
       "description": "Background jobs, their runs and the message queue."
     },
+    "health": {
+      "title": "System health",
+      "description": "Database, jobs, queue, e-mail, AI, storage, audit chain and certificates at a glance."
+    },
     "approvals": {
       "title": "Approvals",
       "description": "Approval chains of every system: steps, approvers, conditions, deadlines."
@@ -159,6 +163,10 @@
     "reporting": {
       "title": "Reporting",
       "description": "Department level, fiscal year, refresh of aggregates, scheduled delivery and the department scorecard limits."
+    },
+    "setup": {
+      "title": "Setup wizard",
+      "description": "First-run guided configuration: e-mail, sign-in, AI, calendar, organisation import and systems."
     }
   },
   "title": "Settings",
@@ -185,7 +193,10 @@
     "hijriHint": "Off by default; data always stays Gregorian.",
     "arabicIndicDigits": "Arabic-Indic digits",
     "arabicIndicDigitsHint": "Numbers show as ١٢٣ in the Arabic interface.",
-    "preview": "Preview"
+    "preview": "Preview",
+    "defaultLanguage": "Default interface language",
+    "defaultLanguageBrowser": "Follow the browser",
+    "defaultLanguageHint": "Used until a person chooses a language."
   },
   "branding": {
     "organisationNameAr": "Organisation name (Arabic)",

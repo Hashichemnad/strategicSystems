@@ -93,10 +93,14 @@ Write-Step "Installed. The application is running at http://$($hostName):$port (
 
 # 5. First administrator: the setup wizard with the one-time setup token from the application log.
 $logs = Invoke-ComposeQuiet logs --no-color app
-$tokenLine = @($logs.Output | Where-Object { $_ -like '*Setup token:*' }) | Select-Object -Last 1
+# The log is JSON (Serilog): the token is the "SetupToken" property of the "FIRST-RUN SETUP" warning (ADR 0150).
+$token = ''
+foreach ($line in @($logs.Output)) {
+    $m = [regex]::Match([string]$line, '"SetupToken":"([^"]+)"')
+    if ($m.Success) { $token = $m.Groups[1].Value }
+}
 Write-Host ''
-if ($tokenLine) {
-    $token = ($tokenLine -split 'Setup token:', 2)[1].Trim()
+if ($token) {
     Write-Host "  Open http://$($hostName):$port/setup and enter the one-time setup token:"
     Write-Host "      $token"
     Write-Host '  (Print a new one later: docker compose -f deploy\docker-compose.yml --profile app run --rm app --setup-token)'

@@ -132,5 +132,10 @@ Write an ADR for every choice the SPEC or CLAUDE.md leaves open (CLAUDE.md §2 r
 | [0147](0147-ai-executive-brief.md) | AI executive brief | Accepted |
 | [0148](0148-echarts-single-chart-library.md) | Apache ECharts as the single chart library; shared dashboard UI kit | Accepted |
 | [0149](0149-my-work-cards-and-layout.md) | My Work cards from every system and the per-user layout | Accepted |
+| [0150](0150-setup-wizard-and-setup-token.md) | First-run setup wizard and the one-time setup token | Proposed |
+| [0151](0151-administrator-health-page.md) | Administrator Health page: contributors per component, message keys, `settings.health.view` | Proposed |
+| [0152](0152-version-and-release-notes.md) | Product version and release notes in the application | Proposed |
+| [0154](0154-uae-pass-for-wasel-vendors.md) | UAE Pass sign-in for Wasel vendors (match by e-mail, second factor still required) | Proposed |
+| [0155](0155-outbound-url-policy-ssrf.md) | Outbound URL policy: SSRF guard on save and at connect time | Proposed |
 | [0156](0156-performance-and-scanning-tools.md) | Performance, image-scanning and SBOM tools (k6, Trivy, Syft) — external, never distributed | Proposed |
 | [0157](0157-backup-restore-upgrade-format.md) | Packaging, install, backup / restore / upgrade format | Proposed |

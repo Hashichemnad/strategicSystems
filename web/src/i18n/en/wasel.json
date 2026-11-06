@@ -9,7 +9,11 @@
     "email": "E-mail",
     "password": "Password",
     "submit": "Sign in",
-    "mfaNotice": "Two-step verification is required for every vendor account."
+    "mfaNotice": "Two-step verification is required for every vendor account.",
+    "or": "or",
+    "uaePass": "UAE Pass",
+    "uaePassButton": "Sign in with {{name}}",
+    "uaePassNotice": "Use the UAE Pass account registered with the e-mail address of your vendor account. Two-step verification still follows."
   },
   "mfa": {
     "enrolTitle": "Set up two-step verification",
@@ -279,5 +283,10 @@
   "author": {
     "vendor": "Vendor",
     "internal": "Project team"
+  },
+  "auth": {
+    "errors": {
+      "uaePassNoAccount": "No active vendor account uses the e-mail address of this UAE Pass account. Ask the project manager who invited you."
+    }
   }
 }

@@ -14,6 +14,7 @@ import {
   FormInput,
   Gauge,
   Hash,
+  HeartPulse,
   KeyRound,
   Languages,
   Layers,
@@ -23,6 +24,7 @@ import {
   ChartColumn,
   ListChecks,
   ListTodo,
+  Rocket,
   Mail,
   MapPinned,
   Palette,
@@ -42,6 +44,7 @@ import {
 } from 'lucide-react';
 
 export type SettingsPageKey =
+  | 'setup'
   | 'teams'
   | 'portfolio'
   | 'kpi'
@@ -64,6 +67,7 @@ export type SettingsPageKey =
   | 'notifications'
   | 'files'
   | 'jobs'
+  | 'health'
   | 'approvals'
   | 'ai'
   | 'mcp'
@@ -84,6 +88,7 @@ export type SettingsPageKey =
   | 'import';
 
 export type SettingsPath =
+  | '/setup/configure'
   | '/settings/regional'
   | '/settings/dashboards'
   | '/settings/reporting'
@@ -96,6 +101,7 @@ export type SettingsPath =
   | '/settings/notifications'
   | '/settings/files'
   | '/settings/jobs'
+  | '/settings/health'
   | '/settings/approvals'
   | '/settings/ai'
   | '/settings/mcp'
@@ -145,6 +151,7 @@ export const settingsGroups: readonly SettingsGroup[] = [
   {
     key: 'general',
     pages: [
+      { key: 'setup', to: '/setup/configure', icon: Rocket, permissions: ['settings.setup.manage'] },
       {
         key: 'regional',
         to: '/settings/regional',
@@ -204,6 +211,7 @@ export const settingsGroups: readonly SettingsGroup[] = [
       },
       { key: 'files', to: '/settings/files', icon: Paperclip, permissions: ['settings.file.manage'] },
       { key: 'jobs', to: '/settings/jobs', icon: Timer, permissions: ['settings.job.view'] },
+      { key: 'health', to: '/settings/health', icon: HeartPulse, permissions: ['settings.health.view'] },
       {
         key: 'approvals',
         to: '/settings/approvals',

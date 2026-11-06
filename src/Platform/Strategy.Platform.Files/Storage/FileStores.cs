@@ -72,6 +72,11 @@ internal sealed class S3FileStore : IFileStore, IDisposable
         {
             ForcePathStyle = options.S3ForcePathStyle,
             AuthenticationRegion = options.S3Region,
+
+            // Checksums only where the operation requires them: several S3-compatible servers store the aws-chunked framing of the SDK's
+            // default streaming upload (with trailing checksum) as part of the object (found against SeaweedFS in Phase 18).
+            RequestChecksumCalculation = RequestChecksumCalculation.WHEN_REQUIRED,
+            ResponseChecksumValidation = ResponseChecksumValidation.WHEN_REQUIRED,
         };
         if (!string.IsNullOrWhiteSpace(options.S3ServiceUrl))
         {
@@ -90,7 +95,16 @@ internal sealed class S3FileStore : IFileStore, IDisposable
         using var buffer = new MemoryStream();
         await content.CopyToAsync(buffer, cancellationToken).ConfigureAwait(false);
         buffer.Position = 0;
-        await _client.PutObjectAsync(new PutObjectRequest { BucketName = _bucket, Key = key, InputStream = buffer, AutoCloseStream = false }, cancellationToken)
+        await _client.PutObjectAsync(new PutObjectRequest
+        {
+            BucketName = _bucket,
+            Key = key,
+            InputStream = buffer,
+            AutoCloseStream = false,
+
+            // A plain signed payload (the content is buffered anyway), never the aws-chunked encoding (see the config above).
+            UseChunkEncoding = false,
+        }, cancellationToken)
             .ConfigureAwait(false);
     }
 

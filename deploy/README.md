@@ -66,9 +66,15 @@ capabilities and `no-new-privileges`. Logs rotate (`LOG_MAX_SIZE`, `LOG_MAX_FILE
 
 ### First administrator
 
-Use the **setup wizard** with the token the installer printed
-(`docker compose -f deploy/docker-compose.yml --profile app logs app | grep 'Setup token:'`). Scripted alternative — it holds the platform
-administrator roles (ADR 0016); the password is read from standard input, never from the command line or a file left on disk:
+**First-run setup wizard (ADR 0150).** While no administrator exists, the application prints a one-time **setup token** in its log at
+start-up (the installer shows it; later: `docker compose -f deploy/docker-compose.yml --profile app logs app | grep -o '"SetupToken":"[^"]*"'`,
+or look for "FIRST-RUN SETUP"). Open `http://<server>:<APP_PORT>/setup`, enter the token, then the organisation profile, branding, languages
+and the first administrator; sign in (two-step verification is set up at the first sign-in) and the guided configuration continues (e-mail
+server, sign-in providers, AI, business hours, organisation import, systems). A new token:
+`docker compose -f deploy/docker-compose.yml --profile app run --rm app --setup-token`.
+
+Or create the first administrator from the command line (once). It holds the platform administrator roles (ADR 0016). The password is
+read from standard input, never from the command line or a file left on disk:
 
 ```bash
 read -rsp 'Administrator password: ' ADMIN_PASSWORD && echo

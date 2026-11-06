@@ -99,11 +99,12 @@ say ""
 info "Installed. The application is running at http://$HOST:$PORT (put an HTTPS reverse proxy in front of it, deploy/nginx/strategy.conf)."
 
 # 5. First administrator: the setup wizard with the one-time setup token from the application log.
-token_line="$(compose logs --no-color app 2> /dev/null | grep -F 'Setup token:' | tail -n 1 || true)"
-if [ -n "$token_line" ]; then
+# The log is JSON (Serilog): the token is the "SetupToken" property of the "FIRST-RUN SETUP" warning (ADR 0150).
+token="$(compose logs --no-color app 2> /dev/null | grep -o '"SetupToken":"[^"]*"' | tail -n 1 | sed 's/^"SetupToken":"//; s/"$//' || true)"
+if [ -n "$token" ]; then
   say ""
   say "  Open http://$HOST:$PORT/setup and enter the one-time setup token:"
-  say "      ${token_line##*Setup token:}"
+  say "      $token"
   say "  (Print a new one later: docker compose -f deploy/docker-compose.yml --profile app run --rm app --setup-token)"
 else
   say ""

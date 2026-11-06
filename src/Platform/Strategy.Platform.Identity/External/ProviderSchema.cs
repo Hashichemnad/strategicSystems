@@ -2,6 +2,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using Strategy.Platform.Identity.Domain;
+using Strategy.Platform.Kernel.Net;
 using Strategy.Platform.Kernel.Results;
 
 namespace Strategy.Platform.Identity.External;
@@ -135,7 +136,7 @@ public static partial class ProviderSchema
         return result;
     }
 
-    public static IReadOnlyList<FieldError> Validate(string type, JsonObject settings, bool hasSecret)
+    public static IReadOnlyList<FieldError> Validate(string type, JsonObject settings, bool hasSecret, OutboundUrlPolicy? outbound = null)
     {
         ArgumentNullException.ThrowIfNull(settings);
         var schema = For(type);
@@ -168,6 +169,11 @@ public static partial class ProviderSchema
                 case FieldKinds.Url when text is null || !Uri.TryCreate(text, UriKind.Absolute, out var url)
                     || (url.Scheme != Uri.UriSchemeHttps && !(allowHttp && url.Scheme == Uri.UriSchemeHttp)):
                     errors.Add(new FieldError(key, "validation.httpsUrl", "validation.httpsUrl"));
+                    break;
+                case FieldKinds.Url when outbound?.Check(text) is { } refusal && refusal != OutboundRefusal.None:
+                    // ADR 0155: not the host itself, link-local / cloud metadata or (when configured) private networks.
+                    errors.Add(new FieldError(key, OutboundUrlPolicy.MessageKey, OutboundUrlPolicy.MessageKey,
+                        new Dictionary<string, object?> { ["reason"] = refusal.ToString() }));
                     break;
                 case FieldKinds.Boolean when node is not JsonValue b || !b.TryGetValue<bool>(out _):
                 case FieldKinds.Number when node is not JsonValue n || !n.TryGetValue<int>(out _):
@@ -204,6 +210,13 @@ public static partial class ProviderSchema
 
                 break;
             case ProviderTypes.Ldap:
+                if (outbound is not null && settings["host"] is JsonValue hostValue && hostValue.TryGetValue<string>(out var ldapHost)
+                    && outbound.CheckHost(ldapHost) is var hostRefusal and not OutboundRefusal.None)
+                {
+                    errors.Add(new FieldError("settings.host", OutboundUrlPolicy.MessageKey, OutboundUrlPolicy.MessageKey,
+                        new Dictionary<string, object?> { ["reason"] = hostRefusal.ToString() }));
+                }
+
                 var filter = settings["userFilter"]?.GetValue<string>() ?? string.Empty;
                 if (!filter.Contains("{0}", StringComparison.Ordinal) || !filter.StartsWith('(') || !filter.EndsWith(')'))
                 {

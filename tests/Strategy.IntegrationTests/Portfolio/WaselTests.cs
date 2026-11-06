@@ -17,6 +17,7 @@ using Strategy.Platform.Access;
 using Strategy.Platform.Audit;
 using Strategy.Platform.Http.Access;
 using Strategy.Platform.Identity.Application;
+using Strategy.Platform.Identity.Wasel;
 using Strategy.Platform.Kernel.Paging;
 using Strategy.Platform.Kernel.Time;
 
@@ -439,7 +440,161 @@ public sealed class WaselTests(WaselFixture fx) : IClassFixture<WaselFixture>
             .KeyAsync(HttpStatusCode.UnprocessableEntity, "portfolio.errors.reviewCompleted");
     }
 
+    [Fact]
+    public async Task Uae_pass_signs_in_only_an_active_vendor_account_by_its_email_and_still_requires_the_second_factor()
+    {
+        // ADR 0154: the installation's UAE Pass provider (a stand-in issuer on a loopback port) and the Wasel option.
+        await using var issuer = await MockUaePassIssuer.StartStandaloneAsync();
+        var origin = issuer.Urls.First();
+        var admin = await fx.Factory.CreateSignedInClientAsync(admin: true);
+        var w = await PortfolioWorld.CreateAsync(fx.Factory);
+        (await (await NewVendorClientAsync()).GetFromJsonAsync<WaselSignInOptionsDto>($"{Wasel}/auth/options"))!.UaePass.ShouldBeFalse();
+        (await (await NewVendorClientAsync()).GetAsync($"{Wasel}/auth/uae-pass/challenge")).StatusCode.ShouldBe(HttpStatusCode.NotFound);
+
+        var (authorize, token, userInfo) = MockUaePassIssuer.Endpoints(origin);
+        var created = await admin.PostAsJsonAsync("/api/v1/identity/admin/providers", new
+        {
+            code = "uaepass-wasel",
+            type = "uaepass",
+            displayNameAr = "الهوية الرقمية",
+            displayNameEn = "UAE Pass",
+            sort = 1,
+            autoLink = false,
+            jitCreateUser = false,
+            secret = MockUaePassIssuer.ClientSecret,
+            settings = new
+            {
+                environment = "staging",
+                clientId = MockUaePassIssuer.ClientId,
+                authorizationEndpoint = authorize,
+                tokenEndpoint = token,
+                userInfoEndpoint = userInfo,
+                allowInsecureHttp = true,
+                allowedUserTypes = "SOP2,SOP3",
+            },
+        });
+        created.StatusCode.ShouldBe(HttpStatusCode.OK, await created.Content.ReadAsStringAsync());
+        var providerId = (await created.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("id").GetGuid();
+        (await admin.PostAsync($"/api/v1/identity/admin/providers/{providerId}/enable", null)).StatusCode.ShouldBe(HttpStatusCode.OK);
+
+        // Provider on, vendor option still off: nothing offered.
+        (await (await NewVendorClientAsync()).GetFromJsonAsync<WaselSignInOptionsDto>($"{Wasel}/auth/options"))!.UaePass.ShouldBeFalse();
+        await WaselSettingsAsync(s => s with { Wasel = s.Wasel with { UaePassForVendors = true } });
+        try
+        {
+            var options = await (await NewVendorClientAsync()).GetFromJsonAsync<WaselSignInOptionsDto>($"{Wasel}/auth/options");
+            options!.UaePass.ShouldBeTrue();
+            options.UaePassNameEn.ShouldBe("UAE Pass");
+
+            var project = await ProjectInPlanningAsync(w, "UAE Pass vendor");
+            var vendor = await CreateVendorAsync(w, "UAE Pass Co");
+            await AssignAsync(w, project.Id, vendor.Id, DateOnly.FromDateTime(DateTime.UtcNow).AddDays(30));
+            var email = $"lead.{w.Suffix}@uaepass-vendor.example";
+            await InviteAsync(w, project.Id, vendor.Id, email, VendorRoles.Lead);
+            var (_, key) = await AcceptInvitationAndSignInAsync(email);
+
+            // A known vendor (e-mail matched case-insensitively): half-signed-in, the second factor is still required.
+            var browser = UaePassBrowser();
+            (await UaePassSignInAsync(browser, origin, email.ToUpperInvariant())).ShouldStartWith("/wasel/login/mfa?methods=");
+            await RefreshAntiforgeryAsync(browser);
+            (await browser.GetAsync($"{Wasel}/me")).StatusCode.ShouldBe(HttpStatusCode.Unauthorized, "no session before the second factor");
+            (await browser.GetAsync($"{Wasel}/projects/{project.Id}")).StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
+            await VerifyAsync(browser, key);
+            (await browser.GetFromJsonAsync<WaselMeDto>($"{Wasel}/me"))!.Email.ShouldBe(email);
+            (await browser.GetAsync($"{Wasel}/projects/{project.Id}")).StatusCode.ShouldBe(HttpStatusCode.OK);
+
+            // The internal application never accepts the vendor's sign-in.
+            (await browser.GetAsync("/api/v1/identity/me")).StatusCode.ShouldBe(HttpStatusCode.Unauthorized);
+
+            // Unknown e-mail, an internal account's e-mail and a disallowed UAE Pass user type: refused, nothing created, no enumeration.
+            var unknown = $"nobody.{w.Suffix}@unknown.example";
+            (await UaePassSignInAsync(UaePassBrowser(), origin, unknown)).ShouldBe("/wasel/login?error=wasel.auth.errors.uaePassNoAccount");
+            (await UaePassSignInAsync(UaePassBrowser(), origin, w.PmOffice.UserName)).ShouldBe("/wasel/login?error=wasel.auth.errors.uaePassNoAccount");
+            (await UaePassSignInAsync(UaePassBrowser(), origin, email, "SOP1")).ShouldBe("/wasel/login?error=auth.errors.externalUserType");
+            await using (var scope = TestAccess.SystemScope(fx.Factory))
+            {
+                var users = scope.ServiceProvider.GetRequiredService<StrategyUserManager>();
+                (await users.Users.AnyAsync(u => u.Email == unknown)).ShouldBeFalse();
+            }
+
+            // A suspended vendor (its users may no longer enter) and a deactivated vendor account are refused.
+            await Ok<VendorDetailDto>(w.C(w.PmOffice).PostAsJsonAsync($"{Base}/vendors/{vendor.Id}/status", new { status = VendorStatuses.Suspended, reason = "Audit" }));
+            (await UaePassSignInAsync(UaePassBrowser(), origin, email)).ShouldBe("/wasel/login?error=wasel.auth.errors.uaePassNoAccount");
+            await Ok<VendorDetailDto>(w.C(w.PmOffice).PostAsJsonAsync($"{Base}/vendors/{vendor.Id}/status", new { status = VendorStatuses.Active, reason = "Cleared" }));
+            (await UaePassSignInAsync(UaePassBrowser(), origin, email)).ShouldStartWith("/wasel/login/mfa?methods=");
+            await using (var scope = TestAccess.SystemScope(fx.Factory))
+            {
+                var users = scope.ServiceProvider.GetRequiredService<StrategyUserManager>();
+                var accounts = scope.ServiceProvider.GetRequiredService<IVendorAccounts>();
+                await accounts.SetActiveAsync((await users.Users.SingleAsync(u => u.Email == email)).Id, false);
+            }
+
+            (await UaePassSignInAsync(UaePassBrowser(), origin, email)).ShouldBe("/wasel/login?error=wasel.auth.errors.uaePassNoAccount");
+
+            // Every attempt is in the audit trail (provider "wasel:uaepass").
+            await using (var scope = TestAccess.SystemScope(fx.Factory))
+            {
+                var audit = scope.ServiceProvider.GetRequiredService<IAuditQuery>();
+                var entries = await audit.SearchAsync(new AuditFilter(Action: "auth"), new PageRequest(1, 200));
+                entries.Items.Count(e => e.Data?.Contains("wasel:uaepass", StringComparison.Ordinal) == true).ShouldBeGreaterThanOrEqualTo(6);
+            }
+        }
+        finally
+        {
+            await WaselSettingsAsync(s => s with { Wasel = s.Wasel with { UaePassForVendors = false } });
+            (await admin.PostAsync($"/api/v1/identity/admin/providers/{providerId}/disable", null)).StatusCode.ShouldBe(HttpStatusCode.OK);
+        }
+
+        (await (await NewVendorClientAsync()).GetAsync($"{Wasel}/auth/uae-pass/challenge")).StatusCode.ShouldBe(HttpStatusCode.NotFound);
+    }
+
     // ---------------------------------------------------------------- helpers
+
+    private HttpClient UaePassBrowser()
+    {
+        var client = fx.Factory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false, HandleCookies = true });
+        client.DefaultRequestHeaders.Add("X-Client", "spa");
+        return client;
+    }
+
+    /// <summary>Plays the browser: Wasel challenge → issuer form → provider callback → Wasel callback. Returns the SPA address it ends on.</summary>
+    private static async Task<string> UaePassSignInAsync(HttpClient browser, string issuerOrigin, string email, string userType = "SOP2")
+    {
+        var challenge = await browser.GetAsync($"{Wasel}/auth/uae-pass/challenge");
+        challenge.StatusCode.ShouldBe(HttpStatusCode.Redirect, await challenge.Content.ReadAsStringAsync());
+        var authorize = challenge.Headers.Location!;
+        authorize.ToString().ShouldStartWith(issuerOrigin);
+        var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(authorize.Query);
+        query["client_id"].ToString().ShouldBe(MockUaePassIssuer.ClientId);
+        query.ContainsKey("code_challenge").ShouldBeTrue("PKCE");
+        using var handler = new HttpClientHandler { AllowAutoRedirect = false };
+        using var person = new HttpClient(handler);
+        using var form = new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["redirect_uri"] = query["redirect_uri"].ToString(),
+            ["state"] = query["state"].ToString(),
+            ["email"] = email,
+            ["userType"] = userType,
+        });
+        var approved = await person.PostAsync(new Uri(authorize, MockUaePassIssuer.BasePath + "/authorize"), form);
+        approved.StatusCode.ShouldBe(HttpStatusCode.Redirect);
+        var back = await browser.GetAsync(approved.Headers.Location!.PathAndQuery);
+        var location = back.Headers.Location?.OriginalString ?? throw new InvalidOperationException(await back.Content.ReadAsStringAsync());
+        while (location.StartsWith("/api/", StringComparison.Ordinal))
+        {
+            location = (await browser.GetAsync(location)).Headers.Location!.OriginalString;
+        }
+
+        return Uri.UnescapeDataString(location);
+    }
+
+    private async Task WaselSettingsAsync(Func<PortfolioSettings, PortfolioSettings> change)
+    {
+        await using var scope = TestAccess.SystemScope(fx.Factory);
+        var editor = scope.ServiceProvider.GetRequiredService<Strategy.Platform.Settings.ISettingsEditor>();
+        var current = await editor.GetDocumentAsync<PortfolioSettings>();
+        (await editor.SaveAsync(change(current.Value), current.Version, PortfolioSettings.Validate)).IsSuccess.ShouldBeTrue();
+    }
 
     private async Task<(HttpClient Lead, Guid ProjectId, Guid VendorId, Guid Milestone)> VendorOnProjectAsync(PortfolioWorld w, string name)
     {

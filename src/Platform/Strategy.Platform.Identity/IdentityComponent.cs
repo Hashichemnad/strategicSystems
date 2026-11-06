@@ -56,6 +56,8 @@ public sealed class IdentityComponent : IPlatformComponent
         services.AddScoped<AccessTokenService>();
         services.AddScoped<TokenPrincipalFactory>();
         services.AddScoped<UserAdministration>();
+        services.AddScoped<Setup.SetupService>();
+        services.AddHostedService<Setup.SetupTokenIssuer>();
         services.AddScoped<Wasel.WaselSignInService>();
         services.AddScoped<Wasel.IVendorAccounts, Wasel.VendorAccounts>();
         services.AddScoped<ISmtpSettingsSource, SmtpSettingsSource>();
@@ -177,6 +179,7 @@ public sealed class IdentityComponent : IPlatformComponent
         AdminEndpoints.Map(group);
         ExternalEndpoints.Map(group, endpoints);
         Wasel.WaselAuthEndpoints.Map(endpoints);
+        Setup.SetupEndpoints.Map(endpoints);
     }
 
     /// <summary>A vendor session stays valid only while the account is an active vendor account with the same security stamp.</summary>

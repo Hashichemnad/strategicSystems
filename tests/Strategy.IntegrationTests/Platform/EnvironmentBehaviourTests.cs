@@ -23,6 +23,17 @@ public class EnvironmentBehaviourTests(PostgresFixture postgres)
     }
 
     [Fact]
+    public async Task The_stand_in_uae_pass_issuer_is_never_mapped_outside_development_even_when_switched_on()
+    {
+        await using var factory = await ApiFactory.CreateAsync(
+            postgres, environment: "Production", settings: new Dictionary<string, string?> { ["Development:MockUaePass"] = "true" });
+
+        var response = await factory.CreateClient().GetAsync("/dev/mock-uaepass/authorize");
+
+        await response.ShouldBeProblemAsync(HttpStatusCode.NotFound, "route.notFound");
+    }
+
+    [Fact]
     public async Task Production_sends_hsts_over_https()
     {
         await using var factory = await ApiFactory.CreateAsync(postgres, environment: "Production");

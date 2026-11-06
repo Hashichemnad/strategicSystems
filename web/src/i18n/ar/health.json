@@ -1,0 +1,153 @@
+{
+  "title": "صحة النظام",
+  "description": "قاعدة البيانات والمهام المجدولة وطابور الرسائل والبريد الإلكتروني وملفات PDF والذكاء الاصطناعي والتخزين وسلامة سجل التدقيق والشهادات في هذا التثبيت.",
+  "refresh": "إعادة الفحص",
+  "checkedAt": "آخر فحص {{at}}",
+  "item": "العنصر",
+  "status": "الحالة",
+  "details": "التفاصيل",
+  "overall": {
+    "ok": "جميع الفحوص سليمة",
+    "warning": "يحتاج إلى متابعة",
+    "error": "توجد مشكلات",
+    "notConfigured": "غير مهيأ"
+  },
+  "statuses": {
+    "ok": "سليم",
+    "warning": "تنبيه",
+    "error": "خطأ",
+    "notConfigured": "غير مهيأ"
+  },
+  "groups": {
+    "platform": "المنصة",
+    "jobs": "المهام المجدولة والطابور",
+    "integrations": "التكاملات",
+    "storage": "التخزين",
+    "security": "الأمان"
+  },
+  "checks": {
+    "version": "الإصدار",
+    "database": "قاعدة البيانات",
+    "migrations": "ترحيلات قاعدة البيانات",
+    "scheduler": "المجدول",
+    "outbox": "طابور الرسائل",
+    "email": "خادم البريد الإلكتروني",
+    "pdf": "إنشاء ملفات PDF (Gotenberg)",
+    "ai": "مزود الذكاء الاصطناعي",
+    "ocr": "التعرف على النصوص (OCR)",
+    "storage": "تخزين الملفات",
+    "disk": "المساحة على القرص",
+    "antivirus": "فحص الفيروسات (ClamAV)",
+    "auditChain": "سلامة سجل التدقيق",
+    "dataProtection": "مفاتيح حماية البيانات",
+    "certificates": "الشهادات"
+  },
+  "items": {
+    "files": "وحدة تخزين الملفات",
+    "temp": "المجلد المؤقت",
+    "dataProtection": "شهادة حماية البيانات"
+  },
+  "job": {
+    "name": "المهمة",
+    "lastRun": "آخر تشغيل",
+    "nextRun": "التشغيل التالي",
+    "failures": "الإخفاقات (24 ساعة)",
+    "never": "لم تُشغَّل بعد",
+    "ok": "نجح آخر تشغيل.",
+    "notRunYet": "مجدولة ولم تُشغَّل بعد.",
+    "recentFailures": "{{failures24h}} تشغيل فاشل خلال آخر 24 ساعة.",
+    "lastFailed": "فشل آخر تشغيل.",
+    "paused": "متوقفة مؤقتًا.",
+    "noNextRun": "لا يوجد تشغيل تالٍ مجدول.",
+    "notScheduled": "غير مجدولة — أعد تشغيل التطبيق."
+  },
+  "common": {
+    "timedOut": "لم يستجب الفحص خلال {{seconds}} ثانية.",
+    "failed": "تعذر تنفيذ الفحص ({{error}})."
+  },
+  "version": {
+    "ok": "الإصدار {{version}}، يعمل منذ {{startedAt}} (‎.NET {{runtime}})."
+  },
+  "database": {
+    "ok": "استجابت PostgreSQL {{version}} خلال {{latencyMs}} مللي ثانية؛ حجم قاعدة البيانات {{sizeBytes}}.",
+    "slow": "استجابت PostgreSQL {{version}} ببطء ({{latencyMs}} مللي ثانية)؛ حجم قاعدة البيانات {{sizeBytes}}.",
+    "unreachable": "تعذر الوصول إلى قاعدة البيانات ({{error}})."
+  },
+  "migrations": {
+    "ok": "جميع المخططات ({{schemas}}) محدّثة.",
+    "pending": "{{count}} ترحيل لم يُطبَّق — نفّذ الترقية (‎--migrate).",
+    "itemOk": "محدّث",
+    "itemPending": "{{count}} بانتظار التطبيق"
+  },
+  "scheduler": {
+    "ok": "يعمل؛ {{jobs}} مهمة مجدولة.",
+    "attention": "يعمل؛ {{failing}} من {{jobs}} مهمة تحتاج إلى متابعة.",
+    "stopped": "المجدول لا يعمل: لا تُرسَل التذكيرات والتصعيدات والرسائل.",
+    "schedulesOff": "يعمل، لكن التشغيل المجدول مُعطَّل (Scheduling:RunSchedules = false)."
+  },
+  "outbox": {
+    "ok": "{{pending}} رسالة بالانتظار؛ أُرسلت {{processed24h}} خلال آخر 24 ساعة.",
+    "dead": "{{dead}} رسالة فشلت نهائيًا — أعد إدراجها من الإعدادات ← المهام المجدولة.",
+    "late": "أقدم رسالة تنتظر منذ {{oldestPendingMinutes}} دقيقة ({{pending}} بالانتظار): الإشعارات متأخرة."
+  },
+  "email": {
+    "notConfigured": "لم يُهيَّأ خادم بريد: لا تُرسَل رسائل البريد الإلكتروني.",
+    "ok": "{{host}}:{{port}} — أُرسلت {{sent24h}} رسالة خلال آخر 24 ساعة.",
+    "idle": "{{host}}:{{port}} — لا رسائل خلال آخر 24 ساعة.",
+    "someFailed": "{{host}}:{{port}} — فشلت {{failed24h}} وأُرسلت {{sent24h}} خلال آخر 24 ساعة.",
+    "lastFailed": "{{host}}:{{port}} — فشلت آخر رسالة ({{lastAt}}). استخدم «إرسال رسالة تجريبية» في الإعدادات ← خادم البريد."
+  },
+  "pdf": {
+    "notConfigured": "إنشاء ملفات PDF غير مهيأ (Gotenberg:Url).",
+    "ok": "استجاب Gotenberg خلال {{latencyMs}} مللي ثانية.",
+    "badStatus": "استجاب Gotenberg بالحالة {{status}}.",
+    "unreachable": "تعذر الوصول إلى Gotenberg: تفشل عمليات تصدير PDF والتقارير."
+  },
+  "ai": {
+    "off": "الذكاء الاصطناعي مُعطَّل.",
+    "noProvider": "الذكاء الاصطناعي مُفعَّل لكن المزود الافتراضي غير موجود أو غير نشط.",
+    "ok": "{{provider}} ({{model}}) — {{calls24h}} طلب خلال آخر 24 ساعة.",
+    "someFailed": "{{provider}} — فشل {{failed24h}} من {{calls24h}} طلب خلال آخر 24 ساعة.",
+    "lastFailed": "{{provider}} — فشل آخر طلب ({{lastError}}). استخدم «اختبار الاتصال» في الإعدادات ← الذكاء الاصطناعي."
+  },
+  "ocr": {
+    "offInstalled": "التعرف على النصوص مُعطَّل؛ المحرك مثبت ({{languages}}).",
+    "offMissing": "التعرف على النصوص مُعطَّل؛ المحرك أو لغاته ({{languages}}) غير مثبتة.",
+    "ok": "Tesseract مثبت مع {{languages}}.",
+    "missing": "التعرف على النصوص مُفعَّل لكن Tesseract أو لغاته ({{languages}}) غير مثبتة: لا يمكن قراءة المستندات الممسوحة."
+  },
+  "storage": {
+    "ok": "يمكن كتابة الملفات ({{provider}}).",
+    "notWritable": "تعذرت كتابة الملفات ({{provider}}): يفشل رفع المرفقات."
+  },
+  "disk": {
+    "ok": "المساحة الحرة كافية.",
+    "low": "المساحة الحرة منخفضة.",
+    "item": "{{freeBytes}} حرة من {{totalBytes}}",
+    "unknown": "المساحة الحرة غير معروفة ({{path}})."
+  },
+  "antivirus": {
+    "off": "فحص الفيروسات مُعطَّل.",
+    "ok": "ClamAV على {{host}}:{{port}} يستجيب.",
+    "unavailable": "ClamAV على {{host}}:{{port}} لا يستجيب."
+  },
+  "auditChain": {
+    "never": "لم يُتحقَّق من سلسلة سجل التدقيق بعد (مهمة يومية، أو التدقيق ← التحقق).",
+    "ok": "تم التحقق {{at}}: فُحص {{checked}} قيدًا، والسلسلة سليمة.",
+    "stale": "آخر تحقق {{at}} — منذ أكثر من 48 ساعة.",
+    "broken": "وجد التحقق في {{at}} انقطاعًا عند القيد {{brokenSeq}}: افتح التدقيق ← التحقق."
+  },
+  "dataProtection": {
+    "ok": "{{keys}} مفتاح؛ المفتاح الحالي صالح حتى {{expiresAt}}.",
+    "noCurrentKey": "لا يوجد مفتاح صالح ({{keys}} مخزنة): لا يمكن حماية الجلسات والأسرار المخزنة."
+  },
+  "certificates": {
+    "none": "لا توجد شهادة قيد المراقبة (Health:CertificatePaths و DataProtection:CertificatePath).",
+    "ok": "جميع الشهادات صالحة.",
+    "attention": "توجد شهادة تنتهي قريبًا أو منتهية أو تتعذر قراءتها.",
+    "valid": "{{subject}} — صالحة حتى {{notAfter}} ({{daysLeft}} يومًا).",
+    "expiresSoon": "{{subject}} — تنتهي في {{notAfter}} (بقي {{daysLeft}} يومًا): جدّدها.",
+    "expired": "{{subject}} — انتهت في {{notAfter}}.",
+    "unreadable": "تتعذر قراءة {{path}} ({{error}})."
+  }
+}

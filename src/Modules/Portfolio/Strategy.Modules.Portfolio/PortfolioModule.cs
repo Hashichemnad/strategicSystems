@@ -100,6 +100,7 @@ public sealed class PortfolioModule : IModule
         services.AddScoped<IUserDirectoryLookup, UserDirectoryLookup>();
         services.AddScoped<IVendorDirectory, VendorDirectory>();
         services.AddScoped<Strategy.Platform.Identity.Wasel.IVendorSignInPolicy, VendorSignInPolicy>();
+        services.AddScoped<Strategy.Platform.Identity.Wasel.IVendorUaePassPolicy, VendorUaePassPolicy>();
         services.AddScoped<WaselAccessRunner>();
         services.AddScheduledJob(WaselAccessJob.Definition);
         services.AddScoped<VendorReviewAiService>();
