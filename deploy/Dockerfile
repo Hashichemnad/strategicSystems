@@ -22,10 +22,25 @@ RUN --mount=type=secret,id=build_ca,required=false \
     if [ -s /run/secrets/build_ca ]; then export SSL_CERT_FILE=/run/secrets/build_ca; fi; \
     dotnet restore src/Host/Strategy.Host/Strategy.Host.csproj
 # The OpenAPI document is generated in the repository build, not inside the image.
+# GIT_REVISION (optional) is stamped into the informational version ("1.0.0+<commit>") shown on the About and Health pages.
+ARG GIT_REVISION=
 RUN dotnet publish src/Host/Strategy.Host/Strategy.Host.csproj -c Release -o /app --no-restore \
-    -p:OpenApiGenerateDocuments=false -p:UseAppHost=false
+    -p:OpenApiGenerateDocuments=false -p:UseAppHost=false \
+    ${GIT_REVISION:+-p:SourceRevisionId=$GIT_REVISION}
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
+# OCI image labels (ADR 0157): the install / upgrade scripts pass APP_VERSION, GIT_REVISION and BUILD_CREATED.
+ARG APP_VERSION=1.0.0
+ARG GIT_REVISION=
+ARG BUILD_CREATED=
+LABEL org.opencontainers.image.title="Integrated Strategy System" \
+      org.opencontainers.image.description="Self-hosted, bilingual integrated strategy management suite (single deployable: host + SPA)" \
+      org.opencontainers.image.version="${APP_VERSION}" \
+      org.opencontainers.image.revision="${GIT_REVISION}" \
+      org.opencontainers.image.created="${BUILD_CREATED}" \
+      org.opencontainers.image.licenses="LicenseRef-Proprietary" \
+      org.opencontainers.image.source="https://github.com/Hashichemnad/strategicSystems" \
+      org.opencontainers.image.base.name="mcr.microsoft.com/dotnet/aspnet:10.0"
 # libldap: LDAP / Active Directory sign-in (System.DirectoryServices.Protocols needs the native library on Linux).
 # Tesseract OCR (Apache-2.0) with Arabic and English language data: text recognition of scanned documents, used only when switched on in
 # Settings → AI (ADR 0033). Build with --build-arg INSTALL_OCR=false to leave it out (about 40 MB smaller; scans then cannot be read).
@@ -48,12 +63,19 @@ RUN apt-get update \
        fi \
     && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
+# TMPDIR: the only writable path besides the files volume, so the container can run with a read-only root file system
+# (compose: read_only + tmpfs /tmp). Data Protection keys live in the database, not in the home directory.
 ENV ASPNETCORE_URLS=http://+:8080 \
     ASPNETCORE_ENVIRONMENT=Production \
-    DOTNET_NOLOGO=1
+    DOTNET_NOLOGO=1 \
+    DOTNET_CLI_TELEMETRY_OPTOUT=1 \
+    TMPDIR=/tmp \
+    ASPNETCORE_HTTP_PORTS= \
+    APP_VERSION=${APP_VERSION}
 COPY --from=build /app ./
 COPY --from=web /src/web/dist ./wwwroot
 # File store (local provider): a volume outside the web root, owned by the app user.
+# /app stays owned by root (COPY default): the runtime user cannot change the application files.
 RUN mkdir -p /var/lib/strategy/files && chown -R $APP_UID /var/lib/strategy
 ENV Files__LocalPath=/var/lib/strategy/files
 USER $APP_UID
