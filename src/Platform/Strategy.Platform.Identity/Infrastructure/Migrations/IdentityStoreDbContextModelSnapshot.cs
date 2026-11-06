@@ -406,6 +406,57 @@ namespace Strategy.Platform.Identity.Infrastructure.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Strategy.Platform.Identity.Domain.SetupState", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset?>("BootstrappedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("bootstrapped_at");
+
+                    b.Property<Guid?>("BootstrappedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("bootstrapped_by");
+
+                    b.Property<DateTimeOffset?>("CompletedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("completed_at");
+
+                    b.Property<Guid?>("CompletedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("completed_by");
+
+                    b.Property<DateTimeOffset?>("TokenConsumedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("token_consumed_at");
+
+                    b.Property<DateTimeOffset?>("TokenExpiresAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("token_expires_at");
+
+                    b.Property<byte[]>("TokenHash")
+                        .HasMaxLength(32)
+                        .HasColumnType("bytea")
+                        .HasColumnName("token_hash");
+
+                    b.Property<DateTimeOffset?>("TokenIssuedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("token_issued_at");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_setup_state");
+
+                    b.ToTable("setup_state", "identity");
+                });
+
             modelBuilder.Entity("Strategy.Platform.Identity.Domain.SmtpSettings", b =>
                 {
                     b.Property<Guid>("Id")

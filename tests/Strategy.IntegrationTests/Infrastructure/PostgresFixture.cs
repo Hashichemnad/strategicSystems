@@ -16,6 +16,7 @@ public sealed class PostgresFixture : IAsyncLifetime
     public const string Image = "postgres:16-alpine";
 
     private PostgreSqlContainer? _container;
+    private readonly System.Collections.Concurrent.ConcurrentBag<string> _created = [];
     private string _adminConnectionString = string.Empty;
 
     public async ValueTask InitializeAsync()
@@ -37,6 +38,7 @@ public sealed class PostgresFixture : IAsyncLifetime
     public async Task<string> CreateDatabaseAsync()
     {
         var name = "strategy_test_" + Guid.CreateVersion7().ToString("N");
+        _created.Add(name);
         await using (var connection = new NpgsqlConnection(_adminConnectionString))
         {
             await connection.OpenAsync();
@@ -52,6 +54,29 @@ public sealed class PostgresFixture : IAsyncLifetime
         if (_container is not null)
         {
             await _container.DisposeAsync();
+            return;
+        }
+
+        // A reused server (STRATEGY_TEST_POSTGRES) keeps what it is given: drop this run's databases, or every run adds a few gigabytes. Every host
+        // of the run has stopped by now (assembly fixture); FORCE closes connections a pool may still hold.
+        if (_adminConnectionString.Length == 0 || _created.IsEmpty)
+        {
+            return;
+        }
+
+        await using var connection = new NpgsqlConnection(_adminConnectionString);
+        await connection.OpenAsync();
+        foreach (var name in _created)
+        {
+            await using var command = new NpgsqlCommand($"DROP DATABASE IF EXISTS \"{name}\" WITH (FORCE)", connection);
+            try
+            {
+                await command.ExecuteNonQueryAsync();
+            }
+            catch (PostgresException)
+            {
+                // Best effort: a database that cannot be dropped now is left for the server's administrator.
+            }
         }
     }
 }

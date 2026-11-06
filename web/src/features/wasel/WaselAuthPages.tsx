@@ -25,11 +25,23 @@ function safeRedirect(redirect: string | undefined): string {
 export function WaselLoginPage() {
   const { t } = useTranslation('wasel');
   const { t: tc } = useTranslation();
-  const { redirect } = waselLoginRoute.useSearch();
+  const { i18n } = useTranslation();
+  const { redirect, error: returnedError } = waselLoginRoute.useSearch();
   const navigate = useNavigate();
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState<string>();
+  const [error, setError] = useState<string | undefined>(returnedError);
+  // UAE Pass is offered only when the installation's provider is on and Settings → Portfolio → Wasel allows it for vendors (ADR 0154).
+  const options = useQuery({
+    queryKey: ['wasel', 'sign-in-options'],
+    queryFn: async ({ signal }) => unwrap(await waselApi.GET('/api/wasel/v1/auth/options', { signal })),
+    staleTime: 60_000,
+  });
+  const uaePassName =
+    (i18n.language === 'ar' ? options.data?.uaePassNameAr : options.data?.uaePassNameEn) ??
+    options.data?.uaePassNameEn ??
+    options.data?.uaePassNameAr ??
+    t('login.uaePass');
   const [busy, setBusy] = useState(false);
 
   async function submit() {
@@ -92,6 +104,22 @@ export function WaselLoginPage() {
           {t('login.submit')}
         </Button>
       </form>
+      {options.data?.uaePass && (
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center gap-3 text-xs text-muted-foreground" aria-hidden="true">
+            <span className="h-px flex-1 bg-border" />
+            {t('login.or')}
+            <span className="h-px flex-1 bg-border" />
+          </div>
+          <Button asChild variant="outline">
+            {/* A full-page navigation: the provider's sign-in page, then back through the server callback. */}
+            <a href="/api/wasel/v1/auth/uae-pass/challenge" data-testid="wasel-login-uaepass">
+              {t('login.uaePassButton', { name: uaePassName })}
+            </a>
+          </Button>
+          <p className="text-xs text-muted-foreground">{t('login.uaePassNotice')}</p>
+        </div>
+      )}
       <p className="text-xs text-muted-foreground">{t('login.mfaNotice')}</p>
     </div>
   );

@@ -18,21 +18,44 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 COPY global.json Directory.Build.props Directory.Packages.props .editorconfig ./
 COPY src/ src/
+# Only the native libraries of the image's own architecture (linux-x64 or linux-arm64) are published: the multi-platform packages
+# (SkiaSharp, PDFium…) otherwise ship Windows / macOS / musl binaries the container never loads. Framework-dependent (aspnet base image).
+ARG TARGETARCH
 RUN --mount=type=secret,id=build_ca,required=false \
     if [ -s /run/secrets/build_ca ]; then export SSL_CERT_FILE=/run/secrets/build_ca; fi; \
-    dotnet restore src/Host/Strategy.Host/Strategy.Host.csproj
+    RID=linux-x64; if [ "$TARGETARCH" = "arm64" ]; then RID=linux-arm64; fi; \
+    dotnet restore src/Host/Strategy.Host/Strategy.Host.csproj -r "$RID"
 # The OpenAPI document is generated in the repository build, not inside the image.
-RUN dotnet publish src/Host/Strategy.Host/Strategy.Host.csproj -c Release -o /app --no-restore \
-    -p:OpenApiGenerateDocuments=false -p:UseAppHost=false
+# GIT_REVISION (optional) is stamped into the informational version ("1.0.0+<commit>") shown on the About and Health pages.
+ARG GIT_REVISION=
+RUN RID=linux-x64; if [ "$TARGETARCH" = "arm64" ]; then RID=linux-arm64; fi; \
+    dotnet publish src/Host/Strategy.Host/Strategy.Host.csproj -c Release -o /app --no-restore -r "$RID" --self-contained false \
+    -p:OpenApiGenerateDocuments=false -p:UseAppHost=false \
+    ${GIT_REVISION:+-p:SourceRevisionId=$GIT_REVISION}
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
+# OCI image labels (ADR 0157): the install / upgrade scripts pass APP_VERSION, GIT_REVISION and BUILD_CREATED.
+ARG APP_VERSION=1.0.0
+ARG GIT_REVISION=
+ARG BUILD_CREATED=
+LABEL org.opencontainers.image.title="Integrated Strategy System" \
+      org.opencontainers.image.description="Self-hosted, bilingual integrated strategy management suite (single deployable: host + SPA)" \
+      org.opencontainers.image.version="${APP_VERSION}" \
+      org.opencontainers.image.revision="${GIT_REVISION}" \
+      org.opencontainers.image.created="${BUILD_CREATED}" \
+      org.opencontainers.image.licenses="LicenseRef-Proprietary" \
+      org.opencontainers.image.source="https://github.com/Hashichemnad/strategicSystems" \
+      org.opencontainers.image.base.name="mcr.microsoft.com/dotnet/aspnet:10.0"
 # libldap: LDAP / Active Directory sign-in (System.DirectoryServices.Protocols needs the native library on Linux).
 # Tesseract OCR (Apache-2.0) with Arabic and English language data: text recognition of scanned documents, used only when switched on in
 # Settings → AI (ADR 0033). Build with --build-arg INSTALL_OCR=false to leave it out (about 40 MB smaller; scans then cannot be read).
 # Licence notices: the copyright file of every package the OCR install adds (Tesseract and the OS libraries it loads, some LGPL) is copied
-# to /app/licenses/ocr/ with a package list (name, version); the build fails if one is missing. docs/THIRD_PARTY_LICENSES.md lists them.
+# to /app/licenses/ocr/ with a package list (name, version) and SOURCES.txt (Ubuntu source package and where to get it); the build fails if
+# one is missing. libjbig0 is GPL-2+ (accepted by the owner, ADR 0033): NOTICE-libjbig0-GPL-2.txt and GPL-2.txt are added. docs/THIRD_PARTY_LICENSES.md lists them.
 ARG INSTALL_OCR=true
+# Security updates of the base image's OS packages first (Trivy gate: no High / Critical with a fix, ADR 0156).
 RUN apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get upgrade -y --no-install-recommends \
     && (apt-get install -y --no-install-recommends libldap2 || apt-get install -y --no-install-recommends libldap-2.5-0) \
     && if [ "$INSTALL_OCR" = "true" ]; then \
          dpkg-query -W -f='${Package}\n' | sort > /tmp/before \
@@ -43,17 +66,40 @@ RUN apt-get update \
               test -f "/usr/share/doc/$p/copyright" || { echo "missing licence notice for $p"; exit 1; }; \
               cp "/usr/share/doc/$p/copyright" "/app/licenses/ocr/$p.copyright"; \
               dpkg-query -W -f='${Package} ${Version}\n' "$p" >> /app/licenses/ocr/packages.txt; \
+              dpkg-query -W -f='${Package} ${Version} | source: ${source:Package} ${source:Version} | https://launchpad.net/ubuntu/+source/${source:Package}/${source:Version}\n' "$p" >> /app/licenses/ocr/SOURCES.txt; \
             done \
+         && if grep -q '^libjbig0 ' /app/licenses/ocr/packages.txt; then \
+              test -f /usr/share/common-licenses/GPL-2 || { echo "missing GPL-2 text for libjbig0"; exit 1; }; \
+              cp /usr/share/common-licenses/GPL-2 /app/licenses/ocr/GPL-2.txt \
+              && { printf '%s\n' \
+                   "libjbig0 (JBIG-KIT) - GNU General Public License, version 2 or later (GPL-2+)" "" \
+                   "This image contains the unmodified Ubuntu package libjbig0, a shared library loaded only by the separate tesseract program" \
+                   "(through libtiff) for OCR (ADR 0033). It is licensed under the GPL, version 2 or later: full text in GPL-2.txt, copyright" \
+                   "notice in libjbig0.copyright. Version and source package:"; \
+                   dpkg-query -W -f='  ${Package} ${Version}, source package ${source:Package} ${source:Version}\n' libjbig0; \
+                   printf '%s\n' "" \
+                   "Corresponding source: https://launchpad.net/ubuntu/+source/$(dpkg-query -W -f='${source:Package}/${source:Version}' libjbig0)" \
+                   "  or on an Ubuntu machine with source repositories: apt-get source $(dpkg-query -W -f='${source:Package}=${source:Version}' libjbig0)" \
+                   "Images built with --build-arg INSTALL_OCR=false contain neither the OCR packages nor libjbig0."; \
+                 } > /app/licenses/ocr/NOTICE-libjbig0-GPL-2.txt; \
+            fi \
          && rm /tmp/before /tmp/after; \
        fi \
     && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
+# TMPDIR: the only writable path besides the files volume, so the container can run with a read-only root file system
+# (compose: read_only + tmpfs /tmp). Data Protection keys live in the database, not in the home directory.
 ENV ASPNETCORE_URLS=http://+:8080 \
     ASPNETCORE_ENVIRONMENT=Production \
-    DOTNET_NOLOGO=1
+    DOTNET_NOLOGO=1 \
+    DOTNET_CLI_TELEMETRY_OPTOUT=1 \
+    TMPDIR=/tmp \
+    ASPNETCORE_HTTP_PORTS= \
+    APP_VERSION=${APP_VERSION}
 COPY --from=build /app ./
 COPY --from=web /src/web/dist ./wwwroot
 # File store (local provider): a volume outside the web root, owned by the app user.
+# /app stays owned by root (COPY default): the runtime user cannot change the application files.
 RUN mkdir -p /var/lib/strategy/files && chown -R $APP_UID /var/lib/strategy
 ENV Files__LocalPath=/var/lib/strategy/files
 USER $APP_UID

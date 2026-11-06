@@ -19,6 +19,14 @@ internal static class SettingsEndpoints
                 (await a.SetTranslationAsync(body.Language, body.Namespace, body.Key, body.Value, ct)).ToOk())
             .WithName("SetTranslationOverride").RequirePermission(SettingsPermissions.TranslationManage);
 
+        // Administrator Health page (ADR 0151): every check, never cached, never secrets.
+        group.MapGet("/health", async (HttpContext http, AdminHealthService a, CancellationToken ct) =>
+            {
+                http.Response.Headers.CacheControl = "no-store";
+                return TypedResults.Ok(await a.CheckAsync(AdminHealthService.DefaultTimeout, ct));
+            })
+            .WithName("GetAdminHealth").RequirePermission(SettingsPermissions.HealthView);
+
         group.MapGet("/regional", (SettingsAdministration a, CancellationToken ct) => a.GetAsync<RegionalSettings>(ct)).WithName("GetRegionalSettings")
             .RequirePermission(SettingsPermissions.GeneralManage);
         group.MapPut("/regional", async (VersionedInput<RegionalSettings> body, SettingsAdministration a, CancellationToken ct) =>

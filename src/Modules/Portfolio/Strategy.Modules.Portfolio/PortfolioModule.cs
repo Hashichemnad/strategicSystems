@@ -35,6 +35,7 @@ public sealed class PortfolioModule : IModule
     {
         services.AddModuleDbContext<PortfolioDbContext>(PortfolioDbContext.SchemaName);
         services.AddRequestHandlersFrom(typeof(PortfolioModule).Assembly);
+        services.AddScoped<Strategy.Platform.Kernel.Demo.IDemoPackContributor, Demo.PortfolioDemoPack>();
         services.AddAccessCatalogue(new PortfolioAccessCatalogue());
         services.AddNumberingFormat(PortfolioAccessCatalogue.RequestNumbering);
         services.AddNumberingFormat(PortfolioAccessCatalogue.ProjectNumbering);
@@ -100,6 +101,7 @@ public sealed class PortfolioModule : IModule
         services.AddScoped<IUserDirectoryLookup, UserDirectoryLookup>();
         services.AddScoped<IVendorDirectory, VendorDirectory>();
         services.AddScoped<Strategy.Platform.Identity.Wasel.IVendorSignInPolicy, VendorSignInPolicy>();
+        services.AddScoped<Strategy.Platform.Identity.Wasel.IVendorUaePassPolicy, VendorUaePassPolicy>();
         services.AddScoped<WaselAccessRunner>();
         services.AddScheduledJob(WaselAccessJob.Definition);
         services.AddScoped<VendorReviewAiService>();

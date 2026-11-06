@@ -66,12 +66,13 @@ export function AuditFindingsPage() {
   return (
     <AuditPageLayout testId="audit-findings">
       <PageHeader title={t('findings.title')} description={t('findings.description')} />
-      <div className="flex flex-wrap gap-1" role="tablist" aria-label={t('findings.views')}>
+      <div className="flex flex-wrap gap-1" role="group" aria-label={t('findings.views')}>
         {findingViews.map((v) => (
           <Button
             key={v}
             size="sm"
             variant={(search.view ?? 'open') === v ? 'primary' : 'ghost'}
+            aria-pressed={(search.view ?? 'open') === v}
             onClick={() => setSearch({ view: v, page: undefined })}
             data-testid={`audit-view-${v}`}
           >

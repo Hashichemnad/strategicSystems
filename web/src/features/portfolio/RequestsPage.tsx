@@ -86,7 +86,7 @@ export function RequestsPage() {
       >
         <TabsList>
           {requestViews.map((view) => (
-            <TabsTrigger key={view} value={view}>
+            <TabsTrigger filter key={view} value={view}>
               {t(`views.${view}`)}
             </TabsTrigger>
           ))}

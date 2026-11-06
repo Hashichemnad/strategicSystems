@@ -162,6 +162,11 @@ internal sealed class VendorRegisterService(
     {
         var v = input.Values;
         var errors = Validate(v);
+        if (v is null)
+        {
+            return Error.Validation(errors);
+        }
+
         if (v.TradeLicenceNo is { } licence && await db.Vendors.AnyAsync(x => x.TradeLicenceNo == licence.Trim() && x.Id != id, ct).ConfigureAwait(false))
         {
             errors.Add(new FieldError("tradeLicenceNo", "portfolio.errors.vendorDuplicate", "portfolio.errors.vendorDuplicate"));
@@ -290,6 +295,11 @@ internal sealed class VendorRegisterService(
 
     internal static List<FieldError> Validate(VendorValues v)
     {
+        if (v is null)
+        {
+            return [new FieldError("values", "validation.required", "validation.required")];
+        }
+
         var errors = new List<FieldError>();
         if (string.IsNullOrWhiteSpace(v.NameAr) && string.IsNullOrWhiteSpace(v.NameEn))
         {

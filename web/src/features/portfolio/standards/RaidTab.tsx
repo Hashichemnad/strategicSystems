@@ -565,12 +565,6 @@ function RiskMatrixPanel({ project }: { project: ProjectFull }) {
                     type="button"
                     data-testid={`matrix-cell-${c.probability}-${c.impact}`}
                     aria-pressed={active}
-                    aria-label={t('matrix.cellLabel', {
-                      probability: c.probability,
-                      impact: c.impact,
-                      band: t(`bands.${c.band}`),
-                      count: c.count,
-                    })}
                     onClick={() =>
                       setSelected(active ? null : { probability: c.probability, impact: c.impact })
                     }
@@ -578,11 +572,22 @@ function RiskMatrixPanel({ project }: { project: ProjectFull }) {
                       'flex aspect-square min-h-10 flex-col items-center justify-center rounded-md border text-sm font-semibold tabular-nums focus-visible:outline-2 focus-visible:outline-primary',
                       bandCell[c.band],
                       active && 'ring-2 ring-primary',
-                      c.count === 0 && 'opacity-60',
+                      // Empty cells are told apart by a dashed border, not by fading the text (WCAG 1.4.3).
+                      c.count === 0 && 'border-dashed',
                     )}
                   >
                     {formatNumber(c.count, lang)}
                     <span className="hidden text-[10px] font-normal sm:block">{t(`bands.${c.band}`)}</span>
+                    {/* The visible count and band start the accessible name; the full description follows (WCAG 2.5.3). */}
+                    <span className="sr-only">
+                      {' — '}
+                      {t('matrix.cellLabel', {
+                        probability: c.probability,
+                        impact: c.impact,
+                        band: t(`bands.${c.band}`),
+                        count: c.count,
+                      })}
+                    </span>
                   </button>
                 );
               })}

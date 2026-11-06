@@ -1,0 +1,106 @@
+{
+  "title": "Set up the system",
+  "description": "First-run setup: a few steps and the system is ready for your organisation.",
+  "steps": {
+    "token": "Setup token",
+    "organisation": "Organisation",
+    "branding": "Branding",
+    "languages": "Languages",
+    "administrator": "Administrator"
+  },
+  "token": {
+    "intro": "For security, setup needs the one-time setup token printed in the application log when the system started.",
+    "where": "Find it in the log of the app container (docker compose logs app) or run the application with --setup-token to print a new one.",
+    "label": "Setup token",
+    "invalid": "This setup token is not valid. It may have expired or been replaced: print a new one with --setup-token."
+  },
+  "organisation": {
+    "nameAr": "Organisation name (Arabic)",
+    "nameEn": "Organisation name (English)",
+    "code": "Short code",
+    "codeHint": "Letters and digits, e.g. ADOF. Used in record numbers and as the code of the top unit.",
+    "timeZone": "Time zone",
+    "currencyCode": "Currency",
+    "dateFormat": "Date format"
+  },
+  "branding": {
+    "primaryColor": "Primary colour",
+    "emailHeaderAr": "E-mail header (Arabic)",
+    "emailHeaderEn": "E-mail header (English)",
+    "emailFooterAr": "E-mail footer (Arabic)",
+    "emailFooterEn": "E-mail footer (English)",
+    "logoLater": "Logos can be uploaded later in Settings → Branding."
+  },
+  "languages": {
+    "defaultLanguage": "Default interface language",
+    "defaultLanguageHint": "Used until each person chooses their own language. Both languages are always available.",
+    "hijri": "Show Hijri dates",
+    "hijriHint": "Off by default; data always stays Gregorian.",
+    "digits": "Arabic-Indic digits",
+    "digitsHint": "Numbers show as ١٢٣ in the Arabic interface."
+  },
+  "administrator": {
+    "intro": "The first administrator manages the whole system. Two-step verification is set up at the first sign-in.",
+    "nameAr": "Full name (Arabic)",
+    "nameEn": "Full name (English)",
+    "employeeNo": "Employee number",
+    "jobTitleAr": "Job title (Arabic)",
+    "jobTitleEn": "Job title (English)",
+    "email": "E-mail (user name)",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "mismatch": "The passwords do not match.",
+    "create": "Create the administrator"
+  },
+  "fieldErrors": "Please correct the following:",
+  "done": {
+    "title": "The first administrator is ready",
+    "description": "Sign in as {{email}}. After setting up two-step verification you continue with the guided configuration.",
+    "signIn": "Sign in"
+  },
+  "configure": {
+    "title": "Guided configuration",
+    "description": "Configure the essentials now or skip any step and do it later in Settings.",
+    "skip": "Skip this step",
+    "optional": "Optional",
+    "finish": "Finish setup",
+    "finished": "Setup is complete. Welcome!",
+    "steps": {
+      "email": "E-mail server",
+      "authentication": "Sign-in providers",
+      "ai": "AI provider",
+      "calendar": "Business hours and holidays",
+      "import": "Organisation structure",
+      "systems": "Systems",
+      "demo": "Demo data",
+      "finish": "Finish"
+    },
+    "hints": {
+      "email": "Set the outgoing mail server and send a test e-mail. Without it, nobody receives notifications or invitations.",
+      "authentication": "Optional: sign-in with Entra ID, ADFS, SAML, LDAP or UAE Pass. Local accounts always work.",
+      "ai": "Optional: AI assistance stays off until a provider is configured and switched on. Use Test connection before enabling it.",
+      "calendar": "Working days and hours drive every deadline and SLA. Add the public holidays of the year.",
+      "import": "Download the templates, fill in your units and then your employees, and upload them.",
+      "systems": "Choose which systems are enabled. Disabled systems are hidden for everyone.",
+      "demo": "Optional, for presentations only: load sample users and records in every system. They can be removed later.",
+      "finish": "You can come back to this wizard from Settings → Setup wizard until you finish it."
+    },
+    "forbidden": "Only administrators can run the setup wizard.",
+    "demo": {
+      "password": "Password for the demo users",
+      "passwordHint": "All demo users sign in with this password. Never use demo data in production.",
+      "load": "Load demo data",
+      "loaded": "Demo data loaded."
+    },
+    "previousStep": "Previous setup step",
+    "nextStep": "Next setup step"
+  },
+  "about": {
+    "menu": "About",
+    "title": "About this system",
+    "version": "Version",
+    "commit": "Build",
+    "built": "Built",
+    "releaseNotes": "Release notes"
+  }
+}

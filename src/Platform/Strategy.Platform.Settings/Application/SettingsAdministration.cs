@@ -32,6 +32,12 @@ internal sealed partial class SettingsAdministration(SettingsDbContext db, Setti
     public async Task<Result<SettingsDocument<T>>> SaveAsync<T>(T value, uint version, Func<T, List<FieldError>> validate, CancellationToken ct = default)
         where T : class, ISettingsArea
     {
+        if (value is null)
+        {
+            // A body without the settings document ({}): a validation problem, never a null dereference in the validator.
+            return Error.Validation([new FieldError("value", "validation.required", "validation.required")]);
+        }
+
         var errors = validate(value);
         if (errors.Count > 0)
         {
@@ -77,6 +83,11 @@ internal sealed partial class SettingsAdministration(SettingsDbContext db, Setti
         if (!RegionalSettings.DateFormats.Contains(value.DateFormat))
         {
             errors.Add(new FieldError("dateFormat", "validation.unknownCode", "validation.unknownCode"));
+        }
+
+        if (value.DefaultLanguage is not null && !RegionalSettings.Languages.Contains(value.DefaultLanguage))
+        {
+            errors.Add(new FieldError("defaultLanguage", "validation.unknownCode", "validation.unknownCode"));
         }
 
         return errors;

@@ -67,6 +67,7 @@
     "dataNotAllowed": "Data of this system may not be sent to the AI.",
     "documentsNotAllowed": "Sending documents to the AI is switched off.",
     "providerError": "The AI provider did not answer. Try again later.",
+    "endpointRefused": "The endpoint address is not allowed by the outbound policy of this installation.",
     "timeout": "The AI provider took too long to answer.",
     "invalidOutput": "The AI answer could not be used. Try again.",
     "limitReached": "The monthly AI limit has been reached.",

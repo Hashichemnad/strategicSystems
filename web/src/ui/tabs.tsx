@@ -7,7 +7,15 @@ export function TabsList({ className, ...props }: TabsPrimitive.TabsListProps) {
   return <TabsPrimitive.List className={cn('flex gap-1 overflow-x-auto border-b', className)} {...props} />;
 }
 
-export function TabsTrigger({ className, ...props }: TabsPrimitive.TabsTriggerProps) {
+interface TabsTriggerProps extends TabsPrimitive.TabsTriggerProps {
+  /**
+   * The tabs filter one shared list instead of switching panels (no TabsContent): no `aria-controls` pointing to a panel that
+   * does not exist (WCAG 4.1.2, axe aria-valid-attr-value).
+   */
+  filter?: boolean;
+}
+
+export function TabsTrigger({ className, filter, ...props }: TabsTriggerProps) {
   return (
     <TabsPrimitive.Trigger
       className={cn(
@@ -15,6 +23,7 @@ export function TabsTrigger({ className, ...props }: TabsPrimitive.TabsTriggerPr
         className,
       )}
       {...props}
+      {...(filter ? { 'aria-controls': undefined } : {})}
     />
   );
 }

@@ -31,11 +31,17 @@ export function Select({
   className,
   ...aria
 }: SelectProps) {
+  // Outside a FormField (no id for a <label>) and without an explicit name, the placeholder (else the chosen option) names the
+  // control, so a select is never an unnamed button (WCAG 4.1.2). Screens should still pass an aria-label naming the field.
+  const name =
+    aria['aria-label'] ??
+    (id ? undefined : (placeholder ?? options.find((option) => option.value === value)?.label));
   return (
     <SelectPrimitive.Root value={value} onValueChange={onValueChange} disabled={disabled}>
       <SelectPrimitive.Trigger
         id={id}
         {...aria}
+        aria-label={name}
         className={cn(
           'flex h-10 w-full items-center justify-between gap-2 rounded-md border border-input bg-card px-3 text-sm data-[placeholder]:text-muted-foreground aria-invalid:border-danger disabled:opacity-50',
           className,

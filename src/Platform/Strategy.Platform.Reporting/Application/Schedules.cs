@@ -132,6 +132,11 @@ public sealed class ScheduleService(
             return Error.Forbidden();
         }
 
+        if (input is null)
+        {
+            return Error.Validation([new FieldError("schedule", "validation.required", "validation.required")]);
+        }
+
         var errors = new List<FieldError>();
         if (string.IsNullOrWhiteSpace(input.Name) || input.Name.Length > 200)
         {

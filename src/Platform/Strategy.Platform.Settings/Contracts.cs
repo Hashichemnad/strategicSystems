@@ -15,11 +15,23 @@ public sealed record RegionalSettings(
     bool HijriDisplay = false,
     bool ArabicIndicDigits = false,
     string CurrencyCode = "AED",
-    string DateFormat = "dd/MM/yyyy") : ISettingsArea
+    string DateFormat = "dd/MM/yyyy",
+    string? DefaultLanguage = null) : ISettingsArea
 {
     public static string Key => "regional";
 
     public static readonly IReadOnlyList<string> DateFormats = ["dd/MM/yyyy", "yyyy-MM-dd", "MM/dd/yyyy"];
+
+    /// <summary>Interface languages. <c>DefaultLanguage</c> (null: follow the browser) is used until a user chooses one (ADR 0150).</summary>
+    public static readonly IReadOnlyList<string> Languages = ["ar", "en"];
+}
+
+/// <summary>Validation of the typed areas for components that save them outside the Settings screens (setup wizard, ADR 0150).</summary>
+public static class SettingsValidation
+{
+    public static List<Kernel.Results.FieldError> Regional(RegionalSettings value) => Application.SettingsAdministration.ValidateRegional(value);
+
+    public static List<Kernel.Results.FieldError> Branding(BrandingSettings value) => Application.SettingsAdministration.ValidateBranding(value);
 }
 
 /// <summary>Branding per installation (SPEC §0.2): names, colour, email header / footer. Logos are separate assets.</summary>

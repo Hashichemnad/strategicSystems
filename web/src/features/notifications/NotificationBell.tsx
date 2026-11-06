@@ -29,16 +29,12 @@ export function NotificationBell() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          aria-label={label}
-          className="relative"
-          data-testid="notification-bell"
-        >
+        <Button variant="ghost" size="icon" className="relative" data-testid="notification-bell">
           <Bell aria-hidden />
+          {/* Named by its content so the visible count is part of the name (WCAG 2.5.3). */}
+          <span className="sr-only">{label}</span>
           {unread > 0 && (
-            <span className="absolute end-1 top-1 inline-flex min-w-4 items-center justify-center rounded-full bg-danger px-1 text-[10px] font-semibold text-white">
+            <span className="absolute end-1 top-1 inline-flex min-w-4 items-center justify-center rounded-full bg-danger px-1 text-[10px] font-semibold text-danger-foreground">
               {unread > 99 ? '99+' : formatNumber(unread, i18n.language)}
             </span>
           )}

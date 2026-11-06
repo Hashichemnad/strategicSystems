@@ -83,17 +83,18 @@ describe('HeatMap', () => {
     expect(cell).toHaveTextContent('P2');
     expect(cell).toHaveStyle({ backgroundColor: '#dc2626' });
     expect(screen.getByTestId('risk-heat-residual-1-2')).toHaveTextContent('1');
-    expect(screen.getByTestId('risk-heat-residual-3-3')).toHaveTextContent('');
+    // No visible count, only the screen-reader description.
+    expect(screen.getByTestId('risk-heat-residual-3-3')).not.toHaveTextContent(/^\d/u);
     expect(screen.getAllByRole('gridcell')).toHaveLength(25);
   });
 
   it('names every cell with likelihood, impact, band and count', async () => {
     await render(<HeatMap kind="inherent" cells={cells()} bands={bands} />);
     expect(screen.getByTestId('risk-heat-inherent-4-5')).toHaveAccessibleName(
-      'Likelihood 4, impact 5, Critical: 3 risks, 2 project risks',
+      /Likelihood 4, impact 5, Critical: 3 risks, 2 project risks$/u,
     );
     expect(screen.getByTestId('risk-heat-inherent-2-2')).toHaveAccessibleName(
-      'Likelihood 2, impact 2, Low: 0 risks, 0 project risks',
+      /Likelihood 2, impact 2, Low: 0 risks, 0 project risks$/u,
     );
   });
 
@@ -114,7 +115,7 @@ describe('HeatMap', () => {
 
   it('labels cells in Arabic with the Arabic band name', async () => {
     await render(<HeatMap kind="residual" cells={cells()} bands={bands} />, 'ar');
-    expect(screen.getByTestId('risk-heat-residual-4-5').getAttribute('aria-label')).toContain('حرج');
+    expect(screen.getByTestId('risk-heat-residual-4-5')).toHaveAccessibleName(/حرج/u);
   });
 });
 

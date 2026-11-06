@@ -92,7 +92,7 @@ export function TeamsPage() {
       >
         <TabsList>
           {(['all', 'mine', 'leading', 'pending-evaluation'] as const).map((view) => (
-            <TabsTrigger key={view} value={view}>
+            <TabsTrigger filter key={view} value={view}>
               {t(`views.${view}`)}
               {count(view) ? (
                 <span className="ms-1 rounded-full bg-muted px-2 text-xs tabular-nums">{count(view)}</span>

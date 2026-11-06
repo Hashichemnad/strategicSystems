@@ -9,11 +9,13 @@ import {
 } from '@tanstack/react-router';
 import { z } from 'zod';
 import { ApiError } from '@/api/client';
+import { accessQueryOptions } from '@/features/access/session';
 import { meQueryOptions } from '@/features/auth/session';
 import { HomePage } from '@/features/home/HomePage';
 import { NotFoundPage } from '@/features/home/NotFoundPage';
+import { setupStatusQuery } from '@/features/setup/api';
 import { AppShell } from '@/layout/AppShell';
-import { AuthLayout } from '@/layout/AuthLayout';
+import { AuthLayout, WideAuthLayout } from '@/layout/AuthLayout';
 
 export interface RouterContext {
   queryClient: QueryClient;
@@ -38,6 +40,14 @@ export const loginRoute = createRoute({
     redirect: redirectParam,
     error: z.string().max(100).optional().catch(undefined),
   }),
+  // A fresh installation has nobody to sign in yet: the first-run setup wizard comes first (ADR 0150).
+  beforeLoad: async ({ context }) => {
+    const status = await context.queryClient.query(setupStatusQuery).catch(() => undefined);
+    if (status?.needsSetup) {
+      // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router redirects are thrown
+      throw redirect({ to: '/setup' });
+    }
+  },
   component: lazyRouteComponent(() => import('@/features/auth/LoginPage'), 'LoginPage'),
 });
 
@@ -72,6 +82,28 @@ export const resetRoute = createRoute({
   component: lazyRouteComponent(() => import('@/features/auth/ResetPasswordPage'), 'ResetPasswordPage'),
 });
 
+// ---- First-run setup (ADR 0150) --------------------------------------------------------------------------
+
+/** Stage 1, public: only while no administrator exists; otherwise the sign-in page. */
+const setupLayout = createRoute({
+  getParentRoute: () => rootRoute,
+  id: 'setup',
+  component: WideAuthLayout,
+  beforeLoad: async ({ context }) => {
+    const status = await context.queryClient.query({ ...setupStatusQuery, staleTime: 0 });
+    if (!status.needsSetup) {
+      // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router redirects are thrown
+      throw redirect({ to: '/login' });
+    }
+  },
+});
+
+export const setupRoute = createRoute({
+  getParentRoute: () => setupLayout,
+  path: '/setup',
+  component: lazyRouteComponent(() => import('@/features/setup/SetupPage'), 'SetupPage'),
+});
+
 // ---- Signed-in application -----------------------------------------------------------------------------
 
 /** Everything below needs a session: load the user once, or send them to the login page and back afterwards. */
@@ -92,7 +124,27 @@ const appLayout = createRoute({
   },
 });
 
-const homeRoute = createRoute({ getParentRoute: () => appLayout, path: '/', component: HomePage });
+const homeRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/',
+  component: HomePage,
+  // Administrators land on the guided configuration until the first-run setup is finished (ADR 0150).
+  beforeLoad: async ({ context }) => {
+    const access = await context.queryClient.query(accessQueryOptions).catch(() => undefined);
+    if (!access?.permissions.includes('settings.setup.manage')) return;
+    const status = await context.queryClient.query(setupStatusQuery).catch(() => undefined);
+    if (status && !status.setupCompleted) {
+      // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router redirects are thrown
+      throw redirect({ to: '/setup/configure' });
+    }
+  },
+});
+
+export const setupConfigureRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/setup/configure',
+  component: lazyRouteComponent(() => import('@/features/setup/ConfigurePage'), 'ConfigurePage'),
+});
 
 // ---- Dashboards and reporting (Phase 17, docs/design/reporting.md) --------------------------------------
 
@@ -475,7 +527,10 @@ const waselRoot = createRoute({
 export const waselLoginRoute = createRoute({
   getParentRoute: () => waselRoot,
   path: '/wasel/login',
-  validateSearch: z.object({ redirect: redirectParam }),
+  validateSearch: z.object({
+    redirect: redirectParam,
+    error: z.string().max(100).optional().catch(undefined),
+  }),
   component: lazyRouteComponent(() => import('@/features/wasel/WaselAuthPages'), 'WaselLoginPage'),
 });
 
@@ -1303,10 +1358,24 @@ const filesSettingsRoute = createRoute({
   component: lazyRouteComponent(() => import('@/features/files/FilesSettingsPage'), 'FilesSettingsPage'),
 });
 
+// Optional demo data for presentations (ADR 0153).
+const demoPackRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/demo-data',
+  component: lazyRouteComponent(() => import('@/features/settings/DemoPackPage'), 'DemoPackPage'),
+});
+
 const jobsRoute = createRoute({
   getParentRoute: () => settingsLayout,
   path: '/jobs',
   component: lazyRouteComponent(() => import('@/features/jobs/JobsPage'), 'JobsPage'),
+});
+
+// Administrator Health page (ADR 0151).
+const healthRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/health',
+  component: lazyRouteComponent(() => import('@/features/health/HealthPage'), 'HealthPage'),
 });
 
 // Business hours and holidays (ADR 0027).
@@ -1490,6 +1559,7 @@ export const assignmentsRoute = createRoute({
 
 const routeTree = rootRoute.addChildren([
   publicLayout.addChildren([loginRoute, mfaRoute, enrolRoute, forgotRoute, resetRoute]),
+  setupLayout.addChildren([setupRoute]),
   consentLayout.addChildren([consentRoute]),
   embedLayout.addChildren([embedRequestRoute]),
   waselRoot.addChildren([
@@ -1501,6 +1571,7 @@ const routeTree = rootRoute.addChildren([
   ]),
   appLayout.addChildren([
     homeRoute,
+    setupConfigureRoute,
     dashboardsRoute,
     executiveRoute,
     dashboardRoute,
@@ -1627,6 +1698,8 @@ const routeTree = rootRoute.addChildren([
       notificationTemplatesRoute,
       filesSettingsRoute,
       jobsRoute,
+      healthRoute,
+      demoPackRoute,
       businessHoursRoute,
       holidaysRoute,
       approvalSettingsRoute,

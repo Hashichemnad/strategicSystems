@@ -1,16 +1,22 @@
 import { Link, useNavigate } from '@tanstack/react-router';
-import { Languages, LogOut, Menu, Monitor, Moon, Sun, UserRound } from 'lucide-react';
+import { Info, Languages, LogOut, Menu, Monitor, Moon, Sun, UserRound } from 'lucide-react';
+import { lazy, Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api } from '@/api/client';
 import { useTheme, type ThemePreference } from '@/app/theme';
 import { useMe, useSignOut } from '@/features/auth/session';
 import { AskButton } from '@/features/ai/AskDialog';
 import { NotificationBell } from '@/features/notifications/NotificationBell';
+
+const AboutDialogContent = lazy(() =>
+  import('@/features/setup/AboutDialog').then((m) => ({ default: m.AboutDialogContent })),
+);
 import { isLanguage } from '@/i18n';
 import { pickText } from '@/lib/format';
 import { writePreference } from '@/lib/preferences';
 import {
   Button,
+  Dialog,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -24,7 +30,7 @@ import {
 export function TopBar({ onOpenMenu }: { onOpenMenu: () => void }) {
   const { t } = useTranslation('shell');
   return (
-    <header className="sticky top-0 z-20 flex h-16 items-center gap-2 border-b bg-background/90 px-4 backdrop-blur md:px-8">
+    <header className="sticky top-0 z-20 flex h-16 items-center gap-1 border-b bg-background/90 px-2 backdrop-blur sm:gap-2 sm:px-4 md:px-8">
       <Button
         variant="ghost"
         size="icon"
@@ -65,7 +71,9 @@ export function LanguageToggle({ saveToProfile = false }: { saveToProfile?: bool
       data-testid="language-toggle"
     >
       <Languages aria-hidden />
-      <span lang={next}>{t('language.switchTo')}</span>
+      <span lang={next} className="hidden sm:inline">
+        {t('language.switchTo')}
+      </span>
     </Button>
   );
 }
@@ -106,6 +114,8 @@ function ThemeMenu() {
 /** The signed-in user: profile and sign out. */
 function ProfileMenu() {
   const { t, i18n } = useTranslation('shell');
+  const { t: ts } = useTranslation('setup');
+  const [aboutOpen, setAboutOpen] = useState(false);
   const me = useMe();
   const signOut = useSignOut();
   const navigate = useNavigate();
@@ -113,43 +123,56 @@ function ProfileMenu() {
     ? pickText(i18n.language, me.employee.nameAr, me.employee.nameEn)
     : (me?.userName ?? '');
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="rounded-full"
-          aria-label={t('profile.menu')}
-          data-testid="profile-menu"
-        >
-          <span className="flex size-8 items-center justify-center rounded-full bg-muted">
-            <UserRound className="size-4" aria-hidden />
-          </span>
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <DropdownMenuLabel className="flex flex-col">
-          <span>{name}</span>
-          <span className="text-xs font-normal text-muted-foreground" dir="ltr">
-            {me?.userName}
-          </span>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <Link to="/profile" search={{ tab: 'preferences' }}>
-            <UserRound aria-hidden />
-            {t('profile.myProfile')}
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          onSelect={() => {
-            void signOut().then(() => navigate({ to: '/login', search: {} }));
-          }}
-        >
-          <LogOut aria-hidden />
-          {t('profile.signOut')}
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="rounded-full"
+            aria-label={t('profile.menu')}
+            data-testid="profile-menu"
+          >
+            <span className="flex size-8 items-center justify-center rounded-full bg-muted">
+              <UserRound className="size-4" aria-hidden />
+            </span>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel className="flex flex-col">
+            <span>{name}</span>
+            <span className="text-xs font-normal text-muted-foreground" dir="ltr">
+              {me?.userName}
+            </span>
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem asChild>
+            <Link to="/profile" search={{ tab: 'preferences' }}>
+              <UserRound aria-hidden />
+              {t('profile.myProfile')}
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => setAboutOpen(true)} data-testid="about-menu">
+            <Info aria-hidden />
+            {ts('about.menu')}
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onSelect={() => {
+              void signOut().then(() => navigate({ to: '/login', search: {} }));
+            }}
+          >
+            <LogOut aria-hidden />
+            {t('profile.signOut')}
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <Dialog open={aboutOpen} onOpenChange={setAboutOpen}>
+        {aboutOpen && (
+          <Suspense fallback={null}>
+            <AboutDialogContent />
+          </Suspense>
+        )}
+      </Dialog>
+    </>
   );
 }

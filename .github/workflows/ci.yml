@@ -43,7 +43,15 @@ jobs:
       - name: Format
         run: dotnet format Strategy.slnx --verify-no-changes --no-restore
       - name: Tests (unit, architecture, integration with Testcontainers)
-        run: dotnet test --solution Strategy.slnx -c Release --no-build
+        # TRX per test project: the job log is too long to show which test failed; the results are uploaded below.
+        run: dotnet test --solution Strategy.slnx -c Release --no-build --report-xunit-trx --results-directory ${{ github.workspace }}/TestResults
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dotnet-test-results
+          path: TestResults/**/*.trx
+          retention-days: 14
       - name: Vulnerable packages (High / Critical fail)
         run: tools/check-vulnerable.sh
       - name: OpenAPI document and generated TS client are committed
@@ -120,9 +128,12 @@ jobs:
           npm ci --no-audit --no-fund
           npx playwright install --with-deps chromium
           npm run build
-      - name: Playwright (projects ar and en)
+      - name: Playwright (projects ar and en, then the accessibility audit ar-a11y / en-a11y)
         working-directory: web
         run: npx playwright test
+      - name: Playwright first-run setup wizard on an empty database (ar and en, ADR 0150)
+        working-directory: web
+        run: npx playwright test -c playwright.setup.config.ts
       - name: Upload report and screenshots
         if: always()
         uses: actions/upload-artifact@v4
@@ -135,12 +146,34 @@ jobs:
           retention-days: 14
 
   docker:
-    name: Container image builds
+    name: Container image (build, scan, SBOM, deploy scripts)
     needs: [backend, frontend]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
-      - name: Build image (not pushed)
-        run: docker build -f deploy/Dockerfile -t strategy-app:ci .
+      - name: Build the versioned image (not pushed)
+        run: |
+          VERSION="$(cat deploy/VERSION)"
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+          docker build -f deploy/Dockerfile -t "strategy-app:$VERSION" \
+            --build-arg APP_VERSION="$VERSION" --build-arg GIT_REVISION="${GITHUB_SHA::7}" \
+            --build-arg BUILD_CREATED="$(date -u +%Y-%m-%dT%H:%M:%SZ)" .
+      - name: Image runs as non-root with labels and a healthcheck
+        run: |
+          test "$(docker image inspect -f '{{.Config.User}}' "strategy-app:$VERSION")" != "root"
+          test -n "$(docker image inspect -f '{{.Config.Healthcheck}}' "strategy-app:$VERSION")"
+          test "$(docker image inspect -f '{{index .Config.Labels "org.opencontainers.image.version"}}' "strategy-app:$VERSION")" = "$VERSION"
+      - name: Vulnerability scan (Trivy — High / Critical with a fix fail, ADR 0156) and CycloneDX SBOM
+        run: IMAGE="strategy-app:$VERSION" ./deploy/sbom.sh --scan
+      - name: Upload SBOM (CycloneDX)
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom
+          path: release/sbom/
+          retention-days: 90
       - name: Compose file is valid
         run: docker compose -f deploy/docker-compose.yml --profile app --profile dev --profile search --profile antivirus --profile ai config -q
+      - name: Deploy scripts (shellcheck, PowerShell parser)
+        run: |
+          shellcheck -x deploy/*.sh deploy/postgres/init-roles.sh
+          pwsh -NoProfile -File tools/check-powershell.ps1 deploy

@@ -84,6 +84,10 @@
       "title": "Scheduled jobs",
       "description": "Background jobs, their runs and the message queue."
     },
+    "health": {
+      "title": "System health",
+      "description": "Database, jobs, queue, e-mail, AI, storage, audit chain and certificates at a glance."
+    },
     "approvals": {
       "title": "Approvals",
       "description": "Approval chains of every system: steps, approvers, conditions, deadlines."
@@ -159,6 +163,14 @@
     "reporting": {
       "title": "Reporting",
       "description": "Department level, fiscal year, refresh of aggregates, scheduled delivery and the department scorecard limits."
+    },
+    "demoPack": {
+      "title": "Demo data",
+      "description": "Sample organisation, users and records in every system for presentations — removable."
+    },
+    "setup": {
+      "title": "Setup wizard",
+      "description": "First-run guided configuration: e-mail, sign-in, AI, calendar, organisation import and systems."
     }
   },
   "title": "Settings",
@@ -185,7 +197,10 @@
     "hijriHint": "Off by default; data always stays Gregorian.",
     "arabicIndicDigits": "Arabic-Indic digits",
     "arabicIndicDigitsHint": "Numbers show as ١٢٣ in the Arabic interface.",
-    "preview": "Preview"
+    "preview": "Preview",
+    "defaultLanguage": "Default interface language",
+    "defaultLanguageBrowser": "Follow the browser",
+    "defaultLanguageHint": "Used until a person chooses a language."
   },
   "branding": {
     "organisationNameAr": "Organisation name (Arabic)",
@@ -280,5 +295,44 @@
     "logoSize": "The logo is larger than {{maxKb}} KB.",
     "logoType": "The logo must be PNG, JPEG or WebP.",
     "duplicateCode": "This code is already used."
+  },
+  "demoPack": {
+    "warningTitle": "For presentations and training only",
+    "warning": "The demo pack adds a demo organisation (units starting with DEMO-), demo users and sample records to the real database. Do not load it on a production installation that holds real data.",
+    "password": "Password for the demo users",
+    "passwordHint": "Must meet the password policy. Every demo user signs in with it.",
+    "load": "Load demo data",
+    "loading": "Loading… (this can take a minute)",
+    "loadedTitle": "Demo pack {{version}} is loaded",
+    "signIn": "Sign in as a demo user (see the installation guide for their e-mail addresses) with the password you chose.",
+    "remove": "Remove demo data",
+    "confirmTitle": "Remove the demo data?",
+    "confirm": "Demo records are cancelled, closed or deactivated with a reason (nothing is deleted from the audit trail), and demo users can no longer sign in.",
+    "partial": "Some systems could not be completed; see the table and the application log.",
+    "systems": "Demo data per system",
+    "system": "System",
+    "status": "Status",
+    "records": "Records",
+    "toast": {
+      "loaded": "Demo data loaded",
+      "removed": "Demo data removed"
+    },
+    "statuses": {
+      "loaded": "Loaded",
+      "removed": "Removed",
+      "failed": "Failed",
+      "skipped": "Unchanged"
+    },
+    "contributors": {
+      "platform": "Organisation and users",
+      "tasks": "Task Management",
+      "teams": "Teams Management",
+      "kpi": "Performance Management",
+      "risk": "Risk Management",
+      "portfolio": "Portfolio Management",
+      "requests": "Document Registry, IP and Benchmarking requests",
+      "cap": "Corrective Action Plan",
+      "auditmgmt": "Audit Management"
+    }
   }
 }

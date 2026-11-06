@@ -26,6 +26,10 @@
     <PackageReference Include="System.Configuration.ConfigurationManager" />
   </ItemGroup>
   <ItemGroup>
+    <!-- Offline common-password list (ASVS V2.1.7; SecLists, MIT). -->
+    <EmbeddedResource Include="Resources\common-passwords.txt" LogicalName="Strategy.Platform.Identity.common-passwords.txt" />
+  </ItemGroup>
+  <ItemGroup>
     <InternalsVisibleTo Include="Strategy.UnitTests" />
     <InternalsVisibleTo Include="Strategy.IntegrationTests" />
     <InternalsVisibleTo Include="Strategy.Host" />

@@ -100,12 +100,19 @@ Tools: `dotnet-ef` (MIT), local tool in `dotnet-tools.json`.
 | eslint, @eslint/js, typescript-eslint, eslint-plugin-react-hooks, eslint-plugin-jsx-a11y, globals | MIT |
 | vitest, jsdom, @testing-library/react, @testing-library/user-event, @testing-library/jest-dom | MIT |
 | @playwright/test | Apache-2.0 |
+| @axe-core/playwright, axe-core (WCAG audit in the E2E suite, docs/accessibility.md) | MPL-2.0 |
 | openapi-typescript | MIT |
 | prettier | MIT |
 | @types/react, @types/react-dom, @types/node | MIT |
 
 Transitive dev-only packages under BlueOak-1.0.0, Python-2.0, CC-BY-4.0 and CC0-1.0 are accepted for tooling only,
 as accepted by the owner in [ADR 0007](decisions/0007-licence-notes.md).
+
+## Bundled data
+
+| Data | Licence | Used for |
+|---|---|---|
+| SecLists `Passwords/Common-Credentials/10k-most-common.txt` (© 2018 Daniel Miessler), embedded in `Strategy.Platform.Identity` | MIT | offline common-password check (ASVS V2.1.7) |
 
 ## Operating-system packages in the product image (`deploy/Dockerfile`)
 
@@ -119,7 +126,8 @@ as accepted by the owner in [ADR 0007](decisions/0007-licence-notes.md).
 `mcr.microsoft.com/dotnet/aspnet:10.0`; versions as of this build — `/app/licenses/ocr/packages.txt` in the image is authoritative). They are
 used only by the separate `tesseract` program; nothing is linked into the product's own code. Each package's Debian copyright file ships in the
 image at `/app/licenses/ocr/<package>.copyright` (the image build fails if one is missing). **LGPL** libraries (accepted by the owner, ADR 0033)
-and the one **GPL** library are in bold.
+and the one **GPL** library (`libjbig0`, kept by the owner — its GPL-2+ notice, the GPL-2 text and the source reference ship in the image) are in bold.
+`/app/licenses/ocr/SOURCES.txt` gives the Ubuntu source package, version and Launchpad URL of every package below.
 
 | Package | Version | Licence (summary of the Debian copyright file) |
 |---|---|---|
@@ -144,7 +152,7 @@ and the one **GPL** library are in bold.
 | libgraphite2-3 | 1.3.14-2ubuntu0.24.04.1 | **LGPL-2.1+** or MPL-1.1 (or GPL-2+) |
 | libgssapi-krb5-2 | 1.20.1-6ubuntu2.10 | MIT (Kerberos) |
 | libharfbuzz0b | 8.3.0-2build2 | MIT ("Old MIT"); GPL only for build scripts |
-| libjbig0 | 2.1-6.1ubuntu2 | **GPL-2+** (JBIG-KIT) — see ADR 0033, owner decision |
+| libjbig0 | 2.1-6.1ubuntu2 | **GPL-2+** (JBIG-KIT) — kept by the owner (ADR 0033). Unmodified Ubuntu package, loaded only by the `tesseract` program through libtiff. Source package `jbigkit` 2.1-6.1ubuntu2: <https://launchpad.net/ubuntu/+source/jbigkit/2.1-6.1ubuntu2> (`apt-get source jbigkit=2.1-6.1ubuntu2`). In the image: `/app/licenses/ocr/NOTICE-libjbig0-GPL-2.txt`, `GPL-2.txt`, `libjbig0.copyright`, `SOURCES.txt`. Not present in images built with `INSTALL_OCR=false` |
 | libjpeg-turbo8 | 2.1.5-2ubuntu2 | IJG, BSD-3-Clause, Zlib |
 | libjpeg8 | 8c-2ubuntu11 | IJG (Debian transitional package; the code is libjpeg-turbo) |
 | libk5crypto3 | 1.20.1-6ubuntu2.10 | MIT (Kerberos) |

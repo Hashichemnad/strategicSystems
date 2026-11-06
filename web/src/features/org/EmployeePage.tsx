@@ -129,6 +129,7 @@ export function EmployeePage() {
           admin && (
             <div className="flex flex-wrap gap-2">
               <Select
+                aria-label={t('fields.status')}
                 className="w-40"
                 value={data.status}
                 onValueChange={(status) => status !== data.status && changeStatus.mutate(status)}

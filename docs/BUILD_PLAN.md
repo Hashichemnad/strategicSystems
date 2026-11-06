@@ -498,10 +498,10 @@ Implement, then run the full hardening review and fix findings, run performance 
 ```
 
 **Acceptance checks**
-- [ ] Fresh Linux server: one command installs; setup wizard completes; first admin logs in.
-- [ ] Upgrade from the previous build with data preserved; restore from backup verified.
-- [ ] ASVS L2 checklist completed with no open high issues; performance NFRs met; WCAG 2.1 AA audit passed.
-- [ ] Admin, installation and user guides delivered in Arabic and English.
+- [x] Fresh Linux server: one command installs; setup wizard completes; first admin logs in.
+- [x] Upgrade from the previous build with data preserved; restore from backup verified.
+- [x] ASVS L2 checklist completed with no open high issues; performance NFRs met; WCAG 2.1 AA audit passed.
+- [x] Admin, installation and user guides delivered in Arabic and English.
 
 ---
 
@@ -527,4 +527,4 @@ Implement, then run the full hardening review and fix findings, run performance 
 | 15 | CAP & Benchmarking | ☑ built — awaiting owner acceptance | |
 | 16 | Audit Management | ☑ built — awaiting owner acceptance | |
 | 17 | Dashboards & reporting | ☑ built — awaiting owner acceptance | |
-| 18 | Installer, hardening, docs, release | ☐ | |
+| 18 | Installer, hardening, docs, release | ☑ built — awaiting owner acceptance | |

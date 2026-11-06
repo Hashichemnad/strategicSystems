@@ -198,4 +198,33 @@ internal sealed class UserRoleQuery(
         await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         models.Invalidate();
     }
+
+    public async Task<bool> AnyPlatformAdministratorAsync(CancellationToken cancellationToken = default)
+    {
+        var today = clock.Today;
+        var role = await db.Roles.AsNoTracking().FirstOrDefaultAsync(r => r.SystemCode == "access" && r.Code == "administrator", cancellationToken)
+            .ConfigureAwait(false);
+        if (role is null)
+        {
+            return false;
+        }
+
+        var assignments = await db.Assignments.AsNoTracking()
+            .Where(a => a.RoleId == role.Id && a.ValidFrom <= today && (a.ValidTo == null || a.ValidTo >= today))
+            .Select(a => new { a.PrincipalKind, a.PrincipalId })
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
+        if (assignments.Any(a => a.PrincipalKind != PrincipalKinds.User))
+        {
+            return true;
+        }
+
+        var ids = assignments.Select(a => a.PrincipalId!.Value).Distinct().ToList();
+        if (ids.Count == 0)
+        {
+            return false;
+        }
+
+        var found = await users.GetManyAsync(ids, cancellationToken).ConfigureAwait(false);
+        return found.Values.Any(u => u.Active);
+    }
 }

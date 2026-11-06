@@ -467,7 +467,7 @@ test.describe('portfolio — agile, standards, Gantt and portfolio views', () =>
     await expect.poll(async () => (await project(ahmed, wf)).subState, { timeout: 60_000 }).toBe('execution');
     const started = Date.now();
     await page.goto(`/portfolio/projects/${wf}?tab=gantt`);
-    await expect(page.getByTestId('project-gantt').locator('svg[role="img"]').first()).toBeVisible();
+    await expect(page.getByTestId('project-gantt').locator('svg[data-gantt]').first()).toBeVisible();
     const elapsed = Date.now() - started;
     expect(elapsed, `Gantt of 30 milestones rendered in ${elapsed} ms`).toBeLessThan(5_000);
     await shot('gantt-project', { fullPage: true });

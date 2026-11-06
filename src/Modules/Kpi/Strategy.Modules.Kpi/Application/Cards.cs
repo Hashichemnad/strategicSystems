@@ -101,6 +101,11 @@ internal sealed partial class CardRules(KpiDbContext db, ILookupService lookups)
 
     public async Task<List<FieldError>> ValidateAsync(CardValues v, Guid? cardId, CancellationToken ct)
     {
+        if (v is null)
+        {
+            return [new FieldError("values", "validation.required", "validation.required")];
+        }
+
         var errors = new List<FieldError>();
         void Add(string field, string key, Dictionary<string, object?>? p = null) => errors.Add(new FieldError(field, key, key, p));
         if (string.IsNullOrWhiteSpace(v.NameAr) && string.IsNullOrWhiteSpace(v.NameEn))

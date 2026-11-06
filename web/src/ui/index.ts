@@ -15,7 +15,8 @@ export {
 export { EmptyState, Skeleton, StatusChip, type Tone } from './feedback';
 export { FormField, Label } from './form-field';
 export { Input, Textarea } from './input';
-export { PageHeader } from './page-header';
+export { EmbeddedPage, PageHeader } from './page-header';
+export { ScrollRegion } from './scroll-region';
 export { Select, type SelectOption } from './select';
 export { StageStepper, type Stage } from './stage-stepper';
 export { StatusBanner } from './status-banner';
