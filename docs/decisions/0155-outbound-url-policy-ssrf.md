@@ -1,6 +1,6 @@
 # 0155 — Outbound URL policy (server-side request forgery guard)
 
-- **Status:** Proposed (Phase 18)
+- **Status:** Accepted by the owner (Phase 18)
 - **Context:** Administrators type URLs and host names the server then calls: AI provider endpoints (Azure, OpenAI-compatible / Ollama / vLLM),
   identity-provider authority, discovery, token, user-info and SAML metadata URLs, LDAP hosts, SMTP host. A stolen or malicious administrator
   session (or a mistake) could point them at the host itself (`localhost:5432`), the cloud metadata service (`169.254.169.254`) or internal

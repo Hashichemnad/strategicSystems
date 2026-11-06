@@ -1,6 +1,6 @@
 # 0150 — First-run setup wizard and the one-time setup token
 
-- **Status:** Proposed (Phase 18)
+- **Status:** Accepted by the owner (Phase 18)
 - **Context:** SPEC §0.5 asks for a guided installer and a first-run setup wizard (organisation profile, branding, languages, admin
   account, email server, authentication provider, AI provider (skippable), org-structure import, modules to enable). A fresh installation
   has no account at all, so the first step must be reachable without signing in — the most sensitive unauthenticated surface of the

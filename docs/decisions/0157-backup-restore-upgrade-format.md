@@ -1,6 +1,6 @@
 # 0157 — Packaging, install, backup / restore / upgrade format
 
-- **Status:** Proposed (Phase 18)
+- **Status:** Accepted by the owner (Phase 18)
 - **Context:** SPEC §0.0 (single-tenant, self-hosted, restricted / offline networks) and §0.5 (*guided installer*, *Docker-based deployment
   plus plain server install*, *versioned migrations and an in-place upgrade path*, *backup / restore tooling*). Until Phase 17 an install was
   a manual sequence from `deploy/README.md` and there were no backup, restore or upgrade tools. Customers run Linux servers, Windows Server

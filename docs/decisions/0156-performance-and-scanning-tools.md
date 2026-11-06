@@ -1,6 +1,6 @@
 # 0156 — Performance, image-scanning and SBOM tools (external, never distributed)
 
-- **Status:** Proposed (Phase 18)
+- **Status:** Accepted by the owner (Phase 18)
 - **Context:** Phase 18 needs a load test against the NFRs, container image vulnerability scanning (no High / Critical) and a software bill
   of materials of the release image. CLAUDE.md §4.3 allows only free / OSI-licensed **dependencies** of the product. These tools are not
   dependencies: they are run by the build / test pipeline against the product and are never part of an image, the repository's packages or

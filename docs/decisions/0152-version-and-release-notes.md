@@ -1,6 +1,6 @@
 # 0152 — Product version and release notes in the application
 
-- **Status:** Proposed (Phase 18)
+- **Status:** Accepted by the owner (Phase 18)
 - **Context:** Release 1.0.0 needs a version that support, upgrades and backups can rely on, and users and administrators should see what
   changed. The version must not be advertised to anonymous callers (ASVS 14.3.3).
 

@@ -226,7 +226,9 @@ Install, backup, restore and upgrade scripts: see above.
   The host needs outbound HTTPS to the chosen provider only.
 - **Text recognition (OCR)** for scanned PDFs and images uses Tesseract with Arabic and English data, installed in the image
   (ADR 0033). Switch it on in Settings → AI → *Data sharing and limits*; the page says whether the engine is installed. To build an image
-  without it: `docker compose … build --build-arg INSTALL_OCR=false`. Non-Docker installs: install `tesseract-ocr`, `tesseract-ocr-ara`,
+  without it: `INSTALL_OCR=false` in `deploy/.env` before `install.sh` / `upgrade.sh` (or `docker compose … build --build-arg
+  INSTALL_OCR=false`) — this also leaves out the one GPL-2+ library, `libjbig0` (kept by the owner, ADR 0033; its notice, the GPL-2 text and
+  the Ubuntu source reference are in `/app/licenses/ocr/NOTICE-libjbig0-GPL-2.txt`, `GPL-2.txt`, `SOURCES.txt`). Non-Docker installs: install `tesseract-ocr`, `tesseract-ocr-ara`,
   `tesseract-ocr-eng` (or point `Ocr__TesseractPath` to the binary). The licence notices of every package the OCR install adds are in
   `/app/licenses/ocr/` in the image (with `packages.txt`); PDFium's and SkiaSharp's are in `/app/licenses/`. Scanned PDF pages are rendered
   with PDFium, which ships inside the application (no extra package).

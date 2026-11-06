@@ -26,6 +26,12 @@ connection to the vendor and no internet access are needed (only the AI provider
 | Building the image | about 10 GB free disk during the build | — |
 | Network | users reach the application port (or the HTTPS proxy); outbound HTTPS only to the AI provider you configure and your SMTP server | — |
 
+**Text recognition (OCR).** The image includes Tesseract OCR with Arabic and English data for scanned documents (switched on in
+*Settings → AI*). The OCR packages include one GPL-2+ library, `libjbig0`; its notice, the GPL-2 text and the source reference are in the
+image under `/app/licenses/ocr/` (also listed in `docs/THIRD_PARTY_LICENSES.md`). To build an image **without** the OCR packages (and without
+`libjbig0`; about 40 MB smaller, scans can then not be read), set `INSTALL_OCR=false` in `deploy/.env` before running the installer, or
+build by hand with `docker compose -f deploy/docker-compose.yml --profile app build --build-arg INSTALL_OCR=false`.
+
 **Offline or restricted networks.** On a connected machine: `docker save strategy-app:1.0.0 -o strategy-app-1.0.0.tar`, and save
 `postgres:16-alpine` and `gotenberg/gotenberg:8` the same way. On the server: `docker load -i …` for each, then install with
 `--image strategy-app-1.0.0.tar` (below). Behind a Docker Hub limit set `REGISTRY_PREFIX=mirror.gcr.io/` (or your own registry mirror);

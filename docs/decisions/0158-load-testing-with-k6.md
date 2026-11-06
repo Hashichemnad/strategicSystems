@@ -1,6 +1,6 @@
 # 0158 — Load testing with k6 against a seeded Release host
 
-- **Status:** Proposed (Phase 18)
+- **Status:** Accepted by the owner (Phase 18)
 - **Context:** Phase 18 must prove the NFRs on realistic volume: record pages < 3 s (SPEC §1.10), Gantt < 5 s for 30 milestones, executive
   dashboard < 3 s on the Phase 17 volume (§0.4), 500 concurrent active projects, notifications delivered within 5 minutes (§0.2). The Phase 17
   test (`ExecutivePerformanceTests`) times a single user inside `WebApplicationFactory`; it does not load a real host with concurrent users.

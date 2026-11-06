@@ -81,6 +81,8 @@ services:
         APP_VERSION: ${APP_VERSION:-1.0.0}
         GIT_REVISION: ${GIT_REVISION:-}
         BUILD_CREATED: ${BUILD_CREATED:-}
+        # false: no Tesseract OCR packages (and no GPL-2+ libjbig0) in the image; scanned documents cannot be read (ADR 0033).
+        INSTALL_OCR: ${INSTALL_OCR:-true}
       secrets:
         - build_ca
     command: ["dotnet", "Strategy.Host.dll", "--migrate"]

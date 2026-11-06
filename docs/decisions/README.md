@@ -37,7 +37,7 @@ Write an ADR for every choice the SPEC or CLAUDE.md leaves open (CLAUDE.md §2 r
 | [0030](0030-document-text-extraction-and-similar-records.md) | Document text extraction and similar records without embeddings | Accepted |
 | [0031](0031-tool-registry.md) | Tool registry shared by the MCP server and "Ask the system" | Accepted |
 | [0032](0032-mcp-server-and-oauth.md) | MCP server, OAuth 2.1 with OpenIddict, dynamic client registration and consent | Accepted |
-| [0033](0033-ocr-for-scanned-documents.md) | Text recognition (OCR) for scanned PDFs and images with Tesseract | Accepted (one licence point for owner confirmation) |
+| [0033](0033-ocr-for-scanned-documents.md) | Text recognition (OCR) for scanned PDFs and images with Tesseract | Accepted (incl. `libjbig0` GPL-2+, Phase 18) |
 | [0034](0034-links-registry.md) | Links registry: linkable types, permission-aware resolution and link storage | Accepted |
 | [0035](0035-task-approval-by-creator.md) | Task approval by the creator is a task-level decision, not an approval-engine process | Accepted |
 | [0036](0036-task-workflow-templates.md) | Task workflow templates, status codes, and Tasks as an always-on core system | Accepted |
@@ -132,12 +132,12 @@ Write an ADR for every choice the SPEC or CLAUDE.md leaves open (CLAUDE.md §2 r
 | [0147](0147-ai-executive-brief.md) | AI executive brief | Accepted |
 | [0148](0148-echarts-single-chart-library.md) | Apache ECharts as the single chart library; shared dashboard UI kit | Accepted |
 | [0149](0149-my-work-cards-and-layout.md) | My Work cards from every system and the per-user layout | Accepted |
-| [0150](0150-setup-wizard-and-setup-token.md) | First-run setup wizard and the one-time setup token | Proposed |
-| [0151](0151-administrator-health-page.md) | Administrator Health page: contributors per component, message keys, `settings.health.view` | Proposed |
-| [0152](0152-version-and-release-notes.md) | Product version and release notes in the application | Proposed |
-| [0153](0153-seed-packs-and-removable-demo-pack.md) | Seed packs: neutral defaults and a removable demo pack | Proposed |
-| [0154](0154-uae-pass-for-wasel-vendors.md) | UAE Pass sign-in for Wasel vendors (match by e-mail, second factor still required) | Proposed |
-| [0155](0155-outbound-url-policy-ssrf.md) | Outbound URL policy: SSRF guard on save and at connect time | Proposed |
-| [0156](0156-performance-and-scanning-tools.md) | Performance, image-scanning and SBOM tools (k6, Trivy, Syft) — external, never distributed | Proposed |
-| [0157](0157-backup-restore-upgrade-format.md) | Packaging, install, backup / restore / upgrade format | Proposed |
-| [0158](0158-load-testing-with-k6.md) | Load testing with k6 (test-only container) against a seeded Release host | Proposed |
+| [0150](0150-setup-wizard-and-setup-token.md) | First-run setup wizard and the one-time setup token | Accepted |
+| [0151](0151-administrator-health-page.md) | Administrator Health page: contributors per component, message keys, `settings.health.view` | Accepted |
+| [0152](0152-version-and-release-notes.md) | Product version and release notes in the application | Accepted |
+| [0153](0153-seed-packs-and-removable-demo-pack.md) | Seed packs: neutral defaults and a removable demo pack | Accepted |
+| [0154](0154-uae-pass-for-wasel-vendors.md) | UAE Pass sign-in for Wasel vendors (match by e-mail, second factor still required) | Accepted |
+| [0155](0155-outbound-url-policy-ssrf.md) | Outbound URL policy: SSRF guard on save and at connect time | Accepted |
+| [0156](0156-performance-and-scanning-tools.md) | Performance, image-scanning and SBOM tools (k6, Trivy, Syft) — external, never distributed | Accepted |
+| [0157](0157-backup-restore-upgrade-format.md) | Packaging, install, backup / restore / upgrade format | Accepted |
+| [0158](0158-load-testing-with-k6.md) | Load testing with k6 (test-only container) against a seeded Release host | Accepted |

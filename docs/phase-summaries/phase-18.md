@@ -1,7 +1,7 @@
 # Phase 18 — Installer, setup wizard, operations, hardening, documentation, release: summary
 
 Status: **built — awaiting owner acceptance** · version **1.0.0**. Design note: [`docs/design/release.md`](../design/release.md).
-ADRs 0150–0158 (**proposed**, for the owner's acceptance). Release notes: *About* in the application
+ADRs 0150–0158 **accepted by the owner**. Release notes: *About* in the application
 ([en](../../src/Host/Strategy.Host/ReleaseNotes/en/1.0.0.md) · [ar](../../src/Host/Strategy.Host/ReleaseNotes/ar/1.0.0.md)),
 [`CHANGELOG.md`](../../CHANGELOG.md).
 
@@ -81,10 +81,17 @@ At 300 users the 4 CPUs saturate (≈ 174 req/s, 0 errors, p95 3.5–3.9 s): siz
 - Dialogs returned focus to the page body; pages scrolled sideways at 360 px (Arabic top bar, wide tables).
 - The accessibility spec depended on running after the other specs, which a fresh database (CI) did not guarantee.
 
-## Decisions (ADRs, proposed — for the owner)
+## Decisions (ADRs, accepted by the owner)
 0150 setup wizard and setup token · 0151 Health page · 0152 version and release notes · 0153 seed packs and removable demo pack ·
 0154 UAE Pass for Wasel vendors · 0155 outbound URL policy (SSRF) · 0156 performance / scanning / SBOM tools (external, never
 distributed) · 0157 packaging, install, backup / restore / upgrade · 0158 load testing with k6.
+
+## Owner decisions after the build
+- ADRs 0150–0158 accepted as proposed (permission names `settings.setup.manage` / `settings.health.view`; no `--seed-volume` command in
+  the product).
+- `libjbig0` kept (ADR 0033 option a): GPL-2+ notice, GPL-2 text and Debian / Ubuntu source reference added to `/app/licenses/ocr/` by the
+  image build (the build fails without the GPL-2 text) and to `docs/THIRD_PARTY_LICENSES.md`; `INSTALL_OCR` is now a compose build argument
+  read from `deploy/.env` (`.env.example`), and the installation guide (ar + en, §2) explains building without the OCR packages.
 
 ## Deviations
 - **From the SPEC:** none known.
@@ -100,7 +107,7 @@ distributed) · 0157 packaging, install, backup / restore / upgrade · 0158 load
 | No real HTTPS reverse proxy with a certificate, no non-Docker install run end to end | nginx configuration and `deploy/linux/README.md` reviewed; verify at the first customer installation |
 | No screen-reader walkthrough (NVDA / VoiceOver) | axe + keyboard / focus scripts pass; manual check during acceptance |
 | Live MCP check with Claude Desktop / claude.ai / Claude Code over HTTPS (Phase 5) | Procedure in `docs/guides/en/mcp.md`; needs the owner's HTTPS installation |
-| `libjbig0` (GPL-2+) among the OCR packages (ADR 0033) | Owner decision; build with `INSTALL_OCR=false` to leave OCR out |
+| `libjbig0` (GPL-2+) among the OCR packages (ADR 0033) | **Kept by the owner.** The image ships `/app/licenses/ocr/NOTICE-libjbig0-GPL-2.txt`, `GPL-2.txt`, `libjbig0.copyright` and `SOURCES.txt` (Ubuntu source package `jbigkit` 2.1-6.1ubuntu2, Launchpad URL); `INSTALL_OCR=false` (compose / `.env`) builds without it. Open for the owner's legal team: how the GPL-2 source obligation (§3) is met when images are delivered to customers — the image points to the Ubuntu source; no written offer is made by the product |
 | Sidecars (Gotenberg, ClamAV) unauthenticated on the internal network; images not signed | Loopback / internal network only; SBOM provided; sign when a registry is introduced |
 | Composition rules on by default (ASVS 2.1.9); no e-mail on password / MFA change; SSRF check only at save time for SAML metadata, LDAP, SMTP | Configurable / audited; planned for 1.1 |
 | Capacity: CPU-bound above ≈ 170 requests / s on 4 vCPU | Sizing guide (8 vCPU beyond ~500 active users) |

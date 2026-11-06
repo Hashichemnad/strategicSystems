@@ -1,7 +1,7 @@
 # 0033 — Text recognition (OCR) for scanned PDFs and images with Tesseract
 
-- **Status:** Accepted by the owner (Phase 5) — including the LGPL OS libraries used only by the `tesseract` program · **one new licence point
-  awaits the owner's decision: `libjbig0` (GPL-2+), see "Licences"**
+- **Status:** Accepted by the owner (Phase 5) — including the LGPL OS libraries used only by the `tesseract` program · `libjbig0` (GPL-2+)
+  **accepted by the owner in Phase 18** (option a), see "Licences"
 - **Context:** Document-to-form extraction read only documents with a text layer (ADR 0030); scanned PDFs and photographed pages answered
   "no text". The owner asked for optional OCR with Tesseract (Apache-2.0), Arabic and English, as a sidecar or a bundled engine.
 
@@ -46,13 +46,17 @@
 - **Notices ship with the product:** the image build copies the Debian copyright file of every package the OCR install adds into
   `/app/licenses/ocr/` with `packages.txt` (name, version) and **fails if one is missing**; PDFium's and SkiaSharp's notices are in the app's
   `licenses/` folder (from `src/Host/Strategy.Host/licenses/`). All these OS packages are listed in `docs/THIRD_PARTY_LICENSES.md`.
-- **Open — owner decision needed:** `libjbig0` (JBIG-KIT 2.1) is **GPL-2+ only** (not LGPL). It is a hard dependency of the distribution's
+- **Decided (Phase 18, owner): keep `libjbig0`.** `libjbig0` (JBIG-KIT 2.1) is **GPL-2+ only** (not LGPL). It is a hard dependency of the distribution's
   `libtiff6`, which Leptonica / Tesseract load to read TIFF images; like the LGPL libraries it is an unmodified OS shared library used only by
   the separate `tesseract` program, and its notice ships in `/app/licenses/ocr/`. GPL distribution obligations (source availability) would
   apply to it as part of the image. Options: (a) accept it on the same footing as the LGPL libraries; (b) ship the default image with
   `INSTALL_OCR=false` and offer OCR as an add-on image / sidecar; (c) later, a Tesseract build against a libtiff without JBIG support. Until
-  the owner decides, `INSTALL_OCR=false` remains documented as the way to build an image without it. (PDFium's own JBIG2 decoder is BSD and
+  the owner decided, `INSTALL_OCR=false` was documented as the way to build an image without it. (PDFium's own JBIG2 decoder is BSD and
   unrelated.)
+  **Decision (Phase 18):** option (a). The image build writes `/app/licenses/ocr/NOTICE-libjbig0-GPL-2.txt` (licence, package and Ubuntu
+  source-package version, Launchpad source URL and `apt-get source` command), `GPL-2.txt` (full text) and `SOURCES.txt` (source package and
+  source URL of every OCR package), next to `libjbig0.copyright`; the build fails if the GPL-2 text is missing. `INSTALL_OCR=false` still
+  builds an image without the OCR packages and without `libjbig0` (installation guide §2).
 
 ## Consequences
 - The application image grows by roughly 40 MB with OCR, plus PDFium and Skia native libraries (about 10 MB per platform) in the app. OCR is CPU-bound (about 1–3 s per page on one core); the page limit and the per-page

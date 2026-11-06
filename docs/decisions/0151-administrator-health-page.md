@@ -1,6 +1,6 @@
 # 0151 — Administrator Health page
 
-- **Status:** Proposed (Phase 18)
+- **Status:** Accepted by the owner (Phase 18)
 - **Context:** SPEC §0.5 asks for a health page for administrators (queue, scheduler, e-mail, AI provider, storage); the Phase 18 prompt adds
   database, migrations, job last / next run and failures, OCR, disk space, certificate expiry and version. `/health/live` and `/health/ready`
   (ASP.NET Core health checks, anonymous, for container orchestration) must stay small and must not reveal details. The facts live in

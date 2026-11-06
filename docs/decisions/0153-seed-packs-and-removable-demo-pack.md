@@ -1,6 +1,6 @@
 # 0153 — Seed packs: neutral defaults and a removable demo pack
 
-- **Status:** Proposed (Phase 18)
+- **Status:** Accepted by the owner (Phase 18)
 - **Context:** SPEC §0.0 (re-usable product, nothing organisation-specific in code), CLAUDE.md §2.2, §6 (no hard deletes of business
   records), BUILD_PLAN Phase 18 "seed packs (neutral defaults; optional demo pack)". Sales presentations and training need a filled
   installation in minutes; customers must never get demo data by accident, and removing it must not break the audit trail.

@@ -1,6 +1,6 @@
 # 0154 — UAE Pass sign-in for Wasel vendors
 
-- **Status:** Proposed (Phase 18)
+- **Status:** Accepted by the owner (Phase 18)
 - **Context:** SPEC §1.18 lists UAE Pass as an optional sign-in for vendors. ADR 0110 stored the switch (`uaePassForVendors`, Settings →
   Portfolio → Wasel) but did not build the flow, and required that it "match a vendor account by e-mail and still require the second factor".
   The internal UAE Pass provider (ADR 0011) signs into the internal scheme only.
