@@ -3604,7 +3604,7 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
-  '/api/v1/setup/demo-pack': {
+  '/api/v1/setup/demo-pack/status': {
     parameters: {
       query?: never;
       header?: never;
@@ -3612,6 +3612,22 @@ export interface paths {
       cookie?: never;
     };
     get: operations['GetDemoPack'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/setup/demo-pack': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
     put?: never;
     post: operations['LoadDemoPack'];
     delete: operations['RemoveDemoPack'];

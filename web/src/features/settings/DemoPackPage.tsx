@@ -33,6 +33,28 @@ const tones: Record<string, Tone> = {
   skipped: 'neutral',
 };
 
+const statusKeys = {
+  loaded: 'demoPack.statuses.loaded',
+  removed: 'demoPack.statuses.removed',
+  failed: 'demoPack.statuses.failed',
+  skipped: 'demoPack.statuses.skipped',
+} as const;
+
+const contributorKeys = {
+  platform: 'demoPack.contributors.platform',
+  tasks: 'demoPack.contributors.tasks',
+  teams: 'demoPack.contributors.teams',
+  kpi: 'demoPack.contributors.kpi',
+  risk: 'demoPack.contributors.risk',
+  portfolio: 'demoPack.contributors.portfolio',
+  requests: 'demoPack.contributors.requests',
+  cap: 'demoPack.contributors.cap',
+  auditmgmt: 'demoPack.contributors.auditmgmt',
+} as const;
+
+const has = <T extends object>(map: T, key: string): key is Extract<keyof T, string> =>
+  Object.hasOwn(map, key);
+
 /** Settings → Demo data (ADR 0153): load the optional demo pack for presentations, see what each system holds, remove it again. */
 export function DemoPackPage() {
   const { t, i18n } = useTranslation('settings');
@@ -51,7 +73,7 @@ export function DemoPackPage() {
     setLast(result);
     setPassword('');
     queryClient.setQueryData(['setup', 'demo-pack'], result);
-    toast({ title: t(`demoPack.toast.${key}`) });
+    toast({ title: key === 'loaded' ? t('demoPack.toast.loaded') : t('demoPack.toast.removed') });
   };
   const load = useMutation({
     mutationFn: async () => unwrap(await api.POST('/api/v1/setup/demo-pack', { body: { password } })),
@@ -128,10 +150,10 @@ export function DemoPackPage() {
           <TableBody>
             {shown.contributors.map((c) => (
               <TableRow key={c.code}>
-                <TableCell>{t(`demoPack.contributors.${c.code}`, { defaultValue: c.code })}</TableCell>
+                <TableCell>{has(contributorKeys, c.code) ? t(contributorKeys[c.code]) : c.code}</TableCell>
                 <TableCell>
                   <StatusChip tone={tones[c.status] ?? 'neutral'}>
-                    {t(`demoPack.statuses.${c.status}`)}
+                    {has(statusKeys, c.status) ? t(statusKeys[c.status]) : c.status}
                   </StatusChip>
                 </TableCell>
                 <TableCell className="text-end">{formatNumber(c.records, i18n.language)}</TableCell>
