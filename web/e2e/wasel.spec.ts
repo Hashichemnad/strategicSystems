@@ -416,7 +416,7 @@ test.describe('wasel — vendor portal and portfolio completion', () => {
 
     // 11. Gantt PNG export with the bundled Arabic font: the downloaded image is kept as the screenshot.
     await page.goto(`/portfolio/projects/${id}?tab=gantt`);
-    await expect(page.getByTestId('project-gantt').locator('svg[role="img"]').first()).toBeVisible();
+    await expect(page.getByTestId('project-gantt').locator('svg[data-gantt]').first()).toBeVisible();
     const download = page.waitForEvent('download');
     await page.getByTestId('gantt-export-png').first().click();
     const file = await (await download).path();
