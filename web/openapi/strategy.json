@@ -66,6 +66,78 @@
         }
       }
     },
+    "/api/v1/system/version": {
+      "get": {
+        "tags": [
+          "system"
+        ],
+        "operationId": "GetSystemVersion",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemVersionDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/system/release-notes": {
+      "get": {
+        "tags": [
+          "system"
+        ],
+        "operationId": "ListReleaseNotes",
+        "parameters": [
+          {
+            "name": "language",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReleaseNoteDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/audit/entries": {
       "get": {
         "tags": [
@@ -7137,6 +7209,129 @@
         "responses": {
           "204": {
             "description": "No Content"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/setup/status": {
+      "get": {
+        "tags": [
+          "setup"
+        ],
+        "operationId": "GetSetupStatus",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SetupStatusDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/setup/verify-token": {
+      "post": {
+        "tags": [
+          "setup"
+        ],
+        "operationId": "VerifySetupToken",
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/setup/bootstrap": {
+      "post": {
+        "tags": [
+          "setup"
+        ],
+        "operationId": "BootstrapSetup",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetupBootstrapInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SetupBootstrapResultDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/setup/complete": {
+      "post": {
+        "tags": [
+          "setup"
+        ],
+        "operationId": "CompleteSetup",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SetupStatusDto"
+                }
+              }
+            }
           },
           "default": {
             "description": "Problem Details (RFC 9457)",
@@ -83618,6 +83813,10 @@
           "dateFormat": {
             "type": "string",
             "default": "dd/MM/yyyy"
+          },
+          "defaultLanguage": {
+            "type": "string",
+            "default": "ar"
           }
         },
         "description": "Regional settings (SPEC §0, §0.2 localisation). Hijri display is off by default."
@@ -83773,6 +83972,26 @@
             "format": "uint32"
           }
         }
+      },
+      "ReleaseNoteDto": {
+        "required": [
+          "version",
+          "language",
+          "markdown"
+        ],
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "string"
+          },
+          "language": {
+            "type": "string"
+          },
+          "markdown": {
+            "type": "string"
+          }
+        },
+        "description": "Release notes of one version in one language (Markdown, shown in the About dialog)."
       },
       "ReleaseValues": {
         "required": [
@@ -89574,6 +89793,187 @@
           }
         }
       },
+      "SetupBootstrapInput": {
+        "required": [
+          "organisationNameAr",
+          "organisationNameEn",
+          "organisationCode",
+          "timeZone",
+          "currencyCode",
+          "dateFormat",
+          "primaryColor",
+          "emailHeaderAr",
+          "emailHeaderEn",
+          "emailFooterAr",
+          "emailFooterEn",
+          "defaultLanguage",
+          "hijriDisplay",
+          "arabicIndicDigits",
+          "adminEmail",
+          "adminPassword",
+          "adminNameAr",
+          "adminNameEn",
+          "adminEmployeeNo",
+          "adminJobTitleAr",
+          "adminJobTitleEn"
+        ],
+        "type": "object",
+        "properties": {
+          "organisationNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "organisationNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "organisationCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "timeZone": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "currencyCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "dateFormat": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "primaryColor": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "emailHeaderAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "emailHeaderEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "emailFooterAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "emailFooterEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "defaultLanguage": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "hijriDisplay": {
+            "type": "boolean"
+          },
+          "arabicIndicDigits": {
+            "type": "boolean"
+          },
+          "adminEmail": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "adminPassword": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "adminNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "adminNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "adminEmployeeNo": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "adminJobTitleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "adminJobTitleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "description": "First stage of the setup wizard (ADR 0150): organisation profile, branding, languages and the first administrator, in one call\nauthorised by the one-time setup token."
+      },
+      "SetupBootstrapResultDto": {
+        "required": [
+          "userId",
+          "userName"
+        ],
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "userName": {
+            "type": "string"
+          }
+        }
+      },
+      "SetupStatusDto": {
+        "required": [
+          "needsSetup",
+          "setupCompleted"
+        ],
+        "type": "object",
+        "properties": {
+          "needsSetup": {
+            "type": "boolean"
+          },
+          "setupCompleted": {
+            "type": "boolean"
+          }
+        },
+        "description": "Public state of the first-run setup (ADR 0150). Reveals nothing but whether the wizard is open."
+      },
       "ShareInput": {
         "required": [
           "principalKind",
@@ -91993,6 +92393,34 @@
             "format": "uint32"
           }
         }
+      },
+      "SystemVersionDto": {
+        "required": [
+          "version",
+          "informationalVersion",
+          "commit",
+          "buildDate"
+        ],
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "string"
+          },
+          "informationalVersion": {
+            "type": "string"
+          },
+          "commit": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "buildDate": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "description": "Version of this installation (ADR 0152): product version, source commit when known, build time of the host assembly."
       },
       "TargetReason": {
         "required": [
@@ -100101,6 +100529,9 @@
       "name": "wasel"
     },
     {
+      "name": "system"
+    },
+    {
       "name": "audit"
     },
     {
@@ -100123,6 +100554,9 @@
     },
     {
       "name": "identity"
+    },
+    {
+      "name": "setup"
     },
     {
       "name": "calendar"

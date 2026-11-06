@@ -37,6 +37,7 @@ public sealed class IdentityStoreDbContext(DbContextOptions<IdentityStoreDbConte
 
     public DbSet<PersonalAccessToken> Tokens => Set<PersonalAccessToken>();
 
+    public DbSet<SetupState> SetupStates => Set<SetupState>();
 }
 
 internal sealed class StrategyUserConfiguration : IEntityTypeConfiguration<StrategyUser>
@@ -188,5 +189,16 @@ internal sealed class PersonalAccessTokenConfiguration : IEntityTypeConfiguratio
         builder.HasIndex(t => t.Prefix).IsUnique();
         builder.HasIndex(t => t.UserId);
         builder.HasOne<StrategyUser>().WithMany().HasForeignKey(t => t.UserId).OnDelete(DeleteBehavior.Cascade);
+    }
+}
+
+internal sealed class SetupStateConfiguration : IEntityTypeConfiguration<SetupState>
+{
+    public void Configure(EntityTypeBuilder<SetupState> builder)
+    {
+        builder.ToTable("setup_state");
+        builder.Property(s => s.Id).ValueGeneratedNever();
+        builder.Property(s => s.TokenHash).HasMaxLength(32);
+        builder.Property(s => s.Version).IsRowVersion();
     }
 }

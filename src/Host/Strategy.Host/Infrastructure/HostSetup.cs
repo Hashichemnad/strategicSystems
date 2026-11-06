@@ -103,6 +103,7 @@ internal static class HostSetup
         app.MapStrategyHealthChecks();
         app.MapStrategyOpenApi();
         app.MapAntiforgeryEndpoint();
+        app.MapSystemInfoEndpoints();
         foreach (var component in components)
         {
             component.MapEndpoints(app);
