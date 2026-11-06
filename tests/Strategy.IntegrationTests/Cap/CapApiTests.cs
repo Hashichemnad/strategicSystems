@@ -97,8 +97,17 @@ internal sealed class CapWorld
 
     public HttpClient C(TestUser user) => Clients[user.Id];
 
-    public static async Task<CapWorld> CreateAsync(ApiFactory factory)
+    /// <summary>
+    /// With a clock and <c>validFrom</c>, the units, people and role assignments are created on that date (so they are valid on it); the
+    /// sign-ins then happen at the real time (authenticator codes are computed from the real time).
+    /// </summary>
+    public static async Task<CapWorld> CreateAsync(ApiFactory factory, TravellingClock? clock = null, DateTimeOffset? validFrom = null)
     {
+        if (clock is not null)
+        {
+            clock.Frozen = validFrom;
+        }
+
         var suffix = Guid.CreateVersion7().ToString("N")[^6..].ToUpperInvariant();
         Guid organisation, a, a1, b;
         await using (var scope = TestAccess.SystemScope(factory))
@@ -116,6 +125,11 @@ internal sealed class CapWorld
         var departmentManager = await factory.CreateUserAsync(unitId: a, roles: "cap.department-manager");
         var outsider = await factory.CreateUserAsync(unitId: b);
         await ApprovalWorld.SetHeadAsync(factory, a1, manager.EmployeeId);
+        if (clock is not null)
+        {
+            clock.Frozen = null;
+        }
+
         var clients = new Dictionary<Guid, HttpClient>();
         foreach (var user in new[] { pmo, manager, assignee, departmentManager, outsider })
         {
@@ -450,10 +464,18 @@ public sealed class CapApiTests(CapFixture fx) : IClassFixture<CapFixture>
     [Fact]
     public async Task Due_dates_follow_the_priority_in_working_time()
     {
-        var w = await CapWorld.CreateAsync(fx.Factory);
+        // The people and their roles are created on the test date: role assignments are valid from the day they are granted, so a world
+        // created "today" has no roles on a date in the past. (Before, the clock went back after the world was created: the test passed only
+        // while the access snapshot cached before that survived; any access change in the process — even another test host's, through the
+        // static AccessChangeSignal — reloaded it on 10 September without the roles: 403 when creating a remark, the Phase 17 flake.)
+        var thursday = new DateTimeOffset(2026, 9, 10, 6, 0, 0, TimeSpan.Zero); // Thursday 10 September 2026 in Dubai
+        var w = await CapWorld.CreateAsync(fx.Factory, fx.Clock, thursday);
         await w.SettingsAsync(s => s with { CountWorkingDays = false });
         var source = await w.SourceAsync();
-        fx.Clock.Frozen = new DateTimeOffset(2026, 9, 10, 6, 0, 0, TimeSpan.Zero); // Thursday 10 September 2026 in Dubai
+        fx.Clock.Frozen = thursday;
+
+        // Reload every access snapshot under the frozen clock, so the test never depends on what happened to be cached.
+        Strategy.Platform.Access.AccessChangeSignal.Raise();
         try
         {
             // Critical +30 = Saturday 10 October → Monday 12 October, due at the end of working time (15:30 Dubai = 11:30 UTC).
