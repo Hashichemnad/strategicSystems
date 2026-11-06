@@ -292,6 +292,91 @@ public class MigrationTests(PostgresFixture postgres)
         message.ToString().ShouldContain("ConnectionStrings__StrategyMigrations");
     }
 
+    /// <summary>
+    /// The documented first start (deploy/README.md) on a fresh two-role install: PostgreSQL's init script creates the runtime role with
+    /// CONNECT only; the <c>migrate</c> service migrates as the owner and grants the runtime role; then <c>--create-admin</c> runs in the
+    /// <c>app</c> service (runtime connection only) and, again, in the <c>migrate</c> service (both connections). It used to migrate on the
+    /// runtime connection and fail with "permission denied for schema core". Before <c>--migrate</c> it explains the order and changes nothing.
+    /// </summary>
+    [Fact]
+    public async Task First_start_on_a_fresh_two_role_database_migrates_as_the_owner_and_creates_the_administrator_as_the_runtime_role()
+    {
+        var owner = await postgres.CreateDatabaseAsync();
+        var role = "strategy_app_" + Guid.CreateVersion7().ToString("N")[^8..];
+        await using (var connection = new NpgsqlConnection(owner))
+        {
+            await connection.OpenAsync();
+            // deploy/postgres/init-roles.sh
+            await using var init = new NpgsqlCommand(
+                $"CREATE ROLE \"{role}\" LOGIN PASSWORD 'App#Pass1'; GRANT CONNECT, TEMPORARY ON DATABASE \"{connection.Database}\" TO \"{role}\";",
+                connection);
+            await init.ExecuteNonQueryAsync();
+        }
+
+        var runtime = new NpgsqlConnectionStringBuilder(owner) { Username = role, Password = "App#Pass1" }.ConnectionString;
+        var passwordFile = Path.GetTempFileName();
+        await File.WriteAllTextAsync(passwordFile, "First#Admin2026\n");
+        var appService = new Dictionary<string, string?> { ["Database:MigrateOnStartup"] = "false" };
+        var migrateService = new Dictionary<string, string?>
+        {
+            ["Database:MigrateOnStartup"] = "false",
+            ["ConnectionStrings:StrategyMigrations"] = owner,
+        };
+
+        // Out of order: --create-admin before --migrate changes nothing and says what to do.
+        await using (var early = new ApiFactory(runtime, settings: appService, backgroundServices: false))
+        {
+            Strategy.Host.Infrastructure.Bootstrap.HasSeparateOwnerConnection(early.Services.GetRequiredService<Microsoft.Extensions.Configuration.IConfiguration>())
+                .ShouldBeFalse();
+            var output = new StringWriter();
+            (await Strategy.Host.Infrastructure.Bootstrap.CreateAdminAsync(
+                early.Services, ["--create-admin", "--email", "admin@example.org", "--password-file", passwordFile], output)).ShouldBe(3, output.ToString());
+            output.ToString().ShouldContain("--migrate");
+        }
+
+        // `up -d --build`: the migrate service (`--migrate` → Database:UseMigrationsConnection) migrates as the owner and grants the role.
+        await using (var migrate = new ApiFactory(
+            runtime, settings: new Dictionary<string, string?>(migrateService) { ["Database:UseMigrationsConnection"] = "true" }, backgroundServices: false))
+        {
+            await migrate.Services.GetRequiredService<ModuleMigrator>().MigrateAllAsync();
+        }
+
+        // `run --rm app --create-admin …`: runtime connection only.
+        await using (var app = new ApiFactory(runtime, settings: appService, backgroundServices: false))
+        {
+            var output = new StringWriter();
+            (await Strategy.Host.Infrastructure.Bootstrap.CreateAdminAsync(
+                app.Services, ["--create-admin", "--email", "admin@example.org", "--password-file", passwordFile], output)).ShouldBe(0, output.ToString());
+            output.ToString().ShouldContain("created");
+        }
+
+        // The same command in the migrate service (both connections; Program migrates as the owner first, then creates as the runtime role).
+        await using (var migrateRun = new ApiFactory(runtime, settings: migrateService, backgroundServices: false))
+        {
+            var configuration = migrateRun.Services.GetRequiredService<Microsoft.Extensions.Configuration.IConfiguration>();
+            Strategy.Host.Infrastructure.Bootstrap.HasSeparateOwnerConnection(configuration).ShouldBeTrue();
+            var output = new StringWriter();
+            (await Strategy.Host.Infrastructure.Bootstrap.CreateAdminAsync(
+                migrateRun.Services, ["--create-admin", "--email", "second@example.org", "--password-file", passwordFile], output)).ShouldBe(0, output.ToString());
+        }
+
+        File.Delete(passwordFile);
+        await using var asRuntime = new NpgsqlConnection(runtime);
+        await asRuntime.OpenAsync();
+        (await ScalarAsync(asRuntime, "select count(*) from identity.users where user_name in ('admin@example.org', 'second@example.org')")).ShouldBe(2);
+        (await ScalarAsync(asRuntime,
+            "select count(*) from access.role_assignment ra join identity.users u on u.id = ra.principal_id where u.user_name = 'admin@example.org'"))
+            .ShouldBeGreaterThan(0);
+        (await ScalarAsync(asRuntime, "select count(*) from audit.entry")).ShouldBeGreaterThan(0);
+
+        // The administrator signs in with the app running as the runtime role.
+        await using var running = new ApiFactory(runtime, settings: appService);
+        var client = running.CreateClient();
+        await client.RefreshAntiforgeryAsync();
+        var login = await client.PostAsJsonAsync("/api/v1/identity/auth/login", new { login = "admin@example.org", password = "First#Admin2026" });
+        login.StatusCode.ShouldBe(HttpStatusCode.OK, await login.Content.ReadAsStringAsync());
+    }
+
     private static async Task<byte[]> ReadAllAsync(IFileService files, Guid fileId)
     {
         var opened = await files.OpenAsync(fileId, auditDownload: false);

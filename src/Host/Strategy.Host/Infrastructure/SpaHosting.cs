@@ -46,8 +46,9 @@ internal static class SpaHosting
         };
         app.MapFallbackToFile("{*path:nonfile:regex(^(?!(api|mcp|health|openapi)(/|$)).*$)}", "index.html", options);
 
-        // SPA routes whose last segment is a dotted code (built-in request types such as docreg.document) look like file names.
-        foreach (var pattern in new[] { "requests/new/{code}", "embed/requests/{code}", "settings/request-types/{code}" })
+        // SPA routes whose last segment is a dotted code (built-in request types such as docreg.document, dashboards such as kpi.scorecard)
+        // look like file names.
+        foreach (var pattern in new[] { "requests/new/{code}", "embed/requests/{code}", "settings/request-types/{code}", "dashboards/{code}" })
         {
             app.MapFallbackToFile(pattern, "index.html", options);
         }

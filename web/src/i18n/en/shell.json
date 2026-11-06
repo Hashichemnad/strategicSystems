@@ -43,7 +43,10 @@
     "portfolioReviews": "Portfolio reviews",
     "cap": "Corrective actions",
     "bench": "Benchmarking",
-    "audit": "Audit management"
+    "audit": "Audit management",
+    "dashboards": "Dashboards",
+    "executive": "Executive dashboard",
+    "reports": "Reports"
   },
   "language": {
     "label": "Language",

@@ -1,5 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
+using Microsoft.Extensions.DependencyInjection;
+using Quartz;
 using Strategy.IntegrationTests.Infrastructure;
 using Strategy.IntegrationTests.Notifications;
 using Strategy.Platform.Kernel.Paging;
@@ -18,7 +20,7 @@ public class JobDashboardTests(ApiFixture api) : IClassFixture<ApiFixture>
             () => admin.GetFromJsonAsync<List<JobDto>>("/api/v1/scheduling/jobs"), j => j!.All(x => x.NextRunAt is not null)))!;
         jobs.Select(j => j.Key).ShouldBe(
             ["audit.verify-chain", "docreg.validity", "files.rescan-pending", "ip.renewals", "kpi.period-windows", "notifications.digest", "org.directory-sync", "portfolio.monthly-cycle", "portfolio.communication-reminders", "scheduling.cleanup", "tasks.digest", "tasks.recurrence", "tasks.reminders", "teams.evaluation-triggers", "teams.reports", "workflow.idempotency-cleanup",
-                "workflow.sla", "requests.stage-overdue", "risk.monitor", "portfolio.wasel-access", "cap.monitor", "bench.monitor", "auditmgmt.monitor"], ignoreOrder: true);
+                "workflow.sla", "requests.stage-overdue", "risk.monitor", "portfolio.wasel-access", "cap.monitor", "bench.monitor", "auditmgmt.monitor", "reporting.refresh", "reporting.snapshot", "reporting.rebuild", "reporting.deliver"], ignoreOrder: true);
         jobs.ShouldAllBe(j => j.NameAr.Length > 0 && j.NameEn.Length > 0 && !j.Paused);
 
         (await admin.PostAsync("/api/v1/scheduling/jobs/audit.verify-chain/run", null)).StatusCode.ShouldBe(HttpStatusCode.NoContent);
@@ -34,6 +36,19 @@ public class JobDashboardTests(ApiFixture api) : IClassFixture<ApiFixture>
 
         var audit = await admin.GetFromJsonAsync<PagedResult<Strategy.Platform.Audit.AuditEntryDto>>("/api/v1/audit/entries?action=job.run");
         audit!.Items.ShouldContain(e => e.RecordId == "audit.verify-chain");
+    }
+
+    [Fact]
+    public async Task A_run_fired_by_the_schedule_without_a_requesting_user_executes_and_is_recorded()
+    {
+        // Schedule-fired triggers carry no "triggeredBy"; the run listener must not veto them (it did: every cron run was skipped).
+        var admin = await api.AdminClientAsync();
+        var scheduler = await api.Factory.Services.GetRequiredService<ISchedulerFactory>().GetScheduler(CancellationToken.None);
+        await scheduler.TriggerJob(new JobKey("scheduling.cleanup", JobScheduleSynchroniser.Group), CancellationToken.None);
+        var runs = await NotificationTests.EventuallyAsync(
+            () => admin.GetFromJsonAsync<List<JobRunDto>>("/api/v1/scheduling/jobs/scheduling.cleanup/runs"),
+            r => r!.Any(x => x.TriggeredBy is null && x.Status != "running"), timeoutSeconds: 30);
+        runs!.First(x => x.TriggeredBy is null).Status.ShouldBe("succeeded");
     }
 
     [Fact]

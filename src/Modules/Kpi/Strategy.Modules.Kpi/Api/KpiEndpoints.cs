@@ -180,7 +180,8 @@ internal static class KpiEndpoints
         // Reports
         group.MapGet("/scorecard", async (int? year, Guid? unitId, IDispatcher d, CancellationToken ct) => (await d.SendAsync(new GetKpiScorecard(year, unitId), ct)).ToOk())
             .WithName("GetKpiScorecard").RequirePermission(KpiPermissions.ScorecardRead);
-        group.MapGet("/dashboard", async (int? year, IDispatcher d, CancellationToken ct) => (await d.SendAsync(new GetKpiDashboard(year), ct)).ToOk())
+        group.MapGet("/dashboard", async (int? year, DateOnly? from, DateOnly? to, IDispatcher d, CancellationToken ct) =>
+                (await d.SendAsync(new GetKpiDashboard(year, from, to), ct)).ToOk())
             .WithName("GetKpiDashboard").RequirePermission(KpiPermissions.DashboardRead);
         group.MapGet("/data-quality", async (int? year, IDispatcher d, CancellationToken ct) => (await d.SendAsync(new GetKpiDataQuality(year), ct)).ToOk())
             .WithName("GetKpiDataQuality").RequirePermission(KpiPermissions.DashboardRead);

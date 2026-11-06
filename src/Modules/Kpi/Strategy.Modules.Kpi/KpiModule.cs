@@ -8,6 +8,7 @@ using Strategy.Modules.Kpi.Contracts;
 using Strategy.Modules.Kpi.Infrastructure;
 using Strategy.Modules.Kpi.Jobs;
 using Strategy.Modules.Kpi.Mcp;
+using Strategy.Modules.Kpi.Reporting;
 using Strategy.Platform.Access;
 using Strategy.Platform.AI;
 using Strategy.Platform.AI.Tools;
@@ -17,6 +18,7 @@ using Strategy.Platform.Kernel;
 using Strategy.Platform.Links;
 using Strategy.Platform.Notifications;
 using Strategy.Platform.Persistence;
+using Strategy.Platform.Reporting;
 using Strategy.Platform.Scheduling;
 using Strategy.Platform.Settings;
 using Strategy.Platform.Workflow;
@@ -67,6 +69,13 @@ public sealed class KpiModule : IModule
         services.AddApprovalHook<DefinitionChangeHook>();
         services.AddCurrentStatusProvider<ResultCurrentStatus>();
         services.AddMyWorkSource<KpiMyWork>();
+
+        // Phase 17 — reporting sources (docs/design/reporting.md §2.5, §6, §7).
+        services.AddReportingMetricSource<KpiMetricSource>();
+        services.AddReportingDimensionLabelSource<KpiDimensionLabels>();
+        services.AddReportingListSource<KpiListSource>();
+        services.AddReportingDatasetSource<KpiDatasetSource>();
+        services.AddMyWorkCardSource<KpiMyWorkCards>();
 
         services.AddFilePurpose(KpiFilePurposes.Evidence);
         services.AddFilePurpose(KpiFilePurposes.CardDocument);

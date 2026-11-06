@@ -6,7 +6,7 @@ import { errorMessage } from '@/api/problem';
 import { useCan } from '@/features/access/session';
 import { AiBadge } from '@/features/ai/AiDraft';
 import { useAiFeature } from '@/features/ai/api';
-import { Section, SimpleDialog, useNames } from '@/features/cap/components';
+import { SimpleDialog, useNames } from '@/features/cap/components';
 import {
   Button,
   EmptyState,
@@ -27,6 +27,7 @@ import {
   TableRow,
   Textarea,
   useToast,
+  Section,
 } from '@/ui';
 import {
   benchApi,

@@ -7,7 +7,7 @@ import { errorMessage, translateMessageKey } from '@/api/problem';
 import { useCan } from '@/features/access/session';
 import { useLookupValues } from '@/features/settings/lookups';
 import { cn } from '@/lib/cn';
-import { formatDate, formatNumber, pickText } from '@/lib/format';
+import { formatDate, pickText } from '@/lib/format';
 import { StatusChip } from '@/ui';
 import { statusTone } from './api';
 
@@ -115,45 +115,5 @@ export function Detail({ label, children, wide }: { label: ReactNode; children: 
       <dt className="text-xs font-medium text-muted-foreground">{label}</dt>
       <dd className="text-sm break-words">{children}</dd>
     </div>
-  );
-}
-
-export interface BarRow {
-  key: string;
-  label: string;
-  value: number;
-}
-
-/** Accessible CSS bars from the design tokens (as the KPI dashboard). */
-export function Bars({ title, rows, testId }: { title: string; rows: BarRow[]; testId?: string }) {
-  const { t, i18n } = useTranslation('ip');
-  const max = Math.max(1, ...rows.map((r) => r.value));
-  return (
-    <section
-      className="flex flex-col gap-3 rounded-lg border bg-card p-5"
-      aria-label={title}
-      data-testid={testId}
-    >
-      <h2 className="font-semibold">{title}</h2>
-      {rows.length === 0 && <p className="text-sm text-muted-foreground">{t('common.noData')}</p>}
-      <ul className="flex flex-col gap-2">
-        {rows.map((row) => (
-          <li
-            key={row.key}
-            className="grid grid-cols-[minmax(5rem,12rem)_1fr_auto] items-center gap-2 text-sm"
-          >
-            <span className="truncate" title={row.label}>
-              {row.label}
-            </span>
-            <span className="flex h-4 overflow-hidden rounded bg-muted" aria-hidden>
-              <span className="h-full bg-primary" style={{ inlineSize: `${(row.value / max) * 100}%` }} />
-            </span>
-            <span className="tabular-nums text-muted-foreground">
-              {formatNumber(row.value, i18n.language)}
-            </span>
-          </li>
-        ))}
-      </ul>
-    </section>
   );
 }

@@ -294,6 +294,7 @@
     "overdue": "Overdue",
     "dueSoon": "Due soon",
     "closed90": "Closed (90 days)",
+    "closedInPeriod": "Closed in the period",
     "avgAccept": "Avg. time to accept",
     "avgComplete": "Avg. time to complete",
     "onTimeRate": "On-time completion",

@@ -3028,6 +3028,486 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/reporting/catalogue': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetReportingCatalogue'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/dashboards': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListDashboards'];
+    put?: never;
+    post: operations['CreateDashboard'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/dashboards/{key}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetDashboard'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/dashboards/{key}/data': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetDashboardData'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/dashboards/{key}/export': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ExportDashboard'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/dashboards/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateDashboard'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/dashboards/{id}/publish': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['PublishDashboard'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/dashboards/{id}/archive': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ArchiveDashboard'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/dashboards/{id}/roles': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['SetDashboardRoles'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/dashboards/{id}/shares': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListDashboardShares'];
+    put: operations['ShareDashboard'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/dashboards/{id}/filters': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListSavedFilters'];
+    put?: never;
+    post: operations['SaveFilter'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/filters/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete: operations['DeleteSavedFilter'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/pins': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListPins'];
+    put?: never;
+    post: operations['Pin'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/pins/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete: operations['Unpin'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/my-work/cards': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetMyWorkCards'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/my-work/layout': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['SaveMyWorkLayout'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/datasets': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListDatasets'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/reports/run': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RunReport'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/reports/export': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ExportReport'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/reports': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListReports'];
+    put?: never;
+    post: operations['CreateReport'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/reports/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetReport'];
+    put: operations['UpdateReport'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/reports/{id}/archive': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ArchiveReport'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/reports/{id}/shares': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListReportShares'];
+    put: operations['ShareReport'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/schedules': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListSchedules'];
+    put?: never;
+    post: operations['CreateSchedule'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/schedules/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateSchedule'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/schedules/{id}/deliveries': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListDeliveries'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/brief': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['GenerateExecutiveBrief'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/briefs': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListExecutiveBriefs'];
+    put?: never;
+    post: operations['SaveExecutiveBrief'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/settings': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetReportingSettings'];
+    put: operations['SaveReportingSettings'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/refresh': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetReportingRefreshStatus'];
+    put?: never;
+    post: operations['RequestReportingRefresh'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/sample/items': {
     parameters: {
       query?: never;
@@ -14479,6 +14959,67 @@ export interface components {
       emailFooterAr?: null | string;
       emailFooterEn?: null | string;
     };
+    BreakdownRowDto: {
+      key: {
+        [key: string]: string;
+      };
+      /** Format: double */
+      value: null | number;
+      /** Format: double */
+      previous: null | number;
+      link: null | string;
+    };
+    BriefDto: {
+      /** Format: uuid */
+      id: null | string;
+      periodKey: string;
+      improved: components['schemas']['BriefPointDto'][];
+      attention: components['schemas']['BriefPointDto'][];
+      decisions: components['schemas']['BriefPointDto'][];
+      aiGenerated: boolean;
+      /** Format: uuid */
+      usageId: null | string;
+      /** Format: date-time */
+      savedAt: null | string;
+    };
+    BriefEvidenceDto: {
+      ref: string;
+      resourceType: string;
+      /** Format: uuid */
+      id: string;
+      number: null | string;
+      titleAr: null | string;
+      titleEn: null | string;
+      link: string;
+    };
+    BriefInput: {
+      periodKey: string;
+      improved: components['schemas']['BriefPointDto'][];
+      attention: components['schemas']['BriefPointDto'][];
+      decisions: components['schemas']['BriefPointDto'][];
+      aiGenerated: boolean;
+    };
+    BriefPointDto: {
+      textAr: string;
+      textEn: string;
+      evidence: components['schemas']['BriefEvidenceDto'][];
+    };
+    BriefRequest: {
+      kind: null | string;
+      from: null | string;
+      to: null | string;
+      /** Format: uuid */
+      unitId: null | string;
+    };
+    BubblePointDto: {
+      code: string;
+      /** Format: double */
+      x: null | number;
+      /** Format: double */
+      y: null | number;
+      /** Format: double */
+      size: null | number;
+    };
     BudgetRowDto: {
       /** Format: uuid */
       unitId: null | string;
@@ -15951,6 +16492,29 @@ export interface components {
       /** Format: double */
       days: number;
     };
+    DashboardBody: {
+      dashboard: components['schemas']['DashboardInput'];
+      /** Format: uint32 */
+      version: number;
+    };
+    DashboardDataDto: {
+      /** Format: uuid */
+      id: string;
+      code: string;
+      titleAr: string;
+      titleEn: string;
+      level: string;
+      systemCode: null | string;
+      period: components['schemas']['ReportingPeriodDto'];
+      /** Format: uuid */
+      unitId: null | string;
+      widgets: components['schemas']['WidgetConfig'][];
+      data: components['schemas']['WidgetDataDto'][];
+      units: components['schemas']['UnitNameDto'][];
+    };
+    DashboardDefinition: {
+      widgets?: components['schemas']['WidgetConfig'][];
+    };
     DashboardDto: {
       /** Format: int32 */
       published: number;
@@ -15967,6 +16531,15 @@ export interface components {
       byUnit: components['schemas']['UnitFacetDto'][];
       expiring: components['schemas']['DocumentListItemDto'][];
       recentlyPublished: components['schemas']['DocumentListItemDto'][];
+    };
+    DashboardInput: {
+      titleAr: string;
+      titleEn: string;
+      descriptionAr: null | string;
+      descriptionEn: null | string;
+      level: string;
+      systemCode: null | string;
+      definition: components['schemas']['DashboardDefinition'];
     };
     DashboardProjectDto: {
       /** Format: uuid */
@@ -15996,11 +16569,51 @@ export interface components {
       /** Format: int32 */
       complexity: null | number;
     };
+    DashboardRoleInput: {
+      roleKey: string;
+      /** Format: int32 */
+      sort: number;
+      isDefault: boolean;
+    };
+    DashboardSummaryDto: {
+      /** Format: uuid */
+      id: string;
+      code: string;
+      titleAr: string;
+      titleEn: string;
+      descriptionAr: null | string;
+      descriptionEn: null | string;
+      level: string;
+      systemCode: null | string;
+      status: string;
+      isRoleDefault: boolean;
+      pinned: boolean;
+      canEdit: boolean;
+      /** Format: int32 */
+      publishedVersion: number;
+    };
     /** @description A data element of a composite KPI (e.g. numerator / denominator). */
     DataElement: {
       code: string;
       nameAr: null | string;
       nameEn: null | string;
+    };
+    DatasetDto: {
+      code: string;
+      systemCode: string;
+      labelAr: string;
+      labelEn: string;
+      fields: components['schemas']['DatasetFieldDto'][];
+    };
+    DatasetFieldDto: {
+      code: string;
+      labelAr: string;
+      labelEn: string;
+      type: string;
+      filterable: boolean;
+      groupable: boolean;
+      sortable: boolean;
+      lookupType: null | string;
     };
     DayDto: {
       /** Format: int32 */
@@ -16083,6 +16696,12 @@ export interface components {
     DiffPart: {
       kind: string;
       text: string;
+    };
+    DimensionLabelDto: {
+      dimension: string;
+      code: string;
+      labelAr: null | string;
+      labelEn: null | string;
     };
     DocPersonDto: {
       /** Format: uuid */
@@ -18737,6 +19356,12 @@ export interface components {
       isClosed: boolean;
       link: null | string;
     };
+    ListCatalogueDto: {
+      code: string;
+      systemCode: string;
+      labelAr: string;
+      labelEn: string;
+    };
     LoginInput: {
       login: null | string;
       password: null | string;
@@ -19169,6 +19794,23 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    MetricCatalogueDto: {
+      code: string;
+      systemCode: string;
+      labelAr: string;
+      labelEn: string;
+      kind: string;
+      aggregation: string;
+      valueKind: string;
+      higherIsBetter: null | boolean;
+      dimensions: components['schemas']['MetricDimensionDto'][];
+      live: boolean;
+    };
+    MetricDimensionDto: {
+      code: string;
+      lookup: null | string;
+      labels: components['schemas']['DimensionLabelDto'][];
+    };
     MfaCodeInput: {
       method: null | string;
       code: null | string;
@@ -19454,6 +20096,43 @@ export interface components {
       onBehalfOf: components['schemas']['PersonName'][];
       selfAssigned: boolean;
     };
+    MyWorkCardDto: {
+      code: string;
+      systemCode: string;
+      titleKey: string;
+      counts: components['schemas']['MyWorkCount'][];
+      items: components['schemas']['MyWorkCardItem'][];
+      link: string;
+      hidden: boolean;
+      state: string;
+    };
+    /** @description One item on a card (deep link to the record). */
+    MyWorkCardItem: {
+      resourceType: string;
+      /** Format: uuid */
+      id: string;
+      number: null | string;
+      titleAr: null | string;
+      titleEn: null | string;
+      messageKey: string;
+      link: string;
+      /** Format: date */
+      dueDate?: null | string;
+      /** @default false */
+      overdue: boolean;
+    };
+    MyWorkCardsDto: {
+      cards: components['schemas']['MyWorkCardDto'][];
+    };
+    /** @description A counter on a My Work card. Tone: neutral, info, success, warning or danger. */
+    MyWorkCount: {
+      key: string;
+      /** Format: int32 */
+      value: number;
+      /** @default neutral */
+      tone: string;
+      link?: null | string;
+    };
     MyWorkCountsDto: {
       /** Format: int32 */
       pendingApprovals: number;
@@ -19487,6 +20166,10 @@ export interface components {
       since?: null | string;
       /** Format: date */
       dueDate?: null | string;
+    };
+    MyWorkLayoutItem: {
+      code: string;
+      hidden: boolean;
     };
     MyWorkTaskDto: {
       /** Format: uuid */
@@ -20138,6 +20821,25 @@ export interface components {
       userId: null | string;
       nameAr: null | string;
       nameEn: null | string;
+    };
+    PinDto: {
+      /** Format: uuid */
+      id: string;
+      kind: string;
+      /** Format: uuid */
+      refId: string;
+      widgetId: null | string;
+      /** Format: int32 */
+      sort: number;
+      titleAr: null | string;
+      titleEn: null | string;
+      code: null | string;
+    };
+    PinInput: {
+      kind: string;
+      /** Format: uuid */
+      refId: string;
+      widgetId: null | string;
     };
     PlanDraftDto: {
       methodology: string;
@@ -21635,6 +22337,15 @@ export interface components {
       /** Format: int32 */
       count: null | number;
     };
+    RefreshStatusDto: {
+      systemCode: string;
+      /** Format: date-time */
+      at: null | string;
+      kind: null | string;
+      /** Format: int32 */
+      facts: number;
+      error: null | string;
+    };
     /** @description Regional settings (SPEC §0, §0.2 localisation). Hijri display is off by default. */
     RegionalSettings: {
       /** @default Asia/Dubai */
@@ -21726,6 +22437,20 @@ export interface components {
       /** Format: uuid */
       usageId: null | string;
     };
+    ReportColumnDto: {
+      code: string;
+      labelAr: string;
+      labelEn: string;
+      type: string;
+    };
+    /** @description A report definition as the builder sends it (also stored as a saved report's definition). */
+    ReportDefinition: {
+      dataset?: string;
+      columns?: string[];
+      filters?: components['schemas']['ReportFilter'][];
+      groupBy?: string[];
+      sort?: components['schemas']['ReportSort'][];
+    };
     ReportDto: {
       /** Format: uuid */
       id: string;
@@ -21749,10 +22474,120 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    ReportExportInput: {
+      definition: components['schemas']['ReportDefinition'];
+      format: string;
+      language: null | string;
+      title: null | string;
+    };
+    /** @description One filter. Values are strings in invariant format (dates ISO, numbers with '.', bools true/false). */
+    ReportFilter: {
+      field: string;
+      operator: string;
+      values: string[];
+    };
+    ReportingCatalogueDto: {
+      widgetTypes: string[];
+      metrics: components['schemas']['MetricCatalogueDto'][];
+      lists: components['schemas']['ListCatalogueDto'][];
+    };
+    ReportingDashboardDto: {
+      /** Format: uuid */
+      id: string;
+      code: string;
+      titleAr: string;
+      titleEn: string;
+      descriptionAr: null | string;
+      descriptionEn: null | string;
+      level: string;
+      systemCode: null | string;
+      status: string;
+      definition: components['schemas']['DashboardDefinition'];
+      draft: null | components['schemas']['DashboardDefinition'];
+      canEdit: boolean;
+      hasDraft: boolean;
+      /** Format: int32 */
+      publishedVersion: number;
+      roleKeys: string[];
+      /** Format: uint32 */
+      version: number;
+    };
+    ReportingPeriodDto: {
+      kind: string;
+      from: string;
+      to: string;
+      previousFrom: string;
+      previousTo: string;
+    };
+    /** @description Settings → Reporting (docs/design/reporting.md §2–§9). Every value is a seeded default the organisation can change. */
+    ReportingSettings: {
+      /** @description Organisation level whose units are the "departments" of the comparison scorecard; lower units roll up. */
+      departmentLevelCode?: string;
+      /**
+       * Format: int32
+       * @description First month of the fiscal year (quarters and years).
+       */
+      fiscalStartMonth?: number;
+      /**
+       * Format: int32
+       * @description Full refresh of the current month every N minutes (dirty systems refresh within about a minute).
+       */
+      refreshMinutes?: number;
+      /** @description `attachment` or `link` (installations that forbid attachments). */
+      deliveryMode?: string;
+      /** Format: int32 */
+      exportRowLimit?: number;
+      /**
+       * Format: int32
+       * @description Attachments larger than this are sent as a link to the authorised download.
+       */
+      attachmentLimitMb?: number;
+      /**
+       * Format: int32
+       * @description Generated files kept for download (days).
+       */
+      deliveryRetentionDays?: number;
+      scorecard?: components['schemas']['ScorecardColumn'][];
+    };
+    ReportingSettingsInput: {
+      settings: components['schemas']['ReportingSettings'];
+      /** Format: uint32 */
+      version: number;
+    };
     ReportInput: {
       summary: string;
       /** Format: uint32 */
       version: number;
+    };
+    ReportRowDto: {
+      /** Format: uuid */
+      id: null | string;
+      cells: string[];
+      link: null | string;
+    };
+    ReportRunDto: {
+      dataset: string;
+      columns: components['schemas']['ReportColumnDto'][];
+      rows: components['schemas']['ReportRowDto'][];
+      /** Format: int32 */
+      total: number;
+      /** Format: int32 */
+      page: number;
+      /** Format: int32 */
+      pageSize: number;
+      droppedColumns: string[];
+    };
+    ReportRunInput: {
+      definition: components['schemas']['ReportDefinition'];
+      /** Format: int32 */
+      page: null | number;
+      /** Format: int32 */
+      pageSize: null | number;
+      language: null | string;
+    };
+    ReportSort: {
+      field: string;
+      descending: boolean;
     };
     RequestActionsDto: {
       edit: boolean;
@@ -22712,6 +23547,41 @@ export interface components {
       nameAr: null | string;
       nameEn: null | string;
     };
+    SavedFilterDto: {
+      /** Format: uuid */
+      id: string;
+      name: string;
+      filters: components['schemas']['JsonElement'];
+      isDefault: boolean;
+    };
+    SavedFilterInput: {
+      name: string;
+      filters: components['schemas']['JsonElement'];
+      isDefault: boolean;
+    };
+    SavedReportBody: {
+      report: components['schemas']['SavedReportInput'];
+      /** Format: uint32 */
+      version: null | number;
+    };
+    SavedReportDto: {
+      /** Format: uuid */
+      id: string;
+      name: string;
+      description: null | string;
+      dataset: string;
+      definition: components['schemas']['ReportDefinition'];
+      /** Format: uuid */
+      ownerUserId: string;
+      canEdit: boolean;
+      /** Format: uint32 */
+      version: number;
+    };
+    SavedReportInput: {
+      name: string;
+      description: null | string;
+      definition: components['schemas']['ReportDefinition'];
+    };
     SaveInput: {
       data: null | components['schemas']['JsonObject'];
       /** Format: uint32 */
@@ -22734,6 +23604,121 @@ export interface components {
       value: number;
       labelAr: null | string;
       labelEn: null | string;
+    };
+    ScheduleBody: {
+      schedule: components['schemas']['ScheduleInput'];
+      /** Format: uint32 */
+      version: null | number;
+    };
+    ScheduleDeliveryDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      userId: string;
+      periodKey: string;
+      status: string;
+      format: null | string;
+      /** Format: int32 */
+      rows: number;
+      detail: null | string;
+      /** Format: uuid */
+      fileId: null | string;
+      /** Format: date-time */
+      at: string;
+    };
+    ScheduleDto: {
+      /** Format: uuid */
+      id: string;
+      name: string;
+      targetKind: string;
+      /** Format: uuid */
+      targetId: string;
+      frequency: string;
+      time: string;
+      /** Format: int32 */
+      day: number;
+      periodRule: string;
+      format: string;
+      recipients: components['schemas']['ScheduleRecipient'][];
+      active: boolean;
+      /** Format: date-time */
+      nextRunAt: null | string;
+      /** Format: date-time */
+      lastRunAt: null | string;
+      /** Format: uuid */
+      ownerUserId: string;
+      /** Format: uint32 */
+      version: number;
+    };
+    ScheduleInput: {
+      name: string;
+      targetKind: string;
+      /** Format: uuid */
+      targetId: string;
+      frequency: string;
+      time: string;
+      /** Format: int32 */
+      day: number;
+      periodRule: string;
+      format: string;
+      recipients: components['schemas']['ScheduleRecipient'][];
+      active: boolean;
+    };
+    ScheduleRecipient: {
+      kind: string;
+      ref: string;
+    };
+    ScorecardCellDto: {
+      column: string;
+      /** Format: double */
+      value: null | number;
+      rag: string;
+      link: null | string;
+    };
+    /** @description One column of the department comparison scorecard (ADR 0146): a metric with optional dimension filters and RAG limits. */
+    ScorecardColumn: {
+      code?: string;
+      labelAr?: string;
+      labelEn?: string;
+      metric?: string;
+      filters?: {
+        [key: string]: string[];
+      };
+      /**
+       * Format: double
+       * @description Green from this value (higher is better) or up to it (lower is better).
+       */
+      green?: number;
+      /** Format: double */
+      amber?: number;
+      higherIsBetter?: boolean;
+      /** @description Drill target: the system dashboard code. */
+      dashboard?: null | string;
+    };
+    ScorecardColumnDto: {
+      code: string;
+      labelAr: string;
+      labelEn: string;
+      metric: string;
+      valueKind: string;
+      higherIsBetter: boolean;
+      /** Format: double */
+      green: number;
+      /** Format: double */
+      amber: number;
+    };
+    ScorecardDto: {
+      columns: components['schemas']['ScorecardColumnDto'][];
+      rows: components['schemas']['ScorecardRowDto'][];
+    };
+    ScorecardRowDto: {
+      /** Format: uuid */
+      unitId: string;
+      code: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      cells: components['schemas']['ScorecardCellDto'][];
+      link: string;
     };
     SecuritySettingsDto: {
       /** Format: int32 */
@@ -22835,6 +23820,11 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    SettingsDocumentOfReportingSettings: {
+      value: null | components['schemas']['ReportingSettings'];
+      /** Format: uint32 */
+      version: number;
+    };
     SettingsDocumentOfRiskSettings: {
       value: null | components['schemas']['RiskSettings'];
       /** Format: uint32 */
@@ -22844,6 +23834,10 @@ export interface components {
       settings: components['schemas']['TeamSettings'];
       /** Format: uint32 */
       version: number;
+    };
+    ShareInput: {
+      principalKind: string;
+      principalRef: string;
     };
     ShareOutcomeInput: {
       note: null | string;
@@ -24064,6 +25058,15 @@ export interface components {
       /** Format: int32 */
       impact: number;
     };
+    /** @description RAG limits of a tile / gauge (green from / amber from when higher is better, up to otherwise). */
+    Thresholds: {
+      /** Format: double */
+      green: number;
+      /** Format: double */
+      amber: number;
+      /** @default true */
+      higherIsBetter: boolean;
+    };
     TimelineDto: {
       events: components['schemas']['TaskEventDto'][];
       timesheet: components['schemas']['TimesheetDto'];
@@ -24152,6 +25155,11 @@ export interface components {
       similarRisks: components['schemas']['RiskListRefDto'][];
       /** Format: uuid */
       usageId: string;
+    };
+    TrendPointDto: {
+      month: string;
+      /** Format: double */
+      value: null | number;
     };
     TypeDetailDto: {
       /** Format: uuid */
@@ -24317,6 +25325,13 @@ export interface components {
       costCentre: null | string;
       /** Format: date */
       effectiveFrom: null | string;
+    };
+    UnitNameDto: {
+      /** Format: uuid */
+      id: string;
+      code: string;
+      nameAr: null | string;
+      nameEn: null | string;
     };
     UpcomingMilestoneDto: {
       /** Format: uuid */
@@ -25199,6 +26214,85 @@ export interface components {
       dormantDays?: number;
       uaePassForVendors?: boolean;
       visibleFields?: components['schemas']['VendorVisibleFields'];
+    };
+    /**
+     * @description One widget of a dashboard definition (ADR 0143). Grid: 12 columns, `X` / `Y` / `W` / `H` in grid units.
+     *     `Dimension`: breakdown (category axis, table rows, heat-map rows); `Series`: second breakdown (stacks, heat-map columns).
+     *     The pseudo-dimension `unit` breaks down by owning unit.
+     */
+    WidgetConfig: {
+      id?: string;
+      type?: string;
+      titleAr?: null | string;
+      titleEn?: null | string;
+      metric?: null | string;
+      /** @description Bubble: x, y, size metrics, broken down by string? WidgetConfig.Dimension. */
+      metrics?: null | string[];
+      dimension?: null | string;
+      series?: null | string;
+      filters?: null | {
+        [key: string]: string[];
+      };
+      /** Format: int32 */
+      top?: null | number;
+      list?: null | string;
+      /** @description Bar: `horizontal`, `stacked`. */
+      variant?: null | string;
+      thresholds?: null | components['schemas']['Thresholds'];
+      /** Format: int32 */
+      x?: number;
+      /** Format: int32 */
+      y?: number;
+      /** Format: int32 */
+      w?: number;
+      /** Format: int32 */
+      h?: number;
+    };
+    /**
+     * @description A widget's data for one viewer and period. `State`: `ok`, `unavailable` (the viewer may not see this metric — never 0),
+     *     `empty`. Labels resolve dimension codes in both languages.
+     */
+    WidgetDataDto: {
+      id: string;
+      type: string;
+      state: string;
+      metric: null | string;
+      metricLabelAr: null | string;
+      metricLabelEn: null | string;
+      valueKind: null | string;
+      higherIsBetter: null | boolean;
+      /** Format: double */
+      value: null | number;
+      /** Format: double */
+      previous: null | number;
+      rag: null | string;
+      trend: null | components['schemas']['TrendPointDto'][];
+      rows: null | components['schemas']['BreakdownRowDto'][];
+      labels: null | components['schemas']['DimensionLabelDto'][];
+      items: null | components['schemas']['WidgetListItemDto'][];
+      bubbles: null | components['schemas']['BubblePointDto'][];
+      scorecard: null | components['schemas']['ScorecardDto'];
+      drillLink: null | string;
+      /** Format: date-time */
+      asOf: null | string;
+      live: boolean;
+    };
+    WidgetListItemDto: {
+      resourceType: string;
+      /** Format: uuid */
+      id: string;
+      number: null | string;
+      titleAr: null | string;
+      titleEn: null | string;
+      statusCode: null | string;
+      tone: string;
+      /** Format: double */
+      value: null | number;
+      /** Format: date */
+      date: null | string;
+      link: string;
+      detailAr: null | string;
+      detailEn: null | string;
     };
     /** @description A submission-window rule (ADR 0060). */
     WindowRule: {
@@ -32499,6 +33593,1295 @@ export interface operations {
       };
     };
   };
+  GetReportingCatalogue: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReportingCatalogueDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListDashboards: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DashboardSummaryDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateDashboard: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['DashboardInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReportingDashboardDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetDashboard: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        key: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReportingDashboardDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetDashboardData: {
+    parameters: {
+      query?: {
+        kind?: string;
+        from?: string;
+        to?: string;
+        compare?: boolean;
+        unit?: string;
+        draft?: boolean;
+      };
+      header?: never;
+      path: {
+        key: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DashboardDataDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ExportDashboard: {
+    parameters: {
+      query: {
+        format: string;
+        kind?: string;
+        from?: string;
+        to?: string;
+        unit?: string;
+        lang?: string;
+      };
+      header?: never;
+      path: {
+        key: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateDashboard: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['DashboardBody'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReportingDashboardDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  PublishDashboard: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReportingDashboardDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ArchiveDashboard: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SetDashboardRoles: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['DashboardRoleInput'][];
+      };
+    };
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListDashboardShares: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ShareInput'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ShareDashboard: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ShareInput'][];
+      };
+    };
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListSavedFilters: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SavedFilterDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SaveFilter: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SavedFilterInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SavedFilterDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  DeleteSavedFilter: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListPins: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PinDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  Pin: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['PinInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PinDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  Unpin: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetMyWorkCards: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MyWorkCardsDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SaveMyWorkLayout: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['MyWorkLayoutItem'][];
+      };
+    };
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListDatasets: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DatasetDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RunReport: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ReportRunInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReportRunDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ExportReport: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ReportExportInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListReports: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SavedReportDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateReport: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SavedReportInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SavedReportDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetReport: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SavedReportDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateReport: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SavedReportBody'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SavedReportDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ArchiveReport: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListReportShares: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ShareInput'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ShareReport: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ShareInput'][];
+      };
+    };
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListSchedules: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ScheduleDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateSchedule: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ScheduleInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ScheduleDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateSchedule: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ScheduleBody'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ScheduleDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListDeliveries: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ScheduleDeliveryDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GenerateExecutiveBrief: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['BriefRequest'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BriefDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListExecutiveBriefs: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BriefDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SaveExecutiveBrief: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['BriefInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BriefDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetReportingSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SettingsDocumentOfReportingSettings'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SaveReportingSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ReportingSettingsInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SettingsDocumentOfReportingSettings'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetReportingRefreshStatus: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RefreshStatusDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RequestReportingRefresh: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Accepted */
+      202: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
   ListSampleItems: {
     parameters: {
       query?: {
@@ -33903,7 +36286,10 @@ export interface operations {
   };
   GetTaskDashboard: {
     parameters: {
-      query?: never;
+      query?: {
+        from?: string;
+        to?: string;
+      };
       header?: never;
       path?: never;
       cookie?: never;
@@ -35328,7 +37714,10 @@ export interface operations {
   };
   GetTeamDashboard: {
     parameters: {
-      query?: never;
+      query?: {
+        from?: string;
+        to?: string;
+      };
       header?: never;
       path?: never;
       cookie?: never;
@@ -36746,6 +39135,8 @@ export interface operations {
         portfolioGroupId?: string;
         programmeId?: string;
         unitId?: string;
+        from?: string;
+        to?: string;
       };
       header?: never;
       path?: never;
@@ -45131,6 +47522,8 @@ export interface operations {
     parameters: {
       query?: {
         year?: number;
+        from?: string;
+        to?: string;
       };
       header?: never;
       path?: never;
@@ -46463,7 +48856,10 @@ export interface operations {
   };
   GetDocumentDashboard: {
     parameters: {
-      query?: never;
+      query?: {
+        from?: string;
+        to?: string;
+      };
       header?: never;
       path?: never;
       cookie?: never;
@@ -47020,7 +49416,10 @@ export interface operations {
   };
   GetIpDashboard: {
     parameters: {
-      query?: never;
+      query?: {
+        from?: string;
+        to?: string;
+      };
       header?: never;
       path?: never;
       cookie?: never;
@@ -49331,6 +51730,8 @@ export interface operations {
         residualStatus?: string;
         year?: number;
         includeProjectRisks?: boolean;
+        from?: string;
+        to?: string;
       };
       header?: never;
       path?: never;
@@ -49369,6 +51770,8 @@ export interface operations {
         residualStatus?: string;
         year?: number;
         includeProjectRisks?: boolean;
+        from?: string;
+        to?: string;
       };
       header?: never;
       path?: never;
@@ -49887,6 +52290,8 @@ export interface operations {
       query?: {
         unitId?: string;
         year?: number;
+        from?: string;
+        to?: string;
       };
       header?: never;
       path?: never;
@@ -51838,6 +54243,8 @@ export interface operations {
       query?: {
         year?: number;
         unitId?: string;
+        from?: string;
+        to?: string;
       };
       header?: never;
       path?: never;
@@ -53139,6 +55546,8 @@ export interface operations {
         priority?: string;
         reportType?: string;
         reportId?: string;
+        from?: string;
+        to?: string;
       };
       header?: never;
       path?: never;

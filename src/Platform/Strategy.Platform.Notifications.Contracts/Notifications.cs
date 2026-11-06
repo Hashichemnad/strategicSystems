@@ -48,7 +48,8 @@ public sealed record NotificationRequest(
     string? Link = null,
     NotificationChannels Channels = NotificationChannels.All,
     DateTimeOffset? ExpiresAt = null,
-    bool Sensitive = false);
+    bool Sensitive = false,
+    IReadOnlyList<Guid>? AttachmentFileIds = null);
 
 /// <summary>Queues notifications in the outbox. With a DbContext in a transaction the messages commit with the business change.</summary>
 public interface INotificationService
@@ -80,7 +81,11 @@ public interface ISmtpSettingsSource
 
 /// <summary>A rendered e-mail plus what it was made from (template key, values, link) for delivery logs and tests.</summary>
 public sealed record EmailMessage(
-    string To, string Subject, string Html, string Text, string TemplateKey, IReadOnlyDictionary<string, string> Values, string? Link);
+    string To, string Subject, string Html, string Text, string TemplateKey, IReadOnlyDictionary<string, string> Values, string? Link,
+    IReadOnlyList<EmailAttachment>? Attachments = null);
+
+/// <summary>A file attached to an e-mail (e.g. a scheduled report, ADR 0145), read from the file store when the e-mail is sent.</summary>
+public sealed record EmailAttachment(string FileName, string ContentType, byte[] Content);
 
 /// <summary>Delivers a rendered e-mail (MailKit SMTP in production; replaced in tests).</summary>
 public interface IEmailTransport

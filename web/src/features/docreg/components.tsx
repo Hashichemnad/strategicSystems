@@ -185,47 +185,6 @@ export function AiDraftPanel({
   );
 }
 
-/** Accessible CSS bars (as the KPI dashboard). */
-export function Bars({
-  title,
-  rows,
-  testId,
-}: {
-  title: string;
-  rows: { key: string; label: string; value: number }[];
-  testId?: string;
-}) {
-  const { t } = useTranslation('docreg');
-  const num = useNumber();
-  const max = Math.max(1, ...rows.map((r) => r.value));
-  return (
-    <section
-      className="flex flex-col gap-3 rounded-lg border bg-card p-5"
-      aria-label={title}
-      data-testid={testId}
-    >
-      <h2 className="font-semibold">{title}</h2>
-      {rows.length === 0 && <p className="text-sm text-muted-foreground">{t('common.noData')}</p>}
-      <ul className="flex flex-col gap-2">
-        {rows.map((row) => (
-          <li
-            key={row.key}
-            className="grid grid-cols-[minmax(6rem,12rem)_1fr_auto] items-center gap-2 text-sm"
-          >
-            <span className="truncate" title={row.label}>
-              {row.label}
-            </span>
-            <span className="flex h-4 overflow-hidden rounded bg-muted" aria-hidden>
-              <span className="h-full bg-primary" style={{ inlineSize: `${(row.value / max) * 100}%` }} />
-            </span>
-            <span className="tabular-nums text-muted-foreground">{num(row.value)}</span>
-          </li>
-        ))}
-      </ul>
-    </section>
-  );
-}
-
 /**
  * In-page viewer of the stamped download (pdf.js, as files/FilePreview: scripting and eval off, glyphs as paths).
  * Loaded on demand, because every download is audited.

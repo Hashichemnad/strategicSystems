@@ -122,3 +122,13 @@ Write an ADR for every choice the SPEC or CLAUDE.md leaves open (CLAUDE.md §2 r
 | [0135](0135-audit-integrations-risk-docreg-cap-kpi-teams.md) | Audit integrations: Risk controls, Document Registry, CAP, KPI, Teams | Accepted |
 | [0136](0136-audit-layer-2-feature-switch.md) | Audit Layer 2 (lifecycle) behind a feature switch | Accepted |
 | [0137](0137-audit-ai-mcp-and-reports.md) | Audit AI features, MCP tools, reports and committee pack | Accepted |
+| [0140](0140-reporting-read-model-through-contracts.md) | Reporting read model: module metric sources through Contracts, facts in `reporting` | Accepted |
+| [0141](0141-scope-correct-cached-aggregates.md) | Scope-correct cached aggregates: unit partitions, additive components, live fallback | Accepted |
+| [0142](0142-periods-snapshots-and-refresh.md) | Month-grain periods, comparison, snapshots and refresh triggers | Accepted |
+| [0143](0143-widget-catalogue-and-dashboard-builder.md) | Widget catalogue, dashboard definitions, role defaults, builder security | Accepted |
+| [0144](0144-report-builder-datasets-and-field-security.md) | Report builder: module datasets, field permissions, run-time scope | Accepted |
+| [0145](0145-scheduled-delivery-as-the-recipient.md) | Scheduled delivery built as the recipient, in their language; email attachments | Accepted |
+| [0146](0146-executive-dashboard-and-department-scorecard.md) | Executive dashboard and department comparison scorecard | Accepted |
+| [0147](0147-ai-executive-brief.md) | AI executive brief | Accepted |
+| [0148](0148-echarts-single-chart-library.md) | Apache ECharts as the single chart library; shared dashboard UI kit | Accepted |
+| [0149](0149-my-work-cards-and-layout.md) | My Work cards from every system and the per-user layout | Accepted |

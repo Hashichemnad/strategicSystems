@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -37,6 +39,23 @@ public sealed partial class ModuleMigrator(
         }
 
         await SeedAllAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>True when any module has a migration not yet applied (or its schema does not exist yet). Reads only.</summary>
+    public async Task<bool> HasPendingMigrationsAsync(CancellationToken cancellationToken = default)
+    {
+        foreach (var database in databases)
+        {
+            await using var scope = scopeFactory.CreateAsyncScope();
+            var context = (DbContext)scope.ServiceProvider.GetRequiredService(database.ContextType);
+            if (!await context.GetService<IHistoryRepository>().ExistsAsync(cancellationToken).ConfigureAwait(false) ||
+                (await context.Database.GetPendingMigrationsAsync(cancellationToken).ConfigureAwait(false)).Any())
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public async Task SeedAllAsync(CancellationToken cancellationToken = default)

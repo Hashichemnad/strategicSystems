@@ -35,6 +35,8 @@ public partial class AuthorizationMatrixTests(ApiFixture api) : IClassFixture<Ap
         // Phase 7: the seeded Teams "Employee" role (assigned to everyone): own teams, request a team, own memberships, AI assists.
         "teams.team.read", "teams.team.request", "teams.membership.read", "teams.ai.formation", "teams.ai.members", "teams.ai.evaluation",
         "teams.ai.minutes",
+        // Phase 17: the seeded "Dashboard user" role (assigned to everyone): dashboards, My Work cards, run and export reports.
+        "reporting.dashboard.read", "reporting.report.run", "reporting.report.export",
     ];
 
     public static TheoryData<string, string> NonPublicEndpoints() => Endpoints(e => e.Metadata.GetMetadata<PublicEndpoint>() is null);
@@ -136,6 +138,12 @@ public partial class AuthorizationMatrixTests(ApiFixture api) : IClassFixture<Ap
                 file.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
                 form.Add(file, "file", "x.csv");
                 request.Content = form;
+            }
+            else if (route.StartsWith("/api/v1/reporting/", StringComparison.Ordinal)
+                && (route.EndsWith("/roles", StringComparison.Ordinal) || route.EndsWith("/shares", StringComparison.Ordinal) || route.EndsWith("/layout", StringComparison.Ordinal)))
+            {
+                // Phase 17 endpoints whose body is a list.
+                request.Content = new StringContent("[]", Encoding.UTF8, "application/json");
             }
             else
             {

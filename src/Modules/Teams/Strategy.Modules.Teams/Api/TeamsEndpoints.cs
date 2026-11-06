@@ -199,7 +199,8 @@ internal static class TeamsEndpoints
         group.MapGet("/employees/{employeeId:guid}/memberships", async (Guid employeeId, IDispatcher d, CancellationToken ct) =>
                 (await d.SendAsync(new ListMemberships(employeeId), ct)).ToOk())
             .WithName("ListEmployeeTeamMemberships").RequirePermission(TeamPermissions.Read);
-        group.MapGet("/dashboard", async (IDispatcher d, CancellationToken ct) => (await d.SendAsync(new GetTeamDashboard(), ct)).ToOk())
+        group.MapGet("/dashboard", async (DateOnly? from, DateOnly? to, IDispatcher d, CancellationToken ct) =>
+                (await d.SendAsync(new GetTeamDashboard(from, to), ct)).ToOk())
             .WithName("GetTeamDashboard").RequirePermission(TeamPermissions.DashboardRead);
         group.MapGet("/export", async Task<Results<FileContentHttpResult, ProblemHttpResult>> (string kind, string format, string? language, IDispatcher d, CancellationToken ct) =>
             {

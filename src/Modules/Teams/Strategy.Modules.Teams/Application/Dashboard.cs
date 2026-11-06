@@ -30,7 +30,12 @@ public sealed record TeamDashboardDto(
     IReadOnlyList<AmountDto>? RewardsByYear,
     IReadOnlyList<AmountDto>? RewardsByUnit);
 
-public sealed record GetTeamDashboard : IQuery<TeamDashboardDto>;
+/// <remarks>
+/// <c>From</c> / <c>To</c> (inclusive dates, normally the first day of the first month and the last day of the last month of the period): only teams
+/// whose formed-on (start) to end window overlaps the period (no end = still running), and only evaluation cycles whose period ends in the
+/// range. Docs/design/reporting.md §2.3.
+/// </remarks>
+public sealed record GetTeamDashboard(DateOnly? From = null, DateOnly? To = null) : IQuery<TeamDashboardDto>;
 
 public sealed record ExportTeams(string Kind, string Format, string? Language) : IQuery<ExportedFile>;
 
@@ -48,9 +53,24 @@ internal sealed class DashboardHandlers(
 
     public async Task<Result<TeamDashboardDto>> HandleAsync(GetTeamDashboard query, CancellationToken cancellationToken)
     {
+        if (query.From is { } rangeFrom && query.To is { } rangeTo && rangeFrom > rangeTo)
+        {
+            return Error.Validation([new FieldError("to", "validation.invalid", "validation.invalid")]);
+        }
+
         var user = context.User;
-        var teams = await (await reader.VisibleAsync(user, cancellationToken).ConfigureAwait(false)).Where(t => t.Status != TeamStatuses.Cancelled)
-            .ToListAsync(cancellationToken).ConfigureAwait(false);
+        var visible = (await reader.VisibleAsync(user, cancellationToken).ConfigureAwait(false)).Where(t => t.Status != TeamStatuses.Cancelled);
+        if (query.From is { } from)
+        {
+            visible = visible.Where(t => t.EndDate == null || t.EndDate >= from);
+        }
+
+        if (query.To is { } to)
+        {
+            visible = visible.Where(t => t.StartDate == null || t.StartDate <= to);
+        }
+
+        var teams = await visible.ToListAsync(cancellationToken).ConfigureAwait(false);
         var ids = teams.Select(t => t.Id).ToList();
         var configuration = await settings.GetAsync<TeamSettings>(cancellationToken).ConfigureAwait(false);
         var operating = teams.Where(t => TeamStatuses.IsOperating(t.Status)).Select(t => t.Id).ToList();
@@ -58,8 +78,18 @@ internal sealed class DashboardHandlers(
             .GroupBy(m => m.EmployeeId).Select(g => new { Employee = g.Key!.Value, Count = g.Count() }).OrderByDescending(x => x.Count).Take(15)
             .ToListAsync(cancellationToken).ConfigureAwait(false);
         var people = await reader.PeopleAsync(memberships.Select(m => (Guid?)m.Employee), cancellationToken).ConfigureAwait(false);
-        var evaluations = await db.Evaluations.AsNoTracking().Where(e => ids.Contains(e.TeamId) && e.Status != EvaluationStatuses.Cancelled).ToListAsync(cancellationToken)
-            .ConfigureAwait(false);
+        var evaluationQuery = db.Evaluations.AsNoTracking().Where(e => ids.Contains(e.TeamId) && e.Status != EvaluationStatuses.Cancelled);
+        if (query.From is { } cycleFrom)
+        {
+            evaluationQuery = evaluationQuery.Where(e => e.PeriodEnd >= cycleFrom);
+        }
+
+        if (query.To is { } cycleTo)
+        {
+            evaluationQuery = evaluationQuery.Where(e => e.PeriodEnd <= cycleTo);
+        }
+
+        var evaluations = await evaluationQuery.ToListAsync(cancellationToken).ConfigureAwait(false);
         var withResults = await reader.WithResultsAsync(user, teams, cancellationToken).ConfigureAwait(false);
         var resultEvaluations = evaluations.Where(e => withResults.Contains(e.TeamId) && e.Status == EvaluationStatuses.Approved).ToList();
         var resultIds = resultEvaluations.Select(e => e.Id).ToList();

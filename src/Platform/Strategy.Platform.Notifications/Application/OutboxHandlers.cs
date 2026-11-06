@@ -2,6 +2,7 @@ using System.Text.Json;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using Strategy.Platform.Files;
 using Strategy.Platform.Kernel.Context;
 using Strategy.Platform.Kernel.Time;
 using Strategy.Platform.Notifications.Domain;
@@ -15,7 +16,7 @@ namespace Strategy.Platform.Notifications.Application;
 /// <summary>Loads the current template text and branding, renders and sends one e-mail; logs the delivery. Throwing schedules a retry.</summary>
 internal sealed class EmailOutboxHandler(
     NotifyDbContext db, IEmailTransport transport, ISmtpSettingsSource smtp, ISettingsStore settings, IDataProtectionProvider protection,
-    IClock clock, IRequestContext context) : IOutboxHandler
+    IClock clock, IRequestContext context, IFileService files) : IOutboxHandler
 {
     public string Type => NotificationService.EmailType;
 
@@ -33,7 +34,23 @@ internal sealed class EmailOutboxHandler(
 
         var rendered = await RenderAsync(db, settings, message.TemplateKey, values ?? [], await AbsoluteAsync(link, cancellationToken).ConfigureAwait(false),
             cancellationToken).ConfigureAwait(false);
-        var email = new EmailMessage(message.To, rendered.Subject, rendered.Html, rendered.Text, message.TemplateKey, values ?? [], rendered.Link);
+        var attachments = new List<EmailAttachment>();
+        foreach (var fileId in message.Attachments ?? [])
+        {
+            var opened = await files.OpenAsync(fileId, auditDownload: false, cancellationToken: cancellationToken).ConfigureAwait(false);
+            if (opened.IsFailure)
+            {
+                continue;
+            }
+
+            await using var stream = opened.Value.Stream;
+            using var buffer = new MemoryStream();
+            await stream.CopyToAsync(buffer, cancellationToken).ConfigureAwait(false);
+            attachments.Add(new EmailAttachment(opened.Value.FileName, opened.Value.ContentType, buffer.ToArray()));
+        }
+
+        var email = new EmailMessage(message.To, rendered.Subject, rendered.Html, rendered.Text, message.TemplateKey, values ?? [], rendered.Link,
+            attachments.Count == 0 ? null : attachments);
         var delivery = new EmailDelivery { To = message.To, TemplateKey = message.TemplateKey, At = clock.UtcNow, CorrelationId = context.CorrelationId };
         try
         {

@@ -3,9 +3,19 @@ import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { errorMessage } from '@/api/problem';
 import { EmployeePicker } from '@/features/org/EmployeePicker';
-import { Button, EmptyState, FormField, PageHeader, Skeleton, StatusBanner, StatusChip } from '@/ui';
+import {
+  Button,
+  EmptyState,
+  FormField,
+  PageHeader,
+  Skeleton,
+  StatusBanner,
+  StatusChip,
+  ProgressBar,
+  Section,
+} from '@/ui';
 import { useAuditCalendar, type AuditCalendarItem } from './api';
-import { AuditPageLayout, PctBar, PriorityChip, Section, useAuditT, useDate, useNames } from './components';
+import { AuditPageLayout, PriorityChip, useAuditT, useDate, useNames } from './components';
 
 type Range = 'week' | 'month' | 'next-month';
 
@@ -119,7 +129,11 @@ function CalendarItem({ item: i }: { item: AuditCalendarItem }) {
       <span className="text-muted-foreground">{names.unit(i.unit)}</span>
       <span className="text-muted-foreground">{names.person(i.auditor)}</span>
       <div className="w-32">
-        <PctBar value={i.latestPct} late={i.status === 'late'} />
+        <ProgressBar
+          value={i.latestPct}
+          tone={i.status === 'late' ? 'danger' : 'primary'}
+          testId="audit-pct"
+        />
       </div>
     </li>
   );

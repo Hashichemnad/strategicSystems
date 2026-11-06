@@ -21,13 +21,13 @@ import {
   TabsList,
   TabsTrigger,
   Textarea,
+  Section,
 } from '@/ui';
 import { capApi, useCapRemarks, useCapSource, type CapRemarkValues, type RemarkExtraction } from './api';
 import {
   CapPageLayout,
   PriorityChip,
   Rows,
-  Section,
   SimpleDialog,
   lookupTypes,
   useCapLabels,

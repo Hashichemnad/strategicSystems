@@ -19,7 +19,7 @@ namespace Strategy.Platform.Persistence;
 /// one before EF saves and commits it after the audit rows are written, so data and audit commit together or not at all.
 /// One instance serves every DbContext of a scope; state is kept per context.
 /// </summary>
-public sealed class AuditTrailInterceptor(IAuditSink sink, IAuditReason reason) : SaveChangesInterceptor
+public sealed class AuditTrailInterceptor(IAuditSink sink, IAuditReason reason, IEnumerable<ISaveChangesObserver> observers) : SaveChangesInterceptor
 {
     private readonly ConditionalWeakTable<DbContext, State> _states = new();
 
@@ -66,6 +66,14 @@ public sealed class AuditTrailInterceptor(IAuditSink sink, IAuditReason reason) 
             if (state.Owned is not null)
             {
                 await state.Owned.CommitAsync(cancellationToken).ConfigureAwait(false);
+            }
+
+            if (context is ModuleDbContext module)
+            {
+                foreach (var observer in observers)
+                {
+                    observer.OnSaved(module.AuditSystemCode);
+                }
             }
         }
         catch
@@ -330,4 +338,13 @@ public static class AuditValues
 
     /// <summary>Arabic and other text stay readable in stored values (they are always HTML-encoded when shown).</summary>
     private static readonly JsonSerializerOptions Readable = new() { Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping };
+}
+
+/// <summary>
+/// Told after audited business changes of a module context were saved (e.g. the reporting read model marks that system's aggregates dirty,
+/// ADR 0142). Must be cheap and must not throw; it runs inside the saving request.
+/// </summary>
+public interface ISaveChangesObserver
+{
+    void OnSaved(string systemCode);
 }

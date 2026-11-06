@@ -181,10 +181,12 @@ export function useLinkedTeams(type: string, id: string) {
   });
 }
 
-export function useTeamDashboard() {
+export function useTeamDashboard(range?: { from: string; to: string }) {
   return useQuery({
-    queryKey: [...teamKeys.all, 'dashboard'],
-    queryFn: async ({ signal }) => unwrap(await api.GET('/api/v1/teams/dashboard', { signal })),
+    queryKey: [...teamKeys.all, 'dashboard', range ?? null],
+    queryFn: async ({ signal }) =>
+      unwrap(await api.GET('/api/v1/teams/dashboard', { params: { query: range ?? {} }, signal })),
+    placeholderData: keepPreviousData,
   });
 }
 

@@ -124,10 +124,12 @@ export function useCompare(id: string, from: string | undefined, to: string | un
   });
 }
 
-export function useDocDashboard() {
+export function useDocDashboard(range?: { from: string; to: string }) {
   return useQuery({
-    queryKey: docregKeys.dashboard,
-    queryFn: async ({ signal }) => unwrap(await api.GET('/api/v1/docreg/dashboard', { signal })),
+    queryKey: [...docregKeys.dashboard, range ?? null],
+    queryFn: async ({ signal }) =>
+      unwrap(await api.GET('/api/v1/docreg/dashboard', { params: { query: range ?? {} }, signal })),
+    placeholderData: keepPreviousData,
   });
 }
 

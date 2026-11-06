@@ -21,6 +21,7 @@ import {
   TableRow,
   Textarea,
   useToast,
+  Section,
 } from '@/ui';
 import {
   reviewTone,
@@ -34,15 +35,7 @@ import {
   type ReviewValues,
   type Risk,
 } from './api';
-import {
-  RatingChip,
-  RiskMatrix,
-  Section,
-  useAxisLabels,
-  useNames,
-  useRiskLabels,
-  useRiskT,
-} from './components';
+import { RatingChip, RiskMatrix, useAxisLabels, useNames, useRiskLabels, useRiskT } from './components';
 import { previewRating } from './scoring';
 
 const NONE = '-';

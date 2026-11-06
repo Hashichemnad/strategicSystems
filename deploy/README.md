@@ -12,14 +12,28 @@
 ```bash
 cp deploy/.env.example deploy/.env          # change the passwords
 docker compose -f deploy/docker-compose.yml --profile app up -d --build
-
-# Create the first administrator (once): holds the platform administrator roles (ADR 0016). The password is read from a file, never from the command line.
-printf '%s' 'a-strong-password' > /tmp/admin-password && chmod 600 /tmp/admin-password
-docker compose -f deploy/docker-compose.yml --profile app run --rm \
-  -v /tmp/admin-password:/run/secrets/admin-password:ro \
-  app --create-admin --email admin@example.org --password-file /run/secrets/admin-password
-rm /tmp/admin-password
 ```
+
+The image `strategy-app` is **built locally, never pulled**: the `migrate` service builds it (`pull_policy: build`) and the `app` service
+reuses it (`pull_policy: never`), so the command above works on a fresh machine (no "pull access denied for strategy-app"). `APP_VERSION`
+only tags the locally built image. `migrate` applies the migrations as the database owner, grants the runtime role (ADR 0018) and exits;
+`app` starts after it.
+
+Create the first administrator (once). It holds the platform administrator roles (ADR 0016). The password is read from standard input,
+never from the command line or a file left on disk:
+
+```bash
+read -rsp 'Administrator password: ' ADMIN_PASSWORD && echo
+printf '%s' "$ADMIN_PASSWORD" | docker compose -f deploy/docker-compose.yml --profile app run --rm -T \
+  app --create-admin --email admin@example.org --password-file /dev/stdin
+unset ADMIN_PASSWORD
+```
+
+`--create-admin` runs as the application's runtime role and never migrates on that connection. Run it after `up` (above) — or after
+`docker compose … run --rm migrate` on an upgrade — when the database is up to date; otherwise it stops with "Run --migrate first" and
+changes nothing. Run in the `migrate` service instead (`… run --rm -T migrate --create-admin …`), it first applies pending migrations as
+the owner. The application runs as a non-root user, so a password file mounted from the host must be readable by that user; standard
+input avoids the question.
 
 The administrator sets up two-step verification at the first sign-in (required for administrators by default).
 Then, in the application (**Settings**): **Email server** (SMTP and the public address used in email links),

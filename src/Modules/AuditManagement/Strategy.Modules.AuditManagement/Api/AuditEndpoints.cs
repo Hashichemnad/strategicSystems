@@ -52,8 +52,9 @@ internal static class AuditEndpoints
             .WithName("GetAuditSettings").RequirePermission(AuditPermissions.SettingsManage);
         group.MapPut("/settings", async (AuditSettingsInput b, IDispatcher d, CancellationToken ct) => (await d.SendAsync(new SaveAuditSettings(b.Settings, b.Version), ct)).ToOk())
             .WithName("SaveAuditSettings").RequirePermission(AuditPermissions.SettingsManage);
-        group.MapGet("/dashboard", async (Guid? unitId, int? year, string? priority, string? reportType, Guid? reportId, IDispatcher d, CancellationToken ct) =>
-                (await d.SendAsync(new GetAuditDashboard(new AuditDashboardFilter(unitId, year, priority, reportType, reportId)), ct)).ToOk())
+        group.MapGet("/dashboard", async (Guid? unitId, int? year, string? priority, string? reportType, Guid? reportId, DateOnly? from, DateOnly? to, IDispatcher d,
+                    CancellationToken ct) =>
+                (await d.SendAsync(new GetAuditDashboard(new AuditDashboardFilter(unitId, year, priority, reportType, reportId, from, to)), ct)).ToOk())
             .WithName("GetAuditDashboard").RequirePermission(AuditPermissions.DashboardRead);
         group.MapGet("/department-view", async (IDispatcher d, CancellationToken ct) => (await d.SendAsync(new GetAuditDepartmentView(), ct)).ToOk())
             .WithName("GetAuditDepartmentView").RequirePermission(Read);

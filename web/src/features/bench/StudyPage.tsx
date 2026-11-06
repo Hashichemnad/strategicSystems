@@ -8,7 +8,7 @@ import { AiBadge } from '@/features/ai/AiDraft';
 import { useAiFeature } from '@/features/ai/api';
 import { HistoryTab } from '@/features/audit/HistoryTab';
 import { actionTone, remarkTone } from '@/features/cap/api';
-import { PctBar, Rows, Section, SimpleDialog, useCapT, useDate, useNames } from '@/features/cap/components';
+import { Rows, SimpleDialog, useCapT, useDate, useNames } from '@/features/cap/components';
 import { ReasonDialog } from '@/features/cap/forms';
 import { DocumentsPanel } from '@/features/files/DocumentsPanel';
 import { LinkedTasksPanel } from '@/features/tasks/LinkedTasksPanel';
@@ -33,6 +33,8 @@ import {
   TabsList,
   TabsTrigger,
   Textarea,
+  ProgressBar,
+  Section,
 } from '@/ui';
 import {
   benchApi,
@@ -404,7 +406,11 @@ function LinkedActions({ study: s, onClosure }: { study: BenchStudy; onClosure: 
                       )}
                     </TableCell>
                     <TableCell>
-                      <PctBar value={a.achievedPct} late={a.status === 'late'} />
+                      <ProgressBar
+                        value={a.achievedPct}
+                        tone={a.status === 'late' ? 'danger' : 'primary'}
+                        testId="cap-pct"
+                      />
                     </TableCell>
                     <TableCell>{a.hasEvidence ? '✓' : '—'}</TableCell>
                   </TableRow>

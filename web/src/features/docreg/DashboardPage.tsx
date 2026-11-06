@@ -1,19 +1,27 @@
 import { Link } from '@tanstack/react-router';
-import type { ReactNode } from 'react';
+import { useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSystemDashboard } from '@/features/reporting/SystemDashboard';
 import { errorMessage } from '@/api/problem';
 import { useCan } from '@/features/access/session';
 import { pickText } from '@/lib/format';
-import { PageHeader, Skeleton, StatusBanner } from '@/ui';
+import {
+  CountChart,
+  Skeleton,
+  StatusBanner,
+  Tile,
+  DashboardFrame,
+  OptionalPeriodSelector,
+  periodToDates,
+  type PeriodValue,
+} from '@/ui';
 import { useDocDashboard, type DocDashboard, type DocumentListItem } from './api';
 import {
-  Bars,
   DocRegPage,
   documentName,
   SensitivityChip,
   useFormatDate,
   useLookupLabel,
-  useNumber,
   ValidityChips,
 } from './components';
 
@@ -21,72 +29,81 @@ import {
 export function DocumentDashboardPage() {
   const { t } = useTranslation('docreg');
   const { t: tc, i18n } = useTranslation();
-  const dashboard = useDocDashboard();
+  const [period, setPeriod] = useState<PeriodValue | null>(null);
+  const range = period ? periodToDates(period) : undefined;
+  const dashboard = useDocDashboard(range);
+  const system = useSystemDashboard('docreg.library', period);
   const levelLabel = useLookupLabel('docreg.level');
   const typeLabel = useLookupLabel('docreg.type');
 
   return (
     <DocRegPage testId="docreg-dashboard">
-      <PageHeader title={t('dashboard.title')} description={t('dashboard.description')} />
-      {dashboard.isError ? (
-        <StatusBanner tone="danger" title={errorMessage(tc, dashboard.error)} />
-      ) : !dashboard.data ? (
-        <Skeleton className="h-96 rounded-lg" />
-      ) : (
-        <>
-          <Tiles data={dashboard.data} />
-          <div className="grid gap-4 lg:grid-cols-3">
-            <Bars
-              title={t('dashboard.byLevel')}
-              testId="docreg-by-level"
-              rows={dashboard.data.byLevel.map((r) => ({
-                key: r.code,
-                label: levelLabel(r.code),
-                value: r.count,
-              }))}
-            />
-            <Bars
-              title={t('dashboard.byType')}
-              testId="docreg-by-type"
-              rows={dashboard.data.byType.map((r) => ({
-                key: r.code,
-                label: typeLabel(r.code),
-                value: r.count,
-              }))}
-            />
-            <Bars
-              title={t('dashboard.byUnit')}
-              testId="docreg-by-unit"
-              rows={dashboard.data.byUnit.map((r) => ({
-                key: r.id,
-                label: pickText(i18n.language, r.nameAr, r.nameEn),
-                value: r.count,
-              }))}
-            />
-          </div>
-          <div className="grid gap-4 lg:grid-cols-2">
-            <DocList
-              title={t('dashboard.expiring')}
-              items={dashboard.data.expiring}
-              show="expiry"
-              testId="docreg-expiring"
-            />
-            <DocList
-              title={t('dashboard.recent')}
-              items={dashboard.data.recentlyPublished}
-              show="published"
-              testId="docreg-recent"
-            />
-          </div>
-        </>
-      )}
+      <DashboardFrame
+        title={t('dashboard.title')}
+        description={t('dashboard.description')}
+        actions={system.action}
+        exports={system.exports}
+        filters={<OptionalPeriodSelector value={period} onChange={setPeriod} allowCompare={false} />}
+      >
+        {dashboard.isError ? (
+          <StatusBanner tone="danger" title={errorMessage(tc, dashboard.error)} />
+        ) : !dashboard.data ? (
+          <Skeleton className="h-96 rounded-lg" />
+        ) : (
+          <>
+            <Tiles data={dashboard.data} />
+            <div className="grid gap-4 lg:grid-cols-3">
+              <CountChart
+                title={t('dashboard.byLevel')}
+                testId="docreg-by-level"
+                rows={dashboard.data.byLevel.map((r) => ({
+                  key: r.code,
+                  label: levelLabel(r.code),
+                  value: r.count,
+                }))}
+              />
+              <CountChart
+                title={t('dashboard.byType')}
+                testId="docreg-by-type"
+                rows={dashboard.data.byType.map((r) => ({
+                  key: r.code,
+                  label: typeLabel(r.code),
+                  value: r.count,
+                }))}
+              />
+              <CountChart
+                title={t('dashboard.byUnit')}
+                testId="docreg-by-unit"
+                rows={dashboard.data.byUnit.map((r) => ({
+                  key: r.id,
+                  label: pickText(i18n.language, r.nameAr, r.nameEn),
+                  value: r.count,
+                }))}
+              />
+            </div>
+            <div className="grid gap-4 lg:grid-cols-2">
+              <DocList
+                title={t('dashboard.expiring')}
+                items={dashboard.data.expiring}
+                show="expiry"
+                testId="docreg-expiring"
+              />
+              <DocList
+                title={t('dashboard.recent')}
+                items={dashboard.data.recentlyPublished}
+                show="published"
+                testId="docreg-recent"
+              />
+            </div>
+          </>
+        )}
+      </DashboardFrame>
     </DocRegPage>
   );
 }
 
 function Tiles({ data }: { data: DocDashboard }) {
   const { t } = useTranslation('docreg');
-  const num = useNumber();
   const canQueue = useCan('docreg.request.process');
   const tiles: [string, number, ReactNode?][] = [
     [t('dashboard.published'), data.published],
@@ -106,11 +123,7 @@ function Tiles({ data }: { data: DocDashboard }) {
   return (
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5" data-testid="docreg-tiles">
       {tiles.map(([title, value, extra]) => (
-        <div key={title} className="flex flex-col gap-1 rounded-lg border bg-card p-4">
-          <span className="text-sm text-muted-foreground">{title}</span>
-          <span className="text-2xl font-semibold tabular-nums">{num(value)}</span>
-          {extra}
-        </div>
+        <Tile key={title} label={title} value={value} footer={extra} />
       ))}
     </div>
   );

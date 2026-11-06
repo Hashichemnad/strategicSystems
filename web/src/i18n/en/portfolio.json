@@ -413,7 +413,11 @@
     "applyChange": "Apply the approved change request",
     "uploadLpo": "Upload the LPO and contract details",
     "formTeam": "Form the project team",
-    "confirmCompletion": "Confirm the initiative's completion"
+    "confirmCompletion": "Confirm the initiative's completion",
+    "milestoneDue": "Milestone due soon",
+    "milestoneOverdue": "Milestone overdue",
+    "waselSubmission": "Vendor progress submission to review",
+    "waselProposal": "Vendor plan proposal to review"
   },
   "errors": {
     "yearCostsMismatch": "Year 1–4 costs ({{total}}) must equal the estimated budget ({{budget}}).",

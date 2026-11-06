@@ -15,6 +15,7 @@ public sealed class ReportDocument
 {
     private readonly List<(string? Ar, string? En)> _paragraphs = [];
     private readonly List<string?[]> _rows = [];
+    private readonly List<string> _blocks = [];
     private IReadOnlyList<ReportColumn> _columns = [];
 
     public string TitleAr { get; init; } = string.Empty;
@@ -35,6 +36,13 @@ public sealed class ReportDocument
     public ReportDocument Paragraph(string? ar, string? en)
     {
         _paragraphs.Add((ar, en));
+        return this;
+    }
+
+    /// <summary>A pre-built HTML block (dashboard renderer only: it encodes every text it writes and emits no script or external resource).</summary>
+    internal ReportDocument Block(string html)
+    {
+        _blocks.Add(html);
         return this;
     }
 
@@ -70,6 +78,11 @@ public sealed class ReportDocument
         foreach (var (ar, en) in _paragraphs)
         {
             html.Append("<div class=\"pair\" dir=\"ltr\"><div class=\"en\"><p>").Append(E(en)).Append("</p></div><div class=\"ar\"><p>").Append(E(ar)).Append("</p></div></div>");
+        }
+
+        foreach (var block in _blocks)
+        {
+            html.Append(block);
         }
 
         if (_columns.Count > 0)

@@ -9,6 +9,7 @@ using Strategy.Modules.Risk.Contracts;
 using Strategy.Modules.Risk.Infrastructure;
 using Strategy.Modules.Risk.Jobs;
 using Strategy.Modules.Risk.Mcp;
+using Strategy.Modules.Risk.Reporting;
 using Strategy.Platform.Access;
 using Strategy.Platform.AI;
 using Strategy.Platform.AI.Tools;
@@ -18,6 +19,7 @@ using Strategy.Platform.Kernel;
 using Strategy.Platform.Links;
 using Strategy.Platform.Notifications;
 using Strategy.Platform.Persistence;
+using Strategy.Platform.Reporting;
 using Strategy.Platform.Scheduling;
 using Strategy.Platform.Settings;
 using Strategy.Platform.Workflow;
@@ -66,6 +68,11 @@ public sealed class RiskModule : IModule
         services.AddApprovalHook<RiskApprovalHook>();
         services.AddCurrentStatusProvider<RiskCurrentStatus>();
         services.AddMyWorkSource<RiskMyWork>();
+        services.AddReportingMetricSource<RiskMetricSource>();
+        services.AddReportingDimensionLabelSource<RiskDimensionLabels>();
+        services.AddReportingListSource<RiskListSource>();
+        services.AddReportingDatasetSource<RiskDatasetSource>();
+        services.AddMyWorkCardSource<RiskMyWorkCards>();
 
         services.AddFilePurpose(RiskFilePurposes.RiskDocument);
         services.AddFilePurpose(RiskFilePurposes.ActionEvidence);

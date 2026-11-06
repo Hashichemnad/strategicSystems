@@ -26,6 +26,8 @@ import {
   TableRow,
   Textarea,
   useToast,
+  ProgressBar,
+  Section,
 } from '@/ui';
 import {
   actionTone,
@@ -38,7 +40,7 @@ import {
   type Risk,
   type TreatmentAction,
 } from './api';
-import { ProgressBar, Section, useNames, useNum, useRiskLabels, useRiskT } from './components';
+import { useNames, useNum, useRiskLabels, useRiskT } from './components';
 
 const NONE = '-';
 
@@ -202,7 +204,7 @@ export function ActionTable({
               )}
             </TableCell>
             <TableCell>
-              <ProgressBar ratio={a.completionPct} label={t('treatment.progress')} />
+              <ProgressBar value={a.completionPct} label={t('treatment.progress')} />
             </TableCell>
             <TableCell>
               <StatusChip tone={actionTone[a.status] ?? 'neutral'}>

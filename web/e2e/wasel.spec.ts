@@ -146,7 +146,8 @@ async function vendorSignsIn(
   await page.getByTestId('wasel-new-password').fill(vendorPassword);
   await page.getByTestId('wasel-confirm-password').fill(vendorPassword);
   await page.getByTestId('wasel-set-password').click();
-  await page.goto('/wasel/login');
+  // The page opens the sign-in page only once the password is saved: wait for that redirect instead of navigating at once.
+  await page.waitForURL(/\/wasel\/login/);
   await page.getByTestId('wasel-login-email').fill(email);
   await page.getByTestId('wasel-login-password').fill(vendorPassword);
   await page.getByTestId('wasel-login-submit').click();

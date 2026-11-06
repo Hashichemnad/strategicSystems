@@ -61,7 +61,7 @@ export function useBenchOptions() {
   });
 }
 
-export function useBenchDashboard(query: { year?: number; unitId?: string }) {
+export function useBenchDashboard(query: { year?: number; unitId?: string; from?: string; to?: string }) {
   return useQuery({
     queryKey: [...benchKeys.all, 'dashboard', query],
     queryFn: async ({ signal }) =>

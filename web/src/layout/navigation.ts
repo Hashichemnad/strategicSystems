@@ -20,6 +20,8 @@ import {
   LayoutDashboard,
   Network,
   Palette,
+  Presentation,
+  Sheet,
   ScrollText,
   Settings2,
   ShieldAlert,
@@ -33,6 +35,9 @@ import type { MyAccess } from '@/features/access/session';
 export interface NavItem {
   to:
     | '/'
+    | '/dashboards'
+    | '/dashboards/executive'
+    | '/reports'
     | '/tasks'
     | '/teams'
     | '/kpi'
@@ -67,6 +72,9 @@ export interface NavItem {
     | '/audit/verification';
   labelKey:
     | 'nav.home'
+    | 'nav.dashboards'
+    | 'nav.executive'
+    | 'nav.reports'
     | 'nav.tasks'
     | 'nav.teams'
     | 'nav.kpi'
@@ -148,6 +156,8 @@ export const settingsPermissions = [
   'requests.type.manage',
   'docreg.settings.manage',
   'ip.settings.manage',
+  'reporting.settings.manage',
+  'reporting.dashboard.manage',
 ] as const;
 
 /**
@@ -160,6 +170,19 @@ export const navigation: readonly NavSection[] = [
     labelKey: 'nav.sections.main',
     items: [
       { to: '/', labelKey: 'nav.home', icon: LayoutDashboard },
+      {
+        to: '/dashboards/executive',
+        labelKey: 'nav.executive',
+        icon: Presentation,
+        permissions: ['reporting.executive.read'],
+      },
+      {
+        to: '/dashboards',
+        labelKey: 'nav.dashboards',
+        icon: ChartPie,
+        permissions: ['reporting.dashboard.read'],
+      },
+      { to: '/reports', labelKey: 'nav.reports', icon: Sheet, permissions: ['reporting.report.run'] },
       { to: '/tasks', labelKey: 'nav.tasks', icon: ListTodo, permissions: ['tasks.task.read'] },
       { to: '/teams', labelKey: 'nav.teams', icon: UsersRound, permissions: ['teams.team.read'] },
     ],

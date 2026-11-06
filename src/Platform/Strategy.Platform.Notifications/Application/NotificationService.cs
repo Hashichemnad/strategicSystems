@@ -10,7 +10,8 @@ namespace Strategy.Platform.Notifications.Application;
 
 /// <summary>Outbox payload of one e-mail. Sensitive values and links are encrypted (Data Protection) while queued.</summary>
 internal sealed record EmailPayload(
-    string TemplateKey, string To, string? Name, string Language, Dictionary<string, string>? Values, string? Link, string? Protected, Guid? UserId);
+    string TemplateKey, string To, string? Name, string Language, Dictionary<string, string>? Values, string? Link, string? Protected, Guid? UserId,
+    List<Guid>? Attachments = null);
 
 /// <summary>Outbox payload of one in-app item.</summary>
 internal sealed record InAppPayload(Guid UserId, string TemplateKey, Dictionary<string, string> Values, string? Link, bool AwaitingDigest);
@@ -113,11 +114,11 @@ internal sealed class NotificationService(
         if (request.Sensitive)
         {
             var secret = protection.CreateProtector(ProtectorPurpose).Protect(JsonSerializer.Serialize(new ProtectedPart(values, request.Link)));
-            payload = new EmailPayload(template.Key, to, name, language, null, null, secret, userId);
+            payload = new EmailPayload(template.Key, to, name, language, null, null, secret, userId, request.AttachmentFileIds?.ToList());
         }
         else
         {
-            payload = new EmailPayload(template.Key, to, name, language, values, request.Link, null, userId);
+            payload = new EmailPayload(template.Key, to, name, language, values, request.Link, null, userId, request.AttachmentFileIds?.ToList());
         }
 
         return new OutboxEnvelope(EmailType, payload, ExpiresAt: request.ExpiresAt);

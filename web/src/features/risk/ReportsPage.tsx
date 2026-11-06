@@ -2,9 +2,9 @@ import { Download } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { UnitSelect } from '@/features/access/pickers';
-import { Button, FormField, PageHeader, StatusBanner } from '@/ui';
+import { Button, FormField, PageHeader, StatusBanner, Section } from '@/ui';
 import { reportKinds, reportUrl, useRiskOptions } from './api';
-import { RiskPageLayout, Section, useRiskT } from './components';
+import { RiskPageLayout, useRiskT } from './components';
 
 /** Reports (docs/design/risk.md §12): register, Top-10, unit profile, action tracker — PDF and Excel in the UI language (audited). */
 export function RiskReportsPage() {

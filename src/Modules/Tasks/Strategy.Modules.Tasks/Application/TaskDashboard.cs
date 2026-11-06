@@ -10,7 +10,12 @@ using Strategy.Platform.Settings;
 
 namespace Strategy.Modules.Tasks.Application;
 
-public sealed record GetTaskDashboard : IQuery<TaskDashboardDto>;
+/// <summary>
+/// The Task dashboard. <paramref name="From"/> / <paramref name="To"/> (inclusive month range, design note reporting.md §3.3): open tasks due in
+/// the range (or, without a due date, created in it) and tasks closed in the range; without them, every open task and the last 90 days of
+/// closed tasks.
+/// </summary>
+public sealed record GetTaskDashboard(DateOnly? From = null, DateOnly? To = null) : IQuery<TaskDashboardDto>;
 
 /// <summary>
 /// Task dashboard (SPEC §11.7, §0.4 level 2–3): open / overdue by unit, source, status and priority; average time to accept and to complete; on-time
@@ -23,11 +28,36 @@ internal sealed class GetTaskDashboardHandler(TaskVisibility visibility, TaskRea
     {
         var now = clock.UtcNow;
         var tasks = (await visibility.QueryAsync(context.User, cancellationToken).ConfigureAwait(false)).Where(t => t.Status != TaskStatuses.Draft);
-        var open = await tasks.Where(t => !TaskStatuses.Closed.Contains(t.Status))
+        var start = query.From is { } from ? new DateOnly(from.Year, from.Month, 1) : (DateOnly?)null;
+        var end = query.To is { } to ? new DateOnly(to.Year, to.Month, 1).AddMonths(1) : (DateOnly?)null;
+        var startAt = start is { } s ? new DateTimeOffset(s.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero) : (DateTimeOffset?)null;
+        var endAt = end is { } e ? new DateTimeOffset(e.ToDateTime(TimeOnly.MinValue), TimeSpan.Zero) : (DateTimeOffset?)null;
+        var openTasks = tasks.Where(t => !TaskStatuses.Closed.Contains(t.Status));
+        if (start is not null)
+        {
+            openTasks = openTasks.Where(t => t.DueDate != null ? t.DueDate >= start : t.CreatedAt >= startAt);
+        }
+
+        if (end is not null)
+        {
+            openTasks = openTasks.Where(t => t.DueDate != null ? t.DueDate < end : t.CreatedAt < endAt);
+        }
+
+        var open = await openTasks
             .Select(t => new { t.UnitId, t.SourceCode, t.Status, t.Priority, t.AssigneeEmployeeId, t.DueAt, t.DueSoonAt })
             .ToListAsync(cancellationToken).ConfigureAwait(false);
-        var since = now.AddDays(-90);
-        var closed = await tasks.Where(t => (t.Status == TaskStatuses.Approved || t.Status == TaskStatuses.Done) && t.ClosedAt >= since)
+        var closedTasks = tasks.Where(t => t.Status == TaskStatuses.Approved || t.Status == TaskStatuses.Done);
+        if ((startAt ?? (endAt is null ? now.AddDays(-90) : null)) is { } since)
+        {
+            closedTasks = closedTasks.Where(t => t.ClosedAt >= since);
+        }
+
+        if (endAt is { } until)
+        {
+            closedTasks = closedTasks.Where(t => t.ClosedAt < until);
+        }
+
+        var closed = await closedTasks
             .Select(t => new { t.TimeToAcceptSeconds, t.TimeToCompleteSeconds, t.CompletedOnTime, t.FeedbackPoint })
             .ToListAsync(cancellationToken).ConfigureAwait(false);
 

@@ -11,7 +11,9 @@ import { LinkBadge } from '@/features/links/LinkBadge';
 import { LinkedTasksPanel } from '@/features/tasks/LinkedTasksPanel';
 import { formatDate, formatDateTime, pickText } from '@/lib/format';
 import {
+  barOption,
   Button,
+  Chart,
   Dialog,
   DialogClose,
   DialogContent,
@@ -34,6 +36,8 @@ import {
   TabsList,
   TabsTrigger,
   Textarea,
+  Section,
+  token,
   useToast,
 } from '@/ui';
 import {
@@ -498,75 +502,44 @@ function PerformanceTab({ card }: { card: KpiCard }) {
   const performance = useKpiPerformance(card.id);
   if (!performance.data) return <Skeleton className="h-40 rounded-lg" />;
   const years = [...performance.data.years].sort((a, b) => a.year - b.year);
-  const max = Math.max(1, ...years.map((y) => y.actual ?? 0));
   const periods = performance.data.periods.filter((p) => p.year === year);
-  const periodMax = Math.max(1, ...periods.map((p) => Math.max(p.achieve ?? 0, p.target ?? p.rangeMax ?? 0)));
+  const yearly = barOption({
+    categories: years.map((y) => ({ key: String(y.year), label: String(y.year) })),
+    series: [
+      { name: t('card.actualShort'), values: years.map((y) => y.actual), color: token('info') },
+      { name: t('card.cappedShort'), values: years.map((y) => y.capped), color: token('primary') },
+    ],
+    format: (v) => pct(v),
+    categoryHeader: t('common.year'),
+  });
+  const targets = barOption({
+    categories: periods.map((p) => ({ key: p.resultId, label: k(`period.${p.periodCode}`) })),
+    series: [
+      {
+        name: t('fields.target'),
+        values: periods.map((p) => p.target ?? p.rangeMax ?? null),
+        color: token('neutral'),
+      },
+      { name: t('fields.achieve'), values: periods.map((p) => p.achieve ?? null), color: token('success') },
+    ],
+    format: (v) => num(v),
+  });
   return (
     <div className="grid gap-4 lg:grid-cols-2" data-testid="kpi-performance-chart">
-      <section className="rounded-lg border bg-card p-5" aria-label={t('card.yearlyPerformance')}>
-        <h3 className="mb-3 font-semibold">{t('card.yearlyPerformance')}</h3>
-        {years.length === 0 && <p className="text-sm text-muted-foreground">{t('common.noData')}</p>}
-        <ul className="flex flex-col gap-3">
-          {years.map((y) => (
-            <li key={y.year} className="grid grid-cols-[3rem_1fr_auto] items-center gap-2 text-sm">
-              <span className="tabular-nums">{y.year}</span>
-              <span className="flex flex-col gap-1" aria-hidden>
-                <span className="flex h-3 overflow-hidden rounded bg-muted">
-                  <span
-                    className="h-full bg-info"
-                    style={{ inlineSize: `${((y.actual ?? 0) / max) * 100}%` }}
-                  />
-                </span>
-                <span className="flex h-3 overflow-hidden rounded bg-muted">
-                  <span
-                    className="h-full bg-primary"
-                    style={{ inlineSize: `${((y.capped ?? 0) / max) * 100}%` }}
-                  />
-                </span>
-              </span>
-              <span className="text-xs text-muted-foreground">
-                {t('card.actualShort')} {pct(y.actual)} · {t('card.cappedShort')} {pct(y.capped)}
-              </span>
-            </li>
-          ))}
-        </ul>
-        <p className="mt-3 flex gap-4 text-xs text-muted-foreground">
-          <span className="flex items-center gap-1">
-            <span className="inline-block size-3 rounded bg-info" aria-hidden /> {t('card.actualShort')}
-          </span>
-          <span className="flex items-center gap-1">
-            <span className="inline-block size-3 rounded bg-primary" aria-hidden /> {t('card.cappedShort')}
-          </span>
-        </p>
-      </section>
-      <section className="rounded-lg border bg-card p-5" aria-label={t('card.targetVsAchieved', { year })}>
-        <h3 className="mb-3 font-semibold">{t('card.targetVsAchieved', { year })}</h3>
-        {periods.length === 0 && <p className="text-sm text-muted-foreground">{t('common.noData')}</p>}
-        <ul className="flex flex-col gap-3">
-          {periods.map((p) => (
-            <li key={p.resultId} className="grid grid-cols-[4rem_1fr_auto] items-center gap-2 text-sm">
-              <span>{k(`period.${p.periodCode}`)}</span>
-              <span className="flex flex-col gap-1" aria-hidden>
-                <span className="flex h-3 overflow-hidden rounded bg-muted">
-                  <span
-                    className="h-full bg-muted-foreground/50"
-                    style={{ inlineSize: `${((p.target ?? p.rangeMax ?? 0) / periodMax) * 100}%` }}
-                  />
-                </span>
-                <span className="flex h-3 overflow-hidden rounded bg-muted">
-                  <span
-                    className="h-full bg-success"
-                    style={{ inlineSize: `${((p.achieve ?? 0) / periodMax) * 100}%` }}
-                  />
-                </span>
-              </span>
-              <span className="text-xs text-muted-foreground tabular-nums">
-                {num(p.target ?? p.rangeMax)} / {num(p.achieve)}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </section>
+      <Section title={t('card.yearlyPerformance')}>
+        {years.length === 0 ? (
+          <p className="text-sm text-muted-foreground">{t('common.noData')}</p>
+        ) : (
+          <Chart {...yearly} height={240} label={t('card.yearlyPerformance')} />
+        )}
+      </Section>
+      <Section title={t('card.targetVsAchieved', { year })}>
+        {periods.length === 0 ? (
+          <p className="text-sm text-muted-foreground">{t('common.noData')}</p>
+        ) : (
+          <Chart {...targets} height={240} label={t('card.targetVsAchieved', { year })} />
+        )}
+      </Section>
     </div>
   );
 }

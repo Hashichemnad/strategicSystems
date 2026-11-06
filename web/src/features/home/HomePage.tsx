@@ -12,12 +12,10 @@ import {
 import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { errorMessage, translateMessageKey } from '@/api/problem';
-import { useCan, useHasSystem } from '@/features/access/session';
+import { useCan } from '@/features/access/session';
 import { useMe } from '@/features/auth/session';
 import { useMyNotifications } from '@/features/notifications/api';
-import { MyKpiCard } from '@/features/kpi/MyKpiCard';
-import { MyRiskCard } from '@/features/risk/MyRiskCard';
-import { MyTasksCard } from '@/features/tasks/MyTasksCard';
+import { MyWorkCards } from '@/features/reporting/MyWorkCards';
 import { useMyWork, type MyWork } from '@/features/workflow/api';
 import { useDueText, usePersonName } from '@/features/workflow/ApprovalPanel';
 import { cn } from '@/lib/cn';
@@ -142,12 +140,7 @@ export function HomePage() {
   const me = useMe();
   const work = useMyWork();
   const notifications = useMyNotifications(1, false);
-  const canTasks = useCan('tasks.task.read');
-  const hasKpi = useHasSystem('kpi');
-  const canKpiResults = useCan('kpi.result.read');
-  const canKpi = hasKpi && canKpiResults;
-  const canRiskRead = useCan('risk.risk.read');
-  const canRisk = useHasSystem('risk') && canRiskRead;
+  const canCards = useCan('reporting.dashboard.read');
   const displayName =
     (pickText(i18n.language, me?.employee?.nameAr, me?.employee?.nameEn) || me?.userName) ?? '';
 
@@ -183,46 +176,29 @@ export function HomePage() {
           </div>
         )
       )}
+      {canCards && <MyWorkCards />}
       <div className="grid gap-6 xl:grid-cols-3">
         <div className="flex flex-col gap-6 xl:col-span-2">
           <Card title={t('myWork.approvals.title')} icon={ClipboardCheck}>
             {work.data ? <Approvals data={work.data} /> : <Skeleton className="h-32" />}
           </Card>
-          {canTasks && (
-            <MyTasksCard items={work.data?.actionItems.filter((item) => item.systemCode === 'tasks') ?? []} />
-          )}
-          {canKpi && (
-            <MyKpiCard items={work.data?.actionItems.filter((item) => item.systemCode === 'kpi') ?? []} />
-          )}
-          {canRisk && (
-            <MyRiskCard items={work.data?.actionItems.filter((item) => item.systemCode === 'risk') ?? []} />
-          )}
           <Card title={t('myWork.actionItems.title')} icon={ListTodo}>
-            {work.data &&
-              work.data.actionItems.filter(
-                (item) =>
-                  item.systemCode !== 'tasks' && item.systemCode !== 'kpi' && item.systemCode !== 'risk',
-              ).length === 0 && (
-                <p className="text-sm text-muted-foreground">{t('myWork.actionItems.empty')}</p>
-              )}
+            {work.data && work.data.actionItems.length === 0 && (
+              <p className="text-sm text-muted-foreground">{t('myWork.actionItems.empty')}</p>
+            )}
             <ul className="flex flex-col divide-y">
-              {work.data?.actionItems
-                .filter(
-                  (item) =>
-                    item.systemCode !== 'tasks' && item.systemCode !== 'kpi' && item.systemCode !== 'risk',
-                )
-                .map((item) => (
-                  <li key={`${item.resourceType}:${item.resourceId}`} className="flex flex-col gap-0.5 py-3">
-                    <Link to={item.link as '/'} className="font-medium text-primary hover:underline">
-                      {[item.number, pickText(i18n.language, item.titleAr, item.titleEn)]
-                        .filter(Boolean)
-                        .join(' · ')}
-                    </Link>
-                    <span className="text-sm text-muted-foreground">
-                      {translateMessageKey(tc, item.messageKey)}
-                    </span>
-                  </li>
-                ))}
+              {work.data?.actionItems.map((item) => (
+                <li key={`${item.resourceType}:${item.resourceId}`} className="flex flex-col gap-0.5 py-3">
+                  <Link to={item.link as '/'} className="font-medium text-primary hover:underline">
+                    {[item.number, pickText(i18n.language, item.titleAr, item.titleEn)]
+                      .filter(Boolean)
+                      .join(' · ')}
+                  </Link>
+                  <span className="text-sm text-muted-foreground">
+                    {translateMessageKey(tc, item.messageKey)}
+                  </span>
+                </li>
+              ))}
             </ul>
           </Card>
         </div>

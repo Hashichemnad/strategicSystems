@@ -85,10 +85,12 @@ export function useIpRecord(id: string) {
   });
 }
 
-export function useIpDashboard() {
+export function useIpDashboard(range?: { from: string; to: string }) {
   return useQuery({
-    queryKey: ipKeys.dashboard,
-    queryFn: async ({ signal }) => unwrap(await api.GET('/api/v1/ip/dashboard', { signal })),
+    queryKey: [...ipKeys.dashboard, range ?? null],
+    queryFn: async ({ signal }) =>
+      unwrap(await api.GET('/api/v1/ip/dashboard', { params: { query: range ?? {} }, signal })),
+    placeholderData: keepPreviousData,
   });
 }
 

@@ -140,6 +140,16 @@ internal sealed class UserRoleQuery(
     public async Task<bool> RequiresMfaAsync(Guid userId, Guid? employeeId, CancellationToken cancellationToken = default) =>
         (await loader.LoadAsync(userId, employeeId, cancellationToken).ConfigureAwait(false)).Access.RequiresMfa;
 
+    public async Task<IReadOnlyList<string>> RoleKeysOfAsync(Guid userId, Guid? employeeId, CancellationToken cancellationToken = default) =>
+        (await loader.LoadAsync(userId, employeeId, cancellationToken).ConfigureAwait(false)).Access.Roles
+            .Where(r => r.Active).Select(r => r.SystemCode + "." + r.Code).Distinct(StringComparer.Ordinal).ToList();
+
+    public async Task<IReadOnlySet<string>> OpenSystemsAsync(Guid userId, Guid? employeeId, CancellationToken cancellationToken = default)
+    {
+        var (model, access) = await loader.LoadAsync(userId, employeeId, cancellationToken).ConfigureAwait(false);
+        return access.Systems.Where(s => model.Systems.TryGetValue(s, out var system) && system.Enabled).ToHashSet(StringComparer.Ordinal);
+    }
+
     public async Task<bool> IsLastAccessAdministratorAsync(Guid userId, CancellationToken cancellationToken = default)
     {
         var holders = await AccessAdministratorHoldersAsync(cancellationToken).ConfigureAwait(false);

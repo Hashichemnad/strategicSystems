@@ -18,17 +18,10 @@ import {
   TableHead,
   TableHeaderCell,
   TableRow,
+  ProgressBar,
 } from '@/ui';
 import { actionViews, useCapActions } from './api';
-import {
-  ActionStatusChip,
-  CapPageLayout,
-  PctBar,
-  ValidationChip,
-  useCapT,
-  useDate,
-  useNames,
-} from './components';
+import { ActionStatusChip, CapPageLayout, ValidationChip, useCapT, useDate, useNames } from './components';
 
 const route = getRouteApi('/app/cap/my-actions');
 
@@ -165,7 +158,11 @@ export function CapActionsPage() {
                     {a.validationStatus === 'approved' ? <ActionStatusChip status={a.status} /> : '—'}
                   </TableCell>
                   <TableCell>
-                    <PctBar value={a.achievedPct} late={a.status === 'late'} />
+                    <ProgressBar
+                      value={a.achievedPct}
+                      tone={a.status === 'late' ? 'danger' : 'primary'}
+                      testId="cap-pct"
+                    />
                   </TableCell>
                 </TableRow>
               ))}

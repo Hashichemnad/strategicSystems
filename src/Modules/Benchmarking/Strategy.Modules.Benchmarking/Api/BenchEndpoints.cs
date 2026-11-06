@@ -44,7 +44,8 @@ internal static class BenchEndpoints
             .WithName("GetBenchSettings").RequirePermission(BenchPermissions.SettingsManage);
         group.MapPut("/settings", async (BenchSettingsInput b, IDispatcher d, CancellationToken ct) => (await d.SendAsync(new SaveBenchSettings(b.Settings, b.Version), ct)).ToOk())
             .WithName("SaveBenchSettings").RequirePermission(BenchPermissions.SettingsManage);
-        group.MapGet("/dashboard", async (int? year, Guid? unitId, IDispatcher d, CancellationToken ct) => (await d.SendAsync(new GetBenchDashboard(year, unitId), ct)).ToOk())
+        group.MapGet("/dashboard", async (int? year, Guid? unitId, DateOnly? from, DateOnly? to, IDispatcher d, CancellationToken ct) =>
+                (await d.SendAsync(new GetBenchDashboard(year, unitId, from, to), ct)).ToOk())
             .WithName("GetBenchDashboard").RequirePermission(BenchPermissions.DashboardRead);
         group.MapGet("/plan", async (int year, IDispatcher d, CancellationToken ct) => (await d.SendAsync(new GetBenchPlan(year), ct)).ToOk())
             .WithName("GetBenchPlan").RequirePermission(BenchPermissions.PlanRead);

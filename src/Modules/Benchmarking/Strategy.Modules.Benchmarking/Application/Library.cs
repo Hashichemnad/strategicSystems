@@ -44,7 +44,10 @@ public sealed record SearchBestPractices(PageRequest Page, string? Search, strin
 
 public sealed record SaveBestPractice(Guid? Id, BenchPracticeValues Values, uint? Version) : ICommand<BenchBestPracticeDto>;
 
-public sealed record GetBenchDashboard(int? Year, Guid? UnitId) : IQuery<BenchDashboardDto>;
+/// <summary>
+/// <paramref name="From"/> / <paramref name="To"/>: whole months (inclusive); a study counts when its target quarter overlaps them (reporting level 2).
+/// </summary>
+public sealed record GetBenchDashboard(int? Year, Guid? UnitId, DateOnly? From = null, DateOnly? To = null) : IQuery<BenchDashboardDto>;
 
 public sealed record GetBenchSettings : IQuery<SettingsDocument<BenchSettings>>;
 
@@ -306,10 +309,28 @@ internal sealed class LibraryHandlers(BenchDbContext db, BenchReader reader, ILo
             return Error.Forbidden();
         }
 
+        if (query.From is { } f && query.To is { } t && f > t)
+        {
+            return Error.Validation([new FieldError("to", "validation.invalid", "validation.invalid")]);
+        }
+
         var source = await reader.StudiesAsync(context.User, cancellationToken).ConfigureAwait(false);
         if (query.Year is { } year)
         {
             source = source.Where(s => s.TargetYear == year);
+        }
+
+        // Month index (year × 12 + month − 1) of the target quarter's first and last month against the requested months.
+        if (query.From is { } from)
+        {
+            var first = (from.Year * 12) + from.Month - 1;
+            source = source.Where(s => (s.TargetYear * 12) + ((s.TargetQuarter - 1) * 3) + 2 >= first);
+        }
+
+        if (query.To is { } to)
+        {
+            var last = (to.Year * 12) + to.Month - 1;
+            source = source.Where(s => (s.TargetYear * 12) + ((s.TargetQuarter - 1) * 3) <= last);
         }
 
         if (query.UnitId is { } unitId)

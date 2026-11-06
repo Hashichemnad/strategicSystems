@@ -32,6 +32,8 @@ import {
   TabsList,
   TabsTrigger,
   Textarea,
+  ProgressBar,
+  Section,
 } from '@/ui';
 import {
   capApi,
@@ -45,9 +47,7 @@ import {
 import {
   ActionStatusChip,
   CapPageLayout,
-  PctBar,
   Rows,
-  Section,
   SimpleDialog,
   ValidationChip,
   lookupTypes,
@@ -122,7 +122,11 @@ export function CapActionPage() {
           <div className="flex flex-wrap items-center gap-2" data-testid="cap-action-meta">
             <ValidationChip status={a.validationStatus} />
             {a.validationStatus === 'approved' && <ActionStatusChip status={a.status} />}
-            <PctBar value={a.achievedPct} late={a.status === 'late'} />
+            <ProgressBar
+              value={a.achievedPct}
+              tone={a.status === 'late' ? 'danger' : 'primary'}
+              testId="cap-pct"
+            />
             <span className="text-sm text-muted-foreground">
               {t('fields.plannedEnd')}: {date(a.effectiveEnd ?? a.values.plannedEnd)}
               {a.revisedEnd && ` (${t('action.revised')})`}

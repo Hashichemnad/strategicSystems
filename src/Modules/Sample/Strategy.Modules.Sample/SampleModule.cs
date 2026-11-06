@@ -14,6 +14,7 @@ using Strategy.Platform.Kernel;
 using Strategy.Platform.Links;
 using Strategy.Platform.Notifications;
 using Strategy.Platform.Persistence;
+using Strategy.Platform.Reporting;
 using Strategy.Platform.Settings;
 using Strategy.Platform.Workflow;
 
@@ -29,6 +30,10 @@ public sealed class SampleModule : IModule
         services.AddModuleDbContext<SampleDbContext>(SampleDbContext.SchemaName);
         services.AddRequestHandlersFrom(typeof(SampleModule).Assembly);
         services.AddScoped<ISampleItemDirectory, SampleItemDirectory>();
+        services.AddScoped<Reporting.SampleReporting>();
+        services.AddScoped<IReportingMetricSource>(sp => sp.GetRequiredService<Reporting.SampleReporting>());
+        services.AddScoped<IReportingListSource>(sp => sp.GetRequiredService<Reporting.SampleReporting>());
+        services.AddScoped<IReportingDatasetSource>(sp => sp.GetRequiredService<Reporting.SampleReporting>());
         services.AddAccessCatalogue(new SampleAccessCatalogue());
         services.AddNumberingFormat(SampleAccessCatalogue.Numbering);
         services.AddFilePurpose(SampleAttachments.Purpose);

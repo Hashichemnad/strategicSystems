@@ -2,6 +2,7 @@ import { Link } from '@tanstack/react-router';
 import { Sparkles } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSystemDashboard } from '@/features/reporting/SystemDashboard';
 import { errorMessage } from '@/api/problem';
 import { UnitSelect } from '@/features/access/pickers';
 import { useCan } from '@/features/access/session';
@@ -9,11 +10,13 @@ import { AiBadge } from '@/features/ai/AiDraft';
 import { useAiFeature } from '@/features/ai/api';
 import { formatDate, formatNumber } from '@/lib/format';
 import {
+  barOption,
   Button,
+  Chart,
+  CountChart,
   Dialog,
   DialogClose,
   DialogContent,
-  PageHeader,
   Select,
   Skeleton,
   StatusBanner,
@@ -24,7 +27,13 @@ import {
   TableHead,
   TableHeaderCell,
   TableRow,
+  token,
   useToast,
+  ProgressBar,
+  DashboardFrame,
+  OptionalPeriodSelector,
+  periodToDates,
+  type PeriodValue,
 } from '@/ui';
 import {
   residualStatuses,
@@ -39,13 +48,11 @@ import {
 } from './api';
 import {
   HeatMap,
-  ProgressBar,
   RatingChip,
   RiskPageLayout,
   useAxisLabels,
   useBands,
   useNames,
-  useNum,
   useRiskLabels,
   useRiskT,
 } from './components';
@@ -64,84 +71,84 @@ export function RiskDashboardPage() {
   const [unitId, setUnitId] = useState<string>();
   const [category, setCategory] = useState<string>();
   const [residualStatus, setResidualStatus] = useState<string>();
-  const [year, setYear] = useState<number>();
+  const [period, setPeriod] = useState<PeriodValue | null>(null);
+  const range = period ? periodToDates(period) : undefined;
   const [includeProject, setIncludeProject] = useState<boolean>();
   const include = includeProject ?? options.data?.includeProjectRisksByDefault ?? true;
   const filter: RiskFilterQuery = {
     ...(unitId ? { unitId } : {}),
     ...(category ? { category } : {}),
     ...(residualStatus ? { residualStatus } : {}),
-    ...(year ? { year } : {}),
+    ...range,
     includeProjectRisks: include,
   };
   const dashboard = useRiskDashboard(filter, options.isSuccess);
   const [cell, setCell] = useState<{ kind: 'inherent' | 'residual'; likelihood: number; impact: number }>();
   const [report, setReport] = useState(false);
-  const thisYear = new Date().getFullYear();
+  const system = useSystemDashboard('risk.profile', period, unitId);
+  // The AI report takes a year: the selected calendar year, otherwise all years.
+  const year = period?.kind === 'year' ? Number(period.from.slice(0, 4)) : undefined;
 
   return (
     <RiskPageLayout testId="risk-dashboard">
-      <PageHeader
+      <DashboardFrame
         title={t('dashboard.title')}
         description={t('dashboard.description')}
+        exports={system.exports}
+        filters={<OptionalPeriodSelector value={period} onChange={setPeriod} allowCompare={false} />}
         actions={
-          canReport && (
-            <Button variant="outline" onClick={() => setReport(true)} data-testid="risk-ai-report">
-              <Sparkles aria-hidden />
-              {t('ai.report.action')}
-            </Button>
-          )
+          <>
+            {system.action}
+            {canReport && (
+              <Button variant="outline" onClick={() => setReport(true)} data-testid="risk-ai-report">
+                <Sparkles aria-hidden />
+                {t('ai.report.action')}
+              </Button>
+            )}
+          </>
         }
-      />
-      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5" data-testid="risk-dashboard-filters">
-        <UnitSelect allowEmpty value={unitId} onChange={setUnitId} />
-        <Select
-          aria-label={t('fields.category')}
-          value={category ?? ALL}
-          onValueChange={(v) => setCategory(v === ALL ? undefined : v)}
-          options={[
-            { value: ALL, label: t('register.allCategories') },
-            ...(options.data?.categories ?? []).map((c) => ({
-              value: c.code,
-              label: labels.category(c.code),
-            })),
-          ]}
-        />
-        <Select
-          aria-label={t('fields.residualStatus')}
-          value={residualStatus ?? ALL}
-          onValueChange={(v) => setResidualStatus(v === ALL ? undefined : v)}
-          options={[
-            { value: ALL, label: t('dashboard.allResidualStatuses') },
-            ...residualStatuses.map((s) => ({ value: s, label: k(`residualStatus.${s}`) })),
-          ]}
-        />
-        <Select
-          aria-label={t('dashboard.year')}
-          value={year ? String(year) : ALL}
-          onValueChange={(v) => setYear(v === ALL ? undefined : Number(v))}
-          options={[
-            { value: ALL, label: t('dashboard.allYears') },
-            ...[0, 1, 2, 3, 4].map((d) => ({ value: String(thisYear - d), label: String(thisYear - d) })),
-          ]}
-        />
-        <Switch
-          checked={include}
-          onCheckedChange={setIncludeProject}
-          label={t('dashboard.includeProjectRisks')}
-        />
-      </div>
-      {dashboard.isError && <StatusBanner tone="danger" title={errorMessage(tc, dashboard.error)} />}
-      {!dashboard.data ? (
-        !dashboard.isError && <Skeleton className="h-96 rounded-lg" />
-      ) : (
-        <DashboardBody
-          data={dashboard.data}
-          cell={cell}
-          onCell={(kind, likelihood, impact) => setCell({ kind, likelihood, impact })}
-          filter={filter}
-        />
-      )}
+      >
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4" data-testid="risk-dashboard-filters">
+          <UnitSelect allowEmpty value={unitId} onChange={setUnitId} />
+          <Select
+            aria-label={t('fields.category')}
+            value={category ?? ALL}
+            onValueChange={(v) => setCategory(v === ALL ? undefined : v)}
+            options={[
+              { value: ALL, label: t('register.allCategories') },
+              ...(options.data?.categories ?? []).map((c) => ({
+                value: c.code,
+                label: labels.category(c.code),
+              })),
+            ]}
+          />
+          <Select
+            aria-label={t('fields.residualStatus')}
+            value={residualStatus ?? ALL}
+            onValueChange={(v) => setResidualStatus(v === ALL ? undefined : v)}
+            options={[
+              { value: ALL, label: t('dashboard.allResidualStatuses') },
+              ...residualStatuses.map((s) => ({ value: s, label: k(`residualStatus.${s}`) })),
+            ]}
+          />
+          <Switch
+            checked={include}
+            onCheckedChange={setIncludeProject}
+            label={t('dashboard.includeProjectRisks')}
+          />
+        </div>
+        {dashboard.isError && <StatusBanner tone="danger" title={errorMessage(tc, dashboard.error)} />}
+        {!dashboard.data ? (
+          !dashboard.isError && <Skeleton className="h-96 rounded-lg" />
+        ) : (
+          <DashboardBody
+            data={dashboard.data}
+            cell={cell}
+            onCell={(kind, likelihood, impact) => setCell({ kind, likelihood, impact })}
+            filter={filter}
+          />
+        )}
+      </DashboardFrame>
       {report && <ReportDialog unitId={unitId} year={year} onClose={() => setReport(false)} />}
     </RiskPageLayout>
   );
@@ -214,17 +221,17 @@ function DashboardBody({
       </div>
       {cell && <CellRisks cell={cell} filter={filter} />}
       <div className="grid gap-4 lg:grid-cols-2">
-        <CountBars
+        <CountChart
           title={t('dashboard.byResidualBand')}
           testId="risk-by-band"
           rows={data.byResidualBand.map((r) => ({ key: r.code, label: bandLabel(r.code), value: r.count }))}
         />
-        <CountBars
+        <CountChart
           title={t('dashboard.byCategory')}
           testId="risk-by-category"
           rows={data.byCategory.map((r) => ({ key: r.code, label: labels.category(r.code), value: r.count }))}
         />
-        <CountBars
+        <CountChart
           title={t('dashboard.byUnit')}
           rows={data.byUnit.map((r) => ({
             key: r.code,
@@ -232,7 +239,7 @@ function DashboardBody({
             value: r.count,
           }))}
         />
-        <CountBars
+        <CountChart
           title={t('dashboard.byResidualStatus')}
           rows={data.byResidualStatus.map((r) => ({
             key: r.code,
@@ -274,7 +281,7 @@ function DashboardBody({
                         {t('fields.plannedEnd')}: {formatDate(a.plannedEnd, i18n.language)}
                       </span>
                     )}
-                    <ProgressBar ratio={a.completionPct} label={t('treatment.progress')} />
+                    <ProgressBar value={a.completionPct} label={t('treatment.progress')} />
                   </span>
                 </li>
               ))}
@@ -282,17 +289,26 @@ function DashboardBody({
           )}
         </Panel>
         <Panel title={t('dashboard.movement')} testId="risk-movement">
-          <div className="flex flex-wrap gap-4 text-sm">
-            <span>
-              {t('dashboard.improved')}: <strong className="text-success">{n(data.movement.improved)}</strong>
-            </span>
-            <span>
-              {t('dashboard.worsened')}: <strong className="text-danger">{n(data.movement.worsened)}</strong>
-            </span>
-            <span>
-              {t('dashboard.unchanged')}: <strong>{n(data.movement.unchanged)}</strong>
-            </span>
-          </div>
+          <Chart
+            label={t('dashboard.movement')}
+            height={150}
+            {...barOption({
+              orientation: 'horizontal',
+              categories: (['improved', 'worsened', 'unchanged'] as const).map((key) => ({
+                key,
+                label: t(`dashboard.${key}`),
+              })),
+              series: [
+                {
+                  name: t('dashboard.movement'),
+                  values: [data.movement.improved, data.movement.worsened, data.movement.unchanged],
+                },
+              ],
+              categoryColors: [token('success'), token('danger'), token('neutral')],
+              integer: true,
+              format: n,
+            })}
+          />
           {data.movement.worsenedRisks.length > 0 && (
             <RiskTable rows={data.movement.worsenedRisks} bands={data.bands} />
           )}
@@ -358,43 +374,6 @@ function Panel({ title, children, testId }: { title: string; children: ReactNode
       <h2 className="font-semibold">{title}</h2>
       {children}
     </section>
-  );
-}
-
-function CountBars({
-  title,
-  rows,
-  testId,
-}: {
-  title: string;
-  rows: { key: string; label: string; value: number }[];
-  testId?: string;
-}) {
-  const num = useNum();
-  const max = Math.max(1, ...rows.map((r) => r.value));
-  return (
-    <Panel title={title} testId={testId}>
-      {rows.length === 0 ? (
-        <Empty />
-      ) : (
-        <ul className="flex flex-col gap-2">
-          {rows.map((row) => (
-            <li
-              key={row.key}
-              className="grid grid-cols-[minmax(6rem,12rem)_1fr_auto] items-center gap-2 text-sm"
-            >
-              <span className="truncate" title={row.label}>
-                {row.label}
-              </span>
-              <span className="flex h-4 overflow-hidden rounded bg-muted" aria-hidden>
-                <span className="h-full bg-primary" style={{ inlineSize: `${(row.value / max) * 100}%` }} />
-              </span>
-              <span className="tabular-nums text-muted-foreground">{num(row.value)}</span>
-            </li>
-          ))}
-        </ul>
-      )}
-    </Panel>
   );
 }
 

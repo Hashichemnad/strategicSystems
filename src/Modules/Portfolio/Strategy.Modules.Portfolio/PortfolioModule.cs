@@ -8,6 +8,7 @@ using Strategy.Modules.Portfolio.Application;
 using Strategy.Modules.Portfolio.Contracts;
 using Strategy.Modules.Portfolio.Infrastructure;
 using Strategy.Modules.Portfolio.Mcp;
+using Strategy.Modules.Portfolio.Reporting;
 using Strategy.Modules.Teams.Contracts;
 using Strategy.Platform.Access;
 using Strategy.Platform.AI;
@@ -18,6 +19,7 @@ using Strategy.Platform.Kernel;
 using Strategy.Platform.Links;
 using Strategy.Platform.Notifications;
 using Strategy.Platform.Persistence;
+using Strategy.Platform.Reporting;
 using Strategy.Platform.Scheduling;
 using Strategy.Platform.Settings;
 using Strategy.Platform.Workflow;
@@ -117,6 +119,12 @@ public sealed class PortfolioModule : IModule
 
         services.AddApprovalHook<ProjectApprovalHook>();
         services.AddMyWorkSource<ProjectMyWork>();
+
+        // Phase 17 — reporting sources (docs/design/reporting.md §2.5, §6, §7).
+        services.AddReportingMetricSource<PortfolioMetricSource>();
+        services.AddReportingListSource<PortfolioListSource>();
+        services.AddReportingDatasetSource<PortfolioDatasetSource>();
+        services.AddMyWorkCardSource<PortfolioMyWorkCards>();
         services.AddApprovalHook<RequestApprovalHook>();
         services.AddCurrentStatusProvider<RequestCurrentStatus>();
         services.AddCurrentStatusProvider<ProjectCurrentStatus>();

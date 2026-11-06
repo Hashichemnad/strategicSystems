@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- What modules implement for dashboards, the report builder and My Work cards (ADR 0140, 0144, 0149). No EF Core, no ASP.NET Core. -->
+  <ItemGroup>
+    <ProjectReference Include="..\Strategy.Platform.Kernel\Strategy.Platform.Kernel.csproj" />
+  </ItemGroup>
+</Project>

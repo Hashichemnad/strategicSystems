@@ -64,7 +64,8 @@ internal sealed class JobRunListener(IServiceScopeFactory scopes, IClock clock) 
             JobKey = context.JobDetail.Key.Name,
             FiredAt = clock.UtcNow,
             Instance = context.Scheduler.SchedulerInstanceId,
-            TriggeredBy = Guid.TryParse(context.MergedJobDataMap.GetString(TriggeredByKey), out var user) ? user : null,
+            // Only manual runs carry the key; GetString throws on a missing key, which would make Quartz skip every scheduled run.
+            TriggeredBy = context.MergedJobDataMap.TryGetString(TriggeredByKey, out var by) && Guid.TryParse(by, out var user) ? user : null,
         };
         context.Put(RunIdKey, run.Id);
         await using var scope = scopes.CreateAsyncScope();
@@ -111,4 +112,26 @@ internal sealed class SchedulingCleanupJob(RequestContext requestContext, Schedu
         var runs = await db.JobRuns.Where(r => r.FiredAt < cutoff).ExecuteDeleteAsync(cancellationToken).ConfigureAwait(false);
         return $"outbox={outbox} runs={runs}";
     }
+}
+
+/// <summary><c>Scheduling:RunSchedules</c> (default true): false stops runs fired by the job schedules; runs started on request still execute.</summary>
+internal sealed record ScheduleSwitch(bool RunSchedules);
+
+/// <summary>
+/// Vetoes schedule-fired runs when <see cref="ScheduleSwitch.RunSchedules"/> is off (integration-test hosts, which invoke jobs
+/// explicitly and must not race a job firing every minute). Manual runs use Quartz's own trigger group and are never vetoed.
+/// </summary>
+internal sealed class ScheduleSwitchListener(ScheduleSwitch schedule) : ITriggerListener
+{
+    public string Name => "strategy-schedule-switch";
+
+    public Task<bool> VetoJobExecution(ITrigger trigger, IJobExecutionContext context, CancellationToken cancellationToken = default) =>
+        Task.FromResult(!schedule.RunSchedules && trigger.Key.Group == Application.JobScheduleSynchroniser.Group);
+
+    public Task TriggerFired(ITrigger trigger, IJobExecutionContext context, CancellationToken cancellationToken = default) => Task.CompletedTask;
+
+    public Task TriggerMisfired(ITrigger trigger, CancellationToken cancellationToken = default) => Task.CompletedTask;
+
+    public Task TriggerComplete(ITrigger trigger, IJobExecutionContext context, SchedulerInstruction triggerInstructionCode, CancellationToken cancellationToken = default) =>
+        Task.CompletedTask;
 }

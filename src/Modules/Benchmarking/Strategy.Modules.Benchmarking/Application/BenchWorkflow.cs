@@ -289,18 +289,26 @@ internal sealed class BenchMyWork(BenchReader reader) : IMyWorkSource
             return [];
         }
 
-        var studies = await (await reader.StudiesAsync(user, cancellationToken).ConfigureAwait(false))
-            .Where(s => s.Status == StudyStatuses.Active && s.PendingProcess == null
-                && ((s.ResponsibleEmployeeId == me && (s.Stage == StudyStages.Acquire || (s.Stage == StudyStages.Search && s.SearchNotifiedAt != null)
-                        || (s.Stage == StudyStages.Analysis && s.AnalysisApprovedAt == null) || s.ReadyNotifiedAt != null))
-                    || (s.RequesterEmployeeId == me && s.Stage == StudyStages.Plan && s.Returned)))
+        var studies = await AwaitingMe(await reader.StudiesAsync(user, cancellationToken).ConfigureAwait(false), me)
             .OrderBy(s => s.TargetYear).ThenBy(s => s.TargetQuarter).Take(50).ToListAsync(cancellationToken).ConfigureAwait(false);
-        return studies.Select(s => new MyWorkItem(BenchPermissions.SystemCode, Study.EntityType, s.Id, s.Number, s.TitleAr, s.TitleEn, s.Stage switch
-        {
-            StudyStages.Plan => "bench.myWork.resubmit",
-            StudyStages.Search => "bench.myWork.search",
-            StudyStages.Acquire => "bench.myWork.visit",
-            _ => s.AnalysisApprovedAt is null ? "bench.myWork.analysis" : "bench.myWork.closure",
-        }, s.Stage == StudyStages.Plan ? $"/requests/{s.RequestId:D}" : BenchNotifier.Link(s), null, Quarters.Start(s.TargetYear, Math.Clamp(s.TargetQuarter, 1, 4)))).ToList();
+        return studies.Select(s => new MyWorkItem(BenchPermissions.SystemCode, Study.EntityType, s.Id, s.Number, s.TitleAr, s.TitleEn, MessageKey(s), Link(s), null,
+            Quarters.Start(s.TargetYear, Math.Clamp(s.TargetQuarter, 1, 4)))).ToList();
     }
+
+    /// <summary>Active studies waiting for the employee: coordinator forms (search, visit, analysis, closure) or a returned plan of the requester.</summary>
+    internal static IQueryable<Study> AwaitingMe(IQueryable<Study> studies, Guid me) =>
+        studies.Where(s => s.Status == StudyStatuses.Active && s.PendingProcess == null
+            && ((s.ResponsibleEmployeeId == me && (s.Stage == StudyStages.Acquire || (s.Stage == StudyStages.Search && s.SearchNotifiedAt != null)
+                    || (s.Stage == StudyStages.Analysis && s.AnalysisApprovedAt == null) || s.ReadyNotifiedAt != null))
+                || (s.RequesterEmployeeId == me && s.Stage == StudyStages.Plan && s.Returned)));
+
+    internal static string MessageKey(Study s) => s.Stage switch
+    {
+        StudyStages.Plan => "bench.myWork.resubmit",
+        StudyStages.Search => "bench.myWork.search",
+        StudyStages.Acquire => "bench.myWork.visit",
+        _ => s.AnalysisApprovedAt is null ? "bench.myWork.analysis" : "bench.myWork.closure",
+    };
+
+    internal static string Link(Study s) => s.Stage == StudyStages.Plan ? $"/requests/{s.RequestId:D}" : BenchNotifier.Link(s);
 }

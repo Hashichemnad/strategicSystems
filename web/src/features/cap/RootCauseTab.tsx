@@ -4,9 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { useCan } from '@/features/access/session';
 import { AiBadge } from '@/features/ai/AiDraft';
 import { useAiFeature } from '@/features/ai/api';
-import { Button, FormField, Input, Select, StatusChip, Textarea } from '@/ui';
+import { Button, FormField, Input, Select, StatusChip, Textarea, Section } from '@/ui';
 import { capApi, fishboneCategories, rootCauseMethods, type CapRemark, type CapRootCauseValues } from './api';
-import { Section, useCapT, useToastMutation } from './components';
+import { useCapT, useToastMutation } from './components';
 
 const MAX_WHYS = 7;
 

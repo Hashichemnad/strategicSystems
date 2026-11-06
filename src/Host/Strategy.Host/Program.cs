@@ -8,6 +8,21 @@ if (args.Contains("--health-check", StringComparer.Ordinal))
     return await HealthProbe.RunAsync(Environment.GetEnvironmentVariable("HEALTHCHECK_URL") ?? "http://localhost:8080/health/live");
 }
 
+// `--create-admin` on a two-role install (ConnectionStrings:StrategyMigrations set to another role, e.g. inside the `migrate` service):
+// pending migrations are applied first as the owner, in a separate host, exactly like `--migrate`. The administrator itself is created
+// below as the runtime role. Without an owner connection nothing is migrated here: `--create-admin` then requires `--migrate` first.
+if (args.Contains("--create-admin", StringComparer.Ordinal))
+{
+    var probe = WebApplication.CreateBuilder(args);
+    if (Bootstrap.HasSeparateOwnerConnection(probe.Configuration))
+    {
+        probe.Configuration["Database:UseMigrationsConnection"] = "true";
+        probe.AddStrategyHost(PlatformCatalog.All, ModuleCatalog.All);
+        await using var migrations = probe.Build();
+        await migrations.Services.GetRequiredService<ModuleMigrator>().MigrateAllAsync();
+    }
+}
+
 var builder = WebApplication.CreateBuilder(args);
 if (args.Contains("--migrate", StringComparer.Ordinal) || args.Contains("--setup-db-roles", StringComparer.Ordinal))
 {

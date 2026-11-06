@@ -27,6 +27,7 @@ import {
   Textarea,
   useToast,
   type Tone,
+  Section,
 } from '@/ui';
 import { ActionDialog } from './ActionsTab';
 import {
@@ -40,7 +41,7 @@ import {
   type Risk,
   type TreatmentSuggestion,
 } from './api';
-import { Section, useNames, useRiskLabels, useRiskT } from './components';
+import { useNames, useRiskLabels, useRiskT } from './components';
 
 const NONE = '-';
 

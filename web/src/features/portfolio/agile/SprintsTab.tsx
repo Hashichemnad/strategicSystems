@@ -1,13 +1,14 @@
 import { AlertTriangle, BarChart3, Pencil, Play, Plus, Send, Square, XCircle } from 'lucide-react';
 import { useMemo, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { EChartsOption } from 'echarts';
 import { errorMessage } from '@/api/problem';
 import { EmployeePicker } from '@/features/org/EmployeePicker';
 import { formatDate, formatNumber, pickText } from '@/lib/format';
 import { cn } from '@/lib/cn';
 import {
+  barOption,
   Button,
+  Chart,
   Checkbox,
   ConfirmDialog,
   DatePicker,
@@ -17,6 +18,7 @@ import {
   EmptyState,
   FormField,
   Input,
+  lineOption,
   Select,
   Skeleton,
   StatusBanner,
@@ -28,10 +30,10 @@ import {
   TableHeaderCell,
   TableRow,
   Textarea,
+  token,
   useToast,
   type Tone,
 } from '@/ui';
-import { EChart, useRtl } from '@/ui/echart';
 import type { ProjectFull } from '../projectApi';
 import { FieldErrors } from '../project/FieldErrors';
 import {
@@ -55,15 +57,16 @@ const sprintTone: Record<string, Tone> = {
   cancelled: 'neutral',
 };
 
+/** Series colours from the design tokens (light / dark). */
 const colours = {
-  committed: '#94a3b8',
-  completed: '#2a9d8f',
-  ideal: '#94a3b8',
-  remaining: '#3b82c4',
-  todo: '#cbd5e1',
-  doing: '#d08a1c',
-  done: '#2a9d8f',
-  scope: '#64748b',
+  committed: token('neutral'),
+  completed: token('primary'),
+  ideal: token('neutral'),
+  remaining: token('info'),
+  todo: token('neutral'),
+  doing: token('warning'),
+  done: token('primary'),
+  scope: token('neutral'),
 };
 
 /** The sprint the charts open on: the active one, otherwise the latest started one, otherwise the first. */
@@ -707,71 +710,19 @@ function ChartCard({
   title,
   summary,
   children,
-  table,
   testId,
 }: {
   title: string;
   summary?: ReactNode;
   children: ReactNode;
-  table?: ReactNode;
   testId?: string;
 }) {
-  const { t } = useTranslation('agile');
   return (
     <section className="flex flex-col gap-2 rounded-lg border bg-card p-4" data-testid={testId}>
       <h3 className="font-semibold">{title}</h3>
       {summary && <p className="text-sm text-muted-foreground">{summary}</p>}
       {children}
-      {table && (
-        <details className="text-sm">
-          <summary className="cursor-pointer text-muted-foreground">{t('charts.showTable')}</summary>
-          <div className="mt-2 max-h-64 overflow-auto">{table}</div>
-        </details>
-      )}
     </section>
-  );
-}
-
-function DataTable({ head, rows }: { head: string[]; rows: (string | number)[][] }) {
-  return (
-    <Table>
-      <TableHead>
-        <TableRow>
-          {head.map((h) => (
-            <TableHeaderCell key={h}>{h}</TableHeaderCell>
-          ))}
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {rows.map((r, i) => (
-          <TableRow key={i}>
-            {r.map((c, j) => (
-              <TableCell key={j} className="tabular-nums">
-                {c}
-              </TableCell>
-            ))}
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  );
-}
-
-/** Shared axis / legend settings: category axis mirrored and value axis on the start side in Arabic. */
-function useAxes() {
-  const rtl = useRtl();
-  return useMemo(
-    () => ({
-      rtl,
-      legend: { top: 0, ...(rtl ? { right: 0 } : { left: 0 }) },
-      grid: { top: 36, bottom: 30, left: 44, right: 44 },
-      yAxis: {
-        type: 'value' as const,
-        minInterval: 1,
-        position: rtl ? ('right' as const) : ('left' as const),
-      },
-    }),
-    [rtl],
   );
 }
 
@@ -779,40 +730,23 @@ function BurndownPanel({ sprint }: { sprint: Sprint | undefined }) {
   const { t, i18n } = useTranslation('agile');
   const { t: tc } = useTranslation();
   const lang = i18n.language;
-  const axes = useAxes();
   const burndown = useBurndown(sprint && sprint.status !== 'planned' ? sprint.id : undefined);
-  const option = useMemo<EChartsOption | null>(() => {
+  const f = (v: number) => formatNumber(v, lang);
+  const spec = useMemo(() => {
     if (!burndown.data) return null;
     const series = burndownSeries(burndown.data.points);
-    return {
-      tooltip: { trigger: 'axis' },
-      legend: axes.legend,
-      grid: axes.grid,
-      xAxis: {
-        type: 'category',
-        data: series.dates.map((d) => formatDate(d, lang)),
-        inverse: axes.rtl,
-      },
-      yAxis: axes.yAxis,
+    return lineOption({
+      categories: series.dates.map((d) => ({ key: d, label: formatDate(d, lang) })),
       series: [
-        {
-          name: t('charts.ideal'),
-          type: 'line',
-          data: series.ideal,
-          lineStyle: { type: 'dashed', color: colours.ideal },
-          itemStyle: { color: colours.ideal },
-          symbol: 'none',
-        },
-        {
-          name: t('charts.remaining'),
-          type: 'line',
-          data: series.remaining,
-          itemStyle: { color: colours.remaining },
-          connectNulls: false,
-        },
+        { name: t('charts.ideal'), values: series.ideal, color: colours.ideal, dashed: true, noSymbol: true },
+        { name: t('charts.remaining'), values: series.remaining, color: colours.remaining },
       ],
-    };
-  }, [burndown.data, axes.legend, axes.grid, axes.rtl, axes.yAxis, lang, t]);
+      integer: true,
+      format: f,
+      categoryHeader: t('charts.date'),
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [burndown.data, lang, t]);
   if (!sprint || sprint.status === 'planned') {
     return (
       <ChartCard title={t('charts.burndown')} testId="sprint-burndown">
@@ -830,24 +764,10 @@ function BurndownPanel({ sprint }: { sprint: Sprint | undefined }) {
       summary={
         burndown.data
           ? t('charts.burndownSummary', {
-              committed: formatNumber(burndown.data.committed, lang),
-              remaining: formatNumber(lastKnown?.remaining ?? burndown.data.committed, lang),
+              committed: f(burndown.data.committed),
+              remaining: f(lastKnown?.remaining ?? burndown.data.committed),
             })
           : undefined
-      }
-      table={
-        burndown.data && (
-          <DataTable
-            head={[t('charts.date'), t('charts.remaining'), t('charts.ideal')]}
-            rows={points
-              .filter((p) => p.remaining >= 0)
-              .map((p) => [
-                formatDate(p.date, lang),
-                formatNumber(p.remaining, lang),
-                formatNumber(p.ideal, lang),
-              ])}
-          />
-        )
       }
     >
       {burndown.isPending ? (
@@ -855,7 +775,7 @@ function BurndownPanel({ sprint }: { sprint: Sprint | undefined }) {
       ) : burndown.error ? (
         <StatusBanner tone="danger" title={errorMessage(tc, burndown.error)} />
       ) : (
-        option && <EChart option={option} label={t('charts.burndownLabel', { n })} />
+        spec && <Chart {...spec} label={t('charts.burndownLabel', { n })} />
       )}
     </ChartCard>
   );
@@ -864,110 +784,100 @@ function BurndownPanel({ sprint }: { sprint: Sprint | undefined }) {
 function MetricsPanels({ metrics, releases }: { metrics: AgileMetrics; releases: Release[] }) {
   const { t, i18n } = useTranslation('agile');
   const lang = i18n.language;
-  const axes = useAxes();
   const f = (v: number) => formatNumber(v, lang);
-  const velocity = useMemo<EChartsOption>(
-    () => ({
-      tooltip: { trigger: 'axis' },
-      legend: axes.legend,
-      grid: axes.grid,
-      xAxis: {
-        type: 'category',
-        data: metrics.velocity.map((v) => t('charts.sprintN', { n: formatNumber(v.number, lang) })),
-        inverse: axes.rtl,
-      },
-      yAxis: axes.yAxis,
-      series: [
-        {
-          name: t('sprints.committed'),
-          type: 'bar',
-          data: metrics.velocity.map((v) => v.committed),
-          itemStyle: { color: colours.committed },
-        },
-        {
-          name: t('sprints.completed'),
-          type: 'bar',
-          data: metrics.velocity.map((v) => v.completed),
-          itemStyle: { color: colours.completed },
-        },
-      ],
-    }),
-    [metrics.velocity, axes.legend, axes.grid, axes.rtl, axes.yAxis, lang, t],
+  const velocity = useMemo(
+    () =>
+      barOption({
+        categories: metrics.velocity.map((v) => ({
+          key: String(v.number),
+          label: t('charts.sprintN', { n: f(v.number) }),
+        })),
+        series: [
+          {
+            name: t('sprints.committed'),
+            values: metrics.velocity.map((v) => v.committed),
+            color: colours.committed,
+          },
+          {
+            name: t('sprints.completed'),
+            values: metrics.velocity.map((v) => v.completed),
+            color: colours.completed,
+          },
+        ],
+        integer: true,
+        format: f,
+        categoryHeader: t('sprints.number'),
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [metrics.velocity, lang, t],
   );
-  const flow = useMemo<EChartsOption>(
-    () => ({
-      tooltip: { trigger: 'axis' },
-      legend: axes.legend,
-      grid: axes.grid,
-      xAxis: {
-        type: 'category',
-        boundaryGap: false,
-        data: metrics.cumulativeFlow.map((p) => formatDate(p.date, lang)),
-        inverse: axes.rtl,
-      },
-      yAxis: axes.yAxis,
-      series: (
-        [
-          ['done', t('category.done'), (p: (typeof metrics.cumulativeFlow)[number]) => p.done],
-          ['doing', t('category.doing'), (p: (typeof metrics.cumulativeFlow)[number]) => p.doing],
-          ['todo', t('category.todo'), (p: (typeof metrics.cumulativeFlow)[number]) => p.toDo],
-        ] as const
-      ).map(([key, name, pick]) => ({
-        name,
-        type: 'line' as const,
-        stack: 'flow',
-        areaStyle: { color: colours[key] },
-        itemStyle: { color: colours[key] },
-        symbol: 'none',
-        data: metrics.cumulativeFlow.map(pick),
-      })),
-    }),
-    [metrics, axes.legend, axes.grid, axes.rtl, axes.yAxis, lang, t],
+  const flow = useMemo(
+    () =>
+      lineOption({
+        categories: metrics.cumulativeFlow.map((p) => ({ key: p.date, label: formatDate(p.date, lang) })),
+        series: [
+          {
+            name: t('category.done'),
+            values: metrics.cumulativeFlow.map((p) => p.done),
+            color: colours.done,
+            area: true,
+            stack: 'flow',
+            noSymbol: true,
+          },
+          {
+            name: t('category.doing'),
+            values: metrics.cumulativeFlow.map((p) => p.doing),
+            color: colours.doing,
+            area: true,
+            stack: 'flow',
+            noSymbol: true,
+          },
+          {
+            name: t('category.todo'),
+            values: metrics.cumulativeFlow.map((p) => p.toDo),
+            color: colours.todo,
+            area: true,
+            stack: 'flow',
+            noSymbol: true,
+          },
+        ],
+        integer: true,
+        format: f,
+        categoryHeader: t('charts.date'),
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [metrics.cumulativeFlow, lang, t],
   );
-  const cycle = useMemo<EChartsOption>(
-    () => ({
-      tooltip: { trigger: 'axis' },
-      grid: { ...axes.grid, top: 16 },
-      xAxis: { type: 'category', data: metrics.cycleTimes.map((c) => c.code), inverse: axes.rtl },
-      yAxis: { ...axes.yAxis, minInterval: undefined, name: t('charts.days') },
-      series: [
-        {
-          name: t('charts.days'),
-          type: 'bar',
-          data: metrics.cycleTimes.map((c) => c.days),
-          itemStyle: { color: colours.remaining },
-          ...(metrics.averageCycleTime !== null
-            ? {
-                markLine: {
-                  symbol: 'none',
-                  data: [{ yAxis: metrics.averageCycleTime }],
-                  label: { formatter: () => formatNumber(metrics.averageCycleTime ?? 0, lang) },
-                },
-              }
-            : {}),
-        },
-      ],
-    }),
-    [metrics.cycleTimes, metrics.averageCycleTime, axes.grid, axes.rtl, axes.yAxis, lang, t],
+  const cycle = useMemo(
+    () =>
+      barOption({
+        categories: metrics.cycleTimes.map((c) => ({ key: c.code, label: c.code })),
+        series: [
+          { name: t('charts.days'), values: metrics.cycleTimes.map((c) => c.days), color: colours.remaining },
+        ],
+        showValues: false,
+        format: f,
+        valueName: t('charts.days'),
+        categoryHeader: t('charts.story'),
+        ...(metrics.averageCycleTime !== null
+          ? {
+              markLine: {
+                value: metrics.averageCycleTime,
+                label: f(Math.round(metrics.averageCycleTime * 10) / 10),
+              },
+            }
+          : {}),
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [metrics.cycleTimes, metrics.averageCycleTime, lang, t],
   );
   return (
     <div className="grid gap-4 lg:grid-cols-2">
-      <ChartCard
-        title={t('charts.velocity')}
-        testId="sprint-velocity"
-        table={
-          metrics.velocity.length > 0 && (
-            <DataTable
-              head={[t('sprints.number'), t('sprints.committed'), t('sprints.completed')]}
-              rows={metrics.velocity.map((v) => [f(v.number), f(v.committed), f(v.completed)])}
-            />
-          )
-        }
-      >
+      <ChartCard title={t('charts.velocity')} testId="sprint-velocity">
         {metrics.velocity.length === 0 ? (
           <p className="text-sm text-muted-foreground">{t('charts.noData')}</p>
         ) : (
-          <EChart option={velocity} height={240} label={t('charts.velocityLabel')} />
+          <Chart {...velocity} height={240} label={t('charts.velocityLabel')} />
         )}
       </ChartCard>
 
@@ -979,43 +889,19 @@ function MetricsPanels({ metrics, releases }: { metrics: AgileMetrics; releases:
             ? t('charts.averageCycle', { value: f(Math.round(metrics.averageCycleTime * 10) / 10) })
             : undefined
         }
-        table={
-          metrics.cycleTimes.length > 0 && (
-            <DataTable
-              head={[t('charts.story'), t('charts.days')]}
-              rows={metrics.cycleTimes.map((c) => [c.code, f(c.days)])}
-            />
-          )
-        }
       >
         {metrics.cycleTimes.length === 0 ? (
           <p className="text-sm text-muted-foreground">{t('charts.noData')}</p>
         ) : (
-          <EChart option={cycle} height={240} label={t('charts.cycleTimeLabel')} />
+          <Chart {...cycle} height={240} label={t('charts.cycleTimeLabel')} />
         )}
       </ChartCard>
 
-      <ChartCard
-        title={t('charts.flow')}
-        testId="sprint-cumulative-flow"
-        table={
-          metrics.cumulativeFlow.length > 0 && (
-            <DataTable
-              head={[t('charts.date'), t('category.todo'), t('category.doing'), t('category.done')]}
-              rows={metrics.cumulativeFlow.map((p) => [
-                formatDate(p.date, lang),
-                f(p.toDo),
-                f(p.doing),
-                f(p.done),
-              ])}
-            />
-          )
-        }
-      >
+      <ChartCard title={t('charts.flow')} testId="sprint-cumulative-flow">
         {metrics.cumulativeFlow.length === 0 ? (
           <p className="text-sm text-muted-foreground">{t('charts.noData')}</p>
         ) : (
-          <EChart option={flow} height={240} label={t('charts.flowLabel')} />
+          <Chart {...flow} height={240} label={t('charts.flowLabel')} />
         )}
       </ChartCard>
 
@@ -1044,52 +930,33 @@ function MetricsPanels({ metrics, releases }: { metrics: AgileMetrics; releases:
 function BurnupChart({ name, points }: { name: string; points: AgileMetrics['burnup'][number]['points'] }) {
   const { t, i18n } = useTranslation('agile');
   const lang = i18n.language;
-  const axes = useAxes();
-  const option = useMemo<EChartsOption>(
-    () => ({
-      tooltip: { trigger: 'axis' },
-      legend: axes.legend,
-      grid: axes.grid,
-      xAxis: { type: 'category', data: points.map((p) => p.label), inverse: axes.rtl },
-      yAxis: axes.yAxis,
-      series: [
-        {
-          name: t('charts.scope'),
-          type: 'line',
-          step: 'end',
-          data: points.map((p) => p.scope),
-          itemStyle: { color: colours.scope },
-          lineStyle: { type: 'dashed', color: colours.scope },
-        },
-        {
-          name: t('charts.done'),
-          type: 'line',
-          data: points.map((p) => p.done),
-          areaStyle: { color: colours.done, opacity: 0.2 },
-          itemStyle: { color: colours.done },
-        },
-      ],
-    }),
-    [points, axes.legend, axes.grid, axes.rtl, axes.yAxis, t],
+  const spec = useMemo(
+    () =>
+      lineOption({
+        categories: points.map((p) => ({ key: p.date, label: p.label })),
+        series: [
+          {
+            name: t('charts.scope'),
+            values: points.map((p) => p.scope),
+            color: colours.scope,
+            dashed: true,
+            step: true,
+          },
+          { name: t('charts.done'), values: points.map((p) => p.done), color: colours.done, area: true },
+        ],
+        integer: true,
+        edgeToEdge: false,
+        format: (v) => formatNumber(v, lang),
+        categoryHeader: t('charts.date'),
+      }),
+    [points, lang, t],
   );
   return (
-    <ChartCard
-      title={`${t('charts.burnup')} · ${name}`}
-      table={
-        <DataTable
-          head={[t('charts.date'), t('charts.done'), t('charts.scope')]}
-          rows={points.map((p) => [
-            `${p.label} (${formatDate(p.date, lang)})`,
-            formatNumber(p.done, lang),
-            formatNumber(p.scope, lang),
-          ])}
-        />
-      }
-    >
+    <ChartCard title={`${t('charts.burnup')} · ${name}`}>
       {points.length === 0 ? (
         <p className="text-sm text-muted-foreground">{t('charts.noData')}</p>
       ) : (
-        <EChart option={option} height={240} label={t('charts.burnupLabel', { name })} />
+        <Chart {...spec} height={240} label={t('charts.burnupLabel', { name })} />
       )}
     </ChartCard>
   );

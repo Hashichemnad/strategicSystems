@@ -115,10 +115,12 @@ export function useTaskGroup(id: string) {
   });
 }
 
-export function useTaskDashboard() {
+export function useTaskDashboard(range?: { from: string; to: string }) {
   return useQuery({
-    queryKey: taskKeys.dashboard(),
-    queryFn: async ({ signal }) => unwrap(await api.GET('/api/v1/tasks/dashboard', { signal })),
+    queryKey: [...taskKeys.dashboard(), range ?? null],
+    queryFn: async ({ signal }) =>
+      unwrap(await api.GET('/api/v1/tasks/dashboard', { params: { query: range ?? {} }, signal })),
+    placeholderData: keepPreviousData,
   });
 }
 

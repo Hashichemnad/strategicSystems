@@ -141,7 +141,7 @@ export function useCapOptions() {
   });
 }
 
-export function useCapDashboard(query: { unitId?: string; year?: number }) {
+export function useCapDashboard(query: { unitId?: string; year?: number; from?: string; to?: string }) {
   return useQuery({
     queryKey: [...capKeys.all, 'dashboard', query],
     queryFn: async ({ signal }) =>

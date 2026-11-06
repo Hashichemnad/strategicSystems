@@ -8,6 +8,7 @@ using Strategy.Modules.Cap.Contracts;
 using Strategy.Modules.Cap.Infrastructure;
 using Strategy.Modules.Cap.Jobs;
 using Strategy.Modules.Cap.Mcp;
+using Strategy.Modules.Cap.Reporting;
 using Strategy.Modules.Kpi.Contracts;
 using Strategy.Modules.Risk.Contracts;
 using Strategy.Platform.Access;
@@ -19,6 +20,7 @@ using Strategy.Platform.Kernel;
 using Strategy.Platform.Links;
 using Strategy.Platform.Notifications;
 using Strategy.Platform.Persistence;
+using Strategy.Platform.Reporting;
 using Strategy.Platform.Scheduling;
 using Strategy.Platform.Settings;
 using Strategy.Platform.Workflow;
@@ -64,6 +66,10 @@ public sealed class CapModule : IModule
         services.AddCurrentStatusProvider<RemarkCurrentStatus>();
         services.AddCurrentStatusProvider<ActionCurrentStatus>();
         services.AddMyWorkSource<CapMyWork>();
+        services.AddReportingMetricSource<CapMetricSource>();
+        services.AddReportingListSource<CapListSource>();
+        services.AddReportingDatasetSource<CapDatasetSource>();
+        services.AddMyWorkCardSource<CapMyWorkCards>();
 
         services.AddFilePurpose(CapFilePurposes.SourceDocument);
         services.AddFilePurpose(CapFilePurposes.RootCause);

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using Strategy.Platform.Access;
 using Strategy.Platform.Access.Application;
 using Strategy.Platform.AI.Application;
@@ -28,14 +29,34 @@ internal static partial class Bootstrap
     {
         var email = Argument(args, "--email");
         var passwordFile = Argument(args, "--password-file");
-        if (email is null || passwordFile is null || !File.Exists(passwordFile))
+        if (email is null || passwordFile is null || (!File.Exists(passwordFile) && passwordFile != "/dev/stdin"))
         {
             await output.WriteLineAsync("Usage: --create-admin --email <email> --password-file <file containing the password>");
             return 2;
         }
 
-        var password = (await File.ReadAllTextAsync(passwordFile)).TrimEnd('\r', '\n');
-        await services.GetRequiredService<ModuleMigrator>().MigrateAllAsync();
+        string password;
+        try
+        {
+            password = (await File.ReadAllTextAsync(passwordFile)).TrimEnd('\r', '\n');
+        }
+        catch (UnauthorizedAccessException)
+        {
+            // In the container the application runs as a non-root user: a root-only (chmod 600) file mounted from the host is unreadable.
+            await output.WriteLineAsync($"The password file {passwordFile} cannot be read by this process. Pass the password on standard input instead (--password-file /dev/stdin), see deploy/README.md.");
+            return 2;
+        }
+
+
+        // Never migrate here: the application role may not create schemas on a two-role install (ADR 0018). Program applies pending
+        // migrations as the owner first when ConnectionStrings:StrategyMigrations is configured; otherwise `--migrate` must run first.
+        if (await services.GetRequiredService<ModuleMigrator>().HasPendingMigrationsAsync())
+        {
+            await output.WriteLineAsync(
+                "The database is not up to date. Run --migrate first (as the owner role: ConnectionStrings__StrategyMigrations), then --create-admin.");
+            return 3;
+        }
+
         await using var scope = services.CreateAsyncScope();
         scope.ServiceProvider.GetRequiredService<RequestContext>().Initialise(Guid.CreateVersion7().ToString("N"), Channels.System, StrategyClaims.CreateSystemPrincipal());
         await scope.ServiceProvider.GetRequiredService<IdentitySettingsCache>().ReloadAsync();
@@ -63,6 +84,23 @@ internal static partial class Bootstrap
 
         await output.WriteLineAsync($"System administrator {email} created. Multi-factor sign-in is set up at the first sign-in.");
         return 0;
+    }
+
+    /// <summary>
+    /// True when <c>ConnectionStrings:StrategyMigrations</c> names another database role than <c>ConnectionStrings:Strategy</c> (two-role
+    /// install, ADR 0018): migrations must then run on that owner connection, never on the runtime one.
+    /// </summary>
+    public static bool HasSeparateOwnerConnection(IConfiguration configuration)
+    {
+        var owner = configuration.GetConnectionString(PersistenceServiceCollectionExtensions.MigrationsConnectionStringName);
+        if (string.IsNullOrWhiteSpace(owner))
+        {
+            return false;
+        }
+
+        var runtime = configuration.GetConnectionString(PersistenceServiceCollectionExtensions.ConnectionStringName);
+        return string.IsNullOrWhiteSpace(runtime) ||
+            !string.Equals(new NpgsqlConnectionStringBuilder(owner).Username, new NpgsqlConnectionStringBuilder(runtime).Username, StringComparison.Ordinal);
     }
 
     /// <summary>
@@ -187,6 +225,9 @@ internal static partial class Bootstrap
                          "requests.office", "requests.type-administrator", "docreg.office", "docreg.administrator", "ip.office", "ip.administrator",
                          "risk.risk-office", "risk.risk-committee", "cap.cap-office", "bench.bench-office", "auditmgmt.audit-office",
                          "auditmgmt.audit-committee",
+
+                         // Phase 17: Mariam is the demo Director General — executive dashboard, AI brief, dashboard and report builder.
+                         "reporting.executive-viewer", "reporting.administrator", "reporting.report-author",
                      })
             {
                 await AccessGrants.AssignRoleAsync(provider, role, AccessGrants.User, adminUser.Id);

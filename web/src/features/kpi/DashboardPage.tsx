@@ -2,11 +2,25 @@ import { Link } from '@tanstack/react-router';
 import { Download, Sparkles } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSystemDashboard } from '@/features/reporting/SystemDashboard';
 import { errorMessage } from '@/api/problem';
 import { useCan } from '@/features/access/session';
 import { useAiFeature } from '@/features/ai/api';
 import { formatNumber, pickText } from '@/lib/format';
-import { Button, PageHeader, Select, Skeleton, StatusBanner, StatusChip, useToast } from '@/ui';
+import {
+  Button,
+  CountChart,
+  Select,
+  Skeleton,
+  StatusBanner,
+  StatusChip,
+  Tile,
+  useToast,
+  DashboardFrame,
+  OptionalPeriodSelector,
+  periodToDates,
+  type PeriodValue,
+} from '@/ui';
 import {
   currentYear,
   exportUrl,
@@ -16,7 +30,7 @@ import {
   useKpiOptions,
   type KpiDashboard,
 } from './api';
-import { Bars, KpiPage, PerformanceValue, RagChip, ScoreBar, useKpiT, yearOptions } from './components';
+import { KpiPage, PerformanceValue, RagChip, ScoreBar, useKpiT, yearOptions } from './components';
 import { DataQualityTable } from './ReportsPage';
 
 /** KPI home dashboard (SPEC §2.5): totals, by type / department / objective, achievement distribution, backlog, top / bottom performers. */
@@ -25,18 +39,22 @@ export function KpiDashboardPage() {
   const { t: tc } = useTranslation();
   const { k, language } = useKpiT();
   const [year, setYear] = useState(currentYear());
-  const dashboard = useKpiDashboard(year);
+  const [period, setPeriod] = useState<PeriodValue | null>(null);
+  const range = period ? periodToDates(period) : undefined;
+  const dashboard = useKpiDashboard(year, range);
+  const system = useSystemDashboard('kpi.scorecard', period);
   const canExport = useCan('kpi.report.export');
   const label = (row: { key: string; labelAr?: string | null; labelEn?: string | null }) =>
     pickText(language, row.labelAr, row.labelEn) || row.key;
 
   return (
     <KpiPage testId="kpi-dashboard">
-      <PageHeader
+      <DashboardFrame
         title={t('dashboard.title')}
         description={t('dashboard.description')}
-        actions={
-          <div className="flex flex-wrap items-center gap-2">
+        exports={system.exports}
+        filters={
+          <>
             <Select
               aria-label={t('common.year')}
               value={String(year)}
@@ -44,6 +62,12 @@ export function KpiDashboardPage() {
               options={yearOptions(currentYear())}
               className="w-28"
             />
+            <OptionalPeriodSelector value={period} onChange={setPeriod} allowCompare={false} />
+          </>
+        }
+        actions={
+          <div className="flex flex-wrap items-center gap-2">
+            {system.action}
             {canExport && (
               <Button variant="outline" size="sm" asChild>
                 <a href={exportUrl('scorecard', 'xlsx', language, { year: String(year) })}>
@@ -54,49 +78,50 @@ export function KpiDashboardPage() {
             )}
           </div>
         }
-      />
-      {dashboard.isError && <StatusBanner tone="danger" title={errorMessage(tc, dashboard.error)} />}
-      {dashboard.isPending ? (
-        <Skeleton className="h-96 rounded-lg" />
-      ) : (
-        dashboard.data && (
-          <>
-            <Tiles data={dashboard.data} />
-            <div className="grid gap-4 lg:grid-cols-2">
-              <Bars
-                title={t('dashboard.achievement')}
-                testId="kpi-achievement"
-                rows={dashboard.data.achievement.map((r) => ({
-                  key: r.key,
-                  label: k(`dashboard.achievementKeys.${r.key}`),
-                  value: r.count,
-                }))}
-              />
-              <Bars
-                title={t('dashboard.byType')}
-                rows={dashboard.data.byType.map((r) => ({ key: r.key, label: label(r), value: r.count }))}
-              />
-              <ScoredList
-                title={t('dashboard.byDepartment')}
-                rows={dashboard.data.byDepartment}
-                label={label}
-              />
-              <ScoredList
-                title={t('dashboard.byObjective')}
-                rows={dashboard.data.byObjective}
-                label={label}
-              />
-              <Performers title={t('dashboard.top')} rows={dashboard.data.top} />
-              <Performers title={t('dashboard.bottom')} rows={dashboard.data.bottom} />
-            </div>
-            <section className="flex flex-col gap-3 rounded-lg border bg-card p-5">
-              <h2 className="font-semibold">{t('reports.dataQuality')}</h2>
-              <DataQualityTable year={year} />
-            </section>
-            <Narrative year={year} />
-          </>
-        )
-      )}
+      >
+        {dashboard.isError && <StatusBanner tone="danger" title={errorMessage(tc, dashboard.error)} />}
+        {dashboard.isPending ? (
+          <Skeleton className="h-96 rounded-lg" />
+        ) : (
+          dashboard.data && (
+            <>
+              <Tiles data={dashboard.data} />
+              <div className="grid gap-4 lg:grid-cols-2">
+                <CountChart
+                  title={t('dashboard.achievement')}
+                  testId="kpi-achievement"
+                  rows={dashboard.data.achievement.map((r) => ({
+                    key: r.key,
+                    label: k(`dashboard.achievementKeys.${r.key}`),
+                    value: r.count,
+                  }))}
+                />
+                <CountChart
+                  title={t('dashboard.byType')}
+                  rows={dashboard.data.byType.map((r) => ({ key: r.key, label: label(r), value: r.count }))}
+                />
+                <ScoredList
+                  title={t('dashboard.byDepartment')}
+                  rows={dashboard.data.byDepartment}
+                  label={label}
+                />
+                <ScoredList
+                  title={t('dashboard.byObjective')}
+                  rows={dashboard.data.byObjective}
+                  label={label}
+                />
+                <Performers title={t('dashboard.top')} rows={dashboard.data.top} />
+                <Performers title={t('dashboard.bottom')} rows={dashboard.data.bottom} />
+              </div>
+              <section className="flex flex-col gap-3 rounded-lg border bg-card p-5">
+                <h2 className="font-semibold">{t('reports.dataQuality')}</h2>
+                <DataQualityTable year={year} />
+              </section>
+              <Narrative year={year} />
+            </>
+          )
+        )}
+      </DashboardFrame>
     </KpiPage>
   );
 }
@@ -104,36 +129,22 @@ export function KpiDashboardPage() {
 function Tiles({ data }: { data: KpiDashboard }) {
   const { t, i18n } = useTranslation('kpi');
   const n = (v: number) => formatNumber(v, i18n.language);
-  const tiles: [string, React.ReactNode, string?][] = [
-    [t('dashboard.totalCards'), `${n(data.activeCards)} / ${n(data.totalCards)}`],
-    [
-      t('dashboard.organisationScore'),
-      <span key="score" className="flex items-center gap-2">
-        <PerformanceValue capped={data.organisationScore} />
-        <RagChip rag={data.organisationRag} />
-      </span>,
-    ],
-    [t('dashboard.pendingUpdates'), n(data.pendingUpdates), '/kpi/pending'],
-    [t('dashboard.overdue'), n(data.overdue)],
-    [t('dashboard.approvalBacklog'), n(data.approvalBacklog), '/kpi/approvals'],
-    [t('dashboard.approvedResults'), n(data.approvedResults)],
-  ];
   return (
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3" data-testid="kpi-tiles">
-      {tiles.map(([title, value, to]) => (
-        <div key={title} className="flex flex-col gap-1 rounded-lg border bg-card p-4">
-          <span className="text-sm text-muted-foreground">
-            {to ? (
-              <Link to={to as '/kpi/pending'} className="text-primary hover:underline">
-                {title}
-              </Link>
-            ) : (
-              title
-            )}
+      <Tile label={t('dashboard.totalCards')} value={`${n(data.activeCards)} / ${n(data.totalCards)}`} />
+      <Tile
+        label={t('dashboard.organisationScore')}
+        value={
+          <span className="flex items-center gap-2">
+            <PerformanceValue capped={data.organisationScore} />
+            <RagChip rag={data.organisationRag} />
           </span>
-          <span className="text-2xl font-semibold tabular-nums">{value}</span>
-        </div>
-      ))}
+        }
+      />
+      <Tile label={t('dashboard.pendingUpdates')} value={data.pendingUpdates} to="/kpi/pending" />
+      <Tile label={t('dashboard.overdue')} value={data.overdue} />
+      <Tile label={t('dashboard.approvalBacklog')} value={data.approvalBacklog} to="/kpi/approvals" />
+      <Tile label={t('dashboard.approvedResults')} value={data.approvedResults} />
     </div>
   );
 }
