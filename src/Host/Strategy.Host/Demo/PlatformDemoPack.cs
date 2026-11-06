@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Identity;
 using Strategy.Platform.Access.Application;
 using Strategy.Platform.Identity.Application;
 using Strategy.Platform.Identity.Domain;
