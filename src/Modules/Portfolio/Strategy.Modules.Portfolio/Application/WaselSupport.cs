@@ -264,6 +264,14 @@ internal sealed class VendorSignInPolicy(PortfolioDbContext db, ISystemState sys
     }
 }
 
+/// <summary>Settings → Portfolio → Wasel → "UAE Pass for vendors" (ADR 0154), only while the Wasel system is on.</summary>
+internal sealed class VendorUaePassPolicy(Strategy.Platform.Settings.ISettingsStore settings, ISystemState systems) : Strategy.Platform.Identity.Wasel.IVendorUaePassPolicy
+{
+    public async Task<bool> IsEnabledAsync(CancellationToken cancellationToken = default) =>
+        await systems.IsEnabledAsync(WaselPermissions.SystemCode, cancellationToken).ConfigureAwait(false)
+        && (await settings.GetAsync<PortfolioSettings>(cancellationToken).ConfigureAwait(false)).Wasel.UaePassForVendors;
+}
+
 /// <summary>The shared supplier register for other modules (ADR 0112).</summary>
 internal sealed class VendorDirectory(PortfolioDbContext db) : IVendorDirectory
 {

@@ -135,7 +135,10 @@ internal static class ExternalEndpoints
         var result = await context.AuthenticateAsync(IdentityConstants.ExternalScheme);
         await context.SignOutAsync(IdentityConstants.ExternalScheme);
         var code = result.Properties?.Items.TryGetValue("provider", out var c) == true ? c : null;
-        if (!result.Succeeded || code is null)
+
+        // A ticket started by the Wasel vendor flow (ADR 0154) never signs anyone in internally.
+        var vendorFlow = result.Properties?.Items.ContainsKey(Wasel.WaselUaePassEndpoints.FlowItem) == true;
+        if (!result.Succeeded || code is null || vendorFlow)
         {
             await events.WriteAsync(AuthEventTypes.ExternalFailed, false, provider: code, detail: "noTicket", cancellationToken: context.RequestAborted);
             return Fail("auth.errors.externalFailed");
@@ -194,7 +197,7 @@ internal static class ExternalEndpoints
             : new ExternalIdentity(subject, Claim("claimEmail"), Claim("claimEmployeeNo"), Claim("claimUserName"), Claim("claimUserType"));
     }
 
-    private static bool UserTypeAllowed(IdentityProvider provider, string? userType)
+    internal static bool UserTypeAllowed(IdentityProvider provider, string? userType)
     {
         var allowed = (provider.Setting("allowedUserTypes") ?? string.Empty).Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         return allowed.Length == 0 || (userType is not null && allowed.Contains(userType, StringComparer.OrdinalIgnoreCase));

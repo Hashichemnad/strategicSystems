@@ -7190,6 +7190,36 @@
         }
       }
     },
+    "/api/wasel/v1/auth/options": {
+      "get": {
+        "tags": [
+          "wasel"
+        ],
+        "operationId": "GetWaselSignInOptions",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WaselSignInOptionsDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/wasel/v1/me": {
       "get": {
         "tags": [
@@ -100167,6 +100197,32 @@
           }
         },
         "description": "Settings → Portfolio → Wasel (docs/design/portfolio.md §49, ADRs 0113 / 0115)."
+      },
+      "WaselSignInOptionsDto": {
+        "required": [
+          "uaePass",
+          "uaePassNameAr",
+          "uaePassNameEn"
+        ],
+        "type": "object",
+        "properties": {
+          "uaePass": {
+            "type": "boolean"
+          },
+          "uaePassNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "uaePassNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "description": "Sign-in options the Wasel login page shows (public: says only whether the UAE Pass button is offered)."
       },
       "WidgetConfig": {
         "type": "object",

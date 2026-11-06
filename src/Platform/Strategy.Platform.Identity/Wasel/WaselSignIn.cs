@@ -172,6 +172,38 @@ internal sealed class WaselSignInService(
             : new SignInOutcome(SignInStatuses.MfaRequired, await signIn.AvailableMethodsAsync(user).ConfigureAwait(false));
     }
 
+    /// <summary>
+    /// First factor completed by an external provider (UAE Pass, ADR 0154): the same checks as the password path (vendor, active, may enter, not
+    /// locked out), then the half-signed-in state — the second factor is still required. Returns the failure detail for the audit trail.
+    /// </summary>
+    public async Task<(SignInOutcome? Outcome, string? Failure)> ExternalFirstFactorAsync(StrategyUser? user, string provider, string login, CancellationToken ct)
+    {
+        if (user is null || user.PrincipalType != StrategyClaims.VendorPrincipal)
+        {
+            await events.WriteAsync(AuthEventTypes.ExternalFailed, false, user?.Id, login, provider, "noVendorAccount", ct).ConfigureAwait(false);
+            return (null, "noVendorAccount");
+        }
+
+        if (await users.IsLockedOutAsync(user).ConfigureAwait(false))
+        {
+            await events.WriteAsync(AuthEventTypes.LockedOut, false, user.Id, login, provider, cancellationToken: ct).ConfigureAwait(false);
+            return (null, "lockedOut");
+        }
+
+        if (!user.Active || !await MayEnterAsync(user.Id, ct).ConfigureAwait(false))
+        {
+            await events.WriteAsync(AuthEventTypes.ExternalFailed, false, user.Id, login, provider, "notAllowed", ct).ConfigureAwait(false);
+            return (null, "notAllowed");
+        }
+
+        var enrolment = !user.TwoFactorEnabled;
+        await SignInTwoFactorStateAsync(user, enrolment).ConfigureAwait(false);
+        await events.WriteAsync(AuthEventTypes.MfaChallenge, true, user.Id, user.UserName, provider, enrolment ? "enrolmentRequired" : null, ct).ConfigureAwait(false);
+        return (enrolment
+            ? new SignInOutcome(SignInStatuses.MfaEnrolmentRequired, EnrolmentMethods())
+            : new SignInOutcome(SignInStatuses.MfaRequired, await signIn.AvailableMethodsAsync(user).ConfigureAwait(false)), null);
+    }
+
     public async Task<Result<SignInOutcome>> VerifyAsync(string method, string code, CancellationToken ct)
     {
         var (user, enrolment) = await TwoFactorStateAsync().ConfigureAwait(false);
@@ -340,6 +372,7 @@ internal static class WaselAuthEndpoints
         auth.MapPost("/password/forgot", ForgotAsync).WithName("WaselForgotPassword").AsPublic().RequireRateLimiting(AuthEndpoints.RateLimitPolicy);
         auth.MapPost("/password/reset", ResetAsync).WithName("WaselResetPassword").AsPublic().RequireRateLimiting(AuthEndpoints.RateLimitPolicy);
         auth.MapPost("/logout", LogoutAsync).WithName("WaselLogout").RequireSignedIn();
+        WaselUaePassEndpoints.Map(auth);
         group.MapGet("/me", MeAsync).WithName("GetWaselMe").RequireSignedIn();
         group.MapPut("/me/preferences", PreferencesAsync).WithName("UpdateWaselPreferences").RequireSignedIn();
     }

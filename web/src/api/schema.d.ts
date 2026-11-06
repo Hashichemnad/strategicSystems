@@ -2308,6 +2308,22 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/wasel/v1/auth/options': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetWaselSignInOptions'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/wasel/v1/me': {
     parameters: {
       query?: never;
@@ -26411,6 +26427,12 @@ export interface components {
       uaePassForVendors?: boolean;
       visibleFields?: components['schemas']['VendorVisibleFields'];
     };
+    /** @description Sign-in options the Wasel login page shows (public: says only whether the UAE Pass button is offered). */
+    WaselSignInOptionsDto: {
+      uaePass: boolean;
+      uaePassNameAr: null | string;
+      uaePassNameEn: null | string;
+    };
     /**
      * @description One widget of a dashboard definition (ADR 0143). Grid: 12 columns, `X` / `Y` / `W` / `H` in grid units.
      *     `Dimension`: breakdown (category axis, table rows, heat-map rows); `Series`: second breakdown (stacks, heat-map columns).
@@ -32014,6 +32036,35 @@ export interface operations {
           [name: string]: unknown;
         };
         content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetWaselSignInOptions: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['WaselSignInOptionsDto'];
+        };
       };
       /** @description Problem Details (RFC 9457) */
       default: {

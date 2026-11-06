@@ -527,7 +527,10 @@ const waselRoot = createRoute({
 export const waselLoginRoute = createRoute({
   getParentRoute: () => waselRoot,
   path: '/wasel/login',
-  validateSearch: z.object({ redirect: redirectParam }),
+  validateSearch: z.object({
+    redirect: redirectParam,
+    error: z.string().max(100).optional().catch(undefined),
+  }),
   component: lazyRouteComponent(() => import('@/features/wasel/WaselAuthPages'), 'WaselLoginPage'),
 });
 
