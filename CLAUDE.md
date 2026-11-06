@@ -247,6 +247,8 @@ tools/check-vulnerable.sh && tools/check-api-client.sh
 cd web && npm run lint && npm run format:check && npm run typecheck && npm test
 npm run build && npm audit --audit-level=high && npm run lint:licenses
 npx playwright test                                                           # E2E, projects "ar" and "en" (needs postgres + mailpit + gotenberg; starts the host)
+npx playwright test -c playwright.setup.config.ts                             # setup wizard E2E on empty databases (psql on PATH; built host + SPA)
+dotnet run --project src/Host/Strategy.Host -- --setup-token                  # new one-time setup token for /setup while no administrator exists (ADR 0150)
 # E2E screenshots go to docs/screenshots/$E2E_SCREENSHOTS (default phase-4); Phase 17: E2E_SCREENSHOTS=phase-17 npx playwright test e2e/reporting.spec.ts (after the other specs, so every system has data). A sandbox Chromium of another revision: E2E_CHROMIUM_PATH=/opt/pw-browsers/chromium
 # The Teams E2E renders the generated memo / certificate PDFs to PNG with pdftoppm (poppler-utils, test machine only)
 

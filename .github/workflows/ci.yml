@@ -123,6 +123,9 @@ jobs:
       - name: Playwright (projects ar and en)
         working-directory: web
         run: npx playwright test
+      - name: Playwright first-run setup wizard on an empty database (ar and en, ADR 0150)
+        working-directory: web
+        run: npx playwright test -c playwright.setup.config.ts
       - name: Upload report and screenshots
         if: always()
         uses: actions/upload-artifact@v4
