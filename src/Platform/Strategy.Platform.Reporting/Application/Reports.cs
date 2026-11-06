@@ -407,6 +407,11 @@ public sealed class ReportService(
             return Error.Forbidden();
         }
 
+        if (input is null)
+        {
+            return Error.Validation([new FieldError("report", "validation.required", "validation.required")]);
+        }
+
         if (string.IsNullOrWhiteSpace(input.Name) || input.Name.Length > 200 || (input.Description?.Length ?? 0) > 1000 || input.Definition is null)
         {
             return Error.Validation([new FieldError("name", "reporting.errors.name", "reporting.errors.name")]);

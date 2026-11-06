@@ -125,6 +125,11 @@ internal sealed class YearHandlers(
             return Error.Validation([new FieldError("year", "validation.invalid", "validation.invalid")]);
         }
 
+        if (command.Items is null)
+        {
+            return Error.Validation([new FieldError("items", "validation.required", "validation.required")]);
+        }
+
         if (!await CanManageAsync(cancellationToken).ConfigureAwait(false))
         {
             return Error.Forbidden();
@@ -228,6 +233,11 @@ internal sealed class YearHandlers(
         if (!await CanManageAsync(cancellationToken).ConfigureAwait(false))
         {
             return Error.Forbidden();
+        }
+
+        if (command.Windows is null)
+        {
+            return Error.Validation([new FieldError("windows", "validation.required", "validation.required")]);
         }
 
         var errors = new List<FieldError>();
