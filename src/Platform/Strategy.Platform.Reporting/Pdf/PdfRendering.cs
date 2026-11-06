@@ -2,6 +2,8 @@ using System.Net.Http.Headers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Strategy.Platform.Http.Health;
 
 namespace Strategy.Platform.Reporting.Pdf;
@@ -30,8 +32,18 @@ public sealed class GotenbergOptions
 /// <c>POST /forms/chromium/convert/html</c>: <c>index.html</c> plus the font files, A4, backgrounds printed. Chromium shapes Arabic
 /// (joining, ligatures, bidi) itself, which is why PDFs go through it rather than a .NET PDF library.
 /// </summary>
-internal sealed class GotenbergPdfRenderer(HttpClient http, GotenbergOptions options) : IPdfRenderer
+internal sealed partial class GotenbergPdfRenderer(HttpClient http, GotenbergOptions options, ILogger<GotenbergPdfRenderer>? logger = null)
+    : IPdfRenderer
 {
+    /// <summary>
+    /// Back-off before the second and third attempt. Gotenberg answers 503 while it restarts Chromium (by default after every 10 conversions)
+    /// or when a conversion waits too long under concurrent load; such failures pass within seconds, so a business PDF is retried twice
+    /// instead of failing the user's export.
+    /// </summary>
+    internal static readonly TimeSpan[] RetryDelays = [TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(3)];
+
+    private readonly ILogger _logger = logger ?? (ILogger)NullLogger.Instance;
+
     public async Task<byte[]> RenderAsync(string html, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(options.Url))
@@ -39,7 +51,45 @@ internal sealed class GotenbergPdfRenderer(HttpClient http, GotenbergOptions opt
             throw new PdfRenderingException("reporting.errors.pdfNotConfigured");
         }
 
-        using var form = new MultipartFormDataContent();
+        var endpoint = new Uri(new Uri(options.Url.TrimEnd('/') + "/"), "forms/chromium/convert/html");
+        for (var attempt = 0; ; attempt++)
+        {
+            var last = attempt >= RetryDelays.Length;
+            try
+            {
+                using var form = Form(html);
+                using var response = await http.PostAsync(endpoint, form, cancellationToken).ConfigureAwait(false);
+                if (response.IsSuccessStatusCode)
+                {
+                    return await response.Content.ReadAsByteArrayAsync(cancellationToken).ConfigureAwait(false);
+                }
+
+                var status = (int)response.StatusCode;
+                LogFailed(_logger, status, attempt + 1, null);
+                if (last || !IsTransient(status))
+                {
+                    throw new PdfRenderingException("reporting.errors.pdfFailed");
+                }
+            }
+            catch (Exception exception) when (exception is HttpRequestException or TaskCanceledException && !cancellationToken.IsCancellationRequested)
+            {
+                LogFailed(_logger, 0, attempt + 1, exception);
+                if (last)
+                {
+                    throw new PdfRenderingException("reporting.errors.pdfFailed", exception);
+                }
+            }
+
+            await Task.Delay(RetryDelays[attempt], cancellationToken).ConfigureAwait(false);
+        }
+    }
+
+    /// <summary>Busy, restarting or overloaded Gotenberg (or a proxy in front of it); other errors (e.g. 400 for invalid HTML) are final.</summary>
+    internal static bool IsTransient(int status) => status is 429 or 502 or 503 or 504;
+
+    private static MultipartFormDataContent Form(string html)
+    {
+        var form = new MultipartFormDataContent();
         var index = new StringContent(html, System.Text.Encoding.UTF8);
         index.Headers.ContentType = new MediaTypeHeaderValue("text/html") { CharSet = "utf-8" };
         form.Add(index, "files", "index.html");
@@ -54,23 +104,11 @@ internal sealed class GotenbergPdfRenderer(HttpClient http, GotenbergOptions opt
         form.Add(new StringContent("true"), "preferCssPageSize");
         form.Add(new StringContent("8.27"), "paperWidth");
         form.Add(new StringContent("11.7"), "paperHeight");
-
-        try
-        {
-            using var response = await http.PostAsync(new Uri(new Uri(options.Url.TrimEnd('/') + "/"), "forms/chromium/convert/html"), form, cancellationToken)
-                .ConfigureAwait(false);
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new PdfRenderingException("reporting.errors.pdfFailed");
-            }
-
-            return await response.Content.ReadAsByteArrayAsync(cancellationToken).ConfigureAwait(false);
-        }
-        catch (Exception exception) when (exception is HttpRequestException or TaskCanceledException && !cancellationToken.IsCancellationRequested)
-        {
-            throw new PdfRenderingException("reporting.errors.pdfFailed", exception);
-        }
+        return form;
     }
+
+    [LoggerMessage(Level = LogLevel.Warning, Message = "PDF rendering by Gotenberg failed (HTTP status {Status}; 0 = no response), attempt {Attempt}")]
+    private static partial void LogFailed(ILogger logger, int status, int attempt, Exception? exception);
 }
 
 /// <summary>The embedded fonts (IBM Plex Sans Arabic, OFL): file name → bytes, and the matching <c>@font-face</c> rules.</summary>
