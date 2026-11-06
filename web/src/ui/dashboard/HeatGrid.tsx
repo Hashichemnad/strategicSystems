@@ -154,7 +154,6 @@ export function HeatGrid({
                     role="gridcell"
                     tabIndex={focus.row === r && focus.column === c ? 0 : -1}
                     data-testid={value.testId}
-                    aria-label={value.label}
                     aria-selected={active}
                     title={value.label}
                     onFocus={() => setFocus({ row: r, column: c })}
@@ -170,6 +169,11 @@ export function HeatGrid({
                     }
                   >
                     {value.content}
+                    {/* Named by its content: the visible count first, then the full description (WCAG 2.5.3). */}
+                    <span className="sr-only">
+                      {', '}
+                      {value.label}
+                    </span>
                   </button>
                 );
               })}

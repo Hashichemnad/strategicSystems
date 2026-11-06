@@ -1,4 +1,5 @@
 import {
+  Fragment,
   useEffect,
   useId,
   useMemo,
@@ -290,148 +291,168 @@ export function Gantt({
                     ? r.diamond.cx + (rtl ? -r.diamond.size - 4 : r.diamond.size + 4)
                     : null;
                 return (
-                  <g
-                    key={r.row.id}
-                    ref={(element) => {
-                      if (element) rowRefs.current.set(r.row.id, element);
-                      else rowRefs.current.delete(r.row.id);
-                    }}
-                    role="button"
-                    tabIndex={0}
-                    aria-label={summary(r)}
-                    aria-expanded={r.hasChildren ? !r.collapsed : undefined}
-                    data-testid="gantt-row"
-                    data-row-id={r.row.id}
-                    data-delayed={r.row.delayed ? 'true' : undefined}
-                    className="cursor-default outline-none"
-                    onMouseEnter={() => setActive(r.row.id)}
-                    onMouseLeave={() => setActive((current) => (current === r.row.id ? null : current))}
-                    onFocus={() => setActive(r.row.id)}
-                    onBlur={() => setActive((current) => (current === r.row.id ? null : current))}
-                    onKeyDown={(event) => onKey(event, r)}
-                    onClick={() => r.hasChildren && toggle(r.row.id)}
-                  >
-                    <rect
-                      x={0}
-                      y={r.y}
-                      width={layout.width}
-                      height={ROW_HEIGHT}
-                      className={focused ? 'fill-accent' : r.index % 2 ? 'fill-muted' : 'fill-card'}
-                      fillOpacity={focused ? 1 : 0.5}
-                    />
-                    {focused && (
+                  <Fragment key={r.row.id}>
+                    <g
+                      ref={(element) => {
+                        if (element) rowRefs.current.set(r.row.id, element);
+                        else rowRefs.current.delete(r.row.id);
+                      }}
+                      role="button"
+                      tabIndex={0}
+                      aria-label={summary(r)}
+                      aria-expanded={r.hasChildren ? !r.collapsed : undefined}
+                      data-testid="gantt-row"
+                      data-row-id={r.row.id}
+                      data-delayed={r.row.delayed ? 'true' : undefined}
+                      className="cursor-default outline-none"
+                      onMouseEnter={() => setActive(r.row.id)}
+                      onMouseLeave={() => setActive((current) => (current === r.row.id ? null : current))}
+                      onFocus={() => setActive(r.row.id)}
+                      onBlur={() => setActive((current) => (current === r.row.id ? null : current))}
+                      onKeyDown={(event) => onKey(event, r)}
+                      onClick={() => r.hasChildren && toggle(r.row.id)}
+                    >
                       <rect
-                        x={1}
-                        y={r.y + 1}
-                        width={layout.width - 2}
-                        height={ROW_HEIGHT - 2}
-                        fill="none"
-                        className="stroke-ring"
-                        strokeWidth={2}
+                        x={0}
+                        y={r.y}
+                        width={layout.width}
+                        height={ROW_HEIGHT}
+                        className={focused ? 'fill-accent' : r.index % 2 ? 'fill-muted' : 'fill-card'}
+                        fillOpacity={focused ? 1 : 0.5}
                       />
-                    )}
-                    {/* The row's accessible name is its summary (label, dates, achieved, status); the drawn text repeats it. */}
-                    <g clipPath={`url(#${clipId}-labels)`} aria-hidden>
-                      {r.hasChildren && (
-                        <text
-                          x={rtl ? r.labelX + 2 : r.labelX - 2}
-                          y={r.cy + 4}
-                          textAnchor="end"
-                          direction={rtl ? 'rtl' : 'ltr'}
-                          className="fill-muted-foreground"
-                          aria-hidden
-                        >
-                          {r.collapsed ? (rtl ? '◂' : '▸') : '▾'}
-                        </text>
-                      )}
-                      <text
-                        x={r.hasChildren ? (rtl ? r.labelX - 12 : r.labelX + 12) : r.labelX}
-                        y={r.cy + 4}
-                        textAnchor="start"
-                        direction={rtl ? 'rtl' : 'ltr'}
-                        className={r.row.delayed ? 'fill-danger' : 'fill-foreground'}
-                        fontWeight={summaryRow ? 600 : 400}
-                      >
-                        {r.row.delayed ? '⚠ ' : ''}
-                        <tspan className="fill-muted-foreground">{r.row.code}</tspan>{' '}
-                        {pickText(language, r.row.titleAr, r.row.titleEn)}
-                      </text>
-                    </g>
-                    {r.baseline && (
-                      <rect
-                        data-part="baseline"
-                        x={r.baseline.x}
-                        y={r.cy + 6}
-                        width={Math.max(r.baseline.width, 1)}
-                        height={3}
-                        rx={1}
-                        className="fill-muted-foreground"
-                        fillOpacity={0.55}
-                      />
-                    )}
-                    {r.planned && (
-                      <>
+                      {focused && (
                         <rect
-                          data-part="planned"
-                          x={r.planned.x}
-                          y={barY}
-                          width={Math.max(r.planned.width, 1)}
-                          height={barH}
-                          rx={summaryRow ? 2 : 3}
-                          className={
-                            summaryRow
-                              ? 'fill-foreground'
-                              : r.row.kind === 'sprint' || r.row.kind === 'release'
-                                ? 'fill-info-soft stroke-info'
-                                : r.row.delayed
-                                  ? 'fill-danger-soft stroke-danger'
-                                  : 'fill-accent stroke-primary'
-                          }
-                          fillOpacity={summaryRow ? 0.25 : 1}
-                          strokeWidth={1}
-                          strokeDasharray={r.row.delayed ? '4 2' : undefined}
+                          x={1}
+                          y={r.y + 1}
+                          width={layout.width - 2}
+                          height={ROW_HEIGHT - 2}
+                          fill="none"
+                          className="stroke-ring"
+                          strokeWidth={2}
                         />
-                        {r.achievedFill && r.achievedFill.width > 0 && (
+                      )}
+                      {/* The row's accessible name is its summary (label, dates, achieved, status); the drawn text repeats it. */}
+                      <g clipPath={`url(#${clipId}-labels)`} aria-hidden>
+                        {/* Expand / collapse arrow and the delay mark are drawn shapes, not glyphs: the visible text stays
+                          exactly the row's label, which is part of its accessible name (WCAG 2.5.3). */}
+                        {r.hasChildren && (
+                          <polygon
+                            points={disclosureArrow(
+                              rtl ? r.labelX + 6 : r.labelX - 6,
+                              r.cy,
+                              r.collapsed,
+                              rtl,
+                            )}
+                            className="fill-muted-foreground"
+                          />
+                        )}
+                        {r.row.delayed && (
+                          <polygon
+                            points={warningMark(
+                              (r.hasChildren ? (rtl ? r.labelX - 12 : r.labelX + 12) : r.labelX) +
+                                (rtl ? -6 : 6),
+                              r.cy,
+                            )}
+                            className="fill-danger"
+                          />
+                        )}
+                        <text
+                          x={
+                            (r.hasChildren ? (rtl ? r.labelX - 12 : r.labelX + 12) : r.labelX) +
+                            (r.row.delayed ? (rtl ? -16 : 16) : 0)
+                          }
+                          y={r.cy + 4}
+                          textAnchor="start"
+                          direction={rtl ? 'rtl' : 'ltr'}
+                          className={r.row.delayed ? 'fill-danger' : 'fill-foreground'}
+                          fontWeight={summaryRow ? 600 : 400}
+                        >
+                          <tspan className="fill-muted-foreground">{r.row.code}</tspan>{' '}
+                          {pickText(language, r.row.titleAr, r.row.titleEn)}
+                        </text>
+                      </g>
+                      {r.baseline && (
+                        <rect
+                          data-part="baseline"
+                          x={r.baseline.x}
+                          y={r.cy + 6}
+                          width={Math.max(r.baseline.width, 1)}
+                          height={3}
+                          rx={1}
+                          className="fill-muted-foreground"
+                          fillOpacity={0.55}
+                        />
+                      )}
+                      {r.planned && (
+                        <>
                           <rect
-                            data-part="achieved"
-                            x={r.achievedFill.x}
+                            data-part="planned"
+                            x={r.planned.x}
                             y={barY}
-                            width={r.achievedFill.width}
+                            width={Math.max(r.planned.width, 1)}
                             height={barH}
                             rx={summaryRow ? 2 : 3}
                             className={
-                              r.row.delayed ? 'fill-danger' : summaryRow ? 'fill-foreground' : 'fill-primary'
+                              summaryRow
+                                ? 'fill-foreground'
+                                : r.row.kind === 'sprint' || r.row.kind === 'release'
+                                  ? 'fill-info-soft stroke-info'
+                                  : r.row.delayed
+                                    ? 'fill-danger-soft stroke-danger'
+                                    : 'fill-accent stroke-primary'
                             }
-                            fillOpacity={summaryRow ? 0.75 : 0.9}
+                            fillOpacity={summaryRow ? 0.25 : 1}
+                            strokeWidth={1}
+                            strokeDasharray={r.row.delayed ? '4 2' : undefined}
                           />
-                        )}
-                      </>
-                    )}
-                    {r.actual && (
-                      <rect
-                        data-part="actual"
-                        x={r.actual.x}
-                        y={summaryRow ? r.cy + 3 : r.cy + 4}
-                        width={Math.max(r.actual.width, 1)}
-                        height={2}
-                        className="fill-foreground"
-                        fillOpacity={0.8}
-                      />
-                    )}
-                    {r.diamond && (
-                      <polygon
-                        data-part="diamond"
-                        points={`${r.diamond.cx},${r.cy - r.diamond.size} ${r.diamond.cx + r.diamond.size},${r.cy} ${r.diamond.cx},${r.cy + r.diamond.size} ${r.diamond.cx - r.diamond.size},${r.cy}`}
-                        className={
-                          r.row.delayed
-                            ? 'fill-danger stroke-danger'
-                            : r.row.achieved >= 1
-                              ? 'fill-success stroke-success'
-                              : 'fill-card stroke-primary'
-                        }
-                        strokeWidth={1.5}
-                      />
-                    )}
+                          {r.achievedFill && r.achievedFill.width > 0 && (
+                            <rect
+                              data-part="achieved"
+                              x={r.achievedFill.x}
+                              y={barY}
+                              width={r.achievedFill.width}
+                              height={barH}
+                              rx={summaryRow ? 2 : 3}
+                              className={
+                                r.row.delayed
+                                  ? 'fill-danger'
+                                  : summaryRow
+                                    ? 'fill-foreground'
+                                    : 'fill-primary'
+                              }
+                              fillOpacity={summaryRow ? 0.75 : 0.9}
+                            />
+                          )}
+                        </>
+                      )}
+                      {r.actual && (
+                        <rect
+                          data-part="actual"
+                          x={r.actual.x}
+                          y={summaryRow ? r.cy + 3 : r.cy + 4}
+                          width={Math.max(r.actual.width, 1)}
+                          height={2}
+                          className="fill-foreground"
+                          fillOpacity={0.8}
+                        />
+                      )}
+                      {r.diamond && (
+                        <polygon
+                          data-part="diamond"
+                          points={`${r.diamond.cx},${r.cy - r.diamond.size} ${r.diamond.cx + r.diamond.size},${r.cy} ${r.diamond.cx},${r.cy + r.diamond.size} ${r.diamond.cx - r.diamond.size},${r.cy}`}
+                          className={
+                            r.row.delayed
+                              ? 'fill-danger stroke-danger'
+                              : r.row.achieved >= 1
+                                ? 'fill-success stroke-success'
+                                : 'fill-card stroke-primary'
+                          }
+                          strokeWidth={1.5}
+                        />
+                      )}
+                    </g>
+                    {/* Outside the row button: its visible text is then exactly the label, the start of its name (WCAG 2.5.3);
+                      the achieved percentage is in the name too. */}
                     {percentX !== null && (
                       <text
                         x={percentX}
@@ -444,7 +465,7 @@ export function Gantt({
                         {percent(r.row.achieved)}
                       </text>
                     )}
-                  </g>
+                  </Fragment>
                 );
               })}
               {layout.dependencies.map((d) => (
@@ -580,4 +601,17 @@ function Legend() {
       ))}
     </ul>
   );
+}
+
+/** Triangle pointing to the reading end (collapsed) or down (expanded), centred on (cx, cy). */
+function disclosureArrow(cx: number, cy: number, collapsed: boolean, rtl: boolean): string {
+  if (!collapsed) return `${cx - 4},${cy - 2} ${cx + 4},${cy - 2} ${cx},${cy + 3}`;
+  return rtl
+    ? `${cx + 3},${cy - 4} ${cx - 3},${cy} ${cx + 3},${cy + 4}`
+    : `${cx - 3},${cy - 4} ${cx + 3},${cy} ${cx - 3},${cy + 4}`;
+}
+
+/** Small upward warning triangle marking a delayed row, centred on (cx, cy). */
+function warningMark(cx: number, cy: number): string {
+  return `${cx},${cy - 6} ${cx + 6},${cy + 5} ${cx - 6},${cy + 5}`;
 }

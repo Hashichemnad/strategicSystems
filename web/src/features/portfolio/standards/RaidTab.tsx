@@ -565,12 +565,6 @@ function RiskMatrixPanel({ project }: { project: ProjectFull }) {
                     type="button"
                     data-testid={`matrix-cell-${c.probability}-${c.impact}`}
                     aria-pressed={active}
-                    aria-label={t('matrix.cellLabel', {
-                      probability: c.probability,
-                      impact: c.impact,
-                      band: t(`bands.${c.band}`),
-                      count: c.count,
-                    })}
                     onClick={() =>
                       setSelected(active ? null : { probability: c.probability, impact: c.impact })
                     }
@@ -584,6 +578,16 @@ function RiskMatrixPanel({ project }: { project: ProjectFull }) {
                   >
                     {formatNumber(c.count, lang)}
                     <span className="hidden text-[10px] font-normal sm:block">{t(`bands.${c.band}`)}</span>
+                    {/* The visible count and band start the accessible name; the full description follows (WCAG 2.5.3). */}
+                    <span className="sr-only">
+                      {' — '}
+                      {t('matrix.cellLabel', {
+                        probability: c.probability,
+                        impact: c.impact,
+                        band: t(`bands.${c.band}`),
+                        count: c.count,
+                      })}
+                    </span>
                   </button>
                 );
               })}
