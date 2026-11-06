@@ -7,6 +7,11 @@
     <OpenApiGenerateDocumentsOptions>--file-name strategy</OpenApiGenerateDocumentsOptions>
   </PropertyGroup>
   <ItemGroup>
+    <!-- Release notes shown in the About dialog (ADR 0152): resources Strategy.Host.ReleaseNotes.<lang>.<version>.md -->
+    <EmbeddedResource Include="ReleaseNotes\en\*.md" LogicalName="Strategy.Host.ReleaseNotes.en.%(Filename)%(Extension)" />
+    <EmbeddedResource Include="ReleaseNotes\ar\*.md" LogicalName="Strategy.Host.ReleaseNotes.ar.%(Filename)%(Extension)" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\Platform\Strategy.Platform.Kernel\Strategy.Platform.Kernel.csproj" />
     <ProjectReference Include="..\..\Platform\Strategy.Platform.Persistence\Strategy.Platform.Persistence.csproj" />
     <ProjectReference Include="..\..\Platform\Strategy.Platform.Access.Contracts\Strategy.Platform.Access.Contracts.csproj" />

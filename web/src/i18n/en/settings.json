@@ -163,6 +163,10 @@
     "demoPack": {
       "title": "Demo data",
       "description": "Sample organisation, users and records in every system for presentations — removable."
+    },
+    "setup": {
+      "title": "Setup wizard",
+      "description": "First-run guided configuration: e-mail, sign-in, AI, calendar, organisation import and systems."
     }
   },
   "title": "Settings",
@@ -189,7 +193,10 @@
     "hijriHint": "Off by default; data always stays Gregorian.",
     "arabicIndicDigits": "Arabic-Indic digits",
     "arabicIndicDigitsHint": "Numbers show as ١٢٣ in the Arabic interface.",
-    "preview": "Preview"
+    "preview": "Preview",
+    "defaultLanguage": "Default interface language",
+    "defaultLanguageBrowser": "Follow the browser",
+    "defaultLanguageHint": "Used until a person chooses a language."
   },
   "branding": {
     "organisationNameAr": "Organisation name (Arabic)",

@@ -62,6 +62,12 @@ if (args.Contains("--seed-demo", StringComparer.Ordinal) || args.Contains("--rem
     return await Strategy.Host.Demo.DemoPackCommands.RunAsync(app.Services, args, Console.Out);
 }
 
+// `--setup-token` issues a new one-time setup token for the first-run wizard (ADR 0150) and prints it; refused once an administrator exists.
+if (args.Contains("--setup-token", StringComparer.Ordinal))
+{
+    return await Bootstrap.PrintSetupTokenAsync(app.Services, Console.Out);
+}
+
 if (app.Configuration.GetValue("Database:MigrateOnStartup", defaultValue: false))
 {
     await app.Services.GetRequiredService<ModuleMigrator>().MigrateAllAsync();

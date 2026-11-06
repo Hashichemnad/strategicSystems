@@ -45,7 +45,7 @@ export function DemoPackPage() {
 
   const status = useQuery({
     queryKey: ['setup', 'demo-pack'],
-    queryFn: async ({ signal }) => unwrap(await api.GET('/api/v1/setup/demo-pack', { signal })),
+    queryFn: async ({ signal }) => unwrap(await api.GET('/api/v1/setup/demo-pack/status', { signal })),
   });
   const done = (result: DemoStatus, key: 'loaded' | 'removed') => {
     setLast(result);

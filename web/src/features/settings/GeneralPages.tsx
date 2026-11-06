@@ -29,22 +29,10 @@ import {
 } from '@/ui';
 import { useServerErrors } from './common';
 import { publicSettingsKey } from './publicSettings';
+import { dateFormats, timeZones } from './regionalOptions';
 
 type Regional = components['schemas']['RegionalSettings'];
 type Branding = components['schemas']['BrandingSettings'];
-
-const timeZones = [
-  'Asia/Dubai',
-  'Asia/Riyadh',
-  'Asia/Qatar',
-  'Asia/Kuwait',
-  'Asia/Bahrain',
-  'Asia/Muscat',
-  'Africa/Cairo',
-  'Europe/London',
-  'UTC',
-];
-const dateFormats = ['dd/MM/yyyy', 'yyyy-MM-dd', 'MM/dd/yyyy'];
 
 /** Settings → Regional: time zone, Hijri display (off by default), Arabic-Indic digits, currency, date format. */
 export function RegionalPage() {
@@ -117,6 +105,23 @@ export function RegionalPage() {
               value={draft.dateFormat}
               onValueChange={(dateFormat) => setDraft({ ...draft, dateFormat })}
               options={dateFormats.map((format) => ({ value: format, label: format }))}
+            />
+          </FormField>
+          <FormField
+            label={t('regional.defaultLanguage')}
+            error={errors.errorFor('defaultLanguage')}
+            hint={t('regional.defaultLanguageHint')}
+          >
+            <Select
+              value={draft.defaultLanguage ?? 'browser'}
+              onValueChange={(value) =>
+                setDraft({ ...draft, defaultLanguage: value === 'browser' ? null : value })
+              }
+              options={[
+                { value: 'browser', label: t('regional.defaultLanguageBrowser') },
+                { value: 'ar', label: 'العربية' },
+                { value: 'en', label: 'English' },
+              ]}
             />
           </FormField>
         </div>

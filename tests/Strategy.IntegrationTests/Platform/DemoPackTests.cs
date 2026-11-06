@@ -56,12 +56,13 @@ public sealed class DemoPackTests(PostgresFixture postgres) : IAsyncLifetime
     public async Task Only_set_up_administrators_may_load_or_remove_the_demo_pack()
     {
         var user = await _factory.CreateSignedInClientAsync();
-        (await user.GetAsync("/api/v1/setup/demo-pack")).StatusCode.ShouldBe(HttpStatusCode.Forbidden);
+        (await user.GetAsync("/api/v1/setup/demo-pack/status")).StatusCode.ShouldBe(HttpStatusCode.Forbidden);
         (await user.PostAsJsonAsync("/api/v1/setup/demo-pack", new { password = DemoPassword })).StatusCode.ShouldBe(HttpStatusCode.Forbidden);
         (await user.DeleteAsync("/api/v1/setup/demo-pack")).StatusCode.ShouldBe(HttpStatusCode.Forbidden);
 
         var admin = await _factory.CreateSignedInClientAsync(admin: true);
-        (await admin.GetAsync("/api/v1/setup/demo-pack")).StatusCode.ShouldBe(HttpStatusCode.OK);
+        (await admin.GetAsync("/api/v1/setup/demo-pack/status")).StatusCode.ShouldBe(HttpStatusCode.OK);
+        (await admin.GetAsync("/api/v1/setup/demo-pack")).StatusCode.ShouldBe(HttpStatusCode.MethodNotAllowed, "the set-up wizard probes the path with GET");
         var weak = await admin.PostAsJsonAsync("/api/v1/setup/demo-pack", new { password = "short" });
         weak.StatusCode.ShouldBe(HttpStatusCode.BadRequest);
         (await weak.Content.ReadAsStringAsync()).ShouldContain("identity.passwordTooShort");
