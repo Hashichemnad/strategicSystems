@@ -132,3 +132,5 @@ Write an ADR for every choice the SPEC or CLAUDE.md leaves open (CLAUDE.md §2 r
 | [0147](0147-ai-executive-brief.md) | AI executive brief | Accepted |
 | [0148](0148-echarts-single-chart-library.md) | Apache ECharts as the single chart library; shared dashboard UI kit | Accepted |
 | [0149](0149-my-work-cards-and-layout.md) | My Work cards from every system and the per-user layout | Accepted |
+| [0151](0151-administrator-health-page.md) | Administrator Health page: contributors per component, message keys, `settings.health.view` | Proposed |
+| [0155](0155-outbound-url-policy-ssrf.md) | Outbound URL policy: SSRF guard on save and at connect time | Proposed |
