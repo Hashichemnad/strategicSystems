@@ -1,6 +1,6 @@
+using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using System.Text;
 using Strategy.Modules.Kpi.Application;
 using Strategy.Modules.Kpi.Contracts;
 using Strategy.Modules.Kpi.Domain;

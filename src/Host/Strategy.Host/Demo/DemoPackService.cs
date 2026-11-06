@@ -67,7 +67,7 @@ public sealed partial class DemoPackService(IServiceScopeFactory scopes, ILogger
             {
                 var context = await CreateContextAsync(scope.ServiceProvider, code, password, cancellationToken).ConfigureAwait(false);
                 await contributor.LoadAsync(context, cancellationToken).ConfigureAwait(false);
-                                steps.Add(new DemoPackStepDto(code, Loaded, (await store.ActiveAsync(code, cancellationToken).ConfigureAwait(false)).Count, null));
+                steps.Add(new DemoPackStepDto(code, Loaded, (await store.ActiveAsync(code, cancellationToken).ConfigureAwait(false)).Count, null));
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
@@ -110,7 +110,7 @@ public sealed partial class DemoPackService(IServiceScopeFactory scopes, ILogger
             {
                 var context = await CreateContextAsync(scope.ServiceProvider, code, null, cancellationToken).ConfigureAwait(false);
                 await contributor.RemoveAsync(context, cancellationToken).ConfigureAwait(false);
-                                await store.MarkRemovedAsync(code, cancellationToken).ConfigureAwait(false);
+                await store.MarkRemovedAsync(code, cancellationToken).ConfigureAwait(false);
                 steps.Add(new DemoPackStepDto(code, Removed, count, null));
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
