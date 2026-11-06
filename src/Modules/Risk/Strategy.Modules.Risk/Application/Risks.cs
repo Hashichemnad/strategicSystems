@@ -120,6 +120,11 @@ internal sealed class RiskRules(ILookupService lookups, RiskDbContext db, Framew
 {
     public async Task<List<FieldError>> ValidateAsync(RiskValues v, RiskSettings settings, CancellationToken ct)
     {
+        if (v is null)
+        {
+            return [new FieldError("values", "validation.required", "validation.required")];
+        }
+
         var errors = new List<FieldError>();
         void Add(string field, string key, Dictionary<string, object?>? p = null) => errors.Add(new FieldError(field, key, key, p));
         if (string.IsNullOrWhiteSpace(v.TitleAr) && string.IsNullOrWhiteSpace(v.TitleEn))
@@ -153,7 +158,7 @@ internal sealed class RiskRules(ILookupService lookups, RiskDbContext db, Framew
             Add("riskType", "validation.invalid");
         }
 
-        if (v.CategoryCodes.Count == 0)
+        if (v.CategoryCodes is not { Count: > 0 })
         {
             Add("categoryCodes", "validation.required");
         }

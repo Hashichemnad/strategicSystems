@@ -20,6 +20,7 @@ namespace Strategy.IntegrationTests.Platform;
 /// organisation directory reads are granted to everyone by default (role <c>org.viewer</c>);</item>
 /// <item>a user granted exactly that one permission (a role holding only it, plus system access for modules) gets past the
 /// permission check;</item>
+/// <item>an empty body (<c>{}</c> / <c>[]</c>) past the permission check is a validation problem, never a 500 (ASVS V5 / V13);</item>
 /// <item>every permission an endpoint declares exists in the seeded catalogue (unknown permissions are refused).</item>
 /// </list>
 /// </summary>
@@ -87,6 +88,9 @@ public partial class AuthorizationMatrixTests(ApiFixture api) : IClassFixture<Ap
 
         response.StatusCode.ShouldNotBe(HttpStatusCode.Forbidden, $"{method} {route} with {permission}: {await response.Content.ReadAsStringAsync()}");
         response.StatusCode.ShouldNotBe(HttpStatusCode.Unauthorized);
+
+        // An empty body ({} / []) past the access check is a validation problem (400), never an unhandled error (ASVS V5 / V13).
+        response.StatusCode.ShouldNotBe(HttpStatusCode.InternalServerError, $"{method} {route}: {await response.Content.ReadAsStringAsync()}");
     }
 
     [Fact]

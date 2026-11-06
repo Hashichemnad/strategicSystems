@@ -102,7 +102,7 @@ internal static class ReportingEndpoints
             .WithName("RunReport").RequirePermission(ReportingPermissions.ReportRun);
         group.MapPost("/reports/export", async Task<Results<FileContentHttpResult, ProblemHttpResult>> (ReportExportInput body, ClaimsPrincipal user, ReportService s, CancellationToken ct) =>
             {
-                var file = await s.ExportAsync(body.Definition, body.Format, body.Language ?? "ar", body.Title ?? body.Definition.Dataset, user, ct);
+                var file = await s.ExportAsync(body.Definition, body.Format, body.Language ?? "ar", body.Title ?? body.Definition?.Dataset ?? string.Empty, user, ct);
                 return file.IsSuccess ? TypedResults.File(file.Value.Content, file.Value.ContentType, file.Value.FileName) : file.Error.ToProblem();
             })
             .WithName("ExportReport").RequirePermission(ReportingPermissions.ReportExport);

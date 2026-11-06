@@ -295,7 +295,17 @@ internal sealed class DashboardHandlers(
             }
 
             var html = MechanismHtml.Build(scorer.Content, (await frameworks.CurrentAsync(cancellationToken).ConfigureAwait(false)).VersionNo, branding, arabic);
-            var bytes = await pdf.RenderAsync(html, cancellationToken).ConfigureAwait(false);
+            byte[] bytes;
+            try
+            {
+                bytes = await pdf.RenderAsync(html, cancellationToken).ConfigureAwait(false);
+            }
+            catch (PdfRenderingException ex)
+            {
+                // PDF service not configured or unreachable: a clear problem instead of an unhandled error (as the other PDF exports).
+                return Error.Rule("risk.pdf.failed", ex.MessageKey);
+            }
+
             await AuditAsync(query, 1, cancellationToken).ConfigureAwait(false);
             return new RiskExportedFile(bytes, "application/pdf", "risk-assessment-mechanism.pdf");
         }
@@ -401,7 +411,14 @@ internal sealed class DashboardHandlers(
             }
 
             document.Table(headers.Select(h => new ReportColumn(h.Ar, h.En)).ToList(), rows);
-            file = new RiskExportedFile(await pdf.RenderAsync(document.ToHtml(), cancellationToken).ConfigureAwait(false), "application/pdf", $"risk-{query.Kind}.pdf");
+            try
+            {
+                file = new RiskExportedFile(await pdf.RenderAsync(document.ToHtml(), cancellationToken).ConfigureAwait(false), "application/pdf", $"risk-{query.Kind}.pdf");
+            }
+            catch (PdfRenderingException ex)
+            {
+                return Error.Rule("risk.pdf.failed", ex.MessageKey);
+            }
         }
         else
         {

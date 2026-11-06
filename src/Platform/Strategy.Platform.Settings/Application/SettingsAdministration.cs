@@ -32,6 +32,12 @@ internal sealed partial class SettingsAdministration(SettingsDbContext db, Setti
     public async Task<Result<SettingsDocument<T>>> SaveAsync<T>(T value, uint version, Func<T, List<FieldError>> validate, CancellationToken ct = default)
         where T : class, ISettingsArea
     {
+        if (value is null)
+        {
+            // A body without the settings document ({}): a validation problem, never a null dereference in the validator.
+            return Error.Validation([new FieldError("value", "validation.required", "validation.required")]);
+        }
+
         var errors = validate(value);
         if (errors.Count > 0)
         {

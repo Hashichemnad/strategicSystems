@@ -300,6 +300,11 @@ internal sealed class GroupService(PortfolioDbContext db, ProjectLoader loader, 
             return Error.Forbidden();
         }
 
+        if (input.Values is null)
+        {
+            return Error.Validation([new FieldError("values", "validation.required", "validation.required")]);
+        }
+
         var v = input.Values;
         var errors = new List<FieldError>();
         if (!GroupKinds.All.Contains(v.Kind ?? string.Empty))

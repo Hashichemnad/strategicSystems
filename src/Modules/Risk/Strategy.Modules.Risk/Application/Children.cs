@@ -731,6 +731,11 @@ internal sealed class ChildHandlers(
 
     public async Task<Result<EventDto>> HandleAsync(LogRiskEvent command, CancellationToken cancellationToken)
     {
+        if (command.Values is null)
+        {
+            return Error.Validation([new FieldError("values", "validation.required", "validation.required")]);
+        }
+
         var v = command.Values;
         var errors = new List<FieldError>();
         if (string.IsNullOrWhiteSpace(v.Description))
@@ -738,7 +743,7 @@ internal sealed class ChildHandlers(
             errors.Add(new FieldError("description", "validation.required", "validation.required"));
         }
 
-        if (v.RiskIds.Count == 0)
+        if (v.RiskIds is not { Count: > 0 })
         {
             errors.Add(new FieldError("riskIds", "validation.required", "validation.required"));
         }
@@ -749,7 +754,7 @@ internal sealed class ChildHandlers(
         }
 
         var risks = new List<RiskRecord>();
-        foreach (var id in v.RiskIds.Distinct())
+        foreach (var id in (v.RiskIds ?? []).Distinct())
         {
             var risk = await reader.RiskAsync(id, context.User, cancellationToken, tracked: true).ConfigureAwait(false);
             if (risk is null)
