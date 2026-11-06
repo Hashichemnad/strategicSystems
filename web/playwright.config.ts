@@ -32,6 +32,7 @@ export default defineConfig<E2eOptions>({
   projects: [
     {
       name: 'ar',
+      testIgnore: ['setup.spec.ts', 'a11y.spec.ts'],
       use: {
         ...devices['Desktop Chrome'],
         viewport: { width: 1366, height: 860 },
@@ -41,6 +42,31 @@ export default defineConfig<E2eOptions>({
     },
     {
       name: 'en',
+      testIgnore: ['setup.spec.ts', 'a11y.spec.ts'],
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 1366, height: 860 },
+        locale: 'en-GB',
+        language: 'en',
+      },
+    },
+    // The accessibility audit visits record pages that the functional specs create, so it runs after both language projects
+    // (on a fresh database it would otherwise find empty lists).
+    {
+      name: 'ar-a11y',
+      testMatch: 'a11y.spec.ts',
+      dependencies: ['ar', 'en'],
+      use: {
+        ...devices['Desktop Chrome'],
+        viewport: { width: 1366, height: 860 },
+        locale: 'ar-AE',
+        language: 'ar',
+      },
+    },
+    {
+      name: 'en-a11y',
+      testMatch: 'a11y.spec.ts',
+      dependencies: ['ar', 'en'],
       use: {
         ...devices['Desktop Chrome'],
         viewport: { width: 1366, height: 860 },

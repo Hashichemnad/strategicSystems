@@ -1,4 +1,4 @@
-import { apiPut, expect, test, tr, type Language } from './fixtures';
+import { apiPut, expect, test, tr } from './fixtures';
 import { expectAccessible, settle } from './a11y';
 import type { Page } from '@playwright/test';
 
@@ -259,9 +259,8 @@ test.describe('accessibility — WCAG 2.1 AA (axe-core)', () => {
     expect(missing, 'lists without a record (run the other specs on this database first)').toEqual([]);
   });
 
-  test('dark theme subset', async ({ page }) => {
+  test('dark theme subset', async ({ page, language }) => {
     test.setTimeout(600_000);
-    const language = test.info().project.name as Language;
     await apiPut(page, '/api/v1/identity/me/preferences', { language, theme: 'dark' });
     await page.addInitScript(() => localStorage.setItem('strategy.theme', 'dark'));
     try {

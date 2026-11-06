@@ -68,7 +68,7 @@ At 300 users the 4 CPUs saturate (≈ 174 req/s, 0 errors, p95 3.5–3.9 s): siz
 | Web: lint, format:check, typecheck, Vitest, build | pass; Vitest 378 / 378 |
 | `npm audit --audit-level=high`, `lint:licenses` | no High / Critical (8 moderate, dev tooling); 618 packages allowed |
 | Image: Trivy (High / Critical with a fix), SBOM | 0; CycloneDX generated |
-| Playwright E2E (`ar` + `en`, incl. `a11y.spec.ts`) | E2E_RESULT |
+| Playwright E2E (`ar` + `en`, then the accessibility projects) on a fresh database | 127 / 128 in the first full run: the Arabic *record pages with every tab* audit ran **before** the specs that create its records (alphabetical order on a fresh database) — fixed by moving `a11y.spec.ts` into projects `ar-a11y` / `en-a11y` that depend on `ar` and `en`; re-run of both accessibility projects: **18 / 18** |
 | Setup wizard E2E (`playwright.setup.config.ts`, fresh databases) | 2 / 2 (ar + en) |
 
 ## Defects found while verifying (fixed in this phase)
@@ -79,6 +79,7 @@ At 300 users the 4 CPUs saturate (≈ 174 req/s, 0 errors, p95 3.5–3.9 s): siz
 - Health disk check warned on the empty 512 MB `/tmp` tmpfs of every container.
 - Integration tests reusing an external PostgreSQL server left their databases behind (disk filled).
 - Dialogs returned focus to the page body; pages scrolled sideways at 360 px (Arabic top bar, wide tables).
+- The accessibility spec depended on running after the other specs, which a fresh database (CI) did not guarantee.
 
 ## Decisions (ADRs, proposed — for the owner)
 0150 setup wizard and setup token · 0151 Health page · 0152 version and release notes · 0153 seed packs and removable demo pack ·
@@ -120,4 +121,4 @@ distributed) · 0157 packaging, install, backup / restore / upgrade · 0158 load
   Docker through `mirror.gcr.io`; MinIO images unavailable (SeaweedFS used); SDK 10.0.403 copied from the official image (the installer
   download was blocked). Tesseract installed for the OCR tests.
 - Screenshots: [`docs/screenshots/phase-18/`](../screenshots/phase-18/) — setup wizard (15 steps × ar / en), health page, vendor UAE Pass
-  sign-in (login, no account, MFA, signed in).
+  sign-in (login, no account, MFA, signed in), install / backup / verified restore from a real run (`*-ops-*.png`).

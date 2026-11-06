@@ -120,7 +120,7 @@ jobs:
           npm ci --no-audit --no-fund
           npx playwright install --with-deps chromium
           npm run build
-      - name: Playwright (projects ar and en)
+      - name: Playwright (projects ar and en, then the accessibility audit ar-a11y / en-a11y)
         working-directory: web
         run: npx playwright test
       - name: Playwright first-run setup wizard on an empty database (ar and en, ADR 0150)
