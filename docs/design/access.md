@@ -163,3 +163,7 @@ if (item is null || !await access.CanAsync(context.User, SamplePermissions.Updat
 - **Systems:** enable / disable a module, owning unit.
 
 The sidebar shows only the systems the user can open and the administration entries they have permissions for.
+
+**Members per system (Phase 19, ADRs 0166 / 0167):** *Settings → Members* is a simple view over the same assignments and system
+access (administrators, users, extra roles per system), with delegated administration through `<system>.members.manage`; the
+matrix above is shown as "Advanced permissions". See `docs/design/members-responsibilities.md` §1.

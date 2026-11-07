@@ -36,6 +36,7 @@ import {
   type SensitivityRule,
 } from './api';
 import { useLookupLabel } from './components';
+import { SystemSettingsLinks } from '@/features/access/SystemSettingsLinks';
 
 type FieldErrors = NonNullable<components['schemas']['Problem']['errors']>;
 
@@ -92,6 +93,7 @@ export function DocRegSettingsPage() {
           </Button>
         }
       />
+      <SystemSettingsLinks system="docreg" />
 
       <section className="grid gap-4 rounded-lg border bg-card p-5 md:grid-cols-2">
         <h2 className="font-semibold md:col-span-2">{t('settings.general')}</h2>

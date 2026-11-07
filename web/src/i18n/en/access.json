@@ -128,6 +128,82 @@
     "systemAccessDuplicate": "They already have access to this system.",
     "transferSource": "Choose users or one unit as the source.",
     "transferTarget": "Choose a user or a unit as the target.",
-    "nothingToMove": "No assignment of these roles is in force at the source."
+    "nothingToMove": "No assignment of these roles is in force at the source.",
+    "membersPeopleOnly": "Only people can be system administrators.",
+    "membersNoRoles": "This list has no active role. Check the lists of this system.",
+    "membersAlreadyMember": "They are already on this list.",
+    "memberRolesOverlap": "A role can be on one list only.",
+    "memberRolesTooMany": "At most {{max}} roles per list."
+  },
+  "members": {
+    "title": "Members",
+    "titleOf": "Members — {{system}}",
+    "description": "Who administers and who uses this system. Changes apply at once, are recorded in the audit trail and the person concerned is notified.",
+    "hubTitle": "Members",
+    "hubDescription": "Choose a system to manage its administrators, users and extra roles.",
+    "hubEmpty": "You do not manage the members of any system.",
+    "linksLabel": "System access settings",
+    "advanced": "Advanced permissions",
+    "configure": "Configure lists",
+    "notFound": "This system has no Members page or is switched off.",
+    "lists": {
+      "administrators": "System administrators",
+      "users": "Users"
+    },
+    "hints": {
+      "administrators": "People who administer this system (role: {{roles}}).",
+      "users": "People, units (with their sub-units) or all employees who use this system (role: {{roles}}).",
+      "extra": "Holders of this additional role of the system."
+    },
+    "noRole": "none configured",
+    "platformOnly": "Managed by the platform administrator",
+    "add": "Add",
+    "addTo": "Add to {{list}}",
+    "addTitle": "Add to {{list}}",
+    "addDescription": "Choose a person, a unit (its sub-units are included) or all employees. Dates are optional.",
+    "kind": "Who",
+    "kinds": {
+      "user": "Person",
+      "unit": "Unit (and sub-units)",
+      "everyone": "All employees"
+    },
+    "person": "Person",
+    "unit": "Unit",
+    "everyoneHint": "Every employee with an account gets the access of this list.",
+    "from": "From",
+    "to": "Until",
+    "note": "Note (optional, kept in the audit trail)",
+    "save": "Add",
+    "added": "Added to the list.",
+    "columns": {
+      "member": "Member",
+      "period": "Period",
+      "state": "State"
+    },
+    "open": "open-ended",
+    "accessOnly": "System access only",
+    "active": "In force",
+    "notActive": "Not in force",
+    "empty": "No one is on this list yet.",
+    "remove": "Remove",
+    "removeNamed": "Remove {{name}}",
+    "removeTitle": "Remove {{name}} from {{list}}?",
+    "removeDescription": "Their access through this list ends now. Nothing is deleted: the change is recorded in the audit trail and the person is notified.",
+    "reason": "Reason (optional)",
+    "removed": "Removed from the list.",
+    "config": {
+      "title": "Lists of this system",
+      "description": "Which role each list stands for. The defaults come with the system; your choice applies to the Members page only.",
+      "listOf": "List of {{role}}",
+      "slots": {
+        "none": "Not on the Members page",
+        "administrators": "System administrators",
+        "users": "Users",
+        "extra": "Extra list"
+      },
+      "reset": "Use the defaults",
+      "save": "Save",
+      "saved": "The lists were saved."
+    }
   }
 }

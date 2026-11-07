@@ -39,17 +39,17 @@ internal static class AccessEndpoints
         systems.MapGet("/{code}/members", async (string code, IRequestContext context, MemberAdministration m, CancellationToken ct) =>
                 (await m.ListAsync(context.User, code, ct)).ToOk())
             .WithName("GetSystemMembers").RequireSignedIn();
-        systems.MapPost("/{code}/members", async (string code, AddMemberInput body, IRequestContext context, MemberAdministration m, CancellationToken ct) =>
+        systems.MapPost("/{code}/members", async (string code, AddSystemMemberInput body, IRequestContext context, MemberAdministration m, CancellationToken ct) =>
                 (await m.AddAsync(context.User, code, body, ct)).ToOk())
             .WithName("AddSystemMember").RequireSignedIn();
         systems.MapPost("/{code}/members/{id:guid}/remove",
-                async (string code, Guid id, RemoveMemberInput body, IRequestContext context, MemberAdministration m, CancellationToken ct) =>
+                async (string code, Guid id, RemoveSystemMemberInput body, IRequestContext context, MemberAdministration m, CancellationToken ct) =>
                     (await m.RemoveAsync(context.User, code, id, body.Reason, ct)).ToOk())
             .WithName("RemoveSystemMember").RequireSignedIn();
         systems.MapGet("/{code}/members/user-search", SearchMemberUsersAsync).WithName("SearchMemberUsers").RequireSignedIn();
         systems.MapGet("/{code}/member-roles", async (string code, MemberAdministration m, CancellationToken ct) => (await m.GetConfigurationAsync(code, ct)).ToOk())
             .WithName("GetMemberRoles").RequirePermission(AccessPermissions.RoleRead);
-        systems.MapPut("/{code}/member-roles", async (string code, MemberRolesInput body, MemberAdministration m, CancellationToken ct) =>
+        systems.MapPut("/{code}/member-roles", async (string code, SystemMemberRolesInput body, MemberAdministration m, CancellationToken ct) =>
                 (await m.SetConfigurationAsync(code, body, ct)).ToOk())
             .WithName("SetMemberRoles").RequirePermission(AccessPermissions.RoleManage);
 

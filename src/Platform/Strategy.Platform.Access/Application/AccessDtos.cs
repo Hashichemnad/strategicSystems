@@ -46,16 +46,16 @@ public sealed record AccessReviewRowDto(
 /// <param name="System">The system.</param>
 /// <param name="PlatformAdministrator">The caller holds <c>access.assignment.manage</c> (may also manage platform administrator roles).</param>
 /// <param name="Lists">Administrators, users, then one list per extra role.</param>
-public sealed record SystemMembersDto(SystemDto System, bool PlatformAdministrator, IReadOnlyList<MemberListDto> Lists);
+public sealed record SystemMembersDto(SystemDto System, bool PlatformAdministrator, IReadOnlyList<SystemMemberListDto> Lists);
 
 /// <param name="Key"><c>administrators</c>, <c>users</c> or <c>extra:&lt;roleCode&gt;</c>.</param>
 /// <param name="Kind"><c>administrators</c>, <c>users</c> or <c>extra</c>.</param>
 /// <param name="Roles">The roles an entry of this list holds.</param>
 /// <param name="CanManage">False when the list holds a platform administrator role and the caller is a delegated administrator (ADR 0167).</param>
 /// <param name="Members">One row per principal.</param>
-public sealed record MemberListDto(string Key, string Kind, IReadOnlyList<MemberRoleDto> Roles, bool CanManage, IReadOnlyList<MemberDto> Members);
+public sealed record SystemMemberListDto(string Key, string Kind, IReadOnlyList<SystemMemberRoleDto> Roles, bool CanManage, IReadOnlyList<SystemMemberDto> Members);
 
-public sealed record MemberRoleDto(string Code, string? NameAr, string? NameEn);
+public sealed record SystemMemberRoleDto(string Code, string? NameAr, string? NameEn);
 
 /// <param name="Id">Pass to <c>…/members/{id}/remove</c>.</param>
 /// <param name="Principal">User, unit (and below) or everyone.</param>
@@ -64,12 +64,12 @@ public sealed record MemberRoleDto(string Code, string? NameAr, string? NameEn);
 /// <param name="Active">In force today.</param>
 /// <param name="SystemAccess">The principal holds its own system-access grant (always true for platform-kind systems).</param>
 /// <param name="RoleCodes">The list's roles the principal holds.</param>
-public sealed record MemberDto(
+public sealed record SystemMemberDto(
     Guid Id, PrincipalDto Principal, DateOnly? ValidFrom, DateOnly? ValidTo, bool Active, bool SystemAccess, IReadOnlyList<string> RoleCodes);
 
 /// <summary>A system's member-role configuration (Settings, platform administrator) with the code defaults.</summary>
-public sealed record MemberRolesConfigDto(
+public sealed record SystemMemberRolesConfigDto(
     string SystemCode, IReadOnlyList<string> AdministratorRoles, IReadOnlyList<string> UserRoles, IReadOnlyList<string> ExtraRoles,
-    MemberRolesDefaultsDto Defaults, bool IsDefault, uint Version);
+    SystemMemberRolesDefaultsDto Defaults, bool IsDefault, uint Version);
 
-public sealed record MemberRolesDefaultsDto(IReadOnlyList<string> AdministratorRoles, IReadOnlyList<string> UserRoles, IReadOnlyList<string> ExtraRoles);
+public sealed record SystemMemberRolesDefaultsDto(IReadOnlyList<string> AdministratorRoles, IReadOnlyList<string> UserRoles, IReadOnlyList<string> ExtraRoles);

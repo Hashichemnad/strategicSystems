@@ -16,6 +16,7 @@ import {
 } from '@/ui';
 import { capApi, raiseModes, useCapMutation, useCapSettings, type CapSettings } from './api';
 import { useCapT } from './components';
+import { SystemSettingsLinks } from '@/features/access/SystemSettingsLinks';
 
 /** Settings → Corrective action plan (docs/design/cap.md §2.1): every threshold is configuration with a seeded default. */
 export function CapSettingsPage() {
@@ -78,6 +79,7 @@ export function CapSettingsPage() {
           </Button>
         }
       />
+      <SystemSettingsLinks system="cap" />
       <Section title={t('settings.dueDays')}>
         <div className="grid gap-3 md:grid-cols-4">
           {num('dueDaysCritical', 1, 730)}

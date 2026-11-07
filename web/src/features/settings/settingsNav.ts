@@ -43,6 +43,7 @@ import {
   Users,
   type LucideIcon,
 } from 'lucide-react';
+import { membersPermissions } from '@/features/access/members';
 
 export type SettingsPageKey =
   | 'setup'
@@ -77,6 +78,7 @@ export type SettingsPageKey =
   | 'tasksReassign'
   | 'businessHours'
   | 'holidays'
+  | 'members'
   | 'roles'
   | 'assignments'
   | 'systemAccess'
@@ -122,6 +124,7 @@ export type SettingsPath =
   | '/settings/tasks/reassign'
   | '/settings/business-hours'
   | '/settings/holidays'
+  | '/settings/members'
   | '/settings/access/roles'
   | '/settings/access/assignments'
   | '/settings/access/system-access'
@@ -282,6 +285,7 @@ export const settingsGroups: readonly SettingsGroup[] = [
   {
     key: 'access',
     pages: [
+      { key: 'members', to: '/settings/members', icon: UsersRound, permissions: membersPermissions },
       { key: 'roles', to: '/settings/access/roles', icon: ShieldHalf, permissions: ['access.role.read'] },
       {
         key: 'assignments',

@@ -108,7 +108,7 @@ internal sealed class MemberAdministration(
         var inOtherLists = assignments.Where(a => otherListRoles.Contains(a.RoleId)).Select(a => (a.PrincipalKind, a.PrincipalId)).ToHashSet();
         var grantOf = grants.ToDictionary(g => (g.PrincipalKind, g.PrincipalId));
 
-        var lists = new List<MemberListDto>();
+        var lists = new List<SystemMemberListDto>();
         foreach (var list in scope.Lists)
         {
             var roleIds = list.Roles.Select(r => r.Id).ToHashSet();
@@ -125,7 +125,7 @@ internal sealed class MemberAdministration(
                 var grant = grantOf.GetValueOrDefault(key);
                 var id = list.Key == Users && grant is not null ? grant.Id : rows[0].Id;
                 var hasAccess = scope.System.IsPlatform || grant is not null;
-                return new MemberDto(
+                return new SystemMemberDto(
                     id,
                     principals[key],
                     rows.Count == 0 ? null : rows.Min(a => a.ValidFrom),
@@ -134,8 +134,8 @@ internal sealed class MemberAdministration(
                     hasAccess,
                     rows.Select(a => list.Roles.First(r => r.Id == a.RoleId).Code).Distinct(StringComparer.Ordinal).ToList());
             }).ToList();
-            lists.Add(new MemberListDto(
-                list.Key, list.Kind, list.Roles.Select(r => new MemberRoleDto(r.Code, r.NameAr, r.NameEn)).ToList(), CanManage(scope, list), members));
+            lists.Add(new SystemMemberListDto(
+                list.Key, list.Kind, list.Roles.Select(r => new SystemMemberRoleDto(r.Code, r.NameAr, r.NameEn)).ToList(), CanManage(scope, list), members));
         }
 
         return new SystemMembersDto(
@@ -144,7 +144,7 @@ internal sealed class MemberAdministration(
 
     // ---- Add ----
 
-    public async Task<Result<SystemMembersDto>> AddAsync(ClaimsPrincipal user, string code, AddMemberInput input, CancellationToken ct)
+    public async Task<Result<SystemMembersDto>> AddAsync(ClaimsPrincipal user, string code, AddSystemMemberInput input, CancellationToken ct)
     {
         var resolved = await AuthoriseAsync(user, code, ct).ConfigureAwait(false);
         if (resolved.IsFailure)
@@ -351,7 +351,7 @@ internal sealed class MemberAdministration(
 
     // ---- Member-role configuration (platform administrator, Settings) ----
 
-    public async Task<Result<MemberRolesConfigDto>> GetConfigurationAsync(string code, CancellationToken ct)
+    public async Task<Result<SystemMemberRolesConfigDto>> GetConfigurationAsync(string code, CancellationToken ct)
     {
         if (!Defaults.TryGetValue(code, out var defaults))
         {
@@ -362,7 +362,7 @@ internal sealed class MemberAdministration(
         return ToDto(code, configured, defaults);
     }
 
-    public async Task<Result<MemberRolesConfigDto>> SetConfigurationAsync(string code, MemberRolesInput input, CancellationToken ct)
+    public async Task<Result<SystemMemberRolesConfigDto>> SetConfigurationAsync(string code, SystemMemberRolesInput input, CancellationToken ct)
     {
         if (!Defaults.TryGetValue(code, out var defaults))
         {
@@ -377,7 +377,7 @@ internal sealed class MemberAdministration(
             var list = (codes ?? []).Distinct(StringComparer.Ordinal).ToList();
             if (list.Count > MaxRolesPerList)
             {
-                errors.Add(new FieldError(field, "validation.maximumCount", "validation.maximumCount", new Dictionary<string, object?> { ["max"] = MaxRolesPerList }));
+                errors.Add(new FieldError(field, "access.errors.memberRolesTooMany", "access.errors.memberRolesTooMany", new Dictionary<string, object?> { ["max"] = MaxRolesPerList }));
             }
 
             foreach (var (role, index) in list.Select((c, i) => (c, i)))
@@ -455,12 +455,12 @@ internal sealed class MemberAdministration(
         await notifications.SendAsync(new NotificationRequest(template, [NotificationRecipient.User(userId)], values, "/"), db, ct).ConfigureAwait(false);
     }
 
-    private static MemberRolesConfigDto ToDto(string code, SystemMemberRolesConfig? configured, SystemMemberRoles defaults)
+    private static SystemMemberRolesConfigDto ToDto(string code, SystemMemberRolesConfig? configured, SystemMemberRoles defaults)
     {
         var current = configured?.ToRoles() ?? defaults;
-        return new MemberRolesConfigDto(
+        return new SystemMemberRolesConfigDto(
             code, current.AdministratorRoles, current.UserRoles, current.ExtraRoles,
-            new MemberRolesDefaultsDto(defaults.AdministratorRoles, defaults.UserRoles, defaults.ExtraRoles), configured is null, configured?.Version ?? 0);
+            new SystemMemberRolesDefaultsDto(defaults.AdministratorRoles, defaults.UserRoles, defaults.ExtraRoles), configured is null, configured?.Version ?? 0);
     }
 
     private static string? Blank(string? value) => string.IsNullOrWhiteSpace(value) ? null : value.Trim();
@@ -496,8 +496,8 @@ internal static class MemberNotifications
 /// <param name="ValidFrom">First day (default today).</param>
 /// <param name="ValidTo">Last day (default open-ended).</param>
 /// <param name="Note">Stored on the assignments and used as the audit reason.</param>
-public sealed record AddMemberInput(string? List, string? PrincipalKind, Guid? PrincipalId, DateOnly? ValidFrom, DateOnly? ValidTo, string? Note);
+public sealed record AddSystemMemberInput(string? List, string? PrincipalKind, Guid? PrincipalId, DateOnly? ValidFrom, DateOnly? ValidTo, string? Note);
 
-public sealed record RemoveMemberInput(string? Reason);
+public sealed record RemoveSystemMemberInput(string? Reason);
 
-public sealed record MemberRolesInput(IReadOnlyList<string>? AdministratorRoles, IReadOnlyList<string>? UserRoles, IReadOnlyList<string>? ExtraRoles, uint? Version);
+public sealed record SystemMemberRolesInput(IReadOnlyList<string>? AdministratorRoles, IReadOnlyList<string>? UserRoles, IReadOnlyList<string>? ExtraRoles, uint? Version);

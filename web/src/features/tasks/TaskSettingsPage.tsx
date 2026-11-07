@@ -16,6 +16,7 @@ import {
   useToast,
 } from '@/ui';
 import { useSaveTaskSettings, useTaskSettings, type TaskSettings } from './api';
+import { SystemSettingsLinks } from '@/features/access/SystemSettingsLinks';
 
 /** Settings → Tasks (docs/design/tasks.md §2): templates per type, assignment rule, reminders, escalation, digest, feedback scale. */
 export function TaskSettingsPage() {
@@ -52,6 +53,7 @@ export function TaskSettingsPage() {
   return (
     <div className="flex flex-col gap-6">
       <PageHeader title={t('settings.title')} description={t('settings.description')} />
+      <SystemSettingsLinks system="tasks" />
       <form
         className="flex max-w-3xl flex-col gap-5 rounded-lg border bg-card p-5"
         onSubmit={(event) => {

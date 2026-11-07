@@ -45,6 +45,7 @@ import {
   type KpiWindow,
 } from './api';
 import { useKpiT, yearOptions } from './components';
+import { SystemSettingsLinks } from '@/features/access/SystemSettingsLinks';
 
 /** Settings → Performance (docs/design/kpi.md §4, §5, §7): general rules, the strategy hierarchy and each year's windows. */
 export function KpiSettingsPage() {
@@ -61,6 +62,7 @@ export function KpiSettingsPage() {
   return (
     <div className="flex flex-col gap-6" data-testid="kpi-settings">
       <PageHeader title={t('settings.title')} description={t('settings.description')} />
+      <SystemSettingsLinks system="kpi" />
       <Tabs value={tab ?? tabs[0] ?? 'general'} onValueChange={setTab}>
         <TabsList>
           {tabs.map((key) => (

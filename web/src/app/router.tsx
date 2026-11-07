@@ -1539,6 +1539,19 @@ const reviewRoute = createRoute({
   component: lazyRouteComponent(() => import('@/features/access/AccessPages'), 'ReviewPage'),
 });
 
+// Members per system (SPEC-ADDENDUM §D1, ADRs 0166 / 0167): also open to delegated system administrators.
+const membersHubRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/members',
+  component: lazyRouteComponent(() => import('@/features/access/MembersPage'), 'MembersHubPage'),
+});
+
+const systemMembersRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/members/$system',
+  component: lazyRouteComponent(() => import('@/features/access/MembersPage'), 'SystemMembersPage'),
+});
+
 export const rolesRoute = createRoute({
   getParentRoute: () => settingsLayout,
   path: '/access/roles',
@@ -1719,6 +1732,8 @@ const routeTree = rootRoute.addChildren([
       benchSettingsRoute,
       auditSettingsRoute,
       taskReassignRoute,
+      membersHubRoute,
+      systemMembersRoute,
       rolesRoute,
       assignmentsRoute,
       systemAccessRoute,
