@@ -30,6 +30,7 @@ public class FormValidationTests
     private static readonly FormSchema Schema = FormSchema.Of(
         F("title", FieldTypes.Text, true) with { MaxLength = 10 },
         F("notes", FieldTypes.Textarea),
+        F("minutes", FieldTypes.RichText) with { MaxLength = 20 },
         F("amount", FieldTypes.Currency, true) with { Min = 0, Max = 1000 },
         F("count", FieldTypes.Number) with { Decimals = 0 },
         F("when", FieldTypes.Date),
@@ -98,6 +99,26 @@ public class FormValidationTests
     {
         var result = await ValidateAsync(Valid(v => v[field] = value));
         result.Errors.ShouldContain(e => e.Field == $"fields.{field}" && e.MessageKey == key);
+    }
+
+    [Fact]
+    public async Task Rich_text_is_sanitised_plain_text_kept_and_the_limit_counts_visible_text()
+    {
+        var html = await ValidateAsync(Valid(v => v["minutes"] = "<p onclick=\"x()\"><strong>Agreed</strong></p><script>alert(1)</script>"));
+        html.Errors.ShouldBeEmpty();
+        html.Values["minutes"]!.GetValue<string>().ShouldBe("<p><strong>Agreed</strong></p>");
+
+        var plain = await ValidateAsync(Valid(v => v["minutes"] = "a < b\nline 2"));
+        plain.Values["minutes"]!.GetValue<string>().ShouldBe("a < b\nline 2");
+
+        var formatted = await ValidateAsync(Valid(v => v["minutes"] = "<p><strong><em><u>exactly twenty char</u></em></strong></p>"));
+        formatted.Errors.ShouldBeEmpty("formatting does not count against the field's maximum");
+
+        var tooLong = await ValidateAsync(Valid(v => v["minutes"] = "<p>twenty-one characters</p>"));
+        tooLong.Errors.ShouldContain(e => e.Field == "fields.minutes" && e.MessageKey == "validation.richTextTooLong");
+
+        var empty = await ValidateAsync(Valid(v => v["minutes"] = "<p></p>"));
+        empty.Values.ContainsKey("minutes").ShouldBeFalse();
     }
 
     [Fact]

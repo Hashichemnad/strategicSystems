@@ -1,5 +1,6 @@
 using System.Globalization;
 using Strategy.Platform.Kernel.Results;
+using Strategy.Platform.Kernel.Text;
 
 namespace Strategy.Modules.Portfolio.Domain;
 
@@ -23,6 +24,9 @@ public static class RequestRules
 {
     public const int NameMaxLength = 300;
     public const int LongTextMaxLength = 5000;
+
+    /// <summary>Stored size of the rich-text description / justifications (sanitised HTML, ADR 0161); the 5 000 limit counts the visible text.</summary>
+    public const int RichTextStoredMaxLength = RichText.DefaultMaxLength;
     public const int TextMaxLength = 2000;
     public const int OtherMaxLength = 300;
 
@@ -34,8 +38,8 @@ public static class RequestRules
         var errors = new List<FieldError>();
         MaxLength(errors, "nameAr", v.NameAr, NameMaxLength);
         MaxLength(errors, "nameEn", v.NameEn, NameMaxLength);
-        MaxLength(errors, "description", v.Description, LongTextMaxLength);
-        MaxLength(errors, "justifications", v.Justifications, LongTextMaxLength);
+        RichLength(errors, "description", v.Description);
+        RichLength(errors, "justifications", v.Justifications);
         MaxLength(errors, "scopeOfWork", v.ScopeOfWork, LongTextMaxLength);
         MaxLength(errors, "previousProgramName", v.PreviousProgramName, NameMaxLength);
         MaxLength(errors, "suggestionSourceOther", v.SuggestionSourceOther, OtherMaxLength);
@@ -126,8 +130,8 @@ public static class RequestRules
             errors.Add(Required("nameEn"));
         }
 
-        RequiredText(errors, "description", v.Description);
-        RequiredText(errors, "justifications", v.Justifications);
+        RequiredRichText(errors, "description", v.Description);
+        RequiredRichText(errors, "justifications", v.Justifications);
         RequiredText(errors, "strategicObjectiveCode", v.StrategicObjectiveCode);
         RequiredText(errors, "suggestionSourceCode", v.SuggestionSourceCode);
         RequiredText(errors, "programTypeCode", v.ProgramTypeCode);
@@ -260,6 +264,24 @@ public static class RequestRules
         if (text is { } t && t.Length > max)
         {
             errors.Add(new FieldError(field, "validation.maximumLength", "validation.maximumLength", P("maxLength", max)));
+        }
+    }
+
+    /// <summary>Rich text (ADR 0161): measured after sanitising, on the visible text.</summary>
+    public static void RichLength(List<FieldError> errors, string field, string? text, int max = LongTextMaxLength)
+    {
+        ArgumentNullException.ThrowIfNull(errors);
+        if (RichText.LengthError(field, RichText.Sanitize(text), max, RichTextStoredMaxLength) is { } error)
+        {
+            errors.Add(error);
+        }
+    }
+
+    private static void RequiredRichText(List<FieldError> errors, string field, string? text)
+    {
+        if (RichText.PlainLength(RichText.Sanitize(text)) == 0)
+        {
+            errors.Add(Required(field));
         }
     }
 

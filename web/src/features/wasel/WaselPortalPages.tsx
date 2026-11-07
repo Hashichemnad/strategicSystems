@@ -6,6 +6,7 @@ import { formatDate, pickText } from '@/lib/format';
 import {
   EmptyState,
   PageHeader,
+  RichTextView,
   Skeleton,
   StatusBanner,
   StatusChip,
@@ -191,7 +192,9 @@ function Overview({ project: p }: { project: VendorProject }) {
         {p.description && (
           <div className="sm:col-span-2">
             <dt className="text-xs text-muted-foreground">{t('overview.description')}</dt>
-            <dd className="whitespace-pre-line">{p.description}</dd>
+            <dd>
+              <RichTextView value={p.description} />
+            </dd>
           </div>
         )}
       </dl>

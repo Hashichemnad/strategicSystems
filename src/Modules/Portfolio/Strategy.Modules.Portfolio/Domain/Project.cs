@@ -1,5 +1,6 @@
 using Strategy.Platform.Audit;
 using Strategy.Platform.Kernel.Domain;
+using Strategy.Platform.Kernel.Text;
 
 namespace Strategy.Modules.Portfolio.Domain;
 
@@ -341,7 +342,7 @@ public sealed class Project : AuditableEntity
         ArgumentNullException.ThrowIfNull(v);
         NameAr = Clean(v.NameAr) ?? NameAr;
         NameEn = Clean(v.NameEn) ?? NameEn;
-        Description = Clean(v.Description);
+        Description = RichText.Sanitize(v.Description);
         ScopeOfWork = Clean(v.ScopeOfWork);
         StrategicObjectiveCode = Clean(v.StrategicObjectiveCode);
         OperationalThemes = themesJson;
@@ -427,7 +428,7 @@ public sealed class Project : AuditableEntity
     {
         NameAr = Clean(nameAr) ?? NameAr;
         NameEn = Clean(nameEn) ?? NameEn;
-        Description = Clean(description) ?? Description;
+        Description = RichText.Sanitize(description) ?? Description;
         ScopeOfWork = Clean(scope) ?? ScopeOfWork;
         PlannedStart = start ?? PlannedStart;
         PlannedEnd = end ?? PlannedEnd;

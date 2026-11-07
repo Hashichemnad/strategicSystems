@@ -12,6 +12,7 @@ import {
   DatePicker,
   FormField,
   Input,
+  RichTextEditor,
   Select,
   StatusBanner,
   StatusChip,
@@ -36,7 +37,7 @@ import {
 /** Every form value is text while editing (AI proposals are text too); {@link toValues} converts for the server. */
 export type FormState = Record<string, string>;
 
-type Kind = 'text' | 'long' | 'number' | 'date' | 'year' | 'yesno' | 'choice';
+type Kind = 'text' | 'long' | 'rich' | 'number' | 'date' | 'year' | 'yesno' | 'choice';
 
 interface FieldSpec {
   name: string;
@@ -229,6 +230,18 @@ export function RequestWizard({
     const highlight = drafts[name] && !drafts[name].accepted ? aiPendingClass : undefined;
     let input: ReactNode;
     switch (spec.kind) {
+      case 'rich':
+        // Rich text (ADR 0161): the 5 000-character limit counts the visible text; the server sanitises the HTML.
+        input = (
+          <RichTextEditor
+            aria-label={label ?? t(`fields.${name}` as 'fields.nameAr')}
+            aria-invalid={invalid}
+            className={cn(highlight)}
+            value={value}
+            onChange={(html) => set(name, html ?? '')}
+          />
+        );
+        break;
       case 'long':
         input = (
           <Textarea
@@ -375,8 +388,8 @@ export function RequestWizard({
               />
             </div>
           )}
-          <div className="md:col-span-2">{f('description', 'long')}</div>
-          <div className="md:col-span-2">{f('justifications', 'long')}</div>
+          <div className="md:col-span-2">{f('description', 'rich')}</div>
+          <div className="md:col-span-2">{f('justifications', 'rich')}</div>
           {f('strategicObjectiveCode', 'choice', { choices: (o) => lookup(o.objectives) })}
           {f('programTypeCode', 'choice', { choices: (o) => lookup(o.programTypes) })}
           {f('suggestionSourceCode', 'choice', { choices: (o) => lookup(o.sources) })}

@@ -9,6 +9,7 @@ import {
   EmptyState,
   FormField,
   Input,
+  RichTextView,
   Skeleton,
   StatusBanner,
   StatusChip,
@@ -401,7 +402,7 @@ export function WaselMeetingsTab({ project }: { project: VendorProject }) {
               )
             )}
           </div>
-          {m.notes && <p className="whitespace-pre-line">{m.notes}</p>}
+          {m.notes && <RichTextView compact value={m.notes} />}
         </li>
       ))}
     </ul>

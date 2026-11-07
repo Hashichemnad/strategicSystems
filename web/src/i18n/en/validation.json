@@ -2,6 +2,7 @@
   "notEmpty": "This field is required.",
   "notNull": "This field is required.",
   "maximumLength": "Use at most {{maxLength}} characters.",
+  "richTextTooLong": "Use at most {{maxLength}} characters of text (the formatting is too large or the text too long).",
   "minimumLength": "Use at least {{minLength}} characters.",
   "atLeastOneLanguage": "Enter this in Arabic, English or both.",
   "unknownSortField": "This column cannot be sorted.",

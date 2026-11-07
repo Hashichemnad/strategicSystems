@@ -255,6 +255,16 @@ public class RequestRulesTests
     }
 
     [Fact]
+    public void Description_and_justifications_are_rich_text_measured_on_the_visible_text()
+    {
+        var formatted = "<p><strong>" + new string('d', RequestRules.LongTextMaxLength) + "</strong></p>";
+        Submit(Valid() with { Description = formatted, Justifications = "<ul><li>Need</li></ul>" }).ShouldBeEmpty();
+        Submit(Valid() with { Description = "<p>" + new string('d', RequestRules.LongTextMaxLength + 1) + "</p>" })["description"]
+            .ShouldBe("validation.richTextTooLong");
+        Submit(Valid() with { Justifications = "<p></p><script>x()</script>" })["justifications"].ShouldBe("validation.notEmpty");
+    }
+
+    [Fact]
     public void Cost_path_must_be_complete_when_budget_is_required()
     {
         Submit(Valid() with { CostPath = null })["costPath"].ShouldBe("validation.notEmpty");

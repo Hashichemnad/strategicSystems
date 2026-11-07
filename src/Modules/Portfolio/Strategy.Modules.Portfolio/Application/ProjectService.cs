@@ -226,10 +226,11 @@ internal sealed class ProjectService(
     {
         var errors = new List<FieldError>();
         void Add(string field, string key, IReadOnlyDictionary<string, object?>? p = null) => errors.Add(new FieldError(field, key, key, p));
+        RequestRules.RichLength(errors, "description", v.Description);
         foreach (var (field, text, max) in new[]
                  {
                      ("nameAr", v.NameAr, RequestRules.NameMaxLength), ("nameEn", v.NameEn, RequestRules.NameMaxLength),
-                     ("description", v.Description, RequestRules.LongTextMaxLength), ("scopeOfWork", v.ScopeOfWork, RequestRules.LongTextMaxLength),
+                     ("scopeOfWork", v.ScopeOfWork, RequestRules.LongTextMaxLength),
                      ("structuralChanges", v.StructuralChanges, RequestRules.LongTextMaxLength), ("resourcesHuman", v.ResourcesHuman, RequestRules.LongTextMaxLength),
                      ("resourcesFinancial", v.ResourcesFinancial, RequestRules.LongTextMaxLength), ("resourcesTechnical", v.ResourcesTechnical, RequestRules.LongTextMaxLength),
                      ("resourcesContract", v.ResourcesContract, RequestRules.LongTextMaxLength), ("resourcesOther", v.ResourcesOther, RequestRules.LongTextMaxLength),

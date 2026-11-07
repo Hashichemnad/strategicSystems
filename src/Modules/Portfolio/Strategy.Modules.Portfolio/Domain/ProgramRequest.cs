@@ -2,6 +2,7 @@ using System.Text.Json;
 using Strategy.Platform.Audit;
 using Strategy.Platform.Kernel.Domain;
 using Strategy.Platform.Kernel.Results;
+using Strategy.Platform.Kernel.Text;
 
 namespace Strategy.Modules.Portfolio.Domain;
 
@@ -269,7 +270,8 @@ public sealed class ProgramRequest : AuditableEntity
             return allowed.Error;
         }
 
-        (NameAr, NameEn, Description, Justifications) = (Trim(v.NameAr), Trim(v.NameEn), Trim(v.Description), Trim(v.Justifications));
+        // Description and justifications are rich text (ADR 0161): sanitised HTML, or plain text kept as typed.
+        (NameAr, NameEn, Description, Justifications) = (Trim(v.NameAr), Trim(v.NameEn), RichText.Sanitize(v.Description), RichText.Sanitize(v.Justifications));
         (StrategicObjectiveCode, SuggestionSourceCode, ProgramTypeCode) = (Trim(v.StrategicObjectiveCode), Trim(v.SuggestionSourceCode), Trim(v.ProgramTypeCode));
         SuggestionSourceOther = OtherCode.Is(SuggestionSourceCode) ? Trim(v.SuggestionSourceOther) : null;
         RequiresBudget = v.RequiresBudget;

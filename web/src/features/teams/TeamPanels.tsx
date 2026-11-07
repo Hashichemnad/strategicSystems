@@ -16,6 +16,7 @@ import {
   EmptyState,
   FormField,
   Input,
+  RichTextEditor,
   Select,
   Skeleton,
   StatusBanner,
@@ -384,7 +385,12 @@ function MeetingDialog({
           <Input value={location} onChange={(e) => setLocation(e.target.value)} />
         </FormField>
         <FormField label={t('meetings.agenda')}>
-          <Textarea rows={3} value={agenda} onChange={(e) => setAgenda(e.target.value)} />
+          <RichTextEditor
+            aria-label={t('meetings.agenda')}
+            value={agenda}
+            onChange={(v) => setAgenda(v ?? '')}
+            minHeight="5rem"
+          />
         </FormField>
       </DialogContent>
     </Dialog>
