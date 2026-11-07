@@ -39,7 +39,17 @@ export type FormValues = Record<string, FieldValue>;
 export interface FieldSpec {
   name: string;
   label: string;
-  kind: 'text' | 'textarea' | 'richtext' | 'number' | 'date' | 'datetime' | 'select' | 'employee' | 'bool' | 'kpiCard';
+  kind:
+    | 'text'
+    | 'textarea'
+    | 'richtext'
+    | 'number'
+    | 'date'
+    | 'datetime'
+    | 'select'
+    | 'employee'
+    | 'bool'
+    | 'kpiCard';
   options?: readonly SelectOption[];
   required?: boolean;
   wide?: boolean;
