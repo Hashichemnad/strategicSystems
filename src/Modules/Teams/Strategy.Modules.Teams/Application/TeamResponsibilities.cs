@@ -155,7 +155,11 @@ internal sealed class TeamEvaluatorResponsibility(TeamsDbContext db, IAccessServ
         var rows = await joined.OrderBy(x => x.e.Number).Skip((query.Page - 1) * query.PageSize).Take(query.PageSize).ToListAsync(cancellationToken).ConfigureAwait(false);
         return new ResponsibilityPage(rows.Select(x => Describe(x.e) with
         {
-            TitleAr = x.NameAr, TitleEn = x.NameEn, UnitId = x.OwningUnitId, ContextAr = x.Number, ContextEn = x.Number,
+            TitleAr = x.NameAr,
+            TitleEn = x.NameEn,
+            UnitId = x.OwningUnitId,
+            ContextAr = x.Number,
+            ContextEn = x.Number,
         }).ToList(), total);
     }
 
