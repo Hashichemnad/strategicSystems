@@ -20,6 +20,7 @@ using Strategy.Platform.Notifications;
 using Strategy.Platform.Persistence;
 using Strategy.Platform.Reporting;
 using Strategy.Platform.Scheduling;
+using Strategy.Platform.Search;
 using Strategy.Platform.Settings;
 using Strategy.Platform.Workflow;
 
@@ -95,6 +96,7 @@ public sealed class TeamsModule : IModule
         services.AddLinkTargetSource<RecommendationLinkTargets>();
         services.AddLinkableType(MeetingLinkTargets.Definition);
         services.AddLinkTargetSource<MeetingLinkTargets>();
+        services.AddSearchContributor<TeamSearchContributor>(TeamPermissions.SystemCode); // global search (ADR 0160)
         services.AddIntegrationEventHandler<LinkedRecordClosed, OpenEvaluationOnLinkedRecordClosed>();
 
         services.AddScoped<EvaluationTriggerRunner>();

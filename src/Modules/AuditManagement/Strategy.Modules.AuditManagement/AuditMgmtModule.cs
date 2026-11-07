@@ -19,6 +19,7 @@ using Strategy.Platform.Notifications;
 using Strategy.Platform.Persistence;
 using Strategy.Platform.Reporting;
 using Strategy.Platform.Scheduling;
+using Strategy.Platform.Search;
 using Strategy.Platform.Settings;
 using Strategy.Platform.Workflow;
 
@@ -81,6 +82,7 @@ public sealed class AuditMgmtModule : IModule
         services.AddLinkTargetSource<FindingLinkTargets>();
         services.AddLinkableType(ReportLinkTargets.Definition);
         services.AddLinkTargetSource<ReportLinkTargets>();
+        services.AddSearchContributor<AuditSearchContributor>(AuditPermissions.SystemCode); // global search (ADR 0160)
 
         services.AddScoped<AuditMonitorRunner>();
         services.AddScheduledJob(AuditMonitorJob.Definition);

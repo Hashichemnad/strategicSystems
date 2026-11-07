@@ -19,6 +19,7 @@ using Strategy.Platform.Notifications;
 using Strategy.Platform.Persistence;
 using Strategy.Platform.Reporting;
 using Strategy.Platform.Scheduling;
+using Strategy.Platform.Search;
 using Strategy.Platform.Settings;
 using Strategy.Platform.Workflow;
 
@@ -65,6 +66,7 @@ public sealed class DocumentRegistryModule : IModule
         services.AddReportingDatasetSource<DocRegDatasetSource>();
         services.AddLinkableType(DocumentLinks.Definition);
         services.AddLinkTargetSource<DocumentLinkTargets>();
+        services.AddSearchContributor<DocumentSearchContributor>(DocRegPermissions.SystemCode); // global search (ADR 0160)
         services.AddScoped<ValidityRunner>();
         services.AddScheduledJob(ValidityJob.Definition);
 

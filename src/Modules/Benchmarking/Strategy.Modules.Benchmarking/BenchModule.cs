@@ -21,6 +21,7 @@ using Strategy.Platform.Notifications;
 using Strategy.Platform.Persistence;
 using Strategy.Platform.Reporting;
 using Strategy.Platform.Scheduling;
+using Strategy.Platform.Search;
 using Strategy.Platform.Settings;
 using Strategy.Platform.Workflow;
 
@@ -70,6 +71,7 @@ public sealed class BenchModule : IModule
         services.AddFileOwnerAccess<StudyFiles>();
         services.AddLinkableType(StudyLinkTargets.Definition);
         services.AddLinkTargetSource<StudyLinkTargets>();
+        services.AddSearchContributor<BenchSearchContributor>(BenchPermissions.SystemCode); // global search (ADR 0160)
 
         services.AddIntegrationEventHandler<CapRemarkStatusChanged, CapRemarkStatusChangedHandler>();
         services.AddScoped<BenchMonitorRunner>();

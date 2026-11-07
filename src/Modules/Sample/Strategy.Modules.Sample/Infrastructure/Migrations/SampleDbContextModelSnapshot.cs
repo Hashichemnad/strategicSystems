@@ -79,6 +79,12 @@ namespace Strategy.Modules.Sample.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("owner_employee_id");
 
+                    b.Property<string>("QuickSearch")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("text")
+                        .HasColumnName("quick_search")
+                        .HasComputedColumnSql("btrim(regexp_replace(lower(translate(regexp_replace(coalesce(number::text, '') || ' ' || coalesce(name_ar::text, '') || ' ' || coalesce(name_en::text, ''), '[ً-ٰٟـ]', '', 'g'), 'آأإٱىة٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹', 'اااايه01234567890123456789')), '\\s+', ' ', 'g'))", true);
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(32)
@@ -119,6 +125,12 @@ namespace Strategy.Modules.Sample.Infrastructure.Migrations
 
                     b.HasIndex("OwnerEmployeeId")
                         .HasDatabaseName("ix_sample_items_owner_employee_id");
+
+                    b.HasIndex("QuickSearch")
+                        .HasDatabaseName("ix_sample_items_quick_search");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("QuickSearch"), "gin");
+                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("QuickSearch"), new[] { "gin_trgm_ops" });
 
                     b.HasIndex("Status")
                         .HasDatabaseName("ix_sample_items_status");

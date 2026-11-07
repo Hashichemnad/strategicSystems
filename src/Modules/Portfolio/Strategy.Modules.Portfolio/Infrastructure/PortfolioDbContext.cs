@@ -100,6 +100,7 @@ internal sealed class ProgramRequestConfiguration : IEntityTypeConfiguration<Pro
     public void Configure(EntityTypeBuilder<ProgramRequest> builder)
     {
         builder.ToTable("request");
+        builder.HasQuickSearch("number", "name_ar", "name_en", "partner_name", "previous_program_name"); // global search (ADR 0160)
         builder.Property(x => x.Id).ValueGeneratedNever();
         builder.Property(x => x.Number).HasMaxLength(50);
         foreach (var name in new[]
@@ -188,6 +189,7 @@ internal sealed class ProjectConfiguration : IEntityTypeConfiguration<Project>
     public void Configure(EntityTypeBuilder<Project> builder)
     {
         builder.ToTable("project");
+        builder.HasQuickSearch("number", "name_ar", "name_en"); // global search (ADR 0160)
         builder.Property(x => x.Id).ValueGeneratedNever();
         builder.Property(x => x.Number).HasMaxLength(50);
         foreach (var name in new[]
@@ -283,6 +285,7 @@ internal sealed class MilestoneConfiguration : IEntityTypeConfiguration<Mileston
     public void Configure(EntityTypeBuilder<Milestone> builder)
     {
         builder.ToTable("milestone");
+        builder.HasQuickSearch("code", "title_ar", "title_en", "main_deliverable"); // global search (ADR 0160)
         builder.Property(x => x.Id).ValueGeneratedNever();
         builder.Property(x => x.Code).HasMaxLength(80);
         builder.Property(x => x.Status).HasMaxLength(40);
@@ -491,6 +494,7 @@ internal sealed class UserStoryConfiguration : IEntityTypeConfiguration<UserStor
     public void Configure(EntityTypeBuilder<UserStory> builder)
     {
         builder.ToTable("user_story");
+        builder.HasQuickSearch("code", "title"); // global search (ADR 0160)
         builder.Property(x => x.Id).ValueGeneratedNever();
         builder.Property(x => x.Code).HasMaxLength(80);
         ChildConfiguration.Texts(builder, 40, nameof(UserStory.ColumnCode), nameof(UserStory.Category), nameof(UserStory.Priority), nameof(UserStory.Status));

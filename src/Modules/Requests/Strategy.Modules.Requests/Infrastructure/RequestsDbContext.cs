@@ -62,6 +62,7 @@ internal sealed class RequestConfiguration : IEntityTypeConfiguration<Request>
         builder.Property(x => x.TitleAr).HasMaxLength(Request.TitleMaxLength);
         builder.Property(x => x.TitleEn).HasMaxLength(Request.TitleMaxLength);
         builder.Property(x => x.TitleSearch).HasMaxLength(1000);
+        builder.HasTrigramIndex(nameof(Request.TitleSearch)); // global search (ADR 0160)
         builder.Property(x => x.Status).HasMaxLength(20);
         builder.Property(x => x.Stage).HasMaxLength(60);
         builder.Property(x => x.DataJson).HasColumnName("data").HasColumnType("jsonb");

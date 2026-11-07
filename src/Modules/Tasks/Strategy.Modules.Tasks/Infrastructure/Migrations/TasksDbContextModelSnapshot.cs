@@ -575,6 +575,12 @@ namespace Strategy.Modules.Tasks.Infrastructure.Migrations
                         .HasColumnType("character varying(20)")
                         .HasColumnName("priority");
 
+                    b.Property<string>("QuickSearch")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("text")
+                        .HasColumnName("quick_search")
+                        .HasComputedColumnSql("btrim(regexp_replace(lower(translate(regexp_replace(coalesce(number::text, '') || ' ' || coalesce(title_ar::text, '') || ' ' || coalesce(title_en::text, ''), '[ً-ٰٟـ]', '', 'g'), 'آأإٱىة٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹', 'اااايه01234567890123456789')), '\\s+', ' ', 'g'))", true);
+
                     b.Property<string>("Recurrence")
                         .HasColumnType("jsonb")
                         .HasColumnName("recurrence");
@@ -678,6 +684,12 @@ namespace Strategy.Modules.Tasks.Infrastructure.Migrations
 
                     b.HasIndex("ParentTaskId")
                         .HasDatabaseName("ix_task_parent_task_id");
+
+                    b.HasIndex("QuickSearch")
+                        .HasDatabaseName("ix_task_quick_search");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("QuickSearch"), "gin");
+                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("QuickSearch"), new[] { "gin_trgm_ops" });
 
                     b.HasIndex("Status")
                         .HasDatabaseName("ix_task_status");

@@ -85,6 +85,7 @@ internal sealed class RiskConfiguration : IEntityTypeConfiguration<RiskRecord>
     public void Configure(EntityTypeBuilder<RiskRecord> builder)
     {
         builder.ToTable("risk");
+        builder.HasQuickSearch("number", "title_ar", "title_en", "event_text"); // global search (ADR 0160)
         builder.Property(x => x.Id).ValueGeneratedNever();
         builder.Ignore(x => x.CategoryCodes);
         builder.Ignore(x => x.ObjectiveCodes);
@@ -141,6 +142,7 @@ internal sealed class TreatmentActionConfiguration : IEntityTypeConfiguration<Tr
     public void Configure(EntityTypeBuilder<TreatmentAction> builder)
     {
         builder.ToTable("treatment_action");
+        builder.HasQuickSearch("number", "title_ar", "title_en"); // global search (ADR 0160)
         builder.Property(x => x.Id).ValueGeneratedNever();
         builder.Ignore(x => x.ResponsibleUnitIds);
         builder.Property(x => x.Number).HasMaxLength(60);

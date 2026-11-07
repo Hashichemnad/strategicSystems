@@ -571,6 +571,12 @@ namespace Strategy.Modules.Kpi.Infrastructure.Migrations
                         .HasColumnType("character varying(400)")
                         .HasColumnName("process_name");
 
+                    b.Property<string>("QuickSearch")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("text")
+                        .HasColumnName("quick_search")
+                        .HasComputedColumnSql("btrim(regexp_replace(lower(translate(regexp_replace(coalesce(code::text, '') || ' ' || coalesce(name_ar::text, '') || ' ' || coalesce(name_en::text, '') || ' ' || coalesce(process_name::text, ''), '[ً-ٰٟـ]', '', 'g'), 'آأإٱىة٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹', 'اااايه01234567890123456789')), '\\s+', ' ', 'g'))", true);
+
                     b.Property<Guid?>("ResponsibleEmployeeId")
                         .HasColumnType("uuid")
                         .HasColumnName("responsible_employee_id");
@@ -662,6 +668,12 @@ namespace Strategy.Modules.Kpi.Infrastructure.Migrations
 
                     b.HasIndex("ParentCardId")
                         .HasDatabaseName("ix_kpi_card_parent_card_id");
+
+                    b.HasIndex("QuickSearch")
+                        .HasDatabaseName("ix_kpi_card_quick_search");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("QuickSearch"), "gin");
+                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("QuickSearch"), new[] { "gin_trgm_ops" });
 
                     b.HasIndex("ResponsibleEmployeeId")
                         .HasDatabaseName("ix_kpi_card_responsible_employee_id");

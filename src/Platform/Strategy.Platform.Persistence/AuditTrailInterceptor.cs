@@ -198,7 +198,8 @@ public static class AuditChangeCollector
             foreach (var property in entry.Properties)
             {
                 var meta = property.Metadata;
-                if (SkippedProperties.Contains(meta.Name) || meta.PropertyInfo?.GetCustomAttribute<NotAuditedAttribute>() is not null)
+                if (SkippedProperties.Contains(meta.Name) || meta.PropertyInfo?.GetCustomAttribute<NotAuditedAttribute>() is not null
+                    || meta.GetComputedColumnSql() is not null) // generated columns (e.g. quick_search, ADR 0160) are derived data
                 {
                     continue;
                 }

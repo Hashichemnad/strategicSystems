@@ -38,6 +38,7 @@ internal sealed class DocumentConfiguration : IEntityTypeConfiguration<Document>
         builder.Property(x => x.Status).HasMaxLength(20);
         builder.Property(x => x.WithdrawnReason).HasMaxLength(2000);
         builder.Property(x => x.SearchText).HasMaxLength(10000);
+        builder.HasTrigramIndex(nameof(Document.SearchText)); // global search (ADR 0160)
         builder.HasIndex(x => x.DocumentNo).IsUnique();
         builder.HasIndex(x => new { x.Status, x.Sensitivity });
         builder.HasIndex(x => x.OwnerUnitId);

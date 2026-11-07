@@ -187,6 +187,12 @@ namespace Strategy.Modules.Requests.Infrastructure.Migrations
                     b.HasIndex("RequesterUserId")
                         .HasDatabaseName("ix_request_requester_user_id");
 
+                    b.HasIndex("TitleSearch")
+                        .HasDatabaseName("ix_request_title_search");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("TitleSearch"), "gin");
+                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("TitleSearch"), new[] { "gin_trgm_ops" });
+
                     b.HasIndex("SubjectType", "SubjectId")
                         .HasDatabaseName("ix_request_subject_type_subject_id");
 

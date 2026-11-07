@@ -11,6 +11,7 @@ using Strategy.Platform.Notifications;
 using Strategy.Platform.Organisation;
 using Strategy.Platform.Reporting;
 using Strategy.Platform.Scheduling;
+using Strategy.Platform.Search;
 using Strategy.Platform.Settings;
 using Strategy.Platform.Workflow;
 
@@ -23,5 +24,5 @@ namespace Strategy.Host;
 internal static class PlatformCatalog
 {
     public static readonly IReadOnlyList<IPlatformComponent> All =
-        [new AuditComponent(), new SchedulingComponent(), new FilesComponent(), new SettingsComponent(), new NotificationsComponent(), new AccessComponent(), new OrganisationComponent(), new IdentityComponent(), new CalendarComponent(), new WorkflowComponent(), new AiComponent(), new McpComponent(), new LinksComponent(), new ReportingComponent(), new Demo.DemoPackComponent()];
+        [new AuditComponent(), new SchedulingComponent(), new FilesComponent(), new SettingsComponent(), new NotificationsComponent(), new AccessComponent(), new OrganisationComponent(), new IdentityComponent(), new CalendarComponent(), new WorkflowComponent(), new AiComponent(), new McpComponent(), new LinksComponent(), new SearchComponent(), new ReportingComponent(), new Demo.DemoPackComponent()];
 }

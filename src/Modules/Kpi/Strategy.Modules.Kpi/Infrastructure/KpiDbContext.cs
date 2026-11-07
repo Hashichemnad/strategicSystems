@@ -59,6 +59,7 @@ internal sealed class KpiCardConfiguration : IEntityTypeConfiguration<KpiCard>
     public void Configure(EntityTypeBuilder<KpiCard> builder)
     {
         builder.ToTable("kpi_card");
+        builder.HasQuickSearch("code", "name_ar", "name_en", "process_name"); // global search (ADR 0160)
         builder.Property(x => x.Id).ValueGeneratedNever();
         builder.Ignore(x => x.Sources);
         builder.Ignore(x => x.GemCriteria);

@@ -215,6 +215,12 @@ namespace Strategy.Modules.Teams.Infrastructure.Migrations
                         .HasColumnType("character varying(50)")
                         .HasColumnName("number");
 
+                    b.Property<string>("QuickSearch")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("text")
+                        .HasColumnName("quick_search")
+                        .HasComputedColumnSql("btrim(regexp_replace(lower(translate(regexp_replace(coalesce(number::text, '') || ' ' || coalesce(title::text, '') || ' ' || coalesce(location::text, ''), '[ً-ٰٟـ]', '', 'g'), 'آأإٱىة٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹', 'اااايه01234567890123456789')), '\\s+', ' ', 'g'))", true);
+
                     b.Property<DateTimeOffset>("ScheduledAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("scheduled_at");
@@ -256,6 +262,12 @@ namespace Strategy.Modules.Teams.Infrastructure.Migrations
                         .IsUnique()
                         .HasDatabaseName("ix_meeting_number")
                         .HasFilter("number IS NOT NULL");
+
+                    b.HasIndex("QuickSearch")
+                        .HasDatabaseName("ix_meeting_quick_search");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("QuickSearch"), "gin");
+                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("QuickSearch"), new[] { "gin_trgm_ops" });
 
                     b.HasIndex("TeamId", "ScheduledAt")
                         .HasDatabaseName("ix_meeting_team_id_scheduled_at");
@@ -530,6 +542,12 @@ namespace Strategy.Modules.Teams.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("owner_employee_id");
 
+                    b.Property<string>("QuickSearch")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("text")
+                        .HasColumnName("quick_search")
+                        .HasComputedColumnSql("btrim(regexp_replace(lower(translate(regexp_replace(coalesce(number::text, '') || ' ' || coalesce(text::text, ''), '[ً-ٰٟـ]', '', 'g'), 'آأإٱىة٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹', 'اااايه01234567890123456789')), '\\s+', ' ', 'g'))", true);
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -570,6 +588,12 @@ namespace Strategy.Modules.Teams.Infrastructure.Migrations
 
                     b.HasIndex("OwnerEmployeeId")
                         .HasDatabaseName("ix_recommendation_owner_employee_id");
+
+                    b.HasIndex("QuickSearch")
+                        .HasDatabaseName("ix_recommendation_quick_search");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("QuickSearch"), "gin");
+                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("QuickSearch"), new[] { "gin_trgm_ops" });
 
                     b.HasIndex("TeamId")
                         .HasDatabaseName("ix_recommendation_team_id");
@@ -749,6 +773,12 @@ namespace Strategy.Modules.Teams.Infrastructure.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("permanent");
 
+                    b.Property<string>("QuickSearch")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("text")
+                        .HasColumnName("quick_search")
+                        .HasComputedColumnSql("btrim(regexp_replace(lower(translate(regexp_replace(coalesce(number::text, '') || ' ' || coalesce(name_ar::text, '') || ' ' || coalesce(name_en::text, '') || ' ' || coalesce(subject::text, ''), '[ً-ٰٟـ]', '', 'g'), 'آأإٱىة٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹', 'اااايه01234567890123456789')), '\\s+', ' ', 'g'))", true);
+
                     b.Property<Guid?>("ReplacedByTeamId")
                         .HasColumnType("uuid")
                         .HasColumnName("replaced_by_team_id");
@@ -833,6 +863,12 @@ namespace Strategy.Modules.Teams.Infrastructure.Migrations
 
                     b.HasIndex("OwningUnitId")
                         .HasDatabaseName("ix_team_owning_unit_id");
+
+                    b.HasIndex("QuickSearch")
+                        .HasDatabaseName("ix_team_quick_search");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("QuickSearch"), "gin");
+                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("QuickSearch"), new[] { "gin_trgm_ops" });
 
                     b.HasIndex("Status")
                         .HasDatabaseName("ix_team_status");

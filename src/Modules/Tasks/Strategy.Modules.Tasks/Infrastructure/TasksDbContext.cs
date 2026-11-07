@@ -34,6 +34,7 @@ internal sealed class TaskItemConfiguration : IEntityTypeConfiguration<TaskItem>
     public void Configure(EntityTypeBuilder<TaskItem> builder)
     {
         builder.ToTable("task");
+        builder.HasQuickSearch("number", "title_ar", "title_en"); // global search (ADR 0160)
         builder.Property(x => x.Id).ValueGeneratedNever();
         builder.Property(x => x.Number).HasMaxLength(50);
         builder.Property(x => x.TitleAr).HasMaxLength(TaskItem.TitleMaxLength);

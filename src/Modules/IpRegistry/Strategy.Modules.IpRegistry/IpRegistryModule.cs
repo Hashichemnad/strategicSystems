@@ -20,6 +20,7 @@ using Strategy.Platform.Notifications;
 using Strategy.Platform.Persistence;
 using Strategy.Platform.Reporting;
 using Strategy.Platform.Scheduling;
+using Strategy.Platform.Search;
 using Strategy.Platform.Settings;
 using Strategy.Platform.Workflow;
 
@@ -62,6 +63,7 @@ public sealed class IpRegistryModule : IModule
         services.AddFileOwnerAccess<IpFiles>();
         services.AddLinkableType(IpLinks.Definition);
         services.AddLinkTargetSource<IpLinkTargets>();
+        services.AddSearchContributor<IpSearchContributor>(IpPermissions.SystemCode); // global search (ADR 0160)
         services.AddScoped<IpSearchSource>();
         services.AddScoped<IRecordSearchSource>(sp => sp.GetRequiredService<IpSearchSource>());
         services.AddScoped<RenewalRunner>();
