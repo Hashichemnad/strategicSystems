@@ -1,6 +1,6 @@
 # 0169 — KPI picker search as you type; "take over as creator" for a leaver's tasks
 
-- **Status:** Accepted (Phase 19, stream M)
+- **Status:** Proposed (Phase 19, stream M) — awaiting owner acceptance
 - **Context:** SPEC-ADDENDUM A8 closes two known limitations: KPI pickers that showed only the first cards of a list (Portfolio's project
   KPI select showed 20, other pickers re-used the full card list), and ADR 0040's open point — tasks a leaver *created* for other people
   keep the leaver as creator and approver.

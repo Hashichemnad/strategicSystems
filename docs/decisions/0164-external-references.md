@@ -1,6 +1,6 @@
 # 0164 — External references: source systems, `integration.external_ref`, uniqueness and origin
 
-- **Status:** Accepted (Phase 19, stream X)
+- **Status:** Proposed (Phase 19, stream X) — awaiting owner acceptance
 - **Context:** SPEC-ADDENDUM §B: data from other systems (first Salesforce standby sync, Phase 23; then any customer system) must stay unique
   and traceable. A record may carry references from several sources; a source's external ID must map to exactly one record and a record to
   at most one external ID per source and type. Records created by a source show "from {source}".

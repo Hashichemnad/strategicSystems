@@ -1,6 +1,6 @@
 # 0166 — Members page over the existing access model
 
-- **Status:** Accepted (Phase 19, stream D1)
+- **Status:** Proposed (Phase 19, stream D1) — awaiting owner acceptance
 - **Context:** SPEC-ADDENDUM §D1 asks for a simple *Members* screen per system (administrators, users — people, units incl. sub-units,
   everyone —, optional extra roles) without the permission matrix. The access model (ADRs 0015, 0016) already has everything needed:
   roles with scopes, role assignments with principal kinds user / unit / everyone and dates, system-access grants, cache invalidation, the

@@ -1,6 +1,6 @@
 # 0161 — Rich text: Tiptap editor, server allow-list (HtmlSanitizer), DOMPurify, no data migration
 
-- **Status:** Proposed (Phase 19, stream R)
+- **Status:** Proposed (Phase 19, stream R) — awaiting owner acceptance
 - **Context:** SPEC-ADDENDUM A2 asks for rich text in the SPEC's rich-text fields, stored as sanitised HTML, rendered with DOMPurify, with
   plain-text fallbacks, while existing plain values migrate unchanged. Until now the only rich-text fields (project meeting notes, Request
   Framework `richtext` fields) were edited in textareas and shown as text; the project-meeting notes were filtered by a regex (Phase 7) and

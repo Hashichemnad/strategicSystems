@@ -1,6 +1,6 @@
 # 0160 — Global search: module contributors, Links-registry resolution, generated search columns
 
-- **Status:** Accepted (Phase 19, stream S)
+- **Status:** Proposed (Phase 19, stream S) — awaiting owner acceptance
 - **Context:** SPEC-ADDENDUM §A1 asks for one search box over every system the user can access, grouped by system, Arabic-normalised,
   permission-filtered with 404 semantics, with recent items. Eleven modules own 22 linkable record types; only three tables had a
   normalised search column and none had a trigram index on it. Search must never reveal a record the user may not read, not even as a count.

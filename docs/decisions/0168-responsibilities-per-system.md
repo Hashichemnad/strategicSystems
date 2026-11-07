@@ -1,6 +1,6 @@
 # 0168 — Responsibilities page per system: one contract, module-owned reassignment
 
-- **Status:** Accepted (Phase 19, stream D2)
+- **Status:** Proposed (Phase 19, stream D2) — awaiting owner acceptance
 - **Context:** SPEC-ADDENDUM §D2: per system, an administrator assigns / reassigns who is responsible for updating records, singly or in bulk,
   with filters and a preview; each reassignment has a reason, notifies the old and the new person, is audited, and open approvals / tasks
   follow. The bulk *role* transfer (access.md) moves role assignments; ADR 0040 moves a leaver's tasks. Neither moves a responsibility that

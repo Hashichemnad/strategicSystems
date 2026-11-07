@@ -1,6 +1,6 @@
 # 0167 — Delegated system administration (`<system>.members.manage`)
 
-- **Status:** Accepted (Phase 19, stream D1)
+- **Status:** Proposed (Phase 19, stream D1) — awaiting owner acceptance
 - **Context:** SPEC-ADDENDUM §D1: a system administrator manages the Members of **their** system only — never another system or a platform
   setting. Until now only holders of `access.assignment.manage` (the platform access administrator) could assign roles.
 

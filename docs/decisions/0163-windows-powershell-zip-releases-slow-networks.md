@@ -1,6 +1,6 @@
 # 0163 — Deploy scripts under Windows PowerShell 5.1, ZIP releases, slow-network builds
 
-- **Status:** Accepted (Phase 19, stream O)
+- **Status:** Proposed (Phase 19, stream O) — awaiting owner acceptance
 - **Context:** SPEC-ADDENDUM A4–A6. ADR 0157 shipped `.ps1` twins of the install / backup / restore / upgrade scripts, verified only with
   PowerShell 7 on Linux. On Windows PowerShell 5.1 (the PowerShell every Windows Server has) native stderr redirected by PowerShell, or with
   the host's stderr redirected, becomes ErrorRecords, so with `$ErrorActionPreference = 'Stop'` the first `docker compose` progress line,

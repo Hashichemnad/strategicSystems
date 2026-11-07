@@ -1,6 +1,6 @@
 # 0162 — Security e-mails (password, MFA, lockout, tokens, new device)
 
-- **Status:** Accepted (Phase 19, stream M)
+- **Status:** Proposed (Phase 19, stream M) — awaiting owner acceptance
 - **Context:** SPEC-ADDENDUM A3; Phase 18 residual "no e-mail on password / MFA change". The audit trail records every account event
   (ADR 0018), but the account holder is not told, so a takeover can go unnoticed. The e-mails must be bilingual, in the recipient's
   language, sent once, never carry secrets, and the user must not be able to switch them off.

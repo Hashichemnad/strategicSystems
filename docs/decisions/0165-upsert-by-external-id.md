@@ -1,6 +1,6 @@
 # 0165 — Upsert by external ID in imports, REST and MCP
 
-- **Status:** Accepted (Phase 19, stream X)
+- **Status:** Proposed (Phase 19, stream X) — awaiting owner acceptance
 - **Context:** SPEC-ADDENDUM §B "Upsert by external ID everywhere": Excel / CSV imports with optional Source system + External ID columns
   (update if found, else create, validation report); `GET / PUT /api/v1/{module}/{type}/by-external/{source}/{externalId}`; an MCP read tool.
 
