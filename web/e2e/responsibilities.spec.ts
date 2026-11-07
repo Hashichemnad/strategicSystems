@@ -81,7 +81,7 @@ test.describe('responsibilities', () => {
     await expect(table.getByRole('row')).toHaveCount(4); // header + 3 cards
     await table.getByRole('checkbox', { name: t('table.select', { record: first.code }) }).check();
     await table.getByRole('checkbox', { name: t('table.select', { record: second.code }) }).check();
-    await expect(page.getByText(t('table.selected_other', { count: 2 }))).toBeVisible();
+    await expect(page.getByText(t('table.selected', { count: 2 }))).toBeVisible();
     await shot('responsibilities-list');
 
     // New person (Fatima), reason, preview: both allowed.
@@ -97,13 +97,13 @@ test.describe('responsibilities', () => {
     await page.getByTestId('responsibilities-confirm').click();
     await page
       .getByRole('dialog')
-      .getByRole('button', { name: t('change.confirm_other', { count: 2 }) })
+      .getByRole('button', { name: t('change.confirm', { count: 2 }) })
       .click();
     const result = page.getByTestId('responsibilities-result');
     await expect(
       result.getByText(t('result.summary', { moved: 2, changeRequests: 0, skipped: 0 })),
     ).toBeVisible();
-    await expect(result.getByText(t('outcomes.moved'))).toHaveCount(2);
+    await expect(result.getByText(t('outcomes.moved'), { exact: true })).toHaveCount(2);
     await shot('responsibilities-result');
 
     // Only the two selected cards moved.

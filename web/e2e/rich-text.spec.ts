@@ -26,16 +26,15 @@ test.describe('rich text', () => {
     const editor = field.getByRole('textbox', { name: k(language, 'fields.description') });
     await expect(editor).toBeVisible();
     await editor.click();
+    // Bold through the keyboard shortcut; the toolbar shows it pressed.
+    await page.keyboard.press('ControlOrMeta+B');
     await page.keyboard.type(language === 'ar' ? 'الأهداف الرئيسية' : 'Main goals');
-    await page.keyboard.press('ControlOrMeta+A');
-    await field.getByRole('button', { name: rt(language, 'bold') }).click();
     await expect(field.getByRole('button', { name: rt(language, 'bold') })).toHaveAttribute(
       'aria-pressed',
       'true',
     );
-    await page.keyboard.press('End');
+    await page.keyboard.press('ControlOrMeta+B');
     await page.keyboard.press('Enter');
-    await field.getByRole('button', { name: rt(language, 'bold') }).click();
     await field.getByRole('button', { name: rt(language, 'bulletList') }).click();
     await page.keyboard.type(language === 'ar' ? 'نموذج إلكتروني' : 'Online form');
     await page.keyboard.press('Enter');

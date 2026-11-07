@@ -51,7 +51,11 @@ test('members: open Portfolio → Settings → Members, add a person and a unit,
   await expect(page.getByRole('heading', { level: 1 })).toContainText(tr(language, 'access:members.title'));
   const users = page.getByRole('region', { name: tr(language, 'access:members.lists.users') });
   await expect(users).toBeVisible();
-  await expect(page.getByRole('link', { name: tr(language, 'access:members.advanced') })).toBeVisible();
+  await expect(
+    page
+      .getByRole('link', { name: tr(language, 'access:members.advanced') })
+      .and(page.locator('a[href*="system=portfolio"]')),
+  ).toBeVisible();
   await shot('members-page', { fullPage: true });
 
   // A person, found by search.

@@ -49,7 +49,7 @@ test('source system, import with external IDs (re-run updates) and the record pa
   const next = () => page.getByRole('button', { name: tr(language, 'common:actions.next') }).click();
   const importFile = async (name: string) => {
     await page.goto('/org/import');
-    await page.getByRole('combobox').click();
+    await page.getByRole('main').getByRole('combobox').click(); // the top bar has the global search combobox
     await page.getByRole('option', { name: tr(language, 'import:kinds.employees') }).click();
     await next();
     await page.getByLabel(tr(language, 'import:drop')).setInputFiles(csv(name));
