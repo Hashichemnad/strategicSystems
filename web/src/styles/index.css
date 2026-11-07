@@ -126,3 +126,95 @@
     @apply outline-2 outline-offset-2 outline-ring;
   }
 }
+
+/*
+ * Rich text (ADR 0161): the read view (RichTextView) and the editor share this typography. Logical properties only, tokens only,
+ * so it follows RTL / LTR, light / dark and branding.
+ */
+@layer components {
+  .rich-text {
+    overflow-wrap: anywhere;
+    line-height: 1.6;
+  }
+  .rich-text > * + * {
+    margin-block-start: 0.5rem;
+  }
+  .rich-text-compact > * + * {
+    margin-block-start: 0.25rem;
+  }
+  .rich-text h2 {
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+  .rich-text h3 {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+  .rich-text h4 {
+    font-size: 0.9375rem;
+    font-weight: 600;
+  }
+  .rich-text ul,
+  .rich-text ol {
+    padding-inline-start: 1.5rem;
+  }
+  .rich-text ul {
+    list-style: disc;
+  }
+  .rich-text ol {
+    list-style: decimal;
+  }
+  .rich-text li > p {
+    margin: 0;
+  }
+  .rich-text blockquote {
+    border-inline-start: 3px solid var(--border);
+    padding-inline-start: 0.75rem;
+    color: var(--muted-foreground);
+  }
+  .rich-text a {
+    color: var(--primary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .rich-text code {
+    border-radius: 0.25rem;
+    background: var(--muted);
+    padding-inline: 0.25rem;
+    font-size: 0.875em;
+  }
+  .rich-text pre {
+    overflow-x: auto;
+    border-radius: 0.375rem;
+    background: var(--muted);
+    padding: 0.5rem 0.75rem;
+  }
+  .rich-text table {
+    display: block;
+    max-inline-size: 100%;
+    overflow-x: auto;
+    border-collapse: collapse;
+  }
+  .rich-text th,
+  .rich-text td {
+    min-inline-size: 4rem;
+    border: 1px solid var(--border);
+    padding: 0.25rem 0.5rem;
+    text-align: start;
+    vertical-align: top;
+  }
+  .rich-text th {
+    background: var(--muted);
+    font-weight: 600;
+  }
+  .rich-text-editing .selectedCell {
+    background: var(--accent);
+  }
+  .rich-text-editing p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    float: inline-start;
+    block-size: 0;
+    pointer-events: none;
+    color: var(--muted-foreground);
+  }
+}
