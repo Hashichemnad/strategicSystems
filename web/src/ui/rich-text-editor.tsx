@@ -187,7 +187,6 @@ function TextTool({
     <button
       type="button"
       tabIndex={-1}
-      aria-label={label}
       title={label}
       aria-pressed={active}
       onMouseDown={(e) => e.preventDefault()}
@@ -197,7 +196,9 @@ function TextTool({
         active && 'bg-accent text-accent-foreground',
       )}
     >
+      {/* The visible short text starts the accessible name, the full label completes it (WCAG 2.5.3 label in name). */}
       {children}
+      <span className="sr-only"> ({label})</span>
     </button>
   );
 }

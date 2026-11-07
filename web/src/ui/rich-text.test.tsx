@@ -134,8 +134,10 @@ describe('RichTextEditor', () => {
       'Numbered list',
       'Link',
       'Insert table',
-      'Right to left',
-      'Left to right',
+      // Text buttons: the visible short text starts the name, the full label completes it (WCAG 2.5.3).
+      'RTL (Right to left)',
+      'LTR (Left to right)',
+      'Auto (Direction from the text)',
     ]) {
       expect(screen.getByRole('button', { name })).toBeTruthy();
     }
@@ -166,9 +168,9 @@ describe('RichTextEditor', () => {
     await waitFor(() => expect(values.at(-1)).toContain('<strong>Hello</strong>'));
     expect(screen.getByRole('button', { name: 'Bold' }).getAttribute('aria-pressed')).toBe('true');
 
-    await user.click(screen.getByRole('button', { name: 'Right to left' }));
+    await user.click(screen.getByRole('button', { name: 'RTL (Right to left)' }));
     await waitFor(() => expect(values.at(-1)).toMatch(/^<p dir="rtl">/));
-    await user.click(screen.getByRole('button', { name: 'Left to right' }));
+    await user.click(screen.getByRole('button', { name: 'LTR (Left to right)' }));
     await waitFor(() => expect(values.at(-1)).toMatch(/^<p dir="ltr">/));
   });
 
