@@ -50,7 +50,18 @@ ADRs **0160–0169 proposed** for owner acceptance.
   translation; the authorization matrix's everyone list lacked the new source-system read permission.
 
 ## Quality gates
-<!-- filled in after the final runs -->
+
+CI run 63 on commit `d2d149a` (GitHub Actions, `workflow_dispatch`) and local runs on SDK **10.0.403** (the CI / image SDK):
+
+| Gate | Result |
+|---|---|
+| `dotnet build Strategy.slnx -c Release`, `dotnet format --verify-no-changes` | 0 warnings, 0 errors; clean (CI) |
+| `dotnet test` — unit, architecture, integration (Testcontainers, Mailpit, Gotenberg, OCR) | **pass** in CI; locally unit 2 146 / 2 146, architecture 32 / 32, integration 3 075 / 3 077 → the 2 failures: a migration count fixed in `d2d149a` (the platform administrator now also holds the Integration administrator role) and `TeamsReportingTests` once (409 while seeding an evaluation under the full parallel run; 3 / 3 when run alone, passed in CI — see *Known gaps*) |
+| `tools/check-vulnerable.sh`, `tools/check-api-client.sh` | no High / Critical; OpenAPI document and TS client up to date (CI) |
+| Web: lint, format:check, typecheck, Vitest, build, `npm audit --audit-level=high`, `lint:licenses` | pass (CI) |
+| Deploy scripts: Windows PowerShell **5.1** and PowerShell 7 on `windows-latest` (72 assertions each, fake docker, folder without `.git`, non-ASCII path); bash + PowerShell 7 + PSScriptAnalyzer on Linux | pass (CI jobs `deploy-windows`, `deploy-scripts`) |
+| Container image: build, non-root / healthcheck, Trivy (High / Critical with a fix), CycloneDX SBOM, compose valid | pass (CI) |
+| Playwright E2E `ar` + `en` on a fresh database (incl. the 7 new Phase 19 specs) | **126 / 126** locally; CI E2E job (with the `ar-a11y` / `en-a11y` axe audit and the setup wizard): see below |
 
 ## Deviations
 - **From the SPEC / addendum:** none known.
@@ -60,6 +71,8 @@ ADRs **0160–0169 proposed** for owner acceptance.
   (`integration.external_ref`), not on the record's own History tab.
 
 ## Known gaps
+- `TeamsReportingTests.Cache_facts_equal_the_dashboard_and_the_live_path_counts_only_the_users_teams` failed once in a local full parallel run
+  (409 concurrency conflict while its seed creates a team evaluation); it passed 3 / 3 alone and in CI. Cause not yet identified — watch it.
 - The run of the `.ps1` scripts on a **real Windows machine with Docker Desktop** is an owner acceptance step (CI uses a fake docker,
   because GitHub's Windows runners only run Windows containers).
 - Search does not index people or units; free-text rich-text fields are not searched.
