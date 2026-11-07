@@ -868,6 +868,86 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/access/systems/{code}/responsibilities': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListResponsibilityKinds'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/access/systems/{code}/responsibilities/{kind}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListResponsibilities'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/access/systems/{code}/responsibilities/{kind}/candidates': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListResponsibilityCandidates'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/access/systems/{code}/responsibilities/{kind}/preview': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['PreviewResponsibilityReassignment'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/access/systems/{code}/responsibilities/{kind}/reassign': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ReassignResponsibilities'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/access/roles': {
     parameters: {
       query?: never;
@@ -23685,6 +23765,89 @@ export interface components {
       newPassword: null | string;
       invitation: boolean;
     };
+    ResponsibilityChangeInput: {
+      items: null | components['schemas']['ResponsibilityItemInput'][];
+      /** Format: uuid */
+      newId: null | string;
+      reason: null | string;
+    };
+    ResponsibilityItemInput: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uint32 */
+      version: number;
+    };
+    ResponsibilityKindDto: {
+      code: string;
+      labelAr: string;
+      labelEn: string;
+      target: string;
+      restrictedCandidates: boolean;
+      noteKey: null | string;
+      statuses: components['schemas']['ResponsibilityStatusOption'][];
+    };
+    ResponsibilityKindsDto: {
+      systemCode: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      kinds: components['schemas']['ResponsibilityKindDto'][];
+    };
+    ResponsibilityListDto: {
+      items: components['schemas']['ResponsibilityRowDto'][];
+      /** Format: int32 */
+      total: number;
+      /** Format: int32 */
+      page: number;
+      /** Format: int32 */
+      pageSize: number;
+    };
+    ResponsibilityNameDto: {
+      /** Format: uuid */
+      id: string;
+      nameAr: null | string;
+      nameEn: null | string;
+    };
+    ResponsibilityOutcomeDto: {
+      /** Format: uuid */
+      id: string;
+      outcome: string;
+      messageKey: null | string;
+      number: null | string;
+      titleAr: null | string;
+      titleEn: null | string;
+      previous: null | components['schemas']['ResponsibilityNameDto'];
+      reference: null | string;
+    };
+    ResponsibilityResultDto: {
+      /** Format: int32 */
+      moved: number;
+      /** Format: int32 */
+      changeRequests: number;
+      /** Format: int32 */
+      skipped: number;
+      new: components['schemas']['ResponsibilityNameDto'];
+      items: components['schemas']['ResponsibilityOutcomeDto'][];
+    };
+    ResponsibilityRowDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uint32 */
+      version: number;
+      number: null | string;
+      titleAr: null | string;
+      titleEn: null | string;
+      status: null | string;
+      responsible: null | components['schemas']['ResponsibilityNameDto'];
+      unit: null | components['schemas']['ResponsibilityNameDto'];
+      link: null | string;
+      contextAr: null | string;
+      contextEn: null | string;
+    };
+    ResponsibilityStatusOption: {
+      code: string;
+      labelAr: string;
+      labelEn: string;
+    };
     RevealDto: {
       /** Format: uuid */
       contributorId: string;
@@ -29311,6 +29474,182 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['PermissionMatrixDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListResponsibilityKinds: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        code: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ResponsibilityKindsDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListResponsibilities: {
+    parameters: {
+      query?: {
+        personId?: string;
+        unitId?: string;
+        status?: string;
+        text?: string;
+        page?: number;
+        pageSize?: number;
+      };
+      header?: never;
+      path: {
+        code: string;
+        kind: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ResponsibilityListDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListResponsibilityCandidates: {
+    parameters: {
+      query?: {
+        search?: string;
+      };
+      header?: never;
+      path: {
+        code: string;
+        kind: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ResponsibilityNameDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  PreviewResponsibilityReassignment: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        code: string;
+        kind: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ResponsibilityChangeInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ResponsibilityOutcomeDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ReassignResponsibilities: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        code: string;
+        kind: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ResponsibilityChangeInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ResponsibilityResultDto'];
         };
       };
       /** @description Problem Details (RFC 9457) */

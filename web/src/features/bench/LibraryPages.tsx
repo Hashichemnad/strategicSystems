@@ -47,6 +47,7 @@ import {
   type PracticeSearch,
 } from './api';
 import { BenchPageLayout, StageChip, useBenchAction, useBenchLabels, useBenchT } from './components';
+import { ResponsibilitiesLink } from '@/features/access/ResponsibilitiesLink';
 
 const ALL = '__all';
 
@@ -555,6 +556,7 @@ export function BenchSettingsPage() {
   const set = (patch: Partial<BenchSettings>) => setValue((v) => (v ? { ...v, ...patch } : v));
   return (
     <div className="flex flex-col gap-6" data-testid="bench-settings">
+      <ResponsibilitiesLink system="bench" />
       <PageHeader
         title={t('settings.title')}
         description={t('settings.description')}

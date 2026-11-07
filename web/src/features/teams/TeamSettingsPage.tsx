@@ -36,6 +36,7 @@ import {
   type TeamConfiguration,
   type TeamType,
 } from './api';
+import { ResponsibilitiesLink } from '@/features/access/ResponsibilitiesLink';
 
 /** Settings → Teams (SPEC §4.3, ADR 0041): general values, team types, member roles, versioned templates and reward matrices. */
 export function TeamSettingsPage() {
@@ -46,6 +47,7 @@ export function TeamSettingsPage() {
   if (config.isError) return <StatusBanner tone="danger" title={errorMessage(tc, config.error)} />;
   return (
     <div className="flex flex-col gap-6">
+      <ResponsibilitiesLink system="teams" />
       <PageHeader title={t('settings.title')} description={t('settings.description')} />
       <Tabs defaultValue="general">
         <TabsList className="flex-wrap">

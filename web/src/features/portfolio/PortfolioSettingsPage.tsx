@@ -33,6 +33,7 @@ import {
 } from './views/SettingsSections';
 import { TemplatesEditor } from './views/TemplatesEditor';
 import { WaselSettingsSection } from './wasel/WaselSettingsSection';
+import { ResponsibilitiesLink } from '@/features/access/ResponsibilitiesLink';
 
 /** Settings → Portfolio (docs/design/portfolio.md §2.1): threshold, criteria and weights, bands, date windows, budget step, template. */
 export function PortfolioSettingsPage() {
@@ -62,6 +63,7 @@ export function PortfolioSettingsPage() {
 
   return (
     <div className="flex flex-col gap-6" data-testid="portfolio-settings">
+      <ResponsibilitiesLink system="portfolio" />
       <PageHeader title={t('settings.title')} description={t('settings.description')} />
       {errors.length > 0 && (
         <StatusBanner
