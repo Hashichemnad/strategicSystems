@@ -45,6 +45,7 @@ import {
   type PortfolioOptions,
   type ProgramRequest,
 } from './api';
+import { ExternalReferencesSection, OriginBadge } from '@/features/integration/ExternalReferences';
 
 const route = getRouteApi('/app/portfolio/requests/$requestId');
 
@@ -154,6 +155,7 @@ export function RequestPage() {
         }
         meta={
           <>
+            <OriginBadge type="portfolio.request" id={data.id} />
             <StatusChip tone={statusTone[data.status] ?? 'neutral'}>
               {t(`status.${data.status as 'draft'}`)}
             </StatusChip>
@@ -258,6 +260,7 @@ export function RequestPage() {
         </TabsList>
         <TabsContent value="overview">
           <Overview request={data} options={options.data} />
+          <ExternalReferencesSection type="portfolio.request" id={data.id} />
         </TabsContent>
         <TabsContent value="assessment">
           <AssessmentPanel request={data} options={options.data} />

@@ -198,6 +198,17 @@
         "dueDateRequired": "Due date required",
         "endBeforeStart": "Date before the finding date"
       }
+    },
+    "integration": {
+      "unknownSource": "Unknown source system",
+      "inactiveSource": "Inactive source system",
+      "sourceRequired": "Source system missing",
+      "externalIdRequired": "External ID missing",
+      "externalIdTooLong": "External ID too long",
+      "externalIdTaken": "External ID linked to another record",
+      "recordAlreadyReferenced": "Record already has another external ID from this source",
+      "duplicateExternalId": "External ID twice in the file",
+      "keyMismatch": "External ID points at another finding"
     }
   },
   "view": {
@@ -358,7 +369,8 @@
     "commit": "Import",
     "done": "{{count}} finding(s) imported.",
     "summary": "{{rows}} rows · {{findings}} findings · {{recommendations}} recommendations · {{issues}} issue(s)",
-    "row": "Row {{row}}"
+    "row": "Row {{row}}",
+    "updated": "{{updated}} finding(s) found by external ID will be updated; their {{skipped}} recommendation row(s) are not imported."
   },
   "ai": {
     "extract": "Extract findings (AI)",

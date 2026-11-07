@@ -198,6 +198,17 @@
         "dueDateRequired": "تاريخ التنفيذ مطلوب",
         "endBeforeStart": "تاريخ يسبق تاريخ الملاحظة"
       }
+    },
+    "integration": {
+      "unknownSource": "نظام مصدر غير معروف",
+      "inactiveSource": "نظام مصدر غير نشط",
+      "sourceRequired": "النظام المصدر غير مدخل",
+      "externalIdRequired": "المعرّف الخارجي غير مدخل",
+      "externalIdTooLong": "المعرّف الخارجي طويل جداً",
+      "externalIdTaken": "المعرّف الخارجي مرتبط بسجل آخر",
+      "recordAlreadyReferenced": "للسجل معرّف خارجي آخر من المصدر نفسه",
+      "duplicateExternalId": "المعرّف الخارجي مكرر في الملف",
+      "keyMismatch": "المعرّف الخارجي يشير إلى ملاحظة أخرى"
     }
   },
   "view": {
@@ -358,7 +369,8 @@
     "commit": "استيراد",
     "done": "تم استيراد {{count}} ملاحظة.",
     "summary": "{{rows}} صف · {{findings}} ملاحظة · {{recommendations}} توصية · {{issues}} مشكلة",
-    "row": "الصف {{row}}"
+    "row": "الصف {{row}}",
+    "updated": "ستُحدَّث {{updated}} ملاحظة موجودة بالمعرّف الخارجي؛ ولن تُستورد صفوف توصياتها ({{skipped}})."
   },
   "ai": {
     "extract": "استخراج الملاحظات (ذكاء اصطناعي)",

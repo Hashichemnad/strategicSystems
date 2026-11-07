@@ -171,6 +171,10 @@
     "setup": {
       "title": "Setup wizard",
       "description": "First-run guided configuration: e-mail, sign-in, AI, calendar, organisation import and systems."
+    },
+    "sourceSystems": {
+      "title": "Source systems",
+      "description": "The systems external IDs come from (Salesforce, SAP, …), used by imports, the API and synchronisation."
     }
   },
   "title": "Settings",

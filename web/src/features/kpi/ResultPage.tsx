@@ -48,6 +48,7 @@ import {
   type KpiResult,
 } from './api';
 import { KpiPage, PerformanceValue, RagChip, ScoreBar, useKpiT, useNumber, usePercent } from './components';
+import { ExternalReferencesSection, OriginBadge } from '@/features/integration/ExternalReferences';
 
 const route = getRouteApi('/app/kpi/results/$resultId');
 
@@ -94,6 +95,7 @@ function ResultView({ result }: { result: KpiResult }) {
         }
         meta={
           <>
+            <OriginBadge type="kpi.result" id={result.id} />
             <StatusChip tone={resultTone[result.status] ?? 'neutral'}>
               {k(`resultStatus.${result.status}`)}
             </StatusChip>
@@ -169,6 +171,7 @@ function ResultView({ result }: { result: KpiResult }) {
               <Anomalies result={result} />
               <EvidenceCheck result={result} />
               <History result={result} />
+              <ExternalReferencesSection type="kpi.result" id={result.id} />
             </div>
           </div>
         </TabsContent>

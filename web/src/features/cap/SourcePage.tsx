@@ -38,6 +38,7 @@ import {
 } from './components';
 import { RemarkDialog, emptyRemark } from './forms';
 import { RemarksTable } from './RemarksTable';
+import { ExternalReferencesSection, OriginBadge } from '@/features/integration/ExternalReferences';
 
 const route = getRouteApi('/app/cap/sources/$sourceId');
 
@@ -78,6 +79,7 @@ export function CapSourcePage() {
         }
         meta={
           <div className="flex flex-wrap items-center gap-2">
+            <OriginBadge type="cap.source" id={s.id} />
             <StatusChip tone={s.status === 'active' ? 'info' : 'success'}>
               {k(`sourceStatus.${s.status}`)}
             </StatusChip>
@@ -131,6 +133,7 @@ export function CapSourcePage() {
               [t('fields.description'), v.description],
             ]}
           />
+          <ExternalReferencesSection type="cap.source" id={s.id} />
         </TabsContent>
         <TabsContent value="documents">
           <DocumentsPanel ownerType="cap.source" ownerId={s.id} canEdit={s.can.edit || s.can.addRemark} />

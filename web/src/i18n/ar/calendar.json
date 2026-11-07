@@ -98,7 +98,8 @@
     "imported_one": "تم استيراد عطلة واحدة.",
     "imported_other": "تم استيراد {{count}} عطلات.",
     "issues": "مشكلات يجب تصحيحها",
-    "row": "الصف {{row}}"
+    "row": "الصف {{row}}",
+    "importedUpdated": "أُنشئت {{created}} وحُدّثت {{updated}} بالمعرّف الخارجي."
   },
   "errors": {
     "unknownTimeZone": "منطقة زمنية غير معروفة. استخدم اسم IANA مثل Asia/Dubai.",

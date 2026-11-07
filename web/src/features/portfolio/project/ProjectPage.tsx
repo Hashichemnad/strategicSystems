@@ -73,6 +73,7 @@ import { useAiAssist } from '../standards/standardsApi';
 import { GroupingCard } from '../views/GroupingCard';
 import { ProjectGanttTab } from '../views/ProjectGanttTab';
 import { WaselTab } from '../wasel/WaselTab';
+import { ExternalReferencesSection, OriginBadge } from '@/features/integration/ExternalReferences';
 
 const route = getRouteApi('/app/portfolio/projects/$projectId');
 
@@ -210,6 +211,7 @@ export function ProjectPage() {
         }
         meta={
           <>
+            <OriginBadge type="portfolio.project" id={p.id} />
             <StatusChip tone={projectStatusTone[p.status] ?? 'neutral'}>
               {t(`projectStatus.${p.status as 'active'}`)}
             </StatusChip>
@@ -273,6 +275,7 @@ export function ProjectPage() {
         </TabsList>
         <TabsContent value="overview">
           <Overview project={p} options={options.data} onEdit={() => setDialog({ kind: 'charter' })} />
+          <ExternalReferencesSection type="portfolio.project" id={p.id} />
         </TabsContent>
         <TabsContent value="kpis">
           <KpisTab project={p} options={options.data} />

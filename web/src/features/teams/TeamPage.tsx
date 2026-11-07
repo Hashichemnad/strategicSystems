@@ -39,6 +39,7 @@ import {
   RecommendationsPanel,
   ReportsPanel,
 } from './TeamPanels';
+import { ExternalReferencesSection, OriginBadge } from '@/features/integration/ExternalReferences';
 
 const route = getRouteApi('/app/teams/$teamId');
 
@@ -120,6 +121,7 @@ export function TeamPage() {
         }
         meta={
           <>
+            <OriginBadge type="teams.team" id={data.id} />
             <StatusChip tone={statusTone[data.status] ?? 'neutral'}>
               {t(`status.${data.status as 'active'}`)}
             </StatusChip>
@@ -184,6 +186,7 @@ export function TeamPage() {
         </TabsList>
         <TabsContent value="overview">
           <Overview team={data} />
+          <ExternalReferencesSection type="teams.team" id={data.id} />
         </TabsContent>
         <TabsContent value="members">
           <MembersPanel team={data} />
