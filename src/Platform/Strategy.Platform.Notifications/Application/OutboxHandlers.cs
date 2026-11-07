@@ -59,7 +59,11 @@ internal sealed class EmailOutboxHandler(
             attachments.Count == 0 ? null : attachments, message.Language);
         var delivery = new EmailDelivery
         {
-            To = message.To, TemplateKey = message.TemplateKey, At = clock.UtcNow, CorrelationId = context.CorrelationId, IdempotencyKey = message.IdempotencyKey,
+            To = message.To,
+            TemplateKey = message.TemplateKey,
+            At = clock.UtcNow,
+            CorrelationId = context.CorrelationId,
+            IdempotencyKey = message.IdempotencyKey,
         };
         try
         {

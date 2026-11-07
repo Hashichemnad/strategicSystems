@@ -139,7 +139,11 @@ public class SecurityEmailTests(ApiFixture api) : IClassFixture<ApiFixture>
             var users = scope.ServiceProvider.GetRequiredService<StrategyUserManager>();
             var vendor = new StrategyUser
             {
-                UserName = email, Email = email, EmailConfirmed = true, PrincipalType = StrategyClaims.VendorPrincipal, CreatedAt = DateTimeOffset.UtcNow,
+                UserName = email,
+                Email = email,
+                EmailConfirmed = true,
+                PrincipalType = StrategyClaims.VendorPrincipal,
+                CreatedAt = DateTimeOffset.UtcNow,
             };
             (await users.CreateAsync(vendor, TestIdentity.Password)).Succeeded.ShouldBeTrue();
         }
