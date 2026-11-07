@@ -231,3 +231,24 @@ holidays, reminders / overdue / escalation / accept reminder with the travelling
 a restricted badge), AI from text with the fake model (nothing created), MCP tools (approve off by default), audit entries, the
 authorization matrix. E2E (ar + en): screenshots of My Tasks list, Kanban, calendar, new task with several assignees, task page timeline,
 assignment group, dashboard, linked tasks on a sample item.
+
+## 15. Take over as creator (Phase 19, SPEC-ADDENDUM A8, ADR 0169)
+
+Closes the gap left by ADR 0040: tasks a leaver **created** for other people kept the leaver as creator and approver.
+
+- Same screen and permission as ADR 0040 (*Reassign open tasks of an employee*, `tasks.reassignment.manage`, data scope over the leaving
+  employee). The preview has a second section **Tasks created by this employee** (open tasks whose creator is the employee and whose assignee
+  is someone else, confidential ones without title / number for an administrator who may not read them).
+- **`POST /api/v1/tasks/reassignment/creator`** `TransferCreatorRole(FromEmployeeId, ToEmployeeId, Reason, TaskIds?)` (idempotency key):
+  one transaction — `TaskItem.TakeOverAsCreator` (creator employee changed, creator user cleared), timeline event `creator-changed` with the
+  reason and old / new creator, record role `creator` revoked from the leaver and granted to the new creator through `IRecordRoleService`.
+  The new creator must be an active employee other than the leaver; only the selected tasks move.
+- Creator approval is a task-level decision (ADR 0035), so **open approvals follow the creator**: a *Submitted* task now waits for the new
+  creator, who can approve / return; the old creator is refused (403 — still able to read only if another rule grants it, otherwise 404).
+- Notifications: `tasks.creatorRoleToYou` (new creator, summary with count and reason) and `tasks.yourCreatedTasksMoved` (old creator,
+  skipped when the account is inactive). After the commit one audit event `tasks.task.creator-transfer` on the employee lists the tasks, the
+  target and the reason (field changes are audited as usual).
+- The "employee left" offer (ADR 0040) counts created tasks too.
+- **No self-service take-over** on the task page: a follow-up person has comment / upload rights only, and an administrator role never
+  approves a task by itself (§6); taking over approval must stay an administrative, reasoned, audited act. Managers can do it for their
+  direct reports when an administrator grants the permission to the *Manager* role with scope **Team** (configuration, no code).

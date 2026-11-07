@@ -281,3 +281,16 @@ the design tokens (as Phases 6–7; ECharts arrives with Phase 17).
   off); AI with a fake model (drafts only, untrusted data).
 - E2E (ar + en): KPI cards, new year wizard, pending updates, submit result, approval with checklist, bulk approval, scorecard, strategy
   map, KPI dashboard — screenshots in `docs/screenshots/phase-12/`.
+
+## 17. KPI card picker (Phase 19, SPEC-ADDENDUM A8, ADR 0169)
+
+- **`GET /api/v1/kpi/cards/lookup`** (`kpi.card.read`, scope applied in the query like every list): `search` (number / code, name AR / EN),
+  `ids` (resolve the selected cards' labels, even when they are not on the current page), `status` (default active; `all`),
+  `page`, `pageSize` ≤ **50** → `PagedResult<KpiCardLookupDto(Id, Code, NameAr, NameEn, Status)>`, ordered by code.
+- Arabic normalisation in the query (no new column): the term goes through `SearchText.Normalise`; the code and names are normalised in SQL
+  the same way (tashkeel and tatweel removed, alef forms → ا, ى → ي, ة → ه, lower case) — so `مؤشر الأداء` finds `مُؤَشِّر الاداء`.
+- **`KpiCardPicker`** (`web/src/features/kpi/KpiCardPicker.tsx`, the one picker for every module): combobox (ARIA 1.2: `role=combobox`,
+  `listbox`, `aria-activedescendant`), 250 ms debounced server search, 20 per page with *Show more*, ↑ ↓ Home End Enter Esc, logical CSS (RTL),
+  the selected card's label from `ids=` (not from the full card endpoint), clear / change. Used by: Risk KRIs, Portfolio project KPIs
+  (existing card), Benchmarking indicators, Audit Management QAIP KPIs, and the KPI excellence report filter keeps its own list (it is a
+  report, not a picker). Portfolio's own `/portfolio/kpi-cards` stays for API clients.
