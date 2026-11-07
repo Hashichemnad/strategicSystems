@@ -80,7 +80,7 @@ if [ -n "$IMAGE_ARCHIVE" ]; then
 elif [ "$SKIP_BUILD" = false ]; then
   info "Building strategy-app:$APP_VERSION (first build takes several minutes)"
   prepare_build_ca
-  revision="$( (git -C "$ROOT_DIR" rev-parse --short HEAD 2> /dev/null) || true)"
+  revision="$(source_revision)"
   GIT_REVISION="$revision" BUILD_CREATED="$(date -u +%Y-%m-%dT%H:%M:%SZ)" compose build migrate
 fi
 

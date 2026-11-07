@@ -54,7 +54,7 @@ elif [ "$SKIP_BUILD" = true ]; then
 else
   info "Building strategy-app:$NEW_VERSION (the current version keeps running)"
   prepare_build_ca
-  revision="$( (git -C "$ROOT_DIR" rev-parse --short HEAD 2> /dev/null) || true)"
+  revision="$(source_revision)"
   APP_VERSION="$NEW_VERSION" GIT_REVISION="$revision" BUILD_CREATED="$(date -u +%Y-%m-%dT%H:%M:%SZ)" compose build migrate \
     || die "Image build failed; the running version is unchanged." 4
 fi
