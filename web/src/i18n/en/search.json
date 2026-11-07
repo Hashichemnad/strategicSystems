@@ -1,0 +1,31 @@
+{
+  "label": "Search all systems",
+  "placeholder": "Search by number, title or keyword…",
+  "open": "Search",
+  "close": "Close search",
+  "clear": "Clear search",
+  "shortcut": "Ctrl K",
+  "recent": "Recent",
+  "noRecent": "Records you open appear here.",
+  "tooShort": "Type at least 2 characters.",
+  "noResults": "No results for “{{query}}”.",
+  "failed": "Search is unavailable right now. Try again in a moment.",
+  "matchedOn": {
+    "number": "Number",
+    "title": "Title",
+    "externalId": "External ID",
+    "event": "Risk event",
+    "subject": "Subject",
+    "location": "Location",
+    "process": "Process",
+    "card": "KPI card",
+    "description": "Description",
+    "documentNo": "Document number",
+    "requestNumber": "Request number",
+    "partner": "Partner",
+    "previousProgram": "Previous programme",
+    "deliverable": "Main deliverable",
+    "auditor": "Auditor",
+    "other": "Other field"
+  }
+}

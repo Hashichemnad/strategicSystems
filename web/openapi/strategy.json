@@ -9825,6 +9825,157 @@
         }
       }
     },
+    "/api/v1/search": {
+      "get": {
+        "tags": [
+          "search"
+        ],
+        "operationId": "GlobalSearch",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "system",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResultsDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/search/recent": {
+      "get": {
+        "tags": [
+          "search"
+        ],
+        "operationId": "ListRecentItems",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RecentItemDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "search"
+        ],
+        "operationId": "RecordRecentItem",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecentVisitInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/search/types": {
+      "get": {
+        "tags": [
+          "search"
+        ],
+        "operationId": "ListSearchTypes",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SearchTypeDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/reporting/catalogue": {
       "get": {
         "tags": [
@@ -83585,6 +83736,47 @@
         },
         "description": "One open task of the leaving employee. Titles are left out for tasks the administrator may not read (confidential)."
       },
+      "RecentItemDto": {
+        "required": [
+          "item",
+          "systemNameAr",
+          "systemNameEn",
+          "visitedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "item": {
+            "$ref": "#/components/schemas/SearchItemDto"
+          },
+          "systemNameAr": {
+            "type": "string"
+          },
+          "systemNameEn": {
+            "type": "string"
+          },
+          "visitedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "description": "A recent item (re-resolved on every read)."
+      },
+      "RecentVisitInput": {
+        "required": [
+          "type",
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
       "RecommendationDto": {
         "required": [
           "id",
@@ -89667,6 +89859,186 @@
             "type": "string"
           }
         }
+      },
+      "SearchGroupDto": {
+        "required": [
+          "systemCode",
+          "nameAr",
+          "nameEn",
+          "items"
+        ],
+        "type": "object",
+        "properties": {
+          "systemCode": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": "string"
+          },
+          "nameEn": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SearchItemDto"
+            }
+          }
+        },
+        "description": "The results of one system, best first."
+      },
+      "SearchItemDto": {
+        "required": [
+          "type",
+          "id",
+          "systemCode",
+          "typeNameAr",
+          "typeNameEn",
+          "number",
+          "titleAr",
+          "titleEn",
+          "statusCode",
+          "statusLabelAr",
+          "statusLabelEn",
+          "tone",
+          "link",
+          "matchedOn",
+          "matchedText",
+          "score"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "systemCode": {
+            "type": "string"
+          },
+          "typeNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "typeNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "number": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "statusCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "statusLabelAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "statusLabelEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "tone": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "link": {
+            "type": "string"
+          },
+          "matchedOn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "matchedText": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "score": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "description": "A found record as the UI shows it: resolved by the Links registry (visible only)."
+      },
+      "SearchResultsDto": {
+        "required": [
+          "query",
+          "groups"
+        ],
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string"
+          },
+          "groups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SearchGroupDto"
+            }
+          }
+        }
+      },
+      "SearchTypeDto": {
+        "required": [
+          "type",
+          "systemCode",
+          "nameAr",
+          "nameEn",
+          "linkTemplate"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "systemCode": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": "string"
+          },
+          "nameEn": {
+            "type": "string"
+          },
+          "linkTemplate": {
+            "type": "string"
+          }
+        },
+        "description": "A linkable type with its deep-link template (the SPA records record-page visits centrally)."
       },
       "SecuritySettingsDto": {
         "required": [
@@ -100931,6 +101303,9 @@
     },
     {
       "name": "links"
+    },
+    {
+      "name": "search"
     },
     {
       "name": "reporting"

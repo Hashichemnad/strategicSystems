@@ -90,6 +90,8 @@ import enHealth from './en/health.json';
 import enCharts from './en/charts.json';
 import arSetup from './ar/setup.json';
 import enSetup from './en/setup.json';
+import arSearch from './ar/search.json';
+import enSearch from './en/search.json';
 import { readPreference } from '@/lib/preferences';
 
 export const languages = ['ar', 'en'] as const;
@@ -142,6 +144,7 @@ export const resources = {
     charts: arCharts,
     setup: arSetup,
     health: arHealth,
+    search: arSearch,
   },
   en: {
     common: enCommon,
@@ -189,6 +192,7 @@ export const resources = {
     charts: enCharts,
     setup: enSetup,
     health: enHealth,
+    search: enSearch,
   },
 } as const;
 

@@ -3156,6 +3156,54 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/search': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GlobalSearch'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/search/recent': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListRecentItems'];
+    put?: never;
+    post: operations['RecordRecentItem'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/search/types': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListSearchTypes'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/reporting/catalogue': {
     parameters: {
       query?: never;
@@ -22422,6 +22470,19 @@ export interface components {
       /** Format: date */
       dueDate: null | string;
     };
+    /** @description A recent item (re-resolved on every read). */
+    RecentItemDto: {
+      item: components['schemas']['SearchItemDto'];
+      systemNameAr: string;
+      systemNameEn: string;
+      /** Format: date-time */
+      visitedAt: string;
+    };
+    RecentVisitInput: {
+      type: string;
+      /** Format: uuid */
+      id: string;
+    };
     RecommendationDto: {
       /** Format: uuid */
       id: string;
@@ -23936,6 +23997,46 @@ export interface components {
       nameEn: null | string;
       cells: components['schemas']['ScorecardCellDto'][];
       link: string;
+    };
+    /** @description The results of one system, best first. */
+    SearchGroupDto: {
+      systemCode: string;
+      nameAr: string;
+      nameEn: string;
+      items: components['schemas']['SearchItemDto'][];
+    };
+    /** @description A found record as the UI shows it: resolved by the Links registry (visible only). */
+    SearchItemDto: {
+      type: string;
+      /** Format: uuid */
+      id: string;
+      systemCode: string;
+      typeNameAr: null | string;
+      typeNameEn: null | string;
+      number: null | string;
+      titleAr: null | string;
+      titleEn: null | string;
+      statusCode: null | string;
+      statusLabelAr: null | string;
+      statusLabelEn: null | string;
+      tone: null | string;
+      link: string;
+      matchedOn: null | string;
+      matchedText: null | string;
+      /** Format: double */
+      score: number;
+    };
+    SearchResultsDto: {
+      query: string;
+      groups: components['schemas']['SearchGroupDto'][];
+    };
+    /** @description A linkable type with its deep-link template (the SPA records record-page visits centrally). */
+    SearchTypeDto: {
+      type: string;
+      systemCode: string;
+      nameAr: string;
+      nameEn: string;
+      linkTemplate: string;
     };
     SecuritySettingsDto: {
       /** Format: int32 */
@@ -34084,6 +34185,128 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['LinksToDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GlobalSearch: {
+    parameters: {
+      query?: {
+        q?: string;
+        system?: string;
+        limit?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SearchResultsDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListRecentItems: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RecentItemDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RecordRecentItem: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RecentVisitInput'];
+      };
+    };
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListSearchTypes: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SearchTypeDto'][];
         };
       };
       /** @description Problem Details (RFC 9457) */

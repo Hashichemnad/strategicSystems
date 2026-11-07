@@ -36,6 +36,12 @@ export { ToastProvider, useToast } from './toast';
 export { Wizard, type WizardStep } from './wizard';
 export { Avatar } from './avatar';
 export { CopyField } from './copy-field';
+export {
+  CommandSearch,
+  type CommandSearchGroup,
+  type CommandSearchItem,
+  type CommandSearchProps,
+} from './command-search';
 export { FileDrop } from './file-drop';
 export { OrgChart } from './org-chart';
 export { OtpInput } from './otp-input';
