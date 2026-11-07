@@ -135,7 +135,8 @@ internal sealed class RiskActionOwnerResponsibility(RiskDbContext db, IAccessSer
 
     protected override async Task<IReadOnlyList<TreatmentAction>> LoadAsync(IReadOnlyCollection<Guid> ids, ClaimsPrincipal user, bool tracked, CancellationToken cancellationToken)
     {
-        var risks = await RiskResponsibilityScope.RisksAsync(db, access, user, cancellationToken).ConfigureAwait(false);
+        // The subquery shares the query's tracking: AsNoTracking anywhere would leave the loaded children untracked.
+        var risks = await RiskResponsibilityScope.RisksAsync(db, access, user, cancellationToken, tracked).ConfigureAwait(false);
         var source = tracked ? db.Actions : db.Actions.AsNoTracking();
         return await source.Where(a => ids.Contains(a.Id) && risks.Any(r => r.Id == a.RiskId)).ToListAsync(cancellationToken).ConfigureAwait(false);
     }
@@ -218,7 +219,8 @@ internal sealed class RiskControlOwnerResponsibility(RiskDbContext db, IAccessSe
 
     protected override async Task<IReadOnlyList<Control>> LoadAsync(IReadOnlyCollection<Guid> ids, ClaimsPrincipal user, bool tracked, CancellationToken cancellationToken)
     {
-        var risks = await RiskResponsibilityScope.RisksAsync(db, access, user, cancellationToken).ConfigureAwait(false);
+        // The subquery shares the query's tracking: AsNoTracking anywhere would leave the loaded children untracked.
+        var risks = await RiskResponsibilityScope.RisksAsync(db, access, user, cancellationToken, tracked).ConfigureAwait(false);
         var source = tracked ? db.Controls : db.Controls.AsNoTracking();
         return await source.Where(c => ids.Contains(c.Id) && risks.Any(r => r.Id == c.RiskId)).ToListAsync(cancellationToken).ConfigureAwait(false);
     }

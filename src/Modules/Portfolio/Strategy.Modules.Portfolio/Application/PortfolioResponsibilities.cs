@@ -175,7 +175,7 @@ internal sealed class StoryAssigneeResponsibility(PortfolioDbContext db, IAccess
 
     protected override async Task<IReadOnlyList<UserStory>> LoadAsync(IReadOnlyCollection<Guid> ids, ClaimsPrincipal user, bool tracked, CancellationToken cancellationToken)
     {
-        var projects = await ProjectsAsync(user, cancellationToken).ConfigureAwait(false);
+        var projects = await ProjectsAsync(user, cancellationToken, tracked).ConfigureAwait(false);
         return await (tracked ? db.Stories : db.Stories.AsNoTracking()).Where(s => ids.Contains(s.Id) && projects.Any(p => p.Id == s.ProjectId))
             .ToListAsync(cancellationToken).ConfigureAwait(false);
     }
@@ -214,8 +214,9 @@ internal sealed class StoryAssigneeResponsibility(PortfolioDbContext db, IAccess
         return batch.AllMoved();
     }
 
-    private async Task<IQueryable<Project>> ProjectsAsync(ClaimsPrincipal user, CancellationToken ct) =>
-        await access.ApplyScopeAsync(db.Projects.AsNoTracking(), user, ResponsibilityPermissions.Manage(SystemCode), ProjectScope.Map, ct).ConfigureAwait(false);
+    /// <summary>Tracked with the outer query when loading for a change (AsNoTracking anywhere applies to the whole query).</summary>
+    private async Task<IQueryable<Project>> ProjectsAsync(ClaimsPrincipal user, CancellationToken ct, bool tracked = false) =>
+        await access.ApplyScopeAsync(tracked ? db.Projects : db.Projects.AsNoTracking(), user, ResponsibilityPermissions.Manage(SystemCode), ProjectScope.Map, ct).ConfigureAwait(false);
 }
 
 internal static class PortfolioLike

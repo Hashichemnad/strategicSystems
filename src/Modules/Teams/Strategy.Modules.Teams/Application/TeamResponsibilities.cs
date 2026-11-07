@@ -161,7 +161,8 @@ internal sealed class TeamEvaluatorResponsibility(TeamsDbContext db, IAccessServ
 
     protected override async Task<IReadOnlyList<TeamEvaluation>> LoadAsync(IReadOnlyCollection<Guid> ids, ClaimsPrincipal user, bool tracked, CancellationToken cancellationToken)
     {
-        var teams = await TeamResponsibilityScope.TeamsAsync(db, access, user, false, cancellationToken).ConfigureAwait(false);
+        // The subquery shares the query's tracking: AsNoTracking anywhere would leave the loaded evaluations untracked.
+        var teams = await TeamResponsibilityScope.TeamsAsync(db, access, user, tracked, cancellationToken).ConfigureAwait(false);
         return await (tracked ? db.Evaluations : db.Evaluations.AsNoTracking()).Where(e => ids.Contains(e.Id) && teams.Any(t => t.Id == e.TeamId))
             .ToListAsync(cancellationToken).ConfigureAwait(false);
     }

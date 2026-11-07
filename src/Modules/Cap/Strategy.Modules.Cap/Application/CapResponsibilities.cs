@@ -135,7 +135,8 @@ internal sealed class CapActionAssigneeResponsibility(
 
     protected override async Task<IReadOnlyList<CapAction>> LoadAsync(IReadOnlyCollection<Guid> ids, ClaimsPrincipal user, bool tracked, CancellationToken cancellationToken)
     {
-        var remarks = await CapResponsibilityScope.RemarksAsync(db, access, user, cancellationToken).ConfigureAwait(false);
+        // The subquery shares the query's tracking: AsNoTracking anywhere would leave the loaded actions untracked.
+        var remarks = await CapResponsibilityScope.RemarksAsync(db, access, user, cancellationToken, tracked).ConfigureAwait(false);
         return await Scoped(remarks, tracked).Where(a => ids.Contains(a.Id)).ToListAsync(cancellationToken).ConfigureAwait(false);
     }
 
