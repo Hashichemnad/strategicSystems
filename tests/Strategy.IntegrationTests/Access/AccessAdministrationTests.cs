@@ -25,7 +25,7 @@ public class AccessAdministrationTests(ApiFixture api) : IClassFixture<ApiFixtur
         var editor = matrix.GetProperty("roles").EnumerateArray().Single(r => r.GetProperty("code").GetString() == "editor");
         editor.GetProperty("permissions").EnumerateArray()
             .Select(p => $"{p.GetProperty("permission").GetString()}:{p.GetProperty("scope").GetString()}")
-            .ShouldBe(["sample.item.create:all", "sample.item.read:all", "sample.item.submit:own", "sample.item.update:own", "sample.members.manage:all"]);
+            .ShouldBe(["sample.item.create:all", "sample.item.read:all", "sample.item.submit:own", "sample.item.update:own"]);
         matrix.GetProperty("recordRoles").EnumerateArray().Single(r => r.GetProperty("roleCode").GetString() == "editor")
             .GetProperty("permissions").GetArrayLength().ShouldBe(2);
         await (await admin.GetAsync($"{Access}/systems/unknown/matrix")).ShouldBeProblemAsync(HttpStatusCode.NotFound, "record.notFound");

@@ -43,7 +43,8 @@ internal sealed class SampleAccessCatalogue : IAccessCatalogueSource
     ];
 
     /// <summary>Members page lists (ADR 0166, docs/design/members-responsibilities.md §1).</summary>
-    public SystemMemberRoles MemberRoles => new(["editor"], ["viewer"], ["approver"]);
+    // No administrator role in the template module: only a platform administrator manages Sample's members (ADR 0167).
+    public SystemMemberRoles MemberRoles => new([], ["viewer"], ["editor", "approver"]);
 
     public IEnumerable<RoleSeed> DefaultRoles =>
     [

@@ -34,7 +34,7 @@ public class MemberRolesTests
         { "bench", ["bench-office"], ["participant"], ["coordinator", "viewer"] },
         { "cap", ["cap-office"], ["participant"], ["department-manager", "viewer"] },
         { "auditmgmt", ["audit-office"], ["department-user"], ["chief-audit-executive", "audit-committee", "viewer"] },
-        { "sample", ["editor"], ["viewer"], ["approver"] },
+        { "sample", [], ["viewer"], ["editor", "approver"] },
     };
 
     [Theory]

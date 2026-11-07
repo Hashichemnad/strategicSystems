@@ -46,7 +46,7 @@ system, the three lists are disjoint, at least one administrator role.
 | `bench` | `bench-office` | `participant` | `coordinator`, `viewer` |
 | `cap` | `cap-office` | `participant` | `department-manager`, `viewer` |
 | `auditmgmt` | `audit-office` | `department-user` | `chief-audit-executive`, `audit-committee`, `viewer` |
-| `sample` | `editor` | `viewer` | `approver` |
+| `sample` | — (none: only a platform administrator manages Sample, so its editors get no delegated rights) | `viewer` | `editor`, `approver` |
 
 Where a module has both an *office* role and an *administrator* role (Portfolio, KPI, Document Registry, IP) the administrator role (it
 holds the system's settings permission) is the system administrator and the office role is an extra list. Several user roles are also
