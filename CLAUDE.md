@@ -21,6 +21,8 @@ A self-hosted, bilingual (Arabic / English, full RTL) **integrated strategy mana
 | 10 | Audit Management | SPEC §10 |
 | 11 | Task Management — shared | SPEC §11 |
 
+**Version 1.0** also includes `docs/SPEC-ADDENDUM.md` (requirements addendum, wins over SPEC.md where they differ) and `docs/BUILD_PLAN-PART2.md` (Phases 19–23); the v1.0.0 release is made at the end of Phase 23.
+
 The original systems ran on Salesforce. They are a **functional reference, not a blueprint**. The SPEC already records where best practice replaces the Salesforce behaviour; follow the SPEC.
 
 ## 2. Non-negotiable rules
