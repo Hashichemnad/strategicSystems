@@ -21,6 +21,7 @@ using Strategy.Platform.Notifications;
 using Strategy.Platform.Persistence;
 using Strategy.Platform.Reporting;
 using Strategy.Platform.Scheduling;
+using Strategy.Platform.Search;
 using Strategy.Platform.Settings;
 using Strategy.Platform.Workflow;
 
@@ -84,6 +85,7 @@ public sealed class RiskModule : IModule
         services.AddLinkTargetSource<RiskLinkTargets>();
         services.AddLinkableType(ActionLinkTargets.Definition);
         services.AddLinkTargetSource<ActionLinkTargets>();
+        services.AddSearchContributor<RiskSearchContributor>(RiskPermissions.SystemCode); // global search (ADR 0160)
 
         services.AddIntegrationEventHandler<KpiResultApproved, KpiResultApprovedHandler>();
         services.AddScoped<MonitorRunner>();

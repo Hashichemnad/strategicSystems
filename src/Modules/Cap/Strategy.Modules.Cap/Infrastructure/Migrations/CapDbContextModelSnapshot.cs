@@ -222,6 +222,12 @@ namespace Strategy.Modules.Cap.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("project_id");
 
+                    b.Property<string>("QuickSearch")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("text")
+                        .HasColumnName("quick_search")
+                        .HasComputedColumnSql("btrim(regexp_replace(lower(translate(regexp_replace(coalesce(number::text, '') || ' ' || coalesce(details_ar::text, '') || ' ' || coalesce(details_en::text, ''), '[ً-ٰٟـ]', '', 'g'), 'آأإٱىة٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹', 'اااايه01234567890123456789')), '\\s+', ' ', 'g'))", true);
+
                     b.Property<string>("RelatedProcess")
                         .HasMaxLength(400)
                         .HasColumnType("character varying(400)")
@@ -280,6 +286,12 @@ namespace Strategy.Modules.Cap.Infrastructure.Migrations
                         .IsUnique()
                         .HasDatabaseName("ix_action_number");
 
+                    b.HasIndex("QuickSearch")
+                        .HasDatabaseName("ix_action_quick_search");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("QuickSearch"), "gin");
+                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("QuickSearch"), new[] { "gin_trgm_ops" });
+
                     b.HasIndex("Status")
                         .HasDatabaseName("ix_action_status");
 
@@ -329,6 +341,12 @@ namespace Strategy.Modules.Cap.Infrastructure.Migrations
                     b.Property<Guid?>("OwnerEmployeeId")
                         .HasColumnType("uuid")
                         .HasColumnName("owner_employee_id");
+
+                    b.Property<string>("QuickSearch")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("text")
+                        .HasColumnName("quick_search")
+                        .HasComputedColumnSql("btrim(regexp_replace(lower(translate(regexp_replace(coalesce(number::text, '') || ' ' || coalesce(title_ar::text, '') || ' ' || coalesce(title_en::text, ''), '[ً-ٰٟـ]', '', 'g'), 'آأإٱىة٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹', 'اااايه01234567890123456789')), '\\s+', ' ', 'g'))", true);
 
                     b.Property<DateOnly>("ReceivedOn")
                         .HasColumnType("date")
@@ -389,6 +407,12 @@ namespace Strategy.Modules.Cap.Infrastructure.Migrations
                     b.HasIndex("Number")
                         .IsUnique()
                         .HasDatabaseName("ix_source_number");
+
+                    b.HasIndex("QuickSearch")
+                        .HasDatabaseName("ix_source_quick_search");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("QuickSearch"), "gin");
+                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("QuickSearch"), new[] { "gin_trgm_ops" });
 
                     b.HasIndex("LinkedType", "LinkedId")
                         .IsUnique()
@@ -626,6 +650,12 @@ namespace Strategy.Modules.Cap.Infrastructure.Migrations
                         .HasColumnType("character varying(100)")
                         .HasColumnName("priority");
 
+                    b.Property<string>("QuickSearch")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("text")
+                        .HasColumnName("quick_search")
+                        .HasComputedColumnSql("btrim(regexp_replace(lower(translate(regexp_replace(coalesce(number::text, '') || ' ' || coalesce(text_ar::text, '') || ' ' || coalesce(text_en::text, ''), '[ً-ٰٟـ]', '', 'g'), 'آأإٱىة٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹', 'اااايه01234567890123456789')), '\\s+', ' ', 'g'))", true);
+
                     b.Property<string>("RejectionReason")
                         .HasMaxLength(4000)
                         .HasColumnType("character varying(4000)")
@@ -718,6 +748,12 @@ namespace Strategy.Modules.Cap.Infrastructure.Migrations
 
                     b.HasIndex("OwnerEmployeeId")
                         .HasDatabaseName("ix_remark_owner_employee_id");
+
+                    b.HasIndex("QuickSearch")
+                        .HasDatabaseName("ix_remark_quick_search");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("QuickSearch"), "gin");
+                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("QuickSearch"), new[] { "gin_trgm_ops" });
 
                     b.HasIndex("SourceId")
                         .HasDatabaseName("ix_remark_source_id");

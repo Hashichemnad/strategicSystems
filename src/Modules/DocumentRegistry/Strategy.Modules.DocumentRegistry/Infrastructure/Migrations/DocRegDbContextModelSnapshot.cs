@@ -192,6 +192,12 @@ namespace Strategy.Modules.DocumentRegistry.Infrastructure.Migrations
                     b.HasIndex("OwnerUnitId")
                         .HasDatabaseName("ix_document_owner_unit_id");
 
+                    b.HasIndex("SearchText")
+                        .HasDatabaseName("ix_document_search_text");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("SearchText"), "gin");
+                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("SearchText"), new[] { "gin_trgm_ops" });
+
                     b.HasIndex("Status", "Sensitivity")
                         .HasDatabaseName("ix_document_status_sensitivity");
 

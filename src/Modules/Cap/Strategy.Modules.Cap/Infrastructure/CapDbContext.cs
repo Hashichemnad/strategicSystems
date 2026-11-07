@@ -46,6 +46,7 @@ internal sealed class CapSourceConfiguration : IEntityTypeConfiguration<CapSourc
     public void Configure(EntityTypeBuilder<CapSource> builder)
     {
         builder.ToTable("source");
+        builder.HasQuickSearch("number", "title_ar", "title_en"); // global search (ADR 0160)
         builder.Property(x => x.Id).ValueGeneratedNever();
         builder.Ignore(x => x.ViewerEmployeeIds);
         builder.Property(x => x.Number).HasMaxLength(60);
@@ -64,6 +65,7 @@ internal sealed class RemarkConfiguration : IEntityTypeConfiguration<Remark>
     public void Configure(EntityTypeBuilder<Remark> builder)
     {
         builder.ToTable("remark");
+        builder.HasQuickSearch("number", "text_ar", "text_en"); // global search (ADR 0160)
         builder.Property(x => x.Id).ValueGeneratedNever();
         builder.Ignore(x => x.Stage);
         builder.Ignore(x => x.IsOpen);
@@ -93,6 +95,7 @@ internal sealed class CapActionConfiguration : IEntityTypeConfiguration<CapActio
     public void Configure(EntityTypeBuilder<CapAction> builder)
     {
         builder.ToTable("action");
+        builder.HasQuickSearch("number", "details_ar", "details_en"); // global search (ADR 0160)
         builder.Property(x => x.Id).ValueGeneratedNever();
         builder.Ignore(x => x.EffectiveEnd);
         builder.Ignore(x => x.IsOpen);

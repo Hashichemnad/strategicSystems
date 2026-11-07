@@ -18,6 +18,7 @@ using Strategy.Platform.Notifications;
 using Strategy.Platform.Persistence;
 using Strategy.Platform.Reporting;
 using Strategy.Platform.Scheduling;
+using Strategy.Platform.Search;
 using Strategy.Platform.Settings;
 using Strategy.Platform.Workflow;
 
@@ -66,6 +67,7 @@ public sealed class RequestsModule : IModule
         services.AddFileOwnerAccess<RequestFiles>();
         services.AddLinkableType(RequestLinks.Definition);
         services.AddLinkTargetSource<RequestLinkTargets>();
+        services.AddSearchContributor<RequestSearchContributor>(RequestPermissions.SystemCode); // global search (ADR 0160)
         services.AddRecordSearchSource<RequestSearchSource>();
         services.AddScheduledJob(StageOverdueJob.Definition);
 

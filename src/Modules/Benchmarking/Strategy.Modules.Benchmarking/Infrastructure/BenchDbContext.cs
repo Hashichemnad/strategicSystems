@@ -63,6 +63,7 @@ internal sealed class StudyConfiguration : IEntityTypeConfiguration<Study>
     public void Configure(EntityTypeBuilder<Study> builder)
     {
         builder.ToTable("study");
+        builder.HasQuickSearch("number", "title_ar", "title_en", "request_number"); // global search (ADR 0160)
         builder.Property(x => x.Id).ValueGeneratedNever();
         builder.Ignore(x => x.AnalysisApproved);
         builder.Ignore(x => x.IsActive);

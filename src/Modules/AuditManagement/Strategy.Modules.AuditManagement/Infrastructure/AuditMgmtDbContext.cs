@@ -59,6 +59,7 @@ internal sealed class AuditReportConfiguration : IEntityTypeConfiguration<AuditR
     public void Configure(EntityTypeBuilder<AuditReport> builder)
     {
         builder.ToTable("report");
+        builder.HasQuickSearch("number", "title_ar", "title_en", "auditor_body"); // global search (ADR 0160)
         builder.Property(x => x.Id).ValueGeneratedNever();
         builder.Ignore(x => x.AuditedUnitIds);
         builder.Ignore(x => x.DistributionEmployeeIds);
@@ -82,6 +83,7 @@ internal sealed class FindingConfiguration : IEntityTypeConfiguration<Finding>
     public void Configure(EntityTypeBuilder<Finding> builder)
     {
         builder.ToTable("finding");
+        builder.HasQuickSearch("number", "title_ar", "title_en"); // global search (ADR 0160)
         builder.Property(x => x.Id).ValueGeneratedNever();
         builder.Ignore(x => x.IsOpen);
         builder.Property(x => x.Number).HasMaxLength(60);

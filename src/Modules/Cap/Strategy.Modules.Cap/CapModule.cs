@@ -22,6 +22,7 @@ using Strategy.Platform.Notifications;
 using Strategy.Platform.Persistence;
 using Strategy.Platform.Reporting;
 using Strategy.Platform.Scheduling;
+using Strategy.Platform.Search;
 using Strategy.Platform.Settings;
 using Strategy.Platform.Workflow;
 
@@ -85,6 +86,7 @@ public sealed class CapModule : IModule
         services.AddLinkTargetSource<RemarkLinkTargets>();
         services.AddLinkableType(ActionLinkTargets.Definition);
         services.AddLinkTargetSource<ActionLinkTargets>();
+        services.AddSearchContributor<CapSearchContributor>(CapPermissions.SystemCode); // global search (ADR 0160)
 
         services.AddIntegrationEventHandler<KpiTargetMissed, KpiTargetMissedHandler>();
         services.AddIntegrationEventHandler<RiskEventLogged, RiskEventLoggedHandler>();

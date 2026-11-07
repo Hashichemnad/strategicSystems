@@ -990,6 +990,12 @@ namespace Strategy.Modules.Risk.Infrastructure.Migrations
                         .HasColumnType("character varying(4000)")
                         .HasColumnName("processes");
 
+                    b.Property<string>("QuickSearch")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("text")
+                        .HasColumnName("quick_search")
+                        .HasComputedColumnSql("btrim(regexp_replace(lower(translate(regexp_replace(coalesce(number::text, '') || ' ' || coalesce(title_ar::text, '') || ' ' || coalesce(title_en::text, '') || ' ' || coalesce(event_text::text, ''), '[ً-ٰٟـ]', '', 'g'), 'آأإٱىة٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹', 'اااايه01234567890123456789')), '\\s+', ' ', 'g'))", true);
+
                     b.Property<string>("ReassessmentReason")
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)")
@@ -1155,6 +1161,12 @@ namespace Strategy.Modules.Risk.Infrastructure.Migrations
                     b.HasIndex("OwnerEmployeeId")
                         .HasDatabaseName("ix_risk_owner_employee_id");
 
+                    b.HasIndex("QuickSearch")
+                        .HasDatabaseName("ix_risk_quick_search");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("QuickSearch"), "gin");
+                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("QuickSearch"), new[] { "gin_trgm_ops" });
+
                     b.HasIndex("Status")
                         .HasDatabaseName("ix_risk_status");
 
@@ -1222,6 +1234,12 @@ namespace Strategy.Modules.Risk.Infrastructure.Migrations
                         .HasColumnType("date")
                         .HasColumnName("planned_start");
 
+                    b.Property<string>("QuickSearch")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("text")
+                        .HasColumnName("quick_search")
+                        .HasComputedColumnSql("btrim(regexp_replace(lower(translate(regexp_replace(coalesce(number::text, '') || ' ' || coalesce(title_ar::text, '') || ' ' || coalesce(title_en::text, ''), '[ً-ٰٟـ]', '', 'g'), 'آأإٱىة٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹', 'اااايه01234567890123456789')), '\\s+', ' ', 'g'))", true);
+
                     b.Property<DateTimeOffset?>("RemindedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("reminded_at");
@@ -1274,6 +1292,12 @@ namespace Strategy.Modules.Risk.Infrastructure.Migrations
 
                     b.HasIndex("OwnerEmployeeId")
                         .HasDatabaseName("ix_treatment_action_owner_employee_id");
+
+                    b.HasIndex("QuickSearch")
+                        .HasDatabaseName("ix_treatment_action_quick_search");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("QuickSearch"), "gin");
+                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("QuickSearch"), new[] { "gin_trgm_ops" });
 
                     b.HasIndex("RiskId")
                         .HasDatabaseName("ix_treatment_action_risk_id");

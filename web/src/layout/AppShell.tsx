@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/app/theme';
 import { useMe } from '@/features/auth/session';
+import { useRecordVisits } from '@/features/search/visits';
 import { isLanguage } from '@/i18n';
 import { writePreference } from '@/lib/preferences';
 import { Sidebar } from './Sidebar';
@@ -16,6 +17,7 @@ export function AppShell() {
 
   useEffect(() => setMenuOpen(false), [pathname]);
   usePreferencesFromProfile();
+  useRecordVisits();
 
   return (
     <div className="flex min-h-dvh">
