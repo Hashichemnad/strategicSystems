@@ -194,8 +194,11 @@ function Invoke-ComposeBinary {
     $psi.RedirectStandardInput = [bool]$StdInFile
     $process = [Diagnostics.Process]::Start($psi)
     if ($StdInFile) {
+        # Write to the raw pipe and close the pipe itself: closing Process.StandardInput (a StreamWriter) flushes the encoding's
+        # preamble on .NET Framework, which appends a BOM after the binary data when the console code page is UTF-8 (65001).
         $in = [IO.File]::OpenRead((Get-FullPath $StdInFile))
-        try { $in.CopyTo($process.StandardInput.BaseStream) } finally { $in.Dispose(); $process.StandardInput.Close() }
+        $pipe = $process.StandardInput.BaseStream
+        try { $in.CopyTo($pipe); $pipe.Flush() } finally { $in.Dispose(); $pipe.Close() }
     }
     if ($StdOutFile) {
         $out = [IO.File]::Create((Get-FullPath $StdOutFile))

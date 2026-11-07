@@ -143,7 +143,7 @@ function Test-Utf8File([string]$Path) {
 function Test-SameBytes([string]$A, [string]$B) {
     if (-not (Test-Path $A) -or -not (Test-Path $B)) { return $false }
     $x = [IO.File]::ReadAllBytes($A); $y = [IO.File]::ReadAllBytes($B)
-    if ($x.Length -ne $y.Length) { return $false }
+    if ($x.Length -ne $y.Length) { Write-Host "    sizes differ: $(Split-Path -Leaf $A) $($x.Length) bytes, $(Split-Path -Leaf $B) $($y.Length) bytes"; return $false }
     for ($i = 0; $i -lt $x.Length; $i++) { if ($x[$i] -ne $y[$i]) { return $false } }
     return $true
 }

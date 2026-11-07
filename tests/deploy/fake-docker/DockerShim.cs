@@ -26,11 +26,13 @@ internal static class DockerShim
 
         var input = new Thread(delegate ()
         {
-            try { Console.OpenStandardInput().CopyTo(process.StandardInput.BaseStream); }
+            // The raw pipe, closed itself: closing the StreamWriter would append the encoding's preamble (BOM) on .NET Framework.
+            Stream pipe = process.StandardInput.BaseStream;
+            try { Console.OpenStandardInput().CopyTo(pipe); pipe.Flush(); }
             catch (IOException) { }
             catch (ObjectDisposedException) { }
             catch (InvalidOperationException) { }
-            try { process.StandardInput.Close(); } catch (IOException) { } catch (InvalidOperationException) { }
+            try { pipe.Close(); } catch (IOException) { } catch (InvalidOperationException) { }
         });
         input.IsBackground = true;
         input.Start();
