@@ -38,6 +38,8 @@ public partial class AuthorizationMatrixTests(ApiFixture api) : IClassFixture<Ap
         "teams.ai.minutes",
         // Phase 17: the seeded "Dashboard user" role (assigned to everyone): dashboards, My Work cards, run and export reports.
         "reporting.dashboard.read", "reporting.report.run", "reporting.report.export",
+        // Phase 19: the seeded "Integration viewer" role (assigned to everyone): source system names for the External references section (ADR 0164).
+        "integration.source-system.read",
     ];
 
     public static TheoryData<string, string> NonPublicEndpoints() => Endpoints(e => e.Metadata.GetMetadata<PublicEndpoint>() is null);

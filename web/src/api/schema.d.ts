@@ -740,6 +740,22 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/access/members/systems': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListMemberSystems'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/access/record-roles/{id}/permissions': {
     parameters: {
       query?: never;
@@ -861,6 +877,70 @@ export interface paths {
     };
     get: operations['GetPermissionMatrix'];
     put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/access/systems/{code}/members': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetSystemMembers'];
+    put?: never;
+    post: operations['AddSystemMember'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/access/systems/{code}/members/{id}/remove': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RemoveSystemMember'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/access/systems/{code}/members/user-search': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['SearchMemberUsers'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/access/systems/{code}/member-roles': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetMemberRoles'];
+    put: operations['SetMemberRoles'];
     post?: never;
     delete?: never;
     options?: never;
@@ -4590,6 +4670,22 @@ export interface paths {
     get?: never;
     put?: never;
     post: operations['ReassignEmployeeTasks'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tasks/reassignment/creator': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['TransferTaskCreatorRole'];
     delete?: never;
     options?: never;
     head?: never;
@@ -8686,6 +8782,22 @@ export interface paths {
     get: operations['ListKpiCards'];
     put?: never;
     post: operations['CreateKpiCard'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/cards/lookup': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['LookupKpiCards'];
+    put?: never;
+    post?: never;
     delete?: never;
     options?: never;
     head?: never;
@@ -13701,6 +13813,29 @@ export interface components {
       nextStepNameAr: null | string;
       nextStepNameEn: null | string;
     };
+    AddSystemMemberInput: {
+      /** @description `administrators`, `users` or `extra:&lt;roleCode&gt;`. */
+      list: null | string;
+      /** @description `user`, `unit` (and its sub-units) or `everyone`; administrators are people only. */
+      principalKind: null | string;
+      /**
+       * Format: uuid
+       * @description The user or unit (none for everyone).
+       */
+      principalId: null | string;
+      /**
+       * Format: date
+       * @description First day (default today).
+       */
+      validFrom: null | string;
+      /**
+       * Format: date
+       * @description Last day (default open-ended).
+       */
+      validTo: null | string;
+      /** @description Stored on the assignments and used as the audit reason. */
+      note: null | string;
+    };
     /**
      * @description One check on the administrator Health page. Never English text: MessageKey and Params are translated by
      *     the client (namespace `health`). Params values are invariant strings (numbers, ISO 8601 dates, codes); never secrets.
@@ -17195,6 +17330,14 @@ export interface components {
       userName: null | string;
       sendInvitation: null | boolean;
     };
+    /** @description Result of moving the creator role: `Skipped` = selected tasks assigned to the new creator (nobody approves their own work). */
+    CreatorTransferResultDto: {
+      /** Format: int32 */
+      transferred: number;
+      /** Format: int32 */
+      skipped: number;
+      taskIds: string[];
+    };
     CriterionInput: {
       code: string;
       level: null | string;
@@ -19162,6 +19305,15 @@ export interface components {
       /** Format: double */
       capped: null | number;
       rag: string;
+    };
+    /** @description A KPI card as the shared picker shows it (ADR 0169). */
+    KpiCardLookupDto: {
+      /** Format: uuid */
+      id: string;
+      code: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      status: string;
     };
     KpiCardOptionDto: {
       /** Format: uuid */
@@ -21411,6 +21563,18 @@ export interface components {
       totalPages?: number;
     };
     /** @description One page of items plus the total count across all pages. */
+    PagedResultOfKpiCardLookupDto: {
+      items: components['schemas']['KpiCardLookupDto'][];
+      /** Format: int32 */
+      page: number;
+      /** Format: int32 */
+      pageSize: number;
+      /** Format: int32 */
+      totalCount: number;
+      /** Format: int32 */
+      totalPages?: number;
+    };
+    /** @description One page of items plus the total count across all pages. */
     PagedResultOfProjectListItemDto: {
       items: components['schemas']['ProjectListItemDto'][];
       /** Format: int32 */
@@ -22975,10 +23139,12 @@ export interface components {
       reason: null | string;
       taskIds: null | string[];
     };
+    /** @description `Tasks`: open tasks assigned to the employee; `CreatedTasks`: open tasks the employee created for other people (ADR 0169). */
     ReassignmentPreviewDto: {
       employee: components['schemas']['PersonDto'];
       employeeStatus: string;
       tasks: components['schemas']['ReassignmentTaskDto'][];
+      createdTasks: components['schemas']['ReassignmentTaskDto'][];
     };
     ReassignmentResultDto: {
       /** Format: int32 */
@@ -23004,6 +23170,7 @@ export interface components {
       createdByLeaver: boolean;
       /** Format: date */
       dueDate: null | string;
+      assignee: components['schemas']['PersonDto'];
     };
     /** @description A recent item (re-resolved on every read). */
     RecentItemDto: {
@@ -23261,6 +23428,9 @@ export interface components {
       remarks: components['schemas']['ExtractedRemarkDto'][];
       /** Format: uuid */
       usageId: string;
+    };
+    RemoveSystemMemberInput: {
+      reason: null | string;
     };
     RenewalInput: {
       registrationNo: null | string;
@@ -24714,6 +24884,10 @@ export interface components {
       tokenMaxDays: number;
       /** Format: uint32 */
       version: number;
+      /** @default false */
+      notifyNewDevice: boolean;
+      securityContactAr?: null | string;
+      securityContactEn?: null | string;
     };
     /** @description Who is cleared for a sensitivity level (ADR 0083). */
     SensitivityRule: {
@@ -25417,6 +25591,80 @@ export interface components {
       owningUnitId: null | string;
       /** Format: uint32 */
       version: number;
+    };
+    SystemMemberDto: {
+      /**
+       * Format: uuid
+       * @description Pass to `…/members/{id}/remove`.
+       */
+      id: string;
+      /** @description User, unit (and below) or everyone. */
+      principal: components['schemas']['PrincipalDto'];
+      /**
+       * Format: date
+       * @description First day of the list's roles (null: system access only).
+       */
+      validFrom: null | string;
+      /**
+       * Format: date
+       * @description Last day (null: open-ended).
+       */
+      validTo: null | string;
+      /** @description In force today. */
+      active: boolean;
+      /** @description The principal holds its own system-access grant (always true for platform-kind systems). */
+      systemAccess: boolean;
+      /** @description The list's roles the principal holds. */
+      roleCodes: string[];
+    };
+    SystemMemberListDto: {
+      /** @description `administrators`, `users` or `extra:&lt;roleCode&gt;`. */
+      key: string;
+      /** @description `administrators`, `users` or `extra`. */
+      kind: string;
+      /** @description The roles an entry of this list holds. */
+      roles: components['schemas']['SystemMemberRoleDto'][];
+      /** @description False when the list holds a platform administrator role and the caller is a delegated administrator (ADR 0167). */
+      canManage: boolean;
+      /** @description One row per principal. */
+      members: components['schemas']['SystemMemberDto'][];
+    };
+    SystemMemberRoleDto: {
+      code: string;
+      nameAr: null | string;
+      nameEn: null | string;
+    };
+    /** @description A system's member-role configuration (Settings, platform administrator) with the code defaults. */
+    SystemMemberRolesConfigDto: {
+      systemCode: string;
+      administratorRoles: string[];
+      userRoles: string[];
+      extraRoles: string[];
+      defaults: components['schemas']['SystemMemberRolesDefaultsDto'];
+      isDefault: boolean;
+      /** Format: uint32 */
+      version: number;
+    };
+    SystemMemberRolesDefaultsDto: {
+      administratorRoles: string[];
+      userRoles: string[];
+      extraRoles: string[];
+    };
+    SystemMemberRolesInput: {
+      administratorRoles: null | string[];
+      userRoles: null | string[];
+      extraRoles: null | string[];
+      /** Format: uint32 */
+      version: null | number;
+    };
+    /** @description A system's Members page (ADR 0166): its lists in order (administrators, users, extra roles). */
+    SystemMembersDto: {
+      /** @description The system. */
+      system: components['schemas']['SystemDto'];
+      /** @description The caller holds `access.assignment.manage` (may also manage platform administrator roles). */
+      platformAdministrator: boolean;
+      /** @description Administrators, users, then one list per extra role. */
+      lists: components['schemas']['SystemMemberListDto'][];
     };
     /** @description Version of this installation (ADR 0152): product version, source commit when known, build time of the host assembly. */
     SystemVersionDto: {
@@ -26136,6 +26384,18 @@ export interface components {
     TotpSetupDto: {
       sharedKey: string;
       authenticatorUri: string;
+    };
+    /**
+     * @description "Take over as creator" (ADR 0169): the creator role of the leaver's open tasks created for other people moves to `ToEmployeeId`, and with it
+     *     the approval of their completion. `TaskIds` narrows the preview (null = all of them).
+     */
+    TransferCreatorRole: {
+      /** Format: uuid */
+      fromEmployeeId: string;
+      /** Format: uuid */
+      toEmployeeId: null | string;
+      reason: null | string;
+      taskIds: null | string[];
     };
     TransferDto: {
       /** Format: uuid */
@@ -29231,6 +29491,35 @@ export interface operations {
       };
     };
   };
+  ListMemberSystems: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SystemDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
   SetRecordRolePermissions: {
     parameters: {
       query?: never;
@@ -29474,6 +29763,207 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['PermissionMatrixDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetSystemMembers: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        code: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SystemMembersDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  AddSystemMember: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        code: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AddSystemMemberInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SystemMembersDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RemoveSystemMember: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        code: string;
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RemoveSystemMemberInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SystemMembersDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SearchMemberUsers: {
+    parameters: {
+      query?: {
+        search?: string;
+      };
+      header?: never;
+      path: {
+        code: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PrincipalDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetMemberRoles: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        code: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SystemMemberRolesConfigDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SetMemberRoles: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        code: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SystemMemberRolesInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SystemMemberRolesConfigDto'];
         };
       };
       /** @description Problem Details (RFC 9457) */
@@ -38627,6 +39117,39 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['ReassignmentResultDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  TransferTaskCreatorRole: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['TransferCreatorRole'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CreatorTransferResultDto'];
         };
       };
       /** @description Problem Details (RFC 9457) */
@@ -48776,6 +49299,41 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['KpiCardDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  LookupKpiCards: {
+    parameters: {
+      query?: {
+        search?: string;
+        ids?: string[];
+        status?: string;
+        page?: number;
+        pageSize?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PagedResultOfKpiCardLookupDto'];
         };
       };
       /** @description Problem Details (RFC 9457) */
