@@ -403,3 +403,20 @@ export function useReassignTasks() {
     onSuccess,
   });
 }
+
+export type TransferCreatorInput = components['schemas']['TransferCreatorRole'];
+
+/** "Take over as creator" (ADR 0169): moves the creator role (and the approval) of the selected tasks. */
+export function useTransferCreatorRole() {
+  const onSuccess = useInvalidateTasks();
+  return useMutation({
+    mutationFn: async ({ body, idempotencyKey }: { body: TransferCreatorInput; idempotencyKey: string }) =>
+      unwrap(
+        await api.POST('/api/v1/tasks/reassignment/creator', {
+          body,
+          headers: { 'Idempotency-Key': idempotencyKey },
+        }),
+      ),
+    onSuccess,
+  });
+}

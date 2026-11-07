@@ -130,7 +130,8 @@ internal sealed class WaselSignInService(
     AuthEventLog events,
     IUserClaimsPrincipalFactory<StrategyUser> claimsFactory,
     IHttpContextAccessor accessor,
-    IEnumerable<IVendorSignInPolicy> policies)
+    IEnumerable<IVendorSignInPolicy> policies,
+    SecurityNotifier security)
 {
     private HttpContext Context => accessor.HttpContext ?? throw new InvalidOperationException("No HTTP context.");
 
@@ -146,6 +147,7 @@ internal sealed class WaselSignInService(
         if (await users.IsLockedOutAsync(user).ConfigureAwait(false))
         {
             await events.WriteAsync(AuthEventTypes.LockedOut, false, user.Id, login, "wasel", cancellationToken: ct).ConfigureAwait(false);
+            await security.LockedOutAsync(user, ct).ConfigureAwait(false);
             return SignInService.LockedOut;
         }
 
@@ -154,6 +156,11 @@ internal sealed class WaselSignInService(
             await users.AccessFailedAsync(user).ConfigureAwait(false);
             var locked = await users.IsLockedOutAsync(user).ConfigureAwait(false);
             await events.WriteAsync(locked ? AuthEventTypes.LockedOut : AuthEventTypes.LoginFailed, false, user.Id, login, "wasel", "password", ct).ConfigureAwait(false);
+            if (locked)
+            {
+                await security.LockedOutAsync(user, ct).ConfigureAwait(false);
+            }
+
             return locked ? SignInService.LockedOut : SignInService.InvalidCredentials;
         }
 
@@ -232,6 +239,11 @@ internal sealed class WaselSignInService(
             await users.AccessFailedAsync(user).ConfigureAwait(false);
             var locked = await users.IsLockedOutAsync(user).ConfigureAwait(false);
             await events.WriteAsync(locked ? AuthEventTypes.LockedOut : AuthEventTypes.MfaFailed, false, user.Id, user.UserName, "wasel", method, ct).ConfigureAwait(false);
+            if (locked)
+            {
+                await security.LockedOutAsync(user, ct).ConfigureAwait(false);
+            }
+
             return locked ? SignInService.LockedOut : SignInService.InvalidCode;
         }
 
@@ -318,7 +330,7 @@ internal sealed class WaselSignInService(
         var identity = new ClaimsIdentity(factory.Claims, AuthSchemes.Wasel, ClaimTypes.Name, ClaimTypes.Role);
         identity.AddClaim(new Claim(StrategyClaims.AuthMethod, AuthMethods.Mfa));
         await Context.SignInAsync(AuthSchemes.Wasel, new ClaimsPrincipal(identity), new AuthenticationProperties { IsPersistent = false }).ConfigureAwait(false);
-        await signIn.MarkSignedInAsync(user).ConfigureAwait(false);
+        await signIn.MarkSignedInAsync(user, ct).ConfigureAwait(false);
         await events.WriteAsync(AuthEventTypes.Login, true, user.Id, user.UserName, "wasel", AuthMethods.Mfa, ct).ConfigureAwait(false);
     }
 

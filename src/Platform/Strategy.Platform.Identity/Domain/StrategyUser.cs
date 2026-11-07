@@ -61,3 +61,22 @@ public sealed class PasswordHistoryEntry
 
     public DateTimeOffset CreatedAt { get; set; }
 }
+
+/// <summary>
+/// A device / network the user signed in from (ADR 0162): only a SHA-256 fingerprint of browser family, OS family and IP prefix — no raw IP or
+/// user agent. Technical data for the optional "new device" e-mail; at most <see cref="MaxPerUser"/> per user.
+/// </summary>
+public sealed class KnownDevice
+{
+    public const int MaxPerUser = 20;
+
+    public Guid Id { get; set; } = Guid.CreateVersion7();
+
+    public Guid UserId { get; set; }
+
+    public string Fingerprint { get; set; } = string.Empty;
+
+    public DateTimeOffset FirstSeenAt { get; set; }
+
+    public DateTimeOffset LastSeenAt { get; set; }
+}

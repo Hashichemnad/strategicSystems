@@ -3,6 +3,7 @@ import { Pencil, Plus, Trash2 } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { errorMessage } from '@/api/problem';
+import { KpiCardPicker } from '@/features/kpi/KpiCardPicker';
 import { EmployeePicker } from '@/features/org/EmployeePicker';
 import {
   Button,
@@ -38,7 +39,7 @@ export type FormValues = Record<string, FieldValue>;
 export interface FieldSpec {
   name: string;
   label: string;
-  kind: 'text' | 'textarea' | 'richtext' | 'number' | 'date' | 'datetime' | 'select' | 'employee' | 'bool';
+  kind: 'text' | 'textarea' | 'richtext' | 'number' | 'date' | 'datetime' | 'select' | 'employee' | 'bool' | 'kpiCard';
   options?: readonly SelectOption[];
   required?: boolean;
   wide?: boolean;
@@ -269,6 +270,15 @@ export function FieldInput({
         return <Select value={text || undefined} onValueChange={onChange} options={spec.options ?? []} />;
       case 'employee':
         return <EmployeePicker value={text || undefined} onChange={(id) => onChange(id ?? null)} />;
+      case 'kpiCard':
+        return (
+          <KpiCardPicker
+            value={text || null}
+            onChange={(id) => onChange(id)}
+            aria-label={spec.label}
+            testId={`field-${spec.name}`}
+          />
+        );
       default:
         return <Input dir="auto" value={text} onChange={(e) => onChange(e.target.value)} />;
     }

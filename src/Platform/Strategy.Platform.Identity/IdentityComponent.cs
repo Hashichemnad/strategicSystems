@@ -62,7 +62,8 @@ public sealed class IdentityComponent : IPlatformComponent
         services.AddScoped<Wasel.IVendorAccounts, Wasel.VendorAccounts>();
         services.AddScoped<ISmtpSettingsSource, SmtpSettingsSource>();
         services.AddScoped<INotificationRecipientDirectory, NotificationRecipientDirectory>();
-        foreach (var template in IdentityEmails.All)
+        services.AddScoped<SecurityNotifier>();
+        foreach (var template in IdentityEmails.All.Concat(SecurityEmails.All))
         {
             services.AddNotificationTemplate(template);
         }

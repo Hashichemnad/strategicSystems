@@ -1,7 +1,11 @@
 using System.Text.Json;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
+using Npgsql;
+using NpgsqlTypes;
 using Strategy.Platform.Kernel.Results;
+using Strategy.Platform.Kernel.Time;
 using Strategy.Platform.Notifications.Domain;
 using Strategy.Platform.Notifications.Infrastructure;
 using Strategy.Platform.Scheduling;
@@ -11,7 +15,7 @@ namespace Strategy.Platform.Notifications.Application;
 /// <summary>Outbox payload of one e-mail. Sensitive values and links are encrypted (Data Protection) while queued.</summary>
 internal sealed record EmailPayload(
     string TemplateKey, string To, string? Name, string Language, Dictionary<string, string>? Values, string? Link, string? Protected, Guid? UserId,
-    List<Guid>? Attachments = null);
+    List<Guid>? Attachments = null, string? IdempotencyKey = null);
 
 /// <summary>Outbox payload of one in-app item.</summary>
 internal sealed record InAppPayload(Guid UserId, string TemplateKey, Dictionary<string, string> Values, string? Link, bool AwaitingDigest);
@@ -27,7 +31,8 @@ internal sealed class NotificationService(
     IOutbox outbox,
     IEmailTransport transport,
     INotificationRecipientDirectory directory,
-    IDataProtectionProvider protection) : INotificationService
+    IDataProtectionProvider protection,
+    IClock clock) : INotificationService
 {
     public const string EmailType = "notifications.email";
     public const string InAppType = "notifications.in-app";
@@ -36,6 +41,11 @@ internal sealed class NotificationService(
     public async Task<Result> SendAsync(NotificationRequest request, object? transactionContext = null, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
+        if (request.IdempotencyKey is { Length: 0 or > Infrastructure.SentRequestConfiguration.KeyMaxLength })
+        {
+            throw new ArgumentException("The idempotency key must have 1 to 200 characters.", nameof(request));
+        }
+
         var template = await db.Templates.AsNoTracking().FirstOrDefaultAsync(t => t.Key == request.TemplateKey, cancellationToken).ConfigureAwait(false)
             ?? throw new InvalidOperationException($"Unknown notification template '{request.TemplateKey}'.");
         var wantsEmail = request.Channels.HasFlag(NotificationChannels.Email);
@@ -90,6 +100,11 @@ internal sealed class NotificationService(
             }
         }
 
+        if (request.IdempotencyKey is { } key && messages.Count > 0)
+        {
+            return await EnqueueOnceAsync(key, request.TemplateKey, messages, transactionContext as DbContext, cancellationToken).ConfigureAwait(false);
+        }
+
         foreach (var message in messages)
         {
             if (transactionContext is DbContext context)
@@ -105,6 +120,51 @@ internal sealed class NotificationService(
         return Result.Success();
     }
 
+    /// <summary>
+    /// Records the idempotency key and queues the messages in one transaction (the caller's, or one of its own): a key seen before queues
+    /// nothing (ADR 0162).
+    /// </summary>
+    private async Task<Result> EnqueueOnceAsync(string key, string templateKey, List<OutboxEnvelope> messages, DbContext? caller, CancellationToken ct)
+    {
+        if (caller?.Database.CurrentTransaction is { } open)
+        {
+            if (await ClaimAsync(caller, open, key, templateKey, ct).ConfigureAwait(false))
+            {
+                foreach (var message in messages)
+                {
+                    await outbox.EnqueueAsync(caller, message, ct).ConfigureAwait(false);
+                }
+            }
+
+            return Result.Success();
+        }
+
+        await using var transaction = await db.Database.BeginTransactionAsync(ct).ConfigureAwait(false);
+        if (!await ClaimAsync(db, transaction, key, templateKey, ct).ConfigureAwait(false))
+        {
+            return Result.Success();
+        }
+
+        foreach (var message in messages)
+        {
+            await outbox.EnqueueAsync(db, message, ct).ConfigureAwait(false);
+        }
+
+        await transaction.CommitAsync(ct).ConfigureAwait(false);
+        return Result.Success();
+    }
+
+    private async Task<bool> ClaimAsync(DbContext context, IDbContextTransaction transaction, string key, string templateKey, CancellationToken ct)
+    {
+        await using var command = new NpgsqlCommand(
+            $"insert into {NotifyDbContext.SchemaName}.sent_request (key, template_key, created_at) values (@key, @template, @now) on conflict (key) do nothing",
+            (NpgsqlConnection)context.Database.GetDbConnection(), (NpgsqlTransaction)transaction.GetDbTransaction());
+        command.Parameters.Add(new NpgsqlParameter("key", NpgsqlDbType.Text) { Value = key });
+        command.Parameters.Add(new NpgsqlParameter("template", NpgsqlDbType.Text) { Value = templateKey });
+        command.Parameters.Add(new NpgsqlParameter("now", NpgsqlDbType.TimestampTz) { Value = clock.UtcNow });
+        return await command.ExecuteNonQueryAsync(ct).ConfigureAwait(false) == 1;
+    }
+
     private OutboxEnvelope Email(
         NotificationRequest request, NotificationTemplate template, Dictionary<string, string> values, string to, string? name, string language, Guid? userId)
     {
@@ -114,13 +174,17 @@ internal sealed class NotificationService(
         if (request.Sensitive)
         {
             var secret = protection.CreateProtector(ProtectorPurpose).Protect(JsonSerializer.Serialize(new ProtectedPart(values, request.Link)));
-            payload = new EmailPayload(template.Key, to, name, language, null, null, secret, userId, request.AttachmentFileIds?.ToList());
+            payload = new EmailPayload(template.Key, to, name, language, null, null, secret, userId, request.AttachmentFileIds?.ToList(), DeliveryKey(request, to));
         }
         else
         {
-            payload = new EmailPayload(template.Key, to, name, language, values, request.Link, null, userId, request.AttachmentFileIds?.ToList());
+            payload = new EmailPayload(template.Key, to, name, language, values, request.Link, null, userId, request.AttachmentFileIds?.ToList(),
+                DeliveryKey(request, to));
         }
 
         return new OutboxEnvelope(EmailType, payload, ExpiresAt: request.ExpiresAt);
     }
+
+    private static string? DeliveryKey(NotificationRequest request, string to) =>
+        request.IdempotencyKey is { } key ? $"{key}:{to.Trim().ToLowerInvariant()}" : null;
 }

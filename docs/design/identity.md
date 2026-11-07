@@ -127,3 +127,53 @@ Phase 2 changes: the `is_system_admin` column, the `set-admin` endpoint and `isS
 | Administration → Identity providers | List + typed editor, Test, Enable / Disable, SP metadata link |
 | Administration → Security | Policy form |
 | Administration → Email server | Form + Send test |
+
+## Security e-mails (Phase 19, SPEC-ADDENDUM A3, ADR 0162)
+
+The user hears about every security-relevant change of their own account by e-mail, so a stolen session or password cannot be used unnoticed.
+
+| Event | Template key | Sent from | Applies to |
+|---|---|---|---|
+| Password changed by the user | `identity.security.passwordChanged` | `POST /me/password` | local accounts |
+| Password reset (e-mail link, also when an administrator sent the link; Wasel set-password) | `identity.security.passwordReset` | `SignInService.ResetPasswordAsync` (not an invitation) | local and vendor accounts |
+| MFA method enrolled | `identity.security.mfaEnrolled` | `SignInService.EnableMethodAsync` (profile, enrolment at sign-in, Wasel) | everyone with local MFA |
+| MFA method removed by the user / reset by an administrator | `identity.security.mfaRemoved` | `POST /me/mfa/disable`, `POST /admin/users/{id}/reset-mfa` | everyone with local MFA |
+| Recovery codes regenerated | `identity.security.recoveryCodes` | `POST /me/mfa/recovery-codes` | everyone with local MFA |
+| Account locked out | `identity.security.lockedOut` | the failed attempt that locks the account (local, LDAP, second factor, Wasel) | everyone (LDAP lockouts are local) |
+| Personal access token created | `identity.security.tokenCreated` | `POST /me/tokens` | internal users |
+| Sign-in from a new device (optional, **off** by default) | `identity.security.newDevice` | every completed sign-in (`MarkSignedInAsync`) | everyone, also SSO and Wasel |
+
+- **`SecurityNotifier`** (`Application/SecurityNotifier.cs`) is the only sender. Each call has an **event id**: a new id per action, except
+  the lockout, whose id is `lockout:{user}:{lockout end}` (repeated attempts while locked are one event). The id is the notification's
+  **idempotency key** (`NotificationRequest.IdempotencyKey`, below), so a second call with the same event never queues a second e-mail.
+- Values: `name`, `time` (installation time zone, Settings → Regional, `yyyy-MM-dd HH:mm` + zone), `ip` (as the audit keeps it),
+  `device` (browser and operating-system family parsed from the user agent, e.g. `Chrome · Windows`), `method` (MFA method), `token`
+  (token **name and prefix only**), `guidanceAr` / `guidanceEn` ("if this wasn't you" text). The e-mails never contain a password, token
+  value, code or link of their own (the button is absent).
+- **Guidance text** is configurable: Administration → Security → *Security e-mails* (`security_contact_ar` / `_en`, ≤ 500 characters each);
+  empty = the seeded default ("If this wasn't you, contact your system administrator straight away."). The template text itself stays
+  editable in Settings → Notifications like every template.
+- All security templates are **mandatory** (`Mandatory: true`): the preference screen shows them locked on; preferences and the digest never
+  suppress them. Email only (no in-app item). Recipients are users (`NotificationRecipient.User`), so the address and language come from
+  the account; inactive accounts get nothing.
+- **Recipient's language**: the e-mail stays bilingual side by side (CLAUDE.md §10), but the subject starts with the recipient's language and
+  the HTML document carries `lang` / `dir` of it (`EmailMessage.Language`, all notifications) — an Arabic-profile user gets
+  `«عربي» | «English»`, an English-profile user `«English» | «عربي»`.
+- External-provider accounts get only the events that apply (no local password → no password e-mails; LDAP lockouts and token creation
+  apply). Vendor (Wasel) accounts get them too (password reset, MFA enrolment, lockout, new device).
+
+### Exactly once (Platform.Notifications)
+
+- `NotificationRequest.IdempotencyKey` (optional). The service inserts the key into **`notify.sent_request`** (`key` primary key,
+  `template_key`, `created_at`) with `ON CONFLICT DO NOTHING` in the same transaction as the outbox messages (the caller's DbContext
+  transaction, or its own); a key already present → nothing is queued (success).
+- The e-mail payload carries `{key}:{address}`; `notify.delivery.idempotency_key` (indexed) records a sent delivery, and the
+  e-mail handler skips a message whose key was already delivered (an outbox message handled twice after a crash between send and commit).
+
+### New device / IP (optional)
+
+- Security settings `notify_new_device` (default **false**).
+- `identity.known_device (id, user_id, fingerprint, first_seen_at, last_seen_at)`, unique (`user_id`, `fingerprint`); fingerprint =
+  SHA-256 hex of `browser family | OS family | IP prefix` (IPv4 /24, IPv6 /48; no raw IP or user agent stored), at most 20 per user (oldest
+  by `last_seen_at` dropped). Devices are always remembered (so switching the e-mail on does not flood users); the e-mail goes only when
+  the switch is on, the user already has at least one known device, and this fingerprint is new.
