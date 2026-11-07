@@ -5,10 +5,10 @@ using Strategy.Platform.AI.Application;
 using Strategy.Platform.Audit;
 using Strategy.Platform.Kernel.Context;
 using Strategy.Platform.Kernel.Results;
+using Strategy.Platform.Kernel.Text;
 using Strategy.Platform.Kernel.Time;
 using Strategy.Platform.Settings;
 using Strategy.Platform.Workflow;
-using Strategy.Platform.Kernel.Text;
 
 namespace Strategy.Platform.AI.Features;
 

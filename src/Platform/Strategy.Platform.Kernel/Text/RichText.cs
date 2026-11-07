@@ -304,10 +304,10 @@ public static partial class RichText
             "p", "h2", "h3", "h4", "blockquote", "pre", "ul", "ol", "li", "table", "thead", "tbody", "tr", "hr",
         };
 
-        private readonly StringBuilder builder = new();
+        private readonly StringBuilder _builder = new();
 
         /// <summary>Position right after a list bullet: a block inside the item starts on the bullet's line.</summary>
-        private int bulletEnd = -1;
+        private int _bulletEnd = -1;
 
         public void Walk(INode node)
         {
@@ -318,7 +318,7 @@ public static partial class RichText
         }
 
         public override string ToString() =>
-            string.Join('\n', builder.ToString().Split('\n').Select(l => l.TrimEnd()).Where(l => l.Trim().Length > 0));
+            string.Join('\n', _builder.ToString().Split('\n').Select(l => l.TrimEnd()).Where(l => l.Trim().Length > 0));
 
         private void Visit(INode node)
         {
@@ -339,12 +339,12 @@ public static partial class RichText
         {
             var inPre = text.ParentElement?.Closest("pre") is not null;
             var content = inPre ? text.Data : Whitespace().Replace(text.Data, " ");
-            if (!inPre && (builder.Length == 0 || builder[^1] is '\n' or ' '))
+            if (!inPre && (_builder.Length == 0 || _builder[^1] is '\n' or ' '))
             {
                 content = content.TrimStart(' ');
             }
 
-            builder.Append(content);
+            _builder.Append(content);
         }
 
         private void VisitElement(IElement element)
@@ -353,17 +353,17 @@ public static partial class RichText
             switch (name)
             {
                 case "br":
-                    builder.Append('\n');
+                    _builder.Append('\n');
                     return;
                 case "hr":
                     NewLine();
-                    builder.Append("---");
+                    _builder.Append("---");
                     NewLine();
                     return;
                 case "li":
                     NewLine();
-                    builder.Append(Bullet(element));
-                    bulletEnd = builder.Length;
+                    _builder.Append(Bullet(element));
+                    _bulletEnd = _builder.Length;
                     Walk(element);
                     NewLine();
                     return;
@@ -374,13 +374,13 @@ public static partial class RichText
                     {
                         if (!first)
                         {
-                            builder.Append(" | ");
+                            _builder.Append(" | ");
                         }
 
                         first = false;
                         var inner = new PlainWriter();
                         inner.Walk(cell);
-                        builder.Append(inner.ToString().Replace('\n', ' '));
+                        _builder.Append(inner.ToString().Replace('\n', ' '));
                     }
 
                     NewLine();
@@ -417,9 +417,9 @@ public static partial class RichText
 
         private void NewLine()
         {
-            if (builder.Length > 0 && builder[^1] != '\n' && builder.Length != bulletEnd)
+            if (_builder.Length > 0 && _builder[^1] != '\n' && _builder.Length != _bulletEnd)
             {
-                builder.Append('\n');
+                _builder.Append('\n');
             }
         }
     }
