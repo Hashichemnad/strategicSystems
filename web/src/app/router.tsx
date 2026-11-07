@@ -1525,6 +1525,20 @@ export const taskReassignRoute = createRoute({
   component: lazyRouteComponent(() => import('@/features/tasks/ReassignTasksPage'), 'ReassignTasksPage'),
 });
 
+// System → Settings → Responsibilities (ADR 0168): one page, the system and kind in the search (only systems the user manages).
+export const responsibilitiesRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/responsibilities',
+  validateSearch: z.object({
+    system: z.string().max(40).optional().catch(undefined),
+    kind: z.string().max(60).optional().catch(undefined),
+  }),
+  component: lazyRouteComponent(
+    () => import('@/features/access/ResponsibilitiesPage'),
+    'ResponsibilitiesPage',
+  ),
+});
+
 const mcpSettingsRoute = createRoute({
   getParentRoute: () => settingsLayout,
   path: '/mcp',
@@ -1745,6 +1759,7 @@ const routeTree = rootRoute.addChildren([
       taskReassignRoute,
       membersHubRoute,
       systemMembersRoute,
+      responsibilitiesRoute,
       rolesRoute,
       assignmentsRoute,
       systemAccessRoute,

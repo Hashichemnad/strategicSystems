@@ -1,0 +1,92 @@
+{
+  "title": "Responsibilities",
+  "description": "Assign or reassign who is responsible for updating records, one by one or in bulk, with a preview and a reason.",
+  "link": "Responsibilities",
+  "system": "System",
+  "noSystems": "You do not manage responsibilities in any system.",
+  "kind": "Responsibility",
+  "filters": {
+    "title": "Filters",
+    "person": "Current person",
+    "unit": "Unit",
+    "anyUnit": "Any unit",
+    "status": "Status",
+    "anyStatus": "Any status",
+    "text": "Number or title",
+    "clear": "Clear filters"
+  },
+  "table": {
+    "caption": "Records",
+    "selectAll": "Select all on this page",
+    "select": "Select {{record}}",
+    "number": "Number",
+    "title": "Title",
+    "context": "Part of",
+    "status": "Status",
+    "responsible": "Responsible now",
+    "unit": "Unit",
+    "none": "No records match the filters.",
+    "selected_one": "{{count}} record selected",
+    "selected_other": "{{count}} records selected",
+    "restricted": "Restricted",
+    "page": "Page {{page}} of {{pages}}",
+    "previous": "Previous page",
+    "next": "Next page"
+  },
+  "change": {
+    "title": "New responsible",
+    "person": "New person",
+    "unit": "New unit",
+    "eligible": "Only eligible people are offered.",
+    "search": "Search eligible people",
+    "noCandidates": "No eligible person matches.",
+    "reason": "Reason",
+    "preview": "Preview the change",
+    "previewTitle": "Preview",
+    "confirm_one": "Reassign {{count}} record",
+    "confirm_other": "Reassign {{count}} records",
+    "confirmTitle": "Reassign the responsibility?",
+    "confirmDescription": "The records marked as allowed move now; change requests are submitted where approval is required. The previous and the new person are notified and the change is audited with your reason.",
+    "back": "Back to the selection",
+    "nothingAllowed": "None of the selected records can move."
+  },
+  "outcomes": {
+    "allowed": "Will move",
+    "change-request": "Change request",
+    "blocked": "Blocked",
+    "moved": "Moved",
+    "skipped": "Skipped"
+  },
+  "result": {
+    "title": "Result",
+    "summary": "Moved: {{moved}} · change requests: {{changeRequests}} · skipped: {{skipped}}",
+    "to": "New responsible: {{name}}",
+    "reference": "Reference {{reference}}",
+    "again": "Reassign more records"
+  },
+  "outcome": {
+    "notFound": "Not found or outside your scope",
+    "changedMeanwhile": "Changed by someone else meanwhile — reload and try again",
+    "alreadyResponsible": "Already the responsible person",
+    "notEligible": "This person is not eligible for this responsibility",
+    "needsChangeRequest": "Needs an approved change request: one will be created and submitted",
+    "changeRequestSubmitted": "Change request submitted for approval",
+    "notEditable": "Closed or no longer editable",
+    "forbidden": "You may not change this record",
+    "approvalRunning": "An approval is already running on this record"
+  },
+  "notes": {
+    "changeRequest": "SPEC: the project manager / owner changes only through an approved Ownership change request. The bulk action creates and submits the change requests; nothing moves until they are approved and applied.",
+    "auditOffice": "Only Audit Office members can be the responsible auditor. Departments of the findings stay unchanged."
+  },
+  "systems": {
+    "kpi": "Performance Management",
+    "risk": "Risk Management",
+    "portfolio": "Portfolio Management",
+    "cap": "Corrective Action Plan",
+    "auditmgmt": "Audit Management",
+    "bench": "Benchmarking",
+    "teams": "Teams Management",
+    "tasks": "Task Management"
+  }
+}

@@ -112,6 +112,10 @@
       "title": "Tasks",
       "description": "Workflow per task type, who can be assigned, reminders, escalation and digest."
     },
+    "responsibilities": {
+      "title": "Responsibilities",
+      "description": "Assign or reassign who is responsible for updating records of a system, one by one or in bulk, with filters, a preview and a reason."
+    },
     "tasksReassign": {
       "title": "Reassign open tasks of an employee",
       "description": "When someone leaves or moves: preview their open tasks, then give them to another employee or hand them back to their creators. Everyone involved is notified and the action is audited."

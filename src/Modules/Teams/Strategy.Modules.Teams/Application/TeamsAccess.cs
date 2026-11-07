@@ -89,6 +89,7 @@ internal sealed class TeamsAccessCatalogue : IAccessCatalogueSource
         new(TeamPermissions.AiMembers, "اقتراح الأعضاء", "Member suggestions", Scopable: false),
         new(TeamPermissions.AiEvaluation, "مساعد التقييم بالذكاء الاصطناعي", "AI evaluation assistant", Scopable: false),
         new(TeamPermissions.AiMinutes, "كاتب المحاضر بالذكاء الاصطناعي", "AI minutes writer", Scopable: false),
+        ResponsibilityPermissions.Definition(TeamPermissions.SystemCode),
     ];
 
     /// <summary>Members page lists (ADR 0166, docs/design/members-responsibilities.md §1).</summary>
@@ -111,7 +112,7 @@ internal sealed class TeamsAccessCatalogue : IAccessCatalogueSource
                 new(TeamPermissions.Operate, DataScope.All), new(TeamPermissions.MembershipRead, DataScope.All), new(TeamPermissions.EvaluationOpen, DataScope.All),
                 new(TeamPermissions.Results, DataScope.All), new(TeamPermissions.RewardManage, DataScope.All), new(TeamPermissions.DashboardRead),
                 new(TeamPermissions.Export), new(TeamPermissions.SettingsManage), new(TeamPermissions.AiFormation), new(TeamPermissions.AiMembers),
-                new(TeamPermissions.AiEvaluation), new(TeamPermissions.AiMinutes)],
+                new(TeamPermissions.AiEvaluation), new(TeamPermissions.AiMinutes), new(ResponsibilityPermissions.Manage(TeamPermissions.SystemCode), DataScope.All)],
             RequiresMfa: true),
     ];
 

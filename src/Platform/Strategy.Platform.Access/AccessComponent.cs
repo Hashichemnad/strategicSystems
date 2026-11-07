@@ -34,6 +34,10 @@ public sealed class AccessComponent : IPlatformComponent
         services.AddScoped<MemberAdministration>();
         services.AddNotificationTemplate(MemberNotifications.Added);
         services.AddNotificationTemplate(MemberNotifications.Removed);
+        services.AddScoped<ResponsibilityService>();
+        services.AddScoped<IResponsibilityNotifier, ResponsibilityNotifier>();
+        services.AddNotificationTemplate(ResponsibilityNotifier.Assigned);
+        services.AddNotificationTemplate(ResponsibilityNotifier.Removed);
         services.AddScoped<IDatabaseSeeder, AccessSeeder>();
         services.AddAccessCatalogue(new AccessCatalogue());
     }

@@ -37,6 +37,7 @@ public sealed class WorkflowComponent : IPlatformComponent
         services.AddScoped<ProcessAdministration>();
         services.AddScoped<SlaEscalation>();
         services.AddScoped<IRoleTransferHook, ApprovalRoleTransferHook>();
+        services.AddScoped<IApprovalRerouting, ApprovalRerouting>();
         services.AddScoped<IDatabaseSeeder, WorkflowSeeder>();
         services.AddScheduledJob(SlaEscalationJob.Definition);
         services.AddScheduledJob(IdempotencyCleanupJob.Definition);

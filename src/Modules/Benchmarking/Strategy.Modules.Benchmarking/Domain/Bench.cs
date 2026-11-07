@@ -194,6 +194,9 @@ public sealed class Study : AuditableEntity
 
     public static Study Create(string number, Guid requestId, string? requestNumber) => new() { Number = number, RequestId = requestId, RequestNumber = requestNumber };
 
+    /// <summary>Responsibility reassignment (ADR 0168): only the coordinator changes.</summary>
+    public void AssignCoordinator(Guid employeeId) => ResponsibleEmployeeId = employeeId;
+
     public void Describe(StudyPlan p)
     {
         ArgumentNullException.ThrowIfNull(p);

@@ -137,6 +137,10 @@ if (item is null || !await access.CanAsync(context.User, SamplePermissions.Updat
 - Registered `IRoleTransferHook`s are called in the same request; the Phase 4 approval engine re-routes pending approvals and tasks.
 - The transfer is logged in `role_transfer` and the log.
 
+## Responsibilities per system (ADR 0168)
+`IResponsibilitySource` (contracts) per system and kind, `/api/v1/access/systems/{code}/responsibilities`, permission
+`<system>.responsibilities.manage` of that system only: see `docs/design/members-responsibilities.md` §2.
+
 ## Access review report
 `GET /access/review?system=&unitId=&userId=` and `/access/review/export?lang=` (xlsx). One row per (user, system, role, source) where source is `direct` / `unit` / `everyone`, with the permissions and scopes. Record roles are listed per user (resource type, id, role).
 

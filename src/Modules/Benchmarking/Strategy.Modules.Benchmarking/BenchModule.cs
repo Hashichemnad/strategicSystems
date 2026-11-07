@@ -72,6 +72,7 @@ public sealed class BenchModule : IModule
         services.AddLinkableType(StudyLinkTargets.Definition);
         services.AddLinkTargetSource<StudyLinkTargets>();
         services.AddSearchContributor<BenchSearchContributor>(BenchPermissions.SystemCode); // global search (ADR 0160)
+        services.AddResponsibilitySource<StudyCoordinatorResponsibility>(); // Settings → Responsibilities (ADR 0168)
 
         services.AddIntegrationEventHandler<CapRemarkStatusChanged, CapRemarkStatusChangedHandler>();
         services.AddScoped<BenchMonitorRunner>();

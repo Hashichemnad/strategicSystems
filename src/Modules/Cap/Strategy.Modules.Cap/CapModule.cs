@@ -87,6 +87,8 @@ public sealed class CapModule : IModule
         services.AddLinkableType(ActionLinkTargets.Definition);
         services.AddLinkTargetSource<ActionLinkTargets>();
         services.AddSearchContributor<CapSearchContributor>(CapPermissions.SystemCode); // global search (ADR 0160)
+        services.AddResponsibilitySource<RemarkOwnerResponsibility>(); // Settings → Responsibilities (ADR 0168)
+        services.AddResponsibilitySource<CapActionAssigneeResponsibility>();
 
         services.AddIntegrationEventHandler<KpiTargetMissed, KpiTargetMissedHandler>();
         services.AddIntegrationEventHandler<RiskEventLogged, RiskEventLoggedHandler>();

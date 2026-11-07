@@ -180,6 +180,9 @@ public sealed class TeamEvaluation : AuditableEntity
         return Result.Success();
     }
 
+    /// <summary>Responsibility reassignment (ADR 0168): another evaluator for an evaluation still being written.</summary>
+    public void AssignEvaluator(Guid employeeId) => EvaluatorEmployeeId = employeeId;
+
     public void RefreshSuggestions(IReadOnlyList<CriterionResult> criteria) => Criteria = JsonSerializer.Serialize(criteria, TeamJson.Options);
 
     public Result Apply(string action, DateTimeOffset at, Guid? by = null, string? comment = null)

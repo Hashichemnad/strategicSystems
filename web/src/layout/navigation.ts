@@ -161,6 +161,15 @@ export const settingsPermissions = [
   'reporting.dashboard.manage',
   // Settings → Members, also for delegated system administrators (ADR 0167).
   ...membersPermissions,
+  // Settings → Responsibilities (ADR 0168): a delegated system administrator holding only this permission reaches it.
+  'kpi.responsibilities.manage',
+  'risk.responsibilities.manage',
+  'portfolio.responsibilities.manage',
+  'cap.responsibilities.manage',
+  'auditmgmt.responsibilities.manage',
+  'bench.responsibilities.manage',
+  'teams.responsibilities.manage',
+  'tasks.responsibilities.manage',
 ] as const;
 
 /**

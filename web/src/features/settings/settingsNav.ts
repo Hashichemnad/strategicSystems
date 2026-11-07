@@ -41,10 +41,27 @@ import {
   SquareStack,
   Timer,
   UserCheck,
+  UserCog,
   Users,
   type LucideIcon,
 } from 'lucide-react';
 import { membersPermissions } from '@/features/access/members';
+
+/** Systems with a Responsibilities page (ADR 0168): `<system>.responsibilities.manage` opens it for that system only. */
+export const responsibilitySystems = [
+  'kpi',
+  'risk',
+  'portfolio',
+  'cap',
+  'auditmgmt',
+  'bench',
+  'teams',
+  'tasks',
+] as const;
+
+export const responsibilityPermissions = responsibilitySystems.map(
+  (system) => `${system}.responsibilities.manage`,
+);
 
 export type SettingsPageKey =
   | 'setup'
@@ -86,6 +103,7 @@ export type SettingsPageKey =
   | 'systemAccess'
   | 'transfer'
   | 'review'
+  | 'responsibilities'
   | 'users'
   | 'providers'
   | 'security'
@@ -133,6 +151,7 @@ export type SettingsPath =
   | '/settings/access/system-access'
   | '/settings/access/transfer'
   | '/settings/access/review'
+  | '/settings/responsibilities'
   | '/admin/users'
   | '/admin/providers'
   | '/admin/security'
@@ -319,6 +338,12 @@ export const settingsGroups: readonly SettingsGroup[] = [
         to: '/settings/access/review',
         icon: FileSpreadsheet,
         permissions: ['access.review.export'],
+      },
+      {
+        key: 'responsibilities',
+        to: '/settings/responsibilities',
+        icon: UserCog,
+        permissions: responsibilityPermissions,
       },
     ],
   },

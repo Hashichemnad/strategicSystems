@@ -72,6 +72,7 @@ internal sealed class TasksAccessCatalogue : IAccessCatalogueSource
         new(TaskPermissions.AiSummary, "تلخيص المهام بالذكاء الاصطناعي", "Summarise tasks with AI", Scopable: false),
         new(TaskPermissions.AiAssignee, "اقتراح المكلفين", "Suggest assignees", Scopable: false),
         new(TaskPermissions.AiWorkload, "رؤى عبء العمل", "Workload insights", Scopable: false),
+        ResponsibilityPermissions.Definition(TaskPermissions.SystemCode),
     ];
 
     /// <summary>Members page lists (ADR 0166, docs/design/members-responsibilities.md §1).</summary>
@@ -92,7 +93,7 @@ internal sealed class TasksAccessCatalogue : IAccessCatalogueSource
         new("hr", "الموارد البشرية (أداء المهام)", "HR (task performance)", [new(TaskPermissions.PerformanceRead, DataScope.All)]),
         new("administrator", "مسؤول المهام", "Task administrator",
             [new(TaskPermissions.Read, DataScope.All), new(TaskPermissions.DashboardRead), new(TaskPermissions.SettingsManage), new(TaskPermissions.AiWorkload),
-                new(TaskPermissions.ReassignmentManage, DataScope.All)],
+                new(TaskPermissions.ReassignmentManage, DataScope.All), new(ResponsibilityPermissions.Manage(TaskPermissions.SystemCode), DataScope.All)],
             RequiresMfa: true),
     ];
 

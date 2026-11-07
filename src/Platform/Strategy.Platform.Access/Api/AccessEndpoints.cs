@@ -52,6 +52,23 @@ internal static class AccessEndpoints
         systems.MapPut("/{code}/member-roles", async (string code, SystemMemberRolesInput body, MemberAdministration m, CancellationToken ct) =>
                 (await m.SetConfigurationAsync(code, body, ct)).ToOk())
             .WithName("SetMemberRoles").RequirePermission(AccessPermissions.RoleManage);
+        // System → Settings → Responsibilities (ADR 0168): the handler checks <system>.responsibilities.manage of THAT system (403) for internal users.
+        var responsibilities = systems.MapGroup("/{code}/responsibilities");
+        responsibilities.MapGet("/", async (string code, ResponsibilityService s, CancellationToken ct) => (await s.KindsAsync(code, ct)).ToOk())
+            .WithName("ListResponsibilityKinds").RequireSignedIn();
+        responsibilities.MapGet("/{kind}", async (string code, string kind, Guid? personId, Guid? unitId, string? status, string? text, int? page, int? pageSize,
+                    ResponsibilityService s, CancellationToken ct) =>
+                (await s.ListAsync(code, kind, new ResponsibilityQuery(personId, unitId, status, text, page ?? 1, pageSize ?? 50), ct)).ToOk())
+            .WithName("ListResponsibilities").RequireSignedIn();
+        responsibilities.MapGet("/{kind}/candidates", async (string code, string kind, string? search, ResponsibilityService s, CancellationToken ct) =>
+                (await s.CandidatesAsync(code, kind, search, ct)).ToOk())
+            .WithName("ListResponsibilityCandidates").RequireSignedIn();
+        responsibilities.MapPost("/{kind}/preview", async (string code, string kind, ResponsibilityChangeInput body, ResponsibilityService s, CancellationToken ct) =>
+                (await s.PreviewAsync(code, kind, body, ct)).ToOk())
+            .WithName("PreviewResponsibilityReassignment").RequireSignedIn();
+        responsibilities.MapPost("/{kind}/reassign", async (string code, string kind, ResponsibilityChangeInput body, ResponsibilityService s, CancellationToken ct) =>
+                (await s.ReassignAsync(code, kind, body, ct)).ToOk())
+            .WithName("ReassignResponsibilities").RequireSignedIn().WithIdempotency();
 
         var roles = group.MapGroup("/roles");
         roles.MapGet("/", (string? system, AccessAdministration a, CancellationToken ct) => a.ListRolesAsync(system, ct)).WithName("ListRoles")

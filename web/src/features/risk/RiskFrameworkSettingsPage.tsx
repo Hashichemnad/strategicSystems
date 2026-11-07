@@ -47,6 +47,7 @@ import {
 } from './api';
 import { RiskMatrix, useNames, useNum, useRiskT } from './components';
 import { SystemSettingsLinks } from '@/features/access/SystemSettingsLinks';
+import { ResponsibilitiesLink } from '@/features/access/ResponsibilitiesLink';
 
 /** Settings → Risk framework (docs/design/risk.md §2, ADR 0100): versioned framework with live preview, categories, settings. */
 export function RiskFrameworkSettingsPage() {
@@ -57,6 +58,7 @@ export function RiskFrameworkSettingsPage() {
   if (!framework.data) return <Skeleton className="h-96 rounded-lg" />;
   return (
     <div className="flex flex-col gap-6" data-testid="risk-framework-settings">
+      <ResponsibilitiesLink system="risk" />
       <PageHeader
         title={t('settings.title')}
         description={t('settings.description', { version: framework.data.versionNo })}
