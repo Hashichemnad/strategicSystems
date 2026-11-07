@@ -66,7 +66,8 @@ Update this file in the same commit that adds a dependency.
 ¹ The NetArchTest.Rules package has no licence metadata in its nuspec; MIT verified from
 <https://github.com/BenMorris/NetArchTest/blob/master/LICENSE> (listed in `PackagePolicy.ManuallyVerified`).
 
-Tools: `dotnet-ef` (MIT), local tool in `dotnet-tools.json`.
+Tools: `dotnet-ef` (MIT), local tool in `dotnet-tools.json`. CI only, not shipped (ADR 0163): PSScriptAnalyzer 1.23.0 (MIT, installed
+from the PowerShell Gallery by `tests/deploy/Invoke-ScriptAnalysis.ps1`); the deploy-script tests use Python's standard library only.
 
 ## npm — `web/package.json`
 
