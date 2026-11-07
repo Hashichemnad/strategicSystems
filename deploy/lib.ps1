@@ -182,7 +182,10 @@ function Wait-Postgres {
 function Invoke-ComposeBinary {
     param([string[]]$Arguments, [string]$StdOutFile = $null, [string]$StdInFile = $null)
     $psi = New-Object Diagnostics.ProcessStartInfo
-    $psi.FileName = 'docker'
+    # The docker that PowerShell itself runs (PATH order). A bare 'docker' would let Windows search System32 and the application folder
+    # before PATH (CreateProcess), so another docker.exe there could win over the one the user put first on PATH.
+    $docker = Get-Command docker -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1
+    if ($docker) { $psi.FileName = $docker.Path } else { $psi.FileName = 'docker' }
     $all = @(Get-ComposeArguments) + $Arguments
     $psi.Arguments = ($all | ForEach-Object { if ($_ -match '[\s"]') { '"' + ($_ -replace '"', '\"') + '"' } else { $_ } }) -join ' '
     $psi.UseShellExecute = $false
