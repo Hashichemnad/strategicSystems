@@ -4,6 +4,7 @@ using System.Text.Json.Nodes;
 using System.Text.RegularExpressions;
 using Strategy.Modules.Requests.Contracts;
 using Strategy.Platform.Kernel.Results;
+using Strategy.Platform.Kernel.Text;
 
 namespace Strategy.Modules.Requests.Domain;
 
@@ -163,6 +164,9 @@ public static partial class FormDataValidator
     public const int TextDefault = 500;
     public const int TextareaDefault = 4000;
     public const int RichTextDefault = 20000;
+
+    /// <summary>Stored size of a rich-text value (HTML, ADR 0161); the field's maximum counts its visible text.</summary>
+    public const int RichTextStoredMax = 40000;
     public const int SecretMax = 100;
 
     public static async Task<FormValidationResult> ValidateAsync(
@@ -215,16 +219,44 @@ public static partial class FormDataValidator
 
         switch (field.Type)
         {
+            case FieldTypes.RichText:
+                {
+                    if (StringOf(raw) is not { } html)
+                    {
+                        return Fail(path, "requests.errors.type", errors);
+                    }
+
+                    // Sanitised HTML or plain text kept as it is (ADR 0161); the limit counts the visible text.
+                    var clean = RichText.Sanitize(html);
+                    var max = field.MaxLength ?? RichTextDefault;
+                    if (RichText.LengthError(path, clean, max, RichTextStoredMax) is { } tooLong)
+                    {
+                        errors.Add(tooLong);
+                        return null;
+                    }
+
+                    if (clean is null)
+                    {
+                        if (required)
+                        {
+                            errors.Add(FormSchemaValidator.Error(path, "validation.notEmpty"));
+                        }
+
+                        return null;
+                    }
+
+                    return JsonValue.Create(clean);
+                }
+
             case FieldTypes.Text:
             case FieldTypes.Textarea:
-            case FieldTypes.RichText:
                 {
                     if (StringOf(raw) is not { } text)
                     {
                         return Fail(path, "requests.errors.type", errors);
                     }
 
-                    var max = field.MaxLength ?? (field.Type == FieldTypes.Text ? TextDefault : field.Type == FieldTypes.Textarea ? TextareaDefault : RichTextDefault);
+                    var max = field.MaxLength ?? (field.Type == FieldTypes.Text ? TextDefault : TextareaDefault);
                     if (text.Trim().Length > max)
                     {
                         errors.Add(FormSchemaValidator.Error(path, "validation.maximumLength", new Dictionary<string, object?> { ["maxLength"] = max }));

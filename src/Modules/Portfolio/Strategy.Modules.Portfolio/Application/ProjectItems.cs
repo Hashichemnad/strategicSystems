@@ -5,6 +5,7 @@ using Strategy.Modules.Portfolio.Domain;
 using Strategy.Modules.Portfolio.Infrastructure;
 using Strategy.Platform.Kernel.Context;
 using Strategy.Platform.Kernel.Results;
+using Strategy.Platform.Kernel.Text;
 using Strategy.Platform.Settings;
 
 namespace Strategy.Modules.Portfolio.Application;
@@ -352,14 +353,19 @@ internal sealed class ProjectItems(
             return MissingValues();
         }
 
-        var v = input.Values with { Notes = RichText.Sanitise(input.Values.Notes) };
+        var v = input.Values with { Notes = RichText.Sanitize(input.Values.Notes) };
         var errors = new List<FieldError>();
         if (string.IsNullOrWhiteSpace(v.Title))
         {
             Add(errors, "title", "validation.notEmpty");
         }
 
-        Lengths(errors, ("title", v.Title, RequestRules.NameMaxLength), ("notes", v.Notes, 20000));
+        Lengths(errors, ("title", v.Title, RequestRules.NameMaxLength));
+        if (RichText.LengthError("notes", v.Notes, RichText.DefaultMaxLength) is { } tooLong)
+        {
+            errors.Add(tooLong);
+        }
+
         return await SaveAsync<Meeting, ProjectMeetingDto>(projectId, itemId, input.Version, ItemRule.Contribution, errors, p => Meeting.Create(p.Id, v), m => m.Edit(v),
             m => Task.FromResult(ProjectMeetingDto(m)), ct).ConfigureAwait(false);
     }
@@ -645,15 +651,4 @@ internal sealed class ProjectItems(
             Add(errors, field, "validation.unknownCode");
         }
     }
-}
-
-/// <summary>Minutes are rich text: keep a safe subset (the SPA renders it through DOMPurify as well).</summary>
-internal static class RichText
-{
-    private static readonly System.Text.RegularExpressions.Regex Dangerous = new(
-        @"<\s*(script|style|iframe|object|embed|link|meta)[^>]*>.*?<\s*/\s*\1\s*>|<\s*(script|style|iframe|object|embed|link|meta)[^>]*/?>|\son\w+\s*=\s*(""[^""]*""|'[^']*'|[^\s>]+)|javascript:",
-        System.Text.RegularExpressions.RegexOptions.IgnoreCase | System.Text.RegularExpressions.RegexOptions.Singleline | System.Text.RegularExpressions.RegexOptions.Compiled,
-        TimeSpan.FromSeconds(1));
-
-    public static string? Sanitise(string? html) => html is null ? null : Dangerous.Replace(html, string.Empty);
 }
