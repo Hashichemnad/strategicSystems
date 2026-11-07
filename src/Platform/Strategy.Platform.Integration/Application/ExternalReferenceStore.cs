@@ -18,7 +18,8 @@ namespace Strategy.Platform.Integration.Application;
 /// leaves the caller's transaction usable.
 /// </summary>
 internal sealed class ExternalReferenceStore(
-    IntegrationDbContext db, IClock clock, ILinkRegistry links, IEnumerable<ReferenceableTypeDefinition> referenceable) : IExternalReferenceStore
+    IntegrationDbContext db, IClock clock, ILinkRegistry links, IEnumerable<ReferenceableTypeDefinition> referenceable, NpgsqlDataSource dataSource)
+    : IExternalReferenceStore
 {
     private readonly HashSet<string> _registered = referenceable.Select(d => d.ResourceType).ToHashSet(StringComparer.Ordinal);
 
@@ -184,8 +185,7 @@ internal sealed class ExternalReferenceStore(
     public async Task<IAsyncDisposable> LockAsync(string sourceSystem, string entityType, string externalId, CancellationToken cancellationToken = default)
     {
         // A dedicated session: the context's own connection may later join a module's transaction (ADR 0023).
-        var connection = new NpgsqlConnection(db.Database.GetConnectionString());
-        await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
+        var connection = await dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
         var key = $"integration.external_ref|{sourceSystem}|{entityType}|{externalId}";
         await using (var command = new NpgsqlCommand("SELECT pg_advisory_lock(hashtextextended(@key, 0))", connection))
         {

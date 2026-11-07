@@ -9,7 +9,7 @@ an MCP read tool, exports / reports / audit trail, and the global-search hook. F
 
 | Project | Contents |
 |---|---|
-| `Strategy.Platform.Integration.Contracts` | What modules and platform components use: `IExternalReferenceStore`, `ExternalReference`, `ExternalReferenceInput`, `SourceSystemInfo`, `ExternalRecordMatch`, `ExternalReferenceErrors` (message keys), `SyncStatuses`, the **referenceable types** registry (`ReferenceableTypeDefinition` + `IReferenceableRecordSource` + `AddReferenceableType`) and `IExternalImportColumns` helpers (`ExternalImport.Columns`, `ExternalImport.Check`). Kernel only — no EF Core / ASP.NET (architecture test). |
+| `Strategy.Platform.Integration.Contracts` | What modules and platform components use: `IExternalReferenceStore`, `ExternalReference`, `ExternalReferenceInput`, `SourceSystemInfo`, `ExternalRecordMatch`, `ExternalReferenceErrors` (message keys), `SyncStatuses`, the **referenceable types** registry (`ReferenceableTypeDefinition` + `IReferenceableRecordSource` + `AddReferenceableType`) and the import helper `ExternalImport` (column keys / labels, row checks, match checks, linking). Kernel only — no EF Core / ASP.NET (architecture test). |
 | `Strategy.Platform.Integration` | `IntegrationComponent` (`/api/v1/integration`, schema **`integration`**), `IntegrationDbContext` + migration, `SourceSystem` and `ExternalRef` entities (`[Audited]`), `ExternalReferenceStore`, `ReferenceResolver`, source-system administration, catalogue (permissions), lookup `integration.source_type`, the MCP tool `find_by_external_reference`. |
 | `Strategy.Platform.Http` (+ reference to the contracts) | `ByExternalEndpoints.MapByExternal(...)`: the reusable GET / PUT by external ID helper modules wire per type in a few lines. |
 
@@ -40,11 +40,10 @@ visibility check behind the record-page endpoint, the MCP tool and search hits. 
 |---|---|
 | `FindAsync(source, type, externalId)` | upsert lookups (imports, REST, sync) |
 | `ListForRecordAsync(type, id)` / `ListForRecordsAsync(type, ids)` | record page, exports, report columns |
-| `LinkAsync(input, transactionContext)` → `Result<ExternalReference>` | create or refresh a reference (idempotent for the same triple + record; sync fields updated) |
-| `UpdateSyncAsync(…)` | sync fields only (Phase 23) |
+| `LinkAsync(input, transactionContext)` → `Result<ExternalReference>` | create or refresh a reference (idempotent for the same triple + record; sync fields — last synced, source modified, hash, status — updated; origin only ever switched on). Phase 23 uses it for every synced row |
 | `UnlinkAsync(source, type, externalId, transactionContext)` | remove the mapping (audited) |
 | `FindByExternalIdAsync(text, limit)` | (type, id) pairs whose external ID equals / starts with the text — for the global-search contributor (stream S) |
-| `GetSourceAsync(code)` / `ValidateSourceAsync(code)` | source checks for imports / REST |
+| `GetSourceAsync(code)` / `ValidateSourceAsync(code)` / `IsReferenceable(type)` | source and type checks for imports / REST / report columns |
 | `LockAsync(source, type, externalId)` | session advisory lock serialising concurrent upserts of the same external ID (REST PUT) |
 
 `transactionContext` follows ADR 0023 (`ILinkStore`): pass the module's DbContext with its open transaction and the reference commits with the

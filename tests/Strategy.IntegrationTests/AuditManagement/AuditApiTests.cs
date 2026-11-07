@@ -659,6 +659,37 @@ public sealed class AuditApiTests(AuditFixture fx) : IClassFixture<AuditFixture>
     }
 
     [Fact]
+    public async Task Excel_import_with_external_ids_updates_the_referenced_finding_on_a_rerun_without_duplicates()
+    {
+        var w = await AuditWorld.CreateAsync(fx.Factory);
+        var report = await w.ReportAsync();
+        var unit = $"AS1{w.Suffix}";
+        var source = $"audit-src-{w.Suffix}".ToLowerInvariant();
+        (await (await fx.AdminAsync()).PostAsJsonAsync("/api/v1/integration/source-systems",
+            new Strategy.Platform.Integration.Application.SourceSystemInput(source, null, "Audit source", "custom", null))).StatusCode.ShouldBe(HttpStatusCode.OK);
+        string?[] Row(string title, string action) =>
+            ["F1", null, title, "finding", "Not reviewed", null, null, null, "2026-03-01", unit, "high", null, null, null, action, null, "2026-09-30", null, null, source, $"EXT-{w.Suffix}"];
+
+        using var first = Xlsx([Row("Reconciliations", "Review monthly")]);
+        var created = await AuditWorld.OkAsync<AuditImportReportDto>(w.C(w.Office).PostAsync($"{Base}/reports/{report.Id}/import?mode=commit", Form(first)));
+        (created.Committed, created.Findings, created.Updated, created.Issues.Count).ShouldBe((true, 1, 0, 0));
+
+        using var second = Xlsx([Row("Reconciliations (revised)", "Review weekly")]);
+        var updated = await AuditWorld.OkAsync<AuditImportReportDto>(w.C(w.Office).PostAsync($"{Base}/reports/{report.Id}/import?mode=commit", Form(second)));
+        (updated.Committed, updated.Findings, updated.Updated, updated.SkippedRecommendations, updated.Issues.Count).ShouldBe((true, 0, 1, 1, 0));
+        var findings = await AuditWorld.OkAsync<PagedResult<AuditFindingListItemDto>>(w.C(w.Office).GetAsync($"{Base}/findings?reportId={report.Id}"));
+        findings.Items.Single().TitleEn.ShouldBe("Reconciliations (revised)");
+        findings.Items.Single().Recommendations.ShouldBe(1);
+        (await AuditWorld.OkAsync<AuditFindingDto>(w.C(w.Office).GetAsync($"{Base}/findings/by-external/{source}/EXT-{w.Suffix}"))).Id.ShouldBe(findings.Items.Single().Id);
+
+        // An unknown source is reported against its column.
+        string?[] unknown = [.. Row("Other", "x").Take(19), $"nosuch-{w.Suffix}", "EXT-2"];
+        using var third = Xlsx([unknown]);
+        var invalid = await AuditWorld.OkAsync<AuditImportReportDto>(w.C(w.Office).PostAsync($"{Base}/reports/{report.Id}/import?mode=validate", Form(third)));
+        invalid.Issues.ShouldContain(i => i.Column == "source_system" && i.Code == "integration.unknownSource");
+    }
+
+    [Fact]
     public async Task Ai_extraction_returns_drafts_and_nothing_is_saved_until_the_audit_office_confirms()
     {
         var w = await AuditWorld.CreateAsync(fx.Factory);
