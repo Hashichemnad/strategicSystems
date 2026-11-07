@@ -9,6 +9,7 @@ using Strategy.Modules.Kpi.Domain;
 using Strategy.Platform.AI.Documents;
 using Strategy.Platform.Http.Access;
 using Strategy.Platform.Http.Audit;
+using Strategy.Platform.Http.Integration;
 using Strategy.Platform.Http.Problems;
 using Strategy.Platform.Kernel.Messaging;
 using Strategy.Platform.Kernel.Paging;
@@ -88,6 +89,9 @@ internal static class KpiEndpoints
             .WithName("GetKpiCard").RequirePermission(KpiPermissions.CardRead);
         group.MapPut("/cards/{id:guid}", async (Guid id, KpiCardBody b, IDispatcher d, CancellationToken ct) => (await d.SendAsync(new UpdateKpiCard(id, b.Card, b.Version), ct)).ToOk())
             .WithName("UpdateKpiCard").RequirePermission(KpiPermissions.CardManage);
+        group.MapByExternal("/cards", CardLinkTargets.Definition.ResourceType, KpiPermissions.CardRead, "KpiCard", c => c.Id, (id, http) => http.Dispatch(new GetKpiCard(id)))
+            .WithUpsert<KpiCardInput>(KpiPermissions.CardManage, KpiPermissions.CardManage, (b, http) => http.Dispatch(new CreateKpiCard(b)),
+                (id, b, current, http) => http.Dispatch(new UpdateKpiCard(id, b, current.Version)));
         group.MapPost("/cards/{id:guid}/activate", async (Guid id, KpiCardStatusInput b, IDispatcher d, CancellationToken ct) =>
                 (await d.SendAsync(new SetKpiCardStatus(id, true, b.Version), ct)).ToOk())
             .WithName("ActivateKpiCard").RequirePermission(KpiPermissions.CardManage);
@@ -149,6 +153,8 @@ internal static class KpiEndpoints
             .WithName("ListMyPendingKpiResults").RequirePermission(KpiPermissions.ResultRead);
         group.MapGet("/results/{id:guid}", async (Guid id, IDispatcher d, CancellationToken ct) => (await d.SendAsync(new GetKpiResult(id), ct)).ToOk())
             .WithName("GetKpiResult").RequirePermission(KpiPermissions.ResultRead);
+        group.MapByExternal("/results", ResultLinkTargets.Definition.ResourceType, KpiPermissions.ResultRead, "KpiResult", r => r.Id,
+            (id, http) => http.Dispatch(new GetKpiResult(id)));
         group.MapPut("/results/{id:guid}/draft", async (Guid id, KpiDraftInput b, IDispatcher d, CancellationToken ct) =>
                 (await d.SendAsync(new SaveKpiResultDraft(id, b.Entry, b.Version), ct)).ToOk())
             .WithName("SaveKpiResultDraft").RequirePermission(KpiPermissions.ResultSubmit);

@@ -45,6 +45,7 @@ public sealed class ReportingComponent : IPlatformComponent
         services.AddScoped<DashboardService>();
         services.AddScoped<DashboardRenderer>();
         services.AddScoped<ReportService>();
+        services.AddScoped<Datasets.ExternalReferenceColumns>();
         services.AddScoped<ScheduleService>();
         services.AddScoped<DeliveryRunner>();
         services.AddScoped<BriefService>();

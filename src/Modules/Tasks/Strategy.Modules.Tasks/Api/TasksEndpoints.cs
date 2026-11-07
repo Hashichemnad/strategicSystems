@@ -8,6 +8,7 @@ using Strategy.Modules.Tasks.Application;
 using Strategy.Modules.Tasks.Domain;
 using Strategy.Platform.Http.Access;
 using Strategy.Platform.Http.Audit;
+using Strategy.Platform.Http.Integration;
 using Strategy.Platform.Http.Problems;
 using Strategy.Platform.Kernel.Messaging;
 using Strategy.Platform.Kernel.Paging;
@@ -33,6 +34,7 @@ internal static class TasksEndpoints
             .WithName("CreateTask").RequirePermission(TaskPermissions.Create).WithIdempotency();
         group.MapGet("/{id:guid}", async (Guid id, IDispatcher d, CancellationToken ct) => (await d.SendAsync(new GetTask(id), ct)).ToOk())
             .WithName("GetTask").RequirePermission(TaskPermissions.Read);
+        group.MapByExternal("", TaskLinkTargets.Definition.ResourceType, TaskPermissions.Read, "Task", t => t.Id, (id, http) => http.Dispatch(new GetTask(id)));
         group.MapPut("/{id:guid}", async (Guid id, UpdateTaskInput b, IDispatcher d, CancellationToken ct) =>
                 (await d.SendAsync(new UpdateTask(id, b.TitleAr, b.TitleEn, b.Description, b.SourceCode, b.CategoryCode, b.Priority, b.Confidential, b.PlannedStart,
                     b.DueDate, b.EstimatedHours, b.PercentComplete, b.Version), ct)).ToOk())

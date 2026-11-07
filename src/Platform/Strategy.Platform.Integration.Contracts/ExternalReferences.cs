@@ -72,6 +72,9 @@ public static class ExternalReferenceErrors
     /// <summary>The record already carries another external ID from the same source.</summary>
     public const string RecordAlreadyReferenced = "integration.errors.recordAlreadyReferenced";
 
+    /// <summary>Import: the external ID points at another record than the row's own key (code, employee no.).</summary>
+    public const string KeyMismatch = "integration.errors.keyMismatch";
+
     /// <summary>Import: the same (source, external ID) appears twice in the file.</summary>
     public const string DuplicateInFile = "integration.errors.duplicateExternalId";
 

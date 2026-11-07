@@ -8,6 +8,7 @@ using Strategy.Modules.DocumentRegistry.Application;
 using Strategy.Modules.DocumentRegistry.Domain;
 using Strategy.Platform.Http.Access;
 using Strategy.Platform.Http.Audit;
+using Strategy.Platform.Http.Integration;
 using Strategy.Platform.Http.Problems;
 using Strategy.Platform.Kernel.Paging;
 
@@ -29,6 +30,8 @@ internal static class DocRegEndpoints
         var documents = group.MapGroup("/documents");
         documents.MapGet("/{id:guid}", async (Guid id, DocumentService s, CancellationToken ct) => (await s.GetAsync(id, ct)).ToOk())
             .WithName("GetDocument").RequirePermission(DocRegPermissions.Read);
+        documents.MapByExternal("", DocumentLinks.Definition.ResourceType, DocRegPermissions.Read, "Document", d => d.Id,
+            (id, http) => http.RequestServices.GetRequiredService<DocumentService>().GetAsync(id, http.RequestAborted));
         documents.MapGet("/{id:guid}/compare", async (Guid id, Guid from, Guid to, DocumentService s, CancellationToken ct) => (await s.CompareAsync(id, from, to, ct)).ToOk())
             .WithName("CompareDocumentVersions").RequirePermission(DocRegPermissions.Read);
         documents.MapGet("/{id:guid}/download", async Task<Results<FileContentHttpResult, ProblemHttpResult>> (Guid id, Guid? versionId, DocumentService s,

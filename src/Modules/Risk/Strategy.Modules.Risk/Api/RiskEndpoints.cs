@@ -9,6 +9,7 @@ using Strategy.Modules.Risk.Domain;
 using Strategy.Platform.AI.Documents;
 using Strategy.Platform.Http.Access;
 using Strategy.Platform.Http.Audit;
+using Strategy.Platform.Http.Integration;
 using Strategy.Platform.Http.Problems;
 using Strategy.Platform.Kernel.Messaging;
 using Strategy.Platform.Kernel.Paging;
@@ -102,6 +103,9 @@ internal static class RiskEndpoints
             .WithName("GetRisk").RequirePermission(RiskPermissions.Read);
         group.MapPut("/risks/{id:guid}", async (Guid id, RiskBody b, IDispatcher d, CancellationToken ct) => (await d.SendAsync(new UpdateRisk(id, b.Values, b.Version), ct)).ToOk())
             .WithName("UpdateRisk").RequirePermission(RiskPermissions.Read);
+        group.MapByExternal("/risks", RiskLinkTargets.Definition.ResourceType, RiskPermissions.Read, "Risk", r => r.Id, (id, http) => http.Dispatch(new GetRisk(id)))
+            .WithUpsert<RiskValues>(RiskPermissions.Create, RiskPermissions.Read, (b, http) => http.Dispatch(new CreateRisk(b)),
+                (id, b, current, http) => http.Dispatch(new UpdateRisk(id, b, current.Version)));
         group.MapPost("/risks/{id:guid}/submit", async (Guid id, RiskCommentInput b, IDispatcher d, CancellationToken ct) => (await d.SendAsync(new SubmitRisk(id, b.Comment), ct)).ToOk())
             .WithName("SubmitRisk").RequirePermission(RiskPermissions.Submit).WithIdempotency();
         group.MapPost("/risks/{id:guid}/recall", async (Guid id, IDispatcher d, CancellationToken ct) => (await d.SendAsync(new RecallRisk(id), ct)).ToOk())

@@ -8,6 +8,7 @@ using Strategy.Modules.IpRegistry.Application;
 using Strategy.Modules.IpRegistry.Domain;
 using Strategy.Platform.Http.Access;
 using Strategy.Platform.Http.Audit;
+using Strategy.Platform.Http.Integration;
 using Strategy.Platform.Http.Problems;
 using Strategy.Platform.Kernel.Paging;
 
@@ -23,6 +24,8 @@ internal static class IpEndpoints
                 TypedResults.Ok(await s.ListAsync(new PageRequest(page ?? 1, pageSize ?? PageRequest.DefaultPageSize).Normalised(), propertyType, protectionType, status, unitId,
                     year, expiringWithin, mine == true, search, ct)))
             .WithName("ListIpRecords").RequirePermission(IpPermissions.Read);
+        group.MapByExternal("/records", IpLinks.Definition.ResourceType, IpPermissions.Read, "IpRecord", r => r.Id,
+            (id, http) => http.RequestServices.GetRequiredService<IpService>().GetAsync(id, http.RequestAborted));
         group.MapGet("/dashboard", async (DateOnly? from, DateOnly? to, IpService s, CancellationToken ct) => TypedResults.Ok(await s.DashboardAsync(ct, from, to)))
             .WithName("GetIpDashboard").RequirePermission(IpPermissions.DashboardRead);
 

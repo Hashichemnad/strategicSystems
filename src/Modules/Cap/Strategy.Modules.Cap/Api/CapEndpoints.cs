@@ -10,6 +10,7 @@ using Strategy.Modules.Portfolio.Contracts;
 using Strategy.Platform.AI.Documents;
 using Strategy.Platform.Http.Access;
 using Strategy.Platform.Http.Audit;
+using Strategy.Platform.Http.Integration;
 using Strategy.Platform.Http.Problems;
 using Strategy.Platform.Kernel.Context;
 using Strategy.Platform.Kernel.Messaging;
@@ -85,6 +86,9 @@ internal static class CapEndpoints
             .WithName("GetCapSource").RequirePermission(CapPermissions.Read);
         group.MapPut("/sources/{id:guid}", async (Guid id, CapSourceBody b, IDispatcher d, CancellationToken ct) => (await d.SendAsync(new UpdateSource(id, b.Values, b.Version), ct)).ToOk())
             .WithName("UpdateCapSource").RequirePermission(CapPermissions.SourceManage);
+        group.MapByExternal("/sources", SourceLinkTargets.Definition.ResourceType, CapPermissions.Read, "CapSource", s => s.Id, (id, http) => http.Dispatch(new GetSource(id)))
+            .WithUpsert<CapSourceValues>(CapPermissions.SourceManage, CapPermissions.SourceManage, (b, http) => http.Dispatch(new CreateSource(b)),
+                (id, b, current, http) => http.Dispatch(new UpdateSource(id, b, current.Version)));
         group.MapPost("/sources/{id:guid}/close", async (Guid id, IDispatcher d, CancellationToken ct) => (await d.SendAsync(new CloseSource(id, true), ct)).ToOk())
             .WithName("CloseCapSource").RequirePermission(CapPermissions.SourceManage);
         group.MapPost("/sources/{id:guid}/reopen", async (Guid id, IDispatcher d, CancellationToken ct) => (await d.SendAsync(new CloseSource(id, false), ct)).ToOk())
@@ -106,6 +110,7 @@ internal static class CapEndpoints
             .WithName("ListCapRemarks").RequirePermission(CapPermissions.Read);
         group.MapGet("/remarks/{id:guid}", async (Guid id, IDispatcher d, CancellationToken ct) => (await d.SendAsync(new GetRemark(id), ct)).ToOk())
             .WithName("GetCapRemark").RequirePermission(CapPermissions.Read);
+        group.MapByExternal("/remarks", RemarkLinkTargets.Definition.ResourceType, CapPermissions.Read, "CapRemark", r => r.Id, (id, http) => http.Dispatch(new GetRemark(id)));
         group.MapPut("/remarks/{id:guid}", async (Guid id, CapRemarkBody b, IDispatcher d, CancellationToken ct) => (await d.SendAsync(new UpdateRemark(id, b.Values, b.Version), ct)).ToOk())
             .WithName("UpdateCapRemark").RequirePermission(CapPermissions.SourceManage);
         group.MapPost("/remarks/{id:guid}/accept", async (Guid id, IDispatcher d, CancellationToken ct) => (await d.SendAsync(new AcceptRemark(id), ct)).ToOk())
@@ -155,6 +160,7 @@ internal static class CapEndpoints
             .WithName("ListCapActions").RequirePermission(CapPermissions.Read);
         group.MapGet("/actions/{id:guid}", async (Guid id, IDispatcher d, CancellationToken ct) => (await d.SendAsync(new GetAction(id), ct)).ToOk())
             .WithName("GetCapAction").RequirePermission(CapPermissions.Read);
+        group.MapByExternal("/actions", ActionLinkTargets.Definition.ResourceType, CapPermissions.Read, "CapAction", a => a.Id, (id, http) => http.Dispatch(new GetAction(id)));
         group.MapPut("/actions/{id:guid}", async (Guid id, CapActionBody b, IDispatcher d, CancellationToken ct) =>
                 (await d.SendAsync(new UpdateAction(id, b.Values, b.Version ?? 0), ct)).ToOk())
             .WithName("UpdateCapAction").RequirePermission(CapPermissions.Respond);

@@ -7,6 +7,7 @@ using Strategy.Platform.Access;
 using Strategy.Platform.Http.Access;
 using Strategy.Platform.Http.Problems;
 using Strategy.Platform.Integration;
+using Strategy.Platform.Kernel.Messaging;
 using Strategy.Platform.Kernel.Results;
 
 namespace Strategy.Platform.Http.Integration;
@@ -16,11 +17,18 @@ namespace Strategy.Platform.Http.Integration;
 /// create and update (its commands: validation, scope, audit and notifications stay the module's). Wire a type in a few lines:
 /// <code>
 /// group.MapByExternal("/risks", "risk.risk", RiskPermissions.Read, "Risk", r => r.Id, (id, http) => Dispatcher(http).SendAsync(new GetRisk(id)))
-///      .WithUpsert&lt;RiskValues&gt;(RiskPermissions.Create, (body, http) => …CreateRisk(body), (id, body, current, http) => …UpdateRisk(id, body, current.Version));
+///      .WithUpsert&lt;RiskValues&gt;(RiskPermissions.Create, RiskPermissions.Read, (body, http) => …CreateRisk(body), (id, body, current, http) => …UpdateRisk(id, body, current.Version));
 /// </code>
 /// </summary>
 public static class ByExternalEndpoints
 {
+    /// <summary>Sends a module command / query through the request's dispatcher (for the GET / create / update delegates).</summary>
+    public static Task<Result<T>> Dispatch<T>(this HttpContext http, IRequest<T> request)
+    {
+        ArgumentNullException.ThrowIfNull(http);
+        return http.RequestServices.GetRequiredService<IDispatcher>().SendAsync(request, http.RequestAborted);
+    }
+
     public static ByExternalBuilder<TDto> MapByExternal<TDto>(
         this RouteGroupBuilder group, string path, string resourceType, string readPermission, string operationName, Func<TDto, Guid> idOf,
         Func<Guid, HttpContext, Task<Result<TDto>>> get)
@@ -71,9 +79,12 @@ public sealed class ByExternalBuilder<TDto>
     /// <summary>
     /// Adds the <c>PUT</c>: update the referenced record through <paramref name="update"/> (given its current DTO, e.g. for the version), or — with
     /// <paramref name="createPermission"/> — create it through <paramref name="create"/> and link the reference as its origin. 200 / 201.
+    /// <paramref name="updatePermission"/> is the permission of the module's own update endpoint (checked here, 403; the update command still checks
+    /// the record itself).
     /// </summary>
     public ByExternalBuilder<TDto> WithUpsert<TBody>(
-        string createPermission, Func<TBody, HttpContext, Task<Result<TDto>>> create, Func<Guid, TBody, TDto, HttpContext, Task<Result<TDto>>> update)
+        string createPermission, string updatePermission, Func<TBody, HttpContext, Task<Result<TDto>>> create,
+        Func<Guid, TBody, TDto, HttpContext, Task<Result<TDto>>> update)
     {
         _group.MapPut(_route, async Task<Results<Ok<TDto>, Created<TDto>, ProblemHttpResult>> (string source, string externalId, TBody body, HttpContext context) =>
             {
@@ -94,9 +105,15 @@ public sealed class ByExternalBuilder<TDto>
 
                 source = sourceCheck.Value.Code;
                 await using var exclusive = await store.LockAsync(source, _resourceType, externalId, ct).ConfigureAwait(false);
+                var access = context.RequestServices.GetRequiredService<IAccessService>();
                 var reference = await store.FindAsync(source, _resourceType, externalId, ct).ConfigureAwait(false);
                 if (reference is not null)
                 {
+                    if (!await access.CanAsync(context.User, updatePermission, cancellationToken: ct).ConfigureAwait(false))
+                    {
+                        return Error.Forbidden().ToProblem();
+                    }
+
                     var current = await _get(reference.RecordId, context).ConfigureAwait(false);
                     if (current.IsFailure)
                     {
@@ -114,7 +131,6 @@ public sealed class ByExternalBuilder<TDto>
                     return refreshed.IsSuccess ? TypedResults.Ok(updated.Value) : refreshed.Error.ToProblem();
                 }
 
-                var access = context.RequestServices.GetRequiredService<IAccessService>();
                 if (!await access.CanAsync(context.User, createPermission, cancellationToken: ct).ConfigureAwait(false))
                 {
                     return Error.Forbidden().ToProblem();

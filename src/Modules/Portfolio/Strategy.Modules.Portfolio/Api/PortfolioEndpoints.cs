@@ -8,6 +8,7 @@ using Strategy.Modules.Portfolio.Application;
 using Strategy.Modules.Portfolio.Domain;
 using Strategy.Platform.Http.Access;
 using Strategy.Platform.Http.Audit;
+using Strategy.Platform.Http.Integration;
 using Strategy.Platform.Http.Problems;
 using Strategy.Platform.Kernel.Messaging;
 using Strategy.Platform.Kernel.Paging;
@@ -53,6 +54,8 @@ internal static class PortfolioEndpoints
             .WithName("CreateProgramRequest").RequirePermission(PortfolioPermissions.RequestCreate);
         requests.MapGet("/{id:guid}", async (Guid id, IDispatcher d, CancellationToken ct) => (await d.SendAsync(new GetRequest(id), ct)).ToOk())
             .WithName("GetProgramRequest").RequirePermission(PortfolioPermissions.RequestRead);
+        requests.MapByExternal("", RequestLinks.Definition.ResourceType, PortfolioPermissions.RequestRead, "ProgramRequest", r => r.Id,
+            (id, http) => http.Dispatch(new GetRequest(id)));
         requests.MapPut("/{id:guid}", async (Guid id, RequestUpdateInput b, IDispatcher d, CancellationToken ct) =>
                 (await d.SendAsync(new UpdateRequest(id, b.Values, b.Version), ct)).ToOk())
             .WithName("UpdateProgramRequest").RequirePermission(PortfolioPermissions.RequestRead);
