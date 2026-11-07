@@ -179,7 +179,11 @@ try {
     if ($build.Count -eq 1) {
         Assert-True ($build[0].env.GIT_REVISION -eq '') 'no .git: GIT_REVISION empty'
         Assert-True ($build[0].env.APP_VERSION -eq '1.0.0') 'APP_VERSION from deploy/VERSION'
-        Assert-True ($build[0].env.BUILD_CREATED -match '^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ$') 'BUILD_CREATED in UTC'
+        # PowerShell 7's ConvertFrom-Json turns an ISO 8601 string into a DateTime (Kind Utc for a trailing Z); 5.1 keeps the string.
+        $created = $build[0].env.BUILD_CREATED
+        if ($created -is [datetime]) { $createdOk = $created.Kind -eq [DateTimeKind]::Utc -and $created.Millisecond -eq 0 }
+        else { $createdOk = [string]$created -match '^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ$' }
+        Assert-True $createdOk "BUILD_CREATED in UTC ($created)"
     }
     Assert-True ($cmds -contains 'compose up -d --no-build') 'services started'
     Assert-True ([Array]::IndexOf($cmds, 'compose build migrate') -lt [Array]::IndexOf($cmds, 'compose up -d --no-build')) 'build before start'
@@ -227,9 +231,11 @@ try {
         Assert-True (Test-SameBytes (Join-Path $b 'files.tar.gz') (Join-Path $r.State 'emitted-files.tar.gz')) 'files.tar.gz byte-identical to tar output'
         Assert-True (Test-SameBytes (Join-Path $b 'env') $envFile) 'env copied'
         foreach ($f in 'SHA256SUMS', 'manifest.json', 'table-counts.tsv') { Assert-True (Test-Utf8File (Join-Path $b $f)) "$f is UTF-8 without BOM, LF" }
-        $counts = [IO.File]::ReadAllText((Join-Path $b 'table-counts.tsv'), $utf8)
+        $counts = ''
+        if (Test-Path (Join-Path $b 'table-counts.tsv')) { $counts = [IO.File]::ReadAllText((Join-Path $b 'table-counts.tsv'), $utf8) }
         Assert-True ($counts -eq "core.users`t3`nkpi.kpi`t5`n") 'table counts as returned by psql'
-        $sums = @([IO.File]::ReadAllLines((Join-Path $b 'SHA256SUMS'), $utf8) | Where-Object { $_ })
+        $sums = @()
+        if (Test-Path (Join-Path $b 'SHA256SUMS')) { $sums = @([IO.File]::ReadAllLines((Join-Path $b 'SHA256SUMS'), $utf8) | Where-Object { $_ }) }
         Assert-True ($sums.Count -eq 4) "SHA256SUMS lists 4 parts ($($sums.Count))"
         $bad = 0
         foreach ($line in $sums) {
@@ -237,9 +243,10 @@ try {
             if ((Get-FileHash -Algorithm SHA256 (Join-Path $b $Matches[2])).Hash.ToLowerInvariant() -ne $Matches[1]) { $bad++ }
         }
         Assert-True ($bad -eq 0) 'SHA256SUMS lines in sha256sum format and correct'
-        $manifest = [IO.File]::ReadAllText((Join-Path $b 'manifest.json'), $utf8) | ConvertFrom-Json
-        Assert-True ($manifest.version -eq '1.0.0' -and $manifest.format -eq 1 -and $manifest.consistent -eq $true) 'manifest version, format, consistent'
-        Assert-True ($manifest.tables -eq 2 -and $manifest.rows -eq 8) 'manifest tables 2, rows 8'
+        $manifest = $null
+        if (Test-Path (Join-Path $b 'manifest.json')) { $manifest = [IO.File]::ReadAllText((Join-Path $b 'manifest.json'), $utf8) | ConvertFrom-Json }
+        Assert-True ($null -ne $manifest -and $manifest.version -eq '1.0.0' -and $manifest.format -eq 1 -and $manifest.consistent -eq $true) 'manifest version, format, consistent'
+        Assert-True ($null -ne $manifest -and $manifest.tables -eq 2 -and $manifest.rows -eq 8) 'manifest tables 2, rows 8'
     }
     Show-OnFailure $r
 

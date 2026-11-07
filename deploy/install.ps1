@@ -70,7 +70,7 @@ if ($Image) {
 } elseif (-not $NoBuild) {
     Write-Step "Building strategy-app:$($env:APP_VERSION) (first build takes several minutes)"
     $env:GIT_REVISION = Get-SourceRevision
-    $env:BUILD_CREATED = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')
+    $env:BUILD_CREATED = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ', [Globalization.CultureInfo]::InvariantCulture)
     Initialize-BuildCa
     Invoke-Compose build migrate
 }

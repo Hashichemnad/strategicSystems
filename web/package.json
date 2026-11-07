@@ -12,7 +12,7 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "typecheck": "tsc -b --noEmit",
-    "lint": "eslint . --max-warnings=0 && node scripts/check-rtl-classes.mjs",
+    "lint": "node --max-old-space-size=6144 node_modules/eslint/bin/eslint.js . --max-warnings=0 && node scripts/check-rtl-classes.mjs",
     "lint:licenses": "node scripts/check-licenses.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

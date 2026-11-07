@@ -48,7 +48,7 @@ try {
     } else {
         Write-Step "Building strategy-app:$newVersion (the current version keeps running)"
         $env:GIT_REVISION = Get-SourceRevision
-        $env:BUILD_CREATED = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')
+        $env:BUILD_CREATED = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ', [Globalization.CultureInfo]::InvariantCulture)
         Initialize-BuildCa
         $env:APP_VERSION = $newVersion
         Invoke-Compose build migrate
