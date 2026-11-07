@@ -29,7 +29,7 @@ public static class ReassignmentModes
 /// <summary>One open task of the leaving employee. Titles are left out for tasks the administrator may not read (confidential).</summary>
 public sealed record ReassignmentTaskDto(
     Guid Id, string? Number, string? TitleAr, string? TitleEn, string Status, string Template, bool Confidential, bool Readable, PersonDto Creator,
-    bool CreatedByLeaver, DateOnly? DueDate);
+    bool CreatedByLeaver, DateOnly? DueDate, PersonDto Assignee);
 
 /// <summary><c>Tasks</c>: open tasks assigned to the employee; <c>CreatedTasks</c>: open tasks the employee created for other people (ADR 0169).</summary>
 public sealed record ReassignmentPreviewDto(
@@ -313,13 +313,14 @@ internal sealed class TaskReassignment(
 
     private async Task<IReadOnlyList<ReassignmentTaskDto>> ItemsAsync(List<TaskItem> tasks, Guid leaver, CancellationToken ct)
     {
-        var people = await reader.PeopleAsync(tasks.Select(t => t.CreatorEmployeeId), ct).ConfigureAwait(false);
+        var people = await reader.PeopleAsync(tasks.Select(t => t.CreatorEmployeeId).Concat(tasks.Select(t => t.AssigneeEmployeeId)), ct).ConfigureAwait(false);
         var items = new List<ReassignmentTaskDto>();
         foreach (var t in tasks)
         {
             var readable = await visibility.CanReadAsync(t, context.User, ct).ConfigureAwait(false);
             items.Add(new ReassignmentTaskDto(t.Id, readable ? t.Number : null, readable ? t.TitleAr : null, readable ? t.TitleEn : null, t.Status, t.Template,
-                t.Confidential, readable, TaskReader.Person(t.CreatorEmployeeId, people), t.CreatorEmployeeId == leaver, t.DueDate));
+                t.Confidential, readable, TaskReader.Person(t.CreatorEmployeeId, people), t.CreatorEmployeeId == leaver, t.DueDate,
+                TaskReader.Person(t.AssigneeEmployeeId, people)));
         }
 
         return items;

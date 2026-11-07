@@ -15,7 +15,6 @@ import {
   projectApi,
   fromPercent,
   toPercent,
-  useKpiCardSearch,
   useProjectFiles,
   useProjectMutation,
   type Challenge,
@@ -66,11 +65,6 @@ interface TabProps {
 export function KpisTab({ project, options }: TabProps) {
   const { t } = useTranslation('portfolio');
   const { lang, opts, label } = useLabels();
-  const cards = useKpiCardSearch('', project.permissions.canEditContent);
-  const cardOptions: SelectOption[] = (cards.data ?? []).map((c) => ({
-    value: c.id,
-    label: `${c.code} · ${pickText(lang, c.nameAr, c.nameEn)}`,
-  }));
   const isNew = (v: FormValues) => v.nature !== 'existing';
   const fields: FieldSpec[] = [
     {
@@ -86,8 +80,7 @@ export function KpisTab({ project, options }: TabProps) {
     {
       name: 'kpiCardId',
       label: t('project.kpi.card'),
-      kind: 'select',
-      options: cardOptions,
+      kind: 'kpiCard',
       required: true,
       when: (v) => v.nature === 'existing',
     },

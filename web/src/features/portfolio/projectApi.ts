@@ -49,7 +49,6 @@ export const projectKeys = {
   changes: (id: string) => ['portfolio', 'project', id, 'changes'] as const,
   files: (id: string) => ['portfolio', 'project', id, 'files'] as const,
   evidence: (mid: string) => ['portfolio', 'milestone', mid, 'evidence'] as const,
-  kpiCards: (search: string) => ['portfolio', 'kpi-cards', search] as const,
 };
 
 const idem = () => ({ 'Idempotency-Key': crypto.randomUUID() });
@@ -158,15 +157,6 @@ export function useEvidence(mid: string | undefined) {
         }),
       ),
     enabled: Boolean(mid),
-  });
-}
-
-export function useKpiCardSearch(search: string, enabled: boolean) {
-  return useQuery({
-    queryKey: projectKeys.kpiCards(search),
-    queryFn: async ({ signal }) =>
-      unwrap(await api.GET('/api/v1/portfolio/kpi-cards', { params: { query: { search } }, signal })),
-    enabled,
   });
 }
 

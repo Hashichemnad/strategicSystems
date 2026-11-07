@@ -13965,6 +13965,46 @@
         }
       }
     },
+    "/api/v1/tasks/reassignment/creator": {
+      "post": {
+        "tags": [
+          "tasks"
+        ],
+        "operationId": "TransferTaskCreatorRole",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransferCreatorRole"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatorTransferResultDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/tasks/{id}/ai/summary": {
       "post": {
         "tags": [
@@ -28650,6 +28690,79 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/KpiCardDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/kpi/cards/lookup": {
+      "get": {
+        "tags": [
+          "kpi"
+        ],
+        "operationId": "LookupKpiCards",
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ids",
+            "in": "query",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResultOfKpiCardLookupDto"
                 }
               }
             }
@@ -60426,6 +60539,32 @@
           }
         }
       },
+      "CreatorTransferResultDto": {
+        "required": [
+          "transferred",
+          "skipped",
+          "taskIds"
+        ],
+        "type": "object",
+        "properties": {
+          "transferred": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "skipped": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "taskIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        },
+        "description": "Result of moving the creator role: `Skipped` = selected tasks assigned to the new creator (nobody approves their own work)."
+      },
       "CriterionInput": {
         "required": [
           "code",
@@ -68351,6 +68490,41 @@
             "type": "string"
           }
         }
+      },
+      "KpiCardLookupDto": {
+        "required": [
+          "id",
+          "code",
+          "nameAr",
+          "nameEn",
+          "status"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "description": "A KPI card as the shared picker shows it (ADR 0169)."
       },
       "KpiCardOptionDto": {
         "required": [
@@ -77195,6 +77369,40 @@
         },
         "description": "One page of items plus the total count across all pages."
       },
+      "PagedResultOfKpiCardLookupDto": {
+        "required": [
+          "items",
+          "page",
+          "pageSize",
+          "totalCount"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KpiCardLookupDto"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "description": "One page of items plus the total count across all pages."
+      },
       "PagedResultOfProjectListItemDto": {
         "required": [
           "items",
@@ -83471,7 +83679,8 @@
         "required": [
           "employee",
           "employeeStatus",
-          "tasks"
+          "tasks",
+          "createdTasks"
         ],
         "type": "object",
         "properties": {
@@ -83486,8 +83695,15 @@
             "items": {
               "$ref": "#/components/schemas/ReassignmentTaskDto"
             }
+          },
+          "createdTasks": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReassignmentTaskDto"
+            }
           }
-        }
+        },
+        "description": "`Tasks`: open tasks assigned to the employee; `CreatedTasks`: open tasks the employee created for other people (ADR 0169)."
       },
       "ReassignmentResultDto": {
         "required": [
@@ -83531,7 +83747,8 @@
           "readable",
           "creator",
           "createdByLeaver",
-          "dueDate"
+          "dueDate",
+          "assignee"
         ],
         "type": "object",
         "properties": {
@@ -83581,6 +83798,9 @@
               "string"
             ],
             "format": "date"
+          },
+          "assignee": {
+            "$ref": "#/components/schemas/PersonDto"
           }
         },
         "description": "One open task of the leaving employee. Titles are left out for tasks the administrator may not read (confidential)."
@@ -95633,6 +95853,45 @@
             "type": "string"
           }
         }
+      },
+      "TransferCreatorRole": {
+        "required": [
+          "fromEmployeeId",
+          "toEmployeeId",
+          "reason",
+          "taskIds"
+        ],
+        "type": "object",
+        "properties": {
+          "fromEmployeeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "toEmployeeId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "taskIds": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        },
+        "description": "\"Take over as creator\" (ADR 0169): the creator role of the leaver's open tasks created for other people moves to `ToEmployeeId`, and with it\nthe approval of their completion. `TaskIds` narrows the preview (null = all of them)."
       },
       "TransferDto": {
         "required": [

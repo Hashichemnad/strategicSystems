@@ -4308,6 +4308,22 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/tasks/reassignment/creator': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['TransferTaskCreatorRole'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/tasks/{id}/ai/summary': {
     parameters: {
       query?: never;
@@ -8318,6 +8334,22 @@ export interface paths {
     get: operations['ListKpiCards'];
     put?: never;
     post: operations['CreateKpiCard'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/cards/lookup': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['LookupKpiCards'];
+    put?: never;
+    post?: never;
     delete?: never;
     options?: never;
     head?: never;
@@ -16617,6 +16649,14 @@ export interface components {
       userName: null | string;
       sendInvitation: null | boolean;
     };
+    /** @description Result of moving the creator role: `Skipped` = selected tasks assigned to the new creator (nobody approves their own work). */
+    CreatorTransferResultDto: {
+      /** Format: int32 */
+      transferred: number;
+      /** Format: int32 */
+      skipped: number;
+      taskIds: string[];
+    };
     CriterionInput: {
       code: string;
       level: null | string;
@@ -18579,6 +18619,15 @@ export interface components {
       /** Format: double */
       capped: null | number;
       rag: string;
+    };
+    /** @description A KPI card as the shared picker shows it (ADR 0169). */
+    KpiCardLookupDto: {
+      /** Format: uuid */
+      id: string;
+      code: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      status: string;
     };
     KpiCardOptionDto: {
       /** Format: uuid */
@@ -20828,6 +20877,18 @@ export interface components {
       totalPages?: number;
     };
     /** @description One page of items plus the total count across all pages. */
+    PagedResultOfKpiCardLookupDto: {
+      items: components['schemas']['KpiCardLookupDto'][];
+      /** Format: int32 */
+      page: number;
+      /** Format: int32 */
+      pageSize: number;
+      /** Format: int32 */
+      totalCount: number;
+      /** Format: int32 */
+      totalPages?: number;
+    };
+    /** @description One page of items plus the total count across all pages. */
     PagedResultOfProjectListItemDto: {
       items: components['schemas']['ProjectListItemDto'][];
       /** Format: int32 */
@@ -22392,10 +22453,12 @@ export interface components {
       reason: null | string;
       taskIds: null | string[];
     };
+    /** @description `Tasks`: open tasks assigned to the employee; `CreatedTasks`: open tasks the employee created for other people (ADR 0169). */
     ReassignmentPreviewDto: {
       employee: components['schemas']['PersonDto'];
       employeeStatus: string;
       tasks: components['schemas']['ReassignmentTaskDto'][];
+      createdTasks: components['schemas']['ReassignmentTaskDto'][];
     };
     ReassignmentResultDto: {
       /** Format: int32 */
@@ -22421,6 +22484,7 @@ export interface components {
       createdByLeaver: boolean;
       /** Format: date */
       dueDate: null | string;
+      assignee: components['schemas']['PersonDto'];
     };
     RecommendationDto: {
       /** Format: uuid */
@@ -23964,6 +24028,10 @@ export interface components {
       tokenMaxDays: number;
       /** Format: uint32 */
       version: number;
+      /** @default false */
+      notifyNewDevice: boolean;
+      securityContactAr?: null | string;
+      securityContactEn?: null | string;
     };
     /** @description Who is cleared for a sensitivity level (ADR 0083). */
     SensitivityRule: {
@@ -25355,6 +25423,18 @@ export interface components {
     TotpSetupDto: {
       sharedKey: string;
       authenticatorUri: string;
+    };
+    /**
+     * @description "Take over as creator" (ADR 0169): the creator role of the leaver's open tasks created for other people moves to `ToEmployeeId`, and with it
+     *     the approval of their completion. `TaskIds` narrows the preview (null = all of them).
+     */
+    TransferCreatorRole: {
+      /** Format: uuid */
+      fromEmployeeId: string;
+      /** Format: uuid */
+      toEmployeeId: null | string;
+      reason: null | string;
+      taskIds: null | string[];
     };
     TransferDto: {
       /** Format: uuid */
@@ -37068,6 +37148,39 @@ export interface operations {
       };
     };
   };
+  TransferTaskCreatorRole: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['TransferCreatorRole'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CreatorTransferResultDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
   SummariseTask: {
     parameters: {
       query?: never;
@@ -46999,6 +47112,41 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['KpiCardDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  LookupKpiCards: {
+    parameters: {
+      query?: {
+        search?: string;
+        ids?: string[];
+        status?: string;
+        page?: number;
+        pageSize?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PagedResultOfKpiCardLookupDto'];
         };
       };
       /** @description Problem Details (RFC 9457) */

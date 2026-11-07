@@ -4,7 +4,18 @@ import { useTranslation } from 'react-i18next';
 import { api, ApiError, unwrap } from '@/api/client';
 import { errorMessage, translateMessageKey } from '@/api/problem';
 import type { components } from '@/api/schema';
-import { Button, FormField, Input, PageHeader, Select, Skeleton, StatusBanner, Switch, useToast } from '@/ui';
+import {
+  Button,
+  FormField,
+  Input,
+  PageHeader,
+  Select,
+  Skeleton,
+  StatusBanner,
+  Switch,
+  Textarea,
+  useToast,
+} from '@/ui';
 
 type Settings = components['schemas']['SecuritySettingsDto'];
 type NumberKey =
@@ -23,7 +34,8 @@ type FlagKey =
   | 'passwordRequireSymbol'
   | 'mfaAllowTotp'
   | 'mfaAllowEmail'
-  | 'requireLocalMfaAfterSso';
+  | 'requireLocalMfaAfterSso'
+  | 'notifyNewDevice';
 
 /** Password policy, lockout, session limits, MFA policy and token lifetime; applied at runtime without a restart. */
 export function SecuritySettingsPage() {
@@ -134,6 +146,27 @@ export function SecuritySettingsPage() {
           <legend className="px-1 font-semibold">{t('security.tokens')}</legend>
           {number('tokenDefaultDays')}
           {number('tokenMaxDays')}
+        </fieldset>
+        <fieldset className="flex flex-col gap-4 rounded-lg border bg-card p-5" data-testid="security-emails">
+          <legend className="px-1 font-semibold">{t('security.emails')}</legend>
+          <p className="text-sm text-muted-foreground">{t('security.emailsHint')}</p>
+          {flag('notifyNewDevice')}
+          {(['securityContactAr', 'securityContactEn'] as const).map((key) => (
+            <FormField
+              key={key}
+              label={t(`security.fields.${key}`)}
+              hint={t('security.contactHint')}
+              error={error(key)}
+            >
+              <Textarea
+                rows={2}
+                maxLength={500}
+                dir={key === 'securityContactAr' ? 'rtl' : 'ltr'}
+                value={draft[key] ?? ''}
+                onChange={(e) => setDraft({ ...draft, [key]: e.target.value || null })}
+              />
+            </FormField>
+          ))}
         </fieldset>
         <Button type="submit" loading={save.isPending} className="self-start">
           {tc('actions.save')}
