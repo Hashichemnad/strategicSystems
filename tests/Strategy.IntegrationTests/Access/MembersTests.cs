@@ -218,7 +218,7 @@ public class MembersTests(PostgresFixture postgres)
         scope.ServiceProvider.GetRequiredService<RequestContext>().Initialise(Guid.CreateVersion7().ToString("N"), Channels.Wasel, vendor);
         var members = scope.ServiceProvider.GetRequiredService<MemberAdministration>();
         (await members.ListAsync(vendor, "portfolio", CancellationToken.None)).Error!.Kind.ShouldBe(ErrorKind.Forbidden);
-        (await members.AddAsync(vendor, "portfolio", new AddMemberInput("users", "everyone", null, null, null, null), CancellationToken.None)).Error!.Kind
+        (await members.AddAsync(vendor, "portfolio", new AddSystemMemberInput("users", "everyone", null, null, null, null), CancellationToken.None)).Error!.Kind
             .ShouldBe(ErrorKind.Forbidden);
         (await members.ManageableSystemsAsync(vendor, CancellationToken.None)).ShouldBeEmpty();
     }
