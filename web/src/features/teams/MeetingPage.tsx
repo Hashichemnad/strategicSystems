@@ -27,6 +27,7 @@ import {
 } from '@/ui';
 import { teamApi, useMeeting, useTeamMutation, type MinutesDraft } from './api';
 import { RecommendationDialog } from './TeamPanels';
+import { ExternalReferencesSection, OriginBadge } from '@/features/integration/ExternalReferences';
 
 const route = getRouteApi('/app/teams/meetings/$meetingId');
 
@@ -118,9 +119,12 @@ export function MeetingPage() {
           </>
         }
         meta={
-          <StatusChip tone={m.status === 'held' ? 'success' : m.status === 'cancelled' ? 'danger' : 'info'}>
-            {t(`meetings.statuses.${m.status as 'held'}`)}
-          </StatusChip>
+          <>
+            <StatusChip tone={m.status === 'held' ? 'success' : m.status === 'cancelled' ? 'danger' : 'info'}>
+              {t(`meetings.statuses.${m.status as 'held'}`)}
+            </StatusChip>
+            <OriginBadge type="teams.meeting" id={m.id} />
+          </>
         }
         actions={
           editable &&
@@ -276,6 +280,7 @@ export function MeetingPage() {
           onClose={() => setAdding(undefined)}
         />
       )}
+      <ExternalReferencesSection type="teams.meeting" id={m.id} />
     </div>
   );
 }

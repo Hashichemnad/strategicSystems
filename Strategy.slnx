@@ -72,6 +72,8 @@
     <Project Path="src/Platform/Strategy.Platform.Links.Contracts/Strategy.Platform.Links.Contracts.csproj" />
     <Project Path="src/Platform/Strategy.Platform.Search/Strategy.Platform.Search.csproj" />
     <Project Path="src/Platform/Strategy.Platform.Search.Contracts/Strategy.Platform.Search.Contracts.csproj" />
+    <Project Path="src/Platform/Strategy.Platform.Integration/Strategy.Platform.Integration.csproj" />
+    <Project Path="src/Platform/Strategy.Platform.Integration.Contracts/Strategy.Platform.Integration.Contracts.csproj" />
     <Project Path="src/Platform/Strategy.Platform.Notifications/Strategy.Platform.Notifications.csproj" />
     <Project Path="src/Platform/Strategy.Platform.Mcp/Strategy.Platform.Mcp.csproj" />
     <Project Path="src/Platform/Strategy.Platform.Notifications.Contracts/Strategy.Platform.Notifications.Contracts.csproj" />

@@ -78,6 +78,7 @@ import { ControlsTab } from './ControlsTab';
 import { EventsTab } from './EventsTab';
 import { KrisTab } from './KrisTab';
 import { ReviewsTab } from './ReviewsTab';
+import { ExternalReferencesSection, OriginBadge } from '@/features/integration/ExternalReferences';
 
 const route = getRouteApi('/app/risk/risks/$riskId');
 
@@ -133,6 +134,7 @@ export function RiskPage() {
         }
         meta={
           <div className="flex flex-wrap items-center gap-2" data-testid="risk-header-meta">
+            <OriginBadge type="risk.risk" id={r.id} />
             <StatusChip tone={statusTone[r.status] ?? 'neutral'}>
               <span data-testid="risk-status">{k(`status.${r.status}`)}</span>
             </StatusChip>
@@ -295,6 +297,7 @@ export function RiskPage() {
               <ApprovalPanel resourceType="risk.risk" resourceId={r.id} />
             </div>
           </div>
+          <ExternalReferencesSection type="risk.risk" id={r.id} />
         </TabsContent>
         <TabsContent value="assessment">
           <AssessmentTab risk={r} />

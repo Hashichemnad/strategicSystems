@@ -75,6 +75,7 @@ import {
   useLookupLabel,
   ValidityChips,
 } from './components';
+import { ExternalReferencesSection, OriginBadge } from '@/features/integration/ExternalReferences';
 
 const route = getRouteApi('/app/documents/$documentId');
 const tabs = ['overview', 'versions', 'validity', 'linked', 'tasks', 'history'] as const;
@@ -125,6 +126,7 @@ export function DocumentPage() {
         }
         meta={
           <>
+            <OriginBadge type="docreg.document" id={doc.id} />
             <DocStatusChip status={doc.status} />
             <SensitivityChip code={doc.sensitivity} />
             <ValidityChips
@@ -199,6 +201,7 @@ export function DocumentPage() {
         </TabsList>
         <TabsContent value="overview">
           <Overview doc={doc} name={name} />
+          <ExternalReferencesSection type="docreg.document" id={doc.id} />
         </TabsContent>
         <TabsContent value="versions">
           <Versions doc={doc} />

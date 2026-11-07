@@ -55,7 +55,9 @@ import enTeams from './en/teams.json';
 import arPortfolio from './ar/portfolio.json';
 import enPortfolio from './en/portfolio.json';
 import arLinks from './ar/links.json';
+import arIntegration from './ar/integration.json';
 import enLinks from './en/links.json';
+import enIntegration from './en/integration.json';
 import arKpi from './ar/kpi.json';
 import enKpi from './en/kpi.json';
 import arRisk from './ar/risk.json';
@@ -133,6 +135,7 @@ export const resources = {
     vendors: arVendors,
     portfolioGov: arPortfolioGov,
     links: arLinks,
+    integration: arIntegration,
     kpi: arKpi,
     risk: arRisk,
     requests: arRequests,
@@ -181,6 +184,7 @@ export const resources = {
     vendors: enVendors,
     portfolioGov: enPortfolioGov,
     links: enLinks,
+    integration: enIntegration,
     kpi: enKpi,
     risk: enRisk,
     requests: enRequests,

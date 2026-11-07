@@ -29,6 +29,7 @@ import { orgKeys, useEmployee, useEmployeeHistory, useInvalidateOrg } from './ap
 import { EmployeeDialog } from './EmployeeDialog';
 import { OpenTasksOffer } from '@/features/tasks/OpenTasksOffer';
 import { statusTone } from './EmployeesPage';
+import { ExternalReferencesSection, OriginBadge } from '@/features/integration/ExternalReferences';
 
 const routeApi = getRouteApi('/app/org/employees/$employeeId');
 
@@ -121,9 +122,12 @@ export function EmployeePage() {
           </span>
         }
         meta={
-          <StatusChip tone={statusTone[data.status as keyof typeof statusTone]}>
-            {t(`employeeStatus.${data.status as 'active'}`)}
-          </StatusChip>
+          <>
+            <StatusChip tone={statusTone[data.status as keyof typeof statusTone]}>
+              {t(`employeeStatus.${data.status as 'active'}`)}
+            </StatusChip>
+            <OriginBadge type="org.employee" id={employeeId} />
+          </>
         }
         actions={
           admin && (
@@ -213,6 +217,7 @@ export function EmployeePage() {
               </Button>
             </div>
           )}
+          <ExternalReferencesSection type="org.employee" id={employeeId} />
         </TabsContent>
         <TabsContent value="history" className="pt-4">
           <ol className="flex flex-col gap-3">

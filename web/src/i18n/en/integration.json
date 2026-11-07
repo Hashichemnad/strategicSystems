@@ -1,0 +1,54 @@
+{
+  "origin": "from {{source}}",
+  "section": {
+    "title": "External references",
+    "origin": "Created from this source",
+    "firstSeen": "First seen {{date}}",
+    "lastSynced": "last synced {{date}}"
+  },
+  "status": {
+    "synced": "Synced",
+    "pending": "Pending",
+    "error": "Sync error",
+    "deleted_in_source": "Deleted in source",
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "fields": {
+    "code": "Code",
+    "name": "Name",
+    "nameAr": "Name (Arabic)",
+    "nameEn": "Name (English)",
+    "type": "Type",
+    "description": "Description",
+    "references": "References",
+    "status": "Status"
+  },
+  "sources": {
+    "title": "Source systems",
+    "description": "Systems whose record IDs are kept as external references. A source is never deleted: deactivate it to stop new references and imports.",
+    "create": "New source system",
+    "edit": "Edit source system",
+    "activate": "Activate",
+    "deactivate": "Deactivate",
+    "showInactive": "Show inactive",
+    "empty": "No source systems yet",
+    "emptyHint": "Add the systems you import or synchronise records from.",
+    "codeHint": "Lower-case letters, digits, - and _ (e.g. salesforce). Used in import files and API URLs; cannot be changed later.",
+    "chooseType": "Choose a type"
+  },
+  "errors": {
+    "unknownSource": "Unknown source system.",
+    "inactiveSource": "The source system is inactive.",
+    "sourceRequired": "Give the source system with the external ID.",
+    "unknownType": "This record type cannot have external references.",
+    "externalIdRequired": "Give the external ID with the source system.",
+    "externalIdTooLong": "The external ID is too long (255 characters at most).",
+    "externalIdTaken": "This external ID is already linked to another record.",
+    "recordAlreadyReferenced": "This record already has another external ID from this source.",
+    "duplicateExternalId": "The same external ID appears twice in the file.",
+    "keyMismatch": "The external ID points at another record than this row.",
+    "codeFormat": "Use lower-case letters, digits, - and _ (2–50 characters).",
+    "codeTaken": "A source system with this code already exists."
+  }
+}

@@ -31,6 +31,7 @@
     <ProjectReference Include="..\..\Platform\Strategy.Platform.Mcp\Strategy.Platform.Mcp.csproj" />
     <ProjectReference Include="..\..\Platform\Strategy.Platform.Links\Strategy.Platform.Links.csproj" />
     <ProjectReference Include="..\..\Platform\Strategy.Platform.Search\Strategy.Platform.Search.csproj" />
+    <ProjectReference Include="..\..\Platform\Strategy.Platform.Integration\Strategy.Platform.Integration.csproj" />
     <ProjectReference Include="..\..\Modules\Sample\Strategy.Modules.Sample\Strategy.Modules.Sample.csproj" />
     <ProjectReference Include="..\..\Modules\Tasks\Strategy.Modules.Tasks\Strategy.Modules.Tasks.csproj" />
     <ProjectReference Include="..\..\Modules\Teams\Strategy.Modules.Teams\Strategy.Modules.Teams.csproj" />

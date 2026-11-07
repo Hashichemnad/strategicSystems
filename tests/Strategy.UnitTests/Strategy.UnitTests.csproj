@@ -22,6 +22,7 @@
     <ProjectReference Include="..\..\src\Modules\IpRegistry\Strategy.Modules.IpRegistry\Strategy.Modules.IpRegistry.csproj" />
     <ProjectReference Include="..\..\src\Platform\Strategy.Platform.Links\Strategy.Platform.Links.csproj" />
     <ProjectReference Include="..\..\src\Platform\Strategy.Platform.Search\Strategy.Platform.Search.csproj" />
+    <ProjectReference Include="..\..\src\Platform\Strategy.Platform.Integration\Strategy.Platform.Integration.csproj" />
     <ProjectReference Include="..\..\src\Platform\Strategy.Platform.Access\Strategy.Platform.Access.csproj" />
     <ProjectReference Include="..\..\src\Platform\Strategy.Platform.Settings\Strategy.Platform.Settings.csproj" />
     <ProjectReference Include="..\..\src\Platform\Strategy.Platform.Organisation\Strategy.Platform.Organisation.csproj" />

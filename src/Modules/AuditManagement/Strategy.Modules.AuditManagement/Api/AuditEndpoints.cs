@@ -9,6 +9,7 @@ using Strategy.Modules.AuditManagement.Domain;
 using Strategy.Platform.AI.Documents;
 using Strategy.Platform.Http.Access;
 using Strategy.Platform.Http.Audit;
+using Strategy.Platform.Http.Integration;
 using Strategy.Platform.Http.Problems;
 using Strategy.Platform.Kernel.Context;
 using Strategy.Platform.Kernel.Messaging;
@@ -83,6 +84,9 @@ internal static class AuditEndpoints
         group.MapPut("/reports/{id:guid}", async (Guid id, AuditReportBody b, IDispatcher d, CancellationToken ct) =>
                 (await d.SendAsync(new UpdateAuditReport(id, b.Values, b.Version), ct)).ToOk())
             .WithName("UpdateAuditReport").RequirePermission(Office);
+        group.MapByExternal("/reports", AuditReport.EntityType, Read, "AuditReport", r => r.Id, (id, http) => http.Dispatch(new GetAuditReport(id)))
+            .WithUpsert<AuditReportValues>(Office, Office, (b, http) => http.Dispatch(new CreateAuditReport(b)),
+                (id, b, current, http) => http.Dispatch(new UpdateAuditReport(id, b, current.Version)));
         group.MapPost("/reports/{id:guid}/issue", async (Guid id, IDispatcher d, CancellationToken ct) => (await d.SendAsync(new IssueAuditReport(id), ct)).ToOk())
             .WithName("IssueAuditReport").RequirePermission(Office).WithIdempotency();
         group.MapPost("/reports/{id:guid}/cancel", async (Guid id, AuditReasonInput b, IDispatcher d, CancellationToken ct) =>
@@ -116,6 +120,10 @@ internal static class AuditEndpoints
         group.MapPut("/findings/{id:guid}", async (Guid id, AuditFindingBody b, IDispatcher d, CancellationToken ct) =>
                 (await d.SendAsync(new UpdateAuditFinding(id, b.Values, b.Version), ct)).ToOk())
             .WithName("UpdateAuditFinding").RequirePermission(Office);
+        group.MapByExternal("/findings", Finding.EntityType, Read, "AuditFinding", f => f.Id, (id, http) => http.Dispatch(new GetAuditFinding(id)))
+            .WithUpsert<AuditFindingUpsertInput>(Office, Office,
+                (b, http) => http.Dispatch(new CreateAuditFinding(b.ReportId, new NewFindingInput(b.Values, b.Recommendations))),
+                (id, b, current, http) => http.Dispatch(new UpdateAuditFinding(id, b.Values, current.Version)));
         group.MapPost("/findings/{id:guid}/cancel", async (Guid id, AuditReasonInput b, IDispatcher d, CancellationToken ct) =>
                 (await d.SendAsync(new CancelAuditFinding(id, b.Reason), ct)).ToOk())
             .WithName("CancelAuditFinding").RequirePermission(Office);

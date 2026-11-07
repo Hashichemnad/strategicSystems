@@ -7,6 +7,7 @@ using Strategy.Modules.Sample.Application;
 using Strategy.Modules.Sample.Domain;
 using Strategy.Platform.Http.Access;
 using Strategy.Platform.Http.Audit;
+using Strategy.Platform.Http.Integration;
 using Strategy.Platform.Http.Problems;
 using Strategy.Platform.Kernel.Messaging;
 using Strategy.Platform.Kernel.Paging;
@@ -23,6 +24,10 @@ internal static class SampleEndpoints
         items.MapGet("/{id:guid}", GetAsync).WithName("GetSampleItem").RequirePermission(SamplePermissions.Read);
         items.MapPost("/", CreateAsync).WithName("CreateSampleItem").RequirePermission(SamplePermissions.Create);
         items.MapPut("/{id:guid}", UpdateAsync).WithName("UpdateSampleItem").RequirePermission(SamplePermissions.Update);
+        items.MapByExternal("", SamplePermissions.ResourceType, SamplePermissions.Read, "SampleItem", i => i.Id, (id, http) => http.Dispatch(new GetSampleItem(id)))
+            .WithUpsert<SampleItemInput>(SamplePermissions.Create, SamplePermissions.Update,
+                (b, http) => http.Dispatch(new CreateSampleItem(b.NameAr, b.NameEn, b.DescriptionAr, b.DescriptionEn, b.Amount)),
+                (id, b, current, http) => http.Dispatch(new UpdateSampleItem(id, b.NameAr, b.NameEn, b.DescriptionAr, b.DescriptionEn, current.Version, b.Amount)));
         items.MapPost("/{id:guid}/activate", ActivateAsync).WithName("ActivateSampleItem").RequirePermission(SamplePermissions.Update);
         items.MapPost("/{id:guid}/deactivate", DeactivateAsync).WithName("DeactivateSampleItem").RequirePermission(SamplePermissions.Update);
 

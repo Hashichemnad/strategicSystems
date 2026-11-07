@@ -211,7 +211,7 @@ internal static class AdministratorRoles
         ("org", "administrator"), ("identity", "administrator"), ("access", "administrator"), ("settings", "administrator"),
         ("audit", "administrator"), ("workflow", "administrator"),
         ("calendar", "administrator"), ("ai", "administrator"), ("mcp", "administrator"), ("tasks", "administrator"), ("teams", "administrator"),
-        ("platform", "administrator"),
+        ("platform", "administrator"), ("integration", "administrator"),
     ];
 
     public static async Task GrantAsync(AccessDbContext db, Guid userId, DateOnly today, CancellationToken ct)

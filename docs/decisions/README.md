@@ -141,3 +141,5 @@ Write an ADR for every choice the SPEC or CLAUDE.md leaves open (CLAUDE.md §2 r
 | [0156](0156-performance-and-scanning-tools.md) | Performance, image-scanning and SBOM tools (k6, Trivy, Syft) — external, never distributed | Accepted |
 | [0157](0157-backup-restore-upgrade-format.md) | Packaging, install, backup / restore / upgrade format | Accepted |
 | [0158](0158-load-testing-with-k6.md) | Load testing with k6 (test-only container) against a seeded Release host | Accepted |
+| [0164](0164-external-references.md) | External references: source systems, `integration.external_ref`, uniqueness both ways, origin | Accepted |
+| [0165](0165-upsert-by-external-id.md) | Upsert by external ID in imports, REST (GET / PUT by-external) and an MCP read tool | Accepted |

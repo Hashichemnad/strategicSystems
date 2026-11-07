@@ -6,6 +6,7 @@ using Strategy.Modules.Benchmarking.Application;
 using Strategy.Modules.Benchmarking.Domain;
 using Strategy.Platform.Http.Access;
 using Strategy.Platform.Http.Audit;
+using Strategy.Platform.Http.Integration;
 using Strategy.Platform.Http.Problems;
 using Strategy.Platform.Kernel.Messaging;
 using Strategy.Platform.Kernel.Paging;
@@ -60,6 +61,7 @@ internal static class BenchEndpoints
             .WithName("ListBenchStudies").RequirePermission(BenchPermissions.Read);
         group.MapGet("/studies/{id:guid}", async (Guid id, IDispatcher d, CancellationToken ct) => (await d.SendAsync(new GetStudy(id), ct)).ToOk())
             .WithName("GetBenchStudy").RequirePermission(BenchPermissions.Read);
+        group.MapByExternal("/studies", StudyLinkTargets.Definition.ResourceType, BenchPermissions.Read, "BenchStudy", s => s.Id, (id, http) => http.Dispatch(new GetStudy(id)));
         group.MapGet("/studies/{id:guid}/search", async (Guid id, IDispatcher d, CancellationToken ct) => (await d.SendAsync(new GetStudySearch(id), ct)).ToOk())
             .WithName("GetBenchStudySearch").RequirePermission(BenchPermissions.Read);
         group.MapPut("/studies/{id:guid}/search", async (Guid id, BenchCandidatesInput b, IDispatcher d, CancellationToken ct) =>

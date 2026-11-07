@@ -8,6 +8,7 @@ using Strategy.Modules.Requests.Application;
 using Strategy.Modules.Requests.Domain;
 using Strategy.Platform.Http.Access;
 using Strategy.Platform.Http.Audit;
+using Strategy.Platform.Http.Integration;
 using Strategy.Platform.Http.Problems;
 using Strategy.Platform.Kernel.Paging;
 
@@ -53,6 +54,8 @@ internal static class RequestEndpoints
             .WithName("CreateRequestDraft").RequirePermission(RequestPermissions.Submit);
         group.MapGet("/{id:guid}", async (Guid id, RequestQueries q, CancellationToken ct) => (await q.GetAsync(id, ct)).ToOk())
             .WithName("GetRequest").RequirePermission(RequestPermissions.Read);
+        group.MapByExternal("", RequestLinks.Definition.ResourceType, RequestPermissions.Read, "ServiceRequest", r => r.Id,
+            (id, http) => http.RequestServices.GetRequiredService<RequestQueries>().GetAsync(id, http.RequestAborted));
         group.MapPut("/{id:guid}", async (Guid id, SaveInput body, RequestCommands c, CancellationToken ct) => (await c.SaveAsync(id, body, ct)).ToOk())
             .WithName("SaveRequestDraft").RequirePermission(RequestPermissions.Read);
         group.MapPost("/{id:guid}/submit", async (Guid id, RequestSubmitInput body, RequestCommands c, CancellationToken ct) => (await c.SubmitAsync(id, body, ct)).ToOk())

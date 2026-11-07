@@ -8,6 +8,7 @@ using Strategy.Platform.Access;
 using Strategy.Platform.Files;
 using Strategy.Platform.Http.Access;
 using Strategy.Platform.Http.Audit;
+using Strategy.Platform.Http.Integration;
 using Strategy.Platform.Http.Problems;
 using Strategy.Platform.Kernel.Context;
 using Strategy.Platform.Kernel.Messaging;
@@ -47,6 +48,17 @@ internal static class OrgEndpoints
         units.MapPost("/{id:guid}/move", MoveUnitAsync).WithName("MoveOrgUnit").RequirePermission(OrgPermissions.UnitManage);
         units.MapPost("/{id:guid}/deactivate", DeactivateUnitAsync).WithName("DeactivateOrgUnit").RequirePermission(OrgPermissions.UnitManage);
         units.MapPost("/{id:guid}/activate", ActivateUnitAsync).WithName("ActivateOrgUnit").RequirePermission(OrgPermissions.UnitManage);
+        units.MapByExternal("", OrgPermissions.UnitResource, OrgPermissions.UnitRead, "OrgUnit", u => u.Id, (id, http) => Send(http, new GetUnit(id)))
+            .WithUpsert<UnitInput>(OrgPermissions.UnitManage, OrgPermissions.UnitManage,
+                (b, http) => Send(http, new CreateUnit(b.Code, b.NameAr, b.NameEn, b.LevelCode, b.ParentId, b.HeadEmployeeId, b.DeputyEmployeeId, b.CostCentre, b.EffectiveFrom)),
+                async (id, b, current, http) =>
+                {
+                    var updated = await Send(http, new UpdateUnit(id, b.Code, b.NameAr, b.NameEn, b.LevelCode, b.HeadEmployeeId, b.DeputyEmployeeId, b.CostCentre,
+                        b.EffectiveFrom, current.Version));
+                    return updated.IsSuccess && updated.Value.ParentId != b.ParentId
+                        ? await Send(http, new MoveUnit(id, b.ParentId, b.EffectiveFrom, updated.Value.Version))
+                        : updated;
+                });
 
         var employees = group.MapGroup("/employees");
         employees.MapGet("/", ListEmployeesAsync).WithName("ListEmployees").RequirePermission(OrgPermissions.EmployeeRead);
@@ -56,6 +68,12 @@ internal static class OrgEndpoints
             (await context.RequestServices.GetRequiredService<IDispatcher>().SendAsync(new GetEmployee(id), context.RequestAborted)).IsSuccess);
         employees.MapPost("/", CreateEmployeeAsync).WithName("CreateEmployee").RequirePermission(OrgPermissions.EmployeeManage);
         employees.MapPut("/{id:guid}", UpdateEmployeeAsync).WithName("UpdateEmployee").RequirePermission(OrgPermissions.EmployeeManage);
+        employees.MapByExternal("", OrgPermissions.EmployeeResource, OrgPermissions.EmployeeRead, "Employee", e => e.Id, (id, http) => Send(http, new GetEmployee(id)))
+            .WithUpsert<EmployeeInput>(OrgPermissions.EmployeeManage, OrgPermissions.EmployeeManage,
+                (b, http) => Send(http, new CreateEmployee(b.EmployeeNo, b.NameAr, b.NameEn, b.Email, b.Mobile, b.JobTitleAr, b.JobTitleEn, b.Grade, b.UnitId,
+                    b.ManagerEmployeeId, b.JoinDate)),
+                (id, b, current, http) => Send(http, new UpdateEmployee(id, b.EmployeeNo, b.NameAr, b.NameEn, b.Email, b.Mobile, b.JobTitleAr, b.JobTitleEn, b.Grade,
+                    b.UnitId, b.ManagerEmployeeId, b.JoinDate, null, current.Version)));
         employees.MapPost("/{id:guid}/change-status", ChangeStatusAsync).WithName("ChangeEmployeeStatus").RequirePermission(OrgPermissions.EmployeeManage);
         employees.MapGet("/{id:guid}/photo", GetPhotoAsync).WithName("GetEmployeePhoto").RequirePermission(OrgPermissions.EmployeeRead)
             .Produces(StatusCodes.Status200OK, contentType: "image/png");
@@ -75,6 +93,9 @@ internal static class OrgEndpoints
         import.MapPost("/{kind}/report", ImportReportAsync).WithName("GetOrgImportReport").RequirePermission(OrgPermissions.ImportManage)
             .DisableAntiforgery().Produces(StatusCodes.Status200OK, contentType: XlsxContentType);
     }
+
+    private static Task<Result<T>> Send<T>(HttpContext http, IRequest<T> request) =>
+        http.RequestServices.GetRequiredService<IDispatcher>().SendAsync(request, http.RequestAborted);
 
     // ---- Levels and settings ----
 

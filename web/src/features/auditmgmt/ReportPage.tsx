@@ -61,6 +61,7 @@ import {
   useToastMutation,
 } from './components';
 import { FindingDialog, ReasonDialog, ReportDialog } from './forms';
+import { ExternalReferencesSection, OriginBadge } from '@/features/integration/ExternalReferences';
 
 const route = getRouteApi('/app/audit-management/reports/$reportId');
 
@@ -96,6 +97,7 @@ export function AuditReportPage() {
         description={names.text(r.values.titleAr, r.values.titleEn)}
         meta={
           <div className="flex flex-wrap items-center gap-3">
+            <OriginBadge type="auditmgmt.report" id={r.id} />
             <ReportStatusChip status={r.status} />
             <span className="text-sm text-muted-foreground">
               {labels.lookup(lookupTypes.reportType, r.values.typeCode)}
@@ -233,6 +235,7 @@ export function AuditReportPage() {
         </TabsContent>
         <TabsContent value="details">
           <Details report={r} />
+          <ExternalReferencesSection type="auditmgmt.report" id={r.id} />
         </TabsContent>
         <TabsContent value="documents">
           <DocumentsPanel ownerType="auditmgmt.report" ownerId={r.id} canEdit={r.can.edit} />
@@ -353,6 +356,11 @@ function ImportDialog({ reportId, onClose }: { reportId: string; onClose: () => 
               issues: result.issues.length,
             })}
           />
+          {result.updated > 0 && (
+            <p data-testid="audit-import-updated">
+              {t('import.updated', { updated: result.updated, skipped: result.skippedRecommendations })}
+            </p>
+          )}
           {result.issues.length > 0 && (
             <ul className="max-h-48 list-disc overflow-y-auto ps-5">
               {result.issues.map((i, n) => (

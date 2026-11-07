@@ -50,6 +50,7 @@ import {
 import { MessageList, RequestStatusChip, useDynamicT } from './components';
 import { FormRenderer, FormValuesView } from './FormRenderer';
 import { fieldErrorsOf, isEmptySchema, normalise, otherErrors, type FieldErrors } from './formLogic';
+import { ExternalReferencesSection, OriginBadge } from '@/features/integration/ExternalReferences';
 
 const route = getRouteApi('/app/requests/$requestId');
 
@@ -109,6 +110,7 @@ export function RequestPage() {
         }
         meta={
           <>
+            <OriginBadge type="requests.request" id={data.id} />
             <RequestStatusChip status={data.status} />
             {data.overdue && <StatusChip tone="danger">{t('list.overdue')}</StatusChip>}
           </>
@@ -240,6 +242,7 @@ export function RequestPage() {
         </TabsList>
         <TabsContent value="overview">
           <Overview request={data} />
+          <ExternalReferencesSection type="requests.request" id={data.id} />
         </TabsContent>
         <TabsContent value="approvals">
           <ApprovalPanel resourceType={requestResource} resourceId={data.id} />

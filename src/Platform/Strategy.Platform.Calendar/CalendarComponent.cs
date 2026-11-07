@@ -8,6 +8,7 @@ using Strategy.Platform.Calendar.Application;
 using Strategy.Platform.Calendar.Domain;
 using Strategy.Platform.Calendar.Infrastructure;
 using Strategy.Platform.Http.Modules;
+using Strategy.Platform.Integration;
 using Strategy.Platform.Persistence;
 using Strategy.Platform.Settings;
 
@@ -35,6 +36,8 @@ public sealed class CalendarComponent : IPlatformComponent
         services.AddScoped<HolidayImport>();
         services.AddScoped<IDatabaseSeeder, CalendarSeeder>();
         services.AddAccessCatalogue(new CalendarCatalogue());
+        services.AddReferenceableType(HolidayReferences.Definition);
+        services.AddReferenceableRecordSource<HolidayReferences>();
     }
 
     public void MapEndpoints(IEndpointRouteBuilder endpoints) => CalendarEndpoints.Map(endpoints.MapPlatformGroup(this));

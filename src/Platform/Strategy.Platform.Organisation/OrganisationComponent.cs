@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Strategy.Platform.Access;
 using Strategy.Platform.Files;
 using Strategy.Platform.Http.Modules;
+using Strategy.Platform.Integration;
 using Strategy.Platform.Kernel;
 using Strategy.Platform.Organisation.Api;
 using Strategy.Platform.Organisation.Application;
@@ -44,6 +45,10 @@ public sealed class OrganisationComponent : IPlatformComponent
         services.AddAccessCatalogue(new OrgAccessCatalogue());
         services.AddLookupType(OrgLookupDefinitions.Grade);
         services.AddScoped<ILookupBackfillSource, GradeBackfill>();
+        services.AddReferenceableType(OrgReferences.Unit);
+        services.AddReferenceableType(OrgReferences.Employee);
+        services.AddReferenceableRecordSource<UnitReferenceSource>();
+        services.AddReferenceableRecordSource<EmployeeReferenceSource>();
     }
 
     public void MapEndpoints(IEndpointRouteBuilder endpoints) => OrgEndpoints.Map(endpoints.MapPlatformGroup(this));

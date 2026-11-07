@@ -5,6 +5,7 @@ import {
   BriefcaseBusiness,
   Bot,
   Cable,
+  DatabaseZap,
   Building,
   CalendarClock,
   CalendarOff,
@@ -73,6 +74,7 @@ export type SettingsPageKey =
   | 'approvals'
   | 'ai'
   | 'mcp'
+  | 'sourceSystems'
   | 'tasks'
   | 'tasksReassign'
   | 'businessHours'
@@ -92,6 +94,7 @@ export type SettingsPageKey =
 export type SettingsPath =
   | '/setup/configure'
   | '/settings/regional'
+  | '/settings/integrations/source-systems'
   | '/settings/dashboards'
   | '/settings/reporting'
   | '/settings/branding'
@@ -277,6 +280,12 @@ export const settingsGroups: readonly SettingsGroup[] = [
     pages: [
       { key: 'ai', to: '/settings/ai', icon: Bot, permissions: ['ai.settings.manage'] },
       { key: 'mcp', to: '/settings/mcp', icon: Cable, permissions: ['mcp.settings.manage'] },
+      {
+        key: 'sourceSystems',
+        to: '/settings/integrations/source-systems',
+        icon: DatabaseZap,
+        permissions: ['integration.source-system.manage'],
+      },
     ],
   },
   {

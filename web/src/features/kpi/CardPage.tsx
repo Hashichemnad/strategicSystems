@@ -58,6 +58,7 @@ import {
   type ProposedChange,
 } from './api';
 import { KpiPage, PerformanceValue, RagChip, usePercent, useKpiT, useNumber } from './components';
+import { ExternalReferencesSection, OriginBadge } from '@/features/integration/ExternalReferences';
 
 const route = getRouteApi('/app/kpi/cards/$cardId');
 
@@ -111,6 +112,7 @@ export function KpiCardPage() {
         }
         meta={
           <>
+            <OriginBadge type="kpi.card" id={data.id} />
             <StatusChip tone={data.status === 'active' ? 'success' : 'neutral'}>
               {k(`cardStatus.${data.status}`)}
             </StatusChip>
@@ -187,6 +189,7 @@ export function KpiCardPage() {
         </TabsList>
         <TabsContent value="details">
           <Details card={data} />
+          <ExternalReferencesSection type="kpi.card" id={data.id} />
         </TabsContent>
         <TabsContent value="measuring">
           <Measuring card={data} />
