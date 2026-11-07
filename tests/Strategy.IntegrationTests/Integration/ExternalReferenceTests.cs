@@ -465,4 +465,33 @@ public sealed class ExternalReferenceTests(ApiFixture api) : IClassFixture<ApiFi
         file.Headers.ContentType = new MediaTypeHeaderValue("text/csv");
         return new MultipartFormDataContent { { file, "file", fileName } };
     }
+
+    [Fact]
+    public async Task Global_search_finds_a_record_by_external_id_only_for_users_who_may_read_it()
+    {
+        var source = await SourceAsync();
+        var own = await api.Factory.CreateRoleAsync("sample", (SamplePermissions.Read, DataScope.Own), (SamplePermissions.Create, DataScope.All));
+        var alice = await api.Factory.SignInAsync(await api.Factory.CreateUserAsync(roles: own));
+        var bob = await api.Factory.SignInAsync(await api.Factory.CreateUserAsync(roles: own));
+        var mine = await ItemAsync(alice, "Ext search A " + Suffix());
+        var theirs = await ItemAsync(bob, "Ext search B " + Suffix());
+        var mineId = "EXT-" + Suffix();
+        var theirsId = "EXT-" + Suffix();
+        (await LinkAsync(new ExternalReferenceInput(source, "sample.item", mineId, mine))).IsSuccess.ShouldBeTrue();
+        (await LinkAsync(new ExternalReferenceInput(source, "sample.item", theirsId, theirs))).IsSuccess.ShouldBeTrue();
+
+        var found = await SearchIdsAsync(alice, mineId);
+        found.ShouldContain((mine, "externalId"));
+        (await SearchIdsAsync(alice, theirsId)).ShouldBeEmpty("an external ID never reveals a record outside the user's scope");
+        (await SearchIdsAsync(bob, theirsId)).ShouldContain((theirs, "externalId"));
+    }
+
+    private static async Task<List<(Guid Id, string? MatchedOn)>> SearchIdsAsync(HttpClient client, string term)
+    {
+        var response = await client.GetAsync($"/api/v1/search?q={Uri.EscapeDataString(term)}&limit=50");
+        response.StatusCode.ShouldBe(HttpStatusCode.OK, await response.Content.ReadAsStringAsync());
+        var body = await response.Content.ReadFromJsonAsync<JsonElement>();
+        return body.GetProperty("groups").EnumerateArray().SelectMany(g => g.GetProperty("items").EnumerateArray())
+            .Select(i => (i.GetProperty("id").GetGuid(), i.GetProperty("matchedOn").GetString())).ToList();
+    }
 }

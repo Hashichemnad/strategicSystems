@@ -9,6 +9,7 @@ using Strategy.Platform.Integration.Application;
 using Strategy.Platform.Integration.Infrastructure;
 using Strategy.Platform.Integration.Mcp;
 using Strategy.Platform.Persistence;
+using Strategy.Platform.Search;
 using Strategy.Platform.Settings;
 
 namespace Strategy.Platform.Integration;
@@ -39,6 +40,7 @@ public sealed class IntegrationComponent : IPlatformComponent
             new("dynamics", "مايكروسوفت دايناميكس", "Microsoft Dynamics"), new("custom", "نظام آخر", "Custom"),
         ]));
         services.AddAppTool<FindByExternalReferenceTool>();
+        services.AddSearchContributor<ExternalReferenceSearch>(); // cross-system: every hit re-checked through the Links registry
     }
 
     public void MapEndpoints(IEndpointRouteBuilder endpoints) => IntegrationEndpoints.Map(endpoints.MapPlatformGroup(this));
