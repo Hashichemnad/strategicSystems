@@ -4,11 +4,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Strategy.IntegrationTests.Infrastructure;
 using Strategy.Modules.Portfolio.Application;
+using Strategy.Modules.Portfolio.Domain;
 using Strategy.Modules.Portfolio.Infrastructure;
 
 namespace Strategy.IntegrationTests.Portfolio;
 
-/// <summary>Rich text in Portfolio (ADR 0161): project meeting minutes sanitised on save; plain and legacy values unchanged.</summary>
+/// <summary>Rich text in Portfolio (ADR 0161): meeting minutes and the request description sanitised on save; plain and legacy values unchanged.</summary>
 public sealed class RichTextPortfolioTests(ProjectFixture fx) : IClassFixture<ProjectFixture>
 {
     private const string Base = PortfolioWorld.Base;
@@ -50,6 +51,11 @@ public sealed class RichTextPortfolioTests(ProjectFixture fx) : IClassFixture<Pr
 
         var list = await PortfolioWorld.OkAsync<List<ProjectMeetingDto>>(pm.GetAsync($"{Base}/projects/{project.Id}/meetings"));
         list.Single(m => m.Id == plain.Id).Notes.ShouldBe(legacy);
+
+        // The request description (5 000 visible characters, formatting not counted) is sanitised and copied to the project.
+        var formatted = "<p><strong>" + new string('d', RequestRules.LongTextMaxLength) + "</strong></p><script>alert(1)</script>";
+        var request = await w.CreateAsync(PortfolioWorld.Valid($"Formatted {w.Suffix}", budget: null) with { Description = formatted });
+        request.Values.Description.ShouldBe("<p><strong>" + new string('d', RequestRules.LongTextMaxLength) + "</strong></p>");
 
         var tooLong = await pm.PostAsJsonAsync($"{Base}/projects/{project.Id}/meetings",
             new { values = new { meetingAt = DateTimeOffset.UtcNow, title = "Long", notes = "<p>" + new string('x', 20001) + "</p>" } });

@@ -48,9 +48,12 @@ texts. They can be switched later field by field with the same building blocks (
 - Applied in: Portfolio `SaveMeetingAsync` (replaces the Phase 7 regex `RichText` class), request save / submit (`RequestRules` +
   `ProgramRequest.Apply`), Teams `CreateMeeting` / `UpdateMeeting` / `SaveMinutes` (domain methods sanitise, validators measure), Request
   Framework `FormValidation` for `richtext` fields (was stored unsanitised before).
-- Plain-text projections: Request Framework PDF (`RequestPdf`), Portfolio AI prompts (request / charter assists: description, justifications),
-  Teams minutes-writer input, request search text where descriptions feed it, MCP read tools returning these fields, request / project Excel
-  exports where they include descriptions.
+- Plain-text projections: Request Framework PDF (`RequestPdf`), Portfolio AI prompts (request review / charter assists: description,
+  justifications), Teams minutes-writer input, and — centrally — every `AiRecordField` value the AI platform sends to a model ("Ask the
+  system" record tool, submission review), so MCP / AI read paths of any module only ever see plain text. None of the inventoried fields
+  is part of an Excel export, a `*_search` column or an e-mail template today; when one is added, it must use `ToPlainText`
+  (exports, search, e-mail plain part) or `ToSafeHtml` (HTML e-mail body, PDF).
+- Every `<a>` gets `rel="noopener noreferrer"`, also one whose unsafe `href` was removed.
 - No migration rewrites data. One schema migration widens `program_request.description` / `.justifications` and `project.description` from
   5 000 to 20 000 characters (stored HTML); the 5 000-character SPEC limit is enforced on the visible text.
 
@@ -85,6 +88,10 @@ page and project details.
 - Integration: Portfolio meeting save (script removed, legacy plain value returned unchanged), Teams minutes save (sanitised, plain
   unchanged), Request Framework `richtext` field sanitised, AI / export path receives plain text.
 - Vitest: `RichTextView` (DOMPurify strips script / handlers / `javascript:` links, plain text escaped with line breaks), `rich-text.ts`
-  helpers, `RichTextEditor` (toolbar names, bold toggles, direction toggle sets `dir`, plain value loads as paragraphs).
-- Playwright `web/e2e/rich-text.spec.ts` (ar + en): formats project-meeting minutes (bold, list, RTL / LTR paragraph), saves, sees it
-  rendered; screenshots `rich-text-editor-<lang>.png`, `rich-text-view-<lang>.png` in `docs/screenshots/$E2E_SCREENSHOTS/`.
+  helpers, `RichTextEditor` (toolbar names in ar / en, bold toggles, direction toggle sets `dir`, arrow-key toolbar, plain value loads as
+  paragraphs, lazy wrapper), `FormRenderer` rich-text read view.
+- Playwright `web/e2e/rich-text.spec.ts` (ar + en): formats a programme request description in the wizard (bold, bulleted list, a
+  paragraph in the other direction), saves the draft, sees it rendered on the request page, and checks that a script sent through the API is
+  removed; screenshots `<lang>-rich-text-editor.png`, `<lang>-rich-text-view.png` in `docs/screenshots/$E2E_SCREENSHOTS/`.
+- Existing E2E specs that `fill` the description / justifications by label keep working: the editor's `contenteditable` carries the field
+  label as `aria-label`, and Playwright fills `contenteditable` elements.
