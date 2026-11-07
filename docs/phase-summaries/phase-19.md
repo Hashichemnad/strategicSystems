@@ -46,6 +46,7 @@ ADRs **0160–0169 proposed** for owner acceptance.
   i18next fell back to English for 2 or more ("2 records selected" on the Arabic page). All six forms added and a test now requires them.
 - **Sample editors were Sample administrators.** The template module's member defaults made its `editor` role the administrator list, so
   every Sample editor held `sample.members.manage` and saw Settings. Sample now has no administrator list.
+- Rich-text direction / table buttons: visible text missing from the accessible name (axe `label-content-name-mismatch`, WCAG 2.5.3).
 - ESLint ran out of memory on the CI runner (heap raised in the `lint` script); IDE0005 with the CI SDK; a missing `validation.maximumItems`
   translation; the authorization matrix's everyone list lacked the new source-system read permission.
 
@@ -61,7 +62,7 @@ CI run 63 on commit `d2d149a` (GitHub Actions, `workflow_dispatch`) and local ru
 | Web: lint, format:check, typecheck, Vitest, build, `npm audit --audit-level=high`, `lint:licenses` | pass (CI) |
 | Deploy scripts: Windows PowerShell **5.1** and PowerShell 7 on `windows-latest` (72 assertions each, fake docker, folder without `.git`, non-ASCII path); bash + PowerShell 7 + PSScriptAnalyzer on Linux | pass (CI jobs `deploy-windows`, `deploy-scripts`) |
 | Container image: build, non-root / healthcheck, Trivy (High / Critical with a fix), CycloneDX SBOM, compose valid | pass (CI) |
-| Playwright E2E `ar` + `en` on a fresh database (incl. the 7 new Phase 19 specs) | **126 / 126** locally; CI E2E job (with the `ar-a11y` / `en-a11y` axe audit and the setup wizard): see below |
+| Playwright E2E `ar` + `en` on a fresh database (incl. the 7 new Phase 19 specs) | **126 / 126** locally; CI run 63 E2E job: **143 / 144** — the one failure was a real WCAG 2.5.3 finding of the axe audit (rich-text direction buttons' accessible name lacked their visible text), fixed in `0e5817c` and re-verified (`ar-a11y` / `en-a11y` request-wizard check 2 / 2); CI re-run on the fix |
 
 ## Deviations
 - **From the SPEC / addendum:** none known.
