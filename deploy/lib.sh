@@ -142,3 +142,12 @@ prepare_build_ca() {
 sha256_of() {
   if command -v sha256sum > /dev/null 2>&1; then sha256sum "$1" | awk '{print $1}'; else shasum -a 256 "$1" | awk '{print $1}'; fi
 }
+
+# Commit of this release folder for the image label, or empty (ADR 0163): a ZIP release has no .git, git may be missing, and a failing
+# rev-parse (broken .git, dubious ownership) only means "no revision" (stderr discarded, exit code tolerated under set -e). Without .git
+# the program is not run at all, so a release unpacked inside another repository never takes that repository's commit.
+source_revision() {
+  [ -e "$ROOT_DIR/.git" ] || return 0
+  command -v git > /dev/null 2>&1 || return 0
+  git -C "$ROOT_DIR" rev-parse --short HEAD 2> /dev/null || true
+}

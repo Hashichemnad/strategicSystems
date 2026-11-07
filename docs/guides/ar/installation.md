@@ -39,9 +39,28 @@
 `--image strategy-app-1.0.0.tar` (أدناه). عند تجاوز حدّ Docker Hub اضبطوا `REGISTRY_PREFIX=mirror.gcr.io/` (أو مرآة السجل لديكم)؛
 وخلف وكيل يفحص TLS اجعلوا `BUILD_CA_FILE` يشير إلى حزمة شهادات الجهة (تُستخدم أثناء البناء فقط ولا تُحفظ في الصورة).
 
+**الاتصالات البطيئة أو غير المستقرة.** يُنزّل بناء الصورة حزم npm وNuGet وتحديثات Ubuntu، وهو يعيد المحاولة تلقائيًا بمهلات أطول؛
+وعلى خط بطيء جدًا ارفعوا القيم في `deploy/.env` قبل تشغيل برنامج التثبيت (تسري في البناء التالي):
+
+| الإعداد في `deploy/.env` | الافتراضي | ما الذي يغيّره |
+|---|---|---|
+| `NPM_FETCH_RETRIES` | 5 | عدد المحاولات لكل حزمة npm |
+| `NPM_FETCH_RETRY_MINTIMEOUT` / `NPM_FETCH_RETRY_MAXTIMEOUT` | 20000 / 120000 | أقصر / أطول انتظار بين محاولات npm (بالملّي ثانية) |
+| `NPM_FETCH_TIMEOUT` | 600000 | المدة المسموح بها لطلب npm واحد (بالملّي ثانية) |
+| `NUGET_ENHANCED_MAX_NETWORK_TRY_COUNT` / `NUGET_ENHANCED_NETWORK_RETRY_DELAY_MILLISECONDS` | 10 / 3000 | عدد المحاولات لكل طلب NuGet والانتظار بينها (ملّي ثانية) |
+| `NUGET_RESTORE_ATTEMPTS` | 3 | عدد مرات إعادة استعادة حزم ‎.NET كاملةً (تبقى الحزم التي نُزّلت) |
+| `NUGET_RESTORE_DISABLE_PARALLEL` | false | ‏`true`: مشروع واحد في كل مرة (اتصالات متزامنة أقل) |
+| `APT_RETRIES` / `APT_HTTP_TIMEOUT` | 5 / 120 | عدد المحاولات والمهلة (بالثواني) لحزم Ubuntu في صورة التشغيل |
+
+مثلًا `NUGET_RESTORE_ATTEMPTS=6` و`NPM_FETCH_RETRIES=10`. أما الاتصال المنقطع تمامًا فيُفشل البناء رغم ذلك — استخدموا حينها التثبيت
+دون اتصال الموضّح أعلاه.
+
 ## 3. التثبيت باستخدام Docker (موصى به)
 
-فكّوا مجلد الإصدار، مثلًا في `/opt/strategy` (‏Linux) أو `C:\strategy` (‏Windows)، ونفّذوا **أمرًا واحدًا** من داخل المجلد:
+فكّوا مجلد الإصدار، مثلًا في `/opt/strategy` (‏Linux) أو `C:\strategy` (‏Windows)، ونفّذوا **أمرًا واحدًا** من داخل المجلد.
+ملف ZIP للإصدار بلا مجلد `.git` مقبول (لن يحمل عندها وسم الصورة رقم الإيداع؛ ويؤخذ الإصدار من `deploy/VERSION`). وعلى Windows تعمل
+النصوص البرمجية في **Windows PowerShell 5.1** (المضمّن في كل Windows Server) وفي **PowerShell 7**، حتى مع تحويل مخرجاتها إلى ملف سجل
+(`... *> install.log`):
 
 ```bash
 ./deploy/install.sh
@@ -192,6 +211,7 @@ APP_VERSION=0.17.0 ./deploy/restore.sh <pre-upgrade backup folder> --yes
 | رُفض رمز الإعداد | تنتهي الرموز بعد 24 ساعة وبعد إعادة التشغيل؛ اطبعوا رمزًا جديدًا (§5) |
 | ‏«Run --migrate first» من `--create-admin` | نفّذوا `docker compose -f deploy/docker-compose.yml --profile app run --rm migrate` ثم أعيدوا المحاولة |
 | فشل بناء الصورة بسبب الشهادات | اضبطوا `BUILD_CA_FILE` على حزمة شهادات الوكيل |
+| فشل بناء الصورة بانتهاء المهلة (`ETIMEDOUT`، `ECONNRESET`، `NU1301`، «Unable to load the service index») | ارفعوا إعدادات إعادة المحاولة في `deploy/.env` (§2، *الاتصالات البطيئة أو غير المستقرة*) وأعيدوا تشغيل برنامج التثبيت (الخطوات المكتملة تؤخذ من ذاكرة البناء المؤقتة في Docker) |
 | ‏Docker Hub ‏«too many requests» | اضبطوا `REGISTRY_PREFIX=mirror.gcr.io/` (أو مرآتكم) في `deploy/.env` |
 | فشل إنشاء ملفات PDF | *الإعدادات ← صحة النظام* ← خدمة PDF؛ تحققوا من حاوية `gotenberg` (‏`docker compose … ps`) |
 | لا تُرسل الرسائل | *الإعدادات ← خادم البريد* ← *إرسال رسالة اختبار*؛ و*الإعدادات ← صحة النظام* ← صندوق الصادر |

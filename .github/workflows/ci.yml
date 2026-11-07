@@ -177,3 +177,43 @@ jobs:
         run: |
           shellcheck -x deploy/*.sh deploy/postgres/init-roles.sh
           pwsh -NoProfile -File tools/check-powershell.ps1 deploy
+
+  # Deploy scripts against a fake docker in a release folder without .git (ADR 0163): bash and PowerShell 7 on Linux, PSScriptAnalyzer.
+  deploy-scripts:
+    name: Deploy scripts on Linux (bash, PowerShell 7, PSScriptAnalyzer)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: shellcheck and PowerShell parser / encoding check
+        run: |
+          shellcheck -x deploy/*.sh deploy/postgres/init-roles.sh tests/deploy/*.sh
+          pwsh -NoProfile -File tools/check-powershell.ps1 deploy
+          pwsh -NoProfile -File tools/check-powershell.ps1 tests/deploy
+      - name: bash scripts (install, backup, restore, upgrade)
+        run: tests/deploy/test-deploy-scripts.sh
+      - name: PowerShell scripts under PowerShell 7
+        run: pwsh -NoProfile -File tests/deploy/Test-DeployScripts.ps1 -Shell pwsh
+      - name: PSScriptAnalyzer (syntax and commands compatible with Windows PowerShell 5.1)
+        shell: pwsh
+        run: ./tests/deploy/Invoke-ScriptAnalysis.ps1
+
+  # GitHub's Windows runners only run Windows containers: the .ps1 scripts run against the fake docker under 5.1 and 7 (ADR 0163).
+  deploy-windows:
+    name: Deploy scripts on Windows (PowerShell 5.1 and 7)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: PowerShell parser / encoding check (Windows PowerShell 5.1)
+        shell: powershell
+        run: |
+          $PSVersionTable.PSVersion
+          powershell.exe -NoProfile -ExecutionPolicy Bypass -File tools/check-powershell.ps1 deploy
+      - name: PowerShell scripts under Windows PowerShell 5.1
+        shell: powershell
+        run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File tests/deploy/Test-DeployScripts.ps1 -Shell powershell.exe
+      - name: PowerShell scripts under PowerShell 7
+        shell: pwsh
+        run: pwsh -NoProfile -File tests/deploy/Test-DeployScripts.ps1 -Shell pwsh
