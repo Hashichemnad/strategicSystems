@@ -259,6 +259,7 @@ internal sealed class BenchAccessCatalogue : IAccessCatalogueSource
         new(BenchPermissions.AiAnalysis, "تحويل ملاحظات الزيارة إلى مقارنات", "Visit notes to comparisons and gaps", Scopable: false),
         new(BenchPermissions.AiSummary, "ملخص الدراسة", "Study summary", Scopable: false),
         new(BenchPermissions.AiSearch, "البحث في أفضل الممارسات بلغة طبيعية", "Natural-language best-practice search", Scopable: false),
+        ResponsibilityPermissions.Definition(BenchPermissions.SystemCode),
     ];
 
     private static readonly PermissionGrant[] Ai =
@@ -274,6 +275,7 @@ internal sealed class BenchAccessCatalogue : IAccessCatalogueSource
             new(BenchPermissions.Read, DataScope.All), new(BenchPermissions.Edit, DataScope.All), new(BenchPermissions.Office, DataScope.All), new(BenchPermissions.PlanRead),
             new(BenchPermissions.ComparatorRead), new(BenchPermissions.ComparatorManage), new(BenchPermissions.PracticeRead), new(BenchPermissions.PracticeManage),
             new(BenchPermissions.DashboardRead), new(BenchPermissions.SettingsManage), .. Ai,
+            new(ResponsibilityPermissions.Manage(BenchPermissions.SystemCode), DataScope.All),
         ], RequiresMfa: true),
         new("coordinator", "منسق المقارنات في الوحدة", "Unit benchmarking coordinator",
         [

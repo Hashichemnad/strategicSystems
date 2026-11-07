@@ -97,6 +97,8 @@ public sealed class TeamsModule : IModule
         services.AddLinkableType(MeetingLinkTargets.Definition);
         services.AddLinkTargetSource<MeetingLinkTargets>();
         services.AddSearchContributor<TeamSearchContributor>(TeamPermissions.SystemCode); // global search (ADR 0160)
+        services.AddResponsibilitySource<TeamLeaderResponsibility>(); // Settings → Responsibilities (ADR 0168)
+        services.AddResponsibilitySource<TeamEvaluatorResponsibility>();
         services.AddIntegrationEventHandler<LinkedRecordClosed, OpenEvaluationOnLinkedRecordClosed>();
 
         services.AddScoped<EvaluationTriggerRunner>();

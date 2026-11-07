@@ -159,6 +159,9 @@ public sealed class PortfolioModule : IModule
         services.AddLinkTargetSource<ProjectLinkTargets>();
         services.AddLinkTargetSource<MilestoneLinkTargets>();
         services.AddSearchContributor<PortfolioSearchContributor>(PortfolioPermissions.SystemCode); // global search (ADR 0160)
+        services.AddResponsibilitySource<ProjectManagerResponsibility>(); // Settings → Responsibilities (ADR 0168)
+        services.AddResponsibilitySource<ProjectOwnerResponsibility>();
+        services.AddResponsibilitySource<StoryAssigneeResponsibility>();
 
         foreach (var feature in PortfolioAiFeatures.All.Concat(ProjectAssistFeatures.All))
         {

@@ -408,6 +408,9 @@ public sealed class UserStory : AuditableEntity
 
     public void SetSprint(Guid? sprintId) => SprintId = sprintId;
 
+    /// <summary>Responsibility reassignment (ADR 0168).</summary>
+    public void AssignTo(Guid employeeId) => AssigneeEmployeeId = employeeId;
+
     public void SetAccepted(bool accepted) => Accepted = accepted && IsDone;
 
     public void ApproveDone()

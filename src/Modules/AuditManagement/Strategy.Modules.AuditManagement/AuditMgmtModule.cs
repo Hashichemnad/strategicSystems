@@ -83,6 +83,8 @@ public sealed class AuditMgmtModule : IModule
         services.AddLinkableType(ReportLinkTargets.Definition);
         services.AddLinkTargetSource<ReportLinkTargets>();
         services.AddSearchContributor<AuditSearchContributor>(AuditPermissions.SystemCode); // global search (ADR 0160)
+        services.AddResponsibilitySource<ReportLeadAuditorResponsibility>(); // Settings → Responsibilities (ADR 0168)
+        services.AddResponsibilitySource<FindingAuditorResponsibility>();
 
         services.AddScoped<AuditMonitorRunner>();
         services.AddScheduledJob(AuditMonitorJob.Definition);
