@@ -119,6 +119,8 @@ internal static class TasksEndpoints
             .WithName("PreviewTaskReassignment").RequirePermission(TaskPermissions.ReassignmentManage);
         group.MapPost("/reassignment", async (ReassignEmployeeTasks b, IDispatcher d, CancellationToken ct) => (await d.SendAsync(b, ct)).ToOk())
             .WithName("ReassignEmployeeTasks").RequirePermission(TaskPermissions.ReassignmentManage).WithIdempotency();
+        group.MapPost("/reassignment/creator", async (TransferCreatorRole b, IDispatcher d, CancellationToken ct) => (await d.SendAsync(b, ct)).ToOk())
+            .WithName("TransferTaskCreatorRole").RequirePermission(TaskPermissions.ReassignmentManage).WithIdempotency();
 
         var ai = group.MapGroup("/ai");
         ai.MapPost("/from-text", async (FromTextInput b, TaskAiService service, CancellationToken ct) => (await service.DraftFromTextAsync(b.Text, ct)).ToOk())

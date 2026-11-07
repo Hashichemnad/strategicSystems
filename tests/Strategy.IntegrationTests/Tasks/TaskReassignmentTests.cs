@@ -167,6 +167,93 @@ public sealed class TaskReassignmentTests(ApiFixture api) : IClassFixture<ApiFix
     }
 
     [Fact]
+    public async Task The_creator_role_of_selected_tasks_moves_to_a_new_creator_who_approves_while_the_old_one_cannot()
+    {
+        var w = await TasksWorld.CreateAsync(api.Factory);
+        async Task<Guid> New(string title, Guid? assignee) =>
+            (await TasksWorld.CreateAsync(w.ManagerClient, TasksWorld.NewTask(title, assignee))).Tasks.Single().Id;
+        var submitted = await New("Waiting for approval", w.A.EmployeeId);
+        var assigned = await New("Assigned to B", w.B.EmployeeId);
+        var notSelected = await New("Not selected", w.A.EmployeeId);
+        var toTarget = await New("Assigned to C", w.C.EmployeeId);
+        await TasksWorld.ActOkAsync(w.AClient, submitted, TaskActions.Accept);
+        await TasksWorld.ActOkAsync(w.AClient, submitted, TaskActions.Submit);
+        var (_, admin) = await AdminAsync();
+
+        // The preview lists the tasks the manager created for other people.
+        var preview = (await admin.GetFromJsonAsync<ReassignmentPreviewDto>($"{Base}/reassignment/{w.Manager.EmployeeId}"))!;
+        preview.Tasks.ShouldBeEmpty();
+        preview.CreatedTasks.Select(t => t.Id).ShouldBe([submitted, assigned, notSelected, toTarget], ignoreOrder: true);
+
+        // A reason and a new creator are required.
+        (await admin.PostAsJsonAsync($"{Base}/reassignment/creator", new { fromEmployeeId = w.Manager.EmployeeId, toEmployeeId = w.C.EmployeeId }))
+            .StatusCode.ShouldBe(HttpStatusCode.BadRequest);
+        var response = await admin.PostAsJsonAsync($"{Base}/reassignment/creator", new
+        {
+            fromEmployeeId = w.Manager.EmployeeId,
+            toEmployeeId = w.C.EmployeeId,
+            reason = "The manager left",
+            taskIds = new[] { submitted, assigned, toTarget },
+        });
+        response.StatusCode.ShouldBe(HttpStatusCode.OK, await response.Content.ReadAsStringAsync());
+        var result = (await response.Content.ReadFromJsonAsync<CreatorTransferResultDto>())!;
+        result.Transferred.ShouldBe(2);
+        result.Skipped.ShouldBe(1); // C would approve their own work
+        result.TaskIds.ShouldBe([submitted, assigned], ignoreOrder: true);
+
+        // Only the selected tasks moved; the task assigned to C and the unselected one keep the manager.
+        (await TasksWorld.GetAsync(w.CClient, submitted)).Creator.EmployeeId.ShouldBe(w.C.EmployeeId!.Value);
+        (await TasksWorld.GetAsync(w.CClient, assigned)).Creator.EmployeeId.ShouldBe(w.C.EmployeeId!.Value);
+        (await TasksWorld.GetAsync(w.ManagerClient, notSelected)).Creator.EmployeeId.ShouldBe(w.Manager.EmployeeId!.Value);
+        (await TasksWorld.GetAsync(w.ManagerClient, toTarget)).Creator.EmployeeId.ShouldBe(w.Manager.EmployeeId!.Value);
+
+        // The open approval follows the creator: the old creator is refused, the new one approves.
+        var oldView = await w.ManagerClient.GetAsync($"{Base}/{submitted}");
+        if (oldView.StatusCode == HttpStatusCode.OK)
+        {
+            var task = (await oldView.Content.ReadFromJsonAsync<TaskDto>())!;
+            task.Actions.ShouldNotContain(TaskActions.Approve);
+            (await TasksWorld.ActAsync(w.ManagerClient, task, TaskActions.Approve, new { feedbackPoint = 3 })).StatusCode
+                .ShouldBeOneOf(HttpStatusCode.Forbidden, HttpStatusCode.NotFound);
+        }
+        else
+        {
+            oldView.StatusCode.ShouldBe(HttpStatusCode.NotFound);
+        }
+
+        (await TasksWorld.GetAsync(w.CClient, submitted)).Actions.ShouldContain(TaskActions.Approve);
+        (await TasksWorld.ActOkAsync(w.CClient, submitted, TaskActions.Approve, new { feedbackPoint = 4 })).Status.ShouldBe(TaskStatuses.Approved);
+
+        // Timeline, notifications to both creators, one audit event with the reason.
+        var timeline = (await w.CClient.GetFromJsonAsync<TimelineDto>($"{Base}/{assigned}/timeline"))!;
+        timeline.Events[^1].Event.ShouldBe(TaskEvents.CreatorChanged);
+        timeline.Events[^1].Comment.ShouldBe("The manager left");
+        await ApprovalFlowTests.WaitForNotificationAsync(w.CClient, TaskNotifications.CreatorRoleToYou.Key);
+        await ApprovalFlowTests.WaitForNotificationAsync(w.ManagerClient, TaskNotifications.YourCreatedTasksMoved.Key);
+        var adminAudit = await api.AdminClientAsync();
+        var events = (await adminAudit.GetFromJsonAsync<PagedResult<JsonElement>>(
+            $"/api/v1/audit/entries?action=tasks.task.creator-transfer&recordId={w.Manager.EmployeeId}&pageSize=10"))!;
+        events.Items.ShouldHaveSingleItem().GetProperty("reason").GetString().ShouldBe("The manager left");
+        var history = (await w.CClient.GetFromJsonAsync<PagedResult<JsonElement>>($"{Base}/{assigned}/audit?pageSize=100"))!;
+        history.Items.ShouldContain(e => e.GetProperty("field").GetString() == "CreatorEmployeeId");
+    }
+
+    [Fact]
+    public async Task Only_holders_of_the_permission_within_their_scope_may_move_the_creator_role()
+    {
+        var w = await TasksWorld.CreateAsync(api.Factory);
+        await TasksWorld.CreateAsync(w.ManagerClient, TasksWorld.NewTask("Open", w.A.EmployeeId));
+        var body = new { fromEmployeeId = w.Manager.EmployeeId, toEmployeeId = w.C.EmployeeId, reason = "x" };
+
+        (await w.AClient.PostAsJsonAsync($"{Base}/reassignment/creator", body)).StatusCode.ShouldBe(HttpStatusCode.Forbidden);
+        (await w.CClient.PostAsJsonAsync($"{Base}/reassignment/creator", body)).StatusCode.ShouldBe(HttpStatusCode.Forbidden);
+
+        var role = await api.Factory.CreateRoleAsync("tasks", (TaskPermissions.ReassignmentManage, DataScope.Unit), (TaskPermissions.Read, DataScope.Own));
+        var other = await api.Factory.SignInAsync(await api.Factory.CreateUserAsync(roles: role));
+        (await other.PostAsJsonAsync($"{Base}/reassignment/creator", body)).StatusCode.ShouldBe(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
     public async Task Only_holders_of_the_permission_within_their_scope_may_reassign()
     {
         var w = await TasksWorld.CreateAsync(api.Factory);

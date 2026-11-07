@@ -119,9 +119,22 @@ public static class TaskNotifications
         "{{fromEn}} is now marked as left and has {{count}} open tasks. Reassign them to another employee or hand them back to their creators.",
         "إعادة إسناد المهام", "Reassign the tasks");
 
+    public static readonly NotificationTemplateDefinition CreatorRoleToYou = BulkTemplate(
+        "tasks.creatorRoleToYou", "أصبحت منشئ مهام", "You are now the creator of tasks", "أصبحت منشئ {{count}} مهمة بدلاً من {{fromAr}}",
+        "You are now the creator of {{count}} tasks instead of {{fromEn}}",
+        "نقل {{actor}} إليك دور المنشئ في {{count}} مهمة مفتوحة أنشأها {{fromAr}}، ومعه اعتماد إنجازها. السبب: {{text}}",
+        "{{actor}} moved the creator role of {{count}} open tasks created by {{fromEn}} to you, with approving their completion. Reason: {{text}}",
+        "فتح المهام", "Open the tasks");
+
+    public static readonly NotificationTemplateDefinition YourCreatedTasksMoved = BulkTemplate(
+        "tasks.yourCreatedTasksMoved", "نقل دور المنشئ في مهامك", "Creator role of your tasks moved", "انتقل دور المنشئ في {{count}} من مهامك إلى {{toAr}}",
+        "The creator role of {{count}} of your tasks moved to {{toEn}}",
+        "نقل {{actor}} دور المنشئ في {{count}} من المهام التي أنشأتها إلى {{toAr}}. السبب: {{text}}",
+        "{{actor}} moved the creator role of {{count}} tasks you created to {{toEn}}. Reason: {{text}}", "فتح", "Open");
+
     public static readonly IReadOnlyList<NotificationTemplateDefinition> All =
         [Assigned, Rejected, Submitted, Completed, Approved, Returned, Cancelled, FollowUpAdded, Mentioned, GroupMessage, DueChanged, DueSoon, Overdue, Escalated, AcceptReminder, Digest, ReassignedToYou,
-            AssigneeChanged, DecisionNeeded, YourTasksReassigned, EmployeeLeftWithTasks];
+            AssigneeChanged, DecisionNeeded, YourTasksReassigned, EmployeeLeftWithTasks, CreatorRoleToYou, YourCreatedTasksMoved];
 }
 
 /// <summary>Sends task notifications to employees (their active users), in the caller's transaction when given.</summary>

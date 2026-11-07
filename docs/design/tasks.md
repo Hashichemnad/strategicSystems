@@ -242,7 +242,8 @@ Closes the gap left by ADR 0040: tasks a leaver **created** for other people kep
 - **`POST /api/v1/tasks/reassignment/creator`** `TransferCreatorRole(FromEmployeeId, ToEmployeeId, Reason, TaskIds?)` (idempotency key):
   one transaction — `TaskItem.TakeOverAsCreator` (creator employee changed, creator user cleared), timeline event `creator-changed` with the
   reason and old / new creator, record role `creator` revoked from the leaver and granted to the new creator through `IRecordRoleService`.
-  The new creator must be an active employee other than the leaver; only the selected tasks move.
+  The new creator must be an active employee other than the leaver; only the selected tasks move; a selected task assigned to the new
+  creator is skipped (`skipped` in the result) — nobody approves their own work.
 - Creator approval is a task-level decision (ADR 0035), so **open approvals follow the creator**: a *Submitted* task now waits for the new
   creator, who can approve / return; the old creator is refused (403 — still able to read only if another rule grants it, otherwise 404).
 - Notifications: `tasks.creatorRoleToYou` (new creator, summary with count and reason) and `tasks.yourCreatedTasksMoved` (old creator,

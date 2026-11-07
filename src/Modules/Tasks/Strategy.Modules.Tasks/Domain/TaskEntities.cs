@@ -291,4 +291,7 @@ public static class TaskEvents
     public const string GroupMessage = "group-message";
     public const string Transferred = "transferred";
     public const string ReturnedToCreator = "returned-to-creator";
+
+    /// <summary>The creator role (and the approval) moved to another employee (ADR 0169).</summary>
+    public const string CreatorChanged = "creator-changed";
 }
