@@ -15,6 +15,43 @@ public class MailpitDeliveryTests(SidecarContainers sidecars) : IClassFixture<Si
     public async Task A_notification_is_delivered_to_mailpit_in_arabic_and_english()
     {
         await using var factory = new ApiFactory(await sidecars.CreateDatabaseAsync(), realEmail: true);
+        await UseMailpitAsync(factory);
+
+        var user = await factory.CreateUserAsync();
+        var anonymous = await factory.CreateSpaClientAsync();
+        (await anonymous.PostAsJsonAsync("/api/v1/identity/auth/password/forgot", new { login = user.UserName })).StatusCode.ShouldBe(HttpStatusCode.Accepted);
+        await AssertResetMailAsync(user.UserName);
+    }
+
+    [Fact]
+    public async Task A_security_e_mail_reaches_mailpit_in_the_users_language_without_the_password()
+    {
+        await using var factory = new ApiFactory(await sidecars.CreateDatabaseAsync(), realEmail: true);
+        await UseMailpitAsync(factory);
+        var user = await factory.CreateUserAsync();
+        var client = await factory.SignInAsync(user);
+        (await client.PutAsJsonAsync("/api/v1/identity/me/preferences", new { language = "en" })).StatusCode.ShouldBe(HttpStatusCode.NoContent);
+        const string changed = "Mailpit#Changed2026";
+        (await client.PostAsJsonAsync("/api/v1/identity/me/password", new { currentPassword = user.Password, newPassword = changed }))
+            .StatusCode.ShouldBe(HttpStatusCode.NoContent);
+
+        using var mailpit = new HttpClient { BaseAddress = sidecars.MailpitApi };
+        var id = await NotificationTests.EventuallyAsync(
+            async () => (await mailpit.GetFromJsonAsync<JsonElement>($"api/v1/search?query=to:{Uri.EscapeDataString(user.UserName)}"))
+                .GetProperty("messages").EnumerateArray().Select(m => m.GetProperty("ID").GetString()).FirstOrDefault(),
+            found => found is not null,
+            timeoutSeconds: 30);
+        var message = await mailpit.GetFromJsonAsync<JsonElement>($"api/v1/message/{id}");
+        message.GetProperty("Subject").GetString().ShouldBe("Your password was changed | تم تغيير كلمة المرور");
+        var html = message.GetProperty("HTML").GetString()!;
+        html.ShouldContain("The password of your account was changed");
+        html.ShouldContain("تم تغيير كلمة مرور حسابك");
+        html.ShouldNotContain(changed);
+        message.GetProperty("Text").GetString()!.ShouldNotContain(changed);
+    }
+
+    private async Task UseMailpitAsync(ApiFactory factory)
+    {
         var admin = await factory.CreateSignedInClientAsync(admin: true);
         var smtp = await admin.GetFromJsonAsync<JsonElement>("/api/v1/identity/admin/smtp");
         var saved = await admin.PutAsJsonAsync("/api/v1/identity/admin/smtp", new
@@ -33,14 +70,13 @@ public class MailpitDeliveryTests(SidecarContainers sidecars) : IClassFixture<Si
             version = smtp.GetProperty("version").GetUInt32(),
         });
         saved.StatusCode.ShouldBe(HttpStatusCode.OK, await saved.Content.ReadAsStringAsync());
+    }
 
-        var user = await factory.CreateUserAsync();
-        var anonymous = await factory.CreateSpaClientAsync();
-        (await anonymous.PostAsJsonAsync("/api/v1/identity/auth/password/forgot", new { login = user.UserName })).StatusCode.ShouldBe(HttpStatusCode.Accepted);
-
+    private async Task AssertResetMailAsync(string to)
+    {
         using var mailpit = new HttpClient { BaseAddress = sidecars.MailpitApi };
         var id = await NotificationTests.EventuallyAsync(
-            async () => (await mailpit.GetFromJsonAsync<JsonElement>($"api/v1/search?query=to:{Uri.EscapeDataString(user.UserName)}"))
+            async () => (await mailpit.GetFromJsonAsync<JsonElement>($"api/v1/search?query=to:{Uri.EscapeDataString(to)}"))
                 .GetProperty("messages").EnumerateArray().Select(m => m.GetProperty("ID").GetString()).FirstOrDefault(),
             found => found is not null,
             timeoutSeconds: 30);

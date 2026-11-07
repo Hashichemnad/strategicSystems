@@ -38,6 +38,8 @@ public sealed class IdentityStoreDbContext(DbContextOptions<IdentityStoreDbConte
     public DbSet<PersonalAccessToken> Tokens => Set<PersonalAccessToken>();
 
     public DbSet<SetupState> SetupStates => Set<SetupState>();
+
+    public DbSet<KnownDevice> KnownDevices => Set<KnownDevice>();
 }
 
 internal sealed class StrategyUserConfiguration : IEntityTypeConfiguration<StrategyUser>
@@ -116,6 +118,8 @@ internal sealed class SecuritySettingsConfiguration : IEntityTypeConfiguration<S
         builder.ToTable("security_settings");
         builder.Property(s => s.Id).ValueGeneratedNever();
         builder.Property(s => s.MfaPolicy).HasMaxLength(20);
+        builder.Property(s => s.SecurityContactAr).HasMaxLength(SecuritySettings.SecurityContactMaxLength);
+        builder.Property(s => s.SecurityContactEn).HasMaxLength(SecuritySettings.SecurityContactMaxLength);
         builder.Property(s => s.Version).IsRowVersion();
         builder.HasData(new SecuritySettings());
     }
@@ -200,5 +204,17 @@ internal sealed class SetupStateConfiguration : IEntityTypeConfiguration<SetupSt
         builder.Property(s => s.Id).ValueGeneratedNever();
         builder.Property(s => s.TokenHash).HasMaxLength(32);
         builder.Property(s => s.Version).IsRowVersion();
+    }
+}
+
+internal sealed class KnownDeviceConfiguration : IEntityTypeConfiguration<KnownDevice>
+{
+    public void Configure(EntityTypeBuilder<KnownDevice> builder)
+    {
+        builder.ToTable("known_device");
+        builder.Property(d => d.Id).ValueGeneratedNever();
+        builder.Property(d => d.Fingerprint).HasMaxLength(64);
+        builder.HasIndex(d => new { d.UserId, d.Fingerprint }).IsUnique();
+        builder.HasOne<StrategyUser>().WithMany().HasForeignKey(d => d.UserId).OnDelete(DeleteBehavior.Cascade);
     }
 }

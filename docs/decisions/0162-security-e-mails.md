@@ -16,7 +16,7 @@
    reaches every security e-mail; empty = the seeded default.
 3. **Exactly once.** `NotificationRequest.IdempotencyKey`: the notification service records the key in `notify.sent_request`
    (`INSERT … ON CONFLICT DO NOTHING` in the transaction that queues the outbox messages) and queues nothing for a key it has seen. The e-mail
-   payload carries `{key}:{address}`; the e-mail handler records it on `notify.email_delivery` (unique) and skips a delivery already made,
+   payload carries `{key}:{address}`; the e-mail handler records it on `notify.delivery` and skips a delivery already made,
    which covers an outbox message handled twice. The event id is new per action; the lockout uses `lockout:{user}:{lockout end}` so the
    attempts made while the account stays locked are one event.
 4. **Mandatory.** The templates are `Mandatory`, so preferences and the digest never suppress them and the preference screen shows them

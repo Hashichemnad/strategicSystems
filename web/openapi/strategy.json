@@ -89749,6 +89749,22 @@
           "version": {
             "type": "integer",
             "format": "uint32"
+          },
+          "notifyNewDevice": {
+            "type": "boolean",
+            "default": false
+          },
+          "securityContactAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "securityContactEn": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },

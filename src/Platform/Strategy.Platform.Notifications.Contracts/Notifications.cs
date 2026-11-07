@@ -40,7 +40,11 @@ public sealed record NotificationRecipient(Guid? UserId, string? Email = null, s
     public static NotificationRecipient Address(string email, string? name = null, string? language = null) => new(null, email, name, language);
 }
 
-/// <summary>What to send. <paramref name="Sensitive"/> values (codes, reset links) are encrypted while queued and never logged.</summary>
+/// <summary>
+/// What to send. <paramref name="Sensitive"/> values (codes, reset links) are encrypted while queued and never logged.
+/// <paramref name="IdempotencyKey"/> (e.g. an event id, ADR 0162): a request whose key was already queued queues nothing again, and an e-mail
+/// whose key was already delivered to that address is not sent again.
+/// </summary>
 public sealed record NotificationRequest(
     string TemplateKey,
     IReadOnlyList<NotificationRecipient> Recipients,
@@ -49,7 +53,8 @@ public sealed record NotificationRequest(
     NotificationChannels Channels = NotificationChannels.All,
     DateTimeOffset? ExpiresAt = null,
     bool Sensitive = false,
-    IReadOnlyList<Guid>? AttachmentFileIds = null);
+    IReadOnlyList<Guid>? AttachmentFileIds = null,
+    string? IdempotencyKey = null);
 
 /// <summary>Queues notifications in the outbox. With a DbContext in a transaction the messages commit with the business change.</summary>
 public interface INotificationService
@@ -79,10 +84,13 @@ public interface ISmtpSettingsSource
     Task<SmtpConnection> GetAsync(CancellationToken cancellationToken = default);
 }
 
-/// <summary>A rendered e-mail plus what it was made from (template key, values, link) for delivery logs and tests.</summary>
+/// <summary>
+/// A rendered e-mail plus what it was made from (template key, values, link) for delivery logs and tests. <paramref name="Language"/> is the
+/// recipient's language (<c>ar</c> / <c>en</c>): it leads the bilingual subject (ADR 0162).
+/// </summary>
 public sealed record EmailMessage(
     string To, string Subject, string Html, string Text, string TemplateKey, IReadOnlyDictionary<string, string> Values, string? Link,
-    IReadOnlyList<EmailAttachment>? Attachments = null);
+    IReadOnlyList<EmailAttachment>? Attachments = null, string? Language = null);
 
 /// <summary>A file attached to an e-mail (e.g. a scheduled report, ADR 0145), read from the file store when the e-mail is sent.</summary>
 public sealed record EmailAttachment(string FileName, string ContentType, byte[] Content);

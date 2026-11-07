@@ -43,6 +43,11 @@ namespace Strategy.Platform.Notifications.Infrastructure.Migrations
                         .HasColumnType("character varying(1000)")
                         .HasColumnName("error");
 
+                    b.Property<string>("IdempotencyKey")
+                        .HasMaxLength(530)
+                        .HasColumnType("character varying(530)")
+                        .HasColumnName("idempotency_key");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -66,6 +71,10 @@ namespace Strategy.Platform.Notifications.Infrastructure.Migrations
 
                     b.HasIndex("At")
                         .HasDatabaseName("ix_delivery_at");
+
+                    b.HasIndex("IdempotencyKey")
+                        .HasDatabaseName("ix_delivery_idempotency_key")
+                        .HasFilter("idempotency_key is not null");
 
                     b.ToTable("delivery", "notify");
                 });
@@ -304,6 +313,32 @@ namespace Strategy.Platform.Notifications.Infrastructure.Migrations
                         .HasDatabaseName("ix_template_key");
 
                     b.ToTable("template", "notify");
+                });
+
+            modelBuilder.Entity("Strategy.Platform.Notifications.Domain.SentRequest", b =>
+                {
+                    b.Property<string>("Key")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("key");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("TemplateKey")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)")
+                        .HasColumnName("template_key");
+
+                    b.HasKey("Key")
+                        .HasName("pk_sent_request");
+
+                    b.HasIndex("CreatedAt")
+                        .HasDatabaseName("ix_sent_request_created_at");
+
+                    b.ToTable("sent_request", "notify");
                 });
 #pragma warning restore 612, 618
         }

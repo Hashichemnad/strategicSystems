@@ -167,7 +167,7 @@ The user hears about every security-relevant change of their own account by e-ma
 - `NotificationRequest.IdempotencyKey` (optional). The service inserts the key into **`notify.sent_request`** (`key` primary key,
   `template_key`, `created_at`) with `ON CONFLICT DO NOTHING` in the same transaction as the outbox messages (the caller's DbContext
   transaction, or its own); a key already present → nothing is queued (success).
-- The e-mail payload carries `{key}:{address}`; `notify.email_delivery.idempotency_key` (unique where not null) records a sent delivery, and the
+- The e-mail payload carries `{key}:{address}`; `notify.delivery.idempotency_key` (indexed) records a sent delivery, and the
   e-mail handler skips a message whose key was already delivered (an outbox message handled twice after a crash between send and commit).
 
 ### New device / IP (optional)

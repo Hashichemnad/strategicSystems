@@ -21,6 +21,8 @@ public sealed class NotifyDbContext(DbContextOptions<NotifyDbContext> options) :
     public DbSet<NotificationPreference> Preferences => Set<NotificationPreference>();
 
     public DbSet<EmailDelivery> Deliveries => Set<EmailDelivery>();
+
+    public DbSet<SentRequest> SentRequests => Set<SentRequest>();
 }
 
 internal sealed class TemplateConfiguration : IEntityTypeConfiguration<NotificationTemplate>
@@ -82,6 +84,22 @@ internal sealed class DeliveryConfiguration : IEntityTypeConfiguration<EmailDeli
         builder.Property(x => x.Status).HasMaxLength(20);
         builder.Property(x => x.Error).HasMaxLength(1000);
         builder.Property(x => x.CorrelationId).HasMaxLength(64);
+        builder.Property(x => x.IdempotencyKey).HasMaxLength(SentRequestConfiguration.KeyMaxLength + 330);
         builder.HasIndex(x => x.At);
+        builder.HasIndex(x => x.IdempotencyKey).HasFilter("idempotency_key is not null");
+    }
+}
+
+internal sealed class SentRequestConfiguration : IEntityTypeConfiguration<SentRequest>
+{
+    public const int KeyMaxLength = 200;
+
+    public void Configure(EntityTypeBuilder<SentRequest> builder)
+    {
+        builder.ToTable("sent_request");
+        builder.HasKey(x => x.Key);
+        builder.Property(x => x.Key).HasMaxLength(KeyMaxLength);
+        builder.Property(x => x.TemplateKey).HasMaxLength(150);
+        builder.HasIndex(x => x.CreatedAt);
     }
 }

@@ -42,7 +42,8 @@ internal sealed class UserAdministration(
     AuthEventLog events,
     IUserRoleQuery roles,
     IRequestContext context,
-    IClock clock)
+    IClock clock,
+    SecurityNotifier security)
 {
     public static Error SelfChange => Error.Rule("identity.user.self", "identity.errors.userSelf");
 
@@ -159,12 +160,19 @@ internal sealed class UserAdministration(
     public Task<Result<UserDto>> ResetMfaAsync(Guid id, CancellationToken cancellationToken) =>
         ChangeAsync(id, "mfa.reset", guardSelf: false, async user =>
         {
+            var had = user.TwoFactorEnabled;
             user.EmailOtpEnabled = false;
             user.TotpEnabled = false;
             await users.SetTwoFactorEnabledAsync(user, false).ConfigureAwait(false);
             await users.RemoveAuthenticationTokenAsync(user, "[AspNetUserStore]", "AuthenticatorKey").ConfigureAwait(false);
             await users.RemoveAuthenticationTokenAsync(user, "[AspNetUserStore]", "RecoveryCodes").ConfigureAwait(false);
             await signIn.RevokeSessionsAsync(user.Id, null, cancellationToken).ConfigureAwait(false);
+            if (had)
+            {
+                await security.NotifyAsync(user, Email.SecurityEmails.MfaRemoved, values: SecurityNotifier.Method(null), cancellationToken: cancellationToken)
+                    .ConfigureAwait(false);
+            }
+
             return Result.Success();
         }, cancellationToken);
 

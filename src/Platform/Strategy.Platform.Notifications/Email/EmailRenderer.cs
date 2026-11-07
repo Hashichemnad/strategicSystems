@@ -31,8 +31,10 @@ public static partial class EmailRenderer
     /// <param name="values">Placeholder values.</param>
     /// <param name="link">Absolute link for the button.</param>
     /// <param name="branding">Names, colour, header and footer from Settings → Branding.</param>
+    /// <param name="language">The recipient's language: it leads the subject and is the document language (both columns stay, ADR 0162).</param>
     public static (string Subject, string Html, string Text) Render(
-        TemplateText template, TemplateText layout, IReadOnlyDictionary<string, string> values, string? link, BrandingSettings branding)
+        TemplateText template, TemplateText layout, IReadOnlyDictionary<string, string> values, string? link, BrandingSettings branding,
+        string? language = null)
     {
         ArgumentNullException.ThrowIfNull(template);
         ArgumentNullException.ThrowIfNull(layout);
@@ -52,7 +54,9 @@ public static partial class EmailRenderer
 
         var footerAr = Blank(branding.EmailFooterAr) ?? layout.BodyAr;
         var footerEn = Blank(branding.EmailFooterEn) ?? layout.BodyEn;
+        var english = language == "en";
         var html = Layout.Value
+            .Replace("<html>", english ? "<html lang=\"en\">" : "<html lang=\"ar\">", StringComparison.Ordinal)
             .Replace("{{subject_en}}", E(subjectEn), StringComparison.Ordinal)
             .Replace("{{subject_ar}}", E(subjectAr), StringComparison.Ordinal)
             .Replace("{{body_en}}", Part("en"), StringComparison.Ordinal)
@@ -74,7 +78,7 @@ public static partial class EmailRenderer
             text.AppendLine();
         }
 
-        return ($"{subjectAr} | {subjectEn}", html, text.ToString());
+        return (english ? $"{subjectEn} | {subjectAr}" : $"{subjectAr} | {subjectEn}", html, text.ToString());
     }
 
     /// <summary>Subject only, in one language (in-app titles).</summary>

@@ -53,6 +53,17 @@ public sealed class SecuritySettings
 
     public int TokenMaxDays { get; set; } = 365;
 
+    /// <summary>E-mail the user when they sign in from a device / network not seen before (ADR 0162). Off by default.</summary>
+    public bool NotifyNewDevice { get; set; }
+
+    /// <summary>"If this wasn't you" text of the security e-mails (Arabic); null = the seeded default.</summary>
+    public string? SecurityContactAr { get; set; }
+
+    /// <summary>"If this wasn't you" text of the security e-mails (English); null = the seeded default.</summary>
+    public string? SecurityContactEn { get; set; }
+
+    public const int SecurityContactMaxLength = 500;
+
     public uint Version { get; set; }
 
     public SecuritySettings Clone() => (SecuritySettings)MemberwiseClone();

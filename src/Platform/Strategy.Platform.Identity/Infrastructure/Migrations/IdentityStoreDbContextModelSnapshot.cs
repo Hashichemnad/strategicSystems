@@ -205,6 +205,40 @@ namespace Strategy.Platform.Identity.Infrastructure.Migrations
                     b.ToTable("identity_provider", "identity");
                 });
 
+            modelBuilder.Entity("Strategy.Platform.Identity.Domain.KnownDevice", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Fingerprint")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("fingerprint");
+
+                    b.Property<DateTimeOffset>("FirstSeenAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("first_seen_at");
+
+                    b.Property<DateTimeOffset>("LastSeenAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_seen_at");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_known_device");
+
+                    b.HasIndex("UserId", "Fingerprint")
+                        .IsUnique()
+                        .HasDatabaseName("ix_known_device_user_id_fingerprint");
+
+                    b.ToTable("known_device", "identity");
+                });
+
             modelBuilder.Entity("Strategy.Platform.Identity.Domain.PasswordHistoryEntry", b =>
                 {
                     b.Property<Guid>("Id")
@@ -327,6 +361,10 @@ namespace Strategy.Platform.Identity.Infrastructure.Migrations
                         .HasColumnType("character varying(20)")
                         .HasColumnName("mfa_policy");
 
+                    b.Property<bool>("NotifyNewDevice")
+                        .HasColumnType("boolean")
+                        .HasColumnName("notify_new_device");
+
                     b.Property<int>("PasswordHistory")
                         .HasColumnType("integer")
                         .HasColumnName("password_history");
@@ -354,6 +392,16 @@ namespace Strategy.Platform.Identity.Infrastructure.Migrations
                     b.Property<bool>("RequireLocalMfaAfterSso")
                         .HasColumnType("boolean")
                         .HasColumnName("require_local_mfa_after_sso");
+
+                    b.Property<string>("SecurityContactAr")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("security_contact_ar");
+
+                    b.Property<string>("SecurityContactEn")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("security_contact_en");
 
                     b.Property<int>("SessionAbsoluteHours")
                         .HasColumnType("integer")
@@ -391,6 +439,7 @@ namespace Strategy.Platform.Identity.Infrastructure.Migrations
                             MfaAllowEmail = true,
                             MfaAllowTotp = true,
                             MfaPolicy = "admins",
+                            NotifyNewDevice = false,
                             PasswordHistory = 5,
                             PasswordMinLength = 12,
                             PasswordRequireDigit = true,
@@ -751,6 +800,16 @@ namespace Strategy.Platform.Identity.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_user_tokens_users_user_id");
+                });
+
+            modelBuilder.Entity("Strategy.Platform.Identity.Domain.KnownDevice", b =>
+                {
+                    b.HasOne("Strategy.Platform.Identity.Domain.StrategyUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_known_device_users_user_id");
                 });
 
             modelBuilder.Entity("Strategy.Platform.Identity.Domain.PasswordHistoryEntry", b =>
