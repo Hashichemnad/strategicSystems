@@ -144,3 +144,56 @@ Screenshots referenced from `docs/screenshots/phase-*/` (E2E runs).
 New permissions: `platform.health.view`, `platform.setup.manage` (wizard stage 2, demo pack), both on the platform administrator role.
 No new integration events. No new scheduled jobs (health reads job state). Audit: setup token attempts, bootstrap, demo load / removal,
 health *test* actions.
+
+## 14. Phase 19 — Windows PowerShell 5.1, ZIP releases, slow networks (stream O, ADR 0163)
+
+SPEC-ADDENDUM A4–A6. Closes the known gap "Windows scripts only run under PowerShell 7 on Linux". No change to the backup format, the
+compose file's services, the image content or the scripts' messages and exit codes (ADR 0157 stays valid).
+
+**A4 — PowerShell 5.1 and 7.** Audit of `deploy/*.ps1` found these 5.1 failures, fixed as follows:
+
+| Pitfall (Windows PowerShell 5.1) | Where | Fix |
+|---|---|---|
+| Native stderr redirected (`2>$null`, `*>`, `2>&1`, or the host's own stderr redirected — CI, scheduled task, remote shell) becomes ErrorRecords; with `$ErrorActionPreference='Stop'` the first `docker compose` progress line or `docker info` warning **terminates** the script | `Invoke-Compose`, `Invoke-ComposeQuiet`, `Assert-Docker`, `Wait-App`, `git rev-parse`, `docker load`, `image inspect`, `--verify-audit-chain`, `logs` | one helper `Invoke-Native` in `lib.ps1`: `ErrorActionPreference='Continue'` (and `PSNativeCommandUseErrorActionPreference=$false`) locally, stdout / stderr merged and turned back into plain text lines (shown with `Write-Host`, captured, or discarded), result decided **only by `$LASTEXITCODE`**; on an interactive console with nothing redirected the command keeps the terminal (compose's live progress view). Every native call of the scripts goes through it (except the byte-exact `Invoke-ComposeBinary`, which uses `System.Diagnostics.Process`) |
+| A BOM-less UTF-8 script is read as the ANSI code page | `install.ps1` (em dash, middle dot) | every `.ps1` is **ASCII-only**; `tools/check-powershell.ps1` fails on a non-ASCII byte in a script without a BOM |
+| `Get-Content` reads BOM-less UTF-8 files as ANSI: `Set-EnvValue` rewrote `.env` and turned the `→` of `.env.example` (and any non-ASCII password or path) into mojibake; the backup path handed from `backup.ps1` to `upgrade.ps1` broke under a non-ASCII user folder | `Get-EnvValue`, `Set-EnvValue`, table counts, `SHA256SUMS`, `manifest.json`, result file | `Read-Utf8Lines` / `Read-Utf8Text` (`[IO.File]` with UTF-8); writes were already UTF-8 without BOM + LF (`Write-Utf8Lines`) — now used for every file the `.sh` twins or the container read |
+| `$null \| ConvertFrom-Json` is a terminating binding error | image labels in `restore.ps1` | only parse non-empty output, inside `try` |
+| PS7-only syntax / parameters (`??`, `?:`, `&&`, `\|\|`, `-Parallel`, `-AsHashtable`, `Join-Path` with 3+ parts, `-AsByteStream`, `$IsWindows`) | none found | guarded by PSScriptAnalyzer `PSUseCompatibleSyntax` (5.1 + 7) and `PSUseCompatibleCommands` (Windows PowerShell 5.1 profile) in CI |
+| `Invoke-WebRequest` without `-UseBasicParsing`, TLS 1.2 | not used (the scripts download nothing; the build downloads inside Docker) | rule recorded in ADR 0163 for future scripts |
+| `Get-FileHash` / `tar` / `Compress-Archive` | `Get-FileHash` exists since 4.0; archives are made by `tar` **inside** the container (byte-exact through `Process` streams) | unchanged |
+| Path separators to Docker | compose accepts Windows paths for `-f` / `--env-file`; `BUILD_CA_FILE` is stored as `./build-ca.local.pem` (relative to the project) | unchanged |
+
+**A5 — ZIP releases (no `.git`).** One function per twin (`Get-SourceRevision` / `source_revision`): the revision is read with git only when
+`<release>/.git` exists and git is installed; a failing `git rev-parse` (no repository, a broken `.git`, "dubious ownership") means "no
+revision" — stderr discarded, exit code tolerated, no `set -e` abort. Without `.git` git is not run at all, so a ZIP unpacked inside some
+other repository does not get that repository's commit as its image label. The version always comes from `deploy/VERSION`.
+
+**A6 — slow networks.** Build arguments (compose `args`, settable in `deploy/.env`, defaults in the Dockerfile and `.env.example`):
+`NPM_FETCH_RETRIES=5`, `NPM_FETCH_RETRY_MINTIMEOUT=20000`, `NPM_FETCH_RETRY_MAXTIMEOUT=120000`, `NPM_FETCH_TIMEOUT=600000` (ms) →
+`npm_config_*` for `npm ci`; NuGet: `NUGET_ENHANCED_MAX_NETWORK_TRY_COUNT=10` and `NUGET_ENHANCED_NETWORK_RETRY_DELAY_MILLISECONDS=3000`
+(NuGet's own per-request retry with back-off, `NUGET_RETRY_HTTP_429=true`), plus `NUGET_RESTORE_ATTEMPTS=3`: a bounded loop around
+`dotnet restore` (pause 20 s × attempt; packages already downloaded stay in the HTTP cache, so a later attempt continues) and
+`NUGET_RESTORE_DISABLE_PARALLEL=false` (`true` → `--disable-parallel`, fewer simultaneous connections on a very thin line). NuGet has no
+setting for its per-request HTTP timeout (100 s, checked against the SDK's NuGet 10 assemblies: only the retry variables exist), so a
+longer timeout is achieved by more and slower retries; recorded in ADR 0163. Runtime stage: `APT_RETRIES=5` and `APT_HTTP_TIMEOUT=120`
+passed as `-o Acquire::Retries` / `-o Acquire::http::Timeout` / `-o Acquire::https::Timeout` to every `apt-get` (nothing stays in the
+image). The defaults change nothing on a fast network. Documented in the installation guide (en + ar) and `deploy/README.md`.
+
+**Tests.**
+- `tests/deploy/fake-docker/` — a fake `docker` (Python, standard library only) that writes compose-style progress to **stderr**, records every
+  call (arguments without the `-f / --env-file / --profile` prefix, plus `APP_VERSION` / `GIT_REVISION`) as JSON lines, returns scripted exit
+  codes (`FAKE_DOCKER_FAIL="<substring>=<code>;…"`) and plays the binary parts (pg_dump bytes with NUL / CR / LF / 0xFF, tar, stdin of
+  psql / pg_restore saved for comparison). On Linux a `docker` shell wrapper runs it; on Windows a tiny forwarder `docker.exe` (C# 5, compiled
+  with the .NET Framework `csc.exe` of the runner) — `System.Diagnostics.Process` (used by `Invoke-ComposeBinary`) only finds `.exe` files.
+- `tests/deploy/Test-DeployScripts.ps1` (plain assertions, no Pester; runs under 5.1 and 7, `-Shell` chooses the PowerShell that runs the
+  scripts) and `tests/deploy/test-deploy-scripts.sh` (bash): in a temporary copy of `deploy/` **without `.git`** (and once with a broken
+  `.git` file, so git fails with stderr): install (fresh, again, build failure), backup (binary integrity, checksums, manifest), restore (dump
+  and SQL received, checksum mismatch → 7), upgrade (new version, migration failure → 7), Docker not running → 10; `.env` and the other
+  written files: UTF-8 without BOM, LF, non-ASCII line of `.env.example` byte-identical. Output of the scripts is redirected to a file, which
+  is exactly the condition that broke 5.1.
+- CI: job **`deploy-windows`** on `windows-latest` runs the PowerShell tests under `powershell.exe` (5.1) and `pwsh` (7); job **`deploy-scripts`**
+  (ubuntu, independent of the slow image build) runs shellcheck, the parser / encoding check, the bash tests, the PowerShell tests under
+  `pwsh` on Linux and PSScriptAnalyzer 1.23.0 (`tests/deploy/Invoke-ScriptAnalysis.ps1`: error-level rules, `PSUseCompatibleSyntax` 5.1 /
+  7.0, `PSUseCompatibleCommands` against the analyzer's Windows PowerShell 5.1 profile).
+- **Manual acceptance on a real Windows machine with Docker Desktop** (the owner runs it during acceptance): checklist
+  `docs/operations/windows-acceptance.md` — install from the ZIP under 5.1, backup, restore, upgrade, then the same under 7.
