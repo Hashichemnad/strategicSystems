@@ -192,10 +192,18 @@ function Invoke-ComposeBinary {
     $psi.WorkingDirectory = (Get-Location -PSProvider FileSystem).ProviderPath
     $psi.RedirectStandardOutput = [bool]$StdOutFile
     $psi.RedirectStandardInput = [bool]$StdInFile
+    if ($StdInFile -and -not $StdOutFile -and $PSVersionTable.PSEdition -ne 'Core') {
+        # Windows PowerShell 5.1 (.NET Framework): Process.StandardInput is a StreamWriter that writes the console encoding's preamble
+        # (a UTF-8 BOM) as soon as it is created, which would corrupt a dump or an archive. Start-Process hands the file itself to the
+        # child as its standard input, byte for byte.
+        $child = Start-Process -FilePath $psi.FileName -ArgumentList $psi.Arguments -WorkingDirectory $psi.WorkingDirectory `
+            -RedirectStandardInput (Get-FullPath $StdInFile) -NoNewWindow -Wait -PassThru
+        if ($child.ExitCode -ne 0) { throw "docker compose $($Arguments -join ' ') failed (exit $($child.ExitCode))." }
+        return
+    }
     $process = [Diagnostics.Process]::Start($psi)
     if ($StdInFile) {
-        # Write to the raw pipe and close the pipe itself: closing Process.StandardInput (a StreamWriter) flushes the encoding's
-        # preamble on .NET Framework, which appends a BOM after the binary data when the console code page is UTF-8 (65001).
+        # PowerShell 7 (.NET): the raw pipe, closed itself.
         $in = [IO.File]::OpenRead((Get-FullPath $StdInFile))
         $pipe = $process.StandardInput.BaseStream
         try { $in.CopyTo($pipe); $pipe.Flush() } finally { $in.Dispose(); $pipe.Close() }
