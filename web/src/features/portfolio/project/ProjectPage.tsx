@@ -17,6 +17,8 @@ import {
   DialogContent,
   FormField,
   Input,
+  RichTextEditor,
+  RichTextView,
   PageHeader,
   Select,
   Skeleton,
@@ -475,8 +477,8 @@ function Overview({
     [t('fields.plannedStart'), p.plannedStart ? formatDate(p.plannedStart, lang) : '—'],
     [t('fields.plannedEnd'), p.plannedEnd ? formatDate(p.plannedEnd, lang) : '—'],
   ];
+  // The description is rich text (ADR 0161); it is shown through RichTextView, the other texts stay plain.
   const texts: [string, string | null | undefined][] = [
-    [t('fields.description'), p.description],
     [t('fields.scopeOfWork'), p.scopeOfWork],
     [t('project.charter.structuralChanges'), c.structuralChanges],
     [t('project.charter.resourcesHuman'), c.resourcesHuman],
@@ -510,6 +512,12 @@ function Overview({
             </div>
           ))}
         </dl>
+        {p.description && (
+          <div>
+            <h3 className="text-sm text-muted-foreground">{t('fields.description')}</h3>
+            <RichTextView className="mt-1" value={p.description} />
+          </div>
+        )}
         {texts
           .filter(([, value]) => value)
           .map(([key, value]) => (
@@ -835,7 +843,13 @@ function CharterDialog({
         <div className="grid max-h-[65vh] gap-3 overflow-y-auto md:grid-cols-2" data-testid="charter-dialog">
           {text('nameAr', t('fields.nameAr'))}
           {text('nameEn', t('fields.nameEn'))}
-          {text('description', t('fields.description'), true)}
+          <FormField label={t('fields.description')} className="md:col-span-2">
+            <RichTextEditor
+              aria-label={t('fields.description')}
+              value={v.description ?? ''}
+              onChange={(html) => set({ description: html })}
+            />
+          </FormField>
           {text('scopeOfWork', t('fields.scopeOfWork'), true)}
           <FormField label={t('fields.strategicObjectiveCode')}>
             <Select
