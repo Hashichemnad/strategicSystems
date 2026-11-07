@@ -14,6 +14,7 @@ import {
   EmptyState,
   FormField,
   Input,
+  RichTextEditor,
   Select,
   Skeleton,
   StatusBanner,
@@ -37,7 +38,7 @@ export type FormValues = Record<string, FieldValue>;
 export interface FieldSpec {
   name: string;
   label: string;
-  kind: 'text' | 'textarea' | 'number' | 'date' | 'datetime' | 'select' | 'employee' | 'bool';
+  kind: 'text' | 'textarea' | 'richtext' | 'number' | 'date' | 'datetime' | 'select' | 'employee' | 'bool';
   options?: readonly SelectOption[];
   required?: boolean;
   wide?: boolean;
@@ -240,7 +241,8 @@ export function FieldInput({
   onChange: (value: FieldValue) => void;
 }) {
   const text = typeof value === 'string' ? value : '';
-  const wide = spec.wide || spec.kind === 'textarea' ? 'md:col-span-2' : undefined;
+  const wide =
+    spec.wide || spec.kind === 'textarea' || spec.kind === 'richtext' ? 'md:col-span-2' : undefined;
   if (spec.kind === 'bool')
     return (
       <div className={wide}>
@@ -251,6 +253,8 @@ export function FieldInput({
     switch (spec.kind) {
       case 'textarea':
         return <Textarea value={text} onChange={(e) => onChange(e.target.value)} />;
+      case 'richtext':
+        return <RichTextEditor aria-label={spec.label} value={text} onChange={(html) => onChange(html)} />;
       case 'number':
         return (
           <Input dir="ltr" inputMode="decimal" value={text} onChange={(e) => onChange(e.target.value)} />

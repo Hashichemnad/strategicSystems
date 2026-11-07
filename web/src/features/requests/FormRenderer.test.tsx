@@ -1,12 +1,12 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { screen } from '@testing-library/react';
+import { cleanup, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { api } from '@/api/client';
 import { renderWithProviders } from '@/test/render';
 import type { FormSchema, FormValues } from './api';
-import { FormRenderer, FormValuesView, plainText } from './FormRenderer';
+import { FormRenderer, FormValuesView } from './FormRenderer';
 
 /** The generated client is too large for TypeScript to infer the spy's types (TS2589). */
 type LooseGetApi = { GET: (...args: unknown[]) => Promise<unknown> };
@@ -91,7 +91,20 @@ describe('FormRenderer', () => {
     expect(screen.getByRole('table')).toHaveTextContent('A4');
   });
 
-  it('renders rich text as inert text', () => {
-    expect(plainText('<p>Hi<img src=x onerror="alert(1)"></p><script>bad()</script>')).toBe('Hi\nbad()');
+  it('renders rich text sanitised and legacy plain text as text', async () => {
+    const rich: FormSchema = {
+      sections: [{ code: 's', fields: [{ code: 'minutes', type: 'richtext', labelEn: 'Minutes' }] }],
+    };
+    await render(
+      <FormValuesView
+        schema={rich}
+        values={{ minutes: '<p><strong>Hi</strong><img src=x onerror="alert(1)"></p><script>bad()</script>' }}
+      />,
+    );
+    expect(screen.getByText('Hi').tagName).toBe('STRONG');
+    expect(screen.getByTestId('value-minutes').querySelector('img, script')).toBeNull();
+    cleanup();
+    await render(<FormValuesView schema={rich} values={{ minutes: 'a < b > c' }} />);
+    expect(screen.getByTestId('value-minutes')).toHaveTextContent('a < b > c');
   });
 });

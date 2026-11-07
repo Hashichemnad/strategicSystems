@@ -16,6 +16,8 @@ import {
   DatePicker,
   FormField,
   Input,
+  RichTextEditor,
+  RichTextView,
   Select,
   Table,
   TableBody,
@@ -220,13 +222,25 @@ function ScalarInput(
   };
   const testId = `field-${props.path}`;
   switch (field.type) {
-    case 'textarea':
     case 'richtext':
+      // Formatted text (ADR 0161): the server sanitises the HTML and counts the field's maximum on the visible text.
+      return (
+        <div data-testid={testId} className={className}>
+          <RichTextEditor
+            {...aria}
+            aria-label={fieldLabel(field, language)}
+            value={text(value)}
+            disabled={disabled}
+            onChange={(html) => onValue(html ?? '')}
+          />
+        </div>
+      );
+    case 'textarea':
       return (
         <Textarea
           {...aria}
           dir="auto"
-          rows={field.type === 'richtext' ? 6 : 4}
+          rows={4}
           maxLength={field.maxLength ?? undefined}
           value={text(value)}
           disabled={disabled}
@@ -780,11 +794,7 @@ export function ValueView({
         </bdi>
       );
     case 'richtext':
-      return (
-        <p dir="auto" className="whitespace-pre-line">
-          {plainText(text(value))}
-        </p>
-      );
+      return <RichTextView value={text(value)} />;
     case 'textarea':
       return (
         <p dir="auto" className="whitespace-pre-line">
@@ -834,17 +844,4 @@ function UnitName({ id, language }: { id: string; language: string }) {
 function useOrgUnitName(id: string) {
   const tree = useUnitTree();
   return tree.data?.find((node) => node.id === id);
-}
-
-/**
- * Rich text shown as its text only: the HTML is parsed into an inert document (no scripts run, nothing is inserted into the page), so
- * nothing from the value can execute.
- */
-export function plainText(html: string): string {
-  if (!/[<&]/u.test(html)) return html;
-  const doc = new DOMParser().parseFromString(
-    html.replace(/<(br|\/p|\/li|\/h\d)\s*\/?>/giu, '$&\n'),
-    'text/html',
-  );
-  return doc.body.textContent.trim();
 }

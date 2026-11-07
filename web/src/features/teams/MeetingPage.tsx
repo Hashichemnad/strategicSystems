@@ -11,7 +11,10 @@ import {
   DialogClose,
   DialogContent,
   FormField,
+  isRichTextBlank,
   PageHeader,
+  RichTextEditor,
+  RichTextView,
   Select,
   Skeleton,
   StatusBanner,
@@ -145,9 +148,7 @@ export function MeetingPage() {
       {m.agenda && (
         <section className="rounded-lg border bg-card p-4">
           <h2 className="mb-1 text-sm text-muted-foreground">{t('meetings.agenda')}</h2>
-          <p className="whitespace-pre-line" dir="auto">
-            {m.agenda}
-          </p>
+          <RichTextView value={m.agenda} />
         </section>
       )}
       <div className="grid gap-4 lg:grid-cols-[1fr_2fr]">
@@ -190,24 +191,36 @@ export function MeetingPage() {
         </section>
         <section className="flex flex-col gap-4 rounded-lg border bg-card p-4" data-testid="meeting-minutes">
           {aiDrafted && <StatusChip tone="info">{t('meetings.aiDraftLabel')}</StatusChip>}
-          <FormField label={t('meetings.minutes')}>
-            <Textarea
-              rows={8}
-              value={minutes}
-              disabled={!editable}
-              onChange={(e) => setMinutes(e.target.value)}
-              dir="auto"
-            />
-          </FormField>
-          <FormField label={t('meetings.decisions')}>
-            <Textarea
-              rows={4}
-              value={decisions}
-              disabled={!editable}
-              onChange={(e) => setDecisions(e.target.value)}
-              dir="auto"
-            />
-          </FormField>
+          {editable ? (
+            <>
+              <FormField label={t('meetings.minutes')}>
+                <RichTextEditor
+                  aria-label={t('meetings.minutes')}
+                  value={minutes}
+                  onChange={(v) => setMinutes(v ?? '')}
+                  minHeight="12rem"
+                />
+              </FormField>
+              <FormField label={t('meetings.decisions')}>
+                <RichTextEditor
+                  aria-label={t('meetings.decisions')}
+                  value={decisions}
+                  onChange={(v) => setDecisions(v ?? '')}
+                />
+              </FormField>
+            </>
+          ) : (
+            <>
+              <div>
+                <h3 className="mb-1 text-sm font-medium">{t('meetings.minutes')}</h3>
+                <RichTextView value={minutes} />
+              </div>
+              <div>
+                <h3 className="mb-1 text-sm font-medium">{t('meetings.decisions')}</h3>
+                <RichTextView value={decisions} />
+              </div>
+            </>
+          )}
           {draft && draft.recommendations.length > 0 && (
             <ul className="flex flex-col gap-2" data-testid="minutes-recommendations">
               {draft.recommendations.map((r, i) => (
@@ -245,7 +258,7 @@ export function MeetingPage() {
                 {t('meetings.saveMinutes')}
               </Button>
               <Button
-                disabled={!minutes.trim()}
+                disabled={isRichTextBlank(minutes)}
                 loading={submit.isPending}
                 onClick={() => saveNow(() => toast({ title: t('meetings.submitMinutes') }))}
               >
