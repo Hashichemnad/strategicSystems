@@ -30,6 +30,7 @@ import {
   type ProtectionRule,
 } from './api';
 import { actionError } from './components';
+import { SystemSettingsLinks } from '@/features/access/SystemSettingsLinks';
 
 /** Settings → IP (docs/design/requests.md §4.1): term and internal-only per protection type, reminder months, MOET form header. */
 export function IpSettingsPage() {
@@ -99,6 +100,7 @@ export function IpSettingsPage() {
           </Button>
         }
       />
+      <SystemSettingsLinks system="ip" />
       {error && <StatusBanner tone="danger" title={error} />}
       <section className="flex flex-col gap-3 rounded-lg border bg-card p-5">
         <h2 className="font-semibold">{t('settings.protections')}</h2>

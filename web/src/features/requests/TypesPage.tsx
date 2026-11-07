@@ -20,6 +20,7 @@ import {
 } from '@/ui';
 import { useRequestTypes } from './api';
 import { TypeIcon } from './components';
+import { SystemSettingsLinks } from '@/features/access/SystemSettingsLinks';
 
 /** Absolute address of an in-app path, for pasting into the intranet. */
 export function absoluteUrl(path: string): string {
@@ -46,6 +47,7 @@ export function RequestTypesPage() {
           </Button>
         }
       />
+      <SystemSettingsLinks system="requests" />
       {types.isPending ? (
         <Skeleton className="h-64 rounded-lg" />
       ) : types.isError ? (

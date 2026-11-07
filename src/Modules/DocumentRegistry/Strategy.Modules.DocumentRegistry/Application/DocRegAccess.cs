@@ -139,6 +139,9 @@ internal sealed class DocRegAccessCatalogue : IAccessCatalogueSource
         new(DocRegPermissions.AiQa, "أسئلة وأجوبة على الوثائق المنشورة", "Q&A over published documents", Scopable: false),
     ];
 
+    /// <summary>Members page lists (ADR 0166, docs/design/members-responsibilities.md §1).</summary>
+    public SystemMemberRoles MemberRoles => new(["administrator"], ["reader"], ["office", "leadership"]);
+
     public IEnumerable<RoleSeed> DefaultRoles =>
     [
         new("reader", "قارئ الوثائق", "Document reader",

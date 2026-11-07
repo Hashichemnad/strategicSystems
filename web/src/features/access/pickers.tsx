@@ -56,16 +56,21 @@ export function UnitSelect(props: {
   );
 }
 
-/** Search-as-you-type user chooser (user name, e-mail or employee name; Arabic spelling variants match). */
+/**
+ * Search-as-you-type user chooser (user name, e-mail or employee name; Arabic spelling variants match). With `membersOf` the search
+ * goes through that system's Members endpoint, for delegated administrators without `access.assignment.read` (ADR 0167).
+ */
 export function UserPicker({
   value,
   onChange,
   id,
+  membersOf,
   ...aria
 }: {
   value: Principal | undefined;
   onChange: (value: Principal | undefined) => void;
   id?: string;
+  membersOf?: string;
   'aria-invalid'?: boolean;
   'aria-describedby'?: string;
 }) {
@@ -91,9 +96,16 @@ export function UserPicker({
     return () => document.removeEventListener('pointerdown', onPointerDown);
   }, [open]);
   const results = useQuery({
-    queryKey: ['access', 'users', debounced],
+    queryKey: ['access', 'users', membersOf ?? '', debounced],
     queryFn: async ({ signal }) =>
-      unwrap(await api.GET('/api/v1/access/users', { params: { query: { search: debounced } }, signal })),
+      membersOf
+        ? unwrap(
+            await api.GET('/api/v1/access/systems/{code}/members/user-search', {
+              params: { path: { code: membersOf }, query: { search: debounced } },
+              signal,
+            }),
+          )
+        : unwrap(await api.GET('/api/v1/access/users', { params: { query: { search: debounced } }, signal })),
     enabled: open && debounced.length > 0,
   });
 

@@ -44,6 +44,26 @@ public interface IAccessCatalogueSource
     IEnumerable<RoleSeed> DefaultRoles => [];
 
     IEnumerable<RecordRoleDefinition> RecordRoles => [];
+
+    /// <summary>
+    /// Default roles of the system's Members page (SPEC-ADDENDUM §D1, ADR 0166): administrators, users and extra lists, as codes of
+    /// <see cref="DefaultRoles"/>. Null: the system has no Members page. The platform administrator can override them in Settings.
+    /// </summary>
+    SystemMemberRoles? MemberRoles => null;
+}
+
+/// <summary>
+/// Which roles of a system the Members lists mean (ADR 0166): <paramref name="AdministratorRoles"/> (system administrators, people only),
+/// <paramref name="UserRoles"/> (users: people, units with sub-units, everyone; plus system access) and one extra list per
+/// <paramref name="ExtraRoles"/> entry. Codes are role codes within the system; the three lists are disjoint.
+/// </summary>
+public sealed record SystemMemberRoles(IReadOnlyList<string> AdministratorRoles, IReadOnlyList<string> UserRoles, IReadOnlyList<string> ExtraRoles)
+{
+    /// <summary>The delegated-administration permission of a system (ADR 0167), e.g. <c>portfolio.members.manage</c>.</summary>
+    public static string ManagePermission(string systemCode) => $"{systemCode}.members.manage";
+
+    /// <summary>Every role code of the three lists.</summary>
+    public IEnumerable<string> AllRoles => AdministratorRoles.Concat(UserRoles).Concat(ExtraRoles);
 }
 
 public static class AccessCatalogueServiceCollectionExtensions

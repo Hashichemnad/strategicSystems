@@ -250,6 +250,9 @@ internal sealed class RiskAccessCatalogue : IAccessCatalogueSource
     private static readonly string[] Ai =
         [RiskPermissions.AiIdentify, RiskPermissions.AiQuality, RiskPermissions.AiSuggest, RiskPermissions.AiDuplicates, RiskPermissions.AiReview];
 
+    /// <summary>Members page lists (ADR 0166, docs/design/members-responsibilities.md §1).</summary>
+    public SystemMemberRoles MemberRoles => new(["risk-office"], ["owner"], ["coordinator", "viewer", "risk-committee", "internal-audit"]);
+
     public IEnumerable<RoleSeed> DefaultRoles =>
     [
         new("risk-office", "مكتب المخاطر", "Risk Office",

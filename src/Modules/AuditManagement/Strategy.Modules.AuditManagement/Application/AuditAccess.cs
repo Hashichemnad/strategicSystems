@@ -255,6 +255,9 @@ internal sealed class AuditAccessCatalogue : IAccessCatalogueSource
         new(AuditPermissions.AiExtract), new(AuditPermissions.AiEvidence), new(AuditPermissions.AiRepeat), new(AuditPermissions.AiSummary),
     ];
 
+    /// <summary>Members page lists (ADR 0166, docs/design/members-responsibilities.md §1).</summary>
+    public SystemMemberRoles MemberRoles => new(["audit-office"], ["department-user"], ["chief-audit-executive", "audit-committee", "viewer"]);
+
     public IEnumerable<RoleSeed> DefaultRoles =>
     [
         new("audit-office", "مكتب التدقيق الداخلي", "Audit Office", OfficeGrants, RequiresMfa: true),

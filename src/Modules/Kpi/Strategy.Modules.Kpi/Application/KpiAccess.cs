@@ -98,6 +98,9 @@ internal sealed class KpiAccessCatalogue : IAccessCatalogueSource
         new(KpiPermissions.AiNarrative, "تقرير الأداء السردي", "Performance narrative", Scopable: false),
     ];
 
+    /// <summary>Members page lists (ADR 0166, docs/design/members-responsibilities.md §1).</summary>
+    public SystemMemberRoles MemberRoles => new(["administrator"], ["owner"], ["strategy-office", "department-manager", "executive"]);
+
     public IEnumerable<RoleSeed> DefaultRoles =>
     [
         new("owner", "مسؤول المؤشر", "KPI owner",

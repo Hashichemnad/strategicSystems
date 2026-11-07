@@ -2447,6 +2447,39 @@
         }
       }
     },
+    "/api/v1/access/members/systems": {
+      "get": {
+        "tags": [
+          "access"
+        ],
+        "operationId": "ListMemberSystems",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SystemDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/access/record-roles/{id}/permissions": {
       "put": {
         "tags": [
@@ -2792,6 +2825,291 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/PermissionMatrixDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/access/systems/{code}/members": {
+      "get": {
+        "tags": [
+          "access"
+        ],
+        "operationId": "GetSystemMembers",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemMembersDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "access"
+        ],
+        "operationId": "AddSystemMember",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddSystemMemberInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemMembersDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/access/systems/{code}/members/{id}/remove": {
+      "post": {
+        "tags": [
+          "access"
+        ],
+        "operationId": "RemoveSystemMember",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RemoveSystemMemberInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemMembersDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/access/systems/{code}/members/user-search": {
+      "get": {
+        "tags": [
+          "access"
+        ],
+        "operationId": "SearchMemberUsers",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PrincipalDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/access/systems/{code}/member-roles": {
+      "get": {
+        "tags": [
+          "access"
+        ],
+        "operationId": "GetMemberRoles",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemMemberRolesConfigDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "access"
+        ],
+        "operationId": "SetMemberRoles",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SystemMemberRolesInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemMemberRolesConfigDto"
                 }
               }
             }
@@ -48125,6 +48443,64 @@
         },
         "description": "Outcome of a decision."
       },
+      "AddSystemMemberInput": {
+        "required": [
+          "list",
+          "principalKind",
+          "principalId",
+          "validFrom",
+          "validTo",
+          "note"
+        ],
+        "type": "object",
+        "properties": {
+          "list": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "`administrators`, `users` or `extra:&lt;roleCode&gt;`."
+          },
+          "principalKind": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "`user`, `unit` (and its sub-units) or `everyone`; administrators are people only."
+          },
+          "principalId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "The user or unit (none for everyone).",
+            "format": "uuid"
+          },
+          "validFrom": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "First day (default today).",
+            "format": "date"
+          },
+          "validTo": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Last day (default open-ended).",
+            "format": "date"
+          },
+          "note": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Stored on the assignments and used as the audit reason."
+          }
+        }
+      },
       "AdminHealthCheck": {
         "required": [
           "code",
@@ -86892,6 +87268,20 @@
           }
         }
       },
+      "RemoveSystemMemberInput": {
+        "required": [
+          "reason"
+        ],
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "RenewalInput": {
         "required": [
           "registrationNo",
@@ -95536,6 +95926,268 @@
             "format": "uint32"
           }
         }
+      },
+      "SystemMemberDto": {
+        "required": [
+          "id",
+          "principal",
+          "validFrom",
+          "validTo",
+          "active",
+          "systemAccess",
+          "roleCodes"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Pass to `…/members/{id}/remove`.",
+            "format": "uuid"
+          },
+          "principal": {
+            "description": "User, unit (and below) or everyone.",
+            "$ref": "#/components/schemas/PrincipalDto"
+          },
+          "validFrom": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "First day of the list's roles (null: system access only).",
+            "format": "date"
+          },
+          "validTo": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Last day (null: open-ended).",
+            "format": "date"
+          },
+          "active": {
+            "type": "boolean",
+            "description": "In force today."
+          },
+          "systemAccess": {
+            "type": "boolean",
+            "description": "The principal holds its own system-access grant (always true for platform-kind systems)."
+          },
+          "roleCodes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The list's roles the principal holds."
+          }
+        }
+      },
+      "SystemMemberListDto": {
+        "required": [
+          "key",
+          "kind",
+          "roles",
+          "canManage",
+          "members"
+        ],
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "description": "`administrators`, `users` or `extra:&lt;roleCode&gt;`."
+          },
+          "kind": {
+            "type": "string",
+            "description": "`administrators`, `users` or `extra`."
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SystemMemberRoleDto"
+            },
+            "description": "The roles an entry of this list holds."
+          },
+          "canManage": {
+            "type": "boolean",
+            "description": "False when the list holds a platform administrator role and the caller is a delegated administrator (ADR 0167)."
+          },
+          "members": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SystemMemberDto"
+            },
+            "description": "One row per principal."
+          }
+        }
+      },
+      "SystemMemberRoleDto": {
+        "required": [
+          "code",
+          "nameAr",
+          "nameEn"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "SystemMemberRolesConfigDto": {
+        "required": [
+          "systemCode",
+          "administratorRoles",
+          "userRoles",
+          "extraRoles",
+          "defaults",
+          "isDefault",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "systemCode": {
+            "type": "string"
+          },
+          "administratorRoles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "userRoles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "extraRoles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "defaults": {
+            "$ref": "#/components/schemas/SystemMemberRolesDefaultsDto"
+          },
+          "isDefault": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        },
+        "description": "A system's member-role configuration (Settings, platform administrator) with the code defaults."
+      },
+      "SystemMemberRolesDefaultsDto": {
+        "required": [
+          "administratorRoles",
+          "userRoles",
+          "extraRoles"
+        ],
+        "type": "object",
+        "properties": {
+          "administratorRoles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "userRoles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "extraRoles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "SystemMemberRolesInput": {
+        "required": [
+          "administratorRoles",
+          "userRoles",
+          "extraRoles",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "administratorRoles": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "userRoles": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "extraRoles": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "version": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          }
+        }
+      },
+      "SystemMembersDto": {
+        "required": [
+          "system",
+          "platformAdministrator",
+          "lists"
+        ],
+        "type": "object",
+        "properties": {
+          "system": {
+            "description": "The system.",
+            "$ref": "#/components/schemas/SystemDto"
+          },
+          "platformAdministrator": {
+            "type": "boolean",
+            "description": "The caller holds `access.assignment.manage` (may also manage platform administrator roles)."
+          },
+          "lists": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SystemMemberListDto"
+            },
+            "description": "Administrators, users, then one list per extra role."
+          }
+        },
+        "description": "A system's Members page (ADR 0166): its lists in order (administrators, users, extra roles)."
       },
       "SystemVersionDto": {
         "required": [

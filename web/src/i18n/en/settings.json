@@ -29,7 +29,7 @@
       "description": "Change any label of the interface in Arabic and English."
     },
     "roles": {
-      "title": "Roles and permissions",
+      "title": "Advanced permissions",
       "description": "The permission matrix of each system: roles, permissions and data scope."
     },
     "assignments": {
@@ -175,6 +175,10 @@
     "sourceSystems": {
       "title": "Source systems",
       "description": "The systems external IDs come from (Salesforce, SAP, …), used by imports, the API and synchronisation."
+    },
+    "members": {
+      "title": "Members",
+      "description": "Administrators, users and extra roles of each system, without the matrix."
     }
   },
   "title": "Settings",

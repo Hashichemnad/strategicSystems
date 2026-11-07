@@ -16,6 +16,7 @@ import {
 } from '@/ui';
 import { auditApi, departmentScopes, useAuditMutation, useAuditSettings, type AuditSettings } from './api';
 import { useAuditT } from './components';
+import { SystemSettingsLinks } from '@/features/access/SystemSettingsLinks';
 
 type CardKey =
   | 'kpiClosureRateCardId'
@@ -90,6 +91,7 @@ export function AuditSettingsPage() {
           </Button>
         }
       />
+      <SystemSettingsLinks system="auditmgmt" />
       <Section title={t('settings.visibility')}>
         <FormField
           label={t('settings.departmentScope')}

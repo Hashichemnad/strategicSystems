@@ -20,12 +20,12 @@ public class AccessAdministrationTests(ApiFixture api) : IClassFixture<ApiFixtur
         var matrix = await admin.GetFromJsonAsync<JsonElement>($"{Access}/systems/sample/matrix");
 
         var permissions = matrix.GetProperty("permissions").EnumerateArray().ToList();
-        permissions.Select(p => p.GetProperty("code").GetString()).ShouldBe(["sample.item.read", "sample.item.create", "sample.item.update", "sample.item.submit"]);
+        permissions.Select(p => p.GetProperty("code").GetString()).ShouldBe(["sample.item.read", "sample.item.create", "sample.item.update", "sample.item.submit", "sample.members.manage"]);
         permissions.ShouldAllBe(p => p.GetProperty("labelAr").GetString()!.Length > 0 && p.GetProperty("labelEn").GetString()!.Length > 0);
         var editor = matrix.GetProperty("roles").EnumerateArray().Single(r => r.GetProperty("code").GetString() == "editor");
         editor.GetProperty("permissions").EnumerateArray()
             .Select(p => $"{p.GetProperty("permission").GetString()}:{p.GetProperty("scope").GetString()}")
-            .ShouldBe(["sample.item.create:all", "sample.item.read:all", "sample.item.submit:own", "sample.item.update:own"]);
+            .ShouldBe(["sample.item.create:all", "sample.item.read:all", "sample.item.submit:own", "sample.item.update:own", "sample.members.manage:all"]);
         matrix.GetProperty("recordRoles").EnumerateArray().Single(r => r.GetProperty("roleCode").GetString() == "editor")
             .GetProperty("permissions").GetArrayLength().ShouldBe(2);
         await (await admin.GetAsync($"{Access}/systems/unknown/matrix")).ShouldBeProblemAsync(HttpStatusCode.NotFound, "record.notFound");

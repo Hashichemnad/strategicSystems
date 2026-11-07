@@ -47,6 +47,7 @@ import {
   type PracticeSearch,
 } from './api';
 import { BenchPageLayout, StageChip, useBenchAction, useBenchLabels, useBenchT } from './components';
+import { SystemSettingsLinks } from '@/features/access/SystemSettingsLinks';
 
 const ALL = '__all';
 
@@ -576,6 +577,7 @@ export function BenchSettingsPage() {
           </Button>
         }
       />
+      <SystemSettingsLinks system="bench" />
       <Section title={t('settings.notices')}>
         <div className="grid gap-3 md:grid-cols-2">
           <FormField label={t('settings.searchNoticeDays')}>

@@ -740,6 +740,22 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/access/members/systems': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListMemberSystems'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/access/record-roles/{id}/permissions': {
     parameters: {
       query?: never;
@@ -861,6 +877,70 @@ export interface paths {
     };
     get: operations['GetPermissionMatrix'];
     put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/access/systems/{code}/members': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetSystemMembers'];
+    put?: never;
+    post: operations['AddSystemMember'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/access/systems/{code}/members/{id}/remove': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RemoveSystemMember'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/access/systems/{code}/members/user-search': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['SearchMemberUsers'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/access/systems/{code}/member-roles': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetMemberRoles'];
+    put: operations['SetMemberRoles'];
     post?: never;
     delete?: never;
     options?: never;
@@ -13653,6 +13733,29 @@ export interface components {
       nextStepNameAr: null | string;
       nextStepNameEn: null | string;
     };
+    AddSystemMemberInput: {
+      /** @description `administrators`, `users` or `extra:&lt;roleCode&gt;`. */
+      list: null | string;
+      /** @description `user`, `unit` (and its sub-units) or `everyone`; administrators are people only. */
+      principalKind: null | string;
+      /**
+       * Format: uuid
+       * @description The user or unit (none for everyone).
+       */
+      principalId: null | string;
+      /**
+       * Format: date
+       * @description First day (default today).
+       */
+      validFrom: null | string;
+      /**
+       * Format: date
+       * @description Last day (default open-ended).
+       */
+      validTo: null | string;
+      /** @description Stored on the assignments and used as the audit reason. */
+      note: null | string;
+    };
     /**
      * @description One check on the administrator Health page. Never English text: MessageKey and Params are translated by
      *     the client (namespace `health`). Params values are invariant strings (numbers, ISO 8601 dates, codes); never secrets.
@@ -23246,6 +23349,9 @@ export interface components {
       /** Format: uuid */
       usageId: string;
     };
+    RemoveSystemMemberInput: {
+      reason: null | string;
+    };
     RenewalInput: {
       registrationNo: null | string;
       /** Format: date */
@@ -25322,6 +25428,80 @@ export interface components {
       owningUnitId: null | string;
       /** Format: uint32 */
       version: number;
+    };
+    SystemMemberDto: {
+      /**
+       * Format: uuid
+       * @description Pass to `…/members/{id}/remove`.
+       */
+      id: string;
+      /** @description User, unit (and below) or everyone. */
+      principal: components['schemas']['PrincipalDto'];
+      /**
+       * Format: date
+       * @description First day of the list's roles (null: system access only).
+       */
+      validFrom: null | string;
+      /**
+       * Format: date
+       * @description Last day (null: open-ended).
+       */
+      validTo: null | string;
+      /** @description In force today. */
+      active: boolean;
+      /** @description The principal holds its own system-access grant (always true for platform-kind systems). */
+      systemAccess: boolean;
+      /** @description The list's roles the principal holds. */
+      roleCodes: string[];
+    };
+    SystemMemberListDto: {
+      /** @description `administrators`, `users` or `extra:&lt;roleCode&gt;`. */
+      key: string;
+      /** @description `administrators`, `users` or `extra`. */
+      kind: string;
+      /** @description The roles an entry of this list holds. */
+      roles: components['schemas']['SystemMemberRoleDto'][];
+      /** @description False when the list holds a platform administrator role and the caller is a delegated administrator (ADR 0167). */
+      canManage: boolean;
+      /** @description One row per principal. */
+      members: components['schemas']['SystemMemberDto'][];
+    };
+    SystemMemberRoleDto: {
+      code: string;
+      nameAr: null | string;
+      nameEn: null | string;
+    };
+    /** @description A system's member-role configuration (Settings, platform administrator) with the code defaults. */
+    SystemMemberRolesConfigDto: {
+      systemCode: string;
+      administratorRoles: string[];
+      userRoles: string[];
+      extraRoles: string[];
+      defaults: components['schemas']['SystemMemberRolesDefaultsDto'];
+      isDefault: boolean;
+      /** Format: uint32 */
+      version: number;
+    };
+    SystemMemberRolesDefaultsDto: {
+      administratorRoles: string[];
+      userRoles: string[];
+      extraRoles: string[];
+    };
+    SystemMemberRolesInput: {
+      administratorRoles: null | string[];
+      userRoles: null | string[];
+      extraRoles: null | string[];
+      /** Format: uint32 */
+      version: null | number;
+    };
+    /** @description A system's Members page (ADR 0166): its lists in order (administrators, users, extra roles). */
+    SystemMembersDto: {
+      /** @description The system. */
+      system: components['schemas']['SystemDto'];
+      /** @description The caller holds `access.assignment.manage` (may also manage platform administrator roles). */
+      platformAdministrator: boolean;
+      /** @description Administrators, users, then one list per extra role. */
+      lists: components['schemas']['SystemMemberListDto'][];
     };
     /** @description Version of this installation (ADR 0152): product version, source commit when known, build time of the host assembly. */
     SystemVersionDto: {
@@ -29148,6 +29328,35 @@ export interface operations {
       };
     };
   };
+  ListMemberSystems: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SystemDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
   SetRecordRolePermissions: {
     parameters: {
       query?: never;
@@ -29391,6 +29600,207 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['PermissionMatrixDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetSystemMembers: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        code: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SystemMembersDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  AddSystemMember: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        code: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AddSystemMemberInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SystemMembersDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RemoveSystemMember: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        code: string;
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RemoveSystemMemberInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SystemMembersDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SearchMemberUsers: {
+    parameters: {
+      query?: {
+        search?: string;
+      };
+      header?: never;
+      path: {
+        code: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PrincipalDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetMemberRoles: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        code: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SystemMemberRolesConfigDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SetMemberRoles: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        code: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SystemMemberRolesInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SystemMemberRolesConfigDto'];
         };
       };
       /** @description Problem Details (RFC 9457) */
