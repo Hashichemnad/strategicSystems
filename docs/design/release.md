@@ -197,3 +197,8 @@ image). The defaults change nothing on a fast network. Documented in the install
   7.0, `PSUseCompatibleCommands` against the analyzer's Windows PowerShell 5.1 profile).
 - **Manual acceptance on a real Windows machine with Docker Desktop** (the owner runs it during acceptance): checklist
   `docs/operations/windows-acceptance.md` — install from the ZIP under 5.1, backup, restore, upgrade, then the same under 7.
+- Verified in the build sandbox (7 Nov 2026): full multi-stage `docker build -f deploy/Dockerfile` with the new arguments → exit 0,
+  image 607 MB (unchanged), user 1654, no NuGet / npm variables in the runtime image. A first run without the sandbox proxy's CA
+  showed the retries at work (NuGet `NU1301` retried every ~28 s instead of failing on the first error) before failing on the untrusted
+  certificate, as it must. `tests/deploy/test-deploy-scripts.sh`: 39 / 39 assertions; `shellcheck` clean. The PowerShell harness was not
+  run in the sandbox (this agent session may not start `pwsh`); it runs in CI (`deploy-scripts`, `deploy-windows`).
