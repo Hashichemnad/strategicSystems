@@ -456,6 +456,16 @@ test.describe('risk management', () => {
     await expect(page.getByTestId('risk-kri-row')).toHaveCount(1);
     await expect(page.getByTestId('risk-kri-level')).toContainText(r(language, 'kriLevel.breach'));
     await shot('kri-breach');
+
+    // The shared KPI card picker (Phase 19, ADR 0169): server search as you type, chosen with the keyboard.
+    await page.getByTestId('risk-kri-add').click();
+    const picker = page.getByTestId('risk-kri-card');
+    await picker.getByRole('combobox').fill(tag);
+    await expect(page.getByRole('option').filter({ hasText: card.code })).toBeVisible();
+    await shot('kpi-picker-search');
+    await page.keyboard.press('Enter');
+    await expect(page.getByTestId('risk-kri-card-selected')).toContainText(card.code);
+    await page.keyboard.press('Escape');
     await tab('activity');
     await shot('risk-page-activity');
 
