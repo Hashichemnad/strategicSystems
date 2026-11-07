@@ -252,6 +252,13 @@ public sealed class ApprovalInstance : AuditableEntity
         return Result.Success();
     }
 
+    /// <summary>The record's owner / unit changed while the approval runs (bulk responsibility reassignment, ADR 0168).</summary>
+    public void UpdateSubject(Guid? ownerEmployeeId, Guid? unitId)
+    {
+        SubjectOwnerEmployeeId = ownerEmployeeId ?? SubjectOwnerEmployeeId;
+        SubjectUnitId = unitId ?? SubjectUnitId;
+    }
+
     public ApprovalSubject Subject => new(ResourceType, ResourceId, SubjectNumber, TitleAr, TitleEn, SubjectOwnerEmployeeId, SubjectOwnerUserId, SubjectUnitId);
 }
 

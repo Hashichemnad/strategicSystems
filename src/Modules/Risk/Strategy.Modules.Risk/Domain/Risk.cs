@@ -275,6 +275,9 @@ public sealed class RiskRecord : AuditableEntity
 
     public bool IsOpen => RiskStatuses.Open.Contains(Status);
 
+    /// <summary>Responsibility reassignment (ADR 0168).</summary>
+    public void AssignOwner(Guid employeeId) => OwnerEmployeeId = employeeId;
+
     public string Title => TitleEn ?? TitleAr ?? Number;
 
     public static RiskRecord Create(string number, int registerYear, RiskValues values)
@@ -557,6 +560,9 @@ public sealed class Control : AuditableEntity
     }
 
     public void Retire() => Status = ControlStatuses.Retired;
+
+    /// <summary>Responsibility reassignment (ADR 0168).</summary>
+    public void AssignOwner(Guid employeeId) => OwnerEmployeeId = employeeId;
 }
 
 public static class ActionStatuses
@@ -617,6 +623,9 @@ public sealed class TreatmentAction : AuditableEntity
     public DateTimeOffset? EscalatedAt { get; private set; }
 
     public IReadOnlyList<Guid> ResponsibleUnitIds => JsonSerializer.Deserialize<List<Guid>>(ResponsibleUnitIdsJson, Json) ?? [];
+
+    /// <summary>Responsibility reassignment (ADR 0168).</summary>
+    public void AssignOwner(Guid employeeId) => OwnerEmployeeId = employeeId;
 
     public static TreatmentAction Create(string number, Guid riskId, ActionValues values)
     {

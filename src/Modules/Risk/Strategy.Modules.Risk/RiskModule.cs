@@ -59,6 +59,9 @@ public sealed class RiskModule : IModule
         services.AddScoped<RiskRules>();
         services.AddScoped<RiskViews>();
         services.AddScoped<RiskRoleSync>();
+        services.AddResponsibilitySource<RiskOwnerResponsibility>(); // Settings → Responsibilities (ADR 0168)
+        services.AddResponsibilitySource<RiskActionOwnerResponsibility>();
+        services.AddResponsibilitySource<RiskControlOwnerResponsibility>();
         services.AddScoped<IRiskScoring, RiskScoringService>();
         services.AddScoped<IRiskDirectory, RiskDirectory>();
         services.AddScoped<IKpiLinkedRecordSource, RiskKpiLinks>();
