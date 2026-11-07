@@ -41,3 +41,35 @@ public sealed record AccessReviewRowDto(
     Guid UserId, string UserName, bool UserActive, string? EmployeeNameAr, string? EmployeeNameEn, string? UnitCode,
     string SystemCode, bool SystemAccess, string RoleCode, string? RoleNameAr, string? RoleNameEn, string Source, DateOnly ValidFrom, DateOnly? ValidTo,
     IReadOnlyList<RolePermissionDto> Permissions);
+
+/// <summary>A system's Members page (ADR 0166): its lists in order (administrators, users, extra roles).</summary>
+/// <param name="System">The system.</param>
+/// <param name="PlatformAdministrator">The caller holds <c>access.assignment.manage</c> (may also manage platform administrator roles).</param>
+/// <param name="Lists">Administrators, users, then one list per extra role.</param>
+public sealed record SystemMembersDto(SystemDto System, bool PlatformAdministrator, IReadOnlyList<MemberListDto> Lists);
+
+/// <param name="Key"><c>administrators</c>, <c>users</c> or <c>extra:&lt;roleCode&gt;</c>.</param>
+/// <param name="Kind"><c>administrators</c>, <c>users</c> or <c>extra</c>.</param>
+/// <param name="Roles">The roles an entry of this list holds.</param>
+/// <param name="CanManage">False when the list holds a platform administrator role and the caller is a delegated administrator (ADR 0167).</param>
+/// <param name="Members">One row per principal.</param>
+public sealed record MemberListDto(string Key, string Kind, IReadOnlyList<MemberRoleDto> Roles, bool CanManage, IReadOnlyList<MemberDto> Members);
+
+public sealed record MemberRoleDto(string Code, string? NameAr, string? NameEn);
+
+/// <param name="Id">Pass to <c>…/members/{id}/remove</c>.</param>
+/// <param name="Principal">User, unit (and below) or everyone.</param>
+/// <param name="ValidFrom">First day of the list's roles (null: system access only).</param>
+/// <param name="ValidTo">Last day (null: open-ended).</param>
+/// <param name="Active">In force today.</param>
+/// <param name="SystemAccess">The principal holds its own system-access grant (always true for platform-kind systems).</param>
+/// <param name="RoleCodes">The list's roles the principal holds.</param>
+public sealed record MemberDto(
+    Guid Id, PrincipalDto Principal, DateOnly? ValidFrom, DateOnly? ValidTo, bool Active, bool SystemAccess, IReadOnlyList<string> RoleCodes);
+
+/// <summary>A system's member-role configuration (Settings, platform administrator) with the code defaults.</summary>
+public sealed record MemberRolesConfigDto(
+    string SystemCode, IReadOnlyList<string> AdministratorRoles, IReadOnlyList<string> UserRoles, IReadOnlyList<string> ExtraRoles,
+    MemberRolesDefaultsDto Defaults, bool IsDefault, uint Version);
+
+public sealed record MemberRolesDefaultsDto(IReadOnlyList<string> AdministratorRoles, IReadOnlyList<string> UserRoles, IReadOnlyList<string> ExtraRoles);

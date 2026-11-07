@@ -5,6 +5,7 @@ using Strategy.Platform.Access.Api;
 using Strategy.Platform.Access.Application;
 using Strategy.Platform.Access.Infrastructure;
 using Strategy.Platform.Http.Modules;
+using Strategy.Platform.Notifications;
 using Strategy.Platform.Persistence;
 
 namespace Strategy.Platform.Access;
@@ -30,6 +31,9 @@ public sealed class AccessComponent : IPlatformComponent
         services.AddScoped<PrincipalNames>();
         services.AddScoped<AccessAdministration>();
         services.AddScoped<AccessReporting>();
+        services.AddScoped<MemberAdministration>();
+        services.AddNotificationTemplate(MemberNotifications.Added);
+        services.AddNotificationTemplate(MemberNotifications.Removed);
         services.AddScoped<IDatabaseSeeder, AccessSeeder>();
         services.AddAccessCatalogue(new AccessCatalogue());
     }

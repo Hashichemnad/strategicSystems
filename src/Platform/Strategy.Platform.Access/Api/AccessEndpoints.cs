@@ -32,6 +32,27 @@ internal static class AccessEndpoints
         systems.MapGet("/{code}/matrix", async (string code, AccessAdministration a, CancellationToken ct) => (await a.MatrixAsync(code, ct)).ToOk())
             .WithName("GetPermissionMatrix").RequirePermission(AccessPermissions.RoleRead);
 
+        // Members (ADRs 0166 / 0167): the right to manage THIS system's members (<code>.members.manage, or access.assignment.manage) is
+        // checked by MemberAdministration for the path's system code (404 unknown / disabled, 403 refused), so no static permission here.
+        group.MapGet("/members/systems", (IRequestContext context, MemberAdministration m, CancellationToken ct) => m.ManageableSystemsAsync(context.User, ct))
+            .WithName("ListMemberSystems").RequireSignedIn();
+        systems.MapGet("/{code}/members", async (string code, IRequestContext context, MemberAdministration m, CancellationToken ct) =>
+                (await m.ListAsync(context.User, code, ct)).ToOk())
+            .WithName("GetSystemMembers").RequireSignedIn();
+        systems.MapPost("/{code}/members", async (string code, AddMemberInput body, IRequestContext context, MemberAdministration m, CancellationToken ct) =>
+                (await m.AddAsync(context.User, code, body, ct)).ToOk())
+            .WithName("AddSystemMember").RequireSignedIn();
+        systems.MapPost("/{code}/members/{id:guid}/remove",
+                async (string code, Guid id, RemoveMemberInput body, IRequestContext context, MemberAdministration m, CancellationToken ct) =>
+                    (await m.RemoveAsync(context.User, code, id, body.Reason, ct)).ToOk())
+            .WithName("RemoveSystemMember").RequireSignedIn();
+        systems.MapGet("/{code}/members/user-search", SearchMemberUsersAsync).WithName("SearchMemberUsers").RequireSignedIn();
+        systems.MapGet("/{code}/member-roles", async (string code, MemberAdministration m, CancellationToken ct) => (await m.GetConfigurationAsync(code, ct)).ToOk())
+            .WithName("GetMemberRoles").RequirePermission(AccessPermissions.RoleRead);
+        systems.MapPut("/{code}/member-roles", async (string code, MemberRolesInput body, MemberAdministration m, CancellationToken ct) =>
+                (await m.SetConfigurationAsync(code, body, ct)).ToOk())
+            .WithName("SetMemberRoles").RequirePermission(AccessPermissions.RoleManage);
+
         var roles = group.MapGroup("/roles");
         roles.MapGet("/", (string? system, AccessAdministration a, CancellationToken ct) => a.ListRolesAsync(system, ct)).WithName("ListRoles")
             .RequirePermission(AccessPermissions.RoleRead);
@@ -112,6 +133,14 @@ internal static class AccessEndpoints
             snapshot.Systems.Order(StringComparer.Ordinal).ToList(),
             permissions.Order(StringComparer.Ordinal).ToList(),
             snapshot.Roles.Select(r => r.Key).Order(StringComparer.Ordinal).ToList()));
+    }
+
+    private static async Task<Results<Ok<IReadOnlyList<PrincipalDto>>, ProblemHttpResult>> SearchMemberUsersAsync(
+        string code, string? search, IRequestContext context, MemberAdministration members, IUserDirectory users, IEmployeeDirectory employees,
+        PrincipalNames names, CancellationToken ct)
+    {
+        var allowed = await members.AuthoriseSearchAsync(context.User, code, ct);
+        return allowed.IsFailure ? allowed.Error.ToProblem() : await SearchUsersAsync(search, users, employees, names, ct);
     }
 
     private static async Task<Results<Ok<IReadOnlyList<PrincipalDto>>, ProblemHttpResult>> SearchUsersAsync(

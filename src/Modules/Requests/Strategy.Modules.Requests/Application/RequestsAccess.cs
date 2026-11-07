@@ -61,6 +61,9 @@ internal sealed class RequestsAccessCatalogue : IAccessCatalogueSource
         new(RequestPermissions.AiExtract, "تعبئة النموذج من مستند بالذكاء الاصطناعي", "Fill a form from a document with AI", Scopable: false),
     ];
 
+    /// <summary>Members page lists (ADR 0166, docs/design/members-responsibilities.md §1).</summary>
+    public SystemMemberRoles MemberRoles => new(["office"], ["requester"], ["type-administrator"]);
+
     public IEnumerable<RoleSeed> DefaultRoles =>
     [
         new("requester", "مقدم الطلبات", "Requester",

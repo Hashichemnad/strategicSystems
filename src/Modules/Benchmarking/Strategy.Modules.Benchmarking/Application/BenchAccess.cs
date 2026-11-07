@@ -267,6 +267,9 @@ internal sealed class BenchAccessCatalogue : IAccessCatalogueSource
         new(BenchPermissions.AiSearch),
     ];
 
+    /// <summary>Members page lists (ADR 0166, docs/design/members-responsibilities.md §1).</summary>
+    public SystemMemberRoles MemberRoles => new(["bench-office"], ["participant"], ["coordinator", "viewer"]);
+
     public IEnumerable<RoleSeed> DefaultRoles =>
     [
         new("bench-office", "مكتب الاستراتيجية (المقارنات)", "Strategy & PM Office (benchmarking)",

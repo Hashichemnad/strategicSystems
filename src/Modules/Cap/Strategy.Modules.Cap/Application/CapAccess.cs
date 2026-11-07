@@ -334,6 +334,9 @@ internal sealed class CapAccessCatalogue : IAccessCatalogueSource
         new(CapPermissions.AiSummary, "ملخص خطة العمل الشهري", "Monthly CAP summary", Scopable: false),
     ];
 
+    /// <summary>Members page lists (ADR 0166, docs/design/members-responsibilities.md §1).</summary>
+    public SystemMemberRoles MemberRoles => new(["cap-office"], ["participant"], ["department-manager", "viewer"]);
+
     public IEnumerable<RoleSeed> DefaultRoles =>
     [
         new("cap-office", "مكتب إدارة المشاريع (خطة العمل)", "PM Office (CAP administrator)",

@@ -42,6 +42,9 @@ internal sealed class SampleAccessCatalogue : IAccessCatalogueSource
         new(SamplePermissions.Submit, "تقديم البنود للموافقة", "Submit items for approval"),
     ];
 
+    /// <summary>Members page lists (ADR 0166, docs/design/members-responsibilities.md §1).</summary>
+    public SystemMemberRoles MemberRoles => new(["editor"], ["viewer"], ["approver"]);
+
     public IEnumerable<RoleSeed> DefaultRoles =>
     [
         new("viewer", "مستعرض", "Viewer", [new(SamplePermissions.Read, DataScope.All)]),

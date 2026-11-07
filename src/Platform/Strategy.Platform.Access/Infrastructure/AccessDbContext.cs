@@ -33,6 +33,8 @@ public sealed class AccessDbContext(DbContextOptions<AccessDbContext> options) :
     public DbSet<PendingAdministratorGrant> PendingAdministratorGrants => Set<PendingAdministratorGrant>();
 
     public DbSet<RoleTransferLog> Transfers => Set<RoleTransferLog>();
+
+    public DbSet<SystemMemberRolesConfig> MemberRoles => Set<SystemMemberRolesConfig>();
 }
 
 internal sealed class AccessSystemConfiguration : IEntityTypeConfiguration<AccessSystem>
@@ -185,5 +187,19 @@ internal sealed class RoleTransferLogConfiguration : IEntityTypeConfiguration<Ro
         builder.Property(x => x.FromDescription).HasMaxLength(4000);
         builder.Property(x => x.ToDescription).HasMaxLength(4000);
         builder.Property(x => x.Reason).HasMaxLength(1000);
+    }
+}
+
+internal sealed class SystemMemberRolesConfigConfiguration : IEntityTypeConfiguration<SystemMemberRolesConfig>
+{
+    public void Configure(EntityTypeBuilder<SystemMemberRolesConfig> builder)
+    {
+        builder.ToTable("system_member_roles");
+        builder.Property(x => x.Id).ValueGeneratedNever();
+        builder.Property(x => x.SystemCode).HasMaxLength(64);
+        builder.Property(x => x.AdministratorRoles).HasColumnType("jsonb");
+        builder.Property(x => x.UserRoles).HasColumnType("jsonb");
+        builder.Property(x => x.ExtraRoles).HasColumnType("jsonb");
+        builder.HasIndex(x => x.SystemCode).IsUnique();
     }
 }

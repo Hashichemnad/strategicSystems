@@ -9,6 +9,7 @@
     <ProjectReference Include="..\Strategy.Platform.Persistence\Strategy.Platform.Persistence.csproj" />
     <ProjectReference Include="..\Strategy.Platform.Http\Strategy.Platform.Http.csproj" />
     <ProjectReference Include="..\Strategy.Platform.Organisation\Strategy.Platform.Organisation.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Notifications.Contracts\Strategy.Platform.Notifications.Contracts.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ClosedXML" />
