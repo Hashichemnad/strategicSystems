@@ -1,6 +1,7 @@
 <#
 .SYNOPSIS
-  Integrated Strategy System — one-command install on Windows Server or Windows with Docker Desktop (Linux containers). ADR 0157.
+  Integrated Strategy System - one-command install on Windows Server or Windows with Docker Desktop (Linux containers). ADR 0157, 0163.
+  Runs in Windows PowerShell 5.1 and PowerShell 7, also from a release folder without .git (ZIP).
 .EXAMPLE
   powershell -ExecutionPolicy Bypass -File deploy\install.ps1
 .EXAMPLE
@@ -65,13 +66,10 @@ $env:APP_VERSION = Get-EnvValue 'APP_VERSION'
 # 3. Image: load a saved image (offline) or build it from this folder.
 if ($Image) {
     Write-Step "Loading the image from $Image"
-    & docker load -i $Image
-    if ($LASTEXITCODE -ne 0) { Stop-WithError 'docker load failed.' 4 }
+    if ((Invoke-Native -Command 'docker' -Arguments @('load', '-i', $Image)).Code -ne 0) { Stop-WithError 'docker load failed.' 4 }
 } elseif (-not $NoBuild) {
     Write-Step "Building strategy-app:$($env:APP_VERSION) (first build takes several minutes)"
-    $revision = ''
-    if (Get-Command git -ErrorAction SilentlyContinue) { $revision = (& git -C $script:RootDir rev-parse --short HEAD 2>$null) }
-    $env:GIT_REVISION = $revision
+    $env:GIT_REVISION = Get-SourceRevision
     $env:BUILD_CREATED = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')
     Initialize-BuildCa
     Invoke-Compose build migrate
@@ -82,7 +80,7 @@ Write-Step 'Starting the services'
 Invoke-Compose up -d --no-build
 Write-Step 'Waiting for the application to become ready'
 if (-not (Wait-App 420)) {
-    & docker compose -f $script:ComposeFile --env-file $script:EnvFile --profile app logs --tail 60 migrate app
+    Invoke-Native -Command 'docker' -Arguments (@(Get-ComposeArguments) + @('logs', '--tail', '60', 'migrate', 'app')) | Out-Null
     Stop-WithError 'The application did not become healthy. See the logs above.' 5
 }
 
@@ -111,4 +109,5 @@ if ($token) {
     Write-Host "      [Net.NetworkCredential]::new('', `$p).Password | docker compose -f deploy\docker-compose.yml --profile app run --rm -T app --create-admin --email admin@example.org --password-file /dev/stdin"
 }
 Write-Host ''
-Write-Host '  Back up regularly: .\deploy\backup.ps1   ·   Upgrade: .\deploy\upgrade.ps1   ·   Guide: docs\guides\en\installation.md'
+$dot = [char]0x00B7   # middle dot; the script itself stays ASCII (Windows PowerShell 5.1 reads it in the ANSI code page)
+Write-Host "  Back up regularly: .\deploy\backup.ps1   $dot   Upgrade: .\deploy\upgrade.ps1   $dot   Guide: docs\guides\en\installation.md"

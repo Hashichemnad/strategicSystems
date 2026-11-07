@@ -40,15 +40,14 @@ function Show-Rollback {
 try {
     if ($Image) {
         Write-Step 'Loading the new image'
-        & docker load -i $Image
-        if ($LASTEXITCODE -ne 0) { throw 'docker load failed.' }
+        if ((Invoke-Native -Command 'docker' -Arguments @('load', '-i', $Image)).Code -ne 0) { throw 'docker load failed.' }
     } elseif ($NoBuild) {
-        & docker image inspect "strategy-app:$newVersion" *> $null
-        if ($LASTEXITCODE -ne 0) { throw "-NoBuild: image strategy-app:$newVersion is not on this machine." }
+        if ((Invoke-Native -Command 'docker' -Arguments @('image', 'inspect', "strategy-app:$newVersion") -Quiet).Code -ne 0) {
+            throw "-NoBuild: image strategy-app:$newVersion is not on this machine."
+        }
     } else {
         Write-Step "Building strategy-app:$newVersion (the current version keeps running)"
-        $env:GIT_REVISION = ''
-        if (Get-Command git -ErrorAction SilentlyContinue) { $env:GIT_REVISION = (& git -C $script:RootDir rev-parse --short HEAD 2>$null) }
+        $env:GIT_REVISION = Get-SourceRevision
         $env:BUILD_CREATED = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ')
         Initialize-BuildCa
         $env:APP_VERSION = $newVersion
@@ -64,7 +63,7 @@ if (-not $NoBackup) {
     Write-Step 'Pre-upgrade backup'
     $result = [IO.Path]::GetTempFileName()
     & (Join-Path $script:DeployDir 'backup.ps1') -ResultFile $result -LeaveStopped
-    $backupDir = (Get-Content $result | Select-Object -First 1)
+    $backupDir = (Read-Utf8Lines $result | Select-Object -First 1)
     Remove-Item -Force $result
     if (-not $backupDir) {
         Invoke-ComposeQuiet up -d --no-build | Out-Null

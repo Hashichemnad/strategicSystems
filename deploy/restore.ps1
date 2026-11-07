@@ -18,22 +18,21 @@ if (-not (Test-Path (Join-Path $Backup 'manifest.json')) -or -not (Test-Path (Jo
 Assert-Docker
 
 Write-Step '1/7 Checking the backup''s checksums'
-foreach ($line in Get-Content (Join-Path $Backup 'SHA256SUMS') | Where-Object { $_ }) {
+foreach ($line in (Read-Utf8Lines (Join-Path $Backup 'SHA256SUMS')) | Where-Object { $_ }) {
     $expected, $name = $line -split '\s+', 2
     $name = $name.TrimStart('*')
     if ((Get-FileSha256 (Join-Path $Backup $name)) -ne $expected.ToLowerInvariant()) {
         Stop-WithError "Checksum mismatch for $($name): the backup is damaged or was changed. Nothing was restored." 7
     }
 }
-$manifest = Get-Content -Raw (Join-Path $Backup 'manifest.json') | ConvertFrom-Json
+$manifest = Read-Utf8Text (Join-Path $Backup 'manifest.json') | ConvertFrom-Json
 if ($WithEnv) {
     Copy-Item (Join-Path $Backup 'env') $script:EnvFile -Force
 }
 if (-not (Test-Path $script:EnvFile)) { Stop-WithError 'deploy\.env not found. Run .\deploy\install.ps1 first (new machine) or pass -WithEnv.' 2 }
 if ($env:APP_VERSION) { Set-EnvValue 'APP_VERSION' $env:APP_VERSION }
 $env:APP_VERSION = Get-Setting 'APP_VERSION' (Get-ReleaseVersion)
-& docker image inspect "strategy-app:$($env:APP_VERSION)" *> $null
-if ($LASTEXITCODE -ne 0) { Stop-WithError "Image strategy-app:$($env:APP_VERSION) is not on this machine. Build it (docker compose -f deploy\docker-compose.yml --profile app build) or load it (docker load -i ...)." 4 }
+if ((Invoke-Native -Command 'docker' -Arguments @('image', 'inspect', "strategy-app:$($env:APP_VERSION)") -Quiet).Code -ne 0) { Stop-WithError "Image strategy-app:$($env:APP_VERSION) is not on this machine. Build it (docker compose -f deploy\docker-compose.yml --profile app build) or load it (docker load -i ...)." 4 }
 $db = Get-Setting 'POSTGRES_DB' 'strategy'
 $owner = Get-Setting 'POSTGRES_USER' 'strategy'
 
@@ -60,7 +59,7 @@ try {
 Invoke-ComposeBinary -Arguments @('exec', '-T', 'postgres', 'pg_restore', '-U', $owner, '-d', $db, '--exit-on-error', '--no-password') -StdInFile (Join-Path $Backup 'database.dump')
 
 Write-Step '4/7 Comparing the row count of every table with the backup'
-$expected = @(Get-Content (Join-Path $Backup 'table-counts.tsv') | Where-Object { $_ })
+$expected = @(Read-Utf8Lines (Join-Path $Backup 'table-counts.tsv') | Where-Object { $_ })
 $actual = Get-TableCounts
 $diff = Compare-Object -ReferenceObject $expected -DifferenceObject $actual
 if (-not $diff) {
@@ -96,10 +95,15 @@ Invoke-Compose run --rm --no-deps migrate
 Write-Step '7/7 Verifying the audit hash chain'
 # Images before 1.0 (no "Integrated Strategy System" title label; the base image has its own version label) have no --verify-audit-chain command: a rollback to them verifies on the screen instead.
 # (No embedded double quotes in native arguments: Windows PowerShell 5.1 would strip them.)
-$labels = (& docker image inspect -f '{{json .Config.Labels}}' "strategy-app:$($env:APP_VERSION)" 2>$null) | ConvertFrom-Json
+# ($null | ConvertFrom-Json is a terminating error in Windows PowerShell 5.1: only parse non-empty output.)
+$labels = $null
+$inspect = Invoke-Native -Command 'docker' -Arguments @('image', 'inspect', '-f', '{{json .Config.Labels}}', "strategy-app:$($env:APP_VERSION)") -Capture -Quiet
+$labelsJson = ($inspect.Output -join "`n").Trim()
+if ($inspect.Code -eq 0 -and $labelsJson -and $labelsJson -ne 'null') {
+    try { $labels = $labelsJson | ConvertFrom-Json } catch { $labels = $null }
+}
 if ($labels -and ($labels.PSObject.Properties.Name -contains 'org.opencontainers.image.title') -and $labels.'org.opencontainers.image.title' -eq 'Integrated Strategy System') {
-    & docker compose -f $script:ComposeFile --env-file $script:EnvFile --profile app run --rm --no-deps app --verify-audit-chain
-    if ($LASTEXITCODE -ne 0) { Stop-WithError 'The audit chain of the restored database does not verify. The application was NOT started.' 9 }
+    if ((Invoke-Native -Command 'docker' -Arguments (@(Get-ComposeArguments) + @('run', '--rm', '--no-deps', 'app', '--verify-audit-chain'))).Code -ne 0) { Stop-WithError 'The audit chain of the restored database does not verify. The application was NOT started.' 9 }
 } else {
     Write-Warn "strategy-app:$($env:APP_VERSION) predates 1.0 and cannot verify the chain from the command line: after the start use Audit -> Verification -> Verify now."
     $chainNote = "; audit chain: verify on the screen"
