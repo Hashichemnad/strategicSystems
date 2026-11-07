@@ -76,6 +76,9 @@ internal static class KpiEndpoints
                 (await d.SendAsync(new ListKpiCards(new PageRequest(page ?? 1, pageSize ?? PageRequest.DefaultPageSize, sort), search, unitId, typeCode, objectiveId, status, gem,
                     globalStar, year), ct)).ToOk())
             .WithName("ListKpiCards").RequirePermission(KpiPermissions.CardRead);
+        group.MapGet("/cards/lookup", async (string? search, Guid[]? ids, string? status, int? page, int? pageSize, IDispatcher d, CancellationToken ct) =>
+                (await d.SendAsync(new LookupKpiCards(search, ids, status, page ?? 1, pageSize ?? 20), ct)).ToOk())
+            .WithName("LookupKpiCards").RequirePermission(KpiPermissions.CardRead);
         group.MapGet("/options", async (IDispatcher d, CancellationToken ct) => (await d.SendAsync(new GetKpiOptions(), ct)).ToOk())
             .WithName("GetKpiOptions").RequirePermission(KpiPermissions.CardRead);
         group.MapPost("/cards", async Task<Results<Created<KpiCardDto>, ProblemHttpResult>> (KpiCardInput b, IDispatcher d, CancellationToken ct) =>
