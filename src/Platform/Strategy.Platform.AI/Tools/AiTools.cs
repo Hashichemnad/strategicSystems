@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Strategy.Platform.Access;
 using Strategy.Platform.AI.Application;
+using Strategy.Platform.Kernel.Text;
 using Strategy.Platform.Settings;
 
 namespace Strategy.Platform.AI.Tools;
@@ -86,7 +87,7 @@ internal sealed class GetRecordTool(IEnumerable<IAiRecordSource> sources, ISyste
             record.TitleAr,
             record.TitleEn,
             record.Link,
-            fields = record.Fields.Where(f => !sharing.Excludes(f.Name)).Select(f => new { f.Name, label = context.Language == "ar" ? f.LabelAr : f.LabelEn, f.Value }),
+            fields = record.Fields.Where(f => !sharing.Excludes(f.Name)).Select(f => new { f.Name, label = context.Language == "ar" ? f.LabelAr : f.LabelEn, Value = f.Value is null ? null : RichText.ToPlainText(f.Value) }),
         });
     }
 }

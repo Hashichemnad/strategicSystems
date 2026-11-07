@@ -1755,8 +1755,8 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                         .HasColumnName("created_by");
 
                     b.Property<string>("Description")
-                        .HasMaxLength(5000)
-                        .HasColumnType("character varying(5000)")
+                        .HasMaxLength(20000)
+                        .HasColumnType("character varying(20000)")
                         .HasColumnName("description");
 
                     b.Property<decimal?>("EstimatedBudget")
@@ -1778,8 +1778,8 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                         .HasColumnName("expected_start_date");
 
                     b.Property<string>("Justifications")
-                        .HasMaxLength(5000)
-                        .HasColumnType("character varying(5000)")
+                        .HasMaxLength(20000)
+                        .HasColumnType("character varying(20000)")
                         .HasColumnName("justifications");
 
                     b.Property<DateTimeOffset?>("LastActionAt")
@@ -2205,8 +2205,8 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                         .HasColumnName("definition_of_done");
 
                     b.Property<string>("Description")
-                        .HasMaxLength(5000)
-                        .HasColumnType("character varying(5000)")
+                        .HasMaxLength(20000)
+                        .HasColumnType("character varying(20000)")
                         .HasColumnName("description");
 
                     b.Property<int?>("EmployeeSatisfaction")

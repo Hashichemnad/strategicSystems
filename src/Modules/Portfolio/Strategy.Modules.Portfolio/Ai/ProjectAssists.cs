@@ -10,6 +10,7 @@ using Strategy.Platform.AI.Application;
 using Strategy.Platform.AI.Tools;
 using Strategy.Platform.Kernel.Context;
 using Strategy.Platform.Kernel.Results;
+using Strategy.Platform.Kernel.Text;
 
 namespace Strategy.Modules.Portfolio.Ai;
 
@@ -145,7 +146,7 @@ internal sealed class ProjectAssistService(
         existing.AppendLine("Existing stakeholders: " + string.Join("; ", await db.Stakeholders.AsNoTracking()
             .Where(k => k.ProjectId == projectId && k.Status == ItemStatuses.Active).Select(k => k.Name).ToListAsync(ct).ConfigureAwait(false)));
         var call = await gateway.CompleteJsonAsync(new AiJsonRequest(ProjectAssistFeatures.CharterAssistant, new Dictionary<string, string>(),
-            [new AiDocument("project", Describe(project) + $"\nJustifications: {request?.Justifications}\n" + existing)], CharterSchema, PortfolioPermissions.SystemCode,
+            [new AiDocument("project", Describe(project) + $"\nJustifications: {RichText.ToPlainText(request?.Justifications)}\n" + existing)], CharterSchema, PortfolioPermissions.SystemCode,
             ResourceType: PortfolioPermissions.ProjectResource, ResourceId: projectId.ToString("D")), ct).ConfigureAwait(false);
         if (call.IsFailure)
         {
@@ -414,7 +415,7 @@ internal sealed class ProjectAssistService(
 
     private static string Describe(Project p) =>
         $"Project {p.Number}\nName (Arabic): {p.NameAr}\nName (English): {p.NameEn}\nClassification: {p.Classification}\nMethodology: {p.Methodology}\n"
-        + $"Description: {p.Description}\nScope of work: {p.ScopeOfWork}\nPlanned dates: {p.PlannedStart:yyyy-MM-dd} → {p.PlannedEnd:yyyy-MM-dd}\n"
+        + $"Description: {RichText.ToPlainText(p.Description)}\nScope of work: {p.ScopeOfWork}\nPlanned dates: {p.PlannedStart:yyyy-MM-dd} → {p.PlannedEnd:yyyy-MM-dd}\n"
         + $"Progress: {p.Performance * 100:0.#}% (planned {p.PlannedProgress * 100:0.#}%, {p.ProgressStatus})\nStage: {p.Stage}\n";
 
     private static DateOnly Min(DateOnly a, DateOnly b) => a < b ? a : b;

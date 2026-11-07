@@ -395,8 +395,8 @@ internal sealed class AssessmentService(
         Line("Request number", r.Number);
         Line("Program name (Arabic)", r.NameAr);
         Line("Program name (English)", r.NameEn);
-        Line("Description", r.Description);
-        Line("Justifications", r.Justifications);
+        Line("Description", RichText.ToPlainText(r.Description));
+        Line("Justifications", RichText.ToPlainText(r.Justifications));
         Line("Scope of work", r.ScopeOfWork);
         Line("Strategic objective", objective is null ? r.StrategicObjectiveCode : $"{objective.Code} ({objective.LabelEn} / {objective.LabelAr})");
         Line("Source of suggestion", r.SuggestionSourceOther ?? r.SuggestionSourceCode);

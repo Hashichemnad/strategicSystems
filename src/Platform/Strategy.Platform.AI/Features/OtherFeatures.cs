@@ -8,6 +8,7 @@ using Strategy.Platform.Kernel.Results;
 using Strategy.Platform.Kernel.Time;
 using Strategy.Platform.Settings;
 using Strategy.Platform.Workflow;
+using Strategy.Platform.Kernel.Text;
 
 namespace Strategy.Platform.AI.Features;
 
@@ -60,7 +61,8 @@ public sealed class BriefService(
         content.Append("Record ").Append(record.Number).Append(": ").Append(record.TitleEn ?? record.TitleAr).Append('\n');
         foreach (var field in record.Fields.Where(f => !sharing.Excludes(f.Name)))
         {
-            content.Append(field.LabelEn).Append(": ").Append(field.Value ?? "—").Append('\n');
+            // Rich-text values (ADR 0161) reach the model as their plain-text projection.
+            content.Append(field.LabelEn).Append(": ").Append(field.Value is null ? "—" : RichText.ToPlainText(field.Value)).Append('\n');
         }
 
         var history = new StringBuilder();
