@@ -64,7 +64,7 @@ CI runs 63 (`d2d149a`) and 67 (`d40c2d0`, attempt 2 — attempt 1 lost its runne
 | Web: lint, format:check, typecheck, Vitest, build, `npm audit --audit-level=high`, `lint:licenses` | pass (CI) |
 | Deploy scripts: Windows PowerShell **5.1** and PowerShell 7 on `windows-latest` (72 assertions each, fake docker, folder without `.git`, non-ASCII path); bash + PowerShell 7 + PSScriptAnalyzer on Linux | pass (CI jobs `deploy-windows`, `deploy-scripts`) |
 | Container image: build, non-root / healthcheck, Trivy (High / Critical with a fix), CycloneDX SBOM, compose valid | pass (CI) |
-| Playwright E2E `ar` + `en` on a fresh database (incl. the 7 new Phase 19 specs) | **126 / 126** locally; CI run 63 E2E job: **143 / 144** — the one failure was a real WCAG 2.5.3 finding of the axe audit (rich-text direction buttons' accessible name lacked their visible text), fixed in `0e5817c` and re-verified (`ar-a11y` / `en-a11y` request-wizard check 2 / 2); CI re-run on the fix |
+| Playwright E2E `ar` + `en` on a fresh database (incl. the 7 new Phase 19 specs) | **126 / 126** locally; CI run 63 E2E job: **143 / 144** — the one failure was a real WCAG 2.5.3 finding of the axe audit (rich-text direction buttons' accessible name lacked their visible text), fixed in `0e5817c` and re-verified (`ar-a11y` / `en-a11y` request-wizard check 2 / 2); **CI run 67 (`d40c2d0`): every job green** — back end, front end, deploy scripts (Windows PowerShell 5.1 + 7, Linux), container image, E2E `ar` / `en` + `ar-a11y` / `en-a11y` + setup wizard |
 
 ## Deviations
 - **From the SPEC / addendum:** none known.
