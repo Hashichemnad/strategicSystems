@@ -56,7 +56,10 @@ public sealed class JobSchedulesFireTests(PostgresFixture postgres)
     [Fact]
     public async Task Every_registered_job_runs_when_its_schedule_fires_with_the_fake_clock()
     {
-        var clock = new TravellingClock { Frozen = Start };
+        // Half a minute before the start, between two instants of every cron: no job is due while the stored triggers are checked.
+        // Frozen exactly at the start, a job whose first instant is the start itself was due at once, and Quartz could fire it before its
+        // trigger was checked, moving its next fire time on (a race seen in CI).
+        var clock = new TravellingClock { Frozen = Start.AddSeconds(-30) };
         var quartzClock = SystemTime.UtcNow;
         var quartzLocal = SystemTime.Now;
         SystemTime.UtcNow = () => clock.UtcNow;
@@ -89,8 +92,8 @@ public sealed class JobSchedulesFireTests(PostgresFixture postgres)
                     t => t is not null);
                 trigger!.CronExpressionString.ShouldBe(definition.Cron);
                 trigger.TimeZone.Id.ShouldBe(Dubai.Id);
-                // Quartz schedules the first firing at or after the start (inclusive), like the cron expression itself.
-                var expected = Next(definition, Start.AddSeconds(-1))!.Value;
+                // Quartz schedules the first firing after the (frozen) time the host started, like the cron expression itself.
+                var expected = Next(definition, clock.Frozen!.Value)!.Value;
                 trigger.GetNextFireTimeUtc().ShouldBe(expected, definition.Key);
                 due.Add((definition, expected));
             }
