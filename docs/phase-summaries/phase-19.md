@@ -46,18 +46,20 @@ ADRs **0160–0169 proposed** for owner acceptance.
   i18next fell back to English for 2 or more ("2 records selected" on the Arabic page). All six forms added and a test now requires them.
 - **Sample editors were Sample administrators.** The template module's member defaults made its `editor` role the administrator list, so
   every Sample editor held `sample.members.manage` and saw Settings. Sample now has no administrator list.
+- Backups taken in the same second (e.g. an upgrade right after a manual backup) overwrote each other; they now get separate folders (bash and PowerShell).
+- `JobSchedulesFireTests` (Phase 18) raced Quartz: a job due exactly at the frozen start could fire before its trigger was checked; the fake clock now starts between cron instants.
 - Rich-text direction / table buttons: visible text missing from the accessible name (axe `label-content-name-mismatch`, WCAG 2.5.3).
 - ESLint ran out of memory on the CI runner (heap raised in the `lint` script); IDE0005 with the CI SDK; a missing `validation.maximumItems`
   translation; the authorization matrix's everyone list lacked the new source-system read permission.
 
 ## Quality gates
 
-CI run 63 on commit `d2d149a` (GitHub Actions, `workflow_dispatch`) and local runs on SDK **10.0.403** (the CI / image SDK):
+CI runs 63 (`d2d149a`) and 67 (`d40c2d0`, attempt 2 — attempt 1 lost its runner mid-job) on GitHub Actions (`workflow_dispatch`), and local runs on SDK **10.0.403** (the CI / image SDK):
 
 | Gate | Result |
 |---|---|
 | `dotnet build Strategy.slnx -c Release`, `dotnet format --verify-no-changes` | 0 warnings, 0 errors; clean (CI) |
-| `dotnet test` — unit, architecture, integration (Testcontainers, Mailpit, Gotenberg, OCR) | **pass** in CI; locally unit 2 146 / 2 146, architecture 32 / 32, integration 3 075 / 3 077 → the 2 failures: a migration count fixed in `d2d149a` (the platform administrator now also holds the Integration administrator role) and `TeamsReportingTests` once (409 while seeding an evaluation under the full parallel run; 3 / 3 when run alone, passed in CI — see *Known gaps*) |
+| `dotnet test` — unit, architecture, integration (Testcontainers, Mailpit, Gotenberg, OCR) | **pass** in CI runs 63 and 67 (runs 64–66 each had one intermittent failure; the one CI named — `JobSchedulesFireTests`, a race of the Phase 18 test — is fixed in `d40c2d0`; CI now prints failing test names); a later local run: 3 076 / 3 077 (Gotenberg render error under load in `PdfRenderingTests`); locally unit 2 146 / 2 146, architecture 32 / 32, integration 3 075 / 3 077 → the 2 failures: a migration count fixed in `d2d149a` (the platform administrator now also holds the Integration administrator role) and `TeamsReportingTests` once (409 while seeding an evaluation under the full parallel run; 3 / 3 when run alone, passed in CI — see *Known gaps*) |
 | `tools/check-vulnerable.sh`, `tools/check-api-client.sh` | no High / Critical; OpenAPI document and TS client up to date (CI) |
 | Web: lint, format:check, typecheck, Vitest, build, `npm audit --audit-level=high`, `lint:licenses` | pass (CI) |
 | Deploy scripts: Windows PowerShell **5.1** and PowerShell 7 on `windows-latest` (72 assertions each, fake docker, folder without `.git`, non-ASCII path); bash + PowerShell 7 + PSScriptAnalyzer on Linux | pass (CI jobs `deploy-windows`, `deploy-scripts`) |
