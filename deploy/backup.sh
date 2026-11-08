@@ -34,6 +34,9 @@ DB="$(setting POSTGRES_DB strategy)"
 OWNER="$(setting POSTGRES_USER strategy)"
 STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
 OUT="$OUTPUT_PARENT/strategy-$VERSION-$STAMP"
+# Two backups in the same second (e.g. an upgrade right after a manual backup) never share a folder.
+N=1
+while [ -e "$OUT" ]; do N=$((N + 1)); OUT="$OUTPUT_PARENT/strategy-$VERSION-$STAMP-$N"; done
 umask 077
 mkdir -p "$OUT"
 chmod 700 "$OUT"

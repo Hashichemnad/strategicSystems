@@ -19,6 +19,9 @@ $db = Get-Setting 'POSTGRES_DB' 'strategy'
 $owner = Get-Setting 'POSTGRES_USER' 'strategy'
 $stamp = (Get-Date).ToUniversalTime().ToString("yyyyMMdd'T'HHmmss'Z'")
 $out = Join-Path $Output "strategy-$version-$stamp"
+# Two backups in the same second (e.g. an upgrade right after a manual backup) never share a folder.
+$n = 1
+while (Test-Path -LiteralPath $out) { $n++; $out = Join-Path $Output "strategy-$version-$stamp-$n" }
 New-Item -ItemType Directory -Force -Path $out | Out-Null
 # The backup contains passwords (env) and the key ring: only the current user (and administrators) may read it.
 if ([Environment]::OSVersion.Platform -eq [PlatformID]::Win32NT) {
