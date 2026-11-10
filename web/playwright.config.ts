@@ -32,7 +32,7 @@ export default defineConfig<E2eOptions>({
   projects: [
     {
       name: 'ar',
-      testIgnore: ['setup.spec.ts', 'a11y.spec.ts'],
+      testIgnore: ['setup.spec.ts', 'a11y.spec.ts', 'visual.spec.ts'],
       use: {
         ...devices['Desktop Chrome'],
         viewport: { width: 1366, height: 860 },
@@ -42,7 +42,7 @@ export default defineConfig<E2eOptions>({
     },
     {
       name: 'en',
-      testIgnore: ['setup.spec.ts', 'a11y.spec.ts'],
+      testIgnore: ['setup.spec.ts', 'a11y.spec.ts', 'visual.spec.ts'],
       use: {
         ...devices['Desktop Chrome'],
         viewport: { width: 1366, height: 860 },
@@ -74,6 +74,19 @@ export default defineConfig<E2eOptions>({
         language: 'en',
       },
     },
+    // Visual-regression baselines per theme (ADR 0175): opt-in, because pixel baselines depend on the machine's font rendering.
+    ...(process.env.E2E_VISUAL
+      ? (['ar', 'en'] as const).map((language) => ({
+          name: `visual-${language}`,
+          testMatch: 'visual.spec.ts',
+          use: {
+            ...devices['Desktop Chrome'],
+            viewport: { width: 1366, height: 860 },
+            locale: language === 'ar' ? 'ar-AE' : 'en-GB',
+            language,
+          },
+        }))
+      : []),
   ],
   webServer: process.env.E2E_BASE_URL
     ? undefined

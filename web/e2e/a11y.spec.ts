@@ -34,6 +34,8 @@ const screens: Screen[] = [
   { name: 'teams', path: '/teams' },
   { name: 'teams-dashboard', path: '/teams/dashboard' },
   { name: 'portfolio', path: '/portfolio' },
+  { name: 'app-home-portfolio', path: '/apps/portfolio' },
+  { name: 'my-work-page', path: '/my-work' },
   { name: 'portfolio-requests', path: '/portfolio/requests' },
   { name: 'portfolio-request-new', path: '/portfolio/requests/new' },
   { name: 'portfolio-projects', path: '/portfolio/projects' },
@@ -91,6 +93,7 @@ const screens: Screen[] = [
 const settingsScreens: Screen[] = [
   '/settings/regional',
   '/settings/branding',
+  '/settings/appearance',
   '/settings/systems',
   '/settings/features',
   '/settings/lookups',
@@ -285,6 +288,66 @@ test.describe('accessibility — WCAG 2.1 AA (axe-core)', () => {
       }
     } finally {
       await apiPut(page, '/api/v1/identity/me/preferences', { language, theme: 'light' });
+    }
+  });
+
+  /**
+   * Phase 20 (ADR 0175): the workspace themes in light and dark — launcher, command palette, app home, list (split view), project
+   * record (highlights, path, related lists), Settings → Appearance. Classic is every test above. Settings are put back afterwards.
+   */
+  test('Enterprise and Modern themes, light and dark', async ({ page, language, adminApi }) => {
+    test.setTimeout(600_000);
+    const current = (await (await adminApi.get('/api/v1/settings/appearance')).json()) as {
+      value: Record<string, unknown> | null;
+      version: number;
+    };
+    const allowed = await apiPut(adminApi, '/api/v1/settings/appearance', {
+      value: { ...(current.value ?? {}), allowUserTheme: true },
+      version: current.version,
+    });
+    expect(allowed.status()).toBe(200);
+    const project = await firstRecordHref(page, '/portfolio/projects', projectHref);
+    try {
+      for (const uiTheme of ['enterprise', 'modern'] as const) {
+        for (const theme of ['light', 'dark'] as const) {
+          await apiPut(page, '/api/v1/identity/me/preferences', { language, theme, uiTheme });
+          const name = (screen: string) => `${uiTheme}-${theme}-${screen}`;
+          await page.goto('/my-work');
+          await expect(page.locator('html')).toHaveAttribute('data-theme', uiTheme);
+          await expectAccessible(page, name('my-work'));
+          await page.getByTestId('app-launcher').click();
+          await expectAccessible(page, name('launcher'));
+          await page.keyboard.press('Escape');
+          if (uiTheme === 'modern') {
+            await page.keyboard.press('Control+k');
+            await expect(page.getByTestId('command-palette')).toBeVisible();
+            await expectAccessible(page, name('palette'));
+            await page.keyboard.press('Escape');
+          }
+          for (const path of [
+            '/apps/portfolio',
+            '/portfolio/projects',
+            '/apps/kpi',
+            '/settings/appearance',
+          ]) {
+            await page.goto(path);
+            await expectAccessible(page, name(path.replace(/\//gu, '-').slice(1)));
+          }
+          if (project) {
+            await page.goto(project);
+            await expectAccessible(page, name('portfolio-project'));
+          }
+        }
+      }
+    } finally {
+      await apiPut(page, '/api/v1/identity/me/preferences', { language, theme: 'light', uiTheme: '' });
+      const latest = (await (await adminApi.get('/api/v1/settings/appearance')).json()) as {
+        version: number;
+      };
+      await apiPut(adminApi, '/api/v1/settings/appearance', {
+        value: current.value ?? {},
+        version: latest.version,
+      });
     }
   });
 });
