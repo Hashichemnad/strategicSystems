@@ -19,6 +19,15 @@ listed at the end.
 Run: `npx playwright test e2e/a11y.spec.ts` (after the rest of the suite on the same database) and
 `npx playwright test -c playwright.setup.config.ts` for the setup wizard.
 
+### Themes (Phase 20, ADR 0175)
+
+Every token set (Classic, Enterprise, Modern × light / dark) is audited: Classic by everything below; Enterprise and Modern by the
+*Enterprise and Modern themes, light and dark* test of `a11y.spec.ts` (My Work, app launcher, command palette, Portfolio and KPI app homes,
+project list in split view, project record with highlights / path / related lists, Settings → Appearance — 60 screen states in `ar` and
+`en`: **0 violations**). `themes.spec.ts` checks the eight main screens of every theme × mode at 360 px (no horizontal page scroll).
+Fixed while auditing: the palette button's accessible name now contains its visible text (2.5.3); the theme previews use their own
+light / dark tokens (1.4.3). Motion in the workspace themes (one 160 ms entrance) is removed under `prefers-reduced-motion`.
+
 ## 2. Screens covered (both `ar` and `en`)
 
 | Area | Screens |

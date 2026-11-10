@@ -94,6 +94,7 @@ from the PowerShell Gallery by `tests/deploy/Invoke-ScriptAnalysis.ps1`); the de
 | @tiptap/react, @tiptap/pm, @tiptap/starter-kit, @tiptap/extension-link, @tiptap/extension-table (+ @tiptap/core and the StarterKit extensions, prosemirror-* MIT, orderedmap MIT, linkifyjs MIT) | MIT | rich-text editor `RichTextEditor` (Phase 19, [ADR 0161](decisions/0161-rich-text.md)) |
 | dompurify | MPL-2.0 OR Apache-2.0 (used under Apache-2.0) | sanitises rich text before rendering (`RichTextView`, ADR 0161) |
 | @fontsource/ibm-plex-sans-arabic, @fontsource/ibm-plex-sans | OFL-1.1 (fonts) | self-hosted fonts (offline installs); the Arabic and Latin WOFF2 files of IBM Plex Sans Arabic are also embedded in `Strategy.Platform.Reporting` for PDFs |
+| @fontsource/noto-kufi-arabic | OFL-1.1 (fonts) | Modern theme headings in Arabic (Arabic subset, weight 600; self-hosted, downloaded by the browser only when used) — ADR 0170 |
 
 ### Development and build only (not shipped)
 
