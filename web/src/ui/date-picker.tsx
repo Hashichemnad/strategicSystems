@@ -46,7 +46,7 @@ export function DatePicker({ value, onChange, id, placeholder, disabled, ...aria
           selected ? undefined : `${placeholder ?? t('datePicker.placeholder')}, ${t('datePicker.open')}`
         }
         className={cn(
-          'flex h-10 w-full items-center justify-between gap-2 rounded-md border border-input bg-card px-3 text-sm aria-invalid:border-danger disabled:opacity-50',
+          'flex h-[var(--control-h)] w-full items-center justify-between gap-2 rounded-md border border-input bg-card px-3 text-sm aria-invalid:border-danger disabled:opacity-50',
           !selected && 'text-muted-foreground',
         )}
       >

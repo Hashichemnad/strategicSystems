@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api, unwrap } from '@/api/client';
 import type { components } from '@/api/schema';
-import { useTheme } from '@/app/theme';
+import { isThemePreference, isUiTheme, useTheme } from '@/app/theme';
 import { isLanguage, resources } from '@/i18n';
 import { readPreference } from '@/lib/preferences';
 import { pickText, setFormatDefaults } from '@/lib/format';
@@ -107,6 +107,17 @@ export function SettingsEffects(): null {
       root.style.setProperty('--brand-primary', settings.primaryColor);
     else root.style.removeProperty('--brand-primary');
   }, [settings]);
+
+  // Signed out (sign-in pages) and before the profile loads: the installation's default theme and mode (Settings → Appearance) apply
+  // until this browser has seen the user's own effective values (ADR 0171).
+  const { setTheme, setUiTheme } = useTheme();
+  const defaultTheme = settings?.defaultTheme;
+  const defaultMode = settings?.defaultMode;
+  useEffect(() => {
+    if (isUiTheme(defaultTheme) && !isUiTheme(readPreference('uiTheme'))) setUiTheme(defaultTheme);
+    if (isThemePreference(defaultMode) && !isThemePreference(readPreference('theme'))) setTheme(defaultMode);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultTheme, defaultMode]);
 
   // The installation's default language (setup wizard, Settings → Regional) applies until this browser or the profile has a choice.
   const defaultLanguage = settings?.regional.defaultLanguage;

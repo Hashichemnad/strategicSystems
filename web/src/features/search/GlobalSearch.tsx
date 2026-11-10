@@ -48,35 +48,16 @@ function isEditable(target: EventTarget | null): boolean {
 }
 
 /**
- * Top-bar global search (SPEC-ADDENDUM A1, ADR 0160): every system the user can open, grouped by system, recent items when empty.
- * `/` or Ctrl / ⌘ + K focuses it; on phones an icon opens it over the top bar.
+ * Grouped record results of the global search for a typed text (recent items while empty): the top-bar search and the Modern
+ * command palette (ADR 0174) share it, so both show exactly the same permission-filtered results.
  */
-export function GlobalSearch() {
+export function useGlobalSearchGroups(text: string, open: boolean) {
   const { t, i18n } = useTranslation('search');
-  const navigate = useNavigate();
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [text, setText] = useState('');
-  const [open, setOpen] = useState(false);
-  const [expanded, setExpanded] = useState(false); // phones: the search covers the top bar
   const term = useDebounced(text.trim(), 200);
   const searching = term.length >= minQueryLength;
   const results = useSearch(term);
   const recent = useRecentItems(open && text.trim().length === 0);
   const language = i18n.language;
-
-  useEffect(() => {
-    const onKeyDown = (event: KeyboardEvent) => {
-      const k = event.key.toLowerCase() === 'k' && (event.ctrlKey || event.metaKey);
-      const slash =
-        event.key === '/' && !event.ctrlKey && !event.metaKey && !event.altKey && !isEditable(event.target);
-      if (!k && !slash) return;
-      event.preventDefault();
-      setExpanded(true);
-      window.requestAnimationFrame(() => inputRef.current?.focus());
-    };
-    document.addEventListener('keydown', onKeyDown);
-    return () => document.removeEventListener('keydown', onKeyDown);
-  }, []);
 
   const links = useRef(new Map<string, string>());
   const groups = useMemo<CommandSearchGroup[]>(() => {
@@ -126,6 +107,37 @@ export function GlobalSearch() {
             : undefined;
   const loading =
     (searching && results.isFetching && !results.data) || (trimmed.length === 0 && recent.isLoading && open);
+
+  return { groups, links, emptyText, loading };
+}
+
+/**
+ * Top-bar global search (SPEC-ADDENDUM A1, ADR 0160): every system the user can open, grouped by system, recent items when empty.
+ * `/` or Ctrl / ⌘ + K focuses it; on phones an icon opens it over the top bar.
+ */
+export function GlobalSearch() {
+  const { t } = useTranslation('search');
+  const navigate = useNavigate();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [text, setText] = useState('');
+  const [open, setOpen] = useState(false);
+  const [expanded, setExpanded] = useState(false); // phones: the search covers the top bar
+  const { groups, links, emptyText, loading } = useGlobalSearchGroups(text, open);
+
+  // Ctrl / ⌘ + K and `/` focus the search (the Modern theme's command palette takes Ctrl + K instead, ADR 0174).
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      const k = event.key.toLowerCase() === 'k' && (event.ctrlKey || event.metaKey);
+      const slash =
+        event.key === '/' && !event.ctrlKey && !event.metaKey && !event.altKey && !isEditable(event.target);
+      if (!k && !slash) return;
+      event.preventDefault();
+      setExpanded(true);
+      window.requestAnimationFrame(() => inputRef.current?.focus());
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => document.removeEventListener('keydown', onKeyDown);
+  }, []);
 
   const close = () => {
     setText('');

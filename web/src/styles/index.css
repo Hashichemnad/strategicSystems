@@ -34,9 +34,37 @@
   --info-soft: oklch(0.96 0.03 245);
   --sidebar: oklch(0.99 0.002 247);
   --radius: 0.625rem;
+  /* Phase 20 layout tokens (docs/design/themes.md §3). Classic values are the Phase 0–19 sizes, so Classic is unchanged. */
+  --header: var(--card);
+  --appbar: var(--card);
+  --appbar-foreground: var(--foreground);
+  --app-accent: var(--primary);
+  --shadow-card: none;
+  --control-h: 2.5rem;
+  --control-h-sm: 2rem;
+  --header-cell-h: 2.75rem;
+  --cell-py: 0.75rem;
+  --font-heading: var(--font-sans);
 }
 
-.dark {
+/* A Classic-scoped element (theme previews in Settings → Appearance) gets Classic's tokens inside any theme. */
+[data-theme='classic'] {
+  --background: oklch(0.985 0.002 247);
+  --foreground: oklch(0.21 0.03 265);
+  --card: oklch(1 0 0);
+  --muted: oklch(0.96 0.005 250);
+  --muted-foreground: oklch(0.47 0.03 257);
+  --border: oklch(0.91 0.01 255);
+  --primary: var(--brand-primary, oklch(0.48 0.09 186));
+  --primary-foreground: oklch(0.99 0 0);
+  --sidebar: oklch(0.99 0.002 247);
+  --header: var(--card);
+  --radius: 0.625rem;
+  --shadow-card: none;
+}
+
+.dark,
+.dark [data-theme='classic'] {
   --background: oklch(0.17 0.02 265);
   --foreground: oklch(0.95 0.01 255);
   --card: oklch(0.21 0.02 265);
@@ -62,6 +90,109 @@
   --info: oklch(0.72 0.12 245);
   --info-soft: oklch(0.3 0.06 245);
   --sidebar: oklch(0.19 0.02 265);
+}
+
+/*
+ * Enterprise theme (SPEC-ADDENDUM §C3, ADR 0170): compact, square, cool grey canvas with white work surfaces and a navy app bar.
+ * Its own colours, Lucide icons and the IBM Plex fonts — no third-party branding.
+ */
+[data-theme='enterprise'] {
+  --background: oklch(0.955 0.006 250);
+  --foreground: oklch(0.22 0.03 260);
+  --card: oklch(1 0 0);
+  --muted: oklch(0.955 0.006 250);
+  --muted-foreground: oklch(0.45 0.03 257);
+  --border: oklch(0.87 0.008 250);
+  --input: oklch(0.8 0.012 250);
+  --ring: oklch(0.55 0.15 258);
+  --primary: var(--brand-primary, oklch(0.48 0.15 258));
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.96 0.008 250);
+  --accent: oklch(0.94 0.03 255);
+  --accent-foreground: oklch(0.36 0.12 258);
+  --sidebar: oklch(1 0 0);
+  --header: oklch(1 0 0);
+  --appbar: oklch(0.3 0.07 258);
+  --appbar-foreground: oklch(0.98 0.005 250);
+  --radius: 0.25rem;
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.08);
+  --control-h: 2.125rem;
+  --control-h-sm: 1.75rem;
+  --header-cell-h: 2.25rem;
+  --cell-py: 0.4rem;
+}
+
+[data-theme='enterprise'].dark,
+.dark [data-theme='enterprise'] {
+  --background: oklch(0.16 0.015 255);
+  --foreground: oklch(0.95 0.01 255);
+  --card: oklch(0.205 0.015 255);
+  --muted: oklch(0.24 0.015 255);
+  --muted-foreground: oklch(0.74 0.02 257);
+  --border: oklch(0.32 0.015 255);
+  --input: oklch(0.38 0.015 255);
+  --ring: oklch(0.72 0.13 255);
+  --primary: oklch(0.72 0.13 255);
+  --primary-foreground: oklch(0.17 0.03 260);
+  --secondary: oklch(0.26 0.015 255);
+  --accent: oklch(0.3 0.06 258);
+  --accent-foreground: oklch(0.88 0.06 255);
+  --sidebar: oklch(0.19 0.015 255);
+  --header: oklch(0.205 0.015 255);
+  --appbar: oklch(0.13 0.02 258);
+  --appbar-foreground: oklch(0.95 0.01 255);
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4);
+}
+
+/* Compact density: every rem-based size shrinks with the root (respects the user's browser font size). */
+html[data-theme='enterprise'] {
+  font-size: 93.75%;
+}
+
+/*
+ * Modern theme (SPEC-ADDENDUM §C4, ADR 0170): calm warm-paper canvas, rounded cards with soft elevation, generous spacing, Arabic-first
+ * headings (Noto Kufi Arabic).
+ */
+[data-theme='modern'] {
+  --background: oklch(0.982 0.005 85);
+  --foreground: oklch(0.2 0.02 260);
+  --card: oklch(1 0 0);
+  --muted: oklch(0.96 0.006 85);
+  --muted-foreground: oklch(0.46 0.025 260);
+  --border: oklch(0.915 0.008 85);
+  --input: oklch(0.85 0.01 85);
+  --ring: oklch(0.55 0.1 200);
+  --primary: var(--brand-primary, oklch(0.47 0.1 200));
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.955 0.008 85);
+  --accent: oklch(0.95 0.025 200);
+  --accent-foreground: oklch(0.36 0.08 200);
+  --sidebar: oklch(0.97 0.006 85);
+  --header: transparent;
+  --radius: 0.875rem;
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.04), 0 4px 16px rgb(0 0 0 / 0.05);
+  --header-cell-h: 3rem;
+  --cell-py: 0.875rem;
+  --font-heading: 'IBM Plex Sans', 'Noto Kufi Arabic', ui-sans-serif, system-ui, sans-serif;
+}
+
+[data-theme='modern'].dark,
+.dark [data-theme='modern'] {
+  --background: oklch(0.165 0.012 260);
+  --foreground: oklch(0.95 0.008 85);
+  --card: oklch(0.205 0.012 260);
+  --muted: oklch(0.24 0.012 260);
+  --muted-foreground: oklch(0.74 0.015 260);
+  --border: oklch(0.29 0.012 260);
+  --input: oklch(0.36 0.012 260);
+  --ring: oklch(0.74 0.1 195);
+  --primary: oklch(0.74 0.1 195);
+  --primary-foreground: oklch(0.17 0.03 210);
+  --secondary: oklch(0.26 0.012 260);
+  --accent: oklch(0.29 0.04 200);
+  --accent-foreground: oklch(0.88 0.06 195);
+  --sidebar: oklch(0.185 0.012 260);
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.35), 0 4px 16px rgb(0 0 0 / 0.25);
 }
 
 @theme inline {
@@ -90,6 +221,10 @@
   --color-info: var(--info);
   --color-info-soft: var(--info-soft);
   --color-sidebar: var(--sidebar);
+  --color-header: var(--header);
+  --color-appbar: var(--appbar);
+  --color-appbar-foreground: var(--appbar-foreground);
+  --color-app-accent: var(--app-accent);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -114,6 +249,24 @@
   /* Arabic text first in Arabic, so Latin digits and words inside Arabic sentences share the Arabic metrics. */
   html:lang(ar) {
     --font-sans: 'IBM Plex Sans Arabic', 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+  }
+  /* Modern: Arabic-first typography — Kufi headings and a more open line height in Arabic. */
+  html[data-theme='modern']:lang(ar) {
+    --font-heading: 'Noto Kufi Arabic', 'IBM Plex Sans Arabic', ui-sans-serif, system-ui, sans-serif;
+  }
+  html[data-theme='modern'] body {
+    line-height: 1.6;
+  }
+  html[data-theme='modern']:lang(ar) body {
+    line-height: 1.75;
+  }
+  :where(html[data-theme='modern']) :where(h1, h2) {
+    font-family: var(--font-heading);
+  }
+  /* Work surfaces get the theme's elevation (none in Classic). :where() keeps any class able to override it. */
+  :where(html[data-theme='enterprise'], html[data-theme='modern'])
+    :where(main .bg-card.border, main section.border.bg-card) {
+    box-shadow: var(--shadow-card);
   }
   body {
     @apply bg-background text-foreground antialiased;
@@ -217,4 +370,39 @@
     pointer-events: none;
     color: var(--muted-foreground);
   }
+}
+
+/* Subtle motion in the workspace themes (Modern panels, palette, launcher); none when the user asks for reduced motion. */
+@layer components {
+  .motion-panel {
+    animation: motion-panel-in 160ms ease-out;
+  }
+  @keyframes motion-panel-in {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .motion-panel {
+      animation: none;
+    }
+    :where(html[data-theme='enterprise'], html[data-theme='modern']) *,
+    :where(html[data-theme='enterprise'], html[data-theme='modern']) *::before,
+    :where(html[data-theme='enterprise'], html[data-theme='modern']) *::after {
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/*
+ * In the workspace themes the app's own tabs (Enterprise tab bar, Modern sidebar) replace each system's secondary navigation, so the
+ * page shows one navigation only (ADR 0172). The secondary navigation stays in Classic.
+ */
+[data-layout='workspace'] [data-module-nav] {
+  display: none;
 }

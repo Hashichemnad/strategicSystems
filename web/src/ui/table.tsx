@@ -30,14 +30,17 @@ export function TableHeaderCell({ className, ...props }: ThHTMLAttributes<HTMLTa
   return (
     <th
       scope="col"
-      className={cn('h-11 px-4 text-start align-middle font-medium whitespace-nowrap', className)}
+      className={cn(
+        'h-[var(--header-cell-h)] px-4 text-start align-middle font-medium whitespace-nowrap',
+        className,
+      )}
       {...props}
     />
   );
 }
 
 export function TableCell({ className, ...props }: TdHTMLAttributes<HTMLTableCellElement>) {
-  return <td className={cn('px-4 py-3 align-middle', className)} {...props} />;
+  return <td className={cn('px-4 py-[var(--cell-py)] align-middle', className)} {...props} />;
 }
 
 export type SortDirection = 'asc' | 'desc' | null;

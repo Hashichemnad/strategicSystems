@@ -46,6 +46,11 @@ export interface CommandSearchProps {
   className?: string;
   onOpenChange?: (open: boolean) => void;
   testId?: string;
+  /**
+   * The list is part of the page flow and always shown (the command palette's dialog, ADR 0174) instead of a popup under the input;
+   * Escape reports `onOpenChange(false)` so the dialog can close.
+   */
+  inline?: boolean;
 }
 
 /**
@@ -68,10 +73,12 @@ export function CommandSearch({
   className,
   onOpenChange,
   testId = 'command-search',
+  inline = false,
 }: CommandSearchProps) {
   const baseId = useId();
   const listId = `${baseId}-list`;
-  const [open, setOpenState] = useState(false);
+  const [openState, setOpenState] = useState(false);
+  const open = inline || openState;
   const [active, setActive] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const items = useMemo(() => groups.flatMap((g) => g.items), [groups]);
@@ -95,7 +102,7 @@ export function CommandSearch({
   const choose = (item: CommandSearchItem | undefined) => {
     if (!item) return;
     onSelect(item);
-    setOpen(false);
+    if (!inline) setOpen(false);
   };
 
   const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
@@ -130,7 +137,8 @@ export function CommandSearch({
         break;
       case 'Escape':
         event.preventDefault();
-        if (open) setOpen(false);
+        if (inline) onOpenChange?.(false);
+        else if (open) setOpen(false);
         else if (value) onValueChange('');
         break;
       default:
@@ -147,7 +155,7 @@ export function CommandSearch({
       className={cn('relative w-full', className)}
       data-testid={testId}
       onBlur={(event) => {
-        if (!containerRef.current?.contains(event.relatedTarget)) setOpen(false);
+        if (!inline && !containerRef.current?.contains(event.relatedTarget)) setOpen(false);
       }}
     >
       <div className="relative">
@@ -205,7 +213,11 @@ export function CommandSearch({
         role="listbox"
         aria-label={label}
         hidden={!expanded}
-        className="absolute inset-x-0 top-full z-50 mt-1 max-h-[70vh] overflow-y-auto rounded-md border bg-card p-1 shadow-lg sm:end-auto sm:w-[min(36rem,calc(100vw-2rem))]"
+        className={
+          inline
+            ? 'mt-2 max-h-[min(60vh,28rem)] overflow-y-auto p-1'
+            : 'absolute inset-x-0 top-full z-50 mt-1 max-h-[70vh] overflow-y-auto rounded-md border bg-card p-1 shadow-lg sm:end-auto sm:w-[min(36rem,calc(100vw-2rem))]'
+        }
         data-testid={`${testId}-list`}
       >
         {loading && items.length === 0 && (

@@ -39,6 +39,7 @@ import {
   ShieldCheck,
   ShieldHalf,
   SquareStack,
+  SwatchBook,
   Timer,
   UserCheck,
   UserCog,
@@ -79,6 +80,7 @@ export type SettingsPageKey =
   | 'dashboards'
   | 'reporting'
   | 'branding'
+  | 'appearance'
   | 'systems'
   | 'features'
   | 'lookups'
@@ -118,6 +120,7 @@ export type SettingsPath =
   | '/settings/dashboards'
   | '/settings/reporting'
   | '/settings/branding'
+  | '/settings/appearance'
   | '/settings/systems'
   | '/settings/features'
   | '/settings/lookups'
@@ -187,6 +190,12 @@ export const settingsGroups: readonly SettingsGroup[] = [
         permissions: ['settings.general.manage'],
       },
       { key: 'branding', to: '/settings/branding', icon: Palette, permissions: ['settings.general.manage'] },
+      {
+        key: 'appearance',
+        to: '/settings/appearance',
+        icon: SwatchBook,
+        permissions: ['settings.general.manage'],
+      },
       {
         key: 'dashboards',
         to: '/settings/dashboards',

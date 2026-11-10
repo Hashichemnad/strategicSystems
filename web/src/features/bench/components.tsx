@@ -66,6 +66,7 @@ export function BenchNav() {
   return (
     <nav
       aria-label={t('nav.label')}
+      data-module-nav
       className="-mt-2 flex flex-wrap gap-1 border-b pb-2"
       data-testid="bench-nav"
     >

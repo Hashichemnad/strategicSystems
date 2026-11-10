@@ -43,7 +43,7 @@ export function Select({
         {...aria}
         aria-label={name}
         className={cn(
-          'flex h-10 w-full items-center justify-between gap-2 rounded-md border border-input bg-card px-3 text-sm data-[placeholder]:text-muted-foreground aria-invalid:border-danger disabled:opacity-50',
+          'flex h-[var(--control-h)] w-full items-center justify-between gap-2 rounded-md border border-input bg-card px-3 text-sm data-[placeholder]:text-muted-foreground aria-invalid:border-danger disabled:opacity-50',
           className,
         )}
       >

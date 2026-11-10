@@ -8,6 +8,10 @@
       "title": "Branding",
       "description": "Organisation name, logos, colour and the e-mail header and footer."
     },
+    "appearance": {
+      "title": "Appearance",
+      "description": "Themes, default theme and mode, landing app per role and the look of each application."
+    },
     "systems": {
       "title": "Systems",
       "description": "Switch systems on or off and set the owning unit of each system."

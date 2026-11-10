@@ -1,0 +1,336 @@
+{
+  "themes": {
+    "classic": "Classic",
+    "enterprise": "Enterprise",
+    "modern": "Modern",
+    "classicDescription": "One sidebar with every system — the layout you know.",
+    "enterpriseDescription": "Compact workspaces with tabs per application, highlights panels and related lists.",
+    "modernDescription": "Calm, spacious workspaces with a command palette, split views and cards."
+  },
+  "modes": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "Same as device"
+  },
+  "menu": {
+    "label": "Appearance",
+    "theme": "Theme",
+    "mode": "Light or dark"
+  },
+  "apps": {
+    "mywork": {
+      "name": "My Work",
+      "description": "Approvals, tasks and items waiting for you across all systems"
+    },
+    "dashboards": {
+      "name": "Dashboards",
+      "description": "Executive dashboard, dashboards and reports across systems"
+    },
+    "portfolio": {
+      "name": "Portfolio",
+      "description": "Program requests, projects, initiatives and portfolios"
+    },
+    "kpi": {
+      "name": "Performance",
+      "description": "KPI cards, results, scorecard and strategy map"
+    },
+    "risk": {
+      "name": "Risk",
+      "description": "Risk register, treatment actions and the risk profile"
+    },
+    "teams": {
+      "name": "Teams",
+      "description": "Teams, committees, meetings and evaluations"
+    },
+    "tasks": {
+      "name": "Tasks",
+      "description": "Tasks assigned to you and the tasks you follow"
+    },
+    "requests": {
+      "name": "Requests",
+      "description": "Request catalogue, your requests and the processing queue"
+    },
+    "docreg": {
+      "name": "Document Registry",
+      "description": "Controlled documents, versions and reviews"
+    },
+    "ip": {
+      "name": "Intellectual Property",
+      "description": "IP register, protection and renewals"
+    },
+    "bench": {
+      "name": "Benchmarking",
+      "description": "Benchmarking plan, studies and best practices"
+    },
+    "cap": {
+      "name": "Corrective Actions",
+      "description": "Remarks, corrective action plans and follow-up"
+    },
+    "auditmgmt": {
+      "name": "Audit Management",
+      "description": "Audit findings, recommendations and annual plans"
+    },
+    "org": {
+      "name": "Organisation",
+      "description": "Units, organisation chart and employees"
+    },
+    "settings": {
+      "name": "Settings",
+      "description": "Administration, settings and the audit log"
+    },
+    "sample": {
+      "name": "Sample",
+      "description": "Template module"
+    }
+  },
+  "tabs": {
+    "home": "Home",
+    "mywork": {
+      "mywork": "My Work",
+      "notifications": "Notifications",
+      "profile": "My profile"
+    },
+    "dashboards": {
+      "executive": "Executive",
+      "dashboards": "Dashboards",
+      "reports": "Reports"
+    },
+    "portfolio": {
+      "requests": "Requests",
+      "projects": "Projects",
+      "dashboard": "Dashboard",
+      "gantt": "Gantt",
+      "portfolios": "Portfolios",
+      "vendors": "Vendors",
+      "capacity": "Capacity",
+      "reviews": "Reviews"
+    },
+    "kpi": {
+      "dashboard": "Dashboard",
+      "cards": "KPI cards",
+      "pending": "Pending updates",
+      "approvals": "Approvals",
+      "scorecard": "Scorecard",
+      "strategyMap": "Strategy map",
+      "reports": "Reports",
+      "newYear": "New year"
+    },
+    "risk": {
+      "dashboard": "Dashboard",
+      "register": "Register",
+      "myActions": "My actions",
+      "projectRisks": "Project risks",
+      "mechanism": "Mechanism",
+      "reports": "Reports"
+    },
+    "tasks": {
+      "tasks": "Tasks",
+      "dashboard": "Dashboard"
+    },
+    "teams": {
+      "teams": "Teams",
+      "dashboard": "Dashboard"
+    },
+    "requests": {
+      "catalogue": "Catalogue",
+      "mine": "My requests",
+      "queue": "Queue"
+    },
+    "docreg": {
+      "library": "Library",
+      "dashboard": "Dashboard"
+    },
+    "ip": {
+      "register": "Register",
+      "dashboard": "Dashboard"
+    },
+    "bench": {
+      "dashboard": "Dashboard",
+      "plan": "Annual plan",
+      "studies": "Studies",
+      "comparators": "Comparators",
+      "practices": "Best practices"
+    },
+    "cap": {
+      "dashboard": "Dashboard",
+      "sources": "Sources",
+      "remarks": "Remarks",
+      "actions": "Actions",
+      "suggestions": "Suggestions"
+    },
+    "auditmgmt": {
+      "dashboard": "Dashboard",
+      "department": "My department",
+      "reports": "Audit reports",
+      "findings": "Findings",
+      "calendar": "Calendar",
+      "universe": "Universe",
+      "plans": "Annual plans"
+    },
+    "org": {
+      "units": "Units",
+      "chart": "Org chart",
+      "employees": "Employees",
+      "levels": "Levels",
+      "import": "Import"
+    },
+    "settings": {
+      "settings": "Settings",
+      "auditLog": "Audit log",
+      "verification": "Chain verification"
+    },
+    "sample": {
+      "sample": "Sample items"
+    }
+  },
+  "quickActions": {
+    "label": "Quick actions",
+    "newRequest": "New program request",
+    "projects": "Open projects",
+    "newKpi": "New KPI card",
+    "pendingUpdates": "My pending updates",
+    "newRisk": "Report a risk",
+    "myActions": "My actions",
+    "tasks": "My tasks",
+    "newTeam": "Request a team",
+    "catalogue": "Submit a request",
+    "library": "Browse the library",
+    "register": "Open the register",
+    "studies": "Open studies",
+    "findings": "Open findings"
+  },
+  "launcher": {
+    "open": "App launcher",
+    "title": "Applications",
+    "search": "Search apps",
+    "favourites": "Favourites",
+    "systems": "Systems",
+    "shared": "Shared apps",
+    "none": "No app matches your search.",
+    "addFavourite": "Add {{name}} to favourites",
+    "removeFavourite": "Remove {{name}} from favourites"
+  },
+  "workspace": {
+    "tabs": "{{name}} tabs",
+    "collapse": "Collapse the sidebar",
+    "expand": "Expand the sidebar",
+    "favourites": "Favourites",
+    "recent": "Recent items",
+    "noRecent": "No recent items yet.",
+    "openMenu": "Open the app menu"
+  },
+  "home": {
+    "myItems": "My items in {{name}}",
+    "noItems": "Nothing is waiting for you in this application.",
+    "approvals": "Approvals",
+    "actionItems": "Your action",
+    "submissions": "My submissions",
+    "dashboard": "System dashboard",
+    "noDashboard": "This application has no system dashboard.",
+    "notFound": "This application does not exist or you cannot open it.",
+    "openApp": "Open"
+  },
+  "palette": {
+    "open": "Command palette",
+    "shortcut": "Ctrl K",
+    "placeholder": "Search records, pages and actions…",
+    "pages": "Pages",
+    "actions": "Actions",
+    "records": "Records",
+    "recent": "Recent items",
+    "empty": "Nothing found.",
+    "switchLanguage": "Switch to {{language}}",
+    "modeLight": "Use the light mode",
+    "modeDark": "Use the dark mode",
+    "modeSystem": "Use the device's mode",
+    "useTheme": "Use the {{theme}} theme",
+    "searching": "Searching…",
+    "hint": "↑ ↓ to move · Enter to open · Esc to close"
+  },
+  "utility": {
+    "label": "Utility bar",
+    "recent": "Recent items",
+    "note": "Quick note",
+    "notePlaceholder": "A scratch note. It stays in this browser only and is never sent anywhere.",
+    "close": "Close"
+  },
+  "split": {
+    "table": "Table",
+    "split": "List and preview",
+    "view": "View",
+    "preview": "Preview",
+    "selectOne": "Select a row to see its preview.",
+    "open": "Open the record"
+  },
+  "record": {
+    "highlights": "Highlights",
+    "related": "Related",
+    "keyFacts": "Key facts",
+    "path": "Path",
+    "guidance": "Current stage: {{stage}}",
+    "items_one": "{{count}} item",
+    "items_other": "{{count}} items"
+  },
+  "settings": {
+    "title": "Appearance",
+    "description": "Themes, the default look of the application, the landing app per role and how each application looks. Organisation branding (logo, primary colour) applies in every theme.",
+    "themesSection": "Themes",
+    "enabled": "Available",
+    "default": "Default theme",
+    "defaultMode": "Default mode",
+    "allowUserTheme": "Allow users to choose their theme",
+    "allowUserThemeHint": "Off: everyone uses the default theme. On: users pick one of the available themes in their profile.",
+    "allowUserMode": "Allow users to choose light or dark",
+    "allowUserModeHint": "Off: everyone uses the default mode.",
+    "brandingNote": "The logo and primary colour from Branding apply in every theme.",
+    "brandingLink": "Open Branding",
+    "preview": "Preview of {{theme}}",
+    "previewSample": "Sample record",
+    "previewButton": "Submit",
+    "landingSection": "Landing app per role",
+    "landingDescription": "Users holding the role land on the app when they open the application (Enterprise and Modern themes). The first matching rule wins; a user's own default app comes first.",
+    "role": "Role",
+    "app": "App",
+    "addRule": "Add a rule",
+    "removeRule": "Remove the rule",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "noRules": "No rules: users land on My Work.",
+    "appsSection": "Applications",
+    "appsDescription": "Display name, icon, accent colour, tabs and the home dashboard of each application (Enterprise and Modern themes). Changes never give anyone access.",
+    "icon": "Icon",
+    "accent": "Accent colour",
+    "nameAr": "Name (Arabic)",
+    "nameEn": "Name (English)",
+    "tabs": "Tabs",
+    "editTabs": "Tabs of {{name}}",
+    "hidden": "Hidden",
+    "visible": "Shown",
+    "dashboard": "Home dashboard",
+    "defaultDashboard": "Default ({{code}})",
+    "noDashboardOption": "None",
+    "edit": "Edit {{name}}",
+    "resetApp": "Reset to default",
+    "lowContrast": "White icons on this colour have a contrast of {{ratio}} : 1; choose a darker colour (at least 3 : 1).",
+    "saved": "Appearance saved.",
+    "save": "Save",
+    "cancel": "Cancel",
+    "done": "Done"
+  },
+  "profile": {
+    "section": "Appearance",
+    "theme": "Theme",
+    "themeDefault": "Organisation default ({{theme}})",
+    "themeLocked": "Your organisation uses the {{theme}} theme.",
+    "mode": "Light or dark",
+    "landingApp": "Default app",
+    "landingDefault": "As set for my role",
+    "favourites": "Favourite apps",
+    "saved": "Preferences saved."
+  },
+  "errors": {
+    "themeChoiceOff": "Choosing a theme is turned off by your organisation.",
+    "modeChoiceOff": "Choosing light or dark is turned off by your organisation.",
+    "defaultNotEnabled": "The default theme must be one of the available themes."
+  }
+}

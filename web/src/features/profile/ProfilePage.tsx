@@ -6,6 +6,7 @@ import { api, ApiError, unwrap } from '@/api/client';
 import { errorMessage, translateMessageKey } from '@/api/problem';
 import type { components } from '@/api/schema';
 import { profileRoute } from '@/app/router';
+import { AppearancePreferences } from '@/features/appearance/AppearancePreferences';
 import { useTheme, type ThemePreference } from '@/app/theme';
 import { MfaSetup, RecoveryCodes } from '@/features/auth/MfaSetup';
 import { PasswordPolicyHint } from '@/features/auth/PasswordPolicyHint';
@@ -125,6 +126,7 @@ function PreferencesPanel() {
   const { t: ts } = useTranslation('shell');
   const { i18n } = useTranslation();
   const { theme, setTheme } = useTheme();
+  const me = useMe();
   const queryClient = useQueryClient();
   const toast = useToast();
   const save = async (language: string | null, nextTheme: string | null) => {
@@ -152,6 +154,7 @@ function PreferencesPanel() {
         </FormField>
         <FormField label={t('preferences.theme')}>
           <Select
+            disabled={me?.appearance.allowUserMode === false}
             value={theme}
             options={(['light', 'dark', 'system'] as const).map((value) => ({
               value,
@@ -164,6 +167,7 @@ function PreferencesPanel() {
           />
         </FormField>
       </div>
+      <AppearancePreferences />
     </Section>
   );
 }

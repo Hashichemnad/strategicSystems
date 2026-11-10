@@ -20,6 +20,7 @@ import {
   RichTextEditor,
   RichTextView,
   PageHeader,
+  RecordLayout,
   Select,
   Skeleton,
   StageStepper,
@@ -182,91 +183,136 @@ export function ProjectPage() {
     }
   };
   const live = p.status === 'active' || p.status === 'on-hold';
+  const person = (x: typeof p.pm) => (x ? pickText(lang, x.nameAr, x.nameEn) : '—');
+  const date = (value: string | null) => (value ? formatDate(value, lang) : '—');
+  // Related lists of the Enterprise / Modern record layout: count cards that open the related tab (ADR 0170).
+  const relatedTabs: { key: ProjectTab; count?: number }[] = [
+    { key: 'milestones', count: p.counts.milestones },
+    { key: 'risks', count: p.counts.risks },
+    { key: 'kpis', count: p.counts.kpis },
+    { key: 'stakeholders', count: p.counts.stakeholders },
+    { key: 'team', count: p.counts.members },
+    { key: 'meetings', count: p.counts.meetings },
+    { key: 'contracts', count: p.counts.contracts },
+    { key: 'changes', count: p.counts.changeRequests },
+    { key: 'documents' },
+    { key: 'approvals' },
+  ];
   return (
-    <div className="flex flex-col gap-6" data-testid="project-page">
-      <Link
-        to="/portfolio/projects"
-        search={{ page: 1 }}
-        className="flex items-center gap-1 text-sm text-primary hover:underline"
-      >
-        <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden />
-        {t('projectsTitle')}
-      </Link>
-      <PageHeader
-        title={<span dir="auto">{pickText(lang, p.nameAr, p.nameEn)}</span>}
-        description={
-          <>
-            <bdi>{p.number}</bdi>
-            {p.pm && (
-              <>
-                {' · '}
-                {t('project.pm')}: {pickText(lang, p.pm.nameAr, p.pm.nameEn)}
-              </>
-            )}
-            {p.owner && (
-              <>
-                {' · '}
-                {t('fields.owner')}: {pickText(lang, p.owner.nameAr, p.owner.nameEn)}
-              </>
-            )}
-          </>
-        }
-        meta={
-          <>
-            <OriginBadge type="portfolio.project" id={p.id} />
-            <StatusChip tone={projectStatusTone[p.status] ?? 'neutral'}>
-              {t(`projectStatus.${p.status as 'active'}`)}
-            </StatusChip>
-            <StatusChip tone="info">{t(`classification.${p.classification as 'project'}`)}</StatusChip>
-            <StatusChip tone="info">{t(`projectStages.${p.stage as 'planning'}`)}</StatusChip>
-            <StatusChip tone={p.progressStatus === 'delayed' ? 'danger' : 'success'}>
-              {formatNumber(toPercent(p.performance) ?? 0, lang)} % ·{' '}
-              {t(`project.progress.${p.progressStatus === 'delayed' ? 'delayed' : 'onTrack'}`)}
-            </StatusChip>
-            {p.approval.process && p.approval.result === null && (
-              <StatusChip tone="warning">
-                {pickText(lang, p.approval.stepNameAr, p.approval.stepNameEn)} –{' '}
-                {t(`project.processes.${p.approval.process.replace('portfolio.', '') as 'charter'}`)}
-              </StatusChip>
-            )}
-          </>
-        }
-        actions={
-          p.permissions.canManage &&
-          live && (
-            <div className="flex flex-wrap gap-2">
-              {p.status === 'active' ? (
-                <Button variant="outline" onClick={() => setDialog({ kind: 'status', action: 'hold' })}>
-                  <Pause aria-hidden />
-                  {t('project.actions.hold')}
-                </Button>
-              ) : (
-                <Button variant="outline" onClick={() => setDialog({ kind: 'status', action: 'resume' })}>
-                  <Play aria-hidden />
-                  {t('actions.resume')}
-                </Button>
+    <RecordLayout
+      testId="project-page"
+      back={
+        <Link
+          to="/portfolio/projects"
+          search={{ page: 1 }}
+          className="flex items-center gap-1 text-sm text-primary hover:underline"
+        >
+          <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden />
+          {t('projectsTitle')}
+        </Link>
+      }
+      header={
+        <PageHeader
+          title={<span dir="auto">{pickText(lang, p.nameAr, p.nameEn)}</span>}
+          description={
+            <>
+              <bdi>{p.number}</bdi>
+              {p.pm && (
+                <>
+                  {' · '}
+                  {t('project.pm')}: {pickText(lang, p.pm.nameAr, p.pm.nameEn)}
+                </>
               )}
-              <Button variant="outline" onClick={() => setDialog({ kind: 'status', action: 'cancel' })}>
-                <Ban aria-hidden />
-                {t('project.actions.cancel')}
-              </Button>
-            </div>
-          )
-        }
-      />
-      <div data-testid="project-stepper">
-        <StageStepper
-          stages={p.stagePath.map((key) => ({ key, label: t(`projectStages.${key as 'planning'}`) }))}
-          current={p.stage}
+              {p.owner && (
+                <>
+                  {' · '}
+                  {t('fields.owner')}: {pickText(lang, p.owner.nameAr, p.owner.nameEn)}
+                </>
+              )}
+            </>
+          }
+          meta={
+            <>
+              <OriginBadge type="portfolio.project" id={p.id} />
+              <StatusChip tone={projectStatusTone[p.status] ?? 'neutral'}>
+                {t(`projectStatus.${p.status as 'active'}`)}
+              </StatusChip>
+              <StatusChip tone="info">{t(`classification.${p.classification as 'project'}`)}</StatusChip>
+              <StatusChip tone="info">{t(`projectStages.${p.stage as 'planning'}`)}</StatusChip>
+              <StatusChip tone={p.progressStatus === 'delayed' ? 'danger' : 'success'}>
+                {formatNumber(toPercent(p.performance) ?? 0, lang)} % ·{' '}
+                {t(`project.progress.${p.progressStatus === 'delayed' ? 'delayed' : 'onTrack'}`)}
+              </StatusChip>
+              {p.approval.process && p.approval.result === null && (
+                <StatusChip tone="warning">
+                  {pickText(lang, p.approval.stepNameAr, p.approval.stepNameEn)} –{' '}
+                  {t(`project.processes.${p.approval.process.replace('portfolio.', '') as 'charter'}`)}
+                </StatusChip>
+              )}
+            </>
+          }
+          actions={
+            p.permissions.canManage &&
+            live && (
+              <div className="flex flex-wrap gap-2">
+                {p.status === 'active' ? (
+                  <Button variant="outline" onClick={() => setDialog({ kind: 'status', action: 'hold' })}>
+                    <Pause aria-hidden />
+                    {t('project.actions.hold')}
+                  </Button>
+                ) : (
+                  <Button variant="outline" onClick={() => setDialog({ kind: 'status', action: 'resume' })}>
+                    <Play aria-hidden />
+                    {t('actions.resume')}
+                  </Button>
+                )}
+                <Button variant="outline" onClick={() => setDialog({ kind: 'status', action: 'cancel' })}>
+                  <Ban aria-hidden />
+                  {t('project.actions.cancel')}
+                </Button>
+              </div>
+            )
+          }
         />
-      </div>
-      <CurrentStatusBanner
-        resourceType={projectResource}
-        resourceId={p.id}
-        actionLabel={(code, key) => actionLabels[code] ?? translateMessageKey(tc, key)}
-        onAction={onAction}
-      />
-      <ProgressStrip project={p} />
+      }
+      highlights={[
+        { key: 'number', label: t('fields.number'), value: <bdi>{p.number}</bdi> },
+        { key: 'pm', label: t('project.pm'), value: person(p.pm) },
+        { key: 'owner', label: t('fields.owner'), value: person(p.owner) },
+        {
+          key: 'unit',
+          label: t('fields.unit'),
+          value: p.unit ? pickText(lang, p.unit.nameAr, p.unit.nameEn) : '—',
+        },
+        { key: 'start', label: t('fields.plannedStart'), value: date(p.plannedStart) },
+        { key: 'end', label: t('fields.plannedEnd'), value: date(p.plannedEnd) },
+      ]}
+      path={
+        <div data-testid="project-stepper">
+          <StageStepper
+            stages={p.stagePath.map((key) => ({ key, label: t(`projectStages.${key as 'planning'}`) }))}
+            current={p.stage}
+          />
+        </div>
+      }
+      status={
+        <CurrentStatusBanner
+          resourceType={projectResource}
+          resourceId={p.id}
+          actionLabel={(code, key) => actionLabels[code] ?? translateMessageKey(tc, key)}
+          onAction={onAction}
+        />
+      }
+      summary={<ProgressStrip project={p} />}
+      related={relatedTabs
+        .filter((item) => tabs.includes(item.key))
+        .map((item) => ({
+          key: item.key,
+          label: t(`project.tabs.${item.key}`),
+          count: item.count,
+          onOpen: () => go(item.key),
+        }))}
+    >
       <Tabs value={tab} onValueChange={(value) => go(value as ProjectTab)}>
         <TabsList className="flex-wrap">
           {tabs.map((key) => (
@@ -409,7 +455,7 @@ export function ProjectPage() {
       {dialog?.kind === 'charter' && (
         <CharterDialog project={p} options={options.data} onClose={() => setDialog(undefined)} />
       )}
-    </div>
+    </RecordLayout>
   );
 }
 

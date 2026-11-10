@@ -1,32 +1,36 @@
 import { Outlet, useRouterState } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '@/app/theme';
+import { isThemePreference, isUiTheme, useAppearance, useTheme } from '@/app/theme';
 import { useMe } from '@/features/auth/session';
 import { useRecordVisits } from '@/features/search/visits';
 import { isLanguage } from '@/i18n';
 import { writePreference } from '@/lib/preferences';
 import { Sidebar } from './Sidebar';
+import { SkipLink } from './SkipLink';
 import { TopBar } from './TopBar';
+import { WorkspaceShell } from './WorkspaceShell';
 
-/** App shell: sidebar on the start side (right in Arabic), top bar, main content. */
+/**
+ * App shell. Classic: one sidebar with every system on the start side (right in Arabic) and the top bar — unchanged since Phase 0.
+ * Enterprise and Modern: the application-workspace shell (app launcher, per-app tabs or sidebar; docs/design/themes.md §4).
+ */
 export function AppShell() {
-  const { t } = useTranslation('shell');
+  const { workspace } = useAppearance();
+  usePreferencesFromProfile();
+  useRecordVisits();
+  return workspace ? <WorkspaceShell /> : <ClassicShell />;
+}
+
+function ClassicShell() {
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = useRouterState({ select: (state) => state.location.pathname });
 
   useEffect(() => setMenuOpen(false), [pathname]);
-  usePreferencesFromProfile();
-  useRecordVisits();
 
   return (
     <div className="flex min-h-dvh">
-      <a
-        href="#main"
-        className="sr-only focus:not-sr-only focus:fixed focus:start-2 focus:top-2 focus:z-[70] focus:rounded-md focus:bg-card focus:px-3 focus:py-2 focus:shadow"
-      >
-        {t('skipToContent')}
-      </a>
+      <SkipLink />
       <Sidebar open={menuOpen} onClose={() => setMenuOpen(false)} />
       <div className="flex min-w-0 flex-1 flex-col">
         <TopBar onOpenMenu={() => setMenuOpen(true)} />
@@ -42,13 +46,17 @@ export function AppShell() {
   );
 }
 
-/** Language and theme saved on the profile win over this browser's last choice (they follow the user). */
+/**
+ * Language, theme and mode follow the user (saved on the profile; theme and mode resolved on the server from Settings → Appearance,
+ * ADR 0171) and win over this browser's last values.
+ */
 function usePreferencesFromProfile() {
   const me = useMe();
   const { i18n } = useTranslation();
-  const { setTheme } = useTheme();
+  const { setTheme, setUiTheme } = useTheme();
   const language = me?.language;
-  const theme = me?.theme;
+  const mode = me?.appearance.mode;
+  const uiTheme = me?.appearance.theme;
   useEffect(() => {
     if (isLanguage(language) && language !== i18n.language) {
       writePreference('language', language);
@@ -58,7 +66,11 @@ function usePreferencesFromProfile() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [language]);
   useEffect(() => {
-    if (theme === 'light' || theme === 'dark' || theme === 'system') setTheme(theme);
+    if (isThemePreference(mode)) setTheme(mode);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [theme]);
+  }, [mode]);
+  useEffect(() => {
+    if (isUiTheme(uiTheme)) setUiTheme(uiTheme);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [uiTheme]);
 }

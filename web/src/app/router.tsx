@@ -10,7 +10,10 @@ import {
 import { z } from 'zod';
 import { ApiError } from '@/api/client';
 import { accessQueryOptions } from '@/features/access/session';
+import type { MyAccess as MyAccessData } from '@/features/access/session';
+import { appearanceQuery } from '@/features/appearance/api';
 import { meQueryOptions } from '@/features/auth/session';
+import { appHref, resolveLandingApp, visibleApps } from '@/layout/apps';
 import { HomePage } from '@/features/home/HomePage';
 import { NotFoundPage } from '@/features/home/NotFoundPage';
 import { setupStatusQuery } from '@/features/setup/api';
@@ -131,13 +134,53 @@ const homeRoute = createRoute({
   // Administrators land on the guided configuration until the first-run setup is finished (ADR 0150).
   beforeLoad: async ({ context }) => {
     const access = await context.queryClient.query(accessQueryOptions).catch(() => undefined);
-    if (!access?.permissions.includes('settings.setup.manage')) return;
-    const status = await context.queryClient.query(setupStatusQuery).catch(() => undefined);
-    if (status && !status.setupCompleted) {
+    if (access?.permissions.includes('settings.setup.manage')) {
+      const status = await context.queryClient.query(setupStatusQuery).catch(() => undefined);
+      if (status && !status.setupCompleted) {
+        // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router redirects are thrown
+        throw redirect({ to: '/setup/configure' });
+      }
+    }
+    // Enterprise and Modern: open the user's landing app (ADR 0173). Classic keeps My Work here, unchanged.
+    const target = await landingTarget(context.queryClient, access);
+    if (target) {
       // eslint-disable-next-line @typescript-eslint/only-throw-error -- TanStack Router redirects are thrown
-      throw redirect({ to: '/setup/configure' });
+      throw redirect({ to: target as '/' });
     }
   },
+});
+
+/** The landing app's home for workspace themes, or undefined to stay on My Work. */
+async function landingTarget(
+  queryClient: QueryClient,
+  access: MyAccessData | undefined,
+): Promise<string | undefined> {
+  const me = await queryClient.query(meQueryOptions).catch(() => undefined);
+  if (!me || me.appearance.theme === 'classic' || !access) return undefined;
+  const settings = await queryClient.query(appearanceQuery).catch(() => undefined);
+  const visible = visibleApps(access, settings?.value?.apps ?? {});
+  const app = resolveLandingApp(
+    visible,
+    access.roles,
+    me.appearance.landingApp,
+    settings?.value?.landingRules ?? [],
+  );
+  return app === 'mywork' ? undefined : appHref(visible, app);
+}
+
+/** My Work as its own page, so the My Work app can be opened in every theme without the landing redirect. */
+const myWorkRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/my-work',
+  component: HomePage,
+});
+
+/** Home page of an application workspace (docs/design/themes.md §5.2). */
+export const appHomeRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/apps/$app',
+  validateSearch: (search) => dashboardSearch.parse(search),
+  component: lazyRouteComponent(() => import('@/features/appearance/AppHomePage'), 'AppHomePage'),
 });
 
 export const setupConfigureRoute = createRoute({
@@ -1310,6 +1353,15 @@ const regionalRoute = createRoute({
   component: lazyRouteComponent(() => import('@/features/settings/GeneralPages'), 'RegionalPage'),
 });
 
+const appearanceRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/appearance',
+  component: lazyRouteComponent(
+    () => import('@/features/appearance/AppearanceSettingsPage'),
+    'AppearanceSettingsPage',
+  ),
+});
+
 const brandingRoute = createRoute({
   getParentRoute: () => settingsLayout,
   path: '/branding',
@@ -1608,6 +1660,8 @@ const routeTree = rootRoute.addChildren([
   ]),
   appLayout.addChildren([
     homeRoute,
+    myWorkRoute,
+    appHomeRoute,
     setupConfigureRoute,
     dashboardsRoute,
     executiveRoute,
@@ -1725,6 +1779,7 @@ const routeTree = rootRoute.addChildren([
       settingsHubRoute,
       regionalRoute,
       brandingRoute,
+      appearanceRoute,
       dashboardsSettingsRoute,
       reportingSettingsRoute,
       systemsRoute,
