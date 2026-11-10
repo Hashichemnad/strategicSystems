@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Strategy.Platform.Integration;
 using Strategy.Platform.Kernel.Results;
 using Strategy.Platform.Organisation.Application;
 using Strategy.Platform.Organisation.Domain;
@@ -33,15 +34,20 @@ public interface IUserProvisioning
 
 /// <summary>
 /// Bulk import of units and employees from the Excel / CSV templates (docs/design/organisation.md). Validates every row first;
-/// commit is all-or-nothing and upserts by unit code / employee number.
+/// commit is all-or-nothing and upserts by external reference (optional Source system + External ID columns, ADR 0165), else by unit code /
+/// employee number. References are linked in the same transaction.
 /// </summary>
 internal sealed class OrgImporter(
     OrgDbContext db,
     OrgStructure structure,
     EmployeeRegister register,
     IEnumerable<IUserProvisioning> provisioning,
-    IEnumerable<Contracts.IEmployeeLifecycleHook> lifecycleHooks)
+    IEnumerable<Contracts.IEmployeeLifecycleHook> lifecycleHooks,
+    IExternalReferenceStore references)
 {
+    private static readonly ImportColumn SourceColumn = new(ExternalImport.Source.Key, ExternalImport.Source.LabelEn, ExternalImport.Source.LabelAr);
+    private static readonly ImportColumn ExternalIdColumn = new(ExternalImport.Id.Key, ExternalImport.Id.LabelEn, ExternalImport.Id.LabelAr);
+
     public static readonly IReadOnlyList<ImportColumn> UnitColumns =
     [
         new("code", "Code", "الرمز", Required: true),
@@ -54,6 +60,8 @@ internal sealed class OrgImporter(
         new("cost_centre", "Cost centre", "مركز التكلفة"),
         new("active", "Active (Y/N)", "نشط (نعم/لا)"),
         new("effective_from", "Effective from (yyyy-mm-dd)", "ساري من (yyyy-mm-dd)"),
+        SourceColumn,
+        ExternalIdColumn,
     ];
 
     public static readonly IReadOnlyList<ImportColumn> EmployeeColumns =
@@ -71,6 +79,8 @@ internal sealed class OrgImporter(
         new("status", "Status (active/on_leave/left)", "الحالة (active/on_leave/left)"),
         new("join_date", "Join date (yyyy-mm-dd)", "تاريخ الالتحاق (yyyy-mm-dd)"),
         new("create_user", "Create user account (Y/N)", "إنشاء حساب مستخدم (نعم/لا)"),
+        SourceColumn,
+        ExternalIdColumn,
     ];
 
     public static IReadOnlyList<ImportColumn> ColumnsOf(string kind) => kind == ImportKinds.Units ? UnitColumns : EmployeeColumns;
@@ -78,14 +88,14 @@ internal sealed class OrgImporter(
     public static byte[] Template(string kind) => kind == ImportKinds.Units
         ? ImportTable.Template("units", UnitColumns,
         [
-            ["ORG", null, "المؤسسة", "The Organisation", "organisation", null, null, "CC-100", "Y", null],
-            ["SEC-OPS", "ORG", "قطاع العمليات", "Operations Sector", "sector", null, null, null, "Y", null],
-            ["DEP-FIN", "SEC-OPS", "إدارة المالية", "Finance Department", "department", null, null, "CC-210", "Y", null],
+            ["ORG", null, "المؤسسة", "The Organisation", "organisation", null, null, "CC-100", "Y", null, null, null],
+            ["SEC-OPS", "ORG", "قطاع العمليات", "Operations Sector", "sector", null, null, null, "Y", null, null, null],
+            ["DEP-FIN", "SEC-OPS", "إدارة المالية", "Finance Department", "department", null, null, "CC-210", "Y", null, null, null],
         ])
         : ImportTable.Template("employees", EmployeeColumns,
         [
-            ["E0001", "سارة أحمد", "Sara Ahmed", "sara.ahmed@example.org", "+971500000001", "مديرة", "Director", "G12", "DEP-FIN", null, "active", "2020-01-05", "Y"],
-            ["E0002", "خالد علي", "Khalid Ali", "khalid.ali@example.org", null, "محلل", "Analyst", "G9", "DEP-FIN", "E0001", "active", "2022-03-01", "N"],
+            ["E0001", "سارة أحمد", "Sara Ahmed", "sara.ahmed@example.org", "+971500000001", "مديرة", "Director", "G12", "DEP-FIN", null, "active", "2020-01-05", "Y", null, null],
+            ["E0002", "خالد علي", "Khalid Ali", "khalid.ali@example.org", null, "محلل", "Analyst", "G9", "DEP-FIN", "E0001", "active", "2022-03-01", "N", null, null],
         ]);
 
     public async Task<ImportReportDto> RunAsync(string kind, IReadOnlyList<ImportRow> rows, bool commit, CancellationToken cancellationToken)
@@ -100,6 +110,22 @@ internal sealed class OrgImporter(
         {
             await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
             await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            foreach (var link in outcome.Links)
+            {
+                var linked = await link.Import.LinkAsync(link.Key, link.RecordId, link.Created, db, cancellationToken).ConfigureAwait(false);
+                if (linked.IsFailure)
+                {
+                    issues.AddRange((linked.Error.Fields ?? []).Select(f => new ImportIssue(link.Row, ExternalImport.IdColumn, f.Code, f.MessageKey, f.Params)));
+                }
+            }
+
+            if (issues.Count > 0)
+            {
+                await transaction.RollbackAsync(cancellationToken).ConfigureAwait(false);
+                db.ChangeTracker.Clear();
+                return new ImportReportDto(kind, false, rows.Count, outcome.Created, outcome.Updated, issues.OrderBy(i => i.Row).ToList());
+            }
+
             await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
             committed = true;
             foreach (var employeeId in outcome.Left)
@@ -123,9 +149,61 @@ internal sealed class OrgImporter(
         return new ImportReportDto(kind, committed, rows.Count, outcome.Created, outcome.Updated, issues.OrderBy(i => i.Row).ToList());
     }
 
-    private sealed record Outcome(int Created, int Updated, IReadOnlyList<Guid> UsersToProvision, IReadOnlyList<Guid>? LeftEmployees = null)
+    private sealed record Outcome(
+        int Created, int Updated, IReadOnlyList<Guid> UsersToProvision, IReadOnlyList<Guid>? LeftEmployees = null, IReadOnlyList<PendingLink>? PendingLinks = null)
     {
         public IReadOnlyList<Guid> Left => LeftEmployees ?? [];
+
+        public IReadOnlyList<PendingLink> Links => PendingLinks ?? [];
+    }
+
+    /// <summary>A reference to write after the records are saved, in the import's transaction.</summary>
+    private sealed record PendingLink(int Row, ExternalImport Import, ExternalKey Key, Guid RecordId, bool Created);
+
+    private static void AddIssues(List<ImportIssue> issues, List<ExternalImportIssue> external) =>
+        issues.AddRange(external.Select(i => new ImportIssue(i.Row, i.Column, i.Code, i.MessageKey)));
+
+    /// <summary>
+    /// Reads the external key of every valid row and points the row at the referenced record: a reference wins over the file's code (the record's
+    /// code is then updated); a file code that belongs to another record than the reference is refused.
+    /// </summary>
+    private static async Task<Dictionary<string, ExternalKey>> ResolveKeysAsync<TRecord>(
+        ExternalImport import, IEnumerable<(string Code, ImportRow Row)> rows, Dictionary<string, TRecord> existing, Func<TRecord, Guid> idOf,
+        Func<TRecord, string> codeOf, string codeColumn, List<ImportIssue> issues, CancellationToken cancellationToken)
+    {
+        var external = new List<ExternalImportIssue>();
+        var keys = new Dictionary<string, ExternalKey>(StringComparer.Ordinal);
+        foreach (var (code, row) in rows)
+        {
+            if (await import.ReadAsync(row.Number, row[ExternalImport.SourceColumn], row[ExternalImport.IdColumn], external, cancellationToken).ConfigureAwait(false)
+                is not { } key)
+            {
+                continue;
+            }
+
+            keys[code] = key;
+            if (await import.FindAsync(key, cancellationToken).ConfigureAwait(false) is { } linkedId)
+            {
+                var target = existing.Values.FirstOrDefault(r => idOf(r) == linkedId);
+                if (target is null || (existing.TryGetValue(code, out var byCode) && idOf(byCode) != linkedId))
+                {
+                    issues.Add(new ImportIssue(row.Number, target is null ? ExternalImport.IdColumn : codeColumn, "integration.keyMismatch",
+                        ExternalReferenceErrors.KeyMismatch));
+                }
+                else if (codeOf(target) != code)
+                {
+                    existing.Remove(codeOf(target));
+                    existing[code] = target;
+                }
+            }
+            else if (existing.TryGetValue(code, out var match))
+            {
+                await import.CheckMatchAsync(row.Number, key, idOf(match), external, cancellationToken).ConfigureAwait(false);
+            }
+        }
+
+        AddIssues(issues, external);
+        return keys;
     }
 
     private async Task<Outcome> ImportUnitsAsync(IReadOnlyList<ImportRow> rows, List<ImportIssue> issues, CancellationToken cancellationToken)
@@ -181,6 +259,14 @@ internal sealed class OrgImporter(
 
         // 2. Parents first (parents may be in the file or already in the database); cycles are refused.
         var existing = await db.Units.ToDictionaryAsync(u => u.Code, StringComparer.Ordinal, cancellationToken).ConfigureAwait(false);
+        var unitRefs = new ExternalImport(references, OrgPermissions.UnitResource);
+        var keys = await ResolveKeysAsync(unitRefs, valid.Select(v => (v.Key, v.Value.Row)), existing, u => u.Id, u => u.Code, "code", issues, cancellationToken)
+            .ConfigureAwait(false);
+        if (issues.Count > 0)
+        {
+            return new Outcome(0, 0, []);
+        }
+
         var ordered = new List<string>();
         var state = new Dictionary<string, int>(StringComparer.Ordinal);
         foreach (var code in valid.Keys)
@@ -232,6 +318,7 @@ internal sealed class OrgImporter(
 
         // 3. Apply through the same domain rules as the screens.
         int created = 0, updated = 0;
+        var links = new List<PendingLink>();
         foreach (var code in ordered)
         {
             var (row, details, parentCode, active, effective) = valid[code];
@@ -253,6 +340,10 @@ internal sealed class OrgImporter(
                 }
 
                 updated++;
+                if (keys.TryGetValue(code, out var key))
+                {
+                    links.Add(new PendingLink(row.Number, unitRefs, key, unit.Id, false));
+                }
             }
             else
             {
@@ -261,6 +352,11 @@ internal sealed class OrgImporter(
                 if (result.IsSuccess && !active)
                 {
                     outcome = result.Value.Deactivate(effective ?? structure.Today);
+                }
+
+                if (result.IsSuccess && keys.TryGetValue(code, out var key))
+                {
+                    links.Add(new PendingLink(row.Number, unitRefs, key, result.Value.Id, true));
                 }
 
                 created++;
@@ -275,7 +371,7 @@ internal sealed class OrgImporter(
             }
         }
 
-        return new Outcome(created, updated, []);
+        return new Outcome(created, updated, [], PendingLinks: links);
     }
 
     private async Task<Outcome> ImportEmployeesAsync(IReadOnlyList<ImportRow> rows, List<ImportIssue> issues, CancellationToken cancellationToken)
@@ -356,6 +452,16 @@ internal sealed class OrgImporter(
             return new Outcome(0, 0, []);
         }
 
+        var employeeRefs = new ExternalImport(references, OrgPermissions.EmployeeResource);
+        var keys = await ResolveKeysAsync(employeeRefs, valid.Select(v => (v.Key, v.Value.Row)), existing, e => e.Id, e => e.EmployeeNo, "employee_no", issues,
+            cancellationToken).ConfigureAwait(false);
+        if (issues.Count > 0)
+        {
+            return new Outcome(0, 0, []);
+        }
+
+        var links = new List<PendingLink>();
+
         // Pass 1: create / update everyone without managers (so managers in the same file exist); pass 2: set managers.
         int created = 0, updated = 0;
         var people = new Dictionary<string, Domain.Employee>(StringComparer.Ordinal);
@@ -374,6 +480,10 @@ internal sealed class OrgImporter(
                 outcome = await register.UpdateAsync(current, details, null, cancellationToken).ConfigureAwait(false);
                 people[number] = current;
                 updated++;
+                if (keys.TryGetValue(number, out var key))
+                {
+                    links.Add(new PendingLink(row.Number, employeeRefs, key, current.Id, false));
+                }
             }
             else
             {
@@ -382,6 +492,10 @@ internal sealed class OrgImporter(
                 if (result.IsSuccess)
                 {
                     people[number] = result.Value;
+                    if (keys.TryGetValue(number, out var key))
+                    {
+                        links.Add(new PendingLink(row.Number, employeeRefs, key, result.Value.Id, true));
+                    }
                 }
 
                 created++;
@@ -433,7 +547,7 @@ internal sealed class OrgImporter(
             }
         }
 
-        return new Outcome(created, updated, provision, left);
+        return new Outcome(created, updated, provision, left, links);
     }
 
     private static string? Required(ImportRow row, string column, List<ImportIssue> issues)

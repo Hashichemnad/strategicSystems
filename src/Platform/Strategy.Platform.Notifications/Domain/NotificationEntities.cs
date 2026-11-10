@@ -168,4 +168,17 @@ public sealed class EmailDelivery
     public DateTimeOffset At { get; set; }
 
     public string? CorrelationId { get; set; }
+
+    /// <summary><c>{request key}:{address}</c> when the request had an idempotency key (ADR 0162): a sent delivery is never repeated.</summary>
+    public string? IdempotencyKey { get; set; }
+}
+
+/// <summary>Idempotency key of a queued notification request (ADR 0162). Technical table, like the outbox; never edited.</summary>
+public sealed class SentRequest
+{
+    public string Key { get; set; } = string.Empty;
+
+    public string TemplateKey { get; set; } = string.Empty;
+
+    public DateTimeOffset CreatedAt { get; set; }
 }

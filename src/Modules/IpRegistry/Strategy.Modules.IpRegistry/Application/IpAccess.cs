@@ -121,6 +121,9 @@ internal sealed class IpAccessCatalogue : IAccessCatalogueSource
         new(IpPermissions.AiMoet, "تعبئة وصف نموذج الوزارة", "Pre-fill the MOET description", Scopable: false),
     ];
 
+    /// <summary>Members page lists (ADR 0166, docs/design/members-responsibilities.md §1).</summary>
+    public SystemMemberRoles MemberRoles => new(["administrator"], ["requester"], ["office", "viewer"]);
+
     public IEnumerable<RoleSeed> DefaultRoles =>
     [
         new("requester", "مقدم طلب ملكية فكرية", "IP requester", [new(IpPermissions.Read, DataScope.Own), new(IpPermissions.AiSuggest)], AssignToEveryone: true),

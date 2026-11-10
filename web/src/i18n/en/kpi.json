@@ -627,6 +627,9 @@
     "clear": "Clear",
     "search": "Search KPI by code or name",
     "none": "No match",
-    "close": "Close"
+    "close": "Close",
+    "more": "Show more",
+    "loading": "Searching…",
+    "results": "{{count}} cards found"
   }
 }

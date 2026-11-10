@@ -509,22 +509,22 @@ Implement, then run the full hardening review and fix findings, run performance 
 
 | Phase | Name | Status | Accepted on |
 |---|---|---|---|
-| 0 | Foundations | ☑ built — awaiting owner acceptance | |
-| 1 | Identity, Organisation, Employees | ☑ built — awaiting owner acceptance | |
-| 2 | Access control & Settings | ☐ | |
-| 3 | Audit, Files, Notifications, Jobs | ☐ | |
-| 4 | Approval engine & My Work | ☑ built — awaiting owner acceptance | |
-| 5 | AI platform & MCP | ☑ built — awaiting owner acceptance | |
-| 6 | Links & Task Management | ☑ built — awaiting owner acceptance | |
-| 7 | Teams Management | ☑ built — awaiting owner acceptance | |
-| 8 | Portfolio A — Requests | ☑ built — awaiting owner acceptance | |
-| 9 | Portfolio B — Lifecycle & change | ☑ built — awaiting owner acceptance | |
-| 10 | Portfolio C — Agile, standards, Gantt | ☑ built — awaiting owner acceptance | |
-| 11 | Wasel vendor portal (+ Portfolio completion) | ☑ built — awaiting owner acceptance | |
-| 12 | Performance Management | ☑ built — awaiting owner acceptance | |
-| 13 | Risk Management | ☑ built — awaiting owner acceptance | |
-| 14 | Requests, Document Registry, IP | ☑ built — awaiting owner acceptance | |
-| 15 | CAP & Benchmarking | ☑ built — awaiting owner acceptance | |
-| 16 | Audit Management | ☑ built — awaiting owner acceptance | |
-| 17 | Dashboards & reporting | ☑ built — awaiting owner acceptance | |
-| 18 | Installer, hardening, docs, release | ☑ built — awaiting owner acceptance | |
+| 0 | Foundations | ☑ accepted by the owner | 7 Nov 2026 |
+| 1 | Identity, Organisation, Employees | ☑ accepted by the owner | 7 Nov 2026 |
+| 2 | Access control & Settings | ☑ accepted by the owner | 7 Nov 2026 |
+| 3 | Audit, Files, Notifications, Jobs | ☑ accepted by the owner | 7 Nov 2026 |
+| 4 | Approval engine & My Work | ☑ accepted by the owner | 7 Nov 2026 |
+| 5 | AI platform & MCP | ☑ accepted by the owner | 7 Nov 2026 |
+| 6 | Links & Task Management | ☑ accepted by the owner | 7 Nov 2026 |
+| 7 | Teams Management | ☑ accepted by the owner | 7 Nov 2026 |
+| 8 | Portfolio A — Requests | ☑ accepted by the owner | 7 Nov 2026 |
+| 9 | Portfolio B — Lifecycle & change | ☑ accepted by the owner | 7 Nov 2026 |
+| 10 | Portfolio C — Agile, standards, Gantt | ☑ accepted by the owner | 7 Nov 2026 |
+| 11 | Wasel vendor portal (+ Portfolio completion) | ☑ accepted by the owner | 7 Nov 2026 |
+| 12 | Performance Management | ☑ accepted by the owner | 7 Nov 2026 |
+| 13 | Risk Management | ☑ accepted by the owner | 7 Nov 2026 |
+| 14 | Requests, Document Registry, IP | ☑ accepted by the owner | 7 Nov 2026 |
+| 15 | CAP & Benchmarking | ☑ accepted by the owner | 7 Nov 2026 |
+| 16 | Audit Management | ☑ accepted by the owner | 7 Nov 2026 |
+| 17 | Dashboards & reporting | ☑ accepted by the owner | 7 Nov 2026 |
+| 18 | Installer, hardening, docs, release | ☑ accepted by the owner | 7 Nov 2026 |

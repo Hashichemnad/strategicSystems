@@ -20,6 +20,7 @@ using Strategy.Platform.Notifications;
 using Strategy.Platform.Persistence;
 using Strategy.Platform.Reporting;
 using Strategy.Platform.Scheduling;
+using Strategy.Platform.Search;
 using Strategy.Platform.Settings;
 using Strategy.Platform.Workflow;
 
@@ -65,6 +66,8 @@ public sealed class TasksModule : IModule
         services.AddMyWorkCardSource<TaskMyWorkCards>();
         services.AddLinkableType(TaskLinkTargets.Definition);
         services.AddLinkTargetSource<TaskLinkTargets>();
+        services.AddSearchContributor<TaskSearchContributor>(TaskPermissions.SystemCode); // global search (ADR 0160)
+        services.AddResponsibilitySource<TaskAssigneeResponsibility>(); // Settings → Responsibilities (ADR 0168)
 
         services.AddScoped<TaskReminders>();
         services.AddScoped<TaskRecurrence>();

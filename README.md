@@ -90,6 +90,8 @@ This package contains everything Claude Code needs to build the product.
 | `CLAUDE.md` | How to build: stack, architecture, security, audit, bilingual/RTL, testing, working method. Claude Code reads it automatically in every session. |
 | `docs/SPEC.md` | What to build: the full requirements for the shared platform and all 11 systems (source of truth). |
 | `docs/BUILD_PLAN.md` | In which order: 19 phases, each with a paste-ready prompt and acceptance checks, plus a progress checklist. |
+| `docs/SPEC-ADDENDUM.md` | Requirements addendum (acceptance fixes, external references, themes, Members & Responsibilities, Reporting 2.0, integrations, Salesforce standby sync) — part of version 1.0; wins over `docs/SPEC.md` where they differ. |
+| `docs/BUILD_PLAN-PART2.md` | Build plan part 2: Phases 19–23 (still version 1.0; the v1.0.0 release is made at the end of Phase 23). |
 
 ## Option A — Browser only (Claude Code on the web, nothing installed on your PC)
 

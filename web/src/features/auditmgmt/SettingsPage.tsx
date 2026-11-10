@@ -16,6 +16,8 @@ import {
 } from '@/ui';
 import { auditApi, departmentScopes, useAuditMutation, useAuditSettings, type AuditSettings } from './api';
 import { useAuditT } from './components';
+import { SystemSettingsLinks } from '@/features/access/SystemSettingsLinks';
+import { ResponsibilitiesLink } from '@/features/access/ResponsibilitiesLink';
 
 type CardKey =
   | 'kpiClosureRateCardId'
@@ -69,6 +71,7 @@ export function AuditSettingsPage() {
 
   return (
     <div className="flex flex-col gap-6" data-testid="audit-settings">
+      <ResponsibilitiesLink system="auditmgmt" />
       <PageHeader
         title={t('settings.title')}
         description={t('settings.description')}
@@ -90,6 +93,7 @@ export function AuditSettingsPage() {
           </Button>
         }
       />
+      <SystemSettingsLinks system="auditmgmt" />
       <Section title={t('settings.visibility')}>
         <FormField
           label={t('settings.departmentScope')}

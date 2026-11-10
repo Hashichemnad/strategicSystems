@@ -88,6 +88,26 @@ public interface IApprovalEngine
     Task<Result<ApprovalDecisionResult>> DecideAsync(string processKey, Guid resourceId, string action, string? comment, CancellationToken cancellationToken = default);
 }
 
+/// <summary>
+/// The people of a record changed (owner, record roles, team roles; SPEC-ADDENDUM §D2, ADR 0168): the approvals in progress follow.
+/// <paramref name="OwnerEmployeeId"/> / <paramref name="UnitId"/>, when set, replace the subject snapshot of the instances (visibility and
+/// "of the record" approver rules); null keeps it.
+/// </summary>
+public sealed record ApprovalReroute(
+    string ResourceType, IReadOnlyCollection<Guid> ResourceIds, string? Reason, Guid? OwnerEmployeeId = null, Guid? UnitId = null);
+
+/// <summary>
+/// Re-routes the pending step of every approval in progress for the records: approver rules that depend on the record (record role, team role,
+/// section manager / department director / head of unit of the record) are resolved again; approvers who no longer qualify are removed with
+/// the reason, new ones added, notified and given approver rights. Steps that would be left without approvers keep their current ones.
+/// Runs inside the caller's transaction (the transaction context, ADR 0023).
+/// </summary>
+public interface IApprovalRerouting
+{
+    /// <returns>The number of tasks re-routed.</returns>
+    Task<int> RerouteAsync(ApprovalReroute reroute, object transactionContext, CancellationToken cancellationToken = default);
+}
+
 /// <summary>Outcome of <see cref="IApprovalEngine.DecideAsync"/>.</summary>
 public sealed record ApprovalDecisionResult(Guid InstanceId, Guid TaskId, string InstanceStatus, string Outcome);
 

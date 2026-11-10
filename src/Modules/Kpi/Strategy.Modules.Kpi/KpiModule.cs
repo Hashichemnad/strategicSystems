@@ -20,6 +20,7 @@ using Strategy.Platform.Notifications;
 using Strategy.Platform.Persistence;
 using Strategy.Platform.Reporting;
 using Strategy.Platform.Scheduling;
+using Strategy.Platform.Search;
 using Strategy.Platform.Settings;
 using Strategy.Platform.Workflow;
 
@@ -87,6 +88,9 @@ public sealed class KpiModule : IModule
         services.AddLinkTargetSource<CardLinkTargets>();
         services.AddLinkableType(ResultLinkTargets.Definition);
         services.AddLinkTargetSource<ResultLinkTargets>();
+        services.AddSearchContributor<KpiSearchContributor>(KpiPermissions.SystemCode); // global search (ADR 0160)
+        services.AddResponsibilitySource<KpiCardPersonResponsibility>(); // Settings → Responsibilities (ADR 0168)
+        services.AddResponsibilitySource<KpiCardUnitResponsibility>();
 
         services.AddScoped<WindowRunner>();
         services.AddScheduledJob(PeriodWindowsJob.Definition);

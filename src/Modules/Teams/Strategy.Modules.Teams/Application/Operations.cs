@@ -9,6 +9,7 @@ using Strategy.Platform.Kernel.Context;
 using Strategy.Platform.Kernel.Messaging;
 using Strategy.Platform.Kernel.Results;
 using Strategy.Platform.Kernel.Time;
+using Strategy.Platform.Kernel.Validation;
 using Strategy.Platform.Organisation.Contracts;
 using Strategy.Platform.Settings;
 
@@ -37,7 +38,7 @@ public sealed class CreateMeetingValidator : AbstractValidator<CreateMeeting>
         RuleFor(x => x.Title).NotEmpty().MaximumLength(Team.NameMaxLength);
         RuleFor(x => x.EndsAt).GreaterThan(x => x.ScheduledAt);
         RuleFor(x => x.Location).MaximumLength(300);
-        RuleFor(x => x.Agenda).MaximumLength(Meeting.TextMaxLength);
+        RuleFor(x => x.Agenda).RichTextLength(Meeting.TextMaxLength, Meeting.TextMaxLength);
     }
 }
 
@@ -48,7 +49,7 @@ public sealed class UpdateMeetingValidator : AbstractValidator<UpdateMeeting>
         RuleFor(x => x.Title).NotEmpty().MaximumLength(Team.NameMaxLength);
         RuleFor(x => x.EndsAt).GreaterThan(x => x.ScheduledAt);
         RuleFor(x => x.Location).MaximumLength(300);
-        RuleFor(x => x.Agenda).MaximumLength(Meeting.TextMaxLength);
+        RuleFor(x => x.Agenda).RichTextLength(Meeting.TextMaxLength, Meeting.TextMaxLength);
     }
 }
 
@@ -56,8 +57,8 @@ public sealed class SaveMinutesValidator : AbstractValidator<SaveMinutes>
 {
     public SaveMinutesValidator()
     {
-        RuleFor(x => x.Minutes).MaximumLength(Meeting.TextMaxLength);
-        RuleFor(x => x.Decisions).MaximumLength(Meeting.TextMaxLength);
+        RuleFor(x => x.Minutes).RichTextLength(Meeting.TextMaxLength, Meeting.TextMaxLength);
+        RuleFor(x => x.Decisions).RichTextLength(Meeting.TextMaxLength, Meeting.TextMaxLength);
         RuleForEach(x => x.Attendance).ChildRules(a =>
         {
             a.RuleFor(x => x.Status).Must(s => AttendanceStatuses.All.Contains(s)).WithMessage("validation.unknownCode");

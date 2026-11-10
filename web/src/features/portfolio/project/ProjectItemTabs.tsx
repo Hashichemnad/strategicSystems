@@ -5,7 +5,7 @@ import { errorMessage } from '@/api/problem';
 import { contentUrl } from '@/features/files/api';
 import { LinkedTeamsPanel } from '@/features/teams/LinkedTeamsPanel';
 import { formatDate, formatDateTime, formatNumber, pickText } from '@/lib/format';
-import { Button, FileDrop, StatusBanner, StatusChip, useToast, type SelectOption } from '@/ui';
+import { Button, FileDrop, RichTextView, StatusBanner, StatusChip, useToast, type SelectOption } from '@/ui';
 import type { PortfolioOptions } from '../api';
 import { useFeature } from '../featuresApi';
 import { ContractExtrasSection } from '../standards/ContractExtrasPanel';
@@ -15,7 +15,6 @@ import {
   projectApi,
   fromPercent,
   toPercent,
-  useKpiCardSearch,
   useProjectFiles,
   useProjectMutation,
   type Challenge,
@@ -66,11 +65,6 @@ interface TabProps {
 export function KpisTab({ project, options }: TabProps) {
   const { t } = useTranslation('portfolio');
   const { lang, opts, label } = useLabels();
-  const cards = useKpiCardSearch('', project.permissions.canEditContent);
-  const cardOptions: SelectOption[] = (cards.data ?? []).map((c) => ({
-    value: c.id,
-    label: `${c.code} · ${pickText(lang, c.nameAr, c.nameEn)}`,
-  }));
   const isNew = (v: FormValues) => v.nature !== 'existing';
   const fields: FieldSpec[] = [
     {
@@ -86,8 +80,7 @@ export function KpisTab({ project, options }: TabProps) {
     {
       name: 'kpiCardId',
       label: t('project.kpi.card'),
-      kind: 'select',
-      options: cardOptions,
+      kind: 'kpiCard',
       required: true,
       when: (v) => v.nature === 'existing',
     },
@@ -612,7 +605,7 @@ export function MeetingsTab({ project }: TabProps) {
       fields={[
         { name: 'title', label: t('project.meeting.title'), kind: 'text', required: true },
         { name: 'meetingAt', label: t('project.meeting.at'), kind: 'datetime', required: true },
-        { name: 'notes', label: t('project.meeting.notes'), kind: 'textarea' },
+        { name: 'notes', label: t('project.meeting.notes'), kind: 'richtext' },
       ]}
       empty={{}}
       fromRow={(m) => ({
@@ -628,10 +621,10 @@ export function MeetingsTab({ project }: TabProps) {
       columns={[
         { label: t('project.meeting.at'), render: (m) => formatDateTime(m.meetingAt, i18n.language) },
         { label: t('project.meeting.title'), render: (m) => m.title ?? '—' },
-        // Minutes are shown as plain text (React escapes them); the server strips scripts and handlers as well.
+        // Minutes are rich text: sanitised on the server and again by DOMPurify; legacy plain values render as text (ADR 0161).
         {
           label: t('project.meeting.notes'),
-          render: (m) => <span className="whitespace-pre-line">{m.notes ?? '—'}</span>,
+          render: (m) => <RichTextView compact value={m.notes} />,
         },
         {
           label: t('project.meeting.vendor'),

@@ -83,6 +83,17 @@ services:
         BUILD_CREATED: ${BUILD_CREATED:-}
         # false: no Tesseract OCR packages (and no GPL-2+ libjbig0) in the image; scanned documents cannot be read (ADR 0033).
         INSTALL_OCR: ${INSTALL_OCR:-true}
+        # Slow networks (ADR 0163): retries and timeouts of npm (ms), NuGet and apt; the defaults change nothing on a good connection.
+        NPM_FETCH_RETRIES: ${NPM_FETCH_RETRIES:-5}
+        NPM_FETCH_RETRY_MINTIMEOUT: ${NPM_FETCH_RETRY_MINTIMEOUT:-20000}
+        NPM_FETCH_RETRY_MAXTIMEOUT: ${NPM_FETCH_RETRY_MAXTIMEOUT:-120000}
+        NPM_FETCH_TIMEOUT: ${NPM_FETCH_TIMEOUT:-600000}
+        NUGET_ENHANCED_MAX_NETWORK_TRY_COUNT: ${NUGET_ENHANCED_MAX_NETWORK_TRY_COUNT:-10}
+        NUGET_ENHANCED_NETWORK_RETRY_DELAY_MILLISECONDS: ${NUGET_ENHANCED_NETWORK_RETRY_DELAY_MILLISECONDS:-3000}
+        NUGET_RESTORE_ATTEMPTS: ${NUGET_RESTORE_ATTEMPTS:-3}
+        NUGET_RESTORE_DISABLE_PARALLEL: ${NUGET_RESTORE_DISABLE_PARALLEL:-false}
+        APT_RETRIES: ${APT_RETRIES:-5}
+        APT_HTTP_TIMEOUT: ${APT_HTTP_TIMEOUT:-120}
       secrets:
         - build_ca
     command: ["dotnet", "Strategy.Host.dll", "--migrate"]

@@ -185,7 +185,12 @@ function ImportDialog({ year, onClose }: { year: number; onClose: () => void }) 
       const outcome = await importHolidays(year, file, mode);
       setResult(outcome);
       if (outcome.committed) {
-        toast({ title: t('import.imported', { count: outcome.created }) });
+        toast({
+          title:
+            outcome.updated > 0
+              ? t('import.importedUpdated', { created: outcome.created, updated: outcome.updated })
+              : t('import.imported', { count: outcome.created }),
+        });
         onClose();
       }
     } catch (failure) {

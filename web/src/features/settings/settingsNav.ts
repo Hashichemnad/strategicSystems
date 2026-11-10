@@ -5,6 +5,7 @@ import {
   BriefcaseBusiness,
   Bot,
   Cable,
+  DatabaseZap,
   Building,
   CalendarClock,
   CalendarOff,
@@ -40,9 +41,27 @@ import {
   SquareStack,
   Timer,
   UserCheck,
+  UserCog,
   Users,
   type LucideIcon,
 } from 'lucide-react';
+import { membersPermissions } from '@/features/access/members';
+
+/** Systems with a Responsibilities page (ADR 0168): `<system>.responsibilities.manage` opens it for that system only. */
+export const responsibilitySystems = [
+  'kpi',
+  'risk',
+  'portfolio',
+  'cap',
+  'auditmgmt',
+  'bench',
+  'teams',
+  'tasks',
+] as const;
+
+export const responsibilityPermissions = responsibilitySystems.map(
+  (system) => `${system}.responsibilities.manage`,
+);
 
 export type SettingsPageKey =
   | 'setup'
@@ -73,15 +92,18 @@ export type SettingsPageKey =
   | 'approvals'
   | 'ai'
   | 'mcp'
+  | 'sourceSystems'
   | 'tasks'
   | 'tasksReassign'
   | 'businessHours'
   | 'holidays'
+  | 'members'
   | 'roles'
   | 'assignments'
   | 'systemAccess'
   | 'transfer'
   | 'review'
+  | 'responsibilities'
   | 'users'
   | 'providers'
   | 'security'
@@ -92,6 +114,7 @@ export type SettingsPageKey =
 export type SettingsPath =
   | '/setup/configure'
   | '/settings/regional'
+  | '/settings/integrations/source-systems'
   | '/settings/dashboards'
   | '/settings/reporting'
   | '/settings/branding'
@@ -122,11 +145,13 @@ export type SettingsPath =
   | '/settings/tasks/reassign'
   | '/settings/business-hours'
   | '/settings/holidays'
+  | '/settings/members'
   | '/settings/access/roles'
   | '/settings/access/assignments'
   | '/settings/access/system-access'
   | '/settings/access/transfer'
   | '/settings/access/review'
+  | '/settings/responsibilities'
   | '/admin/users'
   | '/admin/providers'
   | '/admin/security'
@@ -277,11 +302,18 @@ export const settingsGroups: readonly SettingsGroup[] = [
     pages: [
       { key: 'ai', to: '/settings/ai', icon: Bot, permissions: ['ai.settings.manage'] },
       { key: 'mcp', to: '/settings/mcp', icon: Cable, permissions: ['mcp.settings.manage'] },
+      {
+        key: 'sourceSystems',
+        to: '/settings/integrations/source-systems',
+        icon: DatabaseZap,
+        permissions: ['integration.source-system.manage'],
+      },
     ],
   },
   {
     key: 'access',
     pages: [
+      { key: 'members', to: '/settings/members', icon: UsersRound, permissions: membersPermissions },
       { key: 'roles', to: '/settings/access/roles', icon: ShieldHalf, permissions: ['access.role.read'] },
       {
         key: 'assignments',
@@ -306,6 +338,12 @@ export const settingsGroups: readonly SettingsGroup[] = [
         to: '/settings/access/review',
         icon: FileSpreadsheet,
         permissions: ['access.review.export'],
+      },
+      {
+        key: 'responsibilities',
+        to: '/settings/responsibilities',
+        icon: UserCog,
+        permissions: responsibilityPermissions,
       },
     ],
   },

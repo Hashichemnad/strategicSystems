@@ -52,6 +52,7 @@ import {
 import { ConfidentialChip, IndicatorChip, PriorityChip, TaskStatusChip, useStatusLabel } from './TaskChips';
 import { TaskActionDialog } from './TaskActionDialog';
 import { TaskTable } from './TaskViews';
+import { ExternalReferencesSection, OriginBadge } from '@/features/integration/ExternalReferences';
 
 const route = getRouteApi('/app/tasks/$taskId');
 
@@ -110,6 +111,7 @@ export function TaskPage() {
         description={data.number ?? undefined}
         meta={
           <>
+            <OriginBadge type="tasks.task" id={data.id} />
             <TaskStatusChip template={data.template} status={data.status} />
             <PriorityChip priority={data.priority} />
             <IndicatorChip indicator={data.indicator} />
@@ -176,6 +178,7 @@ export function TaskPage() {
         </TabsList>
         <TabsContent value="overview">
           <Overview task={data} />
+          <ExternalReferencesSection type="tasks.task" id={data.id} />
         </TabsContent>
         <TabsContent value="timeline">
           <TimelineTab taskId={data.id} template={data.template} />

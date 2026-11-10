@@ -45,7 +45,35 @@ const keys = Object.fromEntries(
   ]),
 );
 
+/** Arabic plural keys that lack one of the six CLDR forms (i18next then falls back to the English text). */
+function incompleteArabicPlurals(tree, prefix = '') {
+  const own = Object.keys(tree).filter((key) => typeof tree[key] === 'string');
+  const bases = new Set(
+    own
+      .filter((key) => /_(zero|one|two|few|many|other)$/u.test(key))
+      .map((key) => key.replace(/_[a-z]+$/u, '')),
+  );
+  const missing = [...bases].flatMap((base) =>
+    ['zero', 'one', 'two', 'few', 'many', 'other']
+      .filter((form) => !own.includes(`${base}_${form}`))
+      .map((form) => `${prefix}${base}_${form}`),
+  );
+  return missing.concat(
+    Object.entries(tree)
+      .filter(([, value]) => typeof value !== 'string')
+      .flatMap(([key, value]) => incompleteArabicPlurals(value, `${prefix}${key}.`)),
+  );
+}
+
 describe('translations', () => {
+  it('give every Arabic plural all six forms (zero, one, two, few, many, other)', () => {
+    expect(
+      Object.entries(resources.ar).flatMap(([namespace, tree]) =>
+        incompleteArabicPlurals(tree, `${namespace}.`),
+      ),
+    ).toEqual([]);
+  });
+
   it('have the same keys in Arabic and English', () => {
     expect([...keys.en].filter((key) => !keys.ar.has(key))).toEqual([]);
     expect([...keys.ar].filter((key) => !keys.en.has(key))).toEqual([]);

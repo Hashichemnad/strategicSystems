@@ -141,3 +141,13 @@ Write an ADR for every choice the SPEC or CLAUDE.md leaves open (CLAUDE.md §2 r
 | [0156](0156-performance-and-scanning-tools.md) | Performance, image-scanning and SBOM tools (k6, Trivy, Syft) — external, never distributed | Accepted |
 | [0157](0157-backup-restore-upgrade-format.md) | Packaging, install, backup / restore / upgrade format | Accepted |
 | [0158](0158-load-testing-with-k6.md) | Load testing with k6 (test-only container) against a seeded Release host | Accepted |
+| [0160](0160-global-search.md) | Global search: module contributors, Links-registry resolution, generated search columns | Proposed |
+| [0161](0161-rich-text.md) | Rich text: Tiptap editor, server allow-list (HtmlSanitizer), DOMPurify, no data migration | Proposed |
+| [0162](0162-security-e-mails.md) | Security e-mails (password, MFA, lockout, tokens, new device) | Proposed |
+| [0163](0163-windows-powershell-zip-releases-slow-networks.md) | Deploy scripts under Windows PowerShell 5.1, ZIP releases, slow-network builds | Proposed |
+| [0164](0164-external-references.md) | External references: source systems, `integration.external_ref`, uniqueness and origin | Proposed |
+| [0165](0165-upsert-by-external-id.md) | Upsert by external ID in imports, REST and MCP | Proposed |
+| [0166](0166-members-over-the-access-model.md) | Members page over the existing access model | Proposed |
+| [0167](0167-delegated-system-administration.md) | Delegated system administration (`<system>.members.manage`) | Proposed |
+| [0168](0168-responsibilities-per-system.md) | Responsibilities page per system: one contract, module-owned reassignment | Proposed |
+| [0169](0169-kpi-picker-search-and-take-over-as-creator.md) | KPI picker search as you type; "take over as creator" for a leaver's tasks | Proposed |

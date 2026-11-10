@@ -98,7 +98,8 @@
     "imported_one": "{{count}} holiday imported.",
     "imported_other": "{{count}} holidays imported.",
     "issues": "Problems to fix",
-    "row": "Row {{row}}"
+    "row": "Row {{row}}",
+    "importedUpdated": "{{created}} created, {{updated}} updated by external ID."
   },
   "errors": {
     "unknownTimeZone": "Unknown time zone. Use an IANA name such as Asia/Dubai.",

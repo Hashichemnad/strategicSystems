@@ -15,6 +15,7 @@ using Strategy.Platform.Links;
 using Strategy.Platform.Notifications;
 using Strategy.Platform.Persistence;
 using Strategy.Platform.Reporting;
+using Strategy.Platform.Search;
 using Strategy.Platform.Settings;
 using Strategy.Platform.Workflow;
 
@@ -52,6 +53,9 @@ public sealed class SampleModule : IModule
         // Phase 6: sample items are task-able (links registry, ADR 0034).
         services.AddLinkableType(SampleLinks.Definition);
         services.AddLinkTargetSource<SampleLinkTargets>();
+
+        // Phase 19: global search (ADR 0160).
+        services.AddSearchContributor<SampleSearchContributor>("sample");
     }
 
     public void MapEndpoints(IEndpointRouteBuilder endpoints) => SampleEndpoints.Map(endpoints.MapModuleGroup(this));

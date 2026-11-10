@@ -242,6 +242,13 @@ public sealed class KpiCard : AuditableEntity
         TargetType = d.TargetType;
     }
 
+    /// <summary>Responsibility reassignment (ADR 0168): only the responsible person / unit change.</summary>
+    public void AssignResponsible(Guid? employeeId, Guid? unitId)
+    {
+        ResponsibleEmployeeId = employeeId;
+        ResponsibleUnitId = unitId;
+    }
+
     public void NextVersion() => DefinitionVersion++;
 
     public void Activate()

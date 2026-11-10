@@ -2,6 +2,7 @@ import type { APIRequestContext, Page } from '@playwright/test';
 import {
   apiPost,
   createItemViaApi,
+  createUserWithPassword,
   expect,
   signInViaApi,
   test,
@@ -258,6 +259,63 @@ test.describe('task management', () => {
       page.getByText(k(language, 'reassign.done', { reassigned: 2, returned: 0 }), { exact: true }),
     ).toBeVisible();
     await expect(page.getByText(k(language, 'reassign.none'))).toBeVisible();
+  });
+
+  test('the creator role of a leaver’s tasks moves to a colleague, who then approves them (Phase 19, ADR 0169)', async ({
+    page,
+    language,
+    shot,
+    adminApi,
+    baseURL,
+    playwright,
+  }) => {
+    const tag = `cr${language}${Date.now().toString(36)}`;
+    const { email, password } = await createUserWithPassword(
+      page,
+      adminApi,
+      baseURL ?? 'http://localhost:5080',
+      tag,
+    );
+    const creator = await playwright.request.newContext({ baseURL });
+    expect((await apiPost(creator, '/api/v1/identity/auth/login', { login: email, password })).status()).toBe(
+      200,
+    );
+    const me = (await (await creator.get('/api/v1/identity/me')).json()) as { employee: { id: string } };
+    const leaver = me.employee.id;
+    const assignee = await createEmployee(adminApi, tag, 'ريم', 'Reem', leaver);
+    for (const [ar, en] of [
+      ['مراجعة الميزانية', 'Review the budget'],
+      ['تحديث خطة التدريب', 'Update the training plan'],
+    ] as const) {
+      const response = await apiPost(creator, '/api/v1/tasks', {
+        titleAr: `${ar} ${tag}`,
+        titleEn: `${en} ${tag}`,
+        typeCode: 'manager-assignment',
+        sourceCode: 'manager-assignment',
+        dueDate: inDays(5),
+        assigneeEmployeeIds: [assignee],
+      });
+      expect(response.status(), await response.text()).toBe(201);
+    }
+    await creator.dispose();
+
+    await page.goto(`/settings/tasks/reassign?employee=${leaver}`);
+    const section = page.getByTestId('creator-transfer');
+    await expect(section.getByTestId('creator-transfer-preview').getByRole('row')).toHaveCount(3);
+    await pickEmployee(page, section.locator('form'), language === 'ar' ? 'أحمد' : 'Ahmed');
+    await section
+      .getByTestId('creator-transfer-reason')
+      .fill(language === 'ar' ? 'انتقل الموظف إلى جهة أخرى' : 'The employee moved to another organisation');
+    await shot('tasks-take-over-as-creator');
+    await page.getByTestId('creator-transfer-submit').click();
+    await page
+      .getByRole('dialog')
+      .getByRole('button', { name: k(language, 'reassign.creatorSubmit', { count: 2 }) })
+      .click();
+    await expect(
+      page.getByText(k(language, 'reassign.creatorDone', { transferred: 2, skipped: 0 }), { exact: true }),
+    ).toBeVisible();
+    await expect(page.getByText(k(language, 'reassign.createdNone'))).toBeVisible();
   });
 
   test('AI turns pasted meeting notes into draft tasks that the creator confirms', async ({

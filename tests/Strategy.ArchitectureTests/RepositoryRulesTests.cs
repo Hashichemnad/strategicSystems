@@ -59,6 +59,24 @@ public class RepositoryRulesTests
         }
     }
 
+    /// <summary>
+    /// Platform contract projects used by modules and other platform components (Links, Integration — ADR 0034, 0164) stay free of EF Core,
+    /// ASP.NET Core and Npgsql, like the module contracts.
+    /// </summary>
+    [Theory]
+    [InlineData("Strategy.Platform.Links.Contracts")]
+    [InlineData("Strategy.Platform.Integration.Contracts")]
+    public void Platform_contracts_do_not_depend_on_infrastructure(string assemblyName)
+    {
+        var assembly = Assembly.LoadFrom(Path.Combine(AppContext.BaseDirectory, assemblyName + ".dll"));
+        var result = Types.InAssembly(assembly)
+            .ShouldNot()
+            .HaveDependencyOnAny("Microsoft.EntityFrameworkCore", "Microsoft.AspNetCore", "Npgsql")
+            .GetResult();
+        (result.FailingTypeNames ?? []).ShouldBeEmpty();
+        Types.InAssembly(assembly).ShouldNot().HaveDependencyOn("Strategy.Modules").GetResult().IsSuccessful.ShouldBeTrue();
+    }
+
     [Fact]
     public void Platform_does_not_depend_on_modules()
     {

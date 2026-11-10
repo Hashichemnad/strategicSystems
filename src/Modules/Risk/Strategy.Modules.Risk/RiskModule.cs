@@ -21,6 +21,7 @@ using Strategy.Platform.Notifications;
 using Strategy.Platform.Persistence;
 using Strategy.Platform.Reporting;
 using Strategy.Platform.Scheduling;
+using Strategy.Platform.Search;
 using Strategy.Platform.Settings;
 using Strategy.Platform.Workflow;
 
@@ -58,6 +59,9 @@ public sealed class RiskModule : IModule
         services.AddScoped<RiskRules>();
         services.AddScoped<RiskViews>();
         services.AddScoped<RiskRoleSync>();
+        services.AddResponsibilitySource<RiskOwnerResponsibility>(); // Settings → Responsibilities (ADR 0168)
+        services.AddResponsibilitySource<RiskActionOwnerResponsibility>();
+        services.AddResponsibilitySource<RiskControlOwnerResponsibility>();
         services.AddScoped<IRiskScoring, RiskScoringService>();
         services.AddScoped<IRiskDirectory, RiskDirectory>();
         services.AddScoped<IKpiLinkedRecordSource, RiskKpiLinks>();
@@ -84,6 +88,7 @@ public sealed class RiskModule : IModule
         services.AddLinkTargetSource<RiskLinkTargets>();
         services.AddLinkableType(ActionLinkTargets.Definition);
         services.AddLinkTargetSource<ActionLinkTargets>();
+        services.AddSearchContributor<RiskSearchContributor>(RiskPermissions.SystemCode); // global search (ADR 0160)
 
         services.AddIntegrationEventHandler<KpiResultApproved, KpiResultApprovedHandler>();
         services.AddScoped<MonitorRunner>();

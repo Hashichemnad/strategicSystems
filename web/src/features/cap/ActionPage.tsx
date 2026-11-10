@@ -61,6 +61,7 @@ import {
 } from './components';
 import { ActionDialog, ReasonDialog } from './forms';
 import { BudgetCell, QualityFlag, ValidateDialog } from './RemarkActionsTab';
+import { ExternalReferencesSection, OriginBadge } from '@/features/integration/ExternalReferences';
 
 const route = getRouteApi('/app/cap/actions/$actionId');
 
@@ -120,6 +121,7 @@ export function CapActionPage() {
         }
         meta={
           <div className="flex flex-wrap items-center gap-2" data-testid="cap-action-meta">
+            <OriginBadge type="cap.action" id={a.id} />
             <ValidationChip status={a.validationStatus} />
             {a.validationStatus === 'approved' && <ActionStatusChip status={a.status} />}
             <ProgressBar
@@ -273,6 +275,7 @@ export function CapActionPage() {
         </TabsList>
         <TabsContent value="overview">
           <Overview action={a} />
+          <ExternalReferencesSection type="cap.action" id={a.id} />
         </TabsContent>
         <TabsContent value="progress">
           <ProgressHistory action={a} />

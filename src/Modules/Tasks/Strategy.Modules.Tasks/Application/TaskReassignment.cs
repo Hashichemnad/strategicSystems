@@ -29,9 +29,31 @@ public static class ReassignmentModes
 /// <summary>One open task of the leaving employee. Titles are left out for tasks the administrator may not read (confidential).</summary>
 public sealed record ReassignmentTaskDto(
     Guid Id, string? Number, string? TitleAr, string? TitleEn, string Status, string Template, bool Confidential, bool Readable, PersonDto Creator,
-    bool CreatedByLeaver, DateOnly? DueDate);
+    bool CreatedByLeaver, DateOnly? DueDate, PersonDto Assignee);
 
-public sealed record ReassignmentPreviewDto(PersonDto Employee, string EmployeeStatus, IReadOnlyList<ReassignmentTaskDto> Tasks);
+/// <summary><c>Tasks</c>: open tasks assigned to the employee; <c>CreatedTasks</c>: open tasks the employee created for other people (ADR 0169).</summary>
+public sealed record ReassignmentPreviewDto(
+    PersonDto Employee, string EmployeeStatus, IReadOnlyList<ReassignmentTaskDto> Tasks, IReadOnlyList<ReassignmentTaskDto> CreatedTasks);
+
+/// <summary>Result of moving the creator role: <c>Skipped</c> = selected tasks assigned to the new creator (nobody approves their own work).</summary>
+public sealed record CreatorTransferResultDto(int Transferred, int Skipped, IReadOnlyList<Guid> TaskIds);
+
+/// <summary>
+/// "Take over as creator" (ADR 0169): the creator role of the leaver's open tasks created for other people moves to <c>ToEmployeeId</c>, and with it
+/// the approval of their completion. <c>TaskIds</c> narrows the preview (null = all of them).
+/// </summary>
+public sealed record TransferCreatorRole(Guid FromEmployeeId, Guid? ToEmployeeId, string? Reason, IReadOnlyList<Guid>? TaskIds) : ICommand<CreatorTransferResultDto>;
+
+public sealed class TransferCreatorRoleValidator : AbstractValidator<TransferCreatorRole>
+{
+    public TransferCreatorRoleValidator()
+    {
+        RuleFor(x => x.ToEmployeeId).NotNull();
+        RuleFor(x => x.ToEmployeeId).NotEqual(x => x.FromEmployeeId).When(x => x.ToEmployeeId is not null).WithErrorCode("validation.invalid");
+        RuleFor(x => x.Reason).NotEmpty().MaximumLength(TaskItem.ReasonMaxLength);
+        RuleFor(x => x.TaskIds).Must(ids => ids is null || ids.Count <= 1000).WithErrorCode("validation.invalid");
+    }
+}
 
 public sealed record ReassignmentResultDto(int Reassigned, int ReturnedToCreators, int Skipped, IReadOnlyList<Guid> TaskIds);
 
@@ -67,7 +89,8 @@ public sealed class ReassignEmployeeTasksValidator : AbstractValidator<ReassignE
 internal sealed class TaskReassignment(
     TasksDbContext db, TaskVisibility visibility, TaskReader reader, TaskCreator creator, TaskDeadlines deadlines, IAccessService access, IEmployeeDirectory employees,
     IUserDirectory users, INotificationService notifications, ISettingsStore settingsStore, IAuditLog audit, IRequestContext context, IClock clock)
-    : IQueryHandler<PreviewReassignment, ReassignmentPreviewDto>, ICommandHandler<ReassignEmployeeTasks, ReassignmentResultDto>
+    : IQueryHandler<PreviewReassignment, ReassignmentPreviewDto>, ICommandHandler<ReassignEmployeeTasks, ReassignmentResultDto>,
+        ICommandHandler<TransferCreatorRole, CreatorTransferResultDto>
 {
     public async Task<Result<ReassignmentPreviewDto>> HandleAsync(PreviewReassignment query, CancellationToken cancellationToken)
     {
@@ -78,9 +101,83 @@ internal sealed class TaskReassignment(
         }
 
         var tasks = await OpenTasksOf(query.EmployeeId).ToListAsync(cancellationToken).ConfigureAwait(false);
+        var created = await OpenTasksCreatedBy(query.EmployeeId).ToListAsync(cancellationToken).ConfigureAwait(false);
         return new ReassignmentPreviewDto(
             TaskReader.Person(employee.Value.Id, await reader.PeopleAsync([employee.Value.Id], cancellationToken).ConfigureAwait(false)),
-            employee.Value.Status, await ItemsAsync(tasks, query.EmployeeId, cancellationToken).ConfigureAwait(false));
+            employee.Value.Status, await ItemsAsync(tasks, query.EmployeeId, cancellationToken).ConfigureAwait(false),
+            await ItemsAsync(created, query.EmployeeId, cancellationToken).ConfigureAwait(false));
+    }
+
+    /// <summary>
+    /// Moves the creator role of the leaver's open tasks (assigned to other people) to another employee in one transaction: creator, timeline,
+    /// record roles, notifications to both; one audit event afterwards (ADR 0169).
+    /// </summary>
+    public async Task<Result<CreatorTransferResultDto>> HandleAsync(TransferCreatorRole command, CancellationToken cancellationToken)
+    {
+        var leaver = await AuthorisedEmployeeAsync(command.FromEmployeeId, cancellationToken).ConfigureAwait(false);
+        if (leaver.IsFailure)
+        {
+            return leaver.Error;
+        }
+
+        if (await ActiveEmployeeAsync(command.ToEmployeeId!.Value, cancellationToken).ConfigureAwait(false) is not { } target)
+        {
+            return Error.Validation([new FieldError("toEmployeeId", "validation.unknownReference", "validation.unknownReference")]);
+        }
+
+        var query = OpenTasksCreatedBy(command.FromEmployeeId);
+        if (command.TaskIds is { } ids)
+        {
+            query = query.Where(t => ids.Contains(t.Id));
+        }
+
+        var taskIds = await query.Select(t => t.Id).ToListAsync(cancellationToken).ConfigureAwait(false);
+        var tasks = await db.Tasks.Where(t => taskIds.Contains(t.Id)).ToListAsync(cancellationToken).ConfigureAwait(false);
+        var moving = tasks.Where(t => t.AssigneeEmployeeId != target.Id).ToList(); // the new creator never approves their own work
+        if (moving.Count == 0)
+        {
+            return Error.Rule("tasks.reassignment.nothingToReassign", "tasks.errors.nothingToReassign");
+        }
+
+        var now = clock.UtcNow;
+        var reason = command.Reason!.Trim();
+        var actor = context.User.EmployeeIdOf();
+        await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
+        foreach (var task in moving)
+        {
+            task.TakeOverAsCreator(target.Id);
+            db.Events.Add(TaskEvent.Create(task.Id, now, TaskEvents.CreatorChanged, task.Status, task.Status, actor, context.User.UserId(), reason,
+                new { from = command.FromEmployeeId, to = target.Id }));
+        }
+
+        await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        foreach (var task in moving)
+        {
+            await creator.RevokeAsync(task, TaskPermissions.CreatorRole, command.FromEmployeeId, cancellationToken).ConfigureAwait(false);
+            await creator.GrantAsync(task, TaskPermissions.CreatorRole, target.Id, cancellationToken).ConfigureAwait(false);
+        }
+
+        var names = await reader.PeopleAsync([leaver.Value.Id, target.Id, actor ?? Guid.Empty], cancellationToken).ConfigureAwait(false);
+        string Name(Guid id, bool ar) => (ar ? names.GetValueOrDefault(id)?.NameAr ?? names.GetValueOrDefault(id)?.NameEn : names.GetValueOrDefault(id)?.NameEn
+            ?? names.GetValueOrDefault(id)?.NameAr) ?? string.Empty;
+        var values = new Dictionary<string, string>
+        {
+            ["count"] = moving.Count.ToString(CultureInfo.InvariantCulture),
+            ["fromAr"] = Name(leaver.Value.Id, true),
+            ["fromEn"] = Name(leaver.Value.Id, false),
+            ["toAr"] = Name(target.Id, true),
+            ["toEn"] = Name(target.Id, false),
+            ["actor"] = Name(actor ?? Guid.Empty, false),
+            ["text"] = reason,
+        };
+        await SendAsync(TaskNotifications.CreatorRoleToYou, [target.Id], values, "/tasks?tab=created", cancellationToken).ConfigureAwait(false);
+        await SendAsync(TaskNotifications.YourCreatedTasksMoved, [leaver.Value.Id], values, "/tasks", cancellationToken).ConfigureAwait(false);
+        await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+
+        var skipped = tasks.Count - moving.Count;
+        await audit.WriteAsync(new AuditEvent("tasks.task.creator-transfer", true, TaskPermissions.SystemCode, "org.employee", command.FromEmployeeId.ToString(),
+            new { to = target.Id, tasks = moving.Select(t => t.Id), skipped }, reason), cancellationToken).ConfigureAwait(false);
+        return new CreatorTransferResultDto(moving.Count, skipped, moving.Select(t => t.Id).ToList());
     }
 
     public async Task<Result<ReassignmentResultDto>> HandleAsync(ReassignEmployeeTasks command, CancellationToken cancellationToken)
@@ -193,6 +290,11 @@ internal sealed class TaskReassignment(
         db.Tasks.AsNoTracking().Where(t => t.AssigneeEmployeeId == employeeId && !TaskStatuses.Closed.Contains(t.Status))
             .OrderBy(t => t.DueDate == null).ThenBy(t => t.DueDate).ThenBy(t => t.Number);
 
+    /// <summary>Open tasks the employee created for other people (ADR 0169); their own tasks are handled by the assignee reassignment.</summary>
+    private IQueryable<TaskItem> OpenTasksCreatedBy(Guid employeeId) =>
+        db.Tasks.AsNoTracking().Where(t => t.CreatorEmployeeId == employeeId && t.AssigneeEmployeeId != employeeId && !TaskStatuses.Closed.Contains(t.Status))
+            .OrderBy(t => t.DueDate == null).ThenBy(t => t.DueDate).ThenBy(t => t.Number);
+
     private async Task<Result<EmployeeReference>> AuthorisedEmployeeAsync(Guid employeeId, CancellationToken ct)
     {
         var employee = await employees.GetAsync(employeeId, ct).ConfigureAwait(false);
@@ -211,13 +313,14 @@ internal sealed class TaskReassignment(
 
     private async Task<IReadOnlyList<ReassignmentTaskDto>> ItemsAsync(List<TaskItem> tasks, Guid leaver, CancellationToken ct)
     {
-        var people = await reader.PeopleAsync(tasks.Select(t => t.CreatorEmployeeId), ct).ConfigureAwait(false);
+        var people = await reader.PeopleAsync(tasks.Select(t => t.CreatorEmployeeId).Concat(tasks.Select(t => t.AssigneeEmployeeId)), ct).ConfigureAwait(false);
         var items = new List<ReassignmentTaskDto>();
         foreach (var t in tasks)
         {
             var readable = await visibility.CanReadAsync(t, context.User, ct).ConfigureAwait(false);
             items.Add(new ReassignmentTaskDto(t.Id, readable ? t.Number : null, readable ? t.TitleAr : null, readable ? t.TitleEn : null, t.Status, t.Template,
-                t.Confidential, readable, TaskReader.Person(t.CreatorEmployeeId, people), t.CreatorEmployeeId == leaver, t.DueDate));
+                t.Confidential, readable, TaskReader.Person(t.CreatorEmployeeId, people), t.CreatorEmployeeId == leaver, t.DueDate,
+                TaskReader.Person(t.AssigneeEmployeeId, people)));
         }
 
         return items;
@@ -281,7 +384,8 @@ internal sealed class OfferReassignmentWhenEmployeeLeaves(TasksDbContext db, IEm
 {
     public async Task EmployeeLeftAsync(Guid employeeId, CancellationToken cancellationToken)
     {
-        var open = await db.Tasks.AsNoTracking().CountAsync(t => t.AssigneeEmployeeId == employeeId && !TaskStatuses.Closed.Contains(t.Status), cancellationToken)
+        var open = await db.Tasks.AsNoTracking()
+            .CountAsync(t => (t.AssigneeEmployeeId == employeeId || t.CreatorEmployeeId == employeeId) && !TaskStatuses.Closed.Contains(t.Status), cancellationToken)
             .ConfigureAwait(false);
         if (open == 0 || await employees.GetAsync(employeeId, cancellationToken).ConfigureAwait(false) is not { } employee)
         {

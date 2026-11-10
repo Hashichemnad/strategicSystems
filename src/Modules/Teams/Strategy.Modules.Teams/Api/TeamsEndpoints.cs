@@ -8,6 +8,7 @@ using Strategy.Modules.Teams.Application;
 using Strategy.Modules.Teams.Domain;
 using Strategy.Platform.Http.Access;
 using Strategy.Platform.Http.Audit;
+using Strategy.Platform.Http.Integration;
 using Strategy.Platform.Http.Problems;
 using Strategy.Platform.Kernel.Messaging;
 using Strategy.Platform.Kernel.Paging;
@@ -84,6 +85,9 @@ internal static class TeamsEndpoints
             .WithName("GetTeam").RequirePermission(TeamPermissions.Read);
         group.MapPut("/{id:guid}", async (Guid id, UpdateTeamBody b, IDispatcher d, CancellationToken ct) => (await d.SendAsync(new UpdateTeam(id, b.Team, b.Version), ct)).ToOk())
             .WithName("UpdateTeam").RequirePermission(TeamPermissions.Read);
+        group.MapByExternal("", TeamLinkTargets.Definition.ResourceType, TeamPermissions.Read, "Team", t => t.Id, (id, http) => http.Dispatch(new GetTeam(id)))
+            .WithUpsert<TeamInput>(TeamPermissions.Request, TeamPermissions.Read, (b, http) => http.Dispatch(new CreateTeam(b)),
+                (id, b, current, http) => http.Dispatch(new UpdateTeam(id, b, current.Version)));
         group.MapPost("/{id:guid}/submit", async (Guid id, TeamVersionInput b, IDispatcher d, CancellationToken ct) =>
                 (await d.SendAsync(new SubmitTeam(id, b.Version, b.Comment), ct)).ToOk())
             .WithName("SubmitTeam").RequirePermission(TeamPermissions.Read).WithIdempotency();
@@ -131,6 +135,7 @@ internal static class TeamsEndpoints
         var meetings = group.MapGroup("/meetings");
         meetings.MapGet("/{id:guid}", async (Guid id, IDispatcher d, CancellationToken ct) => (await d.SendAsync(new GetMeeting(id), ct)).ToOk())
             .WithName("GetTeamMeeting").RequirePermission(TeamPermissions.Read);
+        meetings.MapByExternal("", MeetingLinkTargets.Definition.ResourceType, TeamPermissions.Read, "TeamMeeting", m => m.Id, (id, http) => http.Dispatch(new GetMeeting(id)));
         meetings.MapPut("/{id:guid}", async (Guid id, MeetingInput b, IDispatcher d, CancellationToken ct) =>
                 (await d.SendAsync(new UpdateMeeting(id, b.Title, b.ScheduledAt, b.EndsAt, b.Location, b.Agenda, b.Version), ct)).ToOk())
             .WithName("UpdateTeamMeeting").RequirePermission(TeamPermissions.Read);
@@ -155,6 +160,8 @@ internal static class TeamsEndpoints
         var recommendations = group.MapGroup("/recommendations");
         recommendations.MapGet("/{id:guid}", async (Guid id, IDispatcher d, CancellationToken ct) => (await d.SendAsync(new GetRecommendation(id), ct)).ToOk())
             .WithName("GetTeamRecommendation").RequirePermission(TeamPermissions.Read);
+        recommendations.MapByExternal("", RecommendationLinkTargets.Type, TeamPermissions.Read, "TeamRecommendation", r => r.Id,
+            (id, http) => http.Dispatch(new GetRecommendation(id)));
         recommendations.MapPut("/{id:guid}", async (Guid id, RecommendationInput b, IDispatcher d, CancellationToken ct) =>
                 (await d.SendAsync(new UpdateRecommendation(id, b.Kind, b.Text, b.OwnerEmployeeId, b.DueDate, b.Version), ct)).ToOk())
             .WithName("UpdateTeamRecommendation").RequirePermission(TeamPermissions.Read);

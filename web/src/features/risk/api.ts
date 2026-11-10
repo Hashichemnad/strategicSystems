@@ -320,21 +320,6 @@ export function useFrameworkPreview(content: FrameworkContent | undefined) {
   });
 }
 
-/** KPI cards the user can read, for choosing a KRI's card (Performance Management's own list). */
-export function useKpiCardSearch(search: string) {
-  return useQuery({
-    queryKey: ['kpi', 'cards', 'risk-kri', search],
-    queryFn: async ({ signal }) =>
-      unwrap(
-        await api.GET('/api/v1/kpi/cards', {
-          params: { query: { page: 1, pageSize: 20, ...(search ? { search } : {}) } },
-          signal,
-        }),
-      ),
-    placeholderData: keepPreviousData,
-  });
-}
-
 /** A mutation that refreshes every risk query (and workflow / current-status panels) afterwards. */
 export function useRiskMutation<TInput, TOutput>(run: (input: TInput) => Promise<TOutput>) {
   const queryClient = useQueryClient();

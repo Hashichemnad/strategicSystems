@@ -1,5 +1,4 @@
 using System.Globalization;
-using System.Net;
 using System.Text.Json.Nodes;
 using Strategy.Modules.Requests.Contracts;
 using Strategy.Modules.Requests.Domain;
@@ -185,7 +184,7 @@ internal sealed class RequestPdf(
             case FieldTypes.File:
                 return data.Ids("v").Count.ToString(CultureInfo.InvariantCulture);
             case FieldTypes.RichText:
-                return WebUtility.HtmlDecode(System.Text.RegularExpressions.Regex.Replace(data.Text("v") ?? string.Empty, "<[^>]+>", " "));
+                return Platform.Kernel.Text.RichText.ToPlainText(data.Text("v"));
             default:
                 return data.Text("v");
         }

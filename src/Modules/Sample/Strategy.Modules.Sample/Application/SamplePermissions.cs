@@ -42,6 +42,10 @@ internal sealed class SampleAccessCatalogue : IAccessCatalogueSource
         new(SamplePermissions.Submit, "تقديم البنود للموافقة", "Submit items for approval"),
     ];
 
+    /// <summary>Members page lists (ADR 0166, docs/design/members-responsibilities.md §1).</summary>
+    // No administrator role in the template module: only a platform administrator manages Sample's members (ADR 0167).
+    public SystemMemberRoles MemberRoles => new([], ["viewer"], ["editor", "approver"]);
+
     public IEnumerable<RoleSeed> DefaultRoles =>
     [
         new("viewer", "مستعرض", "Viewer", [new(SamplePermissions.Read, DataScope.All)]),

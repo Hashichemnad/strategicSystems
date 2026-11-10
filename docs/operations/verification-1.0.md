@@ -47,5 +47,8 @@ on the same machine). ADR 0157. Image `strategy-app:1.0.0` built from commit `9b
 - **Windows with Docker Desktop**: the PowerShell scripts were run with PowerShell 7 on Linux (same compose, same Docker). Windows
   specifics handled in the scripts but not executed on Windows: PowerShell 5.1 quoting of native arguments (SQL passed on standard input),
   `Get-NetTCPConnection` port check, ACL of the backup folder. To be confirmed on the owner's Windows machine (installation guide steps).
+  *Phase 19 (ADR 0163):* the scripts now also run under Windows PowerShell 5.1 (native stderr no longer stops them, UTF-8 files) and from
+  a release folder without `.git`; CI runs them against a fake `docker` under 5.1 and 7 (`deploy-windows`). The real-machine run is the
+  checklist [`windows-acceptance.md`](windows-acceptance.md).
 - An HTTPS reverse proxy with a real certificate (nginx configuration reviewed).
 - Non-Docker install (`deploy/linux/README.md`): commands reviewed, not executed end to end.

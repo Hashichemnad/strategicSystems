@@ -62,7 +62,7 @@ internal sealed class AccessSeeder : IDatabaseSeeder
         foreach (var source in sources)
         {
             var sort = 0;
-            foreach (var permission in source.Permissions)
+            foreach (var permission in MemberCatalogue.PermissionsOf(source))
             {
                 var parts = permission.Code.Split('.');
                 if (parts.Length != 3 || parts[0] != source.System.Code)
@@ -112,7 +112,7 @@ internal sealed class AccessSeeder : IDatabaseSeeder
         var created = new List<Role>();
         foreach (var source in sources)
         {
-            foreach (var seed in source.DefaultRoles)
+            foreach (var seed in MemberCatalogue.RolesOf(source))
             {
                 var role = roles.Find(r => r.SystemCode == source.System.Code && r.Code == seed.Code);
                 if (role is null)
@@ -203,15 +203,45 @@ internal sealed class AccessSeeder : IDatabaseSeeder
     }
 }
 
+/// <summary>
+/// The synthesised delegated-administration permission (ADR 0167): every catalogue with member roles gets
+/// <c>&lt;system&gt;.members.manage</c>, granted to its seeded administrator roles (new permissions join builtin roles once).
+/// </summary>
+internal static class MemberCatalogue
+{
+    public const string LabelAr = "إدارة أعضاء النظام";
+    public const string LabelEn = "Manage the system's members";
+
+    public static IEnumerable<PermissionDefinition> PermissionsOf(IAccessCatalogueSource source) =>
+        source.MemberRoles is null
+            ? source.Permissions
+            : source.Permissions.Append(new PermissionDefinition(SystemMemberRoles.ManagePermission(source.System.Code), LabelAr, LabelEn, Scopable: false));
+
+    public static IEnumerable<RoleSeed> RolesOf(IAccessCatalogueSource source)
+    {
+        if (source.MemberRoles is not { } members)
+        {
+            return source.DefaultRoles;
+        }
+
+        var manage = new PermissionGrant(SystemMemberRoles.ManagePermission(source.System.Code));
+        return source.DefaultRoles.Select(r => members.AdministratorRoles.Contains(r.Code, StringComparer.Ordinal)
+            ? r with { Permissions = [.. r.Permissions, manage] }
+            : r);
+    }
+}
+
 /// <summary>The seeded platform administrator roles (ADR 0016).</summary>
 internal static class AdministratorRoles
 {
+    public static bool Contains(string system, string code) => All.Contains((system, code));
+
     public static readonly IReadOnlyList<(string System, string Code)> All =
     [
         ("org", "administrator"), ("identity", "administrator"), ("access", "administrator"), ("settings", "administrator"),
         ("audit", "administrator"), ("workflow", "administrator"),
         ("calendar", "administrator"), ("ai", "administrator"), ("mcp", "administrator"), ("tasks", "administrator"), ("teams", "administrator"),
-        ("platform", "administrator"),
+        ("platform", "administrator"), ("integration", "administrator"),
     ];
 
     public static async Task GrantAsync(AccessDbContext db, Guid userId, DateOnly today, CancellationToken ct)

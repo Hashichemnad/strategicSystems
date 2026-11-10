@@ -1,8 +1,9 @@
 import { Link } from '@tanstack/react-router';
 import { Plus } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { errorMessage } from '@/api/problem';
+import { KpiCardPicker } from '@/features/kpi/KpiCardPicker';
 import { formatDateTime } from '@/lib/format';
 import {
   Button,
@@ -29,7 +30,6 @@ import {
   kriDirections,
   kriTone,
   riskApi,
-  useKpiCardSearch,
   useKris,
   useRiskMutation,
   type Kri,
@@ -189,13 +189,6 @@ function KriDialog({ riskId, kri, onClose }: { riskId: string; kri?: Kri; onClos
   const names = useNames();
   const toast = useToast();
   const save = useRiskMutation(riskApi.saveKri);
-  const [search, setSearch] = useState('');
-  const [debounced, setDebounced] = useState('');
-  useEffect(() => {
-    const timer = window.setTimeout(() => setDebounced(search.trim()), 300);
-    return () => window.clearTimeout(timer);
-  }, [search]);
-  const cards = useKpiCardSearch(debounced);
   const [v, setV] = useState<KriValues>({
     kpiCardId: kri?.kpiCardId ?? '',
     basis: kri?.basis ?? 'value',
@@ -204,14 +197,6 @@ function KriDialog({ riskId, kri, onClose }: { riskId: string; kri?: Kri; onClos
     breachThreshold: kri?.breachThreshold ?? 0,
   });
   const [breach, setBreach] = useState(kri ? String(kri.breachThreshold) : '');
-  const cardOptions = [
-    ...(kri
-      ? [{ value: kri.kpiCardId, label: `${kri.cardCode} · ${names.text(kri.cardNameAr, kri.cardNameEn)}` }]
-      : []),
-    ...(cards.data?.items ?? [])
-      .filter((c) => c.id !== kri?.kpiCardId)
-      .map((c) => ({ value: c.id, label: `${c.code} · ${names.text(c.nameAr, c.nameEn)}` })),
-  ];
   return (
     <Dialog open onOpenChange={(open) => !open && onClose()}>
       <DialogContent
@@ -247,19 +232,15 @@ function KriDialog({ riskId, kri, onClose }: { riskId: string; kri?: Kri; onClos
         }
       >
         <div className="grid gap-3 md:grid-cols-2">
-          <FormField label={t('kris.searchCard')} className="md:col-span-2">
-            <Input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              data-testid="risk-kri-card-search"
-            />
-          </FormField>
-          <FormField label={t('kris.card')} required className="md:col-span-2">
-            <Select
-              value={v.kpiCardId || undefined}
-              onValueChange={(value) => setV({ ...v, kpiCardId: value })}
-              options={cardOptions}
-              placeholder={t('kris.chooseCard')}
+          <FormField label={t('kris.card')} required className="md:col-span-2" hint={t('kris.searchCard')}>
+            <KpiCardPicker
+              value={v.kpiCardId || null}
+              onChange={(id) => setV({ ...v, kpiCardId: id ?? '' })}
+              aria-label={t('kris.card')}
+              testId="risk-kri-card"
+              fallbackLabel={
+                kri ? `${kri.cardCode} · ${names.text(kri.cardNameAr, kri.cardNameEn)}` : undefined
+              }
             />
           </FormField>
           <FormField label={t('kris.basis')}>

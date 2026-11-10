@@ -246,6 +246,7 @@ internal sealed class AuditAccessCatalogue : IAccessCatalogueSource
         new(AuditPermissions.AiEvidence, "مراجعة الأدلة وصياغة تعليق المتابعة", "Evidence review and follow-up comment draft", Scopable: false),
         new(AuditPermissions.AiRepeat, "كشف الملاحظات المتكررة", "Repeat-finding detection", Scopable: false),
         new(AuditPermissions.AiSummary, "ملخص لجنة التدقيق", "Audit committee summary", Scopable: false),
+        ResponsibilityPermissions.Definition(AuditPermissions.SystemCode),
     ];
 
     private static readonly PermissionGrant[] OfficeGrants =
@@ -253,7 +254,11 @@ internal sealed class AuditAccessCatalogue : IAccessCatalogueSource
         new(AuditPermissions.Read, DataScope.All), new(AuditPermissions.Office, DataScope.All), new(AuditPermissions.DashboardRead), new(AuditPermissions.Export),
         new(AuditPermissions.SettingsManage), new(AuditPermissions.Lifecycle), new(AuditPermissions.PlanRead, DataScope.All), new(AuditPermissions.WorkPapers),
         new(AuditPermissions.AiExtract), new(AuditPermissions.AiEvidence), new(AuditPermissions.AiRepeat), new(AuditPermissions.AiSummary),
+        new(ResponsibilityPermissions.Manage(AuditPermissions.SystemCode), DataScope.All),
     ];
+
+    /// <summary>Members page lists (ADR 0166, docs/design/members-responsibilities.md §1).</summary>
+    public SystemMemberRoles MemberRoles => new(["audit-office"], ["department-user"], ["chief-audit-executive", "audit-committee", "viewer"]);
 
     public IEnumerable<RoleSeed> DefaultRoles =>
     [

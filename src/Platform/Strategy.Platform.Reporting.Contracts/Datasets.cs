@@ -39,7 +39,11 @@ public sealed record DatasetField(
     string? Permission = null,
     string? LookupType = null);
 
-/// <summary>A report-builder object (one record type) declared by its module. <paramref name="Link"/>: record link with <c>{id}</c>.</summary>
+/// <summary>
+/// A report-builder object (one record type) declared by its module. <paramref name="Link"/>: record link with <c>{id}</c>.
+/// <paramref name="ResourceType"/>: the record type of a row (external-reference columns, ADR 0164); null = the linkable type whose link
+/// template equals <paramref name="Link"/>.
+/// </summary>
 public sealed record DatasetDefinition(
     string Code,
     string SystemCode,
@@ -47,7 +51,8 @@ public sealed record DatasetDefinition(
     string LabelEn,
     string ReadPermission,
     IReadOnlyList<DatasetField> Fields,
-    string Link);
+    string Link,
+    string? ResourceType = null);
 
 public static class ReportOperators
 {

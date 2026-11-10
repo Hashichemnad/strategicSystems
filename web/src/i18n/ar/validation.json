@@ -2,6 +2,8 @@
   "notEmpty": "هذا الحقل مطلوب.",
   "notNull": "هذا الحقل مطلوب.",
   "maximumLength": "الحد الأقصى {{maxLength}} حرفًا.",
+  "maximumItems": "حدّد {{max}} سجلًا على الأكثر.",
+  "richTextTooLong": "الحد الأقصى {{maxLength}} حرفًا من النص (النص أو تنسيقه أطول من المسموح).",
   "minimumLength": "الحد الأدنى {{minLength}} أحرف.",
   "atLeastOneLanguage": "أدخل القيمة بالعربية أو الإنجليزية أو كلتيهما.",
   "unknownSortField": "لا يمكن الترتيب حسب هذا العمود.",

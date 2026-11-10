@@ -20,7 +20,7 @@ public class AccessAdministrationTests(ApiFixture api) : IClassFixture<ApiFixtur
         var matrix = await admin.GetFromJsonAsync<JsonElement>($"{Access}/systems/sample/matrix");
 
         var permissions = matrix.GetProperty("permissions").EnumerateArray().ToList();
-        permissions.Select(p => p.GetProperty("code").GetString()).ShouldBe(["sample.item.read", "sample.item.create", "sample.item.update", "sample.item.submit"]);
+        permissions.Select(p => p.GetProperty("code").GetString()).ShouldBe(["sample.item.read", "sample.item.create", "sample.item.update", "sample.item.submit", "sample.members.manage"]);
         permissions.ShouldAllBe(p => p.GetProperty("labelAr").GetString()!.Length > 0 && p.GetProperty("labelEn").GetString()!.Length > 0);
         var editor = matrix.GetProperty("roles").EnumerateArray().Single(r => r.GetProperty("code").GetString() == "editor");
         editor.GetProperty("permissions").EnumerateArray()
@@ -68,7 +68,7 @@ public class AccessAdministrationTests(ApiFixture api) : IClassFixture<ApiFixtur
             .ShouldBeProblemAsync(HttpStatusCode.Conflict, "access.assignment.overlap");
 
         var effective = await admin.GetFromJsonAsync<JsonElement>($"{Access}/users/{user.Id}/effective");
-        effective.GetProperty("roles").EnumerateArray().Select(r => r.GetString()).ShouldBe(["org.viewer", "ai.user", "tasks.employee", "tasks.manager", "teams.employee", "portfolio.requester", "kpi.owner", "requests.requester", "docreg.reader", "ip.requester", "risk.owner", "cap.participant", "bench.participant", "auditmgmt.department-user", "reporting.user", $"org.{code}"], ignoreOrder: true); // org.viewer, ai.user, the two task roles, the Teams employee, the Portfolio requester, the KPI owner, the requester, the document reader and the IP requester roles are assigned to everyone
+        effective.GetProperty("roles").EnumerateArray().Select(r => r.GetString()).ShouldBe(["org.viewer", "ai.user", "tasks.employee", "tasks.manager", "teams.employee", "portfolio.requester", "kpi.owner", "requests.requester", "docreg.reader", "ip.requester", "risk.owner", "cap.participant", "bench.participant", "auditmgmt.department-user", "reporting.user", "integration.viewer", $"org.{code}"], ignoreOrder: true); // org.viewer, ai.user, the two task roles, the Teams employee, the Portfolio requester, the KPI owner, the requester, the document reader and the IP requester roles are assigned to everyone
 
         // Ending the assignment (last day yesterday) removes the access at once.
         var a = await assignment.Content.ReadFromJsonAsync<JsonElement>();

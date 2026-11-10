@@ -64,6 +64,7 @@ import {
   ReviseDialog,
   RiskLinkDialog,
 } from './forms';
+import { ExternalReferencesSection, OriginBadge } from '@/features/integration/ExternalReferences';
 
 const route = getRouteApi('/app/audit-management/findings/$findingId');
 
@@ -118,6 +119,7 @@ export function AuditFindingPage() {
         }
         meta={
           <div className="flex flex-wrap items-center gap-3" data-testid="audit-finding-meta">
+            <OriginBadge type="auditmgmt.finding" id={f.id} />
             <FindingStatusChip status={f.status} />
             <PriorityChip priority={f.values.priority} />
             {f.values.repeat && <StatusChip tone="warning">{t('finding.repeat')}</StatusChip>}
@@ -195,6 +197,7 @@ export function AuditFindingPage() {
         </TabsList>
         <TabsContent value="overview">
           <Overview finding={f} />
+          <ExternalReferencesSection type="auditmgmt.finding" id={f.id} />
         </TabsContent>
         <TabsContent value="recommendations">
           <Section

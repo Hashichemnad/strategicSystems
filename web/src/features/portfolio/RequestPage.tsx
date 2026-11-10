@@ -21,6 +21,7 @@ import {
   Select,
   Skeleton,
   StageStepper,
+  RichTextView,
   StatusBanner,
   StatusChip,
   Tabs,
@@ -45,6 +46,7 @@ import {
   type PortfolioOptions,
   type ProgramRequest,
 } from './api';
+import { ExternalReferencesSection, OriginBadge } from '@/features/integration/ExternalReferences';
 
 const route = getRouteApi('/app/portfolio/requests/$requestId');
 
@@ -154,6 +156,7 @@ export function RequestPage() {
         }
         meta={
           <>
+            <OriginBadge type="portfolio.request" id={data.id} />
             <StatusChip tone={statusTone[data.status] ?? 'neutral'}>
               {t(`status.${data.status as 'draft'}`)}
             </StatusChip>
@@ -258,6 +261,7 @@ export function RequestPage() {
         </TabsList>
         <TabsContent value="overview">
           <Overview request={data} options={options.data} />
+          <ExternalReferencesSection type="portfolio.request" id={data.id} />
         </TabsContent>
         <TabsContent value="assessment">
           <AssessmentPanel request={data} options={options.data} />
@@ -341,10 +345,11 @@ function Overview({ request, options }: { request: ProgramRequest; options: Port
     [t('fields.approvedBudget'), money(request.approvedBudget)],
     [t('fields.source'), t(`values.${request.source as 'manual'}`)],
   ];
-  const texts: [string, string | null | undefined][] = [
-    [t('fields.description'), v.description],
-    [t('fields.justifications'), v.justifications],
-    [t('fields.scopeOfWork'), v.scopeOfWork],
+  // Description and justifications are rich text (ADR 0161); scope of work stays plain.
+  const texts: [string, string | null | undefined, boolean][] = [
+    [t('fields.description'), v.description, true],
+    [t('fields.justifications'), v.justifications, true],
+    [t('fields.scopeOfWork'), v.scopeOfWork, false],
   ];
   return (
     <div className="grid gap-4 lg:grid-cols-[2fr_1fr]">
@@ -359,12 +364,16 @@ function Overview({ request, options }: { request: ProgramRequest; options: Port
             </div>
           ))}
         </dl>
-        {texts.map(([key, value]) => (
+        {texts.map(([key, value, rich]) => (
           <div key={key}>
             <h3 className="text-sm text-muted-foreground">{key}</h3>
-            <p className="mt-1 whitespace-pre-line" dir="auto">
-              {value ?? '—'}
-            </p>
+            {rich ? (
+              <RichTextView className="mt-1" value={value} />
+            ) : (
+              <p className="mt-1 whitespace-pre-line" dir="auto">
+                {value ?? '—'}
+              </p>
+            )}
           </div>
         ))}
         {request.cancelReason && (

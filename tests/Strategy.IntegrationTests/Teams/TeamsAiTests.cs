@@ -39,6 +39,12 @@ public sealed class TeamsAiTests(AiFixture ai) : IClassFixture<AiFixture>
         draft.Recommendations.Count.ShouldBe(2);
         draft.Recommendations[0].DueDate.ShouldBe(new DateOnly(2026, 12, 1));
         ai.Model.Calls.Last().Messages.Any(m => m.Text.Contains("<untrusted_document", StringComparison.Ordinal)).ShouldBeTrue();
+        // Notes typed in the rich-text editor reach the model as their plain-text projection (ADR 0161).
+        await TeamsWorld.OkAsync<MinutesDraftDto>(w.C(w.Secretary).PostAsJsonAsync($"{Base}/meetings/{meeting.Id}/ai/minutes",
+            new { notes = "<p><strong>Budget</strong> reviewed</p><ul><li>Book the hall</li></ul>" }));
+        var prompt = string.Join("\n", ai.Model.Calls.Last().Messages.Select(m => m.Text));
+        prompt.ShouldContain("Budget reviewed\n• Book the hall");
+        prompt.ShouldNotContain("<strong>");
         var unchanged = (await w.C(w.Secretary).GetFromJsonAsync<MeetingDto>($"{Base}/meetings/{meeting.Id}"))!;
         unchanged.Minutes.ShouldBeNull(); // nothing saved until the secretary accepts the draft
 

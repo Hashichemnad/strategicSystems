@@ -740,6 +740,22 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/access/members/systems': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListMemberSystems'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/access/record-roles/{id}/permissions': {
     parameters: {
       query?: never;
@@ -862,6 +878,150 @@ export interface paths {
     get: operations['GetPermissionMatrix'];
     put?: never;
     post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/access/systems/{code}/members': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetSystemMembers'];
+    put?: never;
+    post: operations['AddSystemMember'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/access/systems/{code}/members/{id}/remove': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RemoveSystemMember'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/access/systems/{code}/members/user-search': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['SearchMemberUsers'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/access/systems/{code}/member-roles': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetMemberRoles'];
+    put: operations['SetMemberRoles'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/access/systems/{code}/responsibilities': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListResponsibilityKinds'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/access/systems/{code}/responsibilities/{kind}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListResponsibilities'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/access/systems/{code}/responsibilities/{kind}/candidates': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListResponsibilityCandidates'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/access/systems/{code}/responsibilities/{kind}/preview': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['PreviewResponsibilityReassignment'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/access/systems/{code}/responsibilities/{kind}/reassign': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ReassignResponsibilities'];
     delete?: never;
     options?: never;
     head?: never;
@@ -1236,6 +1396,22 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/org/units/by-external/{source}/{externalId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetOrgUnitByExternalId'];
+    put: operations['UpsertOrgUnitByExternalId'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/org/employees': {
     parameters: {
       query?: never;
@@ -1309,6 +1485,22 @@ export interface paths {
     };
     get: operations['GetEmployeeAsOf'];
     put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/org/employees/by-external/{source}/{externalId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetEmployeeByExternalId'];
+    put: operations['UpsertEmployeeByExternalId'];
     post?: never;
     delete?: never;
     options?: never;
@@ -3156,6 +3348,150 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/integration/source-systems': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListSourceSystems'];
+    put?: never;
+    post: operations['CreateSourceSystem'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/source-systems/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateSourceSystem'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/source-systems/{id}/activate': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ActivateSourceSystem'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/source-systems/{id}/deactivate': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['DeactivateSourceSystem'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/types': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListReferenceableTypes'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/references/{type}/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListRecordExternalReferences'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/search': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GlobalSearch'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/search/recent': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListRecentItems'];
+    put?: never;
+    post: operations['RecordRecentItem'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/search/types': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListSearchTypes'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/reporting/catalogue': {
     parameters: {
       query?: never;
@@ -3700,6 +4036,22 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/sample/items/by-external/{source}/{externalId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetSampleItemByExternalId'];
+    put: operations['UpsertSampleItemByExternalId'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/sample/items/{id}/activate': {
     parameters: {
       query?: never;
@@ -3853,6 +4205,22 @@ export interface paths {
     };
     get: operations['GetTask'];
     put: operations['UpdateTask'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/tasks/by-external/{source}/{externalId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetTaskByExternalId'];
+    put?: never;
     post?: never;
     delete?: never;
     options?: never;
@@ -4308,6 +4676,22 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/tasks/reassignment/creator': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['TransferTaskCreatorRole'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/tasks/{id}/ai/summary': {
     parameters: {
       query?: never;
@@ -4493,6 +4877,22 @@ export interface paths {
     };
     get: operations['GetTeam'];
     put: operations['UpdateTeam'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/by-external/{source}/{externalId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetTeamByExternalId'];
+    put: operations['UpsertTeamByExternalId'];
     post?: never;
     delete?: never;
     options?: never;
@@ -4884,6 +5284,22 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/teams/meetings/by-external/{source}/{externalId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetTeamMeetingByExternalId'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/teams/meetings/{id}/minutes': {
     parameters: {
       query?: never;
@@ -4957,6 +5373,22 @@ export interface paths {
     };
     get: operations['GetTeamRecommendation'];
     put: operations['UpdateTeamRecommendation'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/teams/recommendations/by-external/{source}/{externalId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetTeamRecommendationByExternalId'];
+    put?: never;
     post?: never;
     delete?: never;
     options?: never;
@@ -5876,6 +6308,22 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/portfolio/requests/by-external/{source}/{externalId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetProgramRequestByExternalId'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/portfolio/requests/{id}/submit': {
     parameters: {
       query?: never;
@@ -6076,6 +6524,22 @@ export interface paths {
       cookie?: never;
     };
     get: operations['GetPortfolioProject'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/portfolio/projects/by-external/{source}/{externalId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetPortfolioProjectByExternalId'];
     put?: never;
     post?: never;
     delete?: never;
@@ -8324,6 +8788,22 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/kpi/cards/lookup': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['LookupKpiCards'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/kpi/options': {
     parameters: {
       query?: never;
@@ -8349,6 +8829,22 @@ export interface paths {
     };
     get: operations['GetKpiCard'];
     put: operations['UpdateKpiCard'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/cards/by-external/{source}/{externalId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetKpiCardByExternalId'];
+    put: operations['UpsertKpiCardByExternalId'];
     post?: never;
     delete?: never;
     options?: never;
@@ -8652,6 +9148,22 @@ export interface paths {
       cookie?: never;
     };
     get: operations['GetKpiResult'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/kpi/results/by-external/{source}/{externalId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetKpiResultByExternalId'];
     put?: never;
     post?: never;
     delete?: never;
@@ -9188,6 +9700,22 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/requests/by-external/{source}/{externalId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetServiceRequestByExternalId'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/requests/{id}/submit': {
     parameters: {
       query?: never;
@@ -9412,6 +9940,22 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/docreg/documents/by-external/{source}/{externalId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetDocumentByExternalId'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/docreg/documents/{id}/compare': {
     parameters: {
       query?: never;
@@ -9628,6 +10172,22 @@ export interface paths {
       cookie?: never;
     };
     get: operations['ListIpRecords'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/ip/records/by-external/{source}/{externalId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetIpRecordByExternalId'];
     put?: never;
     post?: never;
     delete?: never;
@@ -10109,6 +10669,22 @@ export interface paths {
     };
     get: operations['GetRisk'];
     put: operations['UpdateRisk'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/risk/risks/by-external/{source}/{externalId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetRiskByExternalId'];
+    put: operations['UpsertRiskByExternalId'];
     post?: never;
     delete?: never;
     options?: never;
@@ -10884,6 +11460,22 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/cap/sources/by-external/{source}/{externalId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetCapSourceByExternalId'];
+    put: operations['UpsertCapSourceByExternalId'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/cap/sources/{id}/close': {
     parameters: {
       query?: never;
@@ -10957,6 +11549,22 @@ export interface paths {
     };
     get: operations['GetCapRemark'];
     put: operations['UpdateCapRemark'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/remarks/by-external/{source}/{externalId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetCapRemarkByExternalId'];
+    put?: never;
     post?: never;
     delete?: never;
     options?: never;
@@ -11213,6 +11821,22 @@ export interface paths {
     };
     get: operations['GetCapAction'];
     put: operations['UpdateCapAction'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/cap/actions/by-external/{source}/{externalId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetCapActionByExternalId'];
+    put?: never;
     post?: never;
     delete?: never;
     options?: never;
@@ -11708,6 +12332,22 @@ export interface paths {
       cookie?: never;
     };
     get: operations['GetBenchStudy'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/bench/studies/by-external/{source}/{externalId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetBenchStudyByExternalId'];
     put?: never;
     post?: never;
     delete?: never;
@@ -12228,6 +12868,22 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/auditmgmt/reports/by-external/{source}/{externalId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetAuditReportByExternalId'];
+    put: operations['UpsertAuditReportByExternalId'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/auditmgmt/reports/{id}/issue': {
     parameters: {
       query?: never;
@@ -12365,6 +13021,22 @@ export interface paths {
     };
     get: operations['GetAuditFinding'];
     put: operations['UpdateAuditFinding'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auditmgmt/findings/by-external/{source}/{externalId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetAuditFindingByExternalId'];
+    put: operations['UpsertAuditFindingByExternalId'];
     post?: never;
     delete?: never;
     options?: never;
@@ -13140,6 +13812,29 @@ export interface components {
       outcome: string;
       nextStepNameAr: null | string;
       nextStepNameEn: null | string;
+    };
+    AddSystemMemberInput: {
+      /** @description `administrators`, `users` or `extra:&lt;roleCode&gt;`. */
+      list: null | string;
+      /** @description `user`, `unit` (and its sub-units) or `everyone`; administrators are people only. */
+      principalKind: null | string;
+      /**
+       * Format: uuid
+       * @description The user or unit (none for everyone).
+       */
+      principalId: null | string;
+      /**
+       * Format: date
+       * @description First day (default today).
+       */
+      validFrom: null | string;
+      /**
+       * Format: date
+       * @description Last day (default open-ended).
+       */
+      validTo: null | string;
+      /** @description Stored on the assignments and used as the audit reason. */
+      note: null | string;
     };
     /**
      * @description One check on the administrator Health page. Never English text: MessageKey and Params are translated by
@@ -14105,6 +14800,13 @@ export interface components {
       visible: boolean;
       link: null | string;
     };
+    /** @description PUT by external ID (ADR 0165): `ReportId` and `Recommendations` are used when the finding is created, ignored on update. */
+    AuditFindingUpsertInput: {
+      /** Format: uuid */
+      reportId: string;
+      values: components['schemas']['FindingValues'];
+      recommendations: null | components['schemas']['RecommendationValues'][];
+    };
     AuditFollowUpDto: {
       /** Format: uuid */
       id: string;
@@ -14146,6 +14848,17 @@ export interface components {
       recommendations: number;
       issues: components['schemas']['AuditImportIssueDto'][];
       createdNumbers: string[];
+      /**
+       * Format: int32
+       * @default 0
+       */
+      updated: number;
+      /**
+       * Format: int32
+       * @default 0
+       */
+      skippedRecommendations: number;
+      updatedNumbers?: null | string[];
     };
     AuditLogDto: {
       /** Format: uuid */
@@ -16617,6 +17330,14 @@ export interface components {
       userName: null | string;
       sendInvitation: null | boolean;
     };
+    /** @description Result of moving the creator role: `Skipped` = selected tasks assigned to the new creator (nobody approves their own work). */
+    CreatorTransferResultDto: {
+      /** Format: int32 */
+      transferred: number;
+      /** Format: int32 */
+      skipped: number;
+      taskIds: string[];
+    };
     CriterionInput: {
       code: string;
       level: null | string;
@@ -18163,6 +18884,11 @@ export interface components {
       /** Format: int32 */
       created: number;
       issues: components['schemas']['HolidayImportIssue'][];
+      /**
+       * Format: int32
+       * @default 0
+       */
+      updated: number;
     };
     HolidayImportIssue: {
       /** Format: int32 */
@@ -18579,6 +19305,15 @@ export interface components {
       /** Format: double */
       capped: null | number;
       rag: string;
+    };
+    /** @description A KPI card as the shared picker shows it (ADR 0169). */
+    KpiCardLookupDto: {
+      /** Format: uuid */
+      id: string;
+      code: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      status: string;
     };
     KpiCardOptionDto: {
       /** Format: uuid */
@@ -20828,6 +21563,18 @@ export interface components {
       totalPages?: number;
     };
     /** @description One page of items plus the total count across all pages. */
+    PagedResultOfKpiCardLookupDto: {
+      items: components['schemas']['KpiCardLookupDto'][];
+      /** Format: int32 */
+      page: number;
+      /** Format: int32 */
+      pageSize: number;
+      /** Format: int32 */
+      totalCount: number;
+      /** Format: int32 */
+      totalPages?: number;
+    };
+    /** @description One page of items plus the total count across all pages. */
     PagedResultOfProjectListItemDto: {
       items: components['schemas']['ProjectListItemDto'][];
       /** Format: int32 */
@@ -22392,10 +23139,12 @@ export interface components {
       reason: null | string;
       taskIds: null | string[];
     };
+    /** @description `Tasks`: open tasks assigned to the employee; `CreatedTasks`: open tasks the employee created for other people (ADR 0169). */
     ReassignmentPreviewDto: {
       employee: components['schemas']['PersonDto'];
       employeeStatus: string;
       tasks: components['schemas']['ReassignmentTaskDto'][];
+      createdTasks: components['schemas']['ReassignmentTaskDto'][];
     };
     ReassignmentResultDto: {
       /** Format: int32 */
@@ -22421,6 +23170,20 @@ export interface components {
       createdByLeaver: boolean;
       /** Format: date */
       dueDate: null | string;
+      assignee: components['schemas']['PersonDto'];
+    };
+    /** @description A recent item (re-resolved on every read). */
+    RecentItemDto: {
+      item: components['schemas']['SearchItemDto'];
+      systemNameAr: string;
+      systemNameEn: string;
+      /** Format: date-time */
+      visitedAt: string;
+    };
+    RecentVisitInput: {
+      type: string;
+      /** Format: uuid */
+      id: string;
     };
     RecommendationDto: {
       /** Format: uuid */
@@ -22479,6 +23242,31 @@ export interface components {
       /** Format: date */
       dueOn: string;
       notes: null | string;
+    };
+    /** @description One reference of a record as the record page shows it (source names resolved). */
+    RecordReferenceDto: {
+      sourceSystem: string;
+      sourceNameAr: null | string;
+      sourceNameEn: null | string;
+      sourceTypeCode: null | string;
+      sourceActive: boolean;
+      externalId: string;
+      isOrigin: boolean;
+      /** Format: date-time */
+      firstSeenAt: string;
+      /** Format: date-time */
+      lastSyncedAt: null | string;
+      /** Format: date-time */
+      sourceModifiedAt: null | string;
+      syncStatus: string;
+    };
+    /** @description References of one record; `Origin` is the reference the record was created from (origin badge), if any. */
+    RecordReferencesDto: {
+      entityType: string;
+      /** Format: uuid */
+      recordId: string;
+      references: components['schemas']['RecordReferenceDto'][];
+      origin: null | components['schemas']['RecordReferenceDto'];
     };
     RecordRolePermissionsInput: {
       permissions: null | string[];
@@ -22546,6 +23334,12 @@ export interface components {
       until: null | string;
       /** Format: int32 */
       count: null | number;
+    };
+    ReferenceableTypeDto: {
+      resourceType: string;
+      systemCode: string;
+      nameAr: string;
+      nameEn: string;
     };
     RefreshStatusDto: {
       systemCode: string;
@@ -22634,6 +23428,9 @@ export interface components {
       remarks: components['schemas']['ExtractedRemarkDto'][];
       /** Format: uuid */
       usageId: string;
+    };
+    RemoveSystemMemberInput: {
+      reason: null | string;
     };
     RenewalInput: {
       registrationNo: null | string;
@@ -23137,6 +23934,89 @@ export interface components {
       token: null | string;
       newPassword: null | string;
       invitation: boolean;
+    };
+    ResponsibilityChangeInput: {
+      items: null | components['schemas']['ResponsibilityItemInput'][];
+      /** Format: uuid */
+      newId: null | string;
+      reason: null | string;
+    };
+    ResponsibilityItemInput: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uint32 */
+      version: number;
+    };
+    ResponsibilityKindDto: {
+      code: string;
+      labelAr: string;
+      labelEn: string;
+      target: string;
+      restrictedCandidates: boolean;
+      noteKey: null | string;
+      statuses: components['schemas']['ResponsibilityStatusOption'][];
+    };
+    ResponsibilityKindsDto: {
+      systemCode: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      kinds: components['schemas']['ResponsibilityKindDto'][];
+    };
+    ResponsibilityListDto: {
+      items: components['schemas']['ResponsibilityRowDto'][];
+      /** Format: int32 */
+      total: number;
+      /** Format: int32 */
+      page: number;
+      /** Format: int32 */
+      pageSize: number;
+    };
+    ResponsibilityNameDto: {
+      /** Format: uuid */
+      id: string;
+      nameAr: null | string;
+      nameEn: null | string;
+    };
+    ResponsibilityOutcomeDto: {
+      /** Format: uuid */
+      id: string;
+      outcome: string;
+      messageKey: null | string;
+      number: null | string;
+      titleAr: null | string;
+      titleEn: null | string;
+      previous: null | components['schemas']['ResponsibilityNameDto'];
+      reference: null | string;
+    };
+    ResponsibilityResultDto: {
+      /** Format: int32 */
+      moved: number;
+      /** Format: int32 */
+      changeRequests: number;
+      /** Format: int32 */
+      skipped: number;
+      new: components['schemas']['ResponsibilityNameDto'];
+      items: components['schemas']['ResponsibilityOutcomeDto'][];
+    };
+    ResponsibilityRowDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uint32 */
+      version: number;
+      number: null | string;
+      titleAr: null | string;
+      titleEn: null | string;
+      status: null | string;
+      responsible: null | components['schemas']['ResponsibilityNameDto'];
+      unit: null | components['schemas']['ResponsibilityNameDto'];
+      link: null | string;
+      contextAr: null | string;
+      contextEn: null | string;
+    };
+    ResponsibilityStatusOption: {
+      code: string;
+      labelAr: string;
+      labelEn: string;
     };
     RevealDto: {
       /** Format: uuid */
@@ -23937,6 +24817,46 @@ export interface components {
       cells: components['schemas']['ScorecardCellDto'][];
       link: string;
     };
+    /** @description The results of one system, best first. */
+    SearchGroupDto: {
+      systemCode: string;
+      nameAr: string;
+      nameEn: string;
+      items: components['schemas']['SearchItemDto'][];
+    };
+    /** @description A found record as the UI shows it: resolved by the Links registry (visible only). */
+    SearchItemDto: {
+      type: string;
+      /** Format: uuid */
+      id: string;
+      systemCode: string;
+      typeNameAr: null | string;
+      typeNameEn: null | string;
+      number: null | string;
+      titleAr: null | string;
+      titleEn: null | string;
+      statusCode: null | string;
+      statusLabelAr: null | string;
+      statusLabelEn: null | string;
+      tone: null | string;
+      link: string;
+      matchedOn: null | string;
+      matchedText: null | string;
+      /** Format: double */
+      score: number;
+    };
+    SearchResultsDto: {
+      query: string;
+      groups: components['schemas']['SearchGroupDto'][];
+    };
+    /** @description A linkable type with its deep-link template (the SPA records record-page visits centrally). */
+    SearchTypeDto: {
+      type: string;
+      systemCode: string;
+      nameAr: string;
+      nameEn: string;
+      linkTemplate: string;
+    };
     SecuritySettingsDto: {
       /** Format: int32 */
       passwordMinLength: number;
@@ -23964,6 +24884,10 @@ export interface components {
       tokenMaxDays: number;
       /** Format: uint32 */
       version: number;
+      /** @default false */
+      notifyNewDevice: boolean;
+      securityContactAr?: null | string;
+      securityContactEn?: null | string;
     };
     /** @description Who is cleared for a sensitivity level (ADR 0083). */
     SensitivityRule: {
@@ -24204,6 +25128,37 @@ export interface components {
     SmtpTestInput: {
       to: null | string;
       settings: null | components['schemas']['SmtpSettingsInput'];
+    };
+    SourceSystemDto: {
+      /** Format: uuid */
+      id: string;
+      code: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      typeCode: string;
+      description: null | string;
+      active: boolean;
+      /** Format: int32 */
+      referenceCount: number;
+      /** Format: uint32 */
+      version: number;
+    };
+    /** @description `Code` is set on create only (it is the stable key in files, URLs and references). */
+    SourceSystemInput: {
+      code: null | string;
+      nameAr: null | string;
+      nameEn: null | string;
+      typeCode: null | string;
+      description: null | string;
+      /**
+       * Format: uint32
+       * @default 0
+       */
+      version: number;
+    };
+    SourceSystemVersionInput: {
+      /** Format: uint32 */
+      version: number;
     };
     SprintActionInput: {
       /** Format: uint32 */
@@ -24636,6 +25591,80 @@ export interface components {
       owningUnitId: null | string;
       /** Format: uint32 */
       version: number;
+    };
+    SystemMemberDto: {
+      /**
+       * Format: uuid
+       * @description Pass to `…/members/{id}/remove`.
+       */
+      id: string;
+      /** @description User, unit (and below) or everyone. */
+      principal: components['schemas']['PrincipalDto'];
+      /**
+       * Format: date
+       * @description First day of the list's roles (null: system access only).
+       */
+      validFrom: null | string;
+      /**
+       * Format: date
+       * @description Last day (null: open-ended).
+       */
+      validTo: null | string;
+      /** @description In force today. */
+      active: boolean;
+      /** @description The principal holds its own system-access grant (always true for platform-kind systems). */
+      systemAccess: boolean;
+      /** @description The list's roles the principal holds. */
+      roleCodes: string[];
+    };
+    SystemMemberListDto: {
+      /** @description `administrators`, `users` or `extra:&lt;roleCode&gt;`. */
+      key: string;
+      /** @description `administrators`, `users` or `extra`. */
+      kind: string;
+      /** @description The roles an entry of this list holds. */
+      roles: components['schemas']['SystemMemberRoleDto'][];
+      /** @description False when the list holds a platform administrator role and the caller is a delegated administrator (ADR 0167). */
+      canManage: boolean;
+      /** @description One row per principal. */
+      members: components['schemas']['SystemMemberDto'][];
+    };
+    SystemMemberRoleDto: {
+      code: string;
+      nameAr: null | string;
+      nameEn: null | string;
+    };
+    /** @description A system's member-role configuration (Settings, platform administrator) with the code defaults. */
+    SystemMemberRolesConfigDto: {
+      systemCode: string;
+      administratorRoles: string[];
+      userRoles: string[];
+      extraRoles: string[];
+      defaults: components['schemas']['SystemMemberRolesDefaultsDto'];
+      isDefault: boolean;
+      /** Format: uint32 */
+      version: number;
+    };
+    SystemMemberRolesDefaultsDto: {
+      administratorRoles: string[];
+      userRoles: string[];
+      extraRoles: string[];
+    };
+    SystemMemberRolesInput: {
+      administratorRoles: null | string[];
+      userRoles: null | string[];
+      extraRoles: null | string[];
+      /** Format: uint32 */
+      version: null | number;
+    };
+    /** @description A system's Members page (ADR 0166): its lists in order (administrators, users, extra roles). */
+    SystemMembersDto: {
+      /** @description The system. */
+      system: components['schemas']['SystemDto'];
+      /** @description The caller holds `access.assignment.manage` (may also manage platform administrator roles). */
+      platformAdministrator: boolean;
+      /** @description Administrators, users, then one list per extra role. */
+      lists: components['schemas']['SystemMemberListDto'][];
     };
     /** @description Version of this installation (ADR 0152): product version, source commit when known, build time of the host assembly. */
     SystemVersionDto: {
@@ -25355,6 +26384,18 @@ export interface components {
     TotpSetupDto: {
       sharedKey: string;
       authenticatorUri: string;
+    };
+    /**
+     * @description "Take over as creator" (ADR 0169): the creator role of the leaver's open tasks created for other people moves to `ToEmployeeId`, and with it
+     *     the approval of their completion. `TaskIds` narrows the preview (null = all of them).
+     */
+    TransferCreatorRole: {
+      /** Format: uuid */
+      fromEmployeeId: string;
+      /** Format: uuid */
+      toEmployeeId: null | string;
+      reason: null | string;
+      taskIds: null | string[];
     };
     TransferDto: {
       /** Format: uuid */
@@ -28450,6 +29491,35 @@ export interface operations {
       };
     };
   };
+  ListMemberSystems: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SystemDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
   SetRecordRolePermissions: {
     parameters: {
       query?: never;
@@ -28693,6 +29763,383 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['PermissionMatrixDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetSystemMembers: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        code: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SystemMembersDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  AddSystemMember: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        code: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AddSystemMemberInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SystemMembersDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RemoveSystemMember: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        code: string;
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RemoveSystemMemberInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SystemMembersDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SearchMemberUsers: {
+    parameters: {
+      query?: {
+        search?: string;
+      };
+      header?: never;
+      path: {
+        code: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PrincipalDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetMemberRoles: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        code: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SystemMemberRolesConfigDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SetMemberRoles: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        code: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SystemMemberRolesInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SystemMemberRolesConfigDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListResponsibilityKinds: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        code: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ResponsibilityKindsDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListResponsibilities: {
+    parameters: {
+      query?: {
+        personId?: string;
+        unitId?: string;
+        status?: string;
+        text?: string;
+        page?: number;
+        pageSize?: number;
+      };
+      header?: never;
+      path: {
+        code: string;
+        kind: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ResponsibilityListDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListResponsibilityCandidates: {
+    parameters: {
+      query?: {
+        search?: string;
+      };
+      header?: never;
+      path: {
+        code: string;
+        kind: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ResponsibilityNameDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  PreviewResponsibilityReassignment: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        code: string;
+        kind: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ResponsibilityChangeInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ResponsibilityOutcomeDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ReassignResponsibilities: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        code: string;
+        kind: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ResponsibilityChangeInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ResponsibilityResultDto'];
         };
       };
       /** @description Problem Details (RFC 9457) */
@@ -29694,6 +31141,83 @@ export interface operations {
       };
     };
   };
+  GetOrgUnitByExternalId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        source: string;
+        externalId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['OrgUnitDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpsertOrgUnitByExternalId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        source: string;
+        externalId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['UnitInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['OrgUnitDto'];
+        };
+      };
+      /** @description Created */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['OrgUnitDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
   ListEmployees: {
     parameters: {
       query?: {
@@ -29917,6 +31441,83 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['RecordSnapshotDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetEmployeeByExternalId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        source: string;
+        externalId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['EmployeeDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpsertEmployeeByExternalId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        source: string;
+        externalId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['EmployeeInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['EmployeeDto'];
+        };
+      };
+      /** @description Created */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['EmployeeDto'];
         };
       };
       /** @description Problem Details (RFC 9457) */
@@ -34097,6 +35698,358 @@ export interface operations {
       };
     };
   };
+  ListSourceSystems: {
+    parameters: {
+      query?: {
+        includeInactive?: boolean;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SourceSystemDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateSourceSystem: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SourceSystemInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SourceSystemDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateSourceSystem: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SourceSystemInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SourceSystemDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ActivateSourceSystem: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SourceSystemVersionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SourceSystemDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  DeactivateSourceSystem: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SourceSystemVersionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SourceSystemDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListReferenceableTypes: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReferenceableTypeDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListRecordExternalReferences: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        type: string;
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RecordReferencesDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GlobalSearch: {
+    parameters: {
+      query?: {
+        q?: string;
+        system?: string;
+        limit?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SearchResultsDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListRecentItems: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RecentItemDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RecordRecentItem: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['RecentVisitInput'];
+      };
+    };
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListSearchTypes: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SearchTypeDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
   GetReportingCatalogue: {
     parameters: {
       query?: never;
@@ -35611,6 +37564,83 @@ export interface operations {
       };
     };
   };
+  GetSampleItemByExternalId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        source: string;
+        externalId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SampleItemDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpsertSampleItemByExternalId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        source: string;
+        externalId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['SampleItemInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SampleItemDto'];
+        };
+      };
+      /** @description Created */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SampleItemDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
   ActivateSampleItem: {
     parameters: {
       query?: never;
@@ -36035,6 +38065,38 @@ export interface operations {
         'application/json': components['schemas']['UpdateTaskInput'];
       };
     };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TaskDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetTaskByExternalId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        source: string;
+        externalId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
     responses: {
       /** @description OK */
       200: {
@@ -37068,6 +39130,39 @@ export interface operations {
       };
     };
   };
+  TransferTaskCreatorRole: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['TransferCreatorRole'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CreatorTransferResultDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
   SummariseTask: {
     parameters: {
       query?: never;
@@ -37511,6 +39606,83 @@ export interface operations {
     responses: {
       /** @description OK */
       200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TeamDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetTeamByExternalId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        source: string;
+        externalId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TeamDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpsertTeamByExternalId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        source: string;
+        externalId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['TeamInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['TeamDto'];
+        };
+      };
+      /** @description Created */
+      201: {
         headers: {
           [name: string]: unknown;
         };
@@ -38505,6 +40677,38 @@ export interface operations {
       };
     };
   };
+  GetTeamMeetingByExternalId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        source: string;
+        externalId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MeetingDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
   SaveMeetingMinutes: {
     parameters: {
       query?: never;
@@ -38690,6 +40894,38 @@ export interface operations {
         'application/json': components['schemas']['RecommendationInput'];
       };
     };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RecommendationDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetTeamRecommendationByExternalId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        source: string;
+        externalId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
     responses: {
       /** @description OK */
       200: {
@@ -40906,6 +43142,38 @@ export interface operations {
       };
     };
   };
+  GetProgramRequestByExternalId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        source: string;
+        externalId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RequestDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
   SubmitProgramRequest: {
     parameters: {
       query?: never;
@@ -41364,6 +43632,38 @@ export interface operations {
       header?: never;
       path: {
         id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ProjectFullDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetPortfolioProjectByExternalId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        source: string;
+        externalId: string;
       };
       cookie?: never;
     };
@@ -47012,6 +49312,41 @@ export interface operations {
       };
     };
   };
+  LookupKpiCards: {
+    parameters: {
+      query?: {
+        search?: string;
+        ids?: string[];
+        status?: string;
+        page?: number;
+        pageSize?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PagedResultOfKpiCardLookupDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
   GetKpiOptions: {
     parameters: {
       query?: never;
@@ -47089,6 +49424,83 @@ export interface operations {
     responses: {
       /** @description OK */
       200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiCardDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetKpiCardByExternalId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        source: string;
+        externalId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiCardDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpsertKpiCardByExternalId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        source: string;
+        externalId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['KpiCardInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiCardDto'];
+        };
+      };
+      /** @description Created */
+      201: {
         headers: {
           [name: string]: unknown;
         };
@@ -47783,6 +50195,38 @@ export interface operations {
       header?: never;
       path: {
         id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['KpiResultDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetKpiResultByExternalId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        source: string;
+        externalId: string;
       };
       cookie?: never;
     };
@@ -48978,6 +51422,38 @@ export interface operations {
       };
     };
   };
+  GetServiceRequestByExternalId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        source: string;
+        externalId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RequestRecordDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
   SubmitRequest: {
     parameters: {
       query?: never;
@@ -49512,6 +51988,38 @@ export interface operations {
       };
     };
   };
+  GetDocumentByExternalId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        source: string;
+        externalId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DocumentDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
   CompareDocumentVersions: {
     parameters: {
       query: {
@@ -49996,6 +52504,38 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['PagedResultOfIpListItemDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetIpRecordByExternalId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        source: string;
+        externalId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['IpRecordDto'];
         };
       };
       /** @description Problem Details (RFC 9457) */
@@ -51168,6 +53708,83 @@ export interface operations {
     responses: {
       /** @description OK */
       200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RiskDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetRiskByExternalId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        source: string;
+        externalId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RiskDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpsertRiskByExternalId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        source: string;
+        externalId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['RiskValues'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RiskDto'];
+        };
+      };
+      /** @description Created */
+      201: {
         headers: {
           [name: string]: unknown;
         };
@@ -53084,6 +55701,83 @@ export interface operations {
       };
     };
   };
+  GetCapSourceByExternalId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        source: string;
+        externalId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapSourceDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpsertCapSourceByExternalId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        source: string;
+        externalId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['CapSourceValues'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapSourceDto'];
+        };
+      };
+      /** @description Created */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapSourceDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
   CloseCapSource: {
     parameters: {
       query?: never;
@@ -53266,6 +55960,38 @@ export interface operations {
         'application/json': components['schemas']['CapRemarkBody'];
       };
     };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapRemarkDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetCapRemarkByExternalId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        source: string;
+        externalId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
     responses: {
       /** @description OK */
       200: {
@@ -53875,6 +56601,38 @@ export interface operations {
         'application/json': components['schemas']['CapActionBody'];
       };
     };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CapActionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetCapActionByExternalId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        source: string;
+        externalId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
     responses: {
       /** @description OK */
       200: {
@@ -54974,6 +57732,38 @@ export interface operations {
       header?: never;
       path: {
         id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BenchStudyDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetBenchStudyByExternalId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        source: string;
+        externalId: string;
       };
       cookie?: never;
     };
@@ -56400,6 +59190,83 @@ export interface operations {
       };
     };
   };
+  GetAuditReportByExternalId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        source: string;
+        externalId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditReportDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpsertAuditReportByExternalId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        source: string;
+        externalId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['AuditReportValues'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditReportDto'];
+        };
+      };
+      /** @description Created */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditReportDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
   IssueAuditReport: {
     parameters: {
       query?: never;
@@ -56726,6 +59593,83 @@ export interface operations {
     responses: {
       /** @description OK */
       200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditFindingDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetAuditFindingByExternalId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        source: string;
+        externalId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditFindingDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpsertAuditFindingByExternalId: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        source: string;
+        externalId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: {
+      content: {
+        'application/json': components['schemas']['AuditFindingUpsertInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AuditFindingDto'];
+        };
+      };
+      /** @description Created */
+      201: {
         headers: {
           [name: string]: unknown;
         };

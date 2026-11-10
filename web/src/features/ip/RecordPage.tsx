@@ -46,6 +46,7 @@ import { ContributorsTab } from './ContributorsTab';
 import { HistoryTab } from '@/features/audit/HistoryTab';
 import { ipStageKeys, stageOf } from './logic';
 import { RecordActionDialog, type IpDialog } from './RecordDialogs';
+import { ExternalReferencesSection, OriginBadge } from '@/features/integration/ExternalReferences';
 
 const route = getRouteApi('/app/ip/records/$recordId');
 
@@ -111,6 +112,7 @@ export function IpRecordPage() {
         }
         meta={
           <>
+            <OriginBadge type="ip.record" id={data.id} />
             <IpStatusChip status={data.status} />
             {data.propertyType && <StatusChip tone="neutral">{propertyLabel(data.propertyType)}</StatusChip>}
             {data.protectionType && (
@@ -142,6 +144,7 @@ export function IpRecordPage() {
         </TabsList>
         <TabsContent value="overview">
           <Overview record={data} />
+          <ExternalReferencesSection type="ip.record" id={data.id} />
         </TabsContent>
         <TabsContent value="contributors">
           <ContributorsTab record={data} />

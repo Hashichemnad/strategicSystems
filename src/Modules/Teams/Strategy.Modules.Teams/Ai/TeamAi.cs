@@ -11,6 +11,7 @@ using Strategy.Platform.AI.Application;
 using Strategy.Platform.AI.Tools;
 using Strategy.Platform.Kernel.Context;
 using Strategy.Platform.Kernel.Results;
+using Strategy.Platform.Kernel.Text;
 using Strategy.Platform.Kernel.Time;
 using Strategy.Platform.Links;
 using Strategy.Platform.Organisation.Contracts;
@@ -217,6 +218,8 @@ internal sealed class TeamAiService(
 
     public async Task<Result<MinutesDraftDto>> DraftMinutesAsync(Guid meetingId, string? notes, CancellationToken ct)
     {
+        // The notes may come from the rich-text editor: the model only ever sees the plain-text projection, as data (ADR 0161).
+        notes = RichText.ToPlainText(notes);
         if (string.IsNullOrWhiteSpace(notes) || notes.Length > 30_000)
         {
             return Error.Validation([new FieldError("notes", "validation.notEmpty", "validation.notEmpty")]);

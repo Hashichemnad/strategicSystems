@@ -68,7 +68,8 @@ internal sealed class SignInService(
     IEnumerable<IDirectoryPasswordSignIn> directories,
     IdentityStoreDbContext db,
     IUserRoleQuery roles,
-    IHostEnvironment environment)
+    IHostEnvironment environment,
+    SecurityNotifier security)
 {
     public const string InvitationTokenProvider = "Invitation";
     public const string InvitationPurpose = "SetPassword";
@@ -102,6 +103,11 @@ internal sealed class SignInService(
                     var locked = await users.IsLockedOutAsync(result.User).ConfigureAwait(false);
                     await events.WriteAsync(locked ? AuthEventTypes.LockedOut : AuthEventTypes.LoginFailed, false, result.User.Id, login,
                         result.ProviderCode, "ldap.password", cancellationToken).ConfigureAwait(false);
+                    if (locked)
+                    {
+                        await security.LockedOutAsync(result.User, cancellationToken).ConfigureAwait(false);
+                    }
+
                     return locked ? LockedOut : InvalidCredentials;
                 }
 
@@ -117,6 +123,11 @@ internal sealed class SignInService(
                     var locked = await users.IsLockedOutAsync(result.User).ConfigureAwait(false);
                     await events.WriteAsync(locked ? AuthEventTypes.LockedOut : AuthEventTypes.LoginFailed, false, result.User.Id, login,
                         result.ProviderCode, locked ? "lockedOut" : "notAllowed", cancellationToken).ConfigureAwait(false);
+                    if (locked)
+                    {
+                        await security.LockedOutAsync(result.User, cancellationToken).ConfigureAwait(false);
+                    }
+
                     return locked ? LockedOut : InvalidCredentials;
                 }
 
@@ -134,6 +145,7 @@ internal sealed class SignInService(
         if (check.IsLockedOut)
         {
             await events.WriteAsync(AuthEventTypes.LockedOut, false, user.Id, login, cancellationToken: cancellationToken).ConfigureAwait(false);
+            await security.LockedOutAsync(user, cancellationToken).ConfigureAwait(false);
             return LockedOut;
         }
 
@@ -206,6 +218,7 @@ internal sealed class SignInService(
         {
             await events.WriteAsync(AuthEventTypes.LockedOut, false, user.Id, user.UserName, detail: "mfa", cancellationToken: cancellationToken)
                 .ConfigureAwait(false);
+            await security.LockedOutAsync(user, cancellationToken).ConfigureAwait(false);
             return LockedOut;
         }
 
@@ -216,7 +229,7 @@ internal sealed class SignInService(
             return InvalidCode;
         }
 
-        await MarkSignedInAsync(user).ConfigureAwait(false);
+        await MarkSignedInAsync(user, cancellationToken).ConfigureAwait(false);
         await events.WriteAsync(AuthEventTypes.MfaSucceeded, true, user.Id, user.UserName, detail: method, cancellationToken: cancellationToken)
             .ConfigureAwait(false);
         await events.WriteAsync(AuthEventTypes.Login, true, user.Id, user.UserName, detail: AuthMethods.Mfa, cancellationToken: cancellationToken)
@@ -338,6 +351,8 @@ internal sealed class SignInService(
         var codes = (await users.GenerateNewTwoFactorRecoveryCodesAsync(user, 10).ConfigureAwait(false))!.ToList();
         await events.WriteAsync(AuthEventTypes.MfaEnabled, true, user.Id, user.UserName, detail: method, cancellationToken: cancellationToken)
             .ConfigureAwait(false);
+        await security.NotifyAsync(user, SecurityEmails.MfaEnrolled, values: SecurityNotifier.Method(method), cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
         return new RecoveryCodesDto(codes);
     }
 
@@ -376,7 +391,7 @@ internal sealed class SignInService(
         }
 
         await signIn.SignInWithClaimsAsync(user, isPersistent: false, claims).ConfigureAwait(false);
-        await MarkSignedInAsync(user).ConfigureAwait(false);
+        await MarkSignedInAsync(user, cancellationToken).ConfigureAwait(false);
         await events.WriteAsync(AuthEventTypes.Login, true, user.Id, user.UserName, provider, method, cancellationToken).ConfigureAwait(false);
     }
 
@@ -475,6 +490,11 @@ internal sealed class SignInService(
         await RevokeSessionsAsync(user.Id, null, cancellationToken).ConfigureAwait(false);
         await events.WriteAsync(AuthEventTypes.PasswordReset, true, user.Id, user.UserName, detail: invitation ? "invitation" : null,
             cancellationToken: cancellationToken).ConfigureAwait(false);
+        if (!invitation)
+        {
+            await security.NotifyAsync(user, SecurityEmails.PasswordReset, cancellationToken: cancellationToken).ConfigureAwait(false);
+        }
+
         return Result.Success();
     }
 
@@ -534,10 +554,12 @@ internal sealed class SignInService(
         return methods;
     }
 
-    public async Task MarkSignedInAsync(StrategyUser user)
+    /// <summary>Records the completed sign-in; remembers the device and sends the optional new-device e-mail (ADR 0162).</summary>
+    public async Task MarkSignedInAsync(StrategyUser user, CancellationToken cancellationToken = default)
     {
         user.LastSignInAt = DateTimeOffset.UtcNow;
         await users.UpdateAsync(user).ConfigureAwait(false);
+        await security.SignedInAsync(user, cancellationToken).ConfigureAwait(false);
     }
 
     private async Task<string?> ResetLinkAsync(StrategyUser user, Uri? requestOrigin, string path)

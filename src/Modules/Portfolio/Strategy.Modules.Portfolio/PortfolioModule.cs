@@ -21,6 +21,7 @@ using Strategy.Platform.Notifications;
 using Strategy.Platform.Persistence;
 using Strategy.Platform.Reporting;
 using Strategy.Platform.Scheduling;
+using Strategy.Platform.Search;
 using Strategy.Platform.Settings;
 using Strategy.Platform.Workflow;
 
@@ -157,6 +158,10 @@ public sealed class PortfolioModule : IModule
         services.AddLinkTargetSource<StoryLinkTargets>();
         services.AddLinkTargetSource<ProjectLinkTargets>();
         services.AddLinkTargetSource<MilestoneLinkTargets>();
+        services.AddSearchContributor<PortfolioSearchContributor>(PortfolioPermissions.SystemCode); // global search (ADR 0160)
+        services.AddResponsibilitySource<ProjectManagerResponsibility>(); // Settings → Responsibilities (ADR 0168)
+        services.AddResponsibilitySource<ProjectOwnerResponsibility>();
+        services.AddResponsibilitySource<StoryAssigneeResponsibility>();
 
         foreach (var feature in PortfolioAiFeatures.All.Concat(ProjectAssistFeatures.All))
         {

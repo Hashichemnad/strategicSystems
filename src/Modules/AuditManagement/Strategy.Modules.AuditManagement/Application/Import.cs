@@ -1,7 +1,9 @@
 using System.Globalization;
 using Microsoft.EntityFrameworkCore;
+using Strategy.Modules.AuditManagement.Contracts;
 using Strategy.Modules.AuditManagement.Domain;
 using Strategy.Modules.AuditManagement.Infrastructure;
+using Strategy.Platform.Integration;
 using Strategy.Platform.Kernel.Results;
 using Strategy.Platform.Organisation.Contracts;
 using Strategy.Platform.Organisation.Import;
@@ -11,14 +13,20 @@ namespace Strategy.Modules.AuditManagement.Application;
 
 public sealed record AuditImportIssueDto(int Row, string? Column, string Code);
 
+/// <remarks>
+/// <c>Updated</c>: findings found by their external reference and updated (ADR 0165); <c>SkippedRecommendations</c>: recommendation rows of those
+/// findings, not imported (recommendations of an existing finding keep their own lifecycle).
+/// </remarks>
 public sealed record AuditImportReportDto(bool Committed, int TotalRows, int Findings, int Recommendations, IReadOnlyList<AuditImportIssueDto> Issues,
-    IReadOnlyList<string> CreatedNumbers);
+    IReadOnlyList<string> CreatedNumbers, int Updated = 0, int SkippedRecommendations = 0, IReadOnlyList<string>? UpdatedNumbers = null);
 
 /// <summary>
 /// Excel / CSV import of a report's findings (ADR 0134): one row per recommendation, grouped into findings by <c>finding_ref</c>. Every row is
-/// validated first; commit is all-or-nothing through the same create path as the form.
+/// validated first; commit is all-or-nothing through the same create path as the form. A finding whose first row carries a Source system + External ID
+/// that is already linked is updated (same rules as the edit form) instead of created; the reference is linked in the same transaction (ADR 0165).
 /// </summary>
-internal sealed class AuditImporter(AuditMgmtDbContext db, AuditReader reader, AuditService service, ILookupService lookups, IOrgDirectory org)
+internal sealed class AuditImporter(
+    AuditMgmtDbContext db, AuditReader reader, AuditService service, ILookupService lookups, IOrgDirectory org, IExternalReferenceStore references)
 {
     public const string SheetName = "findings";
 
@@ -43,6 +51,8 @@ internal sealed class AuditImporter(AuditMgmtDbContext db, AuditReader reader, A
         new("due_date", "Due date (yyyy-mm-dd)", "تاريخ التنفيذ"),
         new("contact_employee_no", "Department contact (employee no.)", "مسؤول التواصل (الرقم الوظيفي)"),
         new("management_response", "Management response", "رد الإدارة"),
+        new(ExternalImport.Source.Key, ExternalImport.Source.LabelEn, ExternalImport.Source.LabelAr),
+        new(ExternalImport.Id.Key, ExternalImport.Id.LabelEn, ExternalImport.Id.LabelAr),
     ];
 
     public static byte[] Template() => ImportTable.Template(SheetName, Columns,
@@ -50,7 +60,7 @@ internal sealed class AuditImporter(AuditMgmtDbContext db, AuditReader reader, A
         [
             "F1", "ضعف في مطابقة الإيرادات", "Weak revenue reconciliation", "finding", "Monthly revenue reconciliations are not reviewed.",
             "Financial procedures manual §4.2", "No reviewer assigned", "Undetected revenue losses", "2026-09-15", "FIN", "high", null, "2026-12-31",
-            "اعتماد مراجعة شهرية للمطابقات", "Introduce a monthly documented review of reconciliations", "Assign a reviewer and keep a checklist", "2026-12-15", null, "agree",
+            "اعتماد مراجعة شهرية للمطابقات", "Introduce a monthly documented review of reconciliations", "Assign a reviewer and keep a checklist", "2026-12-15", null, "agree", null, null,
         ],
     ]);
 
@@ -81,6 +91,9 @@ internal sealed class AuditImporter(AuditMgmtDbContext db, AuditReader reader, A
         var issues = new List<AuditImportIssueDto>();
         void Issue(int row, string? column, string code) => issues.Add(new AuditImportIssueDto(row, column, code));
         var groups = new List<(string Ref, int FirstRow, FindingValues? Finding, List<(int Row, RecommendationValues Values)> Recs)>();
+        var external = new ExternalImport(references, Finding.EntityType);
+        var externalIssues = new List<ExternalImportIssue>();
+        var keys = new Dictionary<string, (ExternalKey Key, Finding? Target)>(StringComparer.Ordinal);
         var unitCache = new Dictionary<string, Guid?>(StringComparer.OrdinalIgnoreCase);
         foreach (var row in rows)
         {
@@ -96,6 +109,25 @@ internal sealed class AuditImporter(AuditMgmtDbContext db, AuditReader reader, A
                 var finding = await FindingAsync(row, unitCache, report, Issue, ct).ConfigureAwait(false);
                 group = (reference, row.Number, finding, []);
                 groups.Add(group);
+                if (await external.ReadAsync(row.Number, row[ExternalImport.SourceColumn], row[ExternalImport.IdColumn], externalIssues, ct).ConfigureAwait(false) is { } key)
+                {
+                    Finding? target = null;
+                    if (await external.FindAsync(key, ct).ConfigureAwait(false) is { } linked)
+                    {
+                        target = await db.Findings.FirstOrDefaultAsync(f => f.Id == linked, ct).ConfigureAwait(false);
+                        if (target is null || target.ReportId != reportId || target.Status == AuditFindingStatuses.Cancelled)
+                        {
+                            Issue(row.Number, ExternalImport.IdColumn, "integration.keyMismatch");
+                            target = null;
+                        }
+                    }
+
+                    keys[reference] = (key, target);
+                }
+            }
+            else if (row[ExternalImport.IdColumn] is not null && (!keys.TryGetValue(reference, out var groupKey) || groupKey.Key.ExternalId != row[ExternalImport.IdColumn]))
+            {
+                Issue(row.Number, ExternalImport.IdColumn, "integration.keyMismatch");
             }
 
             if (row["recommendation_ar"] is not null || row["recommendation_en"] is not null)
@@ -124,23 +156,66 @@ internal sealed class AuditImporter(AuditMgmtDbContext db, AuditReader reader, A
             }
         }
 
+        issues.AddRange(externalIssues.Select(i => new AuditImportIssueDto(i.Row, i.Column, i.Code)));
         var distinct = issues.DistinctBy(i => (i.Row, i.Column, i.Code)).OrderBy(i => i.Row).ToList();
         var created = new List<string>();
+        var updatedNumbers = new List<string>();
+        var updates = groups.Where(g => keys.TryGetValue(g.Ref, out var k) && k.Target is not null).ToList();
+        var skipped = updates.Sum(g => g.Recs.Count);
         var committed = false;
         if (commit && distinct.Count == 0 && groups.Count > 0)
         {
             await using var transaction = await db.Database.BeginTransactionAsync(ct).ConfigureAwait(false);
+            var settings = await reader.SettingsAsync(ct).ConfigureAwait(false);
+            var links = new List<(int Row, ExternalKey Key, Guid Id, bool Created)>();
             foreach (var group in groups)
             {
+                var keyed = keys.TryGetValue(group.Ref, out var k) ? k : default;
+                if (keyed.Target is { } target)
+                {
+                    // The same rules as the edit form (UpdateAuditFinding): department, grant and status recomputed.
+                    var department = target.ResponsibleUnitId == group.Finding!.ResponsibleUnitId
+                        ? target.DepartmentUnitId
+                        : await reader.DepartmentOfAsync(group.Finding.ResponsibleUnitId, settings.DepartmentLevelCode, ct).ConfigureAwait(false);
+                    target.Edit(group.Finding with { RepeatOfFindingId = group.Finding.RepeatOfFindingId == target.Id ? null : group.Finding.RepeatOfFindingId }, department);
+                    await db.SaveChangesAsync(ct).ConfigureAwait(false);
+                    await service.SyncDepartmentGrantAsync(target, settings, ct).ConfigureAwait(false);
+                    await service.RecomputeAsync(target, ct, updateText: "Details updated / تحديث التفاصيل").ConfigureAwait(false);
+                    updatedNumbers.Add(target.Number);
+                    links.Add((group.FirstRow, keyed.Key, target.Id, false));
+                    continue;
+                }
+
                 var finding = await service.CreateFindingAsync(report, new NewFindingInput(group.Finding!, group.Recs.Select(r => r.Values).ToList()), ct).ConfigureAwait(false);
                 created.Add(finding.Number);
+                if (keyed.Key is not null)
+                {
+                    links.Add((group.FirstRow, keyed.Key, finding.Id, true));
+                }
+            }
+
+            foreach (var (row, key, id, isNew) in links)
+            {
+                var linked = await external.LinkAsync(key, id, isNew, db, ct).ConfigureAwait(false);
+                if (linked.IsFailure)
+                {
+                    distinct.AddRange((linked.Error.Fields ?? []).Select(f => new AuditImportIssueDto(row, ExternalImport.IdColumn, f.Code)));
+                }
+            }
+
+            if (distinct.Count > 0)
+            {
+                await transaction.RollbackAsync(ct).ConfigureAwait(false);
+                db.ChangeTracker.Clear();
+                return (new AuditImportReportDto(false, rows.Count, groups.Count - updates.Count, groups.Sum(g => g.Recs.Count) - skipped, distinct, [], updates.Count, skipped), rows);
             }
 
             await transaction.CommitAsync(ct).ConfigureAwait(false);
             committed = true;
         }
 
-        return (new AuditImportReportDto(committed, rows.Count, groups.Count, groups.Sum(g => g.Recs.Count), distinct, created), rows);
+        return (new AuditImportReportDto(committed, rows.Count, groups.Count - updates.Count, groups.Sum(g => g.Recs.Count) - skipped, distinct, created, updates.Count, skipped,
+            updatedNumbers), rows);
     }
 
     private async Task<FindingValues?> FindingAsync(ImportRow row, Dictionary<string, Guid?> unitCache, AuditReport report, Action<int, string?, string> issue, CancellationToken ct)

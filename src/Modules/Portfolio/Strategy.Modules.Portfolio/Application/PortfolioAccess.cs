@@ -177,7 +177,11 @@ internal sealed class PortfolioAccessCatalogue : IAccessCatalogueSource
         new(PortfolioPermissions.CapacityRead, "عرض سعة الموظفين", "View employee capacity", Scopable: false),
         new(PortfolioPermissions.ReviewRead, "عرض المراجعات الربعية للمحفظة", "View quarterly portfolio reviews", Scopable: false),
         new(PortfolioPermissions.ReviewManage, "إجراء المراجعات الربعية للمحفظة", "Run quarterly portfolio reviews", Scopable: false),
+        ResponsibilityPermissions.Definition(PortfolioPermissions.SystemCode),
     ];
+
+    /// <summary>Members page lists (ADR 0166, docs/design/members-responsibilities.md §1).</summary>
+    public SystemMemberRoles MemberRoles => new(["administrator"], ["requester"], ["pm-office", "viewer", "department-viewer"]);
 
     public IEnumerable<RoleSeed> DefaultRoles =>
     [
@@ -214,7 +218,7 @@ internal sealed class PortfolioAccessCatalogue : IAccessCatalogueSource
         new(PortfolioPermissions.ProjectManage, DataScope.All), new(PortfolioPermissions.ProjectCosts, DataScope.All), new(PortfolioPermissions.PortfolioManage),
         new(PortfolioPermissions.AiAssist), new(PortfolioPermissions.VendorRead), new(PortfolioPermissions.VendorManage),
         new(PortfolioPermissions.ProjectVendors, DataScope.All), new(PortfolioPermissions.CapacityRead), new(PortfolioPermissions.ReviewRead),
-        new(PortfolioPermissions.ReviewManage),
+        new(PortfolioPermissions.ReviewManage), new(ResponsibilityPermissions.Manage(PortfolioPermissions.SystemCode), DataScope.All),
     ];
 
     public IEnumerable<RecordRoleDefinition> RecordRoles =>

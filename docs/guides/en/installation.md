@@ -37,9 +37,28 @@ build by hand with `docker compose -f deploy/docker-compose.yml --profile app bu
 `--image strategy-app-1.0.0.tar` (below). Behind a Docker Hub limit set `REGISTRY_PREFIX=mirror.gcr.io/` (or your own registry mirror);
 behind a TLS-inspecting proxy point `BUILD_CA_FILE` to your organisation's CA bundle (used only while building, never stored in the image).
 
+**Slow or unreliable connections.** The image build downloads npm and NuGet packages and Ubuntu updates. It already retries with
+longer timeouts; on a very slow line raise the values in `deploy/.env` before running the installer (they take effect on the next build):
+
+| Setting in `deploy/.env` | Default | What it changes |
+|---|---|---|
+| `NPM_FETCH_RETRIES` | 5 | attempts per npm package |
+| `NPM_FETCH_RETRY_MINTIMEOUT` / `NPM_FETCH_RETRY_MAXTIMEOUT` | 20000 / 120000 | shortest / longest pause between npm attempts (milliseconds) |
+| `NPM_FETCH_TIMEOUT` | 600000 | how long one npm request may take (milliseconds) |
+| `NUGET_ENHANCED_MAX_NETWORK_TRY_COUNT` / `NUGET_ENHANCED_NETWORK_RETRY_DELAY_MILLISECONDS` | 10 / 3000 | attempts per NuGet request and the pause between them (ms) |
+| `NUGET_RESTORE_ATTEMPTS` | 3 | how often the whole .NET package restore is retried (packages already downloaded are kept) |
+| `NUGET_RESTORE_DISABLE_PARALLEL` | false | `true`: one project at a time (fewer simultaneous connections) |
+| `APT_RETRIES` / `APT_HTTP_TIMEOUT` | 5 / 120 | attempts and timeout (seconds) for the Ubuntu packages of the runtime image |
+
+For example `NUGET_RESTORE_ATTEMPTS=6` and `NPM_FETCH_RETRIES=10`. A connection that fails completely still fails the build — then use
+the offline install above.
+
 ## 3. Install with Docker (recommended)
 
-Unpack the release folder, for example to `/opt/strategy` (Linux) or `C:\strategy` (Windows), and run **one command** from that folder:
+Unpack the release folder, for example to `/opt/strategy` (Linux) or `C:\strategy` (Windows), and run **one command** from that folder.
+A ZIP of the release without a `.git` folder is fine (the image then has no commit label; the version comes from `deploy/VERSION`). On
+Windows the scripts run in **Windows PowerShell 5.1** (built into every Windows Server) and in **PowerShell 7**, also with their output
+redirected to a log file (`... *> install.log`):
 
 ```bash
 ./deploy/install.sh
@@ -192,6 +211,7 @@ instructions, including the two database roles, the first migration, backup, res
 | Setup token refused | tokens expire after 24 hours and after a restart; print a new one (§5) |
 | "Run --migrate first" from `--create-admin` | run `docker compose -f deploy/docker-compose.yml --profile app run --rm migrate`, then retry |
 | Image build fails on certificates | set `BUILD_CA_FILE` to your proxy's CA bundle |
+| Image build fails with timeouts (`ETIMEDOUT`, `ECONNRESET`, `NU1301`, "Unable to load the service index") | raise the retry settings in `deploy/.env` (§2, *Slow or unreliable connections*) and run the installer again (steps already completed are taken from Docker's build cache) |
 | Docker Hub "too many requests" | set `REGISTRY_PREFIX=mirror.gcr.io/` (or your mirror) in `deploy/.env` |
 | PDFs fail | *Settings → System health* → PDF service; check the `gotenberg` container (`docker compose … ps`) |
 | E-mails not sent | *Settings → E-mail server* → *Send test e-mail*; *Settings → System health* → outbox |

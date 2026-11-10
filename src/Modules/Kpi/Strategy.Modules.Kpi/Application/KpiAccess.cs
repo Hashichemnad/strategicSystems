@@ -96,7 +96,11 @@ internal sealed class KpiAccessCatalogue : IAccessCatalogueSource
         new(KpiPermissions.AiBuilder, "منشئ بطاقة المؤشر", "KPI card builder", Scopable: false),
         new(KpiPermissions.AiTargets, "اقتراح المستهدفات", "Target suggestion", Scopable: false),
         new(KpiPermissions.AiNarrative, "تقرير الأداء السردي", "Performance narrative", Scopable: false),
+        ResponsibilityPermissions.Definition(KpiPermissions.SystemCode),
     ];
+
+    /// <summary>Members page lists (ADR 0166, docs/design/members-responsibilities.md §1).</summary>
+    public SystemMemberRoles MemberRoles => new(["administrator"], ["owner"], ["strategy-office", "department-manager", "executive"]);
 
     public IEnumerable<RoleSeed> DefaultRoles =>
     [
@@ -113,7 +117,8 @@ internal sealed class KpiAccessCatalogue : IAccessCatalogueSource
                 new(KpiPermissions.PlanManage), new(KpiPermissions.ResultRead, DataScope.All), new(KpiPermissions.ResultSubmit, DataScope.All),
                 new(KpiPermissions.ResultReview, DataScope.All), new(KpiPermissions.ResultReopen, DataScope.All), new(KpiPermissions.ScorecardRead, DataScope.All),
                 new(KpiPermissions.DashboardRead), new(KpiPermissions.Export), new(KpiPermissions.AiEvidence), new(KpiPermissions.AiAnomalies),
-                new(KpiPermissions.AiCausality), new(KpiPermissions.AiBuilder), new(KpiPermissions.AiTargets), new(KpiPermissions.AiNarrative)],
+                new(KpiPermissions.AiCausality), new(KpiPermissions.AiBuilder), new(KpiPermissions.AiTargets), new(KpiPermissions.AiNarrative),
+                new(ResponsibilityPermissions.Manage(KpiPermissions.SystemCode), DataScope.All)],
             RequiresMfa: true),
         new("executive", "مستعرض تنفيذي (الأداء)", "Executive viewer (performance)",
             [new(KpiPermissions.CardRead, DataScope.All), new(KpiPermissions.ResultRead, DataScope.All), new(KpiPermissions.ScorecardRead, DataScope.All),
@@ -121,7 +126,8 @@ internal sealed class KpiAccessCatalogue : IAccessCatalogueSource
         new("administrator", "مسؤول نظام الأداء", "Performance administrator",
             [new(KpiPermissions.CardRead, DataScope.All), new(KpiPermissions.CardManage, DataScope.All), new(KpiPermissions.StrategyManage),
                 new(KpiPermissions.PlanManage), new(KpiPermissions.ResultRead, DataScope.All), new(KpiPermissions.ScorecardRead, DataScope.All),
-                new(KpiPermissions.DashboardRead), new(KpiPermissions.Export), new(KpiPermissions.SettingsManage), new(KpiPermissions.AiBuilder)],
+                new(KpiPermissions.DashboardRead), new(KpiPermissions.Export), new(KpiPermissions.SettingsManage), new(KpiPermissions.AiBuilder),
+                new(ResponsibilityPermissions.Manage(KpiPermissions.SystemCode), DataScope.All)],
             RequiresMfa: true),
     ];
 

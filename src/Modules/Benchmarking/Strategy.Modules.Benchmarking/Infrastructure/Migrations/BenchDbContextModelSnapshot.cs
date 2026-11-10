@@ -731,6 +731,12 @@ namespace Strategy.Modules.Benchmarking.Infrastructure.Migrations
                         .HasColumnType("character varying(100)")
                         .HasColumnName("purpose_code");
 
+                    b.Property<string>("QuickSearch")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("text")
+                        .HasColumnName("quick_search")
+                        .HasComputedColumnSql("btrim(regexp_replace(lower(translate(regexp_replace(coalesce(number::text, '') || ' ' || coalesce(title_ar::text, '') || ' ' || coalesce(title_en::text, '') || ' ' || coalesce(request_number::text, ''), '[ً-ٰٟـ]', '', 'g'), 'آأإٱىة٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹', 'اااايه01234567890123456789')), '\\s+', ' ', 'g'))", true);
+
                     b.Property<DateTimeOffset?>("ReadyNotifiedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("ready_notified_at");
@@ -836,6 +842,12 @@ namespace Strategy.Modules.Benchmarking.Infrastructure.Migrations
                     b.HasIndex("Number")
                         .IsUnique()
                         .HasDatabaseName("ix_study_number");
+
+                    b.HasIndex("QuickSearch")
+                        .HasDatabaseName("ix_study_quick_search");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("QuickSearch"), "gin");
+                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("QuickSearch"), new[] { "gin_trgm_ops" });
 
                     b.HasIndex("RequestId")
                         .IsUnique()

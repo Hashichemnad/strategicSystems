@@ -66,7 +66,7 @@ release notes ("Known limitations") · **By design** — the behaviour is intend
 ## Phase 6
 | Gap | Status | Evidence / reason |
 |---|---|---|
-| Bulk transfer does not move tasks; no "take over as creator" | By design / Open | ADR 0040. Impact: tasks a leaver *created* keep the leaver as creator / approver until reassigned by hand |
+| Bulk transfer does not move tasks; no "take over as creator" | By design / **Closed (P19)** | ADR 0040 (tasks belong to people); *take over as creator* on *Reassign open tasks of an employee* (ADR 0169, `TaskReassignmentTests`) |
 | Modules register linkable types | Closed (P7–P17) | `Links` registrations per module |
 | Personal leave calendars not in working-time arithmetic | Open | ADR 0027 / 0037: deadlines use the unit's business hours and holidays only |
 
@@ -121,7 +121,7 @@ release notes ("Known limitations") · **By design** — the behaviour is intend
 | Demo AI provider does not answer the Requests / DocReg / IP prompts | Open | the demo provider is a development aid; real providers answer. No impact on customers |
 | Public links for Public documents are a setting only | Open | ADR 0083: no anonymous endpoint in 1.0. Impact: Public documents are shared as files, not links |
 | Form builder edits only the simple stage template | By design | richer stage graphs are code (built-in types) |
-| Rich text shown as plain text (no DOMPurify) | Open | the product has no rich-text editor yet; values are plain text, which is safe. DOMPurify is added when formatted HTML is rendered |
+| Rich text shown as plain text (no DOMPurify) | **Closed (P19)** | Tiptap editor, server allow-list sanitiser, DOMPurify on render, plain-text projections (ADR 0161, `RichTextTests`) |
 | `unitIds` submitter rule has no editor | Open | everyone / roles only in the builder. Impact: unit-restricted request types need the API |
 | Benchmarking as a built-in type | Closed (P15) | ADR 0126 |
 
@@ -129,7 +129,7 @@ release notes ("Known limitations") · **By design** — the behaviour is intend
 | Gap | Status | Evidence / reason |
 |---|---|---|
 | Actions from a development plan have no action type | By design | the owner sets it before submitting (server requires it) |
-| KPI picker lists the first 200 cards | Open | no search-as-you-type. Impact: installations with > 200 KPI cards pick by the API / list order |
+| KPI picker lists the first 200 cards | **Closed (P19)** | shared search-as-you-type picker on `/api/v1/kpi/cards/lookup` (ADR 0169, `KpiLookupTests`) |
 | New visit participants' names appear after saving | Open (UI) | cosmetic |
 | Follow-up calendar without drag-and-drop rescheduling | Open | dates are changed in the follow-up form |
 | QAIP KPI results are drafts | By design | the KPI owner submits them (AI / integrations draft, people decide) |
@@ -164,3 +164,10 @@ but those facts are aggregated per unit and cannot be filtered to the records on
 A correct implementation would store **per-viewer** monthly snapshots of live figures (a job at month end, for the users who use the live path),
 which gives comparisons only from the first snapshot onwards. **Impact:** for these viewers the "vs previous period" delta of stock metrics
 shows "—"; flow metrics (by record date) and all figures of All / Unit-scope viewers have the comparison. Candidate for a later release.
+
+## Phase 18 residuals closed in Phase 19
+| Gap | Status | Evidence |
+|---|---|---|
+| No global search box | **Closed (P19)** | top-bar search across all accessible systems, incl. external IDs (ADR 0160, `GlobalSearchTests`) |
+| No e-mail on password / MFA change | **Closed (P19)** | security e-mails sent once in the user's language (ADR 0162, `SecurityEmailTests`) |
+| Windows install scripts executed only under PowerShell 7 on Linux | **Closed (P19)** for automated checks | CI job `deploy-windows` runs the scripts under Windows PowerShell 5.1 and 7 against a fake docker from a folder without `.git` (ADR 0163); the run on a real Windows machine with Docker Desktop stays an owner acceptance step (`docs/operations/windows-acceptance.md`) |

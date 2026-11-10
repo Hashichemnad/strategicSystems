@@ -38,6 +38,7 @@ import {
   type OrgUnit,
 } from './api';
 import { MoveUnitDialog, UnitDialog } from './UnitDialogs';
+import { ExternalReferencesSection, OriginBadge } from '@/features/integration/ExternalReferences';
 
 export function UnitsPage() {
   const { t } = useTranslation('org');
@@ -233,7 +234,8 @@ function UnitDetails({
           <TabsTrigger value="history">{t('units.tabs.history')}</TabsTrigger>
           <TabsTrigger value="audit">{ta('history.changeLog')}</TabsTrigger>
         </TabsList>
-        <TabsContent value="overview" className="pt-4">
+        <TabsContent value="overview" className="flex flex-col gap-4 pt-4">
+          <OriginBadge type="org.unit" id={id} />
           <dl className="grid gap-x-6 gap-y-3 text-sm sm:grid-cols-2">
             <Detail label={t('fields.nameAr')} value={<span lang="ar">{data.nameAr ?? '—'}</span>} />
             <Detail label={t('fields.nameEn')} value={<span lang="en">{data.nameEn ?? '—'}</span>} />
@@ -273,6 +275,7 @@ function UnitDetails({
               }
             />
           </dl>
+          <ExternalReferencesSection type="org.unit" id={id} />
         </TabsContent>
         <TabsContent value="history" className="pt-4">
           <ol className="flex flex-col gap-3" aria-label={t('units.tabs.history')}>

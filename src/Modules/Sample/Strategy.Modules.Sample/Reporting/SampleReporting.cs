@@ -67,7 +67,7 @@ internal sealed class SampleReporting(SampleDbContext db, IAccessService access)
             new("unit", "الوحدة", "Unit", DatasetFieldType.Unit, Groupable: true),
             new("amount", "القيمة", "Amount", DatasetFieldType.Money, Permission: SamplePermissions.Update),
             new("createdAt", "تاريخ الإنشاء", "Created", DatasetFieldType.DateTime),
-        ], "/sample/{id}"),
+        ], "/sample/{id}", SamplePermissions.ResourceType),
     ];
 
     private async Task<IQueryable<SampleItem>> VisibleAsync(ClaimsPrincipal? user, CancellationToken ct) =>

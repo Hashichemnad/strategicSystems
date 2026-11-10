@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- Global search (ADR 0160, docs/design/search.md): module contributors resolved through the Links registry, recent items (schema search),
+       endpoints /api/v1/search and the MCP / Ask read tool "search". -->
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Strategy.Platform.Kernel\Strategy.Platform.Kernel.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Search.Contracts\Strategy.Platform.Search.Contracts.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Links.Contracts\Strategy.Platform.Links.Contracts.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Access.Contracts\Strategy.Platform.Access.Contracts.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.AI.Contracts\Strategy.Platform.AI.Contracts.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Persistence\Strategy.Platform.Persistence.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Http\Strategy.Platform.Http.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="Strategy.UnitTests" />
+    <InternalsVisibleTo Include="Strategy.IntegrationTests" />
+  </ItemGroup>
+</Project>

@@ -127,6 +127,11 @@ condition (e.g. division by zero) includes the step (the safe side: an extra app
   that transaction, finds pending tasks whose step rule is `role` with a transferred role key, re-resolves the holders (reading the
   uncommitted assignments on the same connection) and moves the assignees (old ended with reason, new added with `source = transfer`),
   approver record roles moved, history `rerouted` with the transfer reason, explicit audit event `workflow.task.rerouted`, new holders notified.
+- **Responsibility reassignment (ADR 0168):** `IApprovalRerouting.RerouteAsync(ApprovalReroute, transactionContext)` is called by the
+  owning module after it moved the people of records (owner, record roles, team roles). For the records' instances in progress it updates
+  the subject snapshot (owner / unit when given) and re-resolves the pending step when its rule depends on the record (record role, team
+  role, section manager / department director / head of unit *of the record*), with the same removal / addition as the transfer hook;
+  a step that would be left without approvers keeps its current ones.
 
 ## 7. Idempotency (ADR 0026)
 `.WithIdempotency()` on submit / act endpoints. With header `Idempotency-Key` (≤ 100 chars): first request stores an in-progress record

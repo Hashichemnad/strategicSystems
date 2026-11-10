@@ -1,5 +1,6 @@
 using Strategy.Platform.Audit;
 using Strategy.Platform.Kernel.Domain;
+using Strategy.Platform.Kernel.Text;
 
 namespace Strategy.Modules.Teams.Domain;
 
@@ -62,7 +63,7 @@ public sealed class Meeting : AuditableEntity
     public string? CancelReason { get; private set; }
 
     public static Meeting Create(Guid teamId, string number, string title, DateTimeOffset scheduledAt, DateTimeOffset endsAt, string? location, string? agenda) =>
-        new() { TeamId = teamId, Number = number, Title = title.Trim(), ScheduledAt = scheduledAt, EndsAt = endsAt, Location = location?.Trim(), Agenda = agenda?.Trim() };
+        new() { TeamId = teamId, Number = number, Title = title.Trim(), ScheduledAt = scheduledAt, EndsAt = endsAt, Location = location?.Trim(), Agenda = RichText.Sanitize(agenda) };
 
     public bool MinutesSubmitted => MinutesSubmittedAt is not null;
 
@@ -72,13 +73,14 @@ public sealed class Meeting : AuditableEntity
         ScheduledAt = scheduledAt;
         EndsAt = endsAt;
         Location = location?.Trim();
-        Agenda = agenda?.Trim();
+        Agenda = RichText.Sanitize(agenda);
     }
 
     public void WriteMinutes(string? minutes, string? decisions, bool aiDrafted)
     {
-        Minutes = string.IsNullOrWhiteSpace(minutes) ? null : minutes.Trim();
-        Decisions = string.IsNullOrWhiteSpace(decisions) ? null : decisions.Trim();
+        // Rich text (ADR 0161): sanitised HTML, or plain text kept as it is.
+        Minutes = RichText.Sanitize(minutes);
+        Decisions = RichText.Sanitize(decisions);
         AiDrafted = aiDrafted;
     }
 

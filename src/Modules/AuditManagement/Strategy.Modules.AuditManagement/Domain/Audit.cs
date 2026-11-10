@@ -248,6 +248,9 @@ public sealed class AuditReport : AuditableEntity
         Summary = Json.Clean(v.Summary);
     }
 
+    /// <summary>Responsibility reassignment (ADR 0168): only the lead auditor changes (an Audit Office member, checked by the caller).</summary>
+    public void AssignLeadAuditor(Guid employeeId) => LeadAuditorEmployeeId = employeeId;
+
     public AuditReportValues Values() => new(TitleAr, TitleEn, TypeCode, AuditorBody, LeadAuditorEmployeeId, AuditedUnitIds, PeriodFrom, PeriodTo, ReportDate,
         DistributionEmployeeIds, DistributionNote, Summary);
 
@@ -409,6 +412,9 @@ public sealed class Finding : AuditableEntity
         RepeatOfFindingId, ExpectedClosingOn, AuditorEmployeeId);
 
     public void SetDepartment(Guid departmentUnitId) => DepartmentUnitId = departmentUnitId;
+
+    /// <summary>Responsibility reassignment (ADR 0168): only the responsible auditor changes (an Audit Office member, checked by the caller).</summary>
+    public void AssignAuditor(Guid employeeId) => AuditorEmployeeId = employeeId;
 
     /// <summary>Applies the derived status and completion; true when the status changed.</summary>
     public bool Refresh(IReadOnlyCollection<FindingStatus.RecommendationState> recommendations, DateOnly today)

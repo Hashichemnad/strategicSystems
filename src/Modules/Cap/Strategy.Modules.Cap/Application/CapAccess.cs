@@ -332,7 +332,11 @@ internal sealed class CapAccessCatalogue : IAccessCatalogueSource
         new(CapPermissions.AiSuggest, "اقتراح الإجراءات وكشف المكرر", "Action suggestions and duplicate check", Scopable: false),
         new(CapPermissions.AiQuality, "فحص جودة الإجراءات", "Action quality check", Scopable: false),
         new(CapPermissions.AiSummary, "ملخص خطة العمل الشهري", "Monthly CAP summary", Scopable: false),
+        ResponsibilityPermissions.Definition(CapPermissions.SystemCode),
     ];
+
+    /// <summary>Members page lists (ADR 0166, docs/design/members-responsibilities.md §1).</summary>
+    public SystemMemberRoles MemberRoles => new(["cap-office"], ["participant"], ["department-manager", "viewer"]);
 
     public IEnumerable<RoleSeed> DefaultRoles =>
     [
@@ -341,7 +345,7 @@ internal sealed class CapAccessCatalogue : IAccessCatalogueSource
             new(CapPermissions.Read, DataScope.All), new(CapPermissions.SourceManage, DataScope.All), new(CapPermissions.Respond, DataScope.All),
             new(CapPermissions.ActionUpdate, DataScope.All), new(CapPermissions.Office, DataScope.All), new(CapPermissions.DashboardRead), new(CapPermissions.Export),
             new(CapPermissions.SettingsManage), new(CapPermissions.AiExtract), new(CapPermissions.AiRootCause), new(CapPermissions.AiSuggest), new(CapPermissions.AiQuality),
-            new(CapPermissions.AiSummary),
+            new(CapPermissions.AiSummary), new(ResponsibilityPermissions.Manage(CapPermissions.SystemCode), DataScope.All),
         ], RequiresMfa: true),
         new("department-manager", "مدير الإدارة (خطة العمل)", "Department manager (CAP)",
             [new(CapPermissions.Read, DataScope.UnitAndBelow), new(CapPermissions.DashboardRead), new(CapPermissions.Export)]),

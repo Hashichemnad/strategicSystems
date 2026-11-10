@@ -32,6 +32,7 @@ import {
 } from '@/ui';
 import { useSampleItem, useSubmitSampleItem, type SampleItem } from './api';
 import { SampleItemDialog } from './SampleItemDialog';
+import { ExternalReferencesSection, OriginBadge } from '@/features/integration/ExternalReferences';
 
 const route = getRouteApi('/app/sample/items/$itemId');
 
@@ -94,6 +95,7 @@ export function SampleItemPage() {
         description={data.number ?? undefined}
         meta={
           <>
+            <OriginBadge type="sample.item" id={data.id} />
             <StatusChip tone={data.status === 'active' ? 'success' : 'neutral'}>
               {t(data.status === 'active' ? 'status.active' : 'status.inactive')}
             </StatusChip>
@@ -164,6 +166,7 @@ export function SampleItemPage() {
               <dd className="mt-1">{formatDateTime(data.updatedAt, i18n.language)}</dd>
             </div>
           </dl>
+          <ExternalReferencesSection type="sample.item" id={data.id} />
         </TabsContent>
         <TabsContent value="approvals">
           <ApprovalPanel resourceType="sample.item" resourceId={data.id} />

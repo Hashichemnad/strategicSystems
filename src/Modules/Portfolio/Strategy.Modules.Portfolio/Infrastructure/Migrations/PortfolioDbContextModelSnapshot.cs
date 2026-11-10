@@ -1141,6 +1141,12 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                         .HasColumnType("character varying(20)")
                         .HasColumnName("quality_status");
 
+                    b.Property<string>("QuickSearch")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("text")
+                        .HasColumnName("quick_search")
+                        .HasComputedColumnSql("btrim(regexp_replace(lower(translate(regexp_replace(coalesce(code::text, '') || ' ' || coalesce(title_ar::text, '') || ' ' || coalesce(title_en::text, '') || ' ' || coalesce(main_deliverable::text, ''), '[ً-ٰٟـ]', '', 'g'), 'آأإٱىة٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹', 'اااايه01234567890123456789')), '\\s+', ' ', 'g'))", true);
+
                     b.Property<int>("Sort")
                         .HasColumnType("integer")
                         .HasColumnName("sort");
@@ -1199,6 +1205,12 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
 
                     b.HasIndex("ProjectId")
                         .HasDatabaseName("ix_milestone_project_id");
+
+                    b.HasIndex("QuickSearch")
+                        .HasDatabaseName("ix_milestone_quick_search");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("QuickSearch"), "gin");
+                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("QuickSearch"), new[] { "gin_trgm_ops" });
 
                     b.HasIndex("VendorId")
                         .HasDatabaseName("ix_milestone_vendor_id");
@@ -1755,8 +1767,8 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                         .HasColumnName("created_by");
 
                     b.Property<string>("Description")
-                        .HasMaxLength(5000)
-                        .HasColumnType("character varying(5000)")
+                        .HasMaxLength(20000)
+                        .HasColumnType("character varying(20000)")
                         .HasColumnName("description");
 
                     b.Property<decimal?>("EstimatedBudget")
@@ -1778,8 +1790,8 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                         .HasColumnName("expected_start_date");
 
                     b.Property<string>("Justifications")
-                        .HasMaxLength(5000)
-                        .HasColumnType("character varying(5000)")
+                        .HasMaxLength(20000)
+                        .HasColumnType("character varying(20000)")
                         .HasColumnName("justifications");
 
                     b.Property<DateTimeOffset?>("LastActionAt")
@@ -1914,6 +1926,12 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                     b.Property<bool>("ProjectScopeUploaded")
                         .HasColumnType("boolean")
                         .HasColumnName("project_scope_uploaded");
+
+                    b.Property<string>("QuickSearch")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("text")
+                        .HasColumnName("quick_search")
+                        .HasComputedColumnSql("btrim(regexp_replace(lower(translate(regexp_replace(coalesce(number::text, '') || ' ' || coalesce(name_ar::text, '') || ' ' || coalesce(name_en::text, '') || ' ' || coalesce(partner_name::text, '') || ' ' || coalesce(previous_program_name::text, ''), '[ً-ٰٟـ]', '', 'g'), 'آأإٱىة٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹', 'اااايه01234567890123456789')), '\\s+', ' ', 'g'))", true);
 
                     b.Property<DateTimeOffset?>("QuotationsHandedOffAt")
                         .HasColumnType("timestamp with time zone")
@@ -2075,6 +2093,12 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                         .IsUnique()
                         .HasDatabaseName("ix_request_number");
 
+                    b.HasIndex("QuickSearch")
+                        .HasDatabaseName("ix_request_quick_search");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("QuickSearch"), "gin");
+                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("QuickSearch"), new[] { "gin_trgm_ops" });
+
                     b.HasIndex("RequesterEmployeeId")
                         .HasDatabaseName("ix_request_requester_employee_id");
 
@@ -2205,8 +2229,8 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                         .HasColumnName("definition_of_done");
 
                     b.Property<string>("Description")
-                        .HasMaxLength(5000)
-                        .HasColumnType("character varying(5000)")
+                        .HasMaxLength(20000)
+                        .HasColumnType("character varying(20000)")
                         .HasColumnName("description");
 
                     b.Property<int?>("EmployeeSatisfaction")
@@ -2345,6 +2369,12 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                         .HasColumnType("character varying(40)")
                         .HasDefaultValue("on-track")
                         .HasColumnName("progress_status");
+
+                    b.Property<string>("QuickSearch")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("text")
+                        .HasColumnName("quick_search")
+                        .HasComputedColumnSql("btrim(regexp_replace(lower(translate(regexp_replace(coalesce(number::text, '') || ' ' || coalesce(name_ar::text, '') || ' ' || coalesce(name_en::text, ''), '[ً-ٰٟـ]', '', 'g'), 'آأإٱىة٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹', 'اااايه01234567890123456789')), '\\s+', ' ', 'g'))", true);
 
                     b.Property<Guid?>("ReplanChangeRequestId")
                         .HasColumnType("uuid")
@@ -2548,6 +2578,12 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
 
                     b.HasIndex("ProgrammeId")
                         .HasDatabaseName("ix_project_programme_id");
+
+                    b.HasIndex("QuickSearch")
+                        .HasDatabaseName("ix_project_quick_search");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("QuickSearch"), "gin");
+                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("QuickSearch"), new[] { "gin_trgm_ops" });
 
                     b.HasIndex("RequestId")
                         .IsUnique()
@@ -3729,6 +3765,12 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("project_id");
 
+                    b.Property<string>("QuickSearch")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("text")
+                        .HasColumnName("quick_search")
+                        .HasComputedColumnSql("btrim(regexp_replace(lower(translate(regexp_replace(coalesce(code::text, '') || ' ' || coalesce(title::text, ''), '[ً-ٰٟـ]', '', 'g'), 'آأإٱىة٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹', 'اااايه01234567890123456789')), '\\s+', ' ', 'g'))", true);
+
                     b.Property<int>("Rank")
                         .HasColumnType("integer")
                         .HasColumnName("rank");
@@ -3787,6 +3829,12 @@ namespace Strategy.Modules.Portfolio.Infrastructure.Migrations
 
                     b.HasIndex("ProjectId")
                         .HasDatabaseName("ix_user_story_project_id");
+
+                    b.HasIndex("QuickSearch")
+                        .HasDatabaseName("ix_user_story_quick_search");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("QuickSearch"), "gin");
+                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("QuickSearch"), new[] { "gin_trgm_ops" });
 
                     b.HasIndex("SprintId")
                         .HasDatabaseName("ix_user_story_sprint_id");

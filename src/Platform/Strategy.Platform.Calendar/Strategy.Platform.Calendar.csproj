@@ -12,6 +12,7 @@
     <ProjectReference Include="..\Strategy.Platform.Persistence\Strategy.Platform.Persistence.csproj" />
     <ProjectReference Include="..\Strategy.Platform.Http\Strategy.Platform.Http.csproj" />
     <ProjectReference Include="..\Strategy.Platform.Settings\Strategy.Platform.Settings.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Integration.Contracts\Strategy.Platform.Integration.Contracts.csproj" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Strategy.UnitTests" />

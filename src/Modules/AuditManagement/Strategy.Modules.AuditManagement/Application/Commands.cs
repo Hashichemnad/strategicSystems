@@ -16,6 +16,9 @@ public sealed record AuditReportBody(AuditReportValues Values, uint Version);
 
 public sealed record AuditFindingBody(FindingValues Values, uint Version);
 
+/// <summary>PUT by external ID (ADR 0165): <c>ReportId</c> and <c>Recommendations</c> are used when the finding is created, ignored on update.</summary>
+public sealed record AuditFindingUpsertInput(Guid ReportId, FindingValues Values, IReadOnlyList<RecommendationValues>? Recommendations);
+
 public sealed record AuditRecommendationBody(RecommendationValues Values, uint Version);
 
 public sealed record AuditReasonInput(string? Reason);

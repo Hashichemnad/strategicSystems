@@ -100,6 +100,7 @@ internal sealed class ProgramRequestConfiguration : IEntityTypeConfiguration<Pro
     public void Configure(EntityTypeBuilder<ProgramRequest> builder)
     {
         builder.ToTable("request");
+        builder.HasQuickSearch("number", "name_ar", "name_en", "partner_name", "previous_program_name"); // global search (ADR 0160)
         builder.Property(x => x.Id).ValueGeneratedNever();
         builder.Property(x => x.Number).HasMaxLength(50);
         foreach (var name in new[]
@@ -131,10 +132,12 @@ internal sealed class ProgramRequestConfiguration : IEntityTypeConfiguration<Pro
             builder.Property(name).HasMaxLength(RequestRules.NameMaxLength);
         }
 
-        foreach (var name in new[] { nameof(ProgramRequest.Description), nameof(ProgramRequest.Justifications), nameof(ProgramRequest.ScopeOfWork) })
+        foreach (var name in new[] { nameof(ProgramRequest.Description), nameof(ProgramRequest.Justifications) })
         {
-            builder.Property(name).HasMaxLength(RequestRules.LongTextMaxLength);
+            builder.Property(name).HasMaxLength(RequestRules.RichTextStoredMaxLength);
         }
+
+        builder.Property(nameof(ProgramRequest.ScopeOfWork)).HasMaxLength(RequestRules.LongTextMaxLength);
 
         foreach (var name in new[]
                  {
@@ -188,6 +191,7 @@ internal sealed class ProjectConfiguration : IEntityTypeConfiguration<Project>
     public void Configure(EntityTypeBuilder<Project> builder)
     {
         builder.ToTable("project");
+        builder.HasQuickSearch("number", "name_ar", "name_en"); // global search (ADR 0160)
         builder.Property(x => x.Id).ValueGeneratedNever();
         builder.Property(x => x.Number).HasMaxLength(50);
         foreach (var name in new[]
@@ -201,7 +205,7 @@ internal sealed class ProjectConfiguration : IEntityTypeConfiguration<Project>
 
         builder.Property(x => x.NameAr).HasMaxLength(RequestRules.NameMaxLength);
         builder.Property(x => x.NameEn).HasMaxLength(RequestRules.NameMaxLength);
-        builder.Property(x => x.Description).HasMaxLength(RequestRules.LongTextMaxLength);
+        builder.Property(x => x.Description).HasMaxLength(RequestRules.RichTextStoredMaxLength);
         builder.Property(x => x.ScopeOfWork).HasMaxLength(RequestRules.LongTextMaxLength);
         builder.Property(x => x.StrategicObjectiveCode).HasMaxLength(100);
         builder.Property(x => x.ProgramTypeCode).HasMaxLength(100);
@@ -283,6 +287,7 @@ internal sealed class MilestoneConfiguration : IEntityTypeConfiguration<Mileston
     public void Configure(EntityTypeBuilder<Milestone> builder)
     {
         builder.ToTable("milestone");
+        builder.HasQuickSearch("code", "title_ar", "title_en", "main_deliverable"); // global search (ADR 0160)
         builder.Property(x => x.Id).ValueGeneratedNever();
         builder.Property(x => x.Code).HasMaxLength(80);
         builder.Property(x => x.Status).HasMaxLength(40);
@@ -491,6 +496,7 @@ internal sealed class UserStoryConfiguration : IEntityTypeConfiguration<UserStor
     public void Configure(EntityTypeBuilder<UserStory> builder)
     {
         builder.ToTable("user_story");
+        builder.HasQuickSearch("code", "title"); // global search (ADR 0160)
         builder.Property(x => x.Id).ValueGeneratedNever();
         builder.Property(x => x.Code).HasMaxLength(80);
         ChildConfiguration.Texts(builder, 40, nameof(UserStory.ColumnCode), nameof(UserStory.Category), nameof(UserStory.Priority), nameof(UserStory.Status));

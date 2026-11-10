@@ -19,12 +19,15 @@ $db = Get-Setting 'POSTGRES_DB' 'strategy'
 $owner = Get-Setting 'POSTGRES_USER' 'strategy'
 $stamp = (Get-Date).ToUniversalTime().ToString("yyyyMMdd'T'HHmmss'Z'")
 $out = Join-Path $Output "strategy-$version-$stamp"
+# Two backups in the same second (e.g. an upgrade right after a manual backup) never share a folder.
+$n = 1
+while (Test-Path -LiteralPath $out) { $n++; $out = Join-Path $Output "strategy-$version-$stamp-$n" }
 New-Item -ItemType Directory -Force -Path $out | Out-Null
 # The backup contains passwords (env) and the key ring: only the current user (and administrators) may read it.
 if ([Environment]::OSVersion.Platform -eq [PlatformID]::Win32NT) {
-    & icacls $out /inheritance:r /grant:r "$($env:USERNAME):(OI)(CI)F" /grant:r '*S-1-5-32-544:(OI)(CI)F' | Out-Null
+    Invoke-Native -Command 'icacls' -Arguments @($out, '/inheritance:r', '/grant:r', "$($env:USERNAME):(OI)(CI)F", '/grant:r', '*S-1-5-32-544:(OI)(CI)F') -Capture | Out-Null
 } else {
-    & chmod 700 $out
+    Invoke-Native -Command 'chmod' -Arguments @('700', $out) | Out-Null
 }
 Write-Step "Backup to $out"
 
@@ -86,7 +89,7 @@ foreach ($name in 'database.dump', 'files.tar.gz', 'env', 'dataprotection.pfx', 
     }
 }
 Write-Utf8Lines (Join-Path $out 'SHA256SUMS') $sums
-$counts = @(Get-Content (Join-Path $out 'table-counts.tsv') | Where-Object { $_ })
+$counts = @(Read-Utf8Lines (Join-Path $out 'table-counts.tsv') | Where-Object { $_ })
 $rows = 0
 foreach ($line in $counts) { $rows += [long]($line.Split("`t")[1]) }
 $consistent = 'true'

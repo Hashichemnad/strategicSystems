@@ -27,6 +27,7 @@ import {
   useToast,
 } from '@/ui';
 import { useReassignmentPreview, useReassignTasks } from './api';
+import { CreatorTransferSection } from './CreatorTransferSection';
 import { TaskStatusChip } from './TaskChips';
 
 const route = getRouteApi('/app/settings/tasks/reassign');
@@ -195,6 +196,14 @@ export function ReassignTasksPage() {
             </Button>
           </form>
         </>
+      )}
+
+      {employee && preview.data && (
+        <CreatorTransferSection
+          employeeId={employee}
+          preview={preview.data}
+          onDone={() => void preview.refetch()}
+        />
       )}
 
       <ConfirmDialog

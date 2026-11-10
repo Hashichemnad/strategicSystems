@@ -245,10 +245,14 @@ internal sealed class RiskAccessCatalogue : IAccessCatalogueSource
         new(RiskPermissions.AiDuplicates, "كشف المخاطر المكررة", "Duplicate detection", Scopable: false),
         new(RiskPermissions.AiReview, "مساعد المراجعة", "Review assistant", Scopable: false),
         new(RiskPermissions.AiReport, "كاتب تقرير المخاطر", "Risk report writer", Scopable: false),
+        ResponsibilityPermissions.Definition(RiskPermissions.SystemCode),
     ];
 
     private static readonly string[] Ai =
         [RiskPermissions.AiIdentify, RiskPermissions.AiQuality, RiskPermissions.AiSuggest, RiskPermissions.AiDuplicates, RiskPermissions.AiReview];
+
+    /// <summary>Members page lists (ADR 0166, docs/design/members-responsibilities.md §1).</summary>
+    public SystemMemberRoles MemberRoles => new(["risk-office"], ["owner"], ["coordinator", "viewer", "risk-committee", "internal-audit"]);
 
     public IEnumerable<RoleSeed> DefaultRoles =>
     [
@@ -259,6 +263,7 @@ internal sealed class RiskAccessCatalogue : IAccessCatalogueSource
             new(RiskPermissions.ActionUpdate, DataScope.All), new(RiskPermissions.ControlUpdate, DataScope.All), new(RiskPermissions.EventManage, DataScope.All),
             new(RiskPermissions.DashboardRead), new(RiskPermissions.Export), new(RiskPermissions.ProjectRisksRead), new(RiskPermissions.FrameworkManage),
             .. Ai.Select(a => new PermissionGrant(a)), new(RiskPermissions.AiReport),
+            new(ResponsibilityPermissions.Manage(RiskPermissions.SystemCode), DataScope.All),
         ], RequiresMfa: true),
         new("coordinator", "منسق المخاطر في الإدارة", "Department risk coordinator",
         [

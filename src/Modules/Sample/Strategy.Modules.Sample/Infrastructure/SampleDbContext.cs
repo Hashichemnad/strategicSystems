@@ -35,5 +35,6 @@ internal sealed class SampleItemConfiguration : IEntityTypeConfiguration<SampleI
         builder.HasIndex(x => x.UnitId);
         builder.HasIndex(x => x.Status);
         builder.HasIndex(x => x.CreatedAt);
+        builder.HasQuickSearch("number", "name_ar", "name_en"); // global search (ADR 0160)
     }
 }

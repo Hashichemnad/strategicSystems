@@ -48,6 +48,7 @@ import {
 } from './api';
 import { BenchPageLayout, StageChip, useBenchAction, useBenchLabels, useBenchT } from './components';
 import { AnalysisTab, SearchTab, VisitsTab } from './StudyTabs';
+import { ExternalReferencesSection, OriginBadge } from '@/features/integration/ExternalReferences';
 
 const route = getRouteApi('/app/bench/studies/$studyId');
 
@@ -101,6 +102,7 @@ export function BenchStudyPage() {
         }
         meta={
           <div className="flex flex-wrap items-center gap-2">
+            <OriginBadge type="bench.study" id={s.id} />
             <StageChip stage={s.stage} status={s.status} />
             {s.pendingProcess && <StatusChip tone="info">{k(`process.${s.pendingProcess}`)}</StatusChip>}
             {s.returned && <StatusChip tone="warning">{t('study.returned')}</StatusChip>}
@@ -149,6 +151,7 @@ export function BenchStudyPage() {
         </TabsList>
         <TabsContent value="overview">
           <Overview study={s} />
+          <ExternalReferencesSection type="bench.study" id={s.id} />
         </TabsContent>
         <TabsContent value="search">
           <SearchTab study={s} />

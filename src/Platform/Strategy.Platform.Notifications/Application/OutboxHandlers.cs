@@ -23,6 +23,12 @@ internal sealed class EmailOutboxHandler(
     public async Task HandleAsync(string payload, CancellationToken cancellationToken)
     {
         var message = JsonSerializer.Deserialize<EmailPayload>(payload, OutboxJson.Options)!;
+        if (message.IdempotencyKey is { } key
+            && await db.Deliveries.AnyAsync(d => d.IdempotencyKey == key && d.Status == DeliveryStatuses.Sent, cancellationToken).ConfigureAwait(false))
+        {
+            return; // already delivered (the same message handled twice, ADR 0162)
+        }
+
         var values = message.Values;
         var link = message.Link;
         if (message.Protected is not null)
@@ -33,7 +39,7 @@ internal sealed class EmailOutboxHandler(
         }
 
         var rendered = await RenderAsync(db, settings, message.TemplateKey, values ?? [], await AbsoluteAsync(link, cancellationToken).ConfigureAwait(false),
-            cancellationToken).ConfigureAwait(false);
+            cancellationToken, message.Language).ConfigureAwait(false);
         var attachments = new List<EmailAttachment>();
         foreach (var fileId in message.Attachments ?? [])
         {
@@ -50,8 +56,15 @@ internal sealed class EmailOutboxHandler(
         }
 
         var email = new EmailMessage(message.To, rendered.Subject, rendered.Html, rendered.Text, message.TemplateKey, values ?? [], rendered.Link,
-            attachments.Count == 0 ? null : attachments);
-        var delivery = new EmailDelivery { To = message.To, TemplateKey = message.TemplateKey, At = clock.UtcNow, CorrelationId = context.CorrelationId };
+            attachments.Count == 0 ? null : attachments, message.Language);
+        var delivery = new EmailDelivery
+        {
+            To = message.To,
+            TemplateKey = message.TemplateKey,
+            At = clock.UtcNow,
+            CorrelationId = context.CorrelationId,
+            IdempotencyKey = message.IdempotencyKey,
+        };
         try
         {
             await transport.SendAsync(email, null, cancellationToken).ConfigureAwait(false);
@@ -71,7 +84,8 @@ internal sealed class EmailOutboxHandler(
 
     /// <summary>Renders a template with the current text, layout and branding.</summary>
     public static async Task<(string Subject, string Html, string Text, string? Link)> RenderAsync(
-        NotifyDbContext db, ISettingsStore settings, string templateKey, IReadOnlyDictionary<string, string> values, string? link, CancellationToken ct)
+        NotifyDbContext db, ISettingsStore settings, string templateKey, IReadOnlyDictionary<string, string> values, string? link, CancellationToken ct,
+        string? language = null)
     {
         var templates = await db.Templates.AsNoTracking().Where(t => t.Key == templateKey || t.Key == NotificationTemplates.Layout.Key).ToListAsync(ct)
             .ConfigureAwait(false);
@@ -79,7 +93,7 @@ internal sealed class EmailOutboxHandler(
         var layout = templates.Find(t => t.Key == NotificationTemplates.Layout.Key);
         var branding = await settings.GetAsync<BrandingSettings>(ct).ConfigureAwait(false);
         var (subject, html, text) = EmailRenderer.Render(TemplateText.From(template),
-            layout is null ? NotificationTemplates.LayoutText : TemplateText.From(layout), values, link, branding);
+            layout is null ? NotificationTemplates.LayoutText : TemplateText.From(layout), values, link, branding, language);
         return (subject, html, text, link);
     }
 

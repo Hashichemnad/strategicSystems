@@ -9,6 +9,7 @@ using Strategy.Platform.Http.Problems;
 using Strategy.Platform.Identity.Application;
 using Strategy.Platform.Identity.Authentication;
 using Strategy.Platform.Identity.Domain;
+using Strategy.Platform.Identity.Email;
 using Strategy.Platform.Identity.Infrastructure;
 using Strategy.Platform.Kernel.Results;
 using Strategy.Platform.Kernel.Time;
@@ -96,7 +97,7 @@ internal static class MeEndpoints
 
     private static async Task<Results<NoContent, ProblemHttpResult>> ChangePasswordAsync(
         ChangePasswordInput body, HttpContext context, StrategyUserManager users, SignInService signIn, StrategySignInManager signInManager,
-        AuthEventLog events, IdentitySettingsCache settings, CancellationToken ct)
+        AuthEventLog events, IdentitySettingsCache settings, SecurityNotifier security, CancellationToken ct)
     {
         if (context.User.IsToken())
         {
@@ -132,6 +133,7 @@ internal static class MeEndpoints
         await signIn.RevokeSessionsAsync(user.Id, CurrentSessionId(context), ct);
         await signInManager.RefreshSignInAsync(user);
         await events.WriteAsync(AuthEventTypes.PasswordChanged, true, user.Id, user.UserName, cancellationToken: ct);
+        await security.NotifyAsync(user, SecurityEmails.PasswordChanged, cancellationToken: ct);
         return TypedResults.NoContent();
     }
 
@@ -229,7 +231,7 @@ internal static class MeEndpoints
 
     private static async Task<Results<Ok<MyMfaDto>, ProblemHttpResult>> DisableMfaAsync(
         MfaDisableInput body, HttpContext context, StrategyUserManager users, SignInService signIn, StrategySignInManager signInManager,
-        IdentitySettingsCache settings, AuthEventLog events, CancellationToken ct)
+        IdentitySettingsCache settings, AuthEventLog events, SecurityNotifier security, CancellationToken ct)
     {
         if (context.User.IsToken())
         {
@@ -274,6 +276,7 @@ internal static class MeEndpoints
 
         await signInManager.RefreshSignInAsync(user);
         await events.WriteAsync(AuthEventTypes.MfaDisabled, true, user.Id, user.UserName, detail: body.Method, cancellationToken: ct);
+        await security.NotifyAsync(user, SecurityEmails.MfaRemoved, values: SecurityNotifier.Method(body.Method), cancellationToken: ct);
         return (await MfaAsync(context, users, signIn, settings)).Result switch
         {
             Ok<MyMfaDto> ok => TypedResults.Ok(ok.Value),
@@ -283,7 +286,7 @@ internal static class MeEndpoints
     }
 
     private static async Task<Results<Ok<RecoveryCodesDto>, ProblemHttpResult>> RecoveryCodesAsync(
-        HttpContext context, StrategyUserManager users, AuthEventLog events, CancellationToken ct)
+        HttpContext context, StrategyUserManager users, AuthEventLog events, SecurityNotifier security, CancellationToken ct)
     {
         if (context.User.IsToken())
         {
@@ -303,6 +306,7 @@ internal static class MeEndpoints
 
         var codes = (await users.GenerateNewTwoFactorRecoveryCodesAsync(user, 10))!.ToList();
         await events.WriteAsync(AuthEventTypes.RecoveryCodesGenerated, true, user.Id, user.UserName, cancellationToken: ct);
+        await security.NotifyAsync(user, SecurityEmails.RecoveryCodes, cancellationToken: ct);
         return TypedResults.Ok(new RecoveryCodesDto(codes));
     }
 
@@ -361,7 +365,8 @@ internal static class MeEndpoints
         TypedResults.Ok(await tokens.ListAsync(context.User.UserId()!.Value, ct));
 
     private static async Task<Results<Ok<CreatedAccessTokenDto>, ProblemHttpResult>> CreateTokenAsync(
-        CreateTokenInput body, HttpContext context, AccessTokenService tokens, AuthEventLog events, IFeatureFlags features, CancellationToken ct)
+        CreateTokenInput body, HttpContext context, AccessTokenService tokens, AuthEventLog events, IFeatureFlags features, StrategyUserManager users,
+        SecurityNotifier security, ISettingsStore settingsStore, CancellationToken ct)
     {
         if (context.User.IsToken())
         {
@@ -390,6 +395,18 @@ internal static class MeEndpoints
         {
             await events.WriteAsync(AuthEventTypes.TokenCreated, true, context.User.UserId(), context.User.Identity?.Name,
                 detail: result.Value.Details.Prefix, cancellationToken: ct);
+            if (await CurrentAsync(context, users) is { } user)
+            {
+                var zone = (await settingsStore.GetAsync<RegionalSettings>(ct)).TimeZone;
+                var tz = TimeZoneInfo.TryFindSystemTimeZoneById(zone, out var found) ? found : TimeZoneInfo.Utc;
+                await security.NotifyAsync(user, SecurityEmails.TokenCreated, values: new Dictionary<string, string>
+                {
+                    // Name and prefix only: the token value is never e-mailed.
+                    ["token"] = $"{result.Value.Details.Name} ({result.Value.Details.Prefix}…)",
+                    ["expires"] = TimeZoneInfo.ConvertTime(result.Value.Details.ExpiresAt, tz)
+                        .ToString("yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture),
+                }, cancellationToken: ct);
+            }
         }
 
         return result.ToOk();

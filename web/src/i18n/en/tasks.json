@@ -267,7 +267,8 @@
     "escalated": "Escalated to the manager",
     "system": "System",
     "transferred": "Reassigned by an administrator",
-    "returned-to-creator": "Handed back to the creator"
+    "returned-to-creator": "Handed back to the creator",
+    "creator-changed": "Creator changed"
   },
   "group": {
     "title": "Assignment group",
@@ -453,6 +454,16 @@
     "statusRule": "In progress, on hold and rejected tasks restart as Assigned for the new person; submitted tasks stay with the creator for approval.",
     "offerLeft": "{{name}} has left and still has {{count}} open task(s).",
     "offer": "{{name}} has {{count}} open task(s).",
-    "offerAction": "Reassign tasks"
+    "offerAction": "Reassign tasks",
+    "createdTitle": "Tasks created by this employee",
+    "createdHint": "Open tasks this employee created for other people. Move the creator role — and with it the approval of their completion — to another employee.",
+    "createdNone": "This employee created no open tasks for other people.",
+    "assignee": "Assignee",
+    "newCreator": "New creator",
+    "creatorReason": "Reason",
+    "creatorSubmit": "Move the creator role of {{count}} tasks",
+    "creatorConfirmTitle": "Move the creator role?",
+    "creatorConfirmDescription": "The new creator will approve {{count}} tasks. The previous creator and the new one are notified, and the change is recorded with the reason.",
+    "creatorDone": "Creator role moved for {{transferred}} tasks ({{skipped}} skipped: assigned to the new creator)."
   }
 }

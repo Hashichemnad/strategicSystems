@@ -641,6 +641,9 @@ public sealed class CapAction : AuditableEntity
 
     public bool IsOpen => Status != ActionStatuses.Completed && Status != ActionStatuses.Cancelled;
 
+    /// <summary>Responsibility reassignment (ADR 0168): only the assignee changes.</summary>
+    public void Reassign(Guid employeeId) => AssignedEmployeeId = employeeId;
+
     /// <summary>Editable by the owner while not submitted or returned.</summary>
     public bool IsEditable => ValidationStatus is ValidationStatuses.Draft or ValidationStatuses.Returned && Status != ActionStatuses.Cancelled;
 

@@ -7,6 +7,7 @@ using Strategy.Modules.Portfolio.Application;
 using Strategy.Modules.Portfolio.Domain;
 using Strategy.Platform.Http.Access;
 using Strategy.Platform.Http.Audit;
+using Strategy.Platform.Http.Integration;
 using Strategy.Platform.Http.Problems;
 using Strategy.Platform.Kernel.Context;
 using Strategy.Platform.Kernel.Results;
@@ -23,6 +24,8 @@ internal static class ProjectEndpoints
         var projects = group.MapGroup("/projects");
         projects.MapGet("/{id:guid}", async (Guid id, ProjectService s, CancellationToken ct) => (await s.GetAsync(id, ct)).ToOk())
             .WithName("GetPortfolioProject").RequirePermission(PortfolioPermissions.ProjectRead);
+        projects.MapByExternal("", ProjectLinks.Project.ResourceType, PortfolioPermissions.ProjectRead, "PortfolioProject", p => p.Id,
+            (id, http) => http.RequestServices.GetRequiredService<ProjectService>().GetAsync(id, http.RequestAborted));
         projects.MapPost("/{id:guid}/take-ownership", async (Guid id, ProjectVersionInput b, ProjectService s, CancellationToken ct) =>
                 (await s.TakeOwnershipAsync(id, b.Version, ct)).ToOk())
             .WithName("TakeProjectOwnership").RequirePermission(PortfolioPermissions.ProjectRead).WithIdempotency();

@@ -49,7 +49,11 @@
       "run": "احتساب",
       "result": "الاستحقاق {{date}} ({{zone}})"
     },
+    "usedBy_zero": "لا تستخدمه أي وحدة",
     "usedBy_one": "تستخدمه وحدة واحدة",
+    "usedBy_two": "تستخدمه وحدتان",
+    "usedBy_few": "تستخدمه {{count}} وحدات",
+    "usedBy_many": "تستخدمه {{count}} وحدة",
     "usedBy_other": "تستخدمه {{count}} وحدات"
   },
   "holidays": {
@@ -93,12 +97,21 @@
     "validate": "فحص الملف",
     "commit": "استيراد",
     "report": "تنزيل التقرير",
+    "valid_zero": "لا توجد صفوف صحيحة.",
     "valid_one": "صف واحد صحيح.",
+    "valid_two": "صفّان صحيحان.",
+    "valid_few": "{{count}} صفوف صحيحة.",
+    "valid_many": "{{count}} صفًا صحيحًا.",
     "valid_other": "{{count}} صفوف صحيحة.",
+    "imported_zero": "لم تُستورد أي عطلة.",
     "imported_one": "تم استيراد عطلة واحدة.",
+    "imported_two": "تم استيراد عطلتين.",
+    "imported_few": "تم استيراد {{count}} عطلات.",
+    "imported_many": "تم استيراد {{count}} عطلة.",
     "imported_other": "تم استيراد {{count}} عطلات.",
     "issues": "مشكلات يجب تصحيحها",
-    "row": "الصف {{row}}"
+    "row": "الصف {{row}}",
+    "importedUpdated": "أُنشئت {{created}} وحُدّثت {{updated}} بالمعرّف الخارجي."
   },
   "errors": {
     "unknownTimeZone": "منطقة زمنية غير معروفة. استخدم اسم IANA مثل Asia/Dubai.",

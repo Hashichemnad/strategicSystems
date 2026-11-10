@@ -170,13 +170,19 @@
       "mfaAllowEmail": "Allow codes by email",
       "requireLocalMfaAfterSso": "Also ask for two-step verification after single sign-on",
       "tokenDefaultDays": "Default lifetime (days)",
-      "tokenMaxDays": "Maximum lifetime (days)"
+      "tokenMaxDays": "Maximum lifetime (days)",
+      "notifyNewDevice": "Also e-mail users when they sign in from a new device or network",
+      "securityContactAr": "“If this wasn't you” text (Arabic)",
+      "securityContactEn": "“If this wasn't you” text (English)"
     },
     "mfaPolicies": {
       "optional": "Optional for everyone",
       "admins": "Required for administrators",
       "all": "Required for everyone"
-    }
+    },
+    "emails": "Security e-mails",
+    "emailsHint": "Users always receive an e-mail when their password, two-step verification or access tokens change, or their account is locked. They cannot turn these e-mails off.",
+    "contactHint": "Leave empty to use the default text: contact your system administrator."
   },
   "email": {
     "title": "Email server",

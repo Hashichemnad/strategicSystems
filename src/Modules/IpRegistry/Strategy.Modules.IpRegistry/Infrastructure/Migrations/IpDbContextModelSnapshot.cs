@@ -288,6 +288,12 @@ namespace Strategy.Modules.IpRegistry.Infrastructure.Migrations
                         .IsUnique()
                         .HasDatabaseName("ix_ip_record_request_id");
 
+                    b.HasIndex("SearchText")
+                        .HasDatabaseName("ix_ip_record_search_text");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("SearchText"), "gin");
+                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("SearchText"), new[] { "gin_trgm_ops" });
+
                     b.HasIndex("Status")
                         .HasDatabaseName("ix_ip_record_status");
 

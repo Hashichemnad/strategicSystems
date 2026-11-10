@@ -417,3 +417,38 @@ public sealed class RoleTransferLog : AuditableEntity
         Reason = reason,
     };
 }
+
+/// <summary>
+/// The platform administrator's override of a system's Members lists (ADR 0166); without a row the catalogue's
+/// <see cref="SystemMemberRoles"/> apply. Role codes within <see cref="SystemCode"/>.
+/// </summary>
+public sealed class SystemMemberRolesConfig : AuditableEntity
+{
+    private SystemMemberRolesConfig()
+    {
+    }
+
+    public string SystemCode { get; private set; } = string.Empty;
+
+    public List<string> AdministratorRoles { get; private set; } = [];
+
+    public List<string> UserRoles { get; private set; } = [];
+
+    public List<string> ExtraRoles { get; private set; } = [];
+
+    public SystemMemberRoles ToRoles() => new(AdministratorRoles, UserRoles, ExtraRoles);
+
+    public static SystemMemberRolesConfig Create(string systemCode, SystemMemberRoles roles)
+    {
+        var config = new SystemMemberRolesConfig { SystemCode = systemCode };
+        config.Set(roles);
+        return config;
+    }
+
+    public void Set(SystemMemberRoles roles)
+    {
+        AdministratorRoles = [.. roles.AdministratorRoles];
+        UserRoles = [.. roles.UserRoles];
+        ExtraRoles = [.. roles.ExtraRoles];
+    }
+}

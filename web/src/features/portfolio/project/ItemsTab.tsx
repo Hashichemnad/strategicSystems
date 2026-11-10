@@ -3,6 +3,7 @@ import { Pencil, Plus, Trash2 } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { errorMessage } from '@/api/problem';
+import { KpiCardPicker } from '@/features/kpi/KpiCardPicker';
 import { EmployeePicker } from '@/features/org/EmployeePicker';
 import {
   Button,
@@ -14,6 +15,7 @@ import {
   EmptyState,
   FormField,
   Input,
+  RichTextEditor,
   Select,
   Skeleton,
   StatusBanner,
@@ -37,7 +39,17 @@ export type FormValues = Record<string, FieldValue>;
 export interface FieldSpec {
   name: string;
   label: string;
-  kind: 'text' | 'textarea' | 'number' | 'date' | 'datetime' | 'select' | 'employee' | 'bool';
+  kind:
+    | 'text'
+    | 'textarea'
+    | 'richtext'
+    | 'number'
+    | 'date'
+    | 'datetime'
+    | 'select'
+    | 'employee'
+    | 'bool'
+    | 'kpiCard';
   options?: readonly SelectOption[];
   required?: boolean;
   wide?: boolean;
@@ -240,7 +252,8 @@ export function FieldInput({
   onChange: (value: FieldValue) => void;
 }) {
   const text = typeof value === 'string' ? value : '';
-  const wide = spec.wide || spec.kind === 'textarea' ? 'md:col-span-2' : undefined;
+  const wide =
+    spec.wide || spec.kind === 'textarea' || spec.kind === 'richtext' ? 'md:col-span-2' : undefined;
   if (spec.kind === 'bool')
     return (
       <div className={wide}>
@@ -251,6 +264,8 @@ export function FieldInput({
     switch (spec.kind) {
       case 'textarea':
         return <Textarea value={text} onChange={(e) => onChange(e.target.value)} />;
+      case 'richtext':
+        return <RichTextEditor aria-label={spec.label} value={text} onChange={(html) => onChange(html)} />;
       case 'number':
         return (
           <Input dir="ltr" inputMode="decimal" value={text} onChange={(e) => onChange(e.target.value)} />
@@ -265,6 +280,15 @@ export function FieldInput({
         return <Select value={text || undefined} onValueChange={onChange} options={spec.options ?? []} />;
       case 'employee':
         return <EmployeePicker value={text || undefined} onChange={(id) => onChange(id ?? null)} />;
+      case 'kpiCard':
+        return (
+          <KpiCardPicker
+            value={text || null}
+            onChange={(id) => onChange(id)}
+            aria-label={spec.label}
+            testId={`field-${spec.name}`}
+          />
+        );
       default:
         return <Input dir="auto" value={text} onChange={(e) => onChange(e.target.value)} />;
     }

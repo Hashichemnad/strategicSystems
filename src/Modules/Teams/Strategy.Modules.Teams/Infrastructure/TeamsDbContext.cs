@@ -100,6 +100,7 @@ internal sealed class TeamConfiguration : IEntityTypeConfiguration<Team>
     public void Configure(EntityTypeBuilder<Team> builder)
     {
         builder.ToTable("team");
+        builder.HasQuickSearch("number", "name_ar", "name_en", "subject"); // global search (ADR 0160)
         builder.Property(x => x.Id).ValueGeneratedNever();
         builder.Property(x => x.Number).HasMaxLength(50);
         builder.Property(x => x.NameAr).HasMaxLength(Team.NameMaxLength);
@@ -154,6 +155,7 @@ internal sealed class MeetingConfiguration : IEntityTypeConfiguration<Meeting>
     public void Configure(EntityTypeBuilder<Meeting> builder)
     {
         builder.ToTable("meeting");
+        builder.HasQuickSearch("number", "title", "location"); // global search (ADR 0160)
         builder.Property(x => x.Id).ValueGeneratedNever();
         builder.Property(x => x.Number).HasMaxLength(50);
         builder.Property(x => x.Title).HasMaxLength(Team.NameMaxLength);
@@ -187,6 +189,7 @@ internal sealed class RecommendationConfiguration : IEntityTypeConfiguration<Rec
     public void Configure(EntityTypeBuilder<Recommendation> builder)
     {
         builder.ToTable("recommendation");
+        builder.HasQuickSearch("number", "text"); // global search (ADR 0160)
         builder.Property(x => x.Id).ValueGeneratedNever();
         builder.Property(x => x.Number).HasMaxLength(50);
         builder.Property(x => x.Kind).HasMaxLength(20);

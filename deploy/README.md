@@ -61,6 +61,28 @@ containers (a second run) are not reported.
 (Phase 17's `pull_policy: build` rebuilt the image on every `run`). The manual equivalent of the installer is still:
 `cp deploy/.env.example deploy/.env` (change the passwords), then `docker compose -f deploy/docker-compose.yml --profile app up -d --build`.
 
+**Windows PowerShell 5.1 and 7, ZIP releases (ADR 0163).** The `.ps1` scripts run unchanged in Windows PowerShell 5.1 (every Windows
+Server) and PowerShell 7, also with their output redirected (scheduled task, remote shell, CI): docker's progress on standard error is shown
+as plain lines and never stops a script; only exit codes count. Every native command goes through `Invoke-Native` in `lib.ps1`; the scripts
+are ASCII-only and write `.env`, `SHA256SUMS`, `manifest.json` and `table-counts.tsv` as UTF-8 without BOM with LF, like the `.sh` twins.
+Install and upgrade also work from a release folder **without `.git`** (a ZIP): the image's revision label is then empty; git is only run
+when `<release>/.git` exists, and a failing `git rev-parse` means "no revision". The version always comes from `deploy/VERSION`.
+
+**Slow networks (ADR 0163).** The image build retries downloads with longer timeouts; change the defaults in `deploy/.env` (build
+arguments, next build):
+
+| Variable | Default | Effect |
+|---|---|---|
+| `NPM_FETCH_RETRIES` / `NPM_FETCH_RETRY_MINTIMEOUT` / `NPM_FETCH_RETRY_MAXTIMEOUT` / `NPM_FETCH_TIMEOUT` | 5 / 20000 / 120000 / 600000 (ms) | npm `fetch-retries`, back-off between attempts, time one request may take |
+| `NUGET_ENHANCED_MAX_NETWORK_TRY_COUNT` / `NUGET_ENHANCED_NETWORK_RETRY_DELAY_MILLISECONDS` | 10 / 3000 | NuGet's per-request attempts and delay (also on HTTP 429). NuGet's 100 s request timeout itself is not configurable |
+| `NUGET_RESTORE_ATTEMPTS` | 3 | whole `dotnet restore` attempts (pause 20 s × attempt; downloaded packages are kept, a retry continues) |
+| `NUGET_RESTORE_DISABLE_PARALLEL` | false | `true`: `dotnet restore --disable-parallel` (fewer simultaneous connections) |
+| `APT_RETRIES` / `APT_HTTP_TIMEOUT` | 5 / 120 (s) | `Acquire::Retries`, HTTP(S) timeout of `apt-get` in the runtime stage |
+
+Tests: `tests/deploy/test-deploy-scripts.sh` (bash) and `tests/deploy/Test-DeployScripts.ps1` (5.1 / 7) run the scripts against a fake
+`docker` in a copy of `deploy/` without `.git` (CI jobs `deploy-scripts` and `deploy-windows`); real Windows with Docker Desktop:
+[`docs/operations/windows-acceptance.md`](../docs/operations/windows-acceptance.md).
+
 The container runs as a non-root user with a read-only root file system (writable: `/tmp` as tmpfs and the files volume), no Linux
 capabilities and `no-new-privileges`. Logs rotate (`LOG_MAX_SIZE`, `LOG_MAX_FILES`).
 

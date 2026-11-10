@@ -132,10 +132,10 @@ test.describe('as an administrator', () => {
     await expect(
       page.getByRole('heading', { level: 1, name: tr(language, 'audit:log.title') }),
     ).toBeVisible();
-    await page.getByLabel(tr(language, 'audit:log.search')).fill(tag);
+    await page.getByRole('main').getByLabel(tr(language, 'audit:log.search')).fill(tag); // not the top-bar search
     await expect(page).toHaveURL(new RegExp(`text=${tag}`));
     await expect(page.getByRole('row', { name: new RegExp(tag) })).toHaveCount(1);
-    await page.getByLabel(tr(language, 'audit:log.search')).fill('');
+    await page.getByRole('main').getByLabel(tr(language, 'audit:log.search')).fill('');
     await expect(page).not.toHaveURL(/text=/);
     await expect(page.getByRole('row').nth(5)).toBeVisible();
     await shot('audit-log');
@@ -252,7 +252,9 @@ test.describe('notifications', () => {
       .toBe(true);
     await page.goto('/');
     const bell = page.getByTestId('notification-bell');
-    await expect(bell.locator('span').filter({ hasText: /\S/ })).toBeVisible({ timeout: 20_000 });
+    await expect(bell.locator('span:not(.sr-only)').filter({ hasText: /\S/ })).toBeVisible({
+      timeout: 20_000,
+    });
     await bell.click();
     const title =
       language === 'ar'
@@ -274,9 +276,10 @@ test.describe('notifications', () => {
     await expect(page).toHaveURL(new RegExp(`/sample/items/${item.id}`));
 
     const email = await latestEmail(page, seed.users.ahmed, since);
-    expect(email.subject).toBe(
-      `يمكنك الآن تعديل البند «بند مشترك ${tag}» | You can now edit “Shared item ${tag}”`,
-    );
+    // Bilingual subject, the recipient's language first (ADR 0162: Ahmed's profile language follows the project).
+    const arabic = `يمكنك الآن تعديل البند «بند مشترك ${tag}»`;
+    const english = `You can now edit “Shared item ${tag}”`;
+    expect(email.subject).toBe(language === 'ar' ? `${arabic} | ${english}` : `${english} | ${arabic}`);
     expect(email.text).toContain('مرحباً');
     expect(email.text).toContain('Hello');
 

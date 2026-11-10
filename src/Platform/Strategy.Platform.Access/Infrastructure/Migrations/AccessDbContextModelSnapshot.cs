@@ -629,6 +629,65 @@ namespace Strategy.Platform.Access.Infrastructure.Migrations
                     b.ToTable("system_access", "access");
                 });
 
+            modelBuilder.Entity("Strategy.Platform.Access.Domain.SystemMemberRolesConfig", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.PrimitiveCollection<string>("AdministratorRoles")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("administrator_roles");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.PrimitiveCollection<string>("ExtraRoles")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("extra_roles");
+
+                    b.Property<string>("SystemCode")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("system_code");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.PrimitiveCollection<string>("UserRoles")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("user_roles");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_system_member_roles");
+
+                    b.HasIndex("SystemCode")
+                        .IsUnique()
+                        .HasDatabaseName("ix_system_member_roles_system_code");
+
+                    b.ToTable("system_member_roles", "access");
+                });
+
             modelBuilder.Entity("Strategy.Platform.Access.Domain.RecordRolePermission", b =>
                 {
                     b.HasOne("Strategy.Platform.Access.Domain.Permission", null)

@@ -4,7 +4,10 @@ All notable changes to the Integrated Strategy System. Format: [Keep a Changelog
 [Semantic Versioning](https://semver.org/). Release notes for users: *About* in the application
 (`src/Host/Strategy.Host/ReleaseNotes/{en,ar}/`). Details per build phase: `docs/phase-summaries/`.
 
-## [1.0.0] — 2026-11-06
+## [1.0.0] — unreleased
+
+Not tagged yet: version 1.0.0 is released (tag `v1.0.0`) at the end of Phase 23 and this entry is then completed to cover Phases 0–23
+(`docs/SPEC-ADDENDUM.md` A7). Phases 0–18 below were accepted by the owner on 7 Nov 2026.
 
 First release. Self-hosted, bilingual (Arabic / English, full RTL) integrated strategy management suite: one application, one database,
 one login, eleven systems on a shared platform.

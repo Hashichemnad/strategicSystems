@@ -38,6 +38,7 @@ Update this file in the same commit that adds a dependency.
 | Microsoft.IdentityModel.Tokens.Saml | MIT | current release in place of Sustainsys.Saml2's 5.2.4 minimum, whose netstandard1.x chain (NETStandard.Library 1.6.1, Microsoft.NETCore.Platforms 1.1.0) carries the non-OSI .NET Library licence |
 | System.Configuration.ConfigurationManager | MIT | current release in place of Sustainsys.Saml2's 4.4.1 minimum (no SPDX metadata) |
 | ClosedXML | MIT | Excel import templates and reports |
+| HtmlSanitizer (+ AngleSharp, AngleSharp.Css) | MIT | server-side allow-list sanitiser and plain-text projection of rich-text fields (`RichText`, Phase 19, [ADR 0161](decisions/0161-rich-text.md)) |
 | Quartz.Extensions.Hosting | Apache-2.0 | scheduled jobs (Quartz.NET with the PostgreSQL job store; the embedded table script is Quartz's own, Apache-2.0) |
 | Quartz.Serialization.SystemTextJson | Apache-2.0 | Quartz job data serialisation |
 | AWSSDK.S3 | Apache-2.0 | optional S3-compatible file storage (MinIO, AWS S3) |
@@ -66,7 +67,8 @@ Update this file in the same commit that adds a dependency.
 ¹ The NetArchTest.Rules package has no licence metadata in its nuspec; MIT verified from
 <https://github.com/BenMorris/NetArchTest/blob/master/LICENSE> (listed in `PackagePolicy.ManuallyVerified`).
 
-Tools: `dotnet-ef` (MIT), local tool in `dotnet-tools.json`.
+Tools: `dotnet-ef` (MIT), local tool in `dotnet-tools.json`. CI only, not shipped (ADR 0163): PSScriptAnalyzer 1.23.0 (MIT, installed
+from the PowerShell Gallery by `tests/deploy/Invoke-ScriptAnalysis.ps1`); the deploy-script tests use Python's standard library only.
 
 ## npm — `web/package.json`
 
@@ -89,6 +91,8 @@ Tools: `dotnet-ef` (MIT), local tool in `dotnet-tools.json`.
 | react-day-picker | MIT | date picker |
 | date-fns | MIT | calendar locales for the date picker |
 | openapi-fetch | MIT | typed HTTP client |
+| @tiptap/react, @tiptap/pm, @tiptap/starter-kit, @tiptap/extension-link, @tiptap/extension-table (+ @tiptap/core and the StarterKit extensions, prosemirror-* MIT, orderedmap MIT, linkifyjs MIT) | MIT | rich-text editor `RichTextEditor` (Phase 19, [ADR 0161](decisions/0161-rich-text.md)) |
+| dompurify | MPL-2.0 OR Apache-2.0 (used under Apache-2.0) | sanitises rich text before rendering (`RichTextView`, ADR 0161) |
 | @fontsource/ibm-plex-sans-arabic, @fontsource/ibm-plex-sans | OFL-1.1 (fonts) | self-hosted fonts (offline installs); the Arabic and Latin WOFF2 files of IBM Plex Sans Arabic are also embedded in `Strategy.Platform.Reporting` for PDFs |
 
 ### Development and build only (not shipped)

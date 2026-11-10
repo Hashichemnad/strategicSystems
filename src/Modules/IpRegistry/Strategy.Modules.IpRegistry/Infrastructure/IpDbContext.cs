@@ -43,6 +43,7 @@ internal sealed class IpRecordConfiguration : IEntityTypeConfiguration<IpRecord>
         builder.Property(x => x.Notes).HasMaxLength(IpRecord.TextMaxLength);
         builder.Property(x => x.MoetRejectionReason).HasMaxLength(2000);
         builder.Property(x => x.SearchText).HasMaxLength(20000);
+        builder.HasTrigramIndex(nameof(IpRecord.SearchText)); // global search (ADR 0160)
         builder.HasIndex(x => x.Number).IsUnique();
         builder.HasIndex(x => x.RequestId).IsUnique();
         builder.HasIndex(x => x.DocumentVersionId).IsUnique();

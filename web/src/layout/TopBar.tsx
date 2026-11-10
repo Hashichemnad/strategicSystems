@@ -7,6 +7,7 @@ import { useTheme, type ThemePreference } from '@/app/theme';
 import { useMe, useSignOut } from '@/features/auth/session';
 import { AskButton } from '@/features/ai/AskDialog';
 import { NotificationBell } from '@/features/notifications/NotificationBell';
+import { GlobalSearch } from '@/features/search/GlobalSearch';
 
 const AboutDialogContent = lazy(() =>
   import('@/features/setup/AboutDialog').then((m) => ({ default: m.AboutDialogContent })),
@@ -40,6 +41,7 @@ export function TopBar({ onOpenMenu }: { onOpenMenu: () => void }) {
       >
         <Menu aria-hidden />
       </Button>
+      <GlobalSearch />
       <div className="flex-1" />
       <AskButton />
       <NotificationBell />

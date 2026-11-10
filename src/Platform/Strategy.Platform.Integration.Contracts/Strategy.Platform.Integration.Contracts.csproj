@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- External references (ADR 0164, 0165): what modules use to find / link records by a source system's ID. No EF Core, no ASP.NET Core. -->
+  <ItemGroup>
+    <ProjectReference Include="..\Strategy.Platform.Kernel\Strategy.Platform.Kernel.csproj" />
+  </ItemGroup>
+</Project>

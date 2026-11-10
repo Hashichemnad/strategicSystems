@@ -1371,6 +1371,16 @@ const jobsRoute = createRoute({
   component: lazyRouteComponent(() => import('@/features/jobs/JobsPage'), 'JobsPage'),
 });
 
+// Settings → Integrations → Source systems (ADR 0164).
+const sourceSystemsRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/integrations/source-systems',
+  component: lazyRouteComponent(
+    () => import('@/features/integration/SourceSystemsPage'),
+    'SourceSystemsPage',
+  ),
+});
+
 // Administrator Health page (ADR 0151).
 const healthRoute = createRoute({
   getParentRoute: () => settingsLayout,
@@ -1515,6 +1525,20 @@ export const taskReassignRoute = createRoute({
   component: lazyRouteComponent(() => import('@/features/tasks/ReassignTasksPage'), 'ReassignTasksPage'),
 });
 
+// System → Settings → Responsibilities (ADR 0168): one page, the system and kind in the search (only systems the user manages).
+export const responsibilitiesRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/responsibilities',
+  validateSearch: z.object({
+    system: z.string().max(40).optional().catch(undefined),
+    kind: z.string().max(60).optional().catch(undefined),
+  }),
+  component: lazyRouteComponent(
+    () => import('@/features/access/ResponsibilitiesPage'),
+    'ResponsibilitiesPage',
+  ),
+});
+
 const mcpSettingsRoute = createRoute({
   getParentRoute: () => settingsLayout,
   path: '/mcp',
@@ -1537,6 +1561,19 @@ const reviewRoute = createRoute({
   getParentRoute: () => settingsLayout,
   path: '/access/review',
   component: lazyRouteComponent(() => import('@/features/access/AccessPages'), 'ReviewPage'),
+});
+
+// Members per system (SPEC-ADDENDUM §D1, ADRs 0166 / 0167): also open to delegated system administrators.
+const membersHubRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/members',
+  component: lazyRouteComponent(() => import('@/features/access/MembersPage'), 'MembersHubPage'),
+});
+
+const systemMembersRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/members/$system',
+  component: lazyRouteComponent(() => import('@/features/access/MembersPage'), 'SystemMembersPage'),
 });
 
 export const rolesRoute = createRoute({
@@ -1699,6 +1736,7 @@ const routeTree = rootRoute.addChildren([
       filesSettingsRoute,
       jobsRoute,
       healthRoute,
+      sourceSystemsRoute,
       demoPackRoute,
       businessHoursRoute,
       holidaysRoute,
@@ -1719,6 +1757,9 @@ const routeTree = rootRoute.addChildren([
       benchSettingsRoute,
       auditSettingsRoute,
       taskReassignRoute,
+      membersHubRoute,
+      systemMembersRoute,
+      responsibilitiesRoute,
       rolesRoute,
       assignmentsRoute,
       systemAccessRoute,

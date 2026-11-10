@@ -24,7 +24,7 @@ test('employees are imported from CSV only after the validation report is clean'
   const next = () => page.getByRole('button', { name: tr(language, 'common:actions.next') }).click();
 
   await page.goto('/org/import');
-  await page.getByRole('combobox').click();
+  await page.getByRole('main').getByRole('combobox').click(); // not the top-bar search
   await page.getByRole('option', { name: tr(language, 'import:kinds.employees') }).click();
   const download = page.waitForEvent('download');
   await page.getByRole('link', { name: tr(language, 'import:downloadTemplate') }).click();

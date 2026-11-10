@@ -138,6 +138,15 @@ internal static class AdminEndpoints
             fields.Add(new FieldError("mfaPolicy", "validation.unknownCode", "validation.unknownCode"));
         }
 
+        foreach (var (field, value) in new[] { ("securityContactAr", body.SecurityContactAr), ("securityContactEn", body.SecurityContactEn) })
+        {
+            if (value is { Length: > SecuritySettings.SecurityContactMaxLength })
+            {
+                fields.Add(new FieldError(field, "validation.maximumLength", "validation.maximumLength",
+                    new Dictionary<string, object?> { ["maxLength"] = SecuritySettings.SecurityContactMaxLength }));
+            }
+        }
+
         if (!body.MfaAllowTotp && !body.MfaAllowEmail)
         {
             fields.Add(new FieldError("mfaAllowTotp", "identity.settings.noMfaMethod", "identity.errors.noMfaMethod"));
@@ -286,12 +295,15 @@ public sealed record SecuritySettingsDto(
     bool RequireLocalMfaAfterSso,
     int TokenDefaultDays,
     int TokenMaxDays,
-    uint Version)
+    uint Version,
+    bool NotifyNewDevice = false,
+    string? SecurityContactAr = null,
+    string? SecurityContactEn = null)
 {
     public static SecuritySettingsDto From(SecuritySettings s) => new(
         s.PasswordMinLength, s.PasswordRequireUpper, s.PasswordRequireLower, s.PasswordRequireDigit, s.PasswordRequireSymbol, s.PasswordHistory,
         s.LockoutThreshold, s.LockoutMinutes, s.SessionIdleMinutes, s.SessionAbsoluteHours, s.MfaPolicy, s.MfaAllowTotp, s.MfaAllowEmail,
-        s.RequireLocalMfaAfterSso, s.TokenDefaultDays, s.TokenMaxDays, s.Version);
+        s.RequireLocalMfaAfterSso, s.TokenDefaultDays, s.TokenMaxDays, s.Version, s.NotifyNewDevice, s.SecurityContactAr, s.SecurityContactEn);
 
     public void ApplyTo(SecuritySettings s)
     {
@@ -312,6 +324,9 @@ public sealed record SecuritySettingsDto(
         s.RequireLocalMfaAfterSso = RequireLocalMfaAfterSso;
         s.TokenDefaultDays = TokenDefaultDays;
         s.TokenMaxDays = TokenMaxDays;
+        s.NotifyNewDevice = NotifyNewDevice;
+        s.SecurityContactAr = string.IsNullOrWhiteSpace(SecurityContactAr) ? null : SecurityContactAr.Trim();
+        s.SecurityContactEn = string.IsNullOrWhiteSpace(SecurityContactEn) ? null : SecurityContactEn.Trim();
     }
 }
 

@@ -29,7 +29,7 @@
       "description": "Change any label of the interface in Arabic and English."
     },
     "roles": {
-      "title": "Roles and permissions",
+      "title": "Advanced permissions",
       "description": "The permission matrix of each system: roles, permissions and data scope."
     },
     "assignments": {
@@ -112,6 +112,10 @@
       "title": "Tasks",
       "description": "Workflow per task type, who can be assigned, reminders, escalation and digest."
     },
+    "responsibilities": {
+      "title": "Responsibilities",
+      "description": "Assign or reassign who is responsible for updating records of a system, one by one or in bulk, with filters, a preview and a reason."
+    },
     "tasksReassign": {
       "title": "Reassign open tasks of an employee",
       "description": "When someone leaves or moves: preview their open tasks, then give them to another employee or hand them back to their creators. Everyone involved is notified and the action is audited."
@@ -171,6 +175,14 @@
     "setup": {
       "title": "Setup wizard",
       "description": "First-run guided configuration: e-mail, sign-in, AI, calendar, organisation import and systems."
+    },
+    "sourceSystems": {
+      "title": "Source systems",
+      "description": "The systems external IDs come from (Salesforce, SAP, …), used by imports, the API and synchronisation."
+    },
+    "members": {
+      "title": "Members",
+      "description": "Administrators, users and extra roles of each system, without the matrix."
     }
   },
   "title": "Settings",

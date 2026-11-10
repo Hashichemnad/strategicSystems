@@ -44,6 +44,7 @@ import {
 import { ReasonDialog, RemarkDialog } from './forms';
 import { RemarkActionsTab } from './RemarkActionsTab';
 import { RootCauseTab } from './RootCauseTab';
+import { ExternalReferencesSection, OriginBadge } from '@/features/integration/ExternalReferences';
 
 const route = getRouteApi('/app/cap/remarks/$remarkId');
 
@@ -87,6 +88,7 @@ export function CapRemarkPage() {
         }
         meta={
           <div className="flex flex-wrap items-center gap-2" data-testid="cap-remark-meta">
+            <OriginBadge type="cap.remark" id={r.id} />
             <RemarkStatusChip status={r.status} />
             <PriorityChip priority={r.values.priority} />
             {r.overdue && <StatusChip tone="danger">{t('remark.overdue')}</StatusChip>}
@@ -172,6 +174,7 @@ export function CapRemarkPage() {
         </TabsList>
         <TabsContent value="overview">
           <Overview remark={r} />
+          <ExternalReferencesSection type="cap.remark" id={r.id} />
         </TabsContent>
         <TabsContent value="root-cause">
           <RootCauseTab remark={r} />

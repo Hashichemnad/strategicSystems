@@ -6,6 +6,7 @@ using Strategy.Platform.Access;
 using Strategy.Platform.Audit;
 using Strategy.Platform.Kernel.Results;
 using Strategy.Platform.Organisation.Contracts;
+using Strategy.Platform.Reporting.Datasets;
 using Strategy.Platform.Reporting.Domain;
 using Strategy.Platform.Reporting.Excel;
 using Strategy.Platform.Reporting.Infrastructure;
@@ -51,7 +52,7 @@ public sealed record ExportedFile(byte[] Content, string ContentType, string Fil
 /// </summary>
 public sealed class ReportService(
     MetricRegistry registry, IAccessService access, ReportingDbContext db, ILookupService lookups, IOrgDirectory org, IEmployeeDirectory employees,
-    ISettingsStore settings, IPdfRenderer pdf, IAuditLog audit, DashboardService dashboards)
+    ISettingsStore settings, IPdfRenderer pdf, IAuditLog audit, DashboardService dashboards, ExternalReferenceColumns externalColumns)
 {
     public const int MaxPageSize = 200;
 
@@ -70,7 +71,34 @@ public sealed class ReportService(
             }
         }
 
+        if (await externalColumns.ResourceTypeOfAsync(dataset, ct).ConfigureAwait(false) is not null)
+        {
+            allowed.AddRange(ExternalReferenceColumns.Fields);
+        }
+
         return allowed;
+    }
+
+    /// <summary>Runs the module's query without the engine's own external-reference columns, then fills them from the row ids.</summary>
+    private async Task<ReportResult> ExecuteAsync(
+        DatasetDefinition dataset, IReportingDatasetSource source, ReportDefinition effective, int skip, int take, ClaimsPrincipal user, CancellationToken ct)
+    {
+        var moduleColumns = effective.Columns.Where(c => !ExternalReferenceColumns.IsVirtual(c)).ToList();
+        var external = moduleColumns.Count != effective.Columns.Count;
+        if (moduleColumns.Count == 0)
+        {
+            // Only external columns asked for: the module still runs (scope, filters, paging) on its first field.
+            moduleColumns.Add(dataset.Fields[0].Code);
+        }
+
+        var result = await source.RunAsync(new ReportQuery(dataset.Code, moduleColumns, effective.Filters, effective.GroupBy, effective.Sort, skip, take), user, ct)
+            .ConfigureAwait(false);
+        if (!external || await externalColumns.ResourceTypeOfAsync(dataset, ct).ConfigureAwait(false) is not { } type)
+        {
+            return result;
+        }
+
+        return await externalColumns.FillAsync(type, effective.Columns, result, ct).ConfigureAwait(false);
     }
 
     public async Task<IReadOnlyList<DatasetDto>> DatasetsAsync(ClaimsPrincipal user, CancellationToken ct)
@@ -108,7 +136,8 @@ public sealed class ReportService(
 
         var allowed = await AllowedFieldsAsync(dataset, user, ct).ConfigureAwait(false);
         var byCode = allowed.ToDictionary(f => f.Code, StringComparer.Ordinal);
-        var declared = dataset.Fields.Select(f => f.Code).ToHashSet(StringComparer.Ordinal);
+        var declared = dataset.Fields.Select(f => f.Code).Concat(allowed.Where(f => ExternalReferenceColumns.IsVirtual(f.Code)).Select(f => f.Code))
+            .ToHashSet(StringComparer.Ordinal);
         var errors = new List<FieldError>();
         if (definition.Columns.Count is 0 or > 40)
         {
@@ -156,9 +185,16 @@ public sealed class ReportService(
             return Error.Validation([new FieldError("columns", "reporting.errors.fieldNotAllowed", "reporting.errors.fieldNotAllowed")]);
         }
 
-        // Grouped results also carry the group fields first.
+        // Grouped results also carry the group fields first; they have no row ids, so the external-reference columns are dropped.
         if (effective.GroupBy.Count > 0)
         {
+            dropped.AddRange(effective.Columns.Where(ExternalReferenceColumns.IsVirtual));
+            effective = effective with { Columns = effective.Columns.Where(c => !ExternalReferenceColumns.IsVirtual(c)).ToList() };
+            if (effective.Columns.Count == 0)
+            {
+                return Error.Validation([new FieldError("columns", "reporting.errors.groupBy", "reporting.errors.groupBy")]);
+            }
+
             effective = effective with { Columns = effective.GroupBy.Concat(effective.Columns.Where(c => !effective.GroupBy.Contains(c))).ToList() };
         }
 
@@ -189,8 +225,7 @@ public sealed class ReportService(
         ReportResult result;
         try
         {
-            result = await source.RunAsync(new ReportQuery(dataset.Code, effective.Columns, effective.Filters, effective.GroupBy, effective.Sort, (p - 1) * size, size), user, ct)
-                .ConfigureAwait(false);
+            result = await ExecuteAsync(dataset, source, effective, (p - 1) * size, size, user, ct).ConfigureAwait(false);
         }
         catch (ArgumentException)
         {
@@ -213,8 +248,7 @@ public sealed class ReportService(
         var (dataset, source, fields, dropped, effective) = prepared.Value;
         try
         {
-            var result = await source.RunAsync(new ReportQuery(dataset.Code, effective.Columns, effective.Filters, effective.GroupBy, effective.Sort, 0, limit), user, ct)
-                .ConfigureAwait(false);
+            var result = await ExecuteAsync(dataset, source, effective, 0, limit, user, ct).ConfigureAwait(false);
             return await FormatAsync(dataset, fields, result, dropped, 1, limit, language, ct).ConfigureAwait(false);
         }
         catch (ArgumentException)

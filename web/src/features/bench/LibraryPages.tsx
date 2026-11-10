@@ -47,6 +47,8 @@ import {
   type PracticeSearch,
 } from './api';
 import { BenchPageLayout, StageChip, useBenchAction, useBenchLabels, useBenchT } from './components';
+import { SystemSettingsLinks } from '@/features/access/SystemSettingsLinks';
+import { ResponsibilitiesLink } from '@/features/access/ResponsibilitiesLink';
 
 const ALL = '__all';
 
@@ -555,6 +557,7 @@ export function BenchSettingsPage() {
   const set = (patch: Partial<BenchSettings>) => setValue((v) => (v ? { ...v, ...patch } : v));
   return (
     <div className="flex flex-col gap-6" data-testid="bench-settings">
+      <ResponsibilitiesLink system="bench" />
       <PageHeader
         title={t('settings.title')}
         description={t('settings.description')}
@@ -576,6 +579,7 @@ export function BenchSettingsPage() {
           </Button>
         }
       />
+      <SystemSettingsLinks system="bench" />
       <Section title={t('settings.notices')}>
         <div className="grid gap-3 md:grid-cols-2">
           <FormField label={t('settings.searchNoticeDays')}>
