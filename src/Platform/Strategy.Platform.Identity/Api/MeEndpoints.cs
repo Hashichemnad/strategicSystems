@@ -44,7 +44,7 @@ internal static class MeEndpoints
     }
 
     private static async Task<Results<Ok<MeDto>, ProblemHttpResult>> GetMeAsync(
-        HttpContext context, StrategyUserManager users, IEmployeeDirectory employees, IOrgDirectory org, CancellationToken ct)
+        HttpContext context, StrategyUserManager users, IEmployeeDirectory employees, IOrgDirectory org, ISettingsStore settingsStore, CancellationToken ct)
     {
         var user = await CurrentAsync(context, users);
         if (user is null)
@@ -59,13 +59,20 @@ internal static class MeEndpoints
             employee = new MeEmployeeDto(e.Id, e.EmployeeNo, e.NameAr, e.NameEn, e.UnitId, unit?.NameAr, unit?.NameEn);
         }
 
+        var settings = await settingsStore.GetAsync<AppearanceSettings>(ct);
+        var effective = AppearanceResolver.Resolve(settings, user.UiTheme, user.Theme);
+        var appearance = new MeAppearanceDto(
+            effective.Theme, effective.Mode, user.UiTheme, user.LandingApp, FavouriteApps(user.FavouriteApps),
+            settings.AllowUserTheme, settings.AllowUserMode, settings.Themes);
+
         return TypedResults.Ok(new MeDto(
             user.Id, user.UserName!, user.Email, user.PrincipalType, user.Language, user.Theme, employee,
-            user.TwoFactorEnabled, user.HasLocalPassword, context.User.FindFirst(StrategyClaims.AuthMethod)?.Value ?? AuthMethods.Password));
+            user.TwoFactorEnabled, user.HasLocalPassword, context.User.FindFirst(StrategyClaims.AuthMethod)?.Value ?? AuthMethods.Password,
+            appearance));
     }
 
     private static async Task<Results<NoContent, ProblemHttpResult>> PreferencesAsync(
-        PreferencesInput body, HttpContext context, StrategyUserManager users)
+        PreferencesInput body, HttpContext context, StrategyUserManager users, ISettingsStore settingsStore, CancellationToken ct)
     {
         var fields = new List<FieldError>();
         if (body.Language is not null && body.Language is not ("ar" or "en"))
@@ -76,6 +83,29 @@ internal static class MeEndpoints
         if (body.Theme is not null && body.Theme is not ("light" or "dark" or "system"))
         {
             fields.Add(new FieldError("theme", "validation.unknownCode", "validation.unknownCode"));
+        }
+
+        // Theme and mode choices only while Settings → Appearance allows them (ADR 0171); "" clears the theme choice.
+        var appearance = await settingsStore.GetAsync<AppearanceSettings>(ct);
+        if (body.Theme is not null && !appearance.AllowUserMode && fields.Count == 0)
+        {
+            fields.Add(new FieldError("theme", "appearance.errors.modeChoiceOff", "appearance.errors.modeChoiceOff"));
+        }
+
+        if (body.UiTheme is { Length: > 0 } && AppearanceResolver.ValidateUserTheme(appearance, body.UiTheme) is { } themeError)
+        {
+            fields.Add(themeError);
+        }
+
+        if (body.LandingApp is { Length: > 0 } && !AppearanceCatalogue.IsApp(body.LandingApp))
+        {
+            fields.Add(new FieldError("landingApp", "validation.unknownCode", "validation.unknownCode"));
+        }
+
+        if (body.FavouriteApps is { } favourites
+            && (favourites.Count > AppearanceCatalogue.MaxFavourites || favourites.Any(a => !AppearanceCatalogue.IsApp(a))))
+        {
+            fields.Add(new FieldError("favouriteApps", "validation.unknownCode", "validation.unknownCode"));
         }
 
         if (fields.Count > 0)
@@ -91,9 +121,27 @@ internal static class MeEndpoints
 
         user.Language = body.Language ?? user.Language;
         user.Theme = body.Theme ?? user.Theme;
+        if (body.UiTheme is not null)
+        {
+            user.UiTheme = body.UiTheme.Length == 0 ? null : body.UiTheme;
+        }
+
+        if (body.LandingApp is not null)
+        {
+            user.LandingApp = body.LandingApp.Length == 0 ? null : body.LandingApp;
+        }
+
+        if (body.FavouriteApps is { } apps)
+        {
+            user.FavouriteApps = apps.Count == 0 ? null : string.Join(',', apps.Distinct(StringComparer.Ordinal));
+        }
+
         await users.UpdateAsync(user);
         return TypedResults.NoContent();
     }
+
+    private static List<string> FavouriteApps(string? stored) =>
+        string.IsNullOrEmpty(stored) ? [] : stored.Split(',', StringSplitOptions.RemoveEmptyEntries).Where(AppearanceCatalogue.IsApp).ToList();
 
     private static async Task<Results<NoContent, ProblemHttpResult>> ChangePasswordAsync(
         ChangePasswordInput body, HttpContext context, StrategyUserManager users, SignInService signIn, StrategySignInManager signInManager,
@@ -444,7 +492,22 @@ public sealed record MeDto(
     MeEmployeeDto? Employee,
     bool MfaEnabled,
     bool HasPassword,
-    string AuthMethod);
+    string AuthMethod,
+    MeAppearanceDto Appearance);
+
+/// <summary>
+/// The user's effective theme and mode (resolved on the server, ADR 0171), their stored theme choice, default app, favourite apps, and what
+/// Settings → Appearance lets them choose.
+/// </summary>
+public sealed record MeAppearanceDto(
+    string Theme,
+    string Mode,
+    string? ThemeChoice,
+    string? LandingApp,
+    IReadOnlyList<string> FavouriteApps,
+    bool AllowUserTheme,
+    bool AllowUserMode,
+    IReadOnlyList<string> EnabledThemes);
 
 public sealed record MyMfaDto(
     bool Enabled, bool Totp, bool Email, int RecoveryCodesLeft, bool RequiredByPolicy, bool TotpAllowed, bool EmailAllowed);
@@ -452,7 +515,8 @@ public sealed record MyMfaDto(
 public sealed record SessionDto(
     Guid Id, string Method, string? Provider, DateTimeOffset CreatedAt, DateTimeOffset LastSeenAt, string? IpAddress, string? UserAgent, bool Current);
 
-internal sealed record PreferencesInput(string? Language, string? Theme);
+internal sealed record PreferencesInput(
+    string? Language, string? Theme, string? UiTheme = null, string? LandingApp = null, IReadOnlyList<string>? FavouriteApps = null);
 
 internal sealed record ChangePasswordInput(string? CurrentPassword, string? NewPassword);
 

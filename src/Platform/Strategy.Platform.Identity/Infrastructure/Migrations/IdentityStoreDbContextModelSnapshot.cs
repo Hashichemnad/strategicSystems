@@ -622,6 +622,16 @@ namespace Strategy.Platform.Identity.Infrastructure.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("employee_id");
 
+                    b.Property<string>("FavouriteApps")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("favourite_apps");
+
+                    b.Property<string>("LandingApp")
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("landing_app");
+
                     b.Property<string>("Language")
                         .HasMaxLength(10)
                         .HasColumnType("character varying(10)")
@@ -692,6 +702,11 @@ namespace Strategy.Platform.Identity.Infrastructure.Migrations
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("boolean")
                         .HasColumnName("two_factor_enabled");
+
+                    b.Property<string>("UiTheme")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("ui_theme");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
