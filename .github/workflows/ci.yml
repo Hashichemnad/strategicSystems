@@ -42,9 +42,11 @@ jobs:
         run: dotnet build Strategy.slnx -c Release --no-restore
       - name: Format
         run: dotnet format Strategy.slnx --verify-no-changes --no-restore
-      - name: Tests (unit, architecture, integration with Testcontainers)
-        # TRX per test project: the job log is too long to show which test failed; the results are uploaded below.
-        run: dotnet test --solution Strategy.slnx -c Release --no-build --report-xunit-trx --results-directory ${{ github.workspace }}/TestResults
+      - name: Tests (unit, architecture)
+        # The integration tests run in the "integration" job, in two shards (one runner for the whole suite ran out of resources).
+        run: |
+          dotnet test --project tests/Strategy.UnitTests -c Release --no-build --report-xunit-trx --results-directory ${{ github.workspace }}/TestResults
+          dotnet test --project tests/Strategy.ArchitectureTests -c Release --no-build --report-xunit-trx --results-directory ${{ github.workspace }}/TestResults
       - name: Name the failing tests
         if: failure()
         # The job log is too long for its end to show which test failed: print each failed test and its message from the TRX files.
@@ -73,6 +75,58 @@ jobs:
           (cd web && npm ci --no-audit --no-fund)
           tools/check-api-client.sh
 
+  integration:
+    name: Integration tests (${{ matrix.shard }})
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        # Module systems / platform (everything else): together exactly the whole suite (checked with --list-tests).
+        shard: [modules, platform]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - name: Tesseract OCR with Arabic and English data (ADR 0033)
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends tesseract-ocr tesseract-ocr-ara tesseract-ocr-eng
+      - name: Restore and build
+        run: |
+          dotnet tool restore
+          dotnet build tests/Strategy.IntegrationTests -c Release
+      - name: Integration tests (Testcontainers)
+        run: |
+          # Memory and disk once a minute: if the runner is lost again, the log shows what ran out.
+          (while true; do echo "resources $(date -u +%H:%M) $(free -m | awk '/Mem:/ {print "mem used " $3 " / " $2 " MB"}') $(df -h / | awk 'NR==2 {print "disk " $3 " / " $2}')"; sleep 60; done) &
+          modules="Portfolio Tasks Reporting Kpi Teams AuditManagement Risk Requests Cap Bench"
+          filters=()
+          for n in $modules; do
+            if [ "${{ matrix.shard }}" = modules ]; then filters+=(--filter-namespace "Strategy.IntegrationTests.$n*"); else filters+=(--filter-not-namespace "Strategy.IntegrationTests.$n*"); fi
+          done
+          dotnet test --project tests/Strategy.IntegrationTests -c Release --no-build "${filters[@]}" --report-xunit-trx --results-directory ${{ github.workspace }}/TestResults
+      - name: Name the failing tests
+        if: failure()
+        # The job log is too long for its end to show which test failed: print each failed test and its message from the TRX files.
+        run: |
+          python3 - <<'PY'
+          import glob, xml.etree.ElementTree as ET
+          ns = {'t': 'http://microsoft.com/schemas/VisualStudio/TeamTest/2010'}
+          for path in glob.glob('TestResults/**/*.trx', recursive=True):
+              for r in ET.parse(path).getroot().iterfind('.//t:UnitTestResult', ns):
+                  if r.get('outcome') == 'Failed':
+                      message = r.find('.//t:Message', ns)
+                      print(f"::error::{r.get('testName')}")
+                      print((message.text or '')[:2000] if message is not None else '')
+          PY
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dotnet-test-results-${{ matrix.shard }}
+          path: TestResults/**/*.trx
+          retention-days: 14
+
+
   frontend:
     name: Front end (lint, format, types, tests, build, audit, licences)
     runs-on: ubuntu-24.04
@@ -100,7 +154,7 @@ jobs:
 
   e2e:
     name: E2E (Arabic + English)
-    needs: [backend, frontend]
+    needs: [backend, integration, frontend]
     runs-on: ubuntu-24.04
     services:
       postgres:
@@ -161,7 +215,7 @@ jobs:
 
   docker:
     name: Container image (build, scan, SBOM, deploy scripts)
-    needs: [backend, frontend]
+    needs: [backend, integration, frontend]
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
