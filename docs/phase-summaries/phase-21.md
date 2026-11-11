@@ -32,7 +32,18 @@ Requirements: [`docs/SPEC-ADDENDUM.md`](../SPEC-ADDENDUM.md) §E (E1–E3), SPEC
 | Report types administration, My reports, folders | `ReportTypesTests.Report_types_are_administered_only_by_reporting_administrators…` (seeded types, cross-system relationships in the metadata, validation message keys, 403 for others, inactive types hidden); `Every_user_keeps_my_reports_and_private_folders…` |
 | Seeded templates valid | `DossierTests.Every_seeded_template_is_valid_and_offered_to_readers_of_its_record_type` (all 7 seeded, record picker scoped) |
 
-QUALITY_GATES
+## Quality gates run (local)
+
+| Gate | Result |
+|---|---|
+| `dotnet build Strategy.slnx` | 0 warnings, 0 errors |
+| `dotnet format Strategy.slnx --verify-no-changes` | clean (after formatting the Phase 21 files) |
+| `dotnet test --solution Strategy.slnx` (unit, architecture, integration) | 5 361 / 5 370 in the full parallel run; the 9 others: 8 OCR tests (Tesseract was not installed in this sandbox — CI installs it) and `SecurityHardeningTests.Identity_provider_urls…` (a sign-in request timed out after 3 min under the full parallel load). After installing Tesseract, the 14 OCR unit tests and both integration tests pass when rerun. Architecture 32 / 32 |
+| Phase 21 tests | unit `ReportTypeEngineTests` 24 / 24, `DossierRenderingTests` 6 / 6; integration `ReportTypesTests` 5 / 5, `DossierTests` 4 / 4; authorization matrix + endpoint catalogue 2 715 / 2 715; Phase 17 `ReportingEngineTests` 7 / 7 |
+| Web: `lint` (incl. RTL class check), `format:check`, `typecheck`, `test`, `build` | pass; Vitest 468 / 468 |
+| `npm audit --audit-level=high`, `lint:licenses` | no high / critical (moderate only, dev tooling); 669 packages, all allowed licences |
+| `tools/check-vulnerable.sh`, `tools/check-api-client.sh` | no High / Critical NuGet vulnerabilities; OpenAPI document and TS client up to date |
+| Playwright `reporting2.spec.ts` (`ar` + `en`) | 2 / 2 (after `portfolio-projects.spec.ts`, which creates the projects). The Phase 17 `reporting.spec.ts` was adapted to the new builder controls (report type instead of object) but not rerun locally — it waits several minutes for the aggregate refresh; CI runs it |
 
 ## Decisions (ADRs, proposed — awaiting the owner)
 0180 reportable metadata contract · 0181 report types and joins in the reporting layer · 0182 builder: grouping, summaries, charts,

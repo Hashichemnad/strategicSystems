@@ -172,8 +172,14 @@
       "title": "Reporting",
       "description": "Department level, fiscal year, refresh of aggregates, scheduled delivery and the department scorecard limits."
     },
-    "reportTypes": {"title": "Report types", "description": "Primary and related record types (also across systems), with or without related records, and the fields offered to the report builder."},
-    "dossierTemplates": {"title": "Dossier templates", "description": "Design the PDF and Word dossiers of a record: cover, header and footer, sections bound to the record or related lists, charts, Gantt, KPI trend, risk matrix, approvals and attachments."},
+    "reportTypes": {
+      "title": "Report types",
+      "description": "Primary and related record types (also across systems), with or without related records, and the fields offered to the report builder."
+    },
+    "dossierTemplates": {
+      "title": "Dossier templates",
+      "description": "Design the PDF and Word dossiers of a record: cover, header and footer, sections bound to the record or related lists, charts, Gantt, KPI trend, risk matrix, approvals and attachments."
+    },
     "demoPack": {
       "title": "Demo data",
       "description": "Sample organisation, users and records in every system for presentations — removable."
