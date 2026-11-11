@@ -10,7 +10,7 @@ required CI visual-regression job).
 | Item | Result | Design / ADR |
 |---|---|---|
 | **Three themes × light / dark × AR / EN** | One component library, token sets per theme on `<html data-theme>` (`web/src/styles/index.css`): **Classic** = the Phase 0–19 tokens byte for byte (default, unchanged); **Enterprise** = compact (root 93.75 %), square, cool grey canvas, white work surfaces, light elevation; **Modern** = warm paper canvas, 0.875 rem radius, soft elevation, generous spacing, **Noto Kufi Arabic** headings in Arabic (OFL), Arabic line height 1.75, one 160 ms entrance motion that `prefers-reduced-motion` removes. New layout tokens (`--control-h`, `--cell-py`, `--shadow-card`, `--header`, `--app-accent`, `--font-heading`) carry density, elevation and accent; Classic's values equal the old sizes | `themes.md` §3, 0170 |
-| **Layout slots, no duplicated screens** | Only the shell and six shared components read the theme (`useAppearance`): `AppShell` (Classic sidebar / workspace shell), **`RecordLayout`** (stack · Enterprise highlights panel + path + two columns with related lists · Modern card layout with key facts), **`SplitView`** + `useListView` + `ListViewToggle` (table / list + preview), `StageStepper` (circles · **path bar** with "Current stage" guidance · progress track), `TabsList` / `TabsTrigger` (underline · boxed with accent top bar · pills), `PageHeader` (title scale). Adopted on the project record page and the project list; every other screen follows through the shared components and tokens | `themes.md` §4, 0170 |
+| **Layout slots, no duplicated screens** | Only the shell and six shared components read the theme (`useAppearance`): `AppShell` (Classic sidebar / workspace shell), **`RecordLayout`** (stack · Enterprise highlights panel + path + two columns with related lists · Modern card layout with key facts), **`SplitView`** + `useListView` + `ListViewToggle` (table / list + preview), `StageStepper` (circles · **path bar** with "Current stage" guidance · progress track), `TabsList` / `TabsTrigger` (underline · boxed with accent top bar · pills), `PageHeader` (title scale). `RecordLayout` adopted on **13 record pages** (project, program request, Request Framework request, risk, KPI card, document, IP record, audit finding, CAP remark, benchmarking study, team, task, sample item) with key fields as highlights and related lists with counts already on the record; `SplitView` on the project list; every other screen follows through the shared components and tokens | `themes.md` §4, 0170 |
 | **Settings → Appearance** | Typed area `appearance` (versioned, audited, `settings.general.manage`): available themes, default theme (Classic) and mode (same as device), **Allow users to choose their theme — off by default**, allow light / dark (on: today's behaviour), **landing app per role** (ordered rules), per-app **name AR / EN, icon, accent colour (contrast warning < 3 : 1), tab order, hidden tabs, home dashboard**; live token previews of each theme; branding note (logo and primary colour apply in every theme) | `themes.md` §7, 0171 |
 | **Theme / mode resolution on the server** | `AppearanceResolver` (Platform.Settings): user theme only while choosing is on **and** the theme is enabled, else the default; mode likewise with `allowUserMode`. `GET /identity/me` returns the effective values; `PUT /identity/me/preferences` accepts `uiTheme` / `landingApp` / `favouriteApps` (migration `Appearance` on `identity.users`) and refuses a choice that is not allowed (422 `appearance.errors.*`); `GET /settings/public` adds the defaults for the sign-in pages | 0171 |
 | **App launcher and workspaces** | App registry (`web/src/layout/apps.ts`, 16 apps = server catalogue): the 11 systems + Sample, shared **My Work, Dashboards, Tasks, Teams, Organisation, Settings**. Launcher (grid button): search in both languages, favourites first, systems, shared apps, star to pin, arrow-key navigation. Workspace per app: header with icon / accent / name, **its own tabs** (Enterprise tab bar · Modern collapsible sidebar with favourites and recent items), the module's secondary navigation hidden there (one navigation per page). **Home page** `/apps/<app>`: quick actions (permission-filtered), *My items in …* (My Work filtered by system), the Phase 17 system dashboard. Routes unchanged: the current app is derived from the URL, so **deep links work in every theme**; `/my-work` added | `themes.md` §5, 0172 |
@@ -75,12 +75,26 @@ package) — CI runs them.
   0171); Classic keeps My Work at `/` (no landing redirect, ADR 0173); no landing rules are seeded (role codes are installation data);
   per-app settings reuse `settings.general.manage` (no new permission).
 
+## Closed after the owner's review (11 Nov 2026)
+- **Landing fallback** confirmed and tested (ADR 0173): no rule matching the user's roles → My Work (Vitest + E2E in ar / en).
+- **Visual regression in CI** (ADR 0175 amended): job *Visual regression (themes)* runs `tools/visual-regression.sh` — Playwright image
+  pinned by digest, product fonts installed from the locked npm packages, fresh Development database; baselines regenerated from that
+  container (`UPDATE_SNAPSHOTS=1`). Defect found by its first CI run and fixed: the build's OpenAPI generation started the host against the
+  job's Development database and seeded it without the authenticator key, so the database variables are now set on the host step only.
+- **Workspace tabs follow the modules' own navigation rules** (`gateTabs`, unit-tested): Audit Office-only calendar, my department for
+  non-office users, lifecycle universe / plans, Risk dashboard / project risks / reports, KPI new year — only the current app's options are
+  requested.
+- **`RecordLayout` on 12 more record pages** (above). Classic keeps the same blocks in the same order; module sub-navigation is rendered
+  just before the back link (hidden in the workspace themes). Verified: typecheck, lint, Vitest (225 tests in the touched modules); Classic
+  E2E specs of risk, KPI, CAP / benchmarking, tasks, teams, requests, portfolio, audit and sample in ar + en — 32 / 32 (two first-run
+  failures were environmental: a demo-pack unit with the same name as the spec's unit, and one slow Gotenberg render; both pass on re-run).
+
 ## Known gaps
-- `RecordLayout` (highlights + related lists) and `SplitView` are adopted on the **project** record page and the **project** list; the
-  other record and list pages get the theme's header, path bar, tabs, cards and density through the shared components but keep their
-  single-column arrangement until moved to `RecordLayout` (mechanical, per page).
-- Workspace tabs filter by permission; a few module navigations also hid entries by module options (e.g. Audit Office-only calendar); in the
-  workspace themes such a tab can be visible to a user whose page then answers with its own access check.
+- `SplitView` (list + preview) is adopted on the project list only; the other lists keep the table in every theme (they get the theme's
+  density and tokens). Record pages not listed above (vendor, review, KPI result, CAP action, audit recommendation / plan / engagement,
+  request-type pages) keep the single-column arrangement.
+- Related-list counts appear only where the record DTO already carries them (no new API calls); e.g. benchmarking topics and CAP actions
+  show no count.
 - Inline edit and mass actions remain where earlier phases built them (no new endpoints in Phase 20).
 - *Visual regression (themes)* must be added to the protected branch's **required status checks** by a repository administrator (the
   workflow cannot set branch protection itself).
