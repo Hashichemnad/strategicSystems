@@ -157,3 +157,9 @@ Write an ADR for every choice the SPEC or CLAUDE.md leaves open (CLAUDE.md §2 r
 | [0173](0173-landing-app-per-role.md) | Landing app per role | Accepted |
 | [0174](0174-command-palette-split-view-utility-bar.md) | Modern command palette, split-view lists and the Enterprise utility bar | Accepted |
 | [0175](0175-theme-tests-and-visual-baselines.md) | Theme tests: screenshots, reflow, axe per theme and visual baselines | Accepted |
+| [0190](0190-reportable-record-contract.md) | Reportable record contract shared with Reporting 2.0 (record types, fields, relationships, neutral filters) | Proposed |
+| [0191](0191-integration-clients-and-service-accounts.md) | Integration clients: service accounts, credentials, the access snapshot, gate and usage log | Proposed |
+| [0192](0192-odata-subset-with-microsoft-odata-core.md) | OData v4 with Microsoft.OData.Core parser and CSDL, executed through the record sources | Proposed |
+| [0193](0193-incremental-extracts-and-scheduled-exports.md) | Incremental extracts, deleted feed and scheduled folder exports | Proposed |
+| [0194](0194-signed-webhooks.md) | Webhooks: catalogue from integration events, HMAC signature, back-off, dead letters, replay | Proposed |
+| [0195](0195-developer-portal.md) | Developer portal page and Power BI guide | Proposed |
