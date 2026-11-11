@@ -149,16 +149,20 @@ test.describe('Reporting 2.0', () => {
     await expect(page.getByTestId('dossier-dialog')).toBeVisible();
     await shot('dossier-dialog');
     await page.keyboard.press('Escape');
-    const pdf = await adminApi.post('/api/v1/reporting/dossiers/portfolio.project-dossier/render', {
-      data: { recordId: project.id, format: 'pdf', language },
+    const pdf = await apiPost(adminApi, '/api/v1/reporting/dossiers/portfolio.project-dossier/render', {
+      recordId: project.id,
+      format: 'pdf',
+      language,
     });
     expect(pdf.ok(), await pdf.text()).toBe(true);
     const pdfBytes = await pdf.body();
     pdfToPng(pdfBytes, language, 'project-dossier-pdf-cover', 1);
     pdfToPng(pdfBytes, language, 'project-dossier-pdf', 2);
     pdfToPng(pdfBytes, language, 'project-dossier-pdf-gantt', 3);
-    const docx = await adminApi.post('/api/v1/reporting/dossiers/portfolio.project-dossier/render', {
-      data: { recordId: project.id, format: 'docx', language },
+    const docx = await apiPost(adminApi, '/api/v1/reporting/dossiers/portfolio.project-dossier/render', {
+      recordId: project.id,
+      format: 'docx',
+      language,
     });
     expect(docx.ok(), await docx.text()).toBe(true);
     const converted = await page.request.post(`${gotenbergUrl}/forms/libreoffice/convert`, {
