@@ -207,8 +207,9 @@ test.describe('as an administrator', () => {
     await expect(verify.getByText(tr(language, 'jobs:statuses.succeeded'))).toBeVisible({ timeout: 20_000 });
     // Platform jobs, the three Task Management jobs, the two Teams jobs, the KPI windows, the Phase 14 jobs, the Portfolio monthly cycle and
     // the Risk monitoring job (Phase 13), the Portfolio communication reminders (Phase 10), the Wasel access job (Phase 11) and the CAP
-    // and Benchmarking monitors (Phase 15) and the Audit Management monitor (Phase 16).
-    await expect(page.getByTestId('job-row')).toHaveCount(27);
+    // and Benchmarking monitors (Phase 15), the Audit Management monitor (Phase 16) and the integration webhook, export and
+    // retention jobs (Phase 22).
+    await expect(page.getByTestId('job-row')).toHaveCount(30);
     await shot('job-dashboard', { fullPage: true });
   });
 });
