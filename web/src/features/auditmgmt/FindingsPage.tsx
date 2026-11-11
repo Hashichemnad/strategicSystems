@@ -1,5 +1,5 @@
 import { getRouteApi, Link, useNavigate } from '@tanstack/react-router';
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { errorMessage } from '@/api/problem';
 import { UnitSelect } from '@/features/access/pickers';
@@ -7,9 +7,13 @@ import {
   Button,
   EmptyState,
   Input,
+  ListViewToggle,
   PageHeader,
   Select,
   Skeleton,
+  SplitCard,
+  SplitPreview,
+  SplitView,
   StatusBanner,
   Table,
   TableBody,
@@ -18,6 +22,7 @@ import {
   TableHeaderCell,
   TableRow,
   ProgressBar,
+  useListView,
 } from '@/ui';
 import {
   findingStatuses,
@@ -62,10 +67,19 @@ export function AuditFindingsPage() {
   const setSearch = (patch: Record<string, string | number | undefined>) =>
     void navigate({ to: '/audit-management/findings', search: { ...search, ...patch } });
   const year0 = new Date().getFullYear();
+  // Table or list + preview (Enterprise toggle, Modern default; Classic: table only — ADR 0174).
+  const listView = useListView('auditmgmt.findings');
+  const [selectedId, setSelectedId] = useState<string>();
+  // The first finding is previewed until the user picks another.
+  const selected = findings.data?.items.find((f) => f.id === selectedId) ?? findings.data?.items[0];
 
   return (
     <AuditPageLayout testId="audit-findings">
-      <PageHeader title={t('findings.title')} description={t('findings.description')} />
+      <PageHeader
+        title={t('findings.title')}
+        description={t('findings.description')}
+        actions={listView.available && <ListViewToggle value={listView.view} onChange={listView.setView} />}
+      />
       <div className="flex flex-wrap gap-1" role="group" aria-label={t('findings.views')}>
         {findingViews.map((v) => (
           <Button
@@ -144,7 +158,26 @@ export function AuditFindingsPage() {
         <EmptyState title={t('findings.empty')} />
       ) : (
         <>
-          <FindingsTable items={findings.data.items} />
+          {listView.view === 'split' ? (
+            <SplitView
+              hasSelection={!!selected}
+              list={
+                <ul className="flex flex-col gap-2" data-testid="audit-finding-cards">
+                  {findings.data.items.map((f) => (
+                    <FindingCard
+                      key={f.id}
+                      finding={f}
+                      selected={f.id === selected?.id}
+                      onPreview={() => setSelectedId(f.id)}
+                    />
+                  ))}
+                </ul>
+              }
+              preview={selected && <FindingPreview finding={selected} />}
+            />
+          ) : (
+            <FindingsTable items={findings.data.items} />
+          )}
           <div className="flex items-center justify-end gap-2 text-sm">
             <Button
               size="sm"
@@ -235,5 +268,84 @@ export function FindingsTable({
         ))}
       </TableBody>
     </Table>
+  );
+}
+
+function FindingLink({
+  finding,
+  className,
+  children,
+}: {
+  finding: AuditFindingListItem;
+  className?: string;
+  children: ReactNode;
+}) {
+  return (
+    <Link to="/audit-management/findings/$findingId" params={{ findingId: finding.id }} className={className}>
+      {children}
+    </Link>
+  );
+}
+
+function FindingCard({
+  finding: f,
+  selected,
+  onPreview,
+}: {
+  finding: AuditFindingListItem;
+  selected: boolean;
+  onPreview: () => void;
+}) {
+  const names = useNames();
+  const date = useDate();
+  return (
+    <SplitCard
+      selected={selected}
+      onPreview={onPreview}
+      title={
+        <FindingLink finding={f} className="min-w-0 font-medium hover:underline">
+          <bdi className="block text-xs text-muted-foreground">{f.number}</bdi>
+          <span dir="auto" className="block">
+            {names.text(f.titleAr, f.titleEn)}
+          </span>
+        </FindingLink>
+      }
+      chips={
+        <>
+          <FindingStatusChip status={f.status} />
+          <PriorityChip priority={f.priority} />
+          <span className="text-xs text-muted-foreground">{date(f.nextDueOn)}</span>
+          <span className="w-full">
+            <ProgressBar value={f.completion} tone={f.status === 'late' ? 'danger' : 'primary'} />
+          </span>
+        </>
+      }
+    />
+  );
+}
+
+function FindingPreview({ finding: f }: { finding: AuditFindingListItem }) {
+  const { t } = useTranslation('auditmgmt');
+  const { t: ta } = useTranslation('appearance');
+  const names = useNames();
+  const date = useDate();
+  return (
+    <SplitPreview
+      title={names.text(f.titleAr, f.titleEn)}
+      rows={[
+        [t('fields.number'), <bdi key="n">{f.number}</bdi>],
+        [t('fields.report'), <bdi key="r">{f.reportNumber}</bdi>],
+        [t('fields.responsibleUnit'), names.unit(f.responsibleUnit)],
+        [t('fields.priority'), <PriorityChip key="p" priority={f.priority} />],
+        [t('fields.status'), <FindingStatusChip key="s" status={f.status} />],
+        [
+          t('fields.completion'),
+          <ProgressBar key="c" value={f.completion} tone={f.status === 'late' ? 'danger' : 'primary'} />,
+        ],
+        [t('fields.nextDue'), date(f.nextDueOn)],
+        [t('fields.officeComment'), f.lastComment ?? '—'],
+      ]}
+      open={<FindingLink finding={f}>{ta('split.open')}</FindingLink>}
+    />
   );
 }
