@@ -3,9 +3,14 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using ClosedXML.Excel;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Strategy.IntegrationTests.Infrastructure;
+using Strategy.IntegrationTests.Notifications;
 using Strategy.IntegrationTests.Tasks;
 using Strategy.Platform.Access;
+using Strategy.Platform.Reporting.Application;
+using Strategy.Platform.Reporting.Infrastructure;
 
 namespace Strategy.IntegrationTests.Reporting;
 
@@ -388,5 +393,63 @@ public sealed class ReportTypesTests(ApiFixture api) : IClassFixture<ApiFixture>
 
         // The unit reader cannot move their report into someone else's (or a shared) folder.
         (await w.UnitClient.PutAsJsonAsync($"/api/v1/reporting/reports/{reportId}/folder", new { folderId = sharedId })).StatusCode.ShouldBe(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
+    public async Task A_scheduled_report_built_on_a_report_type_is_delivered_as_a_file_and_as_a_link()
+    {
+        var w = await WorldAsync();
+        var author = await Factory.CreateUserAsync(roles: ["reporting.report-author", "sample.viewer"]);
+        var authorClient = await Factory.SignInAsync(author);
+        var definition = Def(w.OuterType, ["a.nameEn", "a.unit"], [Mine(w)]);
+        var expected = (await QueryAsync(authorClient, definition)).GetProperty("total").GetInt32();
+        expected.ShouldBeGreaterThan(0);
+        var saved = await authorClient.PostAsJsonAsync("/api/v1/reporting/reports", new { name = $"Typed {w.Suffix}", definition });
+        saved.StatusCode.ShouldBe(HttpStatusCode.OK, await saved.Content.ReadAsStringAsync());
+        var reportId = (await saved.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("id").GetGuid();
+
+        foreach (var format in new[] { "xlsx", "link" })
+        {
+            var schedule = await authorClient.PostAsJsonAsync("/api/v1/reporting/schedules", new
+            {
+                name = $"Typed {format}",
+                targetKind = "report",
+                targetId = reportId,
+                frequency = "weekly",
+                time = "07:00",
+                day = 0,
+                periodRule = "current-month",
+                format,
+                active = true,
+                recipients = new[] { new { kind = "user", @ref = author.Id.ToString("D") } },
+            });
+            schedule.StatusCode.ShouldBe(HttpStatusCode.OK, await schedule.Content.ReadAsStringAsync());
+            var scheduleId = (await schedule.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("id").GetGuid();
+
+            var before = Factory.Emails.Sent.Count;
+            await using (var scope = TestAccess.SystemScope(Factory))
+            {
+                var db = scope.ServiceProvider.GetRequiredService<ReportingDbContext>();
+                var entity = await db.Schedules.SingleAsync(s => s.Id == scheduleId);
+                (await scope.ServiceProvider.GetRequiredService<DeliveryRunner>().RunAsync(entity, CancellationToken.None)).ShouldBe(1);
+            }
+
+            var mail = (await NotificationTests.EventuallyAsync(
+                () => Task.FromResult(Factory.Emails.Sent.Skip(before).Where(e => e.TemplateKey == "reporting.scheduled" && e.To == author.UserName).ToList()),
+                e => e.Count == 1)).Single();
+            mail.Subject.ShouldContain($"Typed {w.Suffix}");
+            if (format == "xlsx")
+            {
+                using var book = new XLWorkbook(new MemoryStream(mail.Attachments.ShouldNotBeNull().Single().Content));
+                book.Worksheets.First().RowsUsed().Count().ShouldBe(1 + expected);
+            }
+            else
+            {
+                (mail.Attachments ?? []).ShouldBeEmpty();
+            }
+
+            var deliveries = await authorClient.GetFromJsonAsync<JsonElement>($"/api/v1/reporting/schedules/{scheduleId}/deliveries");
+            deliveries.EnumerateArray().Select(d => d.GetProperty("status").GetString()).ShouldBe(["sent"]);
+        }
     }
 }

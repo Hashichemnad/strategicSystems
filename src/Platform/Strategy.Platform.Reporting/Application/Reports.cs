@@ -393,6 +393,20 @@ public sealed class ReportService(
         return file;
     }
 
+    /// <summary>The number of rows of any definition as <paramref name="user"/> (link schedules): report types and Phase 17 definitions alike.</summary>
+    public async Task<Result<int>> CountDefinitionAsync(ReportDefinition definition, string language, ClaimsPrincipal user, CancellationToken ct)
+    {
+        ArgumentNullException.ThrowIfNull(definition);
+        if (definition.ReportType is null)
+        {
+            var legacy = await RunAllAsync(definition, language, user, ct).ConfigureAwait(false);
+            return legacy.IsFailure ? legacy.Error : legacy.Value.Rows.Count;
+        }
+
+        var run = await engine.RunAsync(definition, 1, ReportTypes.ReportTypeEngine.MaxPageSize, language, user, ct, all: true).ConfigureAwait(false);
+        return run.IsFailure ? run.Error : run.Value.Total;
+    }
+
     /// <summary>
     /// A file of any definition as <paramref name="user"/> (exports and schedules): type-based definitions through the Reporting 2.0 engine
     /// (Excel / PDF / CSV), Phase 17 definitions through the dataset path (Excel / PDF).

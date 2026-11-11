@@ -418,16 +418,11 @@ public sealed partial class DeliveryRunner(
             return null;
         }
 
-        var run = await reports.RunAllAsync(report.Value.Definition, lang, principal, ct).ConfigureAwait(false);
-        if (run.IsFailure)
-        {
-            return null;
-        }
-
         var reportLink = $"/reports/{schedule.TargetId:D}";
         if (schedule.Format == "link")
         {
-            return new Content(report.Value.Name, report.Value.Name, null, run.Value.Rows.Count, reportLink);
+            var count = await reports.CountDefinitionAsync(report.Value.Definition, lang, principal, ct).ConfigureAwait(false);
+            return count.IsFailure ? null : new Content(report.Value.Name, report.Value.Name, null, count.Value, reportLink);
         }
 
         var rendered = await reports.RenderDefinitionAsync(report.Value.Definition, schedule.Format, lang, report.Value.Name, principal, ct).ConfigureAwait(false);
