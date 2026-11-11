@@ -19,6 +19,7 @@ import {
   FormField,
   Input,
   PageHeader,
+  RecordLayout,
   Select,
   Skeleton,
   StageStepper,
@@ -102,80 +103,137 @@ export function TeamPage() {
     RoleCode: t('form.role'),
   };
 
+  const person = (x: { nameAr: string | null; nameEn: string | null } | null) =>
+    x ? pickText(i18n.language, x.nameAr, x.nameEn) || '—' : '—';
+  const openTab = (next: (typeof teamTabs)[number]) => void navigate({ search: { tab: next } });
   return (
-    <div className="flex flex-col gap-6">
-      <Link
-        to="/teams"
-        search={{ view: 'all', page: 1 }}
-        className="flex items-center gap-1 text-sm text-primary hover:underline"
-      >
-        <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden />
-        {t('title')}
-      </Link>
-      <PageHeader
-        title={name}
-        description={
-          <>
-            <bdi>{data.number}</bdi> · {pickText(i18n.language, data.typeNameAr, data.typeNameEn)}
-          </>
-        }
-        meta={
-          <>
-            <OriginBadge type="teams.team" id={data.id} />
-            <StatusChip tone={statusTone[data.status] ?? 'neutral'}>
-              {t(`status.${data.status as 'active'}`)}
-            </StatusChip>
-            <StatusChip tone="neutral">
-              {t(data.permanent ? 'permanence.permanent' : 'permanence.temporary')}
-            </StatusChip>
-          </>
-        }
-        actions={
-          <div className="flex flex-wrap gap-2">
-            {data.permissions.canEdit && (
-              <Button variant="outline" asChild>
-                <Link to="/teams/$teamId/edit" params={{ teamId: data.id }}>
-                  <Pencil aria-hidden />
-                  {t('actions.edit')}
-                </Link>
-              </Button>
-            )}
-            {data.actions
-              .filter((a) => a !== 'submit')
-              .map((a) => (
-                <Button
-                  key={a}
-                  variant={a === 'open-evaluation' ? 'primary' : 'outline'}
-                  onClick={() => setAction(a)}
-                >
-                  {t(`actions.${a as 'close'}`)}
+    <RecordLayout
+      back={
+        <Link
+          to="/teams"
+          search={{ view: 'all', page: 1 }}
+          className="flex items-center gap-1 text-sm text-primary hover:underline"
+        >
+          <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden />
+          {t('title')}
+        </Link>
+      }
+      header={
+        <PageHeader
+          title={name}
+          description={
+            <>
+              <bdi>{data.number}</bdi> · {pickText(i18n.language, data.typeNameAr, data.typeNameEn)}
+            </>
+          }
+          meta={
+            <>
+              <OriginBadge type="teams.team" id={data.id} />
+              <StatusChip tone={statusTone[data.status] ?? 'neutral'}>
+                {t(`status.${data.status as 'active'}`)}
+              </StatusChip>
+              <StatusChip tone="neutral">
+                {t(data.permanent ? 'permanence.permanent' : 'permanence.temporary')}
+              </StatusChip>
+            </>
+          }
+          actions={
+            <div className="flex flex-wrap gap-2">
+              {data.permissions.canEdit && (
+                <Button variant="outline" asChild>
+                  <Link to="/teams/$teamId/edit" params={{ teamId: data.id }}>
+                    <Pencil aria-hidden />
+                    {t('actions.edit')}
+                  </Link>
                 </Button>
-              ))}
-          </div>
-        }
-      />
-      <StageStepper
-        stages={(['request', 'approval', 'active', 'evaluation', 'closed'] as const).map((key) => ({
-          key,
-          label: t(`stages.${key}`),
-        }))}
-        current={stageOf(data.status)}
-      />
-      <CurrentStatusBanner
-        resourceType="teams.team"
-        resourceId={data.id}
-        actionLabel={(code, key) =>
-          code === 'submit'
-            ? t('actions.submit')
-            : code === 'evaluate'
-              ? t('actions.evaluate')
-              : tc(key as 'actions.edit')
-        }
-        onAction={(code) => {
-          if (code === 'submit') setAction('submit');
-          if (code === 'evaluate') void navigate({ search: { tab: 'evaluations' } });
-        }}
-      />
+              )}
+              {data.actions
+                .filter((a) => a !== 'submit')
+                .map((a) => (
+                  <Button
+                    key={a}
+                    variant={a === 'open-evaluation' ? 'primary' : 'outline'}
+                    onClick={() => setAction(a)}
+                  >
+                    {t(`actions.${a as 'close'}`)}
+                  </Button>
+                ))}
+            </div>
+          }
+        />
+      }
+      highlights={[
+        { key: 'number', label: t('fields.number'), value: <bdi>{data.number ?? '—'}</bdi> },
+        { key: 'leader', label: t('fields.leader'), value: person(data.leader) },
+        { key: 'sponsor', label: t('fields.sponsor'), value: person(data.sponsor) },
+        {
+          key: 'unit',
+          label: t('fields.owningUnit'),
+          value: data.owningUnit
+            ? pickText(i18n.language, data.owningUnit.nameAr, data.owningUnit.nameEn)
+            : '—',
+        },
+        {
+          key: 'start',
+          label: t('fields.startDate'),
+          value: data.startDate ? formatDate(data.startDate, i18n.language) : '—',
+        },
+        {
+          key: 'end',
+          label: t('fields.endDate'),
+          value: data.endDate ? formatDate(data.endDate, i18n.language) : t('permanence.permanent'),
+        },
+      ]}
+      path={
+        <StageStepper
+          stages={(['request', 'approval', 'active', 'evaluation', 'closed'] as const).map((key) => ({
+            key,
+            label: t(`stages.${key}`),
+          }))}
+          current={stageOf(data.status)}
+        />
+      }
+      status={
+        <CurrentStatusBanner
+          resourceType="teams.team"
+          resourceId={data.id}
+          actionLabel={(code, key) =>
+            code === 'submit'
+              ? t('actions.submit')
+              : code === 'evaluate'
+                ? t('actions.evaluate')
+                : tc(key as 'actions.edit')
+          }
+          onAction={(code) => {
+            if (code === 'submit') setAction('submit');
+            if (code === 'evaluate') void navigate({ search: { tab: 'evaluations' } });
+          }}
+        />
+      }
+      related={[
+        {
+          key: 'members',
+          label: t('tabs.members'),
+          count: data.stats.activeMembers,
+          onOpen: () => openTab('members'),
+        },
+        {
+          key: 'meetings',
+          label: t('tabs.meetings'),
+          count: data.stats.meetingsHeld,
+          onOpen: () => openTab('meetings'),
+        },
+        {
+          key: 'recommendations',
+          label: t('tabs.recommendations'),
+          count: data.stats.recommendationsOpen,
+          onOpen: () => openTab('recommendations'),
+        },
+        { key: 'tasks', label: t('tabs.tasks'), onOpen: () => openTab('tasks') },
+        { key: 'documents', label: t('tabs.documents'), onOpen: () => openTab('documents') },
+        { key: 'approvals', label: t('tabs.approvals'), onOpen: () => openTab('approvals') },
+      ]}
+    >
       <Tabs value={tab} onValueChange={(value) => void navigate({ search: { tab: value as 'overview' } })}>
         <TabsList className="flex-wrap">
           {teamTabs.map((key) => (
@@ -224,7 +282,7 @@ export function TeamPage() {
         </TabsContent>
       </Tabs>
       {action && <ActionDialog team={data} action={action} onClose={() => setAction(undefined)} />}
-    </div>
+    </RecordLayout>
   );
 }
 

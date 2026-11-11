@@ -21,6 +21,7 @@ import {
   FormField,
   Input,
   PageHeader,
+  RecordLayout,
   Skeleton,
   StageStepper,
   StatusBanner,
@@ -96,77 +97,100 @@ export function TaskPage() {
     Confidential: t('fields.confidentialShort'),
   };
 
+  const openTab = (next: 'comments' | 'documents' | 'followUps' | 'timeline') =>
+    void navigate({ search: { tab: next } });
   return (
-    <div className="flex flex-col gap-6">
-      <Link
-        to="/tasks"
-        search={{ ...defaultTasksSearch, tab: 'assigned' }}
-        className="flex items-center gap-1 text-sm text-primary hover:underline"
-      >
-        <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden />
-        {t('title')}
-      </Link>
-      <PageHeader
-        title={title}
-        description={data.number ?? undefined}
-        meta={
-          <>
-            <OriginBadge type="tasks.task" id={data.id} />
-            <TaskStatusChip template={data.template} status={data.status} />
-            <PriorityChip priority={data.priority} />
-            <IndicatorChip indicator={data.indicator} />
-            {data.confidential && <ConfidentialChip />}
-          </>
-        }
-      />
-      <dl className="grid gap-3 rounded-lg border bg-card p-4 text-sm sm:grid-cols-2 lg:grid-cols-4">
-        <Fact label={t('fields.assignee')}>
-          {pickText(i18n.language, data.assignee.nameAr, data.assignee.nameEn)}
-        </Fact>
-        <Fact label={t('fields.creator')}>
-          {pickText(i18n.language, data.creator.nameAr, data.creator.nameEn)}
-          {data.enteredBy && (
-            <span className="block text-xs text-muted-foreground">
-              {t('fields.enteredBy')}: {pickText(i18n.language, data.enteredBy.nameAr, data.enteredBy.nameEn)}
-            </span>
+    <RecordLayout
+      back={
+        <Link
+          to="/tasks"
+          search={{ ...defaultTasksSearch, tab: 'assigned' }}
+          className="flex items-center gap-1 text-sm text-primary hover:underline"
+        >
+          <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden />
+          {t('title')}
+        </Link>
+      }
+      // The task's key facts stay with the header (they are its highlights in every theme).
+      header={
+        <>
+          <PageHeader
+            title={title}
+            description={data.number ?? undefined}
+            meta={
+              <>
+                <OriginBadge type="tasks.task" id={data.id} />
+                <TaskStatusChip template={data.template} status={data.status} />
+                <PriorityChip priority={data.priority} />
+                <IndicatorChip indicator={data.indicator} />
+                {data.confidential && <ConfidentialChip />}
+              </>
+            }
+          />
+          <dl className="grid gap-3 rounded-lg border bg-card p-4 text-sm sm:grid-cols-2 lg:grid-cols-4">
+            <Fact label={t('fields.assignee')}>
+              {pickText(i18n.language, data.assignee.nameAr, data.assignee.nameEn)}
+            </Fact>
+            <Fact label={t('fields.creator')}>
+              {pickText(i18n.language, data.creator.nameAr, data.creator.nameEn)}
+              {data.enteredBy && (
+                <span className="block text-xs text-muted-foreground">
+                  {t('fields.enteredBy')}:{' '}
+                  {pickText(i18n.language, data.enteredBy.nameAr, data.enteredBy.nameEn)}
+                </span>
+              )}
+            </Fact>
+            <Fact label={t('fields.dueDate')}>
+              {data.dueDate ? formatDate(data.dueDate, i18n.language) : '—'}
+              {data.dueAt && (
+                <span className="block text-xs text-muted-foreground">
+                  {formatDateTime(data.dueAt, i18n.language)}
+                </span>
+              )}
+            </Fact>
+            <Fact label={t('fields.actualHours')}>{formatDuration(data.actualSeconds)}</Fact>
+          </dl>
+        </>
+      }
+      path={
+        data.status !== 'draft' &&
+        data.status !== 'cancelled' &&
+        data.status !== 'rejected' && <StageStepper stages={stages} current={data.status} />
+      }
+      status={
+        <>
+          {data.confidential && <StatusBanner tone="warning" title={t('detail.confidentialBanner')} />}
+          <CurrentStatusBanner
+            resourceType="tasks.task"
+            resourceId={data.id}
+            actionLabel={(code) => t(`actions.${code}` as 'actions.accept')}
+            onAction={(code) => {
+              if ((taskActions as readonly string[]).includes(code)) setAction(code as TaskAction);
+            }}
+          />
+          {data.group && (
+            <StatusBanner
+              tone="info"
+              title={t('detail.partOfGroup', { finished: data.group.finished, total: data.group.total })}
+              actions={
+                <Button variant="outline" size="sm" asChild>
+                  <Link to="/tasks/groups/$groupId" params={{ groupId: data.group.id }}>
+                    <Users aria-hidden />
+                    {t('detail.openGroup')}
+                  </Link>
+                </Button>
+              }
+            />
           )}
-        </Fact>
-        <Fact label={t('fields.dueDate')}>
-          {data.dueDate ? formatDate(data.dueDate, i18n.language) : '—'}
-          {data.dueAt && (
-            <span className="block text-xs text-muted-foreground">
-              {formatDateTime(data.dueAt, i18n.language)}
-            </span>
-          )}
-        </Fact>
-        <Fact label={t('fields.actualHours')}>{formatDuration(data.actualSeconds)}</Fact>
-      </dl>
-      {data.status !== 'draft' && data.status !== 'cancelled' && data.status !== 'rejected' && (
-        <StageStepper stages={stages} current={data.status} />
-      )}
-      {data.confidential && <StatusBanner tone="warning" title={t('detail.confidentialBanner')} />}
-      <CurrentStatusBanner
-        resourceType="tasks.task"
-        resourceId={data.id}
-        actionLabel={(code) => t(`actions.${code}` as 'actions.accept')}
-        onAction={(code) => {
-          if ((taskActions as readonly string[]).includes(code)) setAction(code as TaskAction);
-        }}
-      />
-      {data.group && (
-        <StatusBanner
-          tone="info"
-          title={t('detail.partOfGroup', { finished: data.group.finished, total: data.group.total })}
-          actions={
-            <Button variant="outline" size="sm" asChild>
-              <Link to="/tasks/groups/$groupId" params={{ groupId: data.group.id }}>
-                <Users aria-hidden />
-                {t('detail.openGroup')}
-              </Link>
-            </Button>
-          }
-        />
-      )}
+        </>
+      }
+      related={[
+        { key: 'timeline', label: t('detail.tabs.timeline'), onOpen: () => openTab('timeline') },
+        { key: 'comments', label: t('detail.tabs.comments'), onOpen: () => openTab('comments') },
+        { key: 'documents', label: tf('tab'), onOpen: () => openTab('documents') },
+        { key: 'followUps', label: t('detail.tabs.followUps'), onOpen: () => openTab('followUps') },
+      ]}
+    >
       <Tabs value={tab} onValueChange={(value) => void navigate({ search: { tab: value as 'overview' } })}>
         <TabsList>
           <TabsTrigger value="overview">{t('detail.tabs.overview')}</TabsTrigger>
@@ -204,7 +228,7 @@ export function TaskPage() {
           onClose={() => setAction(undefined)}
         />
       )}
-    </div>
+    </RecordLayout>
   );
 }
 

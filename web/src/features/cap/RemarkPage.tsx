@@ -13,6 +13,7 @@ import {
   Button,
   FormField,
   PageHeader,
+  RecordLayout,
   Select,
   Skeleton,
   StageStepper,
@@ -27,7 +28,7 @@ import {
 } from '@/ui';
 import { capApi, remarkStages, useCapOptions, useCapRemark, useKpiTrend, type CapRemark } from './api';
 import {
-  CapPageLayout,
+  CapNav,
   PriorityChip,
   RemarkStatusChip,
   Rows,
@@ -74,96 +75,131 @@ export function CapRemarkPage() {
   const close = () => setDialog(undefined);
 
   return (
-    <CapPageLayout testId="cap-remark-page">
-      <Link to="/cap/remarks" className="flex items-center gap-1 text-sm text-primary hover:underline">
-        <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden />
-        {t('remarks.title')}
-      </Link>
-      <PageHeader
-        title={<bdi data-testid="cap-remark-number">{r.number}</bdi>}
-        description={
-          <span className="line-clamp-3" data-testid="cap-remark-text">
-            {names.text(r.values.textAr, r.values.textEn)}
-          </span>
-        }
-        meta={
-          <div className="flex flex-wrap items-center gap-2" data-testid="cap-remark-meta">
-            <OriginBadge type="cap.remark" id={r.id} />
-            <RemarkStatusChip status={r.status} />
-            <PriorityChip priority={r.values.priority} />
-            {r.overdue && <StatusChip tone="danger">{t('remark.overdue')}</StatusChip>}
-            <span className="text-sm text-muted-foreground">
-              {t('fields.dueOn')}: {date(r.dueOn)}
+    <RecordLayout
+      testId="cap-remark-page"
+      // CAP's own navigation first, as on every CAP page (CapPageLayout); hidden in the workspace themes (app tabs).
+      back={
+        <>
+          <CapNav />
+          <Link to="/cap/remarks" className="flex items-center gap-1 text-sm text-primary hover:underline">
+            <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden />
+            {t('remarks.title')}
+          </Link>
+        </>
+      }
+      header={
+        <PageHeader
+          title={<bdi data-testid="cap-remark-number">{r.number}</bdi>}
+          description={
+            <span className="line-clamp-3" data-testid="cap-remark-text">
+              {names.text(r.values.textAr, r.values.textEn)}
             </span>
-            <Link
-              to="/cap/sources/$sourceId"
-              params={{ sourceId: r.sourceId }}
-              className="text-sm text-primary hover:underline"
-            >
-              {t('fields.source')}: <bdi>{r.sourceNumber}</bdi>
-            </Link>
-            {r.linked && <LinkBadge view={r.linked} />}
-            {r.sourceLinked && !r.linked && <LinkBadge view={r.sourceLinked} />}
-          </div>
-        }
-        actions={
-          <div className="flex flex-wrap gap-2">
-            {r.can.edit && (
-              <Button variant="outline" onClick={() => setDialog('edit')} data-testid="cap-remark-edit">
-                <Pencil aria-hidden />
-                {tc('actions.edit')}
-              </Button>
-            )}
-            {r.can.reassign && (
-              <Button
-                variant="outline"
-                onClick={() => setDialog('reassign')}
-                data-testid="cap-remark-reassign"
+          }
+          meta={
+            <div className="flex flex-wrap items-center gap-2" data-testid="cap-remark-meta">
+              <OriginBadge type="cap.remark" id={r.id} />
+              <RemarkStatusChip status={r.status} />
+              <PriorityChip priority={r.values.priority} />
+              {r.overdue && <StatusChip tone="danger">{t('remark.overdue')}</StatusChip>}
+              <span className="text-sm text-muted-foreground">
+                {t('fields.dueOn')}: {date(r.dueOn)}
+              </span>
+              <Link
+                to="/cap/sources/$sourceId"
+                params={{ sourceId: r.sourceId }}
+                className="text-sm text-primary hover:underline"
               >
-                <UserRoundCog aria-hidden />
-                {t('remark.reassign')}
-              </Button>
-            )}
-            {r.can.cancel && (
-              <Button variant="ghost" onClick={() => setDialog('cancel')} data-testid="cap-remark-cancel">
-                <Ban aria-hidden />
-                {t('remark.cancel')}
-              </Button>
-            )}
+                {t('fields.source')}: <bdi>{r.sourceNumber}</bdi>
+              </Link>
+              {r.linked && <LinkBadge view={r.linked} />}
+              {r.sourceLinked && !r.linked && <LinkBadge view={r.sourceLinked} />}
+            </div>
+          }
+          actions={
+            <div className="flex flex-wrap gap-2">
+              {r.can.edit && (
+                <Button variant="outline" onClick={() => setDialog('edit')} data-testid="cap-remark-edit">
+                  <Pencil aria-hidden />
+                  {tc('actions.edit')}
+                </Button>
+              )}
+              {r.can.reassign && (
+                <Button
+                  variant="outline"
+                  onClick={() => setDialog('reassign')}
+                  data-testid="cap-remark-reassign"
+                >
+                  <UserRoundCog aria-hidden />
+                  {t('remark.reassign')}
+                </Button>
+              )}
+              {r.can.cancel && (
+                <Button variant="ghost" onClick={() => setDialog('cancel')} data-testid="cap-remark-cancel">
+                  <Ban aria-hidden />
+                  {t('remark.cancel')}
+                </Button>
+              )}
+            </div>
+          }
+        />
+      }
+      highlights={[
+        { key: 'number', label: t('fields.number'), value: <bdi>{r.number}</bdi> },
+        { key: 'owner', label: t('fields.owner'), value: names.person(r.owner) },
+        { key: 'department', label: t('fields.department'), value: names.unit(r.department) },
+        { key: 'assignedOn', label: t('fields.assignedOn'), value: date(r.assignedOn) },
+        { key: 'dueOn', label: t('fields.dueOn'), value: date(r.dueOn) },
+        { key: 'source', label: t('fields.source'), value: <bdi>{r.sourceNumber}</bdi> },
+      ]}
+      path={
+        r.stage !== 'rejected' &&
+        r.status !== 'cancelled' &&
+        r.status !== 'rejected' && (
+          <StageStepper
+            stages={remarkStages.map((s) => ({ key: s, label: k(`stage.${s}`) }))}
+            current={r.stage}
+          />
+        )
+      }
+      status={
+        <>
+          <div data-testid="cap-remark-current-status">
+            <CurrentStatusBanner
+              resourceType="cap.remark"
+              resourceId={r.id}
+              onAction={(code) => {
+                if (code === 'accept') accept.run(r.id);
+                if (code === 'reject') setDialog('reject');
+                if (code === 'confirm-rejection') setDialog('confirm');
+                if (code === 'send-back') setDialog('send-back');
+                if (code === 'submit') setDialog('submit');
+                if (code === 'validate') go('actions');
+                if (code === 'verify') setDialog('verify');
+              }}
+            />
           </div>
-        }
-      />
-      {r.stage !== 'rejected' && r.status !== 'cancelled' && r.status !== 'rejected' && (
-        <StageStepper
-          stages={remarkStages.map((s) => ({ key: s, label: k(`stage.${s}`) }))}
-          current={r.stage}
-        />
-      )}
-      <div data-testid="cap-remark-current-status">
-        <CurrentStatusBanner
-          resourceType="cap.remark"
-          resourceId={r.id}
-          onAction={(code) => {
-            if (code === 'accept') accept.run(r.id);
-            if (code === 'reject') setDialog('reject');
-            if (code === 'confirm-rejection') setDialog('confirm');
-            if (code === 'send-back') setDialog('send-back');
-            if (code === 'submit') setDialog('submit');
-            if (code === 'validate') go('actions');
-            if (code === 'verify') setDialog('verify');
-          }}
-        />
-      </div>
-      {r.rejectionReason && (
-        <StatusBanner tone="warning" title={t('remark.rejectionReason')} description={r.rejectionReason} />
-      )}
-      {r.pmoDecisionNote && (
-        <StatusBanner
-          tone="info"
-          title={k(`pmoDecision.${r.pmoDecision ?? 'sent-back'}`)}
-          description={r.pmoDecisionNote}
-        />
-      )}
+          {r.rejectionReason && (
+            <StatusBanner
+              tone="warning"
+              title={t('remark.rejectionReason')}
+              description={r.rejectionReason}
+            />
+          )}
+          {r.pmoDecisionNote && (
+            <StatusBanner
+              tone="info"
+              title={k(`pmoDecision.${r.pmoDecision ?? 'sent-back'}`)}
+              description={r.pmoDecisionNote}
+            />
+          )}
+        </>
+      }
+      related={(['root-cause', 'actions', 'tasks', 'documents'] as const).map((key) => ({
+        key,
+        label: t(`tabs.${key}`),
+        onOpen: () => go(key),
+      }))}
+    >
       <Tabs value={tab ?? 'overview'} onValueChange={(value) => go(value as RemarkTab)}>
         <TabsList className="flex-wrap" data-testid="cap-remark-tabs">
           {remarkTabs.map((key) => (
@@ -206,7 +242,7 @@ export function CapRemarkPage() {
       {dialog === 'verify' && <VerifyDialog remark={r} onClose={close} />}
       {dialog === 'reassign' && <ReassignDialog remark={r} onClose={close} />}
       {dialog === 'cancel' && <CancelDialog remark={r} onClose={close} />}
-    </CapPageLayout>
+    </RecordLayout>
   );
 }
 
