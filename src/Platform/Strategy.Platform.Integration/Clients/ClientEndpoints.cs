@@ -45,3 +45,27 @@ internal static class ClientEndpoints
             .WithName("SaveIntegrationSettings").RequirePermission(IntegrationPermissions.ClientManage);
     }
 }
+
+public sealed record CatalogueRecordTypeDto(string Code, string EntitySet, string LabelAr, string LabelEn);
+
+public sealed record CatalogueEventDto(string Code, string LabelAr, string LabelEn);
+
+public sealed record CatalogueSystemDto(string Code, string NameAr, string NameEn, IReadOnlyList<CatalogueRecordTypeDto> RecordTypes, IReadOnlyList<CatalogueEventDto> Events);
+
+/// <summary>What a client can be given (Settings → Integrations → Clients forms): systems with record types and webhook events.</summary>
+internal static class IntegrationCatalogueEndpoint
+{
+    public static void Map(RouteGroupBuilder group) =>
+        group.MapGet("/catalogue", (Feeds.FeedCatalog feeds, IEnumerable<Webhooks.WebhookEventDefinition> events, IEnumerable<Access.IAccessCatalogueSource> catalogues) =>
+            {
+                var names = catalogues.Select(c => c.System).GroupBy(s => s.Code).ToDictionary(g => g.Key, g => g.First(), StringComparer.Ordinal);
+                return TypedResults.Ok(feeds.Systems.Select(code => new CatalogueSystemDto(
+                    code,
+                    names.TryGetValue(code, out var s) ? s.NameAr : code,
+                    names.TryGetValue(code, out var e) ? e.NameEn : code,
+                    feeds.AllTypes.Where(t => t.SystemCode == code).Select(t => new CatalogueRecordTypeDto(t.Code, t.EntitySet, t.LabelAr, t.LabelEn)).ToList(),
+                    events.Where(d => d.SystemCode == code).OrderBy(d => d.Code, StringComparer.Ordinal).Select(d => new CatalogueEventDto(d.Code, d.LabelAr, d.LabelEn)).ToList()))
+                    .ToList());
+            })
+            .WithName("GetIntegrationCatalogue").RequirePermission(IntegrationPermissions.ClientManage);
+}

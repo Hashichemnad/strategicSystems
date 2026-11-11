@@ -20,6 +20,7 @@
     <ProjectReference Include="..\..\..\Platform\Strategy.Platform.Audit.Contracts\Strategy.Platform.Audit.Contracts.csproj" />
     <ProjectReference Include="..\..\..\Platform\Strategy.Platform.Calendar.Contracts\Strategy.Platform.Calendar.Contracts.csproj" />
     <ProjectReference Include="..\..\..\Platform\Strategy.Platform.Http\Strategy.Platform.Http.csproj" />
+    <ProjectReference Include="..\..\..\Platform\Strategy.Platform.Integration\Strategy.Platform.Integration.csproj" />
     <ProjectReference Include="..\..\..\Platform\Strategy.Platform.Identity\Strategy.Platform.Identity.csproj" />
     <ProjectReference Include="..\..\..\Platform\Strategy.Platform.Organisation\Strategy.Platform.Organisation.csproj" />
     <ProjectReference Include="..\..\..\Platform\Strategy.Platform.Settings\Strategy.Platform.Settings.csproj" />

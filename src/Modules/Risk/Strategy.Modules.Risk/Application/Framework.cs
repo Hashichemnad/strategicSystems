@@ -91,7 +91,7 @@ internal sealed class FrameworkStore(RiskDbContext db)
 }
 
 /// <summary>Computes the ratings of a risk (design §5.4) and escalation; used by every write path. Pure apart from loading categories / controls.</summary>
-internal sealed class RiskRater(RiskDbContext db, FrameworkStore frameworks)
+internal sealed class RiskRater(RiskDbContext db, FrameworkStore frameworks, IIntegrationEventPublisher events)
 {
     private List<Category>? _categories;
 
@@ -124,8 +124,16 @@ internal sealed class RiskRater(RiskDbContext db, FrameworkStore frameworks)
             ? (await frameworks.CurrentAsync(ct).ConfigureAwait(false), await frameworks.ScorerAsync(ct).ConfigureAwait(false))
             : await frameworks.ForAsync(risk.FrameworkVersionId, ct).ConfigureAwait(false);
         var ratings = await ComputeAsync(risk, scorer, version.Id, controlRatings, ct).ConfigureAwait(false);
+        var (oldBand, oldScore) = (risk.ResidualBand, risk.ResidualScore);
         var changed = risk.ApplyRatings(ratings);
         ApplyEscalation(risk, settings, scorer, now);
+        if (risk.Status != RiskStatuses.Draft && oldBand.Length > 0 && (oldBand != risk.ResidualBand || oldScore != risk.ResidualScore))
+        {
+            // Phase 22 webhooks (ADR 0194): in the caller's transaction, so the event exists exactly when the new rating commits.
+            await events.PublishAsync(new RiskRatingChanged(risk.Id, risk.Number, oldBand, oldScore, risk.ResidualBand, risk.ResidualScore, risk.UnitId, now), db, ct)
+                .ConfigureAwait(false);
+        }
+
         return changed;
     }
 

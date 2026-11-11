@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Strategy.Modules.AuditManagement.Ai;
 using Strategy.Modules.AuditManagement.Api;
 using Strategy.Modules.AuditManagement.Application;
+using Strategy.Modules.AuditManagement.Contracts;
 using Strategy.Modules.AuditManagement.Infrastructure;
 using Strategy.Modules.AuditManagement.Jobs;
 using Strategy.Modules.AuditManagement.Mcp;
@@ -13,6 +14,7 @@ using Strategy.Platform.AI;
 using Strategy.Platform.AI.Tools;
 using Strategy.Platform.Files;
 using Strategy.Platform.Http.Modules;
+using Strategy.Platform.Integration.Webhooks;
 using Strategy.Platform.Kernel;
 using Strategy.Platform.Links;
 using Strategy.Platform.Notifications;
@@ -103,6 +105,23 @@ public sealed class AuditMgmtModule : IModule
         services.AddAppTool<AuditOverdueFindingsTool>();
         services.AddAppTool<AuditMyFindingStatusTool>();
         services.AddAppTool<AuditRecordFollowUpDraftTool>();
+
+        // Phase 22: analytics feeds and extracts (ADR 0190).
+        services.AddReportableRecordSource<Feeds.AuditFeeds>();
+
+        // Phase 22: webhook events (ADR 0194).
+        services.AddWebhookEvent<AuditFindingClosed>(
+            "auditmgmt.finding.closed", AuditPermissions.SystemCode, "إغلاق ملاحظة تدقيق", "Audit finding closed", Domain.Finding.EntityType,
+            AuditPermissions.Read, e => e.FindingId,
+            new AuditFindingClosed(
+                Guid.Parse("0190a4f0-0000-7000-8000-000000000011"), "AR-0042", AuditFindingStatuses.Closed, Guid.Parse("0190a4f0-0000-7000-8000-000000000012"),
+                new DateTimeOffset(2026, 5, 20, 10, 0, 0, TimeSpan.Zero)));
+        services.AddWebhookEvent<AuditFindingLinkedToRisk>(
+            "auditmgmt.finding.linked-to-risk", AuditPermissions.SystemCode, "ربط ملاحظة تدقيق بخطر", "Audit finding linked to a risk", Domain.Finding.EntityType,
+            AuditPermissions.Read, e => e.FindingId,
+            new AuditFindingLinkedToRisk(
+                Guid.Parse("0190a4f0-0000-7000-8000-000000000011"), "AR-0042", Guid.Parse("0190a4f0-0000-7000-8000-000000000013"),
+                Guid.Parse("0190a4f0-0000-7000-8000-000000000014"), new DateTimeOffset(2026, 4, 8, 11, 15, 0, TimeSpan.Zero)));
     }
 
     public void MapEndpoints(IEndpointRouteBuilder endpoints) => AuditEndpoints.Map(endpoints.MapModuleGroup(this));

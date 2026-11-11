@@ -95,6 +95,9 @@ export type SettingsPageKey =
   | 'ai'
   | 'mcp'
   | 'sourceSystems'
+  | 'integrationClients'
+  | 'webhookDeliveries'
+  | 'developerPortal'
   | 'tasks'
   | 'tasksReassign'
   | 'businessHours'
@@ -117,6 +120,9 @@ export type SettingsPath =
   | '/setup/configure'
   | '/settings/regional'
   | '/settings/integrations/source-systems'
+  | '/settings/integrations/clients'
+  | '/settings/integrations/deliveries'
+  | '/settings/integrations/developer'
   | '/settings/dashboards'
   | '/settings/reporting'
   | '/settings/branding'
@@ -316,6 +322,24 @@ export const settingsGroups: readonly SettingsGroup[] = [
         to: '/settings/integrations/source-systems',
         icon: DatabaseZap,
         permissions: ['integration.source-system.manage'],
+      },
+      {
+        key: 'integrationClients',
+        to: '/settings/integrations/clients',
+        icon: KeyRound,
+        permissions: ['integration.client.manage'],
+      },
+      {
+        key: 'webhookDeliveries',
+        to: '/settings/integrations/deliveries',
+        icon: Repeat,
+        permissions: ['integration.webhook.manage'],
+      },
+      {
+        key: 'developerPortal',
+        to: '/settings/integrations/developer',
+        icon: FileSpreadsheet,
+        permissions: ['integration.portal.view'],
       },
     ],
   },

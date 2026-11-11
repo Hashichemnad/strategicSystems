@@ -370,7 +370,7 @@ public sealed class ClientAdministration(
             Range(errors, "maxClientDays", value.MaxClientDays, 1, 3650);
             Range(errors, "defaultClientDays", value.DefaultClientDays, 1, value.MaxClientDays);
             Range(errors, "accessTokenMinutes", value.AccessTokenMinutes, 5, 1440);
-            Range(errors, "oDataPageSize", value.ODataPageSize, 10, 5000);
+            Range(errors, "oDataPageSize", value.ODataPageSize, 1, 5000);
             Range(errors, "expandLimit", value.ExpandLimit, 100, 100_000);
             Range(errors, "extractMaxPageSize", value.ExtractMaxPageSize, 10, 5000);
             Range(errors, "usageRetentionDays", value.UsageRetentionDays, 1, 3650);

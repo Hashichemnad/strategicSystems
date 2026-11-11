@@ -227,6 +227,7 @@ internal sealed class ProjectApprovalHook(
         {
             await notifier.ToEmployeesAsync(PortfolioNotifications.StageChanged, project, [project.PmEmployeeId], db, ct, stage: ProjectNotifier.StageText(project.Stage))
                 .ConfigureAwait(false);
+            await ProjectStageEvents.PublishIfChangedAsync(events, project, stageBefore, now, db, ct).ConfigureAwait(false);
         }
 
         return Result.Success();
@@ -630,7 +631,8 @@ internal sealed class MilestoneLinkTargets(PortfolioDbContext db, ProjectLoader 
 
 /// <summary>ADR 0072: a formed team linked to projects → project waits no longer for its team; record role <c>team-member</c> follows the members.</summary>
 internal sealed class ProjectTeamMembershipHandler(
-    PortfolioDbContext db, ILinkStore links, IRecordRoleService recordRoles, ProjectNotifier notifier, IServiceProvider services, IClock clock)
+    PortfolioDbContext db, ILinkStore links, IRecordRoleService recordRoles, ProjectNotifier notifier, IServiceProvider services, IClock clock,
+    IIntegrationEventPublisher events)
     : IIntegrationEventHandler<TeamMembershipChanged>
 {
     private const string TeamResource = "teams.team";
@@ -673,10 +675,12 @@ internal sealed class ProjectTeamMembershipHandler(
                 if (project.Status == ProjectStatuses.Active && project.SubState == SubStates.TeamFormation)
                 {
                     var template = project.TemplateOr(StageTemplate.ProjectDefault);
+                    var stageBefore = project.Stage;
                     if (project.Apply(ProjectActions.TeamFormed, template, clock.UtcNow).IsSuccess)
                     {
                         await notifier.ToEmployeesAsync(PortfolioNotifications.StageChanged, project, [project.PmEmployeeId], db, cancellationToken,
                             stage: ProjectNotifier.StageText(project.Stage)).ConfigureAwait(false);
+                        await ProjectStageEvents.PublishIfChangedAsync(events, project, stageBefore, clock.UtcNow, db, cancellationToken).ConfigureAwait(false);
                     }
                 }
             }

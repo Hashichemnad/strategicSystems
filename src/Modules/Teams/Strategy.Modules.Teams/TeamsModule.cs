@@ -14,6 +14,7 @@ using Strategy.Platform.AI;
 using Strategy.Platform.AI.Tools;
 using Strategy.Platform.Files;
 using Strategy.Platform.Http.Modules;
+using Strategy.Platform.Integration.Webhooks;
 using Strategy.Platform.Kernel;
 using Strategy.Platform.Links;
 using Strategy.Platform.Notifications;
@@ -120,6 +121,17 @@ public sealed class TeamsModule : IModule
         services.AddAppTool<MyPendingEvaluationsTool>();
         services.AddAppTool<EvaluationStatusTool>();
         services.AddAppTool<AddMeetingMinutesTool>();
+
+        // Phase 22: analytics feeds and extracts (ADR 0190).
+        services.AddReportableRecordSource<Feeds.TeamsFeeds>();
+
+        // Phase 22: webhook events (ADR 0194).
+        services.AddWebhookEvent<TeamMembershipChanged>(
+            "teams.membership.changed", TeamPermissions.SystemCode, "تغيّر عضوية فريق", "Team membership changed", TeamPermissions.ResourceType, TeamPermissions.Read,
+            e => e.TeamId,
+            new TeamMembershipChanged(Guid.Parse("0190a4f0-0000-7000-8000-000000000031"), "active", Guid.Parse("0190a4f0-0000-7000-8000-000000000032"),
+                [Guid.Parse("0190a4f0-0000-7000-8000-000000000032"), Guid.Parse("0190a4f0-0000-7000-8000-000000000033"), Guid.Parse("0190a4f0-0000-7000-8000-000000000034")],
+                new DateTimeOffset(2026, 2, 1, 6, 30, 0, TimeSpan.Zero)));
     }
 
     public void MapEndpoints(IEndpointRouteBuilder endpoints) => TeamsEndpoints.Map(endpoints.MapModuleGroup(this));

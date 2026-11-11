@@ -115,7 +115,12 @@ public sealed class WebhookDispatcher(IntegrationDbContext db, IWebhookTransport
 
         db.Attempts.Add(new WebhookAttempt
         {
-            DeliveryRef = delivery.Id, Number = delivery.Attempts, At = now, StatusCode = status, DurationMs = (int)watch.ElapsedMilliseconds, Error = Truncate(error),
+            DeliveryRef = delivery.Id,
+            Number = delivery.Attempts,
+            At = now,
+            StatusCode = status,
+            DurationMs = (int)watch.ElapsedMilliseconds,
+            Error = Truncate(error),
         });
         delivery.LastStatusCode = status;
         delivery.LastError = Truncate(error);

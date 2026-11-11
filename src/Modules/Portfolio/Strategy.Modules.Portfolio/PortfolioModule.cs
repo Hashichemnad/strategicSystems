@@ -15,6 +15,7 @@ using Strategy.Platform.AI;
 using Strategy.Platform.AI.Tools;
 using Strategy.Platform.Files;
 using Strategy.Platform.Http.Modules;
+using Strategy.Platform.Integration.Webhooks;
 using Strategy.Platform.Kernel;
 using Strategy.Platform.Links;
 using Strategy.Platform.Notifications;
@@ -190,6 +191,22 @@ public sealed class PortfolioModule : IModule
         services.AddAppTool<SprintSummaryTool>();
         services.AddAppTool<PortfolioSummaryTool>();
         services.AddAppTool<CreateStoryDraftTool>();
+
+        // Phase 22: analytics feeds and extracts (ADR 0190).
+        services.AddReportableRecordSource<Feeds.PortfolioFeeds>();
+
+        // Phase 22: webhook events (ADR 0194).
+        services.AddWebhookEvent<ProjectClosureApproved>(
+            "portfolio.project.closure-approved", PortfolioPermissions.SystemCode, "اعتماد إغلاق مشروع", "Project closure approved",
+            PortfolioPermissions.ProjectResource, PortfolioPermissions.ProjectRead, e => e.ProjectId,
+            new ProjectClosureApproved(Guid.Parse("0190a4f0-0000-7000-8000-000000000001"), "PROJ-SPMO-2026-001", "منصة الخدمات الرقمية", "Digital services platform",
+                Guid.Parse("0190a4f0-0000-7000-8000-000000000002"), Guid.Parse("0190a4f0-0000-7000-8000-000000000003"),
+                new DateTimeOffset(2026, 6, 30, 10, 0, 0, TimeSpan.Zero)));
+        services.AddWebhookEvent<ProjectStageChanged>(
+            "portfolio.project.stage-changed", PortfolioPermissions.SystemCode, "انتقال مرحلة مشروع", "Project stage changed",
+            PortfolioPermissions.ProjectResource, PortfolioPermissions.ProjectRead, e => e.ProjectId,
+            new ProjectStageChanged(Guid.Parse("0190a4f0-0000-7000-8000-000000000001"), "PROJ-SPMO-2026-001", "planning", "execution",
+                Guid.Parse("0190a4f0-0000-7000-8000-000000000002"), new DateTimeOffset(2026, 3, 15, 8, 30, 0, TimeSpan.Zero)));
     }
 
     public void MapEndpoints(IEndpointRouteBuilder endpoints)

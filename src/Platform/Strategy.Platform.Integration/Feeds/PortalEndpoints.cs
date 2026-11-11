@@ -27,7 +27,7 @@ internal static class PortalEndpoints
 
     private static string BaseUrl(HttpRequest request) => $"{request.Scheme}://{request.Host}{request.PathBase}";
 
-    private static async Task<IResult> PortalAsync(HttpContext context, FeedService feeds, CancellationToken ct)
+    private static async Task<Microsoft.AspNetCore.Http.HttpResults.Ok<PortalDto>> PortalAsync(HttpContext context, FeedService feeds, CancellationToken ct)
     {
         var types = await feeds.VisibleAsync(context.User, null, ct);
         var root = BaseUrl(context.Request);

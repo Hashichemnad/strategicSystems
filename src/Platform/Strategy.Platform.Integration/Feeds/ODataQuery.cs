@@ -159,6 +159,7 @@ public static class ODataQuery
         BinaryOperatorNode binary => Comparison(type, binary),
         SingleValueFunctionCallNode call => Function(type, call),
         InNode @in => In(type, @in),
+        SingleValuePropertyAccessNode when FieldOf(type, node) is { Type: RecordFieldType.Bool } flag => new RecordFilterCompare(flag.Code, RecordCompare.Eq, true),
         _ => throw new FeedQueryException("notImplemented", $"This filter expression ({node.Kind}) is not supported."),
     };
 

@@ -1,10 +1,10 @@
-using Strategy.Platform.Identity.Authentication;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using OpenIddict.Abstractions;
 using Strategy.Platform.AI.Application;
 using Strategy.Platform.AI.Tools;
 using Strategy.Platform.Audit;
+using Strategy.Platform.Identity.Authentication;
 using Strategy.Platform.Kernel.Context;
 using Strategy.Platform.Kernel.Results;
 using Strategy.Platform.Mcp.OAuth;
