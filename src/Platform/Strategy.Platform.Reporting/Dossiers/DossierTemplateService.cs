@@ -19,7 +19,7 @@ public sealed record DossierTemplateDto(Guid Id, string Code, string Dataset, st
 public sealed record DossierTemplateInput(string Code, string Dataset, string LabelAr, string LabelEn, DossierDefinition Definition, bool Active);
 
 /// <summary>A template the caller may run (its record type is readable).</summary>
-public sealed record UsableDossierTemplateDto(string Code, string Dataset, string LabelAr, string LabelEn, string Language, IReadOnlyList<ReportTypeFieldDto> FilterFields);
+public sealed record UsableDossierTemplateDto(Guid Id, string Code, string Dataset, string LabelAr, string LabelEn, string Language, IReadOnlyList<ReportTypeFieldDto> FilterFields);
 
 public sealed record DossierRecordDto(Guid Id, string? Number, string? NameAr, string? NameEn);
 
@@ -169,7 +169,7 @@ public sealed class DossierTemplateService(
 
             var definition = JsonSerializer.Deserialize<DossierDefinition>(t.DefinitionJson, DashboardService.Json) ?? new DossierDefinition();
             var fields = ReportTypeService.Describe(type, null, null).Objects[0].Fields.Where(f => f.Filterable).ToList();
-            result.Add(new UsableDossierTemplateDto(t.Code, t.Dataset, t.LabelAr, t.LabelEn, definition.Language, fields));
+            result.Add(new UsableDossierTemplateDto(t.Id, t.Code, t.Dataset, t.LabelAr, t.LabelEn, definition.Language, fields));
         }
 
         return result;

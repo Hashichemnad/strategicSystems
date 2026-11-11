@@ -484,3 +484,55 @@ export function funnelOption(input: FunnelInput): ChartSpec {
     },
   };
 }
+
+export interface PieInput {
+  slices: readonly { key: string; label: string; value: number; color?: string }[];
+  /** A ring (donut) instead of a full pie. */
+  donut?: boolean;
+  format?: Format;
+  categoryHeader?: string;
+  valueHeader?: string;
+}
+
+/** Pie / donut (report builder, ADR 0182): legend on the start side, share in the tooltip, the same data as a table. */
+export function pieOption(input: PieInput): ChartSpec {
+  const format = input.format ?? plain;
+  const total = input.slices.reduce((sum, s) => sum + Math.max(0, s.value), 0);
+  const option = {
+    tooltip: {
+      trigger: 'item',
+      formatter: (params: unknown) => {
+        const p = params as { name: string; value: number; percent: number };
+        return `${p.name.replace(/[&<>"]/g, (c) => `&#${c.charCodeAt(0)};`)}: ${format(p.value)} (${p.percent}%)`;
+      },
+    },
+    legend: { type: 'scroll', orient: 'vertical', left: 0, top: 'middle' },
+    series: [
+      {
+        type: 'pie',
+        radius: input.donut ? ['45%', '72%'] : '72%',
+        center: ['62%', '50%'],
+        avoidLabelOverlap: true,
+        label: { show: false },
+        data: input.slices.map((s) => ({
+          name: s.label,
+          key: s.key,
+          value: s.value,
+          ...(s.color ? { itemStyle: { color: s.color } } : {}),
+        })),
+      },
+    ],
+  } as ChartOption;
+  return {
+    option,
+    table: {
+      columns: [input.categoryHeader ?? '', input.valueHeader ?? '', '%'],
+      rows: input.slices.map((s) => [
+        s.label,
+        format(s.value),
+        total > 0 ? Math.round((Math.max(0, s.value) / total) * 1000) / 10 : 0,
+      ]),
+      rowKeys: input.slices.map((s) => s.key),
+    },
+  };
+}

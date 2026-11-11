@@ -5,6 +5,7 @@ export {
   funnelOption,
   gaugeOption,
   lineOption,
+  pieOption,
   resolveTokenColors,
   token,
   topN,
@@ -18,6 +19,7 @@ export {
   type GaugeInput,
   type LineInput,
   type LineSeries,
+  type PieInput,
 } from './builders';
 export { applyDirection, prepareOption, withAria } from './direction';
 export { chartTheme, readChartTokens, type ChartTokens, type ChartTone } from './theme';

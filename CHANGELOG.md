@@ -12,6 +12,21 @@ Not tagged yet: version 1.0.0 is released (tag `v1.0.0`) at the end of Phase 23 
 First release. Self-hosted, bilingual (Arabic / English, full RTL) integrated strategy management suite: one application, one database,
 one login, eleven systems on a shared platform.
 
+### Added — Reporting 2.0 (Phase 21)
+- **Report types**: a primary record type with related types up to three levels — also across systems (project ↔ team members, project
+  KPI ↔ KPI results, benchmark ↔ CAP remarks and actions, finding ↔ risk, risk ↔ KRI results, document ↔ IP) — "with" or "with or without"
+  related records; 17 seeded per system, administered in **Settings → Report types**. Every row and related row is read through its own
+  system's access; fields a person may not see are neither offered nor returned.
+- **Report builder**: columns from every object of the type, filters with relative dates, grouping up to three levels with subtotals, summary
+  formulas (sum, average, minimum, maximum), charts (bar, stacked bar, line, pie, donut), conditional highlighting, Excel / PDF / CSV export in
+  Arabic or English.
+- **My reports for everyone** with private folders; shared folders, sharing and publishing for Report authors.
+- **Record dossiers**: PDF and Word documents of one record from templates designed in **Settings → Dossier templates** (cover, header /
+  footer, sections bound to the record, related lists, charts, Gantt, KPI trend, risk matrix, approval history, attachments, conditions);
+  seven seeded templates (project, KPI card, risk profile, audit report pack, team evaluation, benchmark study, CAP source); one record, a
+  filtered set as one merged PDF or a ZIP, and monthly e-mail schedules (e.g. to each project manager), always with the reader's access.
+- Reportable metadata contract for integrations (Phase 22 OData `$expand`).
+
 ### Added — themes and application workspaces (Phase 20)
 - Three themes — **Classic** (unchanged, the default), **Enterprise** (compact workspaces: per-app tabs, highlights panel, path bar,
   related lists, utility bar) and **Modern** (calm workspaces: collapsible app sidebar, command palette Ctrl+K, list + preview, cards,

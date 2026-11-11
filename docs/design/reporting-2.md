@@ -181,3 +181,24 @@ subtotals and chart on a worked example; My reports for a user without roles, sh
 project dossier renders every seeded section in AR and EN (PDF via Gotenberg, Word parsed back) and omits the cost section for a user
 without cost rights; bulk dossier for a filtered set (merged PDF page count, ZIP entries); scheduled dossier e-mail to each project owner.
 E2E (ar + en) with the screenshots listed in the phase prompt.
+
+## 11. As built (Phase 21)
+
+- Contract (§1) as designed; `IReportableMetadata` is the registry (`MetricRegistry`), registered scoped. 48 datasets, 46 relationships.
+  ★ datasets added: Portfolio 7 (change requests, project risks, RAID, stakeholders, meetings, lessons, project KPIs), Risk 2 (controls,
+  KRIs), Teams 1 (evaluations), Audit 3 (reports, follow-ups, finding-risks), Benchmarking 2 (topics, plan items), CAP 1 (sources),
+  Document Registry 1 (versions), Workflow 1 (join-only approval history). The template module declares `sample.item-tasks` (used by tests).
+- Engine (`ReportTypes/`): `ReportTypeRules`, `ReportComposer`, `ReportAggregation` and `RelativeDates` are pure and unit-tested;
+  `ReportTypeEngine` resolves, validates (`reporting.errors.fieldNotAllowed` / `fieldUnknown` / `operator` / `summary` / `chart` /
+  `highlight` / `timeout`) and composes; `ReportTypeExport` writes Excel / PDF / CSV; `ChartSvg` draws server charts for PDFs.
+- `POST /reports/query` runs type-based definitions; `/reports/run` keeps the Phase 17 response for dataset definitions; exports and
+  schedules accept both (`ReportService.RenderDefinitionAsync`).
+- Dossiers (`Dossiers/`): `DossierRules` (validation), `DossierBuilder` (data per section as the runner), `DossierHtml` (Gotenberg),
+  `DossierWord` (OpenXml), `DossierTemplateService` (admin, seeding, record picker, one / bulk / file). Sections whose bindings are not
+  readable, or whose condition is false, are omitted; section failures are logged and omitted, never fatal.
+- Schedules: `targetKind = dossier`, `options` jsonb (`DossierScheduleOptions`), recipients by record field resolved as the owner, content
+  built as each recipient.
+- Front end: `features/reporting/ReportBuilderPage.tsx` (Reports home with folders + builder), `ReportResultView.tsx`, `ReportTypesPage.tsx`,
+  `DossierTemplatesPage.tsx`, `DossiersPage.tsx` (incl. `DossierButton`, used on the project page); namespace `reportBuilder`; `pieOption`
+  added to the chart builders. Phase 17 saved reports open in the new builder (converted to `dataset:<code>`).
+- Deviation from §5: Phase 17 reports keep running on the Phase 17 dataset path until saved again from the new builder (no data migration).

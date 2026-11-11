@@ -163,9 +163,10 @@ test.describe('dashboards and reporting', () => {
     // ---- Report builder: object → columns → run → save → schedule ----------------------------------------------
     await page.goto('/reports/new');
     await expect(page.getByTestId('report-builder')).toBeVisible();
-    await page.getByRole('combobox', { name: r('builder.object') }).click();
+    // Reporting 2.0 (Phase 21): a report type (here the first one offered) instead of a single object.
+    await page.getByRole('combobox', { name: tr(language, 'reportBuilder:builder.reportType') }).click();
     await page.getByRole('option').first().click();
-    const columns = page.getByTestId('report-columns').getByRole('checkbox');
+    const columns = page.getByTestId('report-columns-a').getByRole('checkbox');
     await columns.nth(0).check();
     await columns.nth(1).check();
     await columns.nth(2).check();

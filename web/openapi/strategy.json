@@ -104085,6 +104085,7 @@
       },
       "UsableDossierTemplateDto": {
         "required": [
+          "id",
           "code",
           "dataset",
           "labelAr",
@@ -104094,6 +104095,10 @@
         ],
         "type": "object",
         "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
           "code": {
             "type": "string"
           },
