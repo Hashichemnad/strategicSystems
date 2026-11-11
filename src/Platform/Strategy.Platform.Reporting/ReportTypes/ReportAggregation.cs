@@ -244,7 +244,7 @@ public static class ReportAggregation
             {
                 DateOnly date when DateOnly.TryParse(target, CultureInfo.InvariantCulture, out var td) => date.CompareTo(td),
                 DateTimeOffset dto when DateTimeOffset.TryParse(target, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var tt) => dto.CompareTo(tt),
-                bool b => b.ToString().ToLowerInvariant() == target.ToLowerInvariant() ? 0 : 1,
+                bool b => string.Equals(b ? "true" : "false", target, StringComparison.OrdinalIgnoreCase) ? 0 : 1,
                 _ => string.Compare(ReportComposer.Key(value), target, StringComparison.OrdinalIgnoreCase),
             };
         }

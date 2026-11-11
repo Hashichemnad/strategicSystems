@@ -50,6 +50,10 @@ internal sealed class CapRemarkRow
 {
     public Guid Id { get; init; }
 
+    public Guid SourceId { get; init; }
+
+    public Guid? LinkedId { get; init; }
+
     public string Number { get; init; } = string.Empty;
 
     public string? TextAr { get; init; }
@@ -87,6 +91,8 @@ internal sealed class CapRemarkRow
 internal sealed class CapActionRow
 {
     public Guid Id { get; init; }
+
+    public Guid HomeRemarkId { get; init; }
 
     public string Number { get; init; } = string.Empty;
 
@@ -132,6 +138,20 @@ internal sealed class CapDatasetSource(CapDbContext db, CapReader reader, IClock
 {
     public const string RemarksDataset = "cap.remarks";
     public const string ActionsDataset = "cap.actions";
+    public const string SourcesDataset = "cap.sources";
+
+    private static readonly DatasetQuery<CapSource> SourceQuery = new DatasetQuery<CapSource>(s => s.Id)
+        .Field("number", s => s.Number)
+        .Field("titleAr", s => s.TitleAr)
+        .Field("titleEn", s => s.TitleEn)
+        .Field("sourceType", s => s.SourceTypeCode)
+        .Field("receivedOn", s => s.ReceivedOn)
+        .Field("owner", s => s.OwnerEmployeeId)
+        .Field("unit", s => s.UnitId)
+        .Field("origin", s => s.Origin)
+        .Field("status", s => s.Status)
+        .Field("description", s => s.Description)
+        .Field("id", s => s.Id);
 
     private static readonly string[] FinalStatuses = [.. CapRemarkStatuses.Final];
 
@@ -151,7 +171,10 @@ internal sealed class CapDatasetSource(CapDbContext db, CapReader reader, IClock
         .Field("assignedOn", r => r.AssignedOn)
         .Field("dueOn", r => r.DueOn)
         .Field("completedAt", r => r.CompletedAt)
-        .Field("overdue", r => r.Overdue);
+        .Field("overdue", r => r.Overdue)
+        .Field("id", r => r.Id)
+        .Field("sourceId", r => r.SourceId)
+        .Field("linkedId", r => r.LinkedId);
 
     private static readonly DatasetQuery<CapActionRow> ActionQuery = new DatasetQuery<CapActionRow>(a => a.Id)
         .Field("number", a => a.Number)
@@ -172,7 +195,9 @@ internal sealed class CapDatasetSource(CapDbContext db, CapReader reader, IClock
         .Field("budgetRequired", a => a.BudgetRequired)
         .Field("budgetAvailable", a => a.BudgetAvailable)
         .Field("estimatedCost", a => a.EstimatedCost)
-        .Field("completedAt", a => a.CompletedAt);
+        .Field("completedAt", a => a.CompletedAt)
+        .Field("id", a => a.Id)
+        .Field("homeRemarkId", a => a.HomeRemarkId);
 
     public string SystemCode => CapPermissions.SystemCode;
 
@@ -196,7 +221,10 @@ internal sealed class CapDatasetSource(CapDbContext db, CapReader reader, IClock
             new("dueOn", "تاريخ الاستحقاق", "Due date", DatasetFieldType.Date),
             new("completedAt", "تاريخ الاكتمال", "Completed at", DatasetFieldType.DateTime),
             new("overdue", "متأخرة", "Overdue", DatasetFieldType.Bool, Groupable: true),
-        ], "/cap/remarks/{id}"),
+            new("id", "المعرّف", "Id", DatasetFieldType.Reference, Sortable: false),
+            new("sourceId", "المصدر", "Source", DatasetFieldType.Reference, Sortable: false),
+            new("linkedId", "السجل المرتبط", "Linked record", DatasetFieldType.Reference, Sortable: false),
+        ], "/cap/remarks/{id}") { KeyField = "id" },
         new(ActionsDataset, CapPermissions.SystemCode, "الإجراءات التصحيحية", "CAP corrective actions", CapPermissions.Read,
         [
             new("number", "رقم الإجراء", "Action number", DatasetFieldType.Text),
@@ -218,7 +246,30 @@ internal sealed class CapDatasetSource(CapDbContext db, CapReader reader, IClock
             new("budgetAvailable", "الميزانية متوفرة", "Budget available", DatasetFieldType.Bool, Groupable: true),
             new("estimatedCost", "التكلفة التقديرية", "Estimated cost", DatasetFieldType.Money),
             new("completedAt", "تاريخ الاكتمال", "Completed at", DatasetFieldType.DateTime),
-        ], "/cap/actions/{id}"),
+            new("id", "المعرّف", "Id", DatasetFieldType.Reference, Sortable: false),
+            new("homeRemarkId", "الملاحظة", "Remark", DatasetFieldType.Reference, Sortable: false),
+        ], "/cap/actions/{id}") { KeyField = "id" },
+        new(SourcesDataset, CapPermissions.SystemCode, "مصادر خطة العمل التصحيحية", "CAP sources", CapPermissions.Read,
+        [
+            new("number", "رقم المصدر", "Source number", DatasetFieldType.Text),
+            new("titleAr", "العنوان (عربي)", "Title (Arabic)", DatasetFieldType.Text),
+            new("titleEn", "العنوان (إنجليزي)", "Title (English)", DatasetFieldType.Text),
+            new("sourceType", "نوع المصدر", "Source type", DatasetFieldType.Lookup, Groupable: true, LookupType: CapPermissions.SourceTypeLookup),
+            new("receivedOn", "تاريخ الاستلام", "Received on", DatasetFieldType.Date),
+            new("owner", "المسؤول", "Owner", DatasetFieldType.Employee, Groupable: true),
+            new("unit", "الوحدة", "Unit", DatasetFieldType.Unit, Groupable: true),
+            new("origin", "المنشأ", "Origin", DatasetFieldType.Lookup, Groupable: true),
+            new("status", "الحالة", "Status", DatasetFieldType.Lookup, Groupable: true),
+            new("description", "الوصف", "Description", DatasetFieldType.Text, Filterable: false, Sortable: false),
+            new("id", "المعرّف", "Id", DatasetFieldType.Reference, Sortable: false),
+        ], "/cap/sources/{id}") { KeyField = "id" },
+    ];
+
+    public IReadOnlyList<DatasetRelationship> Relationships { get; } =
+    [
+        new("cap.source-remarks", SourcesDataset, "id", RemarksDataset, "sourceId", "الملاحظات", "Remarks"),
+        new("cap.remark-actions", RemarksDataset, "id", ActionsDataset, "homeRemarkId", "الإجراءات التصحيحية", "Corrective actions"),
+        new("cap.remark-tasks", RemarksDataset, "id", "tasks.tasks", "linkedId", "المهام", "Tasks"),
     ];
 
     public async Task<ReportResult> RunAsync(ReportQuery query, ClaimsPrincipal user, CancellationToken cancellationToken)
@@ -233,6 +284,8 @@ internal sealed class CapDatasetSource(CapDbContext db, CapReader reader, IClock
                         .Join(db.Sources.AsNoTracking(), r => r.SourceId, s => s.Id, (r, s) => new CapRemarkRow
                         {
                             Id = r.Id,
+                            SourceId = r.SourceId,
+                            LinkedId = r.LinkedId,
                             Number = r.Number,
                             TextAr = r.TextAr,
                             TextEn = r.TextEn,
@@ -259,6 +312,7 @@ internal sealed class CapDatasetSource(CapDbContext db, CapReader reader, IClock
                         .Join(db.Remarks.AsNoTracking(), a => a.HomeRemarkId, r => r.Id, (a, r) => new CapActionRow
                         {
                             Id = a.Id,
+                            HomeRemarkId = a.HomeRemarkId,
                             Number = a.Number,
                             DetailsAr = a.DetailsAr,
                             DetailsEn = a.DetailsEn,
@@ -281,6 +335,9 @@ internal sealed class CapDatasetSource(CapDbContext db, CapReader reader, IClock
                         });
                     return await ActionQuery.RunAsync(rows, query, cancellationToken).ConfigureAwait(false);
                 }
+
+            case SourcesDataset:
+                return await SourceQuery.RunAsync(await reader.SourcesAsync(user, cancellationToken).ConfigureAwait(false), query, cancellationToken).ConfigureAwait(false);
 
             default:
                 throw new ArgumentException($"Unknown dataset '{query.Dataset}'.", nameof(query));

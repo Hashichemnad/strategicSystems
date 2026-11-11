@@ -13,6 +13,8 @@ internal sealed class KpiResultReportRow
 {
     public Guid Id { get; init; }
 
+    public Guid CardId { get; init; }
+
     public string CardCode { get; init; } = string.Empty;
 
     public string? CardNameAr { get; init; }
@@ -86,7 +88,8 @@ internal sealed class KpiDatasetSource(KpiDbContext db, KpiReader reader) : IRep
             new("baselineValue", "قيمة خط الأساس", "Baseline value", DatasetFieldType.Number),
             new("globalStar", "مؤشر النجمة العالمية", "Global star", DatasetFieldType.Bool, Groupable: true),
             new("initiatedOn", "تاريخ البدء", "Initiated on", DatasetFieldType.Date),
-        ], "/kpi/cards/{id}"),
+            new("id", "المعرّف", "Id", DatasetFieldType.Reference, Sortable: false),
+        ], "/kpi/cards/{id}") { KeyField = "id" },
         new(ResultsDataset, KpiPermissions.SystemCode, "نتائج مؤشرات الأداء", "KPI results", KpiPermissions.ResultRead,
         [
             new("cardCode", "رمز المؤشر", "KPI code", DatasetFieldType.Text, Groupable: true),
@@ -110,7 +113,14 @@ internal sealed class KpiDatasetSource(KpiDbContext db, KpiReader reader) : IRep
             new("approvedAt", "تاريخ الاعتماد", "Approved on", DatasetFieldType.DateTime),
             new("unit", "الوحدة", "Unit", DatasetFieldType.Unit, Groupable: true),
             new("owner", "المسؤول", "Owner", DatasetFieldType.Employee, Groupable: true),
-        ], "/kpi/results/{id}"),
+            new("id", "المعرّف", "Id", DatasetFieldType.Reference, Sortable: false),
+            new("cardId", "بطاقة المؤشر", "KPI card", DatasetFieldType.Reference, Sortable: false),
+        ], "/kpi/results/{id}") { KeyField = "id" },
+    ];
+
+    public IReadOnlyList<DatasetRelationship> Relationships { get; } =
+    [
+        new("kpi.card-results", CardsDataset, "id", ResultsDataset, "cardId", "نتائج المؤشر حسب الفترة", "Results by period"),
     ];
 
     public async Task<ReportResult> RunAsync(ReportQuery query, ClaimsPrincipal user, CancellationToken cancellationToken)
@@ -139,7 +149,8 @@ internal sealed class KpiDatasetSource(KpiDbContext db, KpiReader reader) : IRep
                         .Field("weight", c => c.Weight)
                         .Field("baselineValue", c => c.BaselineValue)
                         .Field("globalStar", c => c.IsGlobalStar)
-                        .Field("initiatedOn", c => c.InitiatedOn);
+                        .Field("initiatedOn", c => c.InitiatedOn)
+                        .Field("id", c => c.Id);
                     return await dataset.RunAsync(source, query, cancellationToken).ConfigureAwait(false);
                 }
 
@@ -152,6 +163,7 @@ internal sealed class KpiDatasetSource(KpiDbContext db, KpiReader reader) : IRep
                                  select new KpiResultReportRow
                                  {
                                      Id = r.Id,
+                                     CardId = c.Id,
                                      CardCode = c.Code,
                                      CardNameAr = c.NameAr,
                                      CardNameEn = c.NameEn,
@@ -195,7 +207,13 @@ internal sealed class KpiDatasetSource(KpiDbContext db, KpiReader reader) : IRep
                         .Field("daysLate", r => r.DaysLate)
                         .Field("approvedAt", r => r.ApprovedAt)
                         .Field("unit", r => r.UnitId)
-                        .Field("owner", r => r.OwnerEmployeeId);
+                        .Field("owner", r => r.OwnerEmployeeId)
+                        .Field("id", r => r.Id)
+                        .Field("cardId", r => r.CardId);
+                    var stable = query.Sort.Count > 0 || query.GroupBy.Count > 0
+                        ? query
+                        : query with { Sort = [new ReportSort("cardCode", false), new ReportSort("periodStart", false)] };
+                    query = stable;
                     return await dataset.RunAsync(source, query, cancellationToken).ConfigureAwait(false);
                 }
 

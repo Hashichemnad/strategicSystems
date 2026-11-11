@@ -76,6 +76,8 @@ internal sealed class AuditFindingRow
 {
     public Guid Id { get; init; }
 
+    public Guid ReportId { get; init; }
+
     public string Number { get; init; } = string.Empty;
 
     public string? TitleAr { get; init; }
@@ -120,6 +122,8 @@ internal sealed class AuditRecommendationRow
 {
     public Guid Id { get; init; }
 
+    public Guid FindingId { get; init; }
+
     public string Number { get; init; } = string.Empty;
 
     public string? ActionAr { get; init; }
@@ -160,6 +164,45 @@ internal sealed class AuditDatasetSource(AuditMgmtDbContext db, AuditReader read
 {
     public const string FindingsDataset = "auditmgmt.findings";
     public const string RecommendationsDataset = "auditmgmt.recommendations";
+    public const string ReportsDataset = "auditmgmt.reports";
+    public const string FollowUpsDataset = "auditmgmt.follow-ups";
+    public const string FindingRisksDataset = "auditmgmt.finding-risks";
+
+    private static readonly DatasetQuery<AuditReport> AuditReportQuery = new DatasetQuery<AuditReport>(r => r.Id)
+        .Field("number", r => r.Number)
+        .Field("titleAr", r => r.TitleAr)
+        .Field("titleEn", r => r.TitleEn)
+        .Field("type", r => r.TypeCode)
+        .Field("auditorBody", r => r.AuditorBody)
+        .Field("leadAuditor", r => r.LeadAuditorEmployeeId)
+        .Field("periodFrom", r => r.PeriodFrom)
+        .Field("periodTo", r => r.PeriodTo)
+        .Field("reportDate", r => r.ReportDate)
+        .Field("summary", r => r.Summary)
+        .Field("status", r => r.Status)
+        .Field("issuedAt", r => r.IssuedAt)
+        .Field("closedAt", r => r.ClosedAt)
+        .Field("id", r => r.Id);
+
+    private static readonly DatasetQuery<AuditFollowUpRow> FollowUpQuery = new DatasetQuery<AuditFollowUpRow>(f => f.RecommendationId)
+        .Field("number", f => f.Item.Number)
+        .Field("recommendationNumber", f => f.RecommendationNumber)
+        .Field("followUpOn", f => f.Item.FollowUpOn)
+        .Field("achievedOn", f => f.Item.AchievedOn)
+        .Field("pct", f => f.Item.Pct)
+        .Field("actionsImplemented", f => f.Item.ActionsImplemented)
+        .Field("nextFollowUpOn", f => f.Item.NextFollowUpOn)
+        .Field("recordedBy", f => f.Item.RecordedByEmployeeId)
+        .Field("reviewStatus", f => f.Item.ReviewStatus)
+        .Field("recommendationId", f => f.Item.RecommendationId);
+
+    private static readonly DatasetQuery<AuditFindingRiskRow> FindingRiskQuery = new DatasetQuery<AuditFindingRiskRow>(f => f.FindingId)
+        .Field("findingNumber", f => f.FindingNumber)
+        .Field("riskNumber", f => f.Item.RiskNumber)
+        .Field("flaggedForReassessment", f => f.Item.FlaggedForReassessment)
+        .Field("controlLoweredTo", f => f.Item.ControlLoweredTo)
+        .Field("findingId", f => f.Item.FindingId)
+        .Field("riskId", f => f.Item.RiskId);
 
     private static readonly string[] FinalRecommendationStatuses = [.. RecommendationStatuses.Final];
 
@@ -182,7 +225,9 @@ internal sealed class AuditDatasetSource(AuditMgmtDbContext db, AuditReader read
         .Field("actualClosedOn", f => f.ActualClosedOn)
         .Field("completion", f => f.Completion)
         .Field("repeat", f => f.Repeat)
-        .Field("capRemarkNumber", f => f.CapRemarkNumber);
+        .Field("capRemarkNumber", f => f.CapRemarkNumber)
+        .Field("id", f => f.Id)
+        .Field("reportId", f => f.ReportId);
 
     private static readonly DatasetQuery<AuditRecommendationRow> RecommendationQuery = new DatasetQuery<AuditRecommendationRow>(r => r.Id)
         .Field("number", r => r.Number)
@@ -201,7 +246,9 @@ internal sealed class AuditDatasetSource(AuditMgmtDbContext db, AuditReader read
         .Field("nextFollowUpOn", r => r.NextFollowUpOn)
         .Field("responsibleUnit", r => r.ResponsibleUnitId)
         .Field("priority", r => r.Priority)
-        .Field("overdue", r => r.Overdue);
+        .Field("overdue", r => r.Overdue)
+        .Field("id", r => r.Id)
+        .Field("findingId", r => r.FindingId);
 
     public string SystemCode => AuditPermissions.SystemCode;
 
@@ -228,7 +275,9 @@ internal sealed class AuditDatasetSource(AuditMgmtDbContext db, AuditReader read
             new("completion", "نسبة الإنجاز", "Completion", DatasetFieldType.Ratio),
             new("repeat", "ملاحظة متكررة", "Repeat finding", DatasetFieldType.Bool, Groupable: true),
             new("capRemarkNumber", "رقم ملاحظة خطة العمل", "CAP remark number", DatasetFieldType.Text),
-        ], "/audit-management/findings/{id}"),
+            new("id", "المعرّف", "Id", DatasetFieldType.Reference, Sortable: false),
+            new("reportId", "التقرير", "Report", DatasetFieldType.Reference, Sortable: false),
+        ], "/audit-management/findings/{id}") { KeyField = "id" },
         new(RecommendationsDataset, AuditPermissions.SystemCode, "توصيات التدقيق", "Audit recommendations", AuditPermissions.Read,
         [
             new("number", "رقم التوصية", "Recommendation number", DatasetFieldType.Text),
@@ -248,7 +297,57 @@ internal sealed class AuditDatasetSource(AuditMgmtDbContext db, AuditReader read
             new("responsibleUnit", "الجهة المسؤولة", "Responsible unit", DatasetFieldType.Unit, Groupable: true),
             new("priority", "أولوية الملاحظة", "Finding priority", DatasetFieldType.Lookup, Groupable: true, LookupType: AuditPermissions.PriorityLookup),
             new("overdue", "متأخرة", "Overdue", DatasetFieldType.Bool, Groupable: true),
+            new("id", "المعرّف", "Id", DatasetFieldType.Reference, Sortable: false),
+            new("findingId", "الملاحظة", "Finding", DatasetFieldType.Reference, Sortable: false),
+        ], "/audit-management/recommendations/{id}") { KeyField = "id" },
+        new(ReportsDataset, AuditPermissions.SystemCode, "تقارير التدقيق", "Audit reports", AuditPermissions.Read,
+        [
+            new("number", "رقم التقرير", "Report number", DatasetFieldType.Text),
+            new("titleAr", "العنوان (عربي)", "Title (Arabic)", DatasetFieldType.Text),
+            new("titleEn", "العنوان (إنجليزي)", "Title (English)", DatasetFieldType.Text),
+            new("type", "نوع التقرير", "Report type", DatasetFieldType.Lookup, Groupable: true, LookupType: AuditPermissions.ReportTypeLookup),
+            new("auditorBody", "جهة التدقيق", "Auditor body", DatasetFieldType.Text, Groupable: true),
+            new("leadAuditor", "المدقق الرئيسي", "Lead auditor", DatasetFieldType.Employee, Groupable: true),
+            new("periodFrom", "الفترة من", "Period from", DatasetFieldType.Date),
+            new("periodTo", "الفترة إلى", "Period to", DatasetFieldType.Date),
+            new("reportDate", "تاريخ التقرير", "Report date", DatasetFieldType.Date),
+            new("summary", "الملخص", "Summary", DatasetFieldType.Text, Filterable: false, Sortable: false),
+            new("status", "الحالة", "Status", DatasetFieldType.Lookup, Groupable: true),
+            new("issuedAt", "تاريخ الإصدار", "Issued on", DatasetFieldType.DateTime),
+            new("closedAt", "تاريخ الإغلاق", "Closed on", DatasetFieldType.DateTime),
+            new("id", "المعرّف", "Id", DatasetFieldType.Reference, Sortable: false),
+        ], "/audit-management/reports/{id}") { KeyField = "id" },
+        new(FollowUpsDataset, AuditPermissions.SystemCode, "متابعات التوصيات", "Recommendation follow-ups", AuditPermissions.Read,
+        [
+            new("number", "رقم المتابعة", "Follow-up number", DatasetFieldType.Text),
+            new("recommendationNumber", "رقم التوصية", "Recommendation number", DatasetFieldType.Text, Groupable: true),
+            new("followUpOn", "تاريخ المتابعة", "Follow-up date", DatasetFieldType.Date),
+            new("achievedOn", "تاريخ الإنجاز", "Achieved on", DatasetFieldType.Date),
+            new("pct", "نسبة الإنجاز", "Achievement", DatasetFieldType.Ratio),
+            new("actionsImplemented", "الإجراءات المنفذة", "Actions implemented", DatasetFieldType.Text, Filterable: false, Sortable: false),
+            new("nextFollowUpOn", "المتابعة القادمة", "Next follow-up", DatasetFieldType.Date),
+            new("recordedBy", "سجلها", "Recorded by", DatasetFieldType.Employee, Groupable: true),
+            new("reviewStatus", "حالة المراجعة", "Review status", DatasetFieldType.Lookup, Groupable: true),
+            new("recommendationId", "التوصية", "Recommendation", DatasetFieldType.Reference, Sortable: false),
         ], "/audit-management/recommendations/{id}"),
+        new(FindingRisksDataset, AuditPermissions.SystemCode, "مخاطر الملاحظات", "Finding risks", AuditPermissions.Read,
+        [
+            new("findingNumber", "رقم الملاحظة", "Finding number", DatasetFieldType.Text, Groupable: true),
+            new("riskNumber", "رقم الخطر", "Risk number", DatasetFieldType.Text, Groupable: true),
+            new("flaggedForReassessment", "لإعادة التقييم", "Flagged for reassessment", DatasetFieldType.Bool, Groupable: true),
+            new("controlLoweredTo", "تخفيض الضابط إلى", "Control lowered to", DatasetFieldType.Lookup, Groupable: true),
+            new("findingId", "الملاحظة", "Finding", DatasetFieldType.Reference, Sortable: false),
+            new("riskId", "الخطر", "Risk", DatasetFieldType.Reference, Sortable: false),
+        ], "/audit-management/findings/{id}"),
+    ];
+
+    public IReadOnlyList<DatasetRelationship> Relationships { get; } =
+    [
+        new("auditmgmt.report-findings", ReportsDataset, "id", FindingsDataset, "reportId", "الملاحظات", "Findings"),
+        new("auditmgmt.finding-recommendations", FindingsDataset, "id", RecommendationsDataset, "findingId", "التوصيات", "Recommendations"),
+        new("auditmgmt.recommendation-follow-ups", RecommendationsDataset, "id", FollowUpsDataset, "recommendationId", "المتابعات", "Follow-ups"),
+        new("auditmgmt.finding-risk-links", FindingsDataset, "id", FindingRisksDataset, "findingId", "المخاطر المرتبطة", "Linked risks"),
+        new("auditmgmt.finding-risk-risks", FindingRisksDataset, "riskId", "risk.risks", "id", "الخطر", "Risk"),
     ];
 
     public async Task<ReportResult> RunAsync(ReportQuery query, ClaimsPrincipal user, CancellationToken cancellationToken)
@@ -262,6 +361,7 @@ internal sealed class AuditDatasetSource(AuditMgmtDbContext db, AuditReader read
                     var rows = findings.Join(db.Reports.AsNoTracking(), f => f.ReportId, r => r.Id, (f, r) => new AuditFindingRow
                     {
                         Id = f.Id,
+                        ReportId = f.ReportId,
                         Number = f.Number,
                         TitleAr = f.TitleAr,
                         TitleEn = f.TitleEn,
@@ -291,6 +391,7 @@ internal sealed class AuditDatasetSource(AuditMgmtDbContext db, AuditReader read
                     var rows = db.Recommendations.AsNoTracking().Join(findings, r => r.FindingId, f => f.Id, (r, f) => new AuditRecommendationRow
                     {
                         Id = r.Id,
+                        FindingId = r.FindingId,
                         Number = r.Number,
                         ActionAr = r.ActionAr,
                         ActionEn = r.ActionEn,
@@ -312,10 +413,53 @@ internal sealed class AuditDatasetSource(AuditMgmtDbContext db, AuditReader read
                     return await RecommendationQuery.RunAsync(rows, query, cancellationToken).ConfigureAwait(false);
                 }
 
+            case ReportsDataset:
+                return await AuditReportQuery.RunAsync(await reader.ReportsAsync(user, cancellationToken).ConfigureAwait(false), query, cancellationToken).ConfigureAwait(false);
+
+            case FollowUpsDataset:
+                {
+                    var recommendations = await reader.RecommendationsAsync(user, cancellationToken).ConfigureAwait(false);
+                    var rows = from f in db.FollowUps.AsNoTracking()
+                               join r in recommendations on f.RecommendationId equals r.Id
+                               select new AuditFollowUpRow { Item = f, RecommendationId = r.Id, RecommendationNumber = r.Number };
+                    var stable = query.Sort.Count > 0 || query.GroupBy.Count > 0 ? query : query with { Sort = [new ReportSort("number", false)] };
+                    return await FollowUpQuery.RunAsync(rows, stable, cancellationToken).ConfigureAwait(false);
+                }
+
+            case FindingRisksDataset:
+                {
+                    var rows = from l in db.FindingRisks.AsNoTracking()
+                               join f in findings on l.FindingId equals f.Id
+                               where l.Active
+                               select new AuditFindingRiskRow { Item = l, FindingId = f.Id, FindingNumber = f.Number };
+                    var stable = query.Sort.Count > 0 || query.GroupBy.Count > 0 ? query : query with { Sort = [new ReportSort("findingNumber", false), new ReportSort("riskNumber", false)] };
+                    return await FindingRiskQuery.RunAsync(rows, stable, cancellationToken).ConfigureAwait(false);
+                }
+
             default:
                 throw new ArgumentException($"Unknown dataset '{query.Dataset}'.", nameof(query));
         }
     }
+}
+
+/// <summary>A follow-up with its (visible) recommendation.</summary>
+internal sealed class AuditFollowUpRow
+{
+    public FollowUp Item { get; init; } = null!;
+
+    public Guid RecommendationId { get; init; }
+
+    public string RecommendationNumber { get; init; } = string.Empty;
+}
+
+/// <summary>A finding ↔ risk link with its (visible) finding.</summary>
+internal sealed class AuditFindingRiskRow
+{
+    public FindingRisk Item { get; init; } = null!;
+
+    public Guid FindingId { get; init; }
+
+    public string FindingNumber { get; init; } = string.Empty;
 }
 
 /// <summary>

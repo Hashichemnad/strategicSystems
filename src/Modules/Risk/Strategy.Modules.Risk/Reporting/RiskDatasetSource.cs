@@ -36,6 +36,17 @@ internal sealed class RiskActionRow
     public string RiskNumber { get; init; } = string.Empty;
 
     public Guid UnitId { get; init; }
+
+    public Guid RiskId { get; init; }
+}
+
+/// <summary>A risk child (control / KRI) with its risk's number and unit.</summary>
+internal sealed class RiskChildRow<T>
+    where T : class
+{
+    public RiskRecord Risk { get; init; } = null!;
+
+    public T Item { get; init; } = null!;
 }
 
 /// <summary>Report-builder objects "risks" and "treatment actions" on the register's scoped query (<see cref="RiskReader"/>).</summary>
@@ -43,6 +54,8 @@ internal sealed class RiskDatasetSource(RiskDbContext db, RiskReader reader) : I
 {
     public const string RisksDataset = "risk.risks";
     public const string ActionsDataset = "risk.actions";
+    public const string ControlsDataset = "risk.controls";
+    public const string KrisDataset = "risk.kris";
 
     private static readonly DatasetQuery<RiskRecord> RiskQuery = new DatasetQuery<RiskRecord>(r => r.Id)
         .Field("number", r => r.Number)
@@ -66,7 +79,12 @@ internal sealed class RiskDatasetSource(RiskDbContext db, RiskReader reader) : I
         .Field("top10", r => r.Top10)
         .Field("escalated", r => r.Escalated)
         .Field("lastReviewOn", r => r.LastReviewOn)
-        .Field("nextReviewOn", r => r.NextReviewOn);
+        .Field("nextReviewOn", r => r.NextReviewOn)
+        .Field("inherentLikelihood", r => r.InherentLikelihood)
+        .Field("inherentImpact", r => r.InherentImpact)
+        .Field("residualLikelihood", r => r.ResidualLikelihood)
+        .Field("residualImpact", r => r.ResidualImpact)
+        .Field("id", r => r.Id);
 
     private static readonly DatasetQuery<RiskActionRow> ActionQuery = new DatasetQuery<RiskActionRow>(a => a.Id)
         .Field("number", a => a.Number)
@@ -80,7 +98,38 @@ internal sealed class RiskDatasetSource(RiskDbContext db, RiskReader reader) : I
         .Field("completion", a => a.CompletionPct)
         .Field("cost", a => a.Cost)
         .Field("riskNumber", a => a.RiskNumber)
-        .Field("unit", a => a.UnitId);
+        .Field("unit", a => a.UnitId)
+        .Field("id", a => a.Id)
+        .Field("riskId", a => a.RiskId);
+
+    private static readonly DatasetQuery<RiskChildRow<Control>> ControlQuery = new DatasetQuery<RiskChildRow<Control>>(c => c.Risk.Id)
+        .Field("riskNumber", c => c.Risk.Number)
+        .Field("unit", c => c.Risk.UnitId)
+        .Field("nameAr", c => c.Item.NameAr)
+        .Field("nameEn", c => c.Item.NameEn)
+        .Field("type", c => c.Item.TypeCode)
+        .Field("nature", c => c.Item.NatureCode)
+        .Field("owner", c => c.Item.OwnerEmployeeId)
+        .Field("frequency", c => c.Item.FrequencyCode)
+        .Field("effectiveness", c => c.Item.EffectivenessCode)
+        .Field("lastAssessedOn", c => c.Item.LastAssessedOn)
+        .Field("status", c => c.Item.Status)
+        .Field("riskId", c => c.Item.RiskId);
+
+    private static readonly DatasetQuery<RiskChildRow<Kri>> KriQuery = new DatasetQuery<RiskChildRow<Kri>>(k => k.Risk.Id)
+        .Field("riskNumber", k => k.Risk.Number)
+        .Field("unit", k => k.Risk.UnitId)
+        .Field("cardCode", k => k.Item.CardCode)
+        .Field("cardNameAr", k => k.Item.CardNameAr)
+        .Field("cardNameEn", k => k.Item.CardNameEn)
+        .Field("warningThreshold", k => k.Item.WarningThreshold)
+        .Field("breachThreshold", k => k.Item.BreachThreshold)
+        .Field("lastValue", k => k.Item.LastValue)
+        .Field("lastLevel", k => k.Item.LastLevel)
+        .Field("lastPeriod", k => k.Item.LastPeriod)
+        .Field("status", k => k.Item.Status)
+        .Field("riskId", k => k.Item.RiskId)
+        .Field("kpiCardId", k => k.Item.KpiCardId);
 
     public string SystemCode => RiskPermissions.SystemCode;
 
@@ -110,7 +159,12 @@ internal sealed class RiskDatasetSource(RiskDbContext db, RiskReader reader) : I
             new("escalated", "مصعّد", "Escalated", DatasetFieldType.Bool, Groupable: true),
             new("lastReviewOn", "آخر مراجعة", "Last review", DatasetFieldType.Date),
             new("nextReviewOn", "المراجعة القادمة", "Next review", DatasetFieldType.Date),
-        ], "/risk/risks/{id}"),
+            new("inherentLikelihood", "الاحتمالية الكامنة", "Inherent likelihood", DatasetFieldType.Number, Groupable: true),
+            new("inherentImpact", "الأثر الكامن", "Inherent impact", DatasetFieldType.Number, Groupable: true),
+            new("residualLikelihood", "الاحتمالية المتبقية", "Residual likelihood", DatasetFieldType.Number, Groupable: true),
+            new("residualImpact", "الأثر المتبقي", "Residual impact", DatasetFieldType.Number, Groupable: true),
+            new("id", "المعرّف", "Id", DatasetFieldType.Reference, Sortable: false),
+        ], "/risk/risks/{id}") { KeyField = "id" },
         new(ActionsDataset, RiskPermissions.SystemCode, "إجراءات المعالجة", "Treatment actions", RiskPermissions.Read,
         [
             new("number", "الرقم", "Number", DatasetFieldType.Text),
@@ -125,7 +179,48 @@ internal sealed class RiskDatasetSource(RiskDbContext db, RiskReader reader) : I
             new("cost", "التكلفة", "Cost", DatasetFieldType.Money),
             new("riskNumber", "رقم الخطر", "Risk number", DatasetFieldType.Text, Groupable: true),
             new("unit", "وحدة الخطر", "Risk unit", DatasetFieldType.Unit, Groupable: true),
-        ], "/risk/actions/{id}"),
+            new("id", "المعرّف", "Id", DatasetFieldType.Reference, Sortable: false),
+            new("riskId", "الخطر", "Risk", DatasetFieldType.Reference, Sortable: false),
+        ], "/risk/actions/{id}") { KeyField = "id" },
+        new(ControlsDataset, RiskPermissions.SystemCode, "الضوابط", "Controls", RiskPermissions.Read,
+        [
+            new("riskNumber", "رقم الخطر", "Risk number", DatasetFieldType.Text, Groupable: true),
+            new("unit", "وحدة الخطر", "Risk unit", DatasetFieldType.Unit, Groupable: true),
+            new("nameAr", "الاسم (عربي)", "Name (Arabic)", DatasetFieldType.Text),
+            new("nameEn", "الاسم (إنجليزي)", "Name (English)", DatasetFieldType.Text),
+            new("type", "النوع", "Type", DatasetFieldType.Lookup, Groupable: true),
+            new("nature", "الطبيعة", "Nature", DatasetFieldType.Lookup, Groupable: true),
+            new("owner", "المسؤول", "Owner", DatasetFieldType.Employee, Groupable: true),
+            new("frequency", "الدورية", "Frequency", DatasetFieldType.Lookup, Groupable: true),
+            new("effectiveness", "الفاعلية", "Effectiveness", DatasetFieldType.Lookup, Groupable: true),
+            new("lastAssessedOn", "آخر تقييم", "Last assessed", DatasetFieldType.Date),
+            new("status", "الحالة", "Status", DatasetFieldType.Lookup, Groupable: true),
+            new("riskId", "الخطر", "Risk", DatasetFieldType.Reference, Sortable: false),
+        ], "/risk/risks/{id}?tab=controls"),
+        new(KrisDataset, RiskPermissions.SystemCode, "مؤشرات المخاطر الرئيسية", "Key risk indicators", RiskPermissions.Read,
+        [
+            new("riskNumber", "رقم الخطر", "Risk number", DatasetFieldType.Text, Groupable: true),
+            new("unit", "وحدة الخطر", "Risk unit", DatasetFieldType.Unit, Groupable: true),
+            new("cardCode", "رمز المؤشر", "KPI code", DatasetFieldType.Text, Groupable: true),
+            new("cardNameAr", "المؤشر (عربي)", "KPI (Arabic)", DatasetFieldType.Text),
+            new("cardNameEn", "المؤشر (إنجليزي)", "KPI (English)", DatasetFieldType.Text),
+            new("warningThreshold", "حد التحذير", "Warning threshold", DatasetFieldType.Number),
+            new("breachThreshold", "حد التجاوز", "Breach threshold", DatasetFieldType.Number),
+            new("lastValue", "آخر قيمة", "Last value", DatasetFieldType.Number),
+            new("lastLevel", "آخر مستوى", "Last level", DatasetFieldType.Lookup, Groupable: true),
+            new("lastPeriod", "آخر فترة", "Last period", DatasetFieldType.Text),
+            new("status", "الحالة", "Status", DatasetFieldType.Lookup, Groupable: true),
+            new("riskId", "الخطر", "Risk", DatasetFieldType.Reference, Sortable: false),
+            new("kpiCardId", "بطاقة المؤشر", "KPI card", DatasetFieldType.Reference, Sortable: false),
+        ], "/risk/risks/{id}?tab=kris"),
+    ];
+
+    public IReadOnlyList<DatasetRelationship> Relationships { get; } =
+    [
+        new("risk.risk-actions", RisksDataset, "id", ActionsDataset, "riskId", "إجراءات المعالجة", "Treatment actions"),
+        new("risk.risk-controls", RisksDataset, "id", ControlsDataset, "riskId", "الضوابط", "Controls"),
+        new("risk.risk-kris", RisksDataset, "id", KrisDataset, "riskId", "مؤشرات المخاطر الرئيسية", "Key risk indicators"),
+        new("risk.kri-results", KrisDataset, "kpiCardId", "kpi.results", "cardId", "نتائج المؤشر", "KPI results"),
     ];
 
     public async Task<ReportResult> RunAsync(ReportQuery query, ClaimsPrincipal user, CancellationToken cancellationToken)
@@ -154,8 +249,20 @@ internal sealed class RiskDatasetSource(RiskDbContext db, RiskReader reader) : I
                                Cost = a.Cost,
                                RiskNumber = r.Number,
                                UnitId = r.UnitId,
+                               RiskId = r.Id,
                            };
                 return await ActionQuery.RunAsync(rows, query, cancellationToken).ConfigureAwait(false);
+            case ControlsDataset:
+                var controls = from c in db.Controls.AsNoTracking()
+                               join r in risks on c.RiskId equals r.Id
+                               select new RiskChildRow<Control> { Risk = r, Item = c };
+                return await ControlQuery.RunAsync(controls, query, cancellationToken).ConfigureAwait(false);
+            case KrisDataset:
+                var kris = from k in db.Kris.AsNoTracking()
+                           join r in risks on k.RiskId equals r.Id
+                           select new RiskChildRow<Kri> { Risk = r, Item = k };
+                var stable = query.Sort.Count > 0 || query.GroupBy.Count > 0 ? query : query with { Sort = [new ReportSort("riskNumber", false), new ReportSort("cardCode", false)] };
+                return await KriQuery.RunAsync(kris, stable, cancellationToken).ConfigureAwait(false);
             default:
                 throw new ArgumentException($"Unknown dataset '{query.Dataset}'.", nameof(query));
         }

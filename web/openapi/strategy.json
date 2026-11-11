@@ -88312,6 +88312,26 @@
             "type": "integer",
             "format": "int32"
           },
+          "reportPrimaryRowLimit": {
+            "type": "integer",
+            "description": "Report types (ADR 0181): most primary records read for one run; more → the result is marked truncated.",
+            "format": "int32"
+          },
+          "reportTimeoutSeconds": {
+            "type": "integer",
+            "description": "Report types: a run (all module queries and the join) is cancelled after this many seconds.",
+            "format": "int32"
+          },
+          "dossierBulkLimit": {
+            "type": "integer",
+            "description": "Record dossiers (ADR 0185): most records in one bulk run (merged PDF or ZIP) or one scheduled e-mail.",
+            "format": "int32"
+          },
+          "dossierSectionRowLimit": {
+            "type": "integer",
+            "description": "Record dossiers: most rows of one related-list section.",
+            "format": "int32"
+          },
           "attachmentLimitMb": {
             "type": "integer",
             "description": "Attachments larger than this are sent as a link to the authorised download.",

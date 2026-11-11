@@ -28,6 +28,9 @@ public enum DatasetFieldType
     /// filterable only with <c>eq</c> / <c>in</c> / <c>empty</c> / <c>notEmpty</c>; published in the reportable metadata for joins.
     /// </summary>
     Reference = 11,
+
+    /// <summary>Sanitised rich text (HTML, Phase 19): every report, export and dossier shows its plain-text projection.</summary>
+    RichText = 12,
 }
 
 /// <summary>

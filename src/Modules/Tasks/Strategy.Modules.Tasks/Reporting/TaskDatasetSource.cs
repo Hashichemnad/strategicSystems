@@ -32,7 +32,9 @@ internal sealed class TaskDatasetSource(TaskVisibility visibility) : IReportingD
         .Field("percentComplete", t => t.PercentComplete)
         .Field("estimatedHours", t => t.EstimatedHours)
         .Field("completedOnTime", t => t.CompletedOnTime)
-        .Field("feedbackPoint", t => t.FeedbackPoint);
+        .Field("feedbackPoint", t => t.FeedbackPoint)
+        .Field("id", t => t.Id)
+        .Field("linkedId", t => t.LinkedId);
 
     public string SystemCode => TaskPermissions.SystemCode;
 
@@ -61,7 +63,9 @@ internal sealed class TaskDatasetSource(TaskVisibility visibility) : IReportingD
             new("estimatedHours", "الساعات المقدرة", "Estimated hours", DatasetFieldType.Number),
             new("completedOnTime", "أنجزت في الموعد", "Completed on time", DatasetFieldType.Bool, Groupable: true),
             new("feedbackPoint", "نقاط التقييم", "Feedback points", DatasetFieldType.Number),
-        ], "/tasks/{id}"),
+            new("id", "المعرّف", "Id", DatasetFieldType.Reference, Sortable: false),
+            new("linkedId", "السجل المرتبط", "Linked record", DatasetFieldType.Reference, Sortable: false),
+        ], "/tasks/{id}") { KeyField = "id" },
     ];
 
     public async Task<ReportResult> RunAsync(ReportQuery query, ClaimsPrincipal user, CancellationToken cancellationToken)

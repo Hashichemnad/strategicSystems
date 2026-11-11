@@ -67,7 +67,8 @@ internal sealed class SampleReporting(SampleDbContext db, IAccessService access)
             new("unit", "الوحدة", "Unit", DatasetFieldType.Unit, Groupable: true),
             new("amount", "القيمة", "Amount", DatasetFieldType.Money, Permission: SamplePermissions.Update),
             new("createdAt", "تاريخ الإنشاء", "Created", DatasetFieldType.DateTime),
-        ], "/sample/{id}", SamplePermissions.ResourceType),
+            new("id", "المعرّف", "Id", DatasetFieldType.Reference, Sortable: false),
+        ], "/sample/{id}", SamplePermissions.ResourceType) { KeyField = "id" },
     ];
 
     private async Task<IQueryable<SampleItem>> VisibleAsync(ClaimsPrincipal? user, CancellationToken ct) =>
@@ -144,7 +145,8 @@ internal sealed class SampleReporting(SampleDbContext db, IAccessService access)
         .Field("approval", i => i.ApprovalStatus)
         .Field("unit", i => i.UnitId)
         .Field("amount", i => i.Amount)
-        .Field("createdAt", i => i.CreatedAt);
+        .Field("createdAt", i => i.CreatedAt)
+        .Field("id", i => i.Id);
 
     public async Task<ReportResult> RunAsync(ReportQuery query, ClaimsPrincipal user, CancellationToken cancellationToken) =>
         await ItemQuery.RunAsync(await VisibleAsync(user, cancellationToken).ConfigureAwait(false), query, cancellationToken).ConfigureAwait(false);

@@ -52,6 +52,7 @@ internal sealed class TeamsDatasetSource(TeamsDbContext db, TeamReader reader) :
 {
     public const string TeamsDataset = "teams.teams";
     public const string MembersDataset = "teams.members";
+    public const string EvaluationsDataset = "teams.evaluations";
 
     public string SystemCode => TeamPermissions.SystemCode;
 
@@ -74,7 +75,8 @@ internal sealed class TeamsDatasetSource(TeamsDbContext db, TeamReader reader) :
             new("endDate", "تاريخ الانتهاء", "End date", DatasetFieldType.Date),
             new("activatedAt", "تاريخ التفعيل", "Activated on", DatasetFieldType.DateTime),
             new("closedAt", "تاريخ الإغلاق", "Closed on", DatasetFieldType.DateTime),
-        ], "/teams/{id}"),
+            new("id", "المعرّف", "Id", DatasetFieldType.Reference, Sortable: false),
+        ], "/teams/{id}") { KeyField = "id" },
         new(MembersDataset, TeamPermissions.SystemCode, "أعضاء الفرق", "Team members", TeamPermissions.Read,
         [
             new("teamNumber", "رمز الفريق", "Team code", DatasetFieldType.Text, Groupable: true),
@@ -91,7 +93,31 @@ internal sealed class TeamsDatasetSource(TeamsDbContext db, TeamReader reader) :
             new("fromDate", "من", "From", DatasetFieldType.Date),
             new("toDate", "إلى", "To", DatasetFieldType.Date),
             new("status", "حالة العضوية", "Membership status", DatasetFieldType.Lookup, Groupable: true),
+            new("teamId", "الفريق", "Team", DatasetFieldType.Reference, Sortable: false),
         ], "/teams/{id}?tab=members"),
+        new(EvaluationsDataset, TeamPermissions.SystemCode, "تقييمات الفرق", "Team evaluations", TeamPermissions.Read,
+        [
+            new("teamNumber", "رمز الفريق", "Team code", DatasetFieldType.Text, Groupable: true),
+            new("teamNameAr", "الفريق (عربي)", "Team (Arabic)", DatasetFieldType.Text),
+            new("teamNameEn", "الفريق (إنجليزي)", "Team (English)", DatasetFieldType.Text),
+            new("unit", "الوحدة المالكة", "Owning unit", DatasetFieldType.Unit, Groupable: true),
+            new("number", "رقم التقييم", "Evaluation number", DatasetFieldType.Text),
+            new("cycle", "الدورة", "Cycle", DatasetFieldType.Lookup, Groupable: true),
+            new("periodStart", "بداية الفترة", "Period start", DatasetFieldType.Date),
+            new("periodEnd", "نهاية الفترة", "Period end", DatasetFieldType.Date),
+            new("evaluator", "المقيّم", "Evaluator", DatasetFieldType.Employee, Groupable: true),
+            new("score", "الدرجة", "Score", DatasetFieldType.Number),
+            new("status", "الحالة", "Status", DatasetFieldType.Lookup, Groupable: true),
+            new("submittedAt", "تاريخ التقديم", "Submitted on", DatasetFieldType.DateTime),
+            new("approvedAt", "تاريخ الاعتماد", "Approved on", DatasetFieldType.DateTime),
+            new("teamId", "الفريق", "Team", DatasetFieldType.Reference, Sortable: false),
+        ], "/teams/{id}?tab=evaluations"),
+    ];
+
+    public IReadOnlyList<DatasetRelationship> Relationships { get; } =
+    [
+        new("teams.team-members", TeamsDataset, "id", MembersDataset, "teamId", "الأعضاء", "Members"),
+        new("teams.team-evaluations", TeamsDataset, "id", EvaluationsDataset, "teamId", "التقييمات", "Evaluations"),
     ];
 
     public async Task<ReportResult> RunAsync(ReportQuery query, ClaimsPrincipal user, CancellationToken cancellationToken)
@@ -117,7 +143,8 @@ internal sealed class TeamsDatasetSource(TeamsDbContext db, TeamReader reader) :
                         .Field("startDate", t => t.StartDate)
                         .Field("endDate", t => t.EndDate)
                         .Field("activatedAt", t => t.ActivatedAt)
-                        .Field("closedAt", t => t.ClosedAt);
+                        .Field("closedAt", t => t.ClosedAt)
+                        .Field("id", t => t.Id);
                     return await dataset.RunAsync(teams, query, cancellationToken).ConfigureAwait(false);
                 }
 
@@ -159,7 +186,8 @@ internal sealed class TeamsDatasetSource(TeamsDbContext db, TeamReader reader) :
                         .Field("fromDate", m => m.FromDate)
                         .Field("toDate", m => m.ToDate)
                         .Field("status", m => m.Status)
-                        .Field("memberId", m => m.MemberId);
+                        .Field("memberId", m => m.MemberId)
+                        .Field("teamId", m => m.TeamId);
 
                     // Several members share a team id: page in a stable order unless the runner sorts.
                     var stable = query.Sort.Count > 0 || query.GroupBy.Count > 0
@@ -168,8 +196,43 @@ internal sealed class TeamsDatasetSource(TeamsDbContext db, TeamReader reader) :
                     return await dataset.RunAsync(source, stable, cancellationToken).ConfigureAwait(false);
                 }
 
+            case EvaluationsDataset:
+                {
+                    var source = from e in db.Evaluations.AsNoTracking()
+                                 join t in teams on e.TeamId equals t.Id
+                                 where e.Status != EvaluationStatuses.Cancelled
+                                 select new TeamEvaluationRow { Team = t, Item = e };
+                    var dataset = new DatasetQuery<TeamEvaluationRow>(r => r.Team.Id)
+                        .Field("teamNumber", r => r.Team.Number)
+                        .Field("teamNameAr", r => r.Team.NameAr)
+                        .Field("teamNameEn", r => r.Team.NameEn)
+                        .Field("unit", r => r.Team.OwningUnitId)
+                        .Field("number", r => r.Item.Number)
+                        .Field("cycle", r => r.Item.Cycle)
+                        .Field("periodStart", r => r.Item.PeriodStart)
+                        .Field("periodEnd", r => r.Item.PeriodEnd)
+                        .Field("evaluator", r => r.Item.EvaluatorEmployeeId)
+                        .Field("score", r => r.Item.Score)
+                        .Field("status", r => r.Item.Status)
+                        .Field("submittedAt", r => r.Item.SubmittedAt)
+                        .Field("approvedAt", r => r.Item.ApprovedAt)
+                        .Field("teamId", r => r.Item.TeamId);
+                    var stable = query.Sort.Count > 0 || query.GroupBy.Count > 0
+                        ? query
+                        : query with { Sort = [new ReportSort("teamNumber", false), new ReportSort("periodStart", false)] };
+                    return await dataset.RunAsync(source, stable, cancellationToken).ConfigureAwait(false);
+                }
+
             default:
                 throw new ArgumentException($"Unknown dataset '{query.Dataset}'.", nameof(query));
         }
     }
+}
+
+/// <summary>An evaluation with its (visible) team.</summary>
+internal sealed class TeamEvaluationRow
+{
+    public Team Team { get; init; } = null!;
+
+    public TeamEvaluation Item { get; init; } = null!;
 }
