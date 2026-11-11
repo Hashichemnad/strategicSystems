@@ -513,7 +513,9 @@ public sealed partial class DeliveryRunner(
 
         var definition = new ReportDefinition
         {
-            ReportType = ReportTypes.ReportTypeRules.ImplicitPrefix + template.Dataset, Columns = [field], Filters = options.Filters ?? [],
+            ReportType = ReportTypes.ReportTypeRules.ImplicitPrefix + template.Dataset,
+            Columns = [field],
+            Filters = options.Filters ?? [],
         };
         var prepared = await engine.PrepareAsync(definition, owner, ct).ConfigureAwait(false);
         if (prepared.IsFailure)

@@ -255,7 +255,8 @@ internal sealed class PortfolioDatasetSource(PortfolioDbContext db, RequestReade
             new("unit", "الإدارة المالكة", "Owning unit", DatasetFieldType.Unit, Groupable: true),
             .. fields,
             new("projectId", "المشروع", "Project", DatasetFieldType.Reference, Sortable: false),
-        ], ProjectLink + "?tab=" + tab) { KeyField = key };
+        ], ProjectLink + "?tab=" + tab)
+        { KeyField = key };
 
     public async Task<ReportResult> RunAsync(ReportQuery query, ClaimsPrincipal user, CancellationToken cancellationToken)
     {

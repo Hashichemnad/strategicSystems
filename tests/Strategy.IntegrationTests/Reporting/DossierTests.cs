@@ -256,8 +256,17 @@ public sealed class DossierTests(SidecarContainers sidecars) : IClassFixture<Sid
         var id = (await check.ServiceProvider.GetRequiredService<ReportingDbContext>().DossierTemplates.SingleAsync(t => t.Code == Template)).Id;
         var invalid = await _fullClient.PostAsJsonAsync("/api/v1/reporting/schedules", new
         {
-            name = "Invalid", targetKind = "dossier", targetId = id, frequency = "monthly", time = "07:00", day = 1, periodRule = "previous-month", format = "pdf", active = true,
-            recipients = Array.Empty<object>(), dossier = new { filters = Array.Empty<object>(), language = "en", recipientField = "a.number" },
+            name = "Invalid",
+            targetKind = "dossier",
+            targetId = id,
+            frequency = "monthly",
+            time = "07:00",
+            day = 1,
+            periodRule = "previous-month",
+            format = "pdf",
+            active = true,
+            recipients = Array.Empty<object>(),
+            dossier = new { filters = Array.Empty<object>(), language = "en", recipientField = "a.number" },
         });
         await ReportingEngineTests.ShouldBeValidationAsync(invalid, "reporting.errors.dossierSchedule");
     }

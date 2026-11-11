@@ -16,15 +16,28 @@ public static class DossierSeeds
     private static DossierSection Chart(string key, string ar, string en, string[] path, string type, string category, string? measure = null, string aggregate = SummaryFunctions.Sum) =>
         new()
         {
-            Key = key, TitleAr = ar, TitleEn = en, Kind = DossierSectionKinds.Chart, Path = [.. path],
+            Key = key,
+            TitleAr = ar,
+            TitleEn = en,
+            Kind = DossierSectionKinds.Chart,
+            Path = [.. path],
             Chart = new ReportChart { Type = type, Category = category, Measure = measure, Aggregate = aggregate },
         };
 
     private static DossierSection Gantt(string key, string ar, string en, string[] path, string labelAr, string labelEn, string start, string end, string? actualStart = null, string? actualEnd = null) =>
         new()
         {
-            Key = key, TitleAr = ar, TitleEn = en, Kind = DossierSectionKinds.Gantt, Path = [.. path], LabelAr = labelAr, LabelEn = labelEn, Start = start, End = end,
-            ActualStart = actualStart, ActualEnd = actualEnd,
+            Key = key,
+            TitleAr = ar,
+            TitleEn = en,
+            Kind = DossierSectionKinds.Gantt,
+            Path = [.. path],
+            LabelAr = labelAr,
+            LabelEn = labelEn,
+            Start = start,
+            End = end,
+            ActualStart = actualStart,
+            ActualEnd = actualEnd,
         };
 
     private static DossierSection Approvals(string key, string resourceType) =>

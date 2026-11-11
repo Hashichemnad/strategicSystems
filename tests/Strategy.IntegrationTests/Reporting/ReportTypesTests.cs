@@ -64,8 +64,13 @@ public sealed class ReportTypesTests(ApiFixture api) : IClassFixture<ApiFixture>
             {
                 var created = await TasksWorld.CreateAsync(editorAClient, new
                 {
-                    titleEn = title, titleAr = "مهمة " + title, typeCode = "project", sourceCode = "project",
-                    assigneeEmployeeIds = new[] { assigneeEmployee }, linkedType = "sample.item", linkedId = itemsA[0],
+                    titleEn = title,
+                    titleAr = "مهمة " + title,
+                    typeCode = "project",
+                    sourceCode = "project",
+                    assigneeEmployeeIds = new[] { assigneeEmployee },
+                    linkedType = "sample.item",
+                    linkedId = itemsA[0],
                 });
                 return created.Tasks.Single().Id;
             }
@@ -79,7 +84,11 @@ public sealed class ReportTypesTests(ApiFixture api) : IClassFixture<ApiFixture>
                 var code = $"test.items-tasks-{join}-{suffix}";
                 var response = await adminClient.PostAsJsonAsync("/api/v1/reporting/admin/report-types", new
                 {
-                    code, systemCode = "sample", labelAr = "البنود مع المهام", labelEn = "Items with tasks " + join, active = true,
+                    code,
+                    systemCode = "sample",
+                    labelAr = "البنود مع المهام",
+                    labelEn = "Items with tasks " + join,
+                    active = true,
                     definition = new
                     {
                         nodes = new object[]
@@ -107,7 +116,14 @@ public sealed class ReportTypesTests(ApiFixture api) : IClassFixture<ApiFixture>
     private static object Def(string type, string[] columns, object[]? filters = null, string[]? groupBy = null, object[]? sort = null, object[]? summaries = null,
         object? chart = null, object[]? highlights = null) => new
         {
-            reportType = type, columns, filters = filters ?? [], groupBy = groupBy ?? [], sort = sort ?? [], summaries = summaries ?? [], chart, highlights = highlights ?? [],
+            reportType = type,
+            columns,
+            filters = filters ?? [],
+            groupBy = groupBy ?? [],
+            sort = sort ?? [],
+            summaries = summaries ?? [],
+            chart,
+            highlights = highlights ?? [],
         };
 
     private static async Task<JsonElement> QueryAsync(HttpClient client, object definition, string language = "en")
@@ -250,8 +266,14 @@ public sealed class ReportTypesTests(ApiFixture api) : IClassFixture<ApiFixture>
         // Grouped, without details: subtotals only.
         var summary = await QueryAsync(w.EditorAClient, new
         {
-            reportType = w.OuterType, columns = new[] { "a.nameEn", "a.amount" }, filters = new[] { Mine(w) }, groupBy = new[] { "a.unit" }, sort = Array.Empty<object>(),
-            summaries = new[] { new { column = "a.amount", functions = new[] { "sum" } } }, highlights = Array.Empty<object>(), showDetails = false,
+            reportType = w.OuterType,
+            columns = new[] { "a.nameEn", "a.amount" },
+            filters = new[] { Mine(w) },
+            groupBy = new[] { "a.unit" },
+            sort = Array.Empty<object>(),
+            summaries = new[] { new { column = "a.amount", functions = new[] { "sum" } } },
+            highlights = Array.Empty<object>(),
+            showDetails = false,
         });
         summary.GetProperty("rows").GetArrayLength().ShouldBe(0);
         summary.GetProperty("groups").GetArrayLength().ShouldBe(2);
@@ -299,7 +321,11 @@ public sealed class ReportTypesTests(ApiFixture api) : IClassFixture<ApiFixture>
         // An invalid definition (relationship from the wrong parent) is refused with its message key; an editor may not administer.
         var invalid = await w.AdminClient.PostAsJsonAsync("/api/v1/reporting/admin/report-types", new
         {
-            code = "test.invalid-" + w.Suffix, systemCode = "sample", labelAr = "خطأ", labelEn = "Invalid", active = true,
+            code = "test.invalid-" + w.Suffix,
+            systemCode = "sample",
+            labelAr = "خطأ",
+            labelEn = "Invalid",
+            active = true,
             definition = new { nodes = new object[] { new { alias = "a", dataset = "tasks.tasks" }, new { alias = "b", dataset = "tasks.tasks", parent = "a", relationship = "sample.item-tasks", join = "inner" } } },
         });
         await ReportingEngineTests.ShouldBeValidationAsync(invalid, "reporting.errors.reportType.relationship");
@@ -310,7 +336,12 @@ public sealed class ReportTypesTests(ApiFixture api) : IClassFixture<ApiFixture>
         var copy = "test.copy-" + w.Suffix;
         var created = await w.AdminClient.PostAsJsonAsync("/api/v1/reporting/admin/report-types", new
         {
-            code = copy, systemCode = "sample", labelAr = "نسخة", labelEn = "Copy", active = false, definition = stored.GetProperty("definition"),
+            code = copy,
+            systemCode = "sample",
+            labelAr = "نسخة",
+            labelEn = "Copy",
+            active = false,
+            definition = stored.GetProperty("definition"),
         });
         created.StatusCode.ShouldBe(HttpStatusCode.OK, await created.Content.ReadAsStringAsync());
         (await w.EditorAClient.GetFromJsonAsync<JsonElement>("/api/v1/reporting/report-types")).EnumerateArray()
