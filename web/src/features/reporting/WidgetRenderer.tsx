@@ -236,10 +236,12 @@ export function WidgetView({
               return {
                 content: v ? formatValue(v, data.valueKind, i18n.language) : '',
                 label: `${row.title ?? row.key} · ${column.title ?? column.key}: ${formatValue(v, data.valueKind, i18n.language)}`,
+                // A tint of the primary colour over the card (at most 45 %), always with the normal text colour: the strongest cell
+                // keeps ≥ 4.5 : 1 in light and dark mode and in every theme / branding colour (WCAG 1.4.3; white text on a mid-tone did not).
                 background: v
-                  ? `color-mix(in srgb, var(--color-primary) ${Math.round(15 + intensity * 65)}%, transparent)`
+                  ? `color-mix(in srgb, var(--color-primary) ${Math.round(8 + intensity * 37)}%, var(--color-card))`
                   : undefined,
-                color: intensity > 0.55 ? 'var(--color-primary-foreground)' : undefined,
+                color: v ? 'var(--color-foreground)' : undefined,
                 muted: !v,
               };
             }}

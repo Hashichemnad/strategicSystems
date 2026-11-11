@@ -295,26 +295,27 @@ test.describe('accessibility — WCAG 2.1 AA (axe-core)', () => {
    * Phase 20 (ADR 0175): the workspace themes in light and dark — launcher, command palette, app home, list (split view), project
    * record (highlights, path, related lists), Settings → Appearance. Classic is every test above. Settings are put back afterwards.
    */
-  test('Enterprise and Modern themes, light and dark', async ({ page, language, adminApi }) => {
-    test.setTimeout(600_000);
-    const current = (await (await adminApi.get('/api/v1/settings/appearance')).json()) as {
-      value: Record<string, unknown> | null;
-      version: number;
-    };
-    const allowed = await apiPut(adminApi, '/api/v1/settings/appearance', {
-      value: { ...(current.value ?? {}), allowUserTheme: true },
-      version: current.version,
-    });
-    expect(allowed.status()).toBe(200);
-    // Record pages with the theme's record layout (highlights, path, related lists), found in Classic while lists are tables.
-    const recordPages: { name: string; href: string }[] = [];
-    for (const record of records) {
-      const href = await firstRecordHref(page, record.list, record.href);
-      if (href) recordPages.push({ name: record.name, href });
-    }
-    try {
-      for (const uiTheme of ['enterprise', 'modern'] as const) {
-        for (const theme of ['light', 'dark'] as const) {
+  /** One test per theme × mode, so each has its own time budget (about 35 audited screens each). */
+  for (const uiTheme of ['enterprise', 'modern'] as const) {
+    for (const theme of ['light', 'dark'] as const) {
+      test(`${uiTheme} theme, ${theme}`, async ({ page, language, adminApi }) => {
+        test.setTimeout(900_000);
+        const current = (await (await adminApi.get('/api/v1/settings/appearance')).json()) as {
+          value: Record<string, unknown> | null;
+          version: number;
+        };
+        const allowed = await apiPut(adminApi, '/api/v1/settings/appearance', {
+          value: { ...(current.value ?? {}), allowUserTheme: true },
+          version: current.version,
+        });
+        expect(allowed.status()).toBe(200);
+        // Record pages with the theme's record layout (highlights, path, related lists), found in Classic while lists are tables.
+        const recordPages: { name: string; href: string }[] = [];
+        for (const record of records) {
+          const href = await firstRecordHref(page, record.list, record.href);
+          if (href) recordPages.push({ name: record.name, href });
+        }
+        try {
           await apiPut(page, '/api/v1/identity/me/preferences', { language, theme, uiTheme });
           const name = (screen: string) => `${uiTheme}-${theme}-${screen}`;
           await page.goto('/my-work');
@@ -354,19 +355,19 @@ test.describe('accessibility — WCAG 2.1 AA (axe-core)', () => {
             await page.goto(record.href);
             await expectAccessible(page, name(record.name));
           }
+        } finally {
+          await apiPut(page, '/api/v1/identity/me/preferences', { language, theme: 'light', uiTheme: '' });
+          const latest = (await (await adminApi.get('/api/v1/settings/appearance')).json()) as {
+            version: number;
+          };
+          await apiPut(adminApi, '/api/v1/settings/appearance', {
+            value: current.value ?? {},
+            version: latest.version,
+          });
         }
-      }
-    } finally {
-      await apiPut(page, '/api/v1/identity/me/preferences', { language, theme: 'light', uiTheme: '' });
-      const latest = (await (await adminApi.get('/api/v1/settings/appearance')).json()) as {
-        version: number;
-      };
-      await apiPut(adminApi, '/api/v1/settings/appearance', {
-        value: current.value ?? {},
-        version: latest.version,
       });
     }
-  });
+  }
 });
 
 test.describe('accessibility — keyboard, focus and reflow', () => {
