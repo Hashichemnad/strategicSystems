@@ -18,10 +18,12 @@ import {
   FileDrop,
   FormField,
   Input,
+  ListViewToggle,
   PageHeader,
   Pagination,
   Select,
   Skeleton,
+  SplitView,
   StatusBanner,
   StatusChip,
   Table,
@@ -31,8 +33,10 @@ import {
   TableHeaderCell,
   TableRow,
   Textarea,
+  useListView,
   useToast,
 } from '@/ui';
+import { SplitCard, SplitPreview } from '@/ui';
 import {
   IDENTIFIED_RISK_KEY,
   registerViews,
@@ -53,6 +57,7 @@ const ALL = '__all';
 export function RiskRegisterPage() {
   const { t } = useTranslation('risk');
   const { t: tc } = useTranslation();
+  const { t: ta } = useTranslation('appearance');
   const { k, language } = useRiskT();
   const search = route.useSearch();
   const navigate = route.useNavigate();
@@ -84,6 +89,11 @@ export function RiskRegisterPage() {
   });
   const set = (patch: Record<string, unknown>) =>
     void navigate({ search: (p) => ({ ...p, ...patch, page: undefined }) });
+  // Table or list + preview (Enterprise toggle, Modern default; Classic: table only — ADR 0174).
+  const listView = useListView('risk.register');
+  const [selectedId, setSelectedId] = useState<string>();
+  // The first row is previewed until the user picks another.
+  const selected = risks.data?.items.find((r) => r.id === selectedId) ?? risks.data?.items[0];
 
   return (
     <RiskPageLayout testId="risk-register">
@@ -92,6 +102,7 @@ export function RiskRegisterPage() {
         description={t('register.description')}
         actions={
           <div className="flex flex-wrap gap-2">
+            {listView.available && <ListViewToggle value={listView.view} onChange={listView.setView} />}
             {options.data?.canExport &&
               (['pdf', 'xlsx'] as const).map((format) => (
                 <Button key={format} variant="outline" size="sm" asChild>
@@ -199,85 +210,166 @@ export function RiskRegisterPage() {
         <EmptyState icon={ShieldAlert} title={t('register.empty')} />
       ) : (
         <>
-          <Table data-testid="risk-register-table">
-            <TableHead>
-              <TableRow>
-                <TableHeaderCell>{t('fields.number')}</TableHeaderCell>
-                <TableHeaderCell>{t('fields.title')}</TableHeaderCell>
-                <TableHeaderCell>{t('fields.unit')}</TableHeaderCell>
-                <TableHeaderCell>{t('fields.owner')}</TableHeaderCell>
-                <TableHeaderCell>{t('rating.inherent')}</TableHeaderCell>
-                <TableHeaderCell>{t('rating.residual')}</TableHeaderCell>
-                <TableHeaderCell>{t('rating.target')}</TableHeaderCell>
-                <TableHeaderCell>{t('fields.residualStatus')}</TableHeaderCell>
-                <TableHeaderCell>{t('fields.nextReviewOn')}</TableHeaderCell>
-                <TableHeaderCell>{t('fields.status')}</TableHeaderCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {risks.data.items.map((r) => (
-                <TableRow key={r.id} data-testid="risk-row">
-                  <TableCell>
-                    <Link
-                      to="/risk/risks/$riskId"
-                      params={{ riskId: r.id }}
-                      className="font-medium text-primary hover:underline"
-                    >
-                      <bdi>{r.number}</bdi>
-                    </Link>
-                  </TableCell>
-                  <TableCell>
-                    <span className="flex flex-col gap-1">
-                      <span>{names.text(r.titleAr, r.titleEn)}</span>
-                      <span className="flex flex-wrap gap-1">
-                        {r.top10 && (
-                          <StatusChip tone="danger">
-                            <Flag className="me-1 size-3" aria-hidden />
-                            {t('flags.top10', { rank: r.top10Rank ?? '' })}
+          {listView.view === 'split' ? (
+            <SplitView
+              hasSelection={!!selected}
+              list={
+                <ul className="flex flex-col gap-2" data-testid="risk-cards">
+                  {risks.data.items.map((r) => (
+                    <SplitCard
+                      key={r.id}
+                      selected={r.id === selected?.id}
+                      onPreview={() => setSelectedId(r.id)}
+                      title={
+                        <Link
+                          to="/risk/risks/$riskId"
+                          params={{ riskId: r.id }}
+                          className="min-w-0 font-medium hover:underline"
+                        >
+                          <bdi className="block text-xs text-muted-foreground">{r.number}</bdi>
+                          <span dir="auto" className="block">
+                            {names.text(r.titleAr, r.titleEn)}
+                          </span>
+                        </Link>
+                      }
+                      chips={
+                        <>
+                          <StatusChip tone={statusTone[r.status] ?? 'neutral'}>
+                            {k(`status.${r.status}`)}
                           </StatusChip>
-                        )}
-                        {r.escalated && (
-                          <StatusChip tone="warning">
-                            <TrendingUp className="me-1 size-3" aria-hidden />
-                            {t('flags.escalated')}
-                          </StatusChip>
-                        )}
-                        {r.reassessmentRequired && (
-                          <StatusChip tone="warning">
-                            <TriangleAlert className="me-1 size-3" aria-hidden />
-                            {t('flags.reassessment')}
-                          </StatusChip>
-                        )}
-                        {r.withinAppetite === false && (
-                          <StatusChip tone="danger">{t('flags.outsideAppetite')}</StatusChip>
-                        )}
-                      </span>
-                    </span>
-                  </TableCell>
-                  <TableCell>{names.unit(r.unit)}</TableCell>
-                  <TableCell>{names.person(r.owner)}</TableCell>
-                  <TableCell>
-                    <RatingChip band={r.inherentBand} score={r.inherentScore} testId="risk-chip-inherent" />
-                  </TableCell>
-                  <TableCell>
-                    <RatingChip band={r.residualBand} score={r.residualScore} testId="risk-chip-residual" />
-                  </TableCell>
-                  <TableCell>
-                    <RatingChip band={r.targetBand} score={r.targetScore} testId="risk-chip-target" />
-                  </TableCell>
-                  <TableCell>{k(`residualStatus.${r.residualStatus}`)}</TableCell>
-                  <TableCell className={r.reviewOverdue ? 'font-medium text-danger' : undefined}>
-                    {r.nextReviewOn ? formatDate(r.nextReviewOn, language) : '—'}
-                  </TableCell>
-                  <TableCell>
-                    <StatusChip tone={statusTone[r.status] ?? 'neutral'}>
-                      {k(`status.${r.status}`)}
-                    </StatusChip>
-                  </TableCell>
+                          <RatingChip band={r.residualBand} score={r.residualScore} />
+                          {r.top10 && (
+                            <StatusChip tone="danger">
+                              {t('flags.top10', { rank: r.top10Rank ?? '' })}
+                            </StatusChip>
+                          )}
+                          {r.withinAppetite === false && (
+                            <StatusChip tone="danger">{t('flags.outsideAppetite')}</StatusChip>
+                          )}
+                          <span className="text-xs text-muted-foreground">{names.person(r.owner)}</span>
+                        </>
+                      }
+                    />
+                  ))}
+                </ul>
+              }
+              preview={
+                selected && (
+                  <SplitPreview
+                    title={names.text(selected.titleAr, selected.titleEn)}
+                    rows={[
+                      [t('fields.number'), <bdi key="n">{selected.number}</bdi>],
+                      [t('fields.unit'), names.unit(selected.unit)],
+                      [t('fields.owner'), names.person(selected.owner)],
+                      [
+                        t('rating.inherent'),
+                        <RatingChip key="i" band={selected.inherentBand} score={selected.inherentScore} />,
+                      ],
+                      [
+                        t('rating.residual'),
+                        <RatingChip key="r" band={selected.residualBand} score={selected.residualScore} />,
+                      ],
+                      [
+                        t('rating.target'),
+                        <RatingChip key="t" band={selected.targetBand} score={selected.targetScore} />,
+                      ],
+                      [t('fields.residualStatus'), k(`residualStatus.${selected.residualStatus}`)],
+                      [
+                        t('fields.nextReviewOn'),
+                        selected.nextReviewOn ? formatDate(selected.nextReviewOn, language) : '—',
+                      ],
+                      [t('fields.status'), k(`status.${selected.status}`)],
+                    ]}
+                    open={
+                      <Link to="/risk/risks/$riskId" params={{ riskId: selected.id }}>
+                        {ta('split.open')}
+                      </Link>
+                    }
+                  />
+                )
+              }
+            />
+          ) : (
+            <Table data-testid="risk-register-table">
+              <TableHead>
+                <TableRow>
+                  <TableHeaderCell>{t('fields.number')}</TableHeaderCell>
+                  <TableHeaderCell>{t('fields.title')}</TableHeaderCell>
+                  <TableHeaderCell>{t('fields.unit')}</TableHeaderCell>
+                  <TableHeaderCell>{t('fields.owner')}</TableHeaderCell>
+                  <TableHeaderCell>{t('rating.inherent')}</TableHeaderCell>
+                  <TableHeaderCell>{t('rating.residual')}</TableHeaderCell>
+                  <TableHeaderCell>{t('rating.target')}</TableHeaderCell>
+                  <TableHeaderCell>{t('fields.residualStatus')}</TableHeaderCell>
+                  <TableHeaderCell>{t('fields.nextReviewOn')}</TableHeaderCell>
+                  <TableHeaderCell>{t('fields.status')}</TableHeaderCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHead>
+              <TableBody>
+                {risks.data.items.map((r) => (
+                  <TableRow key={r.id} data-testid="risk-row">
+                    <TableCell>
+                      <Link
+                        to="/risk/risks/$riskId"
+                        params={{ riskId: r.id }}
+                        className="font-medium text-primary hover:underline"
+                      >
+                        <bdi>{r.number}</bdi>
+                      </Link>
+                    </TableCell>
+                    <TableCell>
+                      <span className="flex flex-col gap-1">
+                        <span>{names.text(r.titleAr, r.titleEn)}</span>
+                        <span className="flex flex-wrap gap-1">
+                          {r.top10 && (
+                            <StatusChip tone="danger">
+                              <Flag className="me-1 size-3" aria-hidden />
+                              {t('flags.top10', { rank: r.top10Rank ?? '' })}
+                            </StatusChip>
+                          )}
+                          {r.escalated && (
+                            <StatusChip tone="warning">
+                              <TrendingUp className="me-1 size-3" aria-hidden />
+                              {t('flags.escalated')}
+                            </StatusChip>
+                          )}
+                          {r.reassessmentRequired && (
+                            <StatusChip tone="warning">
+                              <TriangleAlert className="me-1 size-3" aria-hidden />
+                              {t('flags.reassessment')}
+                            </StatusChip>
+                          )}
+                          {r.withinAppetite === false && (
+                            <StatusChip tone="danger">{t('flags.outsideAppetite')}</StatusChip>
+                          )}
+                        </span>
+                      </span>
+                    </TableCell>
+                    <TableCell>{names.unit(r.unit)}</TableCell>
+                    <TableCell>{names.person(r.owner)}</TableCell>
+                    <TableCell>
+                      <RatingChip band={r.inherentBand} score={r.inherentScore} testId="risk-chip-inherent" />
+                    </TableCell>
+                    <TableCell>
+                      <RatingChip band={r.residualBand} score={r.residualScore} testId="risk-chip-residual" />
+                    </TableCell>
+                    <TableCell>
+                      <RatingChip band={r.targetBand} score={r.targetScore} testId="risk-chip-target" />
+                    </TableCell>
+                    <TableCell>{k(`residualStatus.${r.residualStatus}`)}</TableCell>
+                    <TableCell className={r.reviewOverdue ? 'font-medium text-danger' : undefined}>
+                      {r.nextReviewOn ? formatDate(r.nextReviewOn, language) : '—'}
+                    </TableCell>
+                    <TableCell>
+                      <StatusChip tone={statusTone[r.status] ?? 'neutral'}>
+                        {k(`status.${r.status}`)}
+                      </StatusChip>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
           <Pagination
             page={risks.data.page}
             totalPages={risks.data.totalPages ?? 1}

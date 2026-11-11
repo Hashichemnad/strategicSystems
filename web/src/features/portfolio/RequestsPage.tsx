@@ -9,10 +9,14 @@ import {
   Button,
   EmptyState,
   Input,
+  ListViewToggle,
   PageHeader,
   Pagination,
   Select,
   Skeleton,
+  SplitCard,
+  SplitPreview,
+  SplitView,
   StatusBanner,
   StatusChip,
   Table,
@@ -24,6 +28,7 @@ import {
   Tabs,
   TabsList,
   TabsTrigger,
+  useListView,
 } from '@/ui';
 import { bandTone, requestStatuses, statusTone, usePortfolioOptions, useRequests } from './api';
 
@@ -35,6 +40,7 @@ export const requestViews = ['all', 'mine', 'in-approval', 'returned'] as const;
 export function RequestsPage() {
   const { t, i18n } = useTranslation('portfolio');
   const { t: tc } = useTranslation();
+  const { t: ta } = useTranslation('appearance');
   const search = route.useSearch();
   const navigate = route.useNavigate();
   const canCreate = useCan('portfolio.request.create');
@@ -63,6 +69,21 @@ export function RequestsPage() {
     return band ? pickText(i18n.language, band.labelAr, band.labelEn) : code;
   };
   const filtered = Boolean(search.status || search.classification || search.band || search.search);
+  // Table or list + preview (Enterprise toggle, Modern default; Classic: table only — ADR 0174).
+  const listView = useListView('portfolio.requests');
+  const [selectedId, setSelectedId] = useState<string>();
+  // The first row is previewed until the user picks another.
+  const selected = requests.data?.items.find((r) => r.id === selectedId) ?? requests.data?.items[0];
+  const statusLabel = (r: RequestListItem) =>
+    r.status === 'in-approval' && (r.approvalStepNameAr || r.approvalStepNameEn)
+      ? pickText(i18n.language, r.approvalStepNameAr, r.approvalStepNameEn)
+      : r.approvalStatus === 'returned' && r.status === 'draft'
+        ? t('approvalStatus.returned')
+        : t(`status.${r.status as 'draft'}`);
+  const budget = (r: RequestListItem) =>
+    r.requiresBudget && r.estimatedBudget !== null
+      ? `${formatNumber(r.estimatedBudget, i18n.language)} ${options.data?.currencyCode ?? ''}`
+      : '—';
 
   return (
     <div className="flex flex-col gap-6">
@@ -70,13 +91,18 @@ export function RequestsPage() {
         title={t('title')}
         description={t('description')}
         actions={
-          canCreate && (
-            <Button asChild>
-              <Link to="/portfolio/requests/new" search={{}}>
-                <Plus aria-hidden />
-                {t('newRequest')}
-              </Link>
-            </Button>
+          (canCreate || listView.available) && (
+            <>
+              {listView.available && <ListViewToggle value={listView.view} onChange={listView.setView} />}
+              {canCreate && (
+                <Button asChild>
+                  <Link to="/portfolio/requests/new" search={{}}>
+                    <Plus aria-hidden />
+                    {t('newRequest')}
+                  </Link>
+                </Button>
+              )}
+            </>
           )
         }
       />
@@ -163,76 +189,163 @@ export function RequestsPage() {
         />
       ) : (
         <>
-          <div className="overflow-x-auto rounded-lg border bg-card">
-            <Table aria-busy={requests.isFetching} data-testid="requests-table">
-              <TableHead>
-                <TableRow>
-                  <TableHeaderCell>{t('fields.number')}</TableHeaderCell>
-                  <TableHeaderCell>{t('fields.name')}</TableHeaderCell>
-                  <TableHeaderCell>{t('fields.status')}</TableHeaderCell>
-                  <TableHeaderCell>{t('fields.classification')}</TableHeaderCell>
-                  <TableHeaderCell>{t('fields.priorityBand')}</TableHeaderCell>
-                  <TableHeaderCell>{t('fields.estimatedBudget')}</TableHeaderCell>
-                  <TableHeaderCell>{t('fields.unit')}</TableHeaderCell>
-                  <TableHeaderCell>{t('fields.updatedAt')}</TableHeaderCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {requests.data.items.map((r) => (
-                  <TableRow key={r.id}>
-                    <TableCell>
+          {listView.view === 'split' ? (
+            <SplitView
+              hasSelection={!!selected}
+              list={
+                <ul className="flex flex-col gap-2" data-testid="requests-cards">
+                  {requests.data.items.map((r) => (
+                    <SplitCard
+                      key={r.id}
+                      selected={r.id === selected?.id}
+                      onPreview={() => setSelectedId(r.id)}
+                      title={
+                        <Link
+                          to="/portfolio/requests/$requestId"
+                          params={{ requestId: r.id }}
+                          search={{ tab: 'overview' }}
+                          className="min-w-0 font-medium hover:underline"
+                        >
+                          <bdi className="block text-xs text-muted-foreground">{r.number}</bdi>
+                          <span dir="auto" className="block">
+                            {pickText(i18n.language, r.nameAr, r.nameEn)}
+                          </span>
+                        </Link>
+                      }
+                      chips={
+                        <>
+                          <StatusChip tone={statusTone[r.status] ?? 'neutral'}>{statusLabel(r)}</StatusChip>
+                          <StatusChip tone="info">
+                            {t(`classification.${r.effectiveClassification as 'project'}`)}
+                          </StatusChip>
+                          {r.priorityBand && (
+                            <StatusChip tone={bandTone[r.priorityBand] ?? 'neutral'}>
+                              {bandLabel(r.priorityBand)}
+                            </StatusChip>
+                          )}
+                        </>
+                      }
+                      progress={
+                        r.evaluationScore !== null
+                          ? {
+                              value: r.evaluationScore,
+                              label: `${t('fields.priorityBand')} · ${formatNumber(Math.round(r.evaluationScore * 100), i18n.language)} %`,
+                            }
+                          : undefined
+                      }
+                    />
+                  ))}
+                </ul>
+              }
+              preview={
+                selected && (
+                  <SplitPreview
+                    title={pickText(i18n.language, selected.nameAr, selected.nameEn)}
+                    rows={[
+                      [t('fields.number'), <bdi key="n">{selected.number}</bdi>],
+                      [t('fields.status'), statusLabel(selected)],
+                      [
+                        t('fields.classification'),
+                        t(`classification.${selected.effectiveClassification as 'project'}`),
+                      ],
+                      [
+                        t('fields.priorityBand'),
+                        selected.priorityBand ? bandLabel(selected.priorityBand) : '—',
+                      ],
+                      [t('fields.estimatedBudget'), budget(selected)],
+                      [
+                        t('fields.unit'),
+                        selected.unit
+                          ? pickText(i18n.language, selected.unit.nameAr, selected.unit.nameEn)
+                          : '—',
+                      ],
+                      [t('fields.updatedAt'), formatDate(selected.updatedAt, i18n.language)],
+                    ]}
+                    open={
                       <Link
                         to="/portfolio/requests/$requestId"
-                        params={{ requestId: r.id }}
+                        params={{ requestId: selected.id }}
                         search={{ tab: 'overview' }}
-                        className="font-medium text-primary hover:underline"
                       >
-                        <bdi>{r.number}</bdi>
+                        {ta('split.open')}
                       </Link>
-                    </TableCell>
-                    <TableCell>
-                      <span dir="auto">{pickText(i18n.language, r.nameAr, r.nameEn)}</span>
-                      {r.projectNumber && (
-                        <span className="block text-xs text-muted-foreground">
-                          <bdi>{r.projectNumber}</bdi>
-                        </span>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <StatusChip tone={statusTone[r.status] ?? 'neutral'}>
-                        {r.status === 'in-approval' && (r.approvalStepNameAr || r.approvalStepNameEn)
-                          ? pickText(i18n.language, r.approvalStepNameAr, r.approvalStepNameEn)
-                          : r.approvalStatus === 'returned' && r.status === 'draft'
-                            ? t('approvalStatus.returned')
-                            : t(`status.${r.status as 'draft'}`)}
-                      </StatusChip>
-                    </TableCell>
-                    <TableCell>{t(`classification.${r.effectiveClassification as 'project'}`)}</TableCell>
-                    <TableCell>
-                      {r.priorityBand ? (
-                        <StatusChip tone={bandTone[r.priorityBand] ?? 'neutral'}>
-                          {bandLabel(r.priorityBand)}
-                          {r.evaluationScore !== null &&
-                            ` · ${formatNumber(Math.round(r.evaluationScore * 100), i18n.language)} %`}
-                        </StatusChip>
-                      ) : (
-                        '—'
-                      )}
-                    </TableCell>
-                    <TableCell className="tabular-nums">
-                      {r.requiresBudget && r.estimatedBudget !== null
-                        ? `${formatNumber(r.estimatedBudget, i18n.language)} ${options.data?.currencyCode ?? ''}`
-                        : '—'}
-                    </TableCell>
-                    <TableCell>
-                      {r.unit ? pickText(i18n.language, r.unit.nameAr, r.unit.nameEn) : '—'}
-                    </TableCell>
-                    <TableCell>{formatDate(r.updatedAt, i18n.language)}</TableCell>
+                    }
+                  />
+                )
+              }
+            />
+          ) : (
+            <div className="overflow-x-auto rounded-lg border bg-card">
+              <Table aria-busy={requests.isFetching} data-testid="requests-table">
+                <TableHead>
+                  <TableRow>
+                    <TableHeaderCell>{t('fields.number')}</TableHeaderCell>
+                    <TableHeaderCell>{t('fields.name')}</TableHeaderCell>
+                    <TableHeaderCell>{t('fields.status')}</TableHeaderCell>
+                    <TableHeaderCell>{t('fields.classification')}</TableHeaderCell>
+                    <TableHeaderCell>{t('fields.priorityBand')}</TableHeaderCell>
+                    <TableHeaderCell>{t('fields.estimatedBudget')}</TableHeaderCell>
+                    <TableHeaderCell>{t('fields.unit')}</TableHeaderCell>
+                    <TableHeaderCell>{t('fields.updatedAt')}</TableHeaderCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+                </TableHead>
+                <TableBody>
+                  {requests.data.items.map((r) => (
+                    <TableRow key={r.id}>
+                      <TableCell>
+                        <Link
+                          to="/portfolio/requests/$requestId"
+                          params={{ requestId: r.id }}
+                          search={{ tab: 'overview' }}
+                          className="font-medium text-primary hover:underline"
+                        >
+                          <bdi>{r.number}</bdi>
+                        </Link>
+                      </TableCell>
+                      <TableCell>
+                        <span dir="auto">{pickText(i18n.language, r.nameAr, r.nameEn)}</span>
+                        {r.projectNumber && (
+                          <span className="block text-xs text-muted-foreground">
+                            <bdi>{r.projectNumber}</bdi>
+                          </span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <StatusChip tone={statusTone[r.status] ?? 'neutral'}>
+                          {r.status === 'in-approval' && (r.approvalStepNameAr || r.approvalStepNameEn)
+                            ? pickText(i18n.language, r.approvalStepNameAr, r.approvalStepNameEn)
+                            : r.approvalStatus === 'returned' && r.status === 'draft'
+                              ? t('approvalStatus.returned')
+                              : t(`status.${r.status as 'draft'}`)}
+                        </StatusChip>
+                      </TableCell>
+                      <TableCell>{t(`classification.${r.effectiveClassification as 'project'}`)}</TableCell>
+                      <TableCell>
+                        {r.priorityBand ? (
+                          <StatusChip tone={bandTone[r.priorityBand] ?? 'neutral'}>
+                            {bandLabel(r.priorityBand)}
+                            {r.evaluationScore !== null &&
+                              ` · ${formatNumber(Math.round(r.evaluationScore * 100), i18n.language)} %`}
+                          </StatusChip>
+                        ) : (
+                          '—'
+                        )}
+                      </TableCell>
+                      <TableCell className="tabular-nums">
+                        {r.requiresBudget && r.estimatedBudget !== null
+                          ? `${formatNumber(r.estimatedBudget, i18n.language)} ${options.data?.currencyCode ?? ''}`
+                          : '—'}
+                      </TableCell>
+                      <TableCell>
+                        {r.unit ? pickText(i18n.language, r.unit.nameAr, r.unit.nameEn) : '—'}
+                      </TableCell>
+                      <TableCell>{formatDate(r.updatedAt, i18n.language)}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
           <Pagination
             page={search.page}
             totalPages={Math.max(1, Math.ceil(requests.data.totalCount / PAGE_SIZE))}
@@ -244,3 +357,5 @@ export function RequestsPage() {
     </div>
   );
 }
+
+type RequestListItem = NonNullable<ReturnType<typeof useRequests>['data']>['items'][number];
