@@ -51,8 +51,12 @@ test('integration client, permissions, webhooks, delivery log, developer portal 
   // 2. Permissions: the sample viewer role (read, all records).
   await page.getByTestId(`client-${clientId}`).getByRole('link').click();
   await page.getByRole('tab', { name: i('clients.tabs.permissions') }).click();
-  const viewer = page.getByTestId('role-viewer').first();
-  await viewer.getByRole('checkbox').check();
+  // The viewer roles of both systems (read, all records).
+  const viewers = page.getByTestId('role-viewer');
+  await expect(viewers.first()).toBeVisible();
+  for (const row of await viewers.all()) {
+    await row.getByRole('checkbox').check();
+  }
   await page.getByRole('button', { name: tr(language, 'common:actions.save') }).click();
   await expect(page.getByText(tr(language, 'common:status.saved')).first()).toBeVisible();
   await shot('integration-client-permissions', { fullPage: true });
@@ -76,7 +80,7 @@ test('integration client, permissions, webhooks, delivery log, developer portal 
     .getByTestId('webhook-ERP')
     .getByRole('button', { name: i('webhooks.sendTest') })
     .click();
-  await expect(page.getByText(i('webhooks.testQueued'))).toBeVisible();
+  await expect(page.getByText(i('webhooks.testQueued'), { exact: true })).toBeVisible();
   await shot('integration-webhooks', { fullPage: true });
   await page.getByRole('tab', { name: i('clients.tabs.deliveries') }).click();
   await expect(page.getByTestId('delivery-log').getByRole('row')).not.toHaveCount(0);

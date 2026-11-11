@@ -41,9 +41,35 @@ joins in the consumer) or be mapped onto it. Cross-system `$expand` is left to P
 | Every module's record types run | `RecordSourceSmokeTests`: every record type of every module with all fields, a filter on every field type, sorting with total, keyset changed-since and the deleted mode, on PostgreSQL |
 | **Power BI connects to the OData feed** | **Documented manual check** (no Power BI in CI): guide §3 (`docs/guides/{en,ar}/integrations.md`) and the portal's *Connect Power BI* tab. The E2E spec reads the feed with **HTTP Basic credentials exactly as Power BI's OData connector sends them** and captures the service metadata and a feed page (`*-odata-metadata-basic.png`, `*-odata-feed-basic.png`). Owner check: Power BI Desktop → OData feed → `https://<server>/odata/v1/portfolio` → Basic (client ID / API key) → Projects + Milestones load, relationship on `id` = `projectId` |
 
-## Quality gates
+## Quality gates (local runs in the build sandbox: SDK 10.0.114, PostgreSQL 16, Chromium 1243)
 
-See "Quality gates run" below (filled from the runs in this session).
+| Gate | Result |
+|---|---|
+| `dotnet build` (Host, Release) · `dotnet format --verify-no-changes` | 0 warnings, 0 errors · clean |
+| Unit tests | **2 186 / 2 193** — 36 new (`IntegrationFeedRulesTests`); the 7 failures are the OCR tests, which need Tesseract (not installed in this sandbox; CI installs it, CLAUDE.md §18) |
+| Architecture tests | **32 / 32** (Microsoft.OData.Core / Edm / Spatial MIT, listed in `THIRD_PARTY_LICENSES.md`; module → Platform.Integration references allowed) |
+| Integration tests (real PostgreSQL) | Full suite **2 867 / 2 869** on the first run; the 2 failures were expected updates (job dashboard list gains the 3 integration jobs; extract endpoints needed endpoint metadata `RequireIntegrationClient`) — fixed and both classes re-run green with the 8 Phase 22 tests (**14 / 14**); `RecordSourceSmokeTests` green |
+| OpenAPI document · TS client | regenerated (`npm run api:generate`), no drift |
+| `npm run lint` · `format:check` · `typecheck` | clean (incl. the RTL logical-class check) |
+| `npm test` (Vitest) | **464 / 464** (the server message-key coverage test caught two invented keys; replaced by the existing `validation.inclusiveBetween` / `validation.invalid`) |
+| `npm run build` | OK |
+| E2E `e2e/integrations.spec.ts` (ar + en) | **2 / 2**; screenshots in [`docs/screenshots/phase-22/`](../screenshots/phase-22/) |
+
+Not run in this sandbox: the full E2E / accessibility suite, visual regression, `npm audit` / `check-vulnerable.sh` (no new npm package;
+one NuGet family added, MIT) — CI runs them on the pull request.
+
+## Screenshots (Arabic and English, `docs/screenshots/phase-22/`)
+`integration-clients`, `integration-client-editor`, `integration-client-secret`, `integration-client-permissions`, `integration-webhook-editor`,
+`integration-webhooks`, `integration-delivery-log`, `integration-deliveries`, `developer-portal`, `developer-portal-webhooks`,
+`developer-portal-power-bi`, `odata-metadata-basic` and `odata-feed-basic` (the feed as Power BI's OData connector reads it with Basic
+credentials — the documented substitute for a live Power BI screenshot).
+
+## How to demo
+1. Settings → Integrations → **Integration clients → New client**: API key, systems Portfolio + Sample, save, copy ID and key.
+2. **Permissions** tab: tick the viewer roles → Save. **Webhooks** tab: new subscription (`https://…`), *Send test*; **Delivery log** shows it.
+3. `curl -u ic_…:sik_… https://<server>/odata/v1/portfolio/Projects?$top=5&$expand=milestones&lang=ar`, or Power BI → OData feed (guide §3).
+4. `curl -u ic_…:sik_… "https://<server>/api/v1/integration/extracts/portfolio/Projects?changedSince=2026-01-01T00:00:00Z"`, then `/deleted`.
+5. Settings → Integrations → **Developer portal**: metadata, webhook catalogue with sample payloads, Power BI guide.
 
 ## Decisions (ADRs, proposed)
 0190 reportable record contract · 0191 integration clients and service accounts · 0192 OData with Microsoft.OData.Core · 0193 extracts and
