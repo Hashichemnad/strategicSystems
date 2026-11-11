@@ -108,7 +108,14 @@ public static class ReportAggregation
         {
             foreach (var (field, descending) in keys)
             {
-                var c = Compare(x.Row.Value(field), y.Row.Value(field));
+                var a = x.Row.Value(field);
+                var b = y.Row.Value(field);
+                if (a is null != b is null)
+                {
+                    return a is null ? 1 : -1; // empty values last in both directions
+                }
+
+                var c = Compare(a, b);
                 if (c != 0)
                 {
                     return descending ? -c : c;

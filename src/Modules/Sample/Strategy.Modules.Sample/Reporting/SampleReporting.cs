@@ -55,6 +55,12 @@ internal sealed class SampleReporting(SampleDbContext db, IAccessService access)
     public IReadOnlyList<ReportingListDefinition> Lists { get; } =
         [new("sample.largest", "sample", "أكبر البنود قيمة", "Largest items", SamplePermissions.Read)];
 
+    /// <summary>Sample items are task-able: an item's tasks (Tasks owns the reference; declared here as the template for modules, ADR 0180).</summary>
+    public IReadOnlyList<DatasetRelationship> Relationships { get; } =
+    [
+        new("sample.item-tasks", "sample.items", "id", "tasks.tasks", "linkedId", "مهام البند", "Item tasks"),
+    ];
+
     public IReadOnlyList<DatasetDefinition> Datasets { get; } =
     [
         new("sample.items", "sample", "البنود", "Items", SamplePermissions.Read,
