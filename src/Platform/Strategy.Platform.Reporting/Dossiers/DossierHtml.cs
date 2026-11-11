@@ -11,7 +11,7 @@ namespace Strategy.Platform.Reporting.Dossiers;
 public sealed record DossierBranding(string? OrganisationAr, string? OrganisationEn, string PrimaryColor, DateTimeOffset GeneratedAt);
 
 /// <summary>
-/// HTML of one or more dossiers for Gotenberg (ADR 0185): cover page, repeated page header / footer (fixed elements repeat on every printed
+/// HTML of one or more dossiers for Gotenberg (ADR 0185): cover page, header line, repeated page footer (fixed elements repeat on every printed
 /// page), sections laid out in the language's direction, SVG charts, Gantt and matrix. Every text is encoded; no script, no external resource.
 /// Bilingual: Arabic and English labels / values side by side.
 /// </summary>
@@ -32,8 +32,8 @@ public static partial class DossierHtml
         html.Append("<!doctype html><html lang=\"").Append(ar ? "ar" : "en").Append("\" dir=\"").Append(ar ? "rtl" : "ltr").Append("\"><head><meta charset=\"utf-8\"><title>")
             .Append(E(documents.Count == 1 ? (ar ? documents[0].TemplateLabelAr : documents[0].TemplateLabelEn) : "Dossiers")).Append("</title><style>")
             .Append(PdfFonts.FontFaceCss())
-            .Append("@page{size:A4;margin:20mm 12mm 18mm}body{font-family:'").Append(PdfFonts.Family).Append("',sans-serif;font-size:9.5pt;color:#1b1f24;margin:0}")
-            .Append(".hdr{position:fixed;top:-14mm;inset-inline:0;font-size:8pt;color:#57606a;border-bottom:1px solid #d0d7de;display:flex;justify-content:space-between}")
+            .Append("@page{size:A4;margin:14mm 12mm 18mm}body{font-family:'").Append(PdfFonts.Family).Append("',sans-serif;font-size:9.5pt;color:#1b1f24;margin:0}")
+            .Append(".hdr{font-size:8pt;color:#57606a;border-bottom:1px solid #d0d7de;display:flex;justify-content:space-between;margin-bottom:6mm}")
             .Append(".ftr{position:fixed;bottom:-12mm;inset-inline:0;font-size:8pt;color:#57606a;border-top:1px solid #d0d7de;display:flex;justify-content:space-between}")
             .Append(".cover{height:230mm;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;page-break-after:always}")
             .Append(".cover h1{font-size:24pt;color:").Append(color).Append(";margin:0 0 8px}.cover .sub{font-size:14pt;margin:4px 0}.cover .meta{color:#57606a;margin-top:18px}")
@@ -61,7 +61,10 @@ public static partial class DossierHtml
         var ar = language != DossierLanguages.English;
         string T(string? arText, string? enText) => bilingual ? $"{arText} — {enText}" : ar ? arText ?? enText ?? string.Empty : enText ?? arText ?? string.Empty;
         html.Append("<section class=\"rec\">");
-        html.Append("<div class=\"hdr\"><span>").Append(E(T(d.HeaderAr ?? doc.TemplateLabelAr, d.HeaderEn ?? doc.TemplateLabelEn))).Append("</span><span>")
+
+        // Header line under the cover (a block: fixed elements at the top overlap the first line of every page in Chromium); the footer repeats.
+        var header = new StringBuilder();
+        header.Append("<div class=\"hdr\"><span>").Append(E(T(d.HeaderAr ?? doc.TemplateLabelAr, d.HeaderEn ?? doc.TemplateLabelEn))).Append("</span><span>")
             .Append(E(doc.Number)).Append("</span></div>");
         html.Append("<div class=\"ftr\"><span>").Append(E(T(branding.OrganisationAr, branding.OrganisationEn))).Append("</span><span>").Append(E(T(d.FooterAr, d.FooterEn)))
             .Append("</span><span>").Append(E(branding.GeneratedAt.UtcDateTime.ToString("yyyy-MM-dd HH:mm 'UTC'", CultureInfo.InvariantCulture))).Append("</span></div>");
@@ -88,6 +91,7 @@ public static partial class DossierHtml
             html.Append("</div></div>");
         }
 
+        html.Append(header);
         foreach (var block in doc.Blocks)
         {
             html.Append("<div class=\"sec").Append(block.PageBreak ? " pb" : string.Empty).Append("\" data-section=\"").Append(E(block.Key)).Append("\"><h2>")
