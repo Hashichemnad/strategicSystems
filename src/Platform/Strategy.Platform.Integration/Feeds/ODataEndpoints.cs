@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.OData.Edm;
 using Microsoft.OData.Edm.Csdl;
 using Strategy.Platform.Access;
+using Strategy.Platform.Http.Access;
 using Strategy.Platform.Http.Problems;
 using Strategy.Platform.Integration.Clients;
 using Strategy.Platform.Kernel.Results;
@@ -31,11 +32,11 @@ internal static class ODataEndpoints
     public static void MapExtracts(RouteGroupBuilder group)
     {
         var extracts = group.MapGroup("/extracts");
-        extracts.MapGet("/", CatalogueAsync).WithName("ListExtractTypes").ExcludeFromDescription();
+        extracts.MapGet("/", CatalogueAsync).WithName("ListExtractTypes").ExcludeFromDescription().RequireIntegrationClient();
         extracts.MapGet("/{system}/{entitySet}", (HttpContext c, string system, string entitySet, FeedService f, CancellationToken ct) =>
-            ExtractAsync(c, system, entitySet, RecordQueryMode.Current, f, ct)).ExcludeFromDescription();
+            ExtractAsync(c, system, entitySet, RecordQueryMode.Current, f, ct)).ExcludeFromDescription().RequireIntegrationClient();
         extracts.MapGet("/{system}/{entitySet}/deleted", (HttpContext c, string system, string entitySet, FeedService f, CancellationToken ct) =>
-            ExtractAsync(c, system, entitySet, RecordQueryMode.Deleted, f, ct)).ExcludeFromDescription();
+            ExtractAsync(c, system, entitySet, RecordQueryMode.Deleted, f, ct)).ExcludeFromDescription().RequireIntegrationClient();
     }
 
     public static string Lang(HttpRequest request) => request.Query["lang"].ToString() is "ar" ? "ar" : "en";
@@ -219,7 +220,7 @@ internal static class ODataEndpoints
         {
             if (!DateTimeOffset.TryParse(text, System.Globalization.CultureInfo.InvariantCulture, System.Globalization.DateTimeStyles.AssumeUniversal, out var parsed))
             {
-                await Error.Validation([new FieldError("changedSince", "validation.invalidDate", "validation.invalidDate")]).ToProblem().ExecuteAsync(context).ConfigureAwait(false);
+                await Error.Validation([new FieldError("changedSince", "validation.invalid", "validation.invalid")]).ToProblem().ExecuteAsync(context).ConfigureAwait(false);
                 return;
             }
 

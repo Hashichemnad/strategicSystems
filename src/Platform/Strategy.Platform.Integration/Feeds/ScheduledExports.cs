@@ -78,7 +78,7 @@ public sealed class ScheduledExports(
 
         if (input.EveryHours is not (>= 1 and <= 168))
         {
-            errors.Add(Field("everyHours", "validation.range"));
+            errors.Add(new FieldError("everyHours", "validation.inclusiveBetween", "validation.inclusiveBetween", new Dictionary<string, object?> { ["from"] = 1, ["to"] = 168 }));
         }
 
         if (errors.Count > 0)

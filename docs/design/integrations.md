@@ -157,9 +157,11 @@ Audit Management `Findings` → `Recommendations`; Tasks `Tasks`; Sample `Items`
 
 **Catalogue** — modules register integration events: `services.AddWebhookEvent<TEvent>(new WebhookEventDefinition(code, system, labels,
 resource type, permission, resource-id selector, sample))`. Seeded: `portfolio.project.closure-approved`, `portfolio.project.stage-changed`,
-`kpi.result.approved`, `kpi.result.target-missed`, `risk.risk.rating-changed`, `risk.kri.breached`, `risk.event.logged`,
+`kpi.result.approved`, `kpi.result.target-missed`, `risk.risk.rating-changed`, `risk.kri.breached`,
 `risk.control.ineffective`, `cap.remark.status-changed` (raised or status changed), `cap.action.completed`, `auditmgmt.finding.closed`, `auditmgmt.finding.linked-to-risk`,
 `docreg.document.published`, `teams.membership.changed`, `tasks.task.completed`, `requests.request.decided`.
+Not offered: `risk.event.logged` (risk events are not a linkable type, so the per-record visibility check cannot be made — a client would
+learn of events it may not read).
 
 **Subscriptions** (`integration.webhook_subscription`, audited): client, name, target URL (https; validated by the outbound URL policy on save,
 ADR 0155), event codes, active, secret (generated, **encrypted** with Data Protection — it is needed to sign; shown once; *Regenerate*).

@@ -24,8 +24,25 @@ public sealed record SelfServiceEndpoint;
 /// </summary>
 public sealed record VendorEndpoint(string Permission);
 
+/// <summary>
+/// Endpoint metadata: an endpoint for integration clients only (incremental extracts, ADR 0193). Rows are filtered by the client's own
+/// permissions and data scope inside the handler, through <see cref="IAccessService"/>.
+/// </summary>
+public sealed record IntegrationClientEndpoint;
+
 public static class PermissionEndpointExtensions
 {
+    /// <summary>Declares and enforces that only integration clients call the endpoint (403 for people, ADR 0191).</summary>
+    public static TBuilder RequireIntegrationClient<TBuilder>(this TBuilder builder)
+        where TBuilder : IEndpointConventionBuilder
+    {
+        builder.WithMetadata(new IntegrationClientEndpoint());
+        builder.AddEndpointFilter(async (context, next) => context.HttpContext.User.IsIntegrationClient()
+            ? await next(context).ConfigureAwait(false)
+            : new Error("integration.clientOnly", "integration.errors.clientOnly", ErrorKind.Forbidden).ToProblem());
+        return builder;
+    }
+
     /// <summary>
     /// Declares and enforces the endpoint's permission through <see cref="IAccessService"/> (403 when refused).
     /// Record-level checks (404 outside scope) happen in the handler after loading the record.

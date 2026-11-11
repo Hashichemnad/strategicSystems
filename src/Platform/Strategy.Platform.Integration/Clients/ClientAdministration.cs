@@ -245,7 +245,7 @@ public sealed class ClientAdministration(
         var overlap = input.OverlapDays ?? 7;
         if (overlap is < 0 or > 30)
         {
-            return Error.Validation([Field("overlapDays", "validation.range", new() { ["min"] = 0, ["max"] = 30 })]);
+            return Error.Validation([Field("overlapDays", "validation.inclusiveBetween", new() { ["from"] = 0, ["to"] = 30 })]);
         }
 
         var client = await db.Clients.FirstOrDefaultAsync(c => c.Id == id, ct).ConfigureAwait(false);
@@ -386,7 +386,7 @@ public sealed class ClientAdministration(
     {
         if (value < min || value > max)
         {
-            errors.Add(Field(field, "validation.range", new() { ["min"] = min, ["max"] = max }));
+            errors.Add(Field(field, "validation.inclusiveBetween", new() { ["from"] = min, ["to"] = max }));
         }
     }
 
@@ -450,7 +450,7 @@ public sealed class ClientAdministration(
 
         if (input.RateLimitPerMinute is { } rate && (rate < 1 || rate > 10_000))
         {
-            errors.Add(Field("rateLimitPerMinute", "validation.range", new() { ["min"] = 1, ["max"] = 10_000 }));
+            errors.Add(Field("rateLimitPerMinute", "validation.inclusiveBetween", new() { ["from"] = 1, ["to"] = 10_000 }));
         }
 
         if (input.ExpiresAt is { } expires && (expires <= clock.UtcNow || expires > clock.UtcNow.AddDays(limits.MaxClientDays)))
