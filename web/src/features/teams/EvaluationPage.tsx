@@ -15,6 +15,7 @@ import {
   FormField,
   Input,
   PageHeader,
+  RecordLayout,
   Select,
   Skeleton,
   StatusBanner,
@@ -64,49 +65,93 @@ export function EvaluationPage() {
     );
   const e = evaluation.data;
   const cycle = e.summary.cycle === 'completion' ? t('evaluations.completion') : e.summary.cycle;
+  const lang = i18n.language;
+  const tabs = ['evaluation', 'review', ...(e.summary.rewardStatus !== 'none' ? ['rewards'] : [])];
+  const tabLabel = (key: string) =>
+    key === 'evaluation'
+      ? t('evaluation.steps.criteria')
+      : key === 'review'
+        ? t('evaluation.review')
+        : t('rewards.title');
   return (
-    <div className="flex flex-col gap-6">
-      <Link
-        to="/teams/$teamId"
-        params={{ teamId: e.summary.teamId }}
-        search={{ tab: 'evaluations' }}
-        className="flex items-center gap-1 text-sm text-primary hover:underline"
-      >
-        <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden />
-        {pickText(i18n.language, e.teamNameAr, e.teamNameEn)}
-      </Link>
-      <PageHeader
-        title={t('evaluation.title', { cycle })}
-        description={
-          <>
-            <bdi>{e.summary.number}</bdi> ·{' '}
+    <RecordLayout
+      back={
+        <Link
+          to="/teams/$teamId"
+          params={{ teamId: e.summary.teamId }}
+          search={{ tab: 'evaluations' }}
+          className="flex items-center gap-1 text-sm text-primary hover:underline"
+        >
+          <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden />
+          {pickText(lang, e.teamNameAr, e.teamNameEn)}
+        </Link>
+      }
+      highlights={[
+        { key: 'number', label: t('fields.number'), value: <bdi>{e.summary.number ?? '—'}</bdi> },
+        { key: 'cycle', label: t('evaluations.cycle'), value: cycle },
+        {
+          key: 'period',
+          label: t('evaluations.period'),
+          value: (
             <bdi>
-              {formatDate(e.summary.periodStart, i18n.language)} –{' '}
-              {formatDate(e.summary.periodEnd, i18n.language)}
+              {formatDate(e.summary.periodStart, lang)} – {formatDate(e.summary.periodEnd, lang)}
             </bdi>
-          </>
-        }
-        meta={
-          <>
-            <StatusChip tone={e.summary.status === 'approved' ? 'success' : 'info'}>
-              {t(`evaluations.statuses.${e.summary.status as 'open'}`)}
-            </StatusChip>
-            {e.summary.score !== null && (
-              <StatusChip tone="neutral">
-                {t('evaluations.score')}: {formatNumber(e.summary.score, i18n.language)}
+          ),
+        },
+        {
+          key: 'evaluator',
+          label: t('evaluations.evaluator'),
+          value: e.summary.evaluator
+            ? pickText(lang, e.summary.evaluator.nameAr, e.summary.evaluator.nameEn)
+            : '—',
+        },
+        {
+          key: 'score',
+          label: t('evaluations.score'),
+          value: e.summary.score !== null ? formatNumber(e.summary.score, lang) : '—',
+        },
+      ]}
+      related={tabs
+        .filter((key) => key !== 'evaluation')
+        .map((key) => ({ key, label: tabLabel(key), onOpen: () => setTab(key) }))}
+      header={
+        <PageHeader
+          title={t('evaluation.title', { cycle })}
+          description={
+            <>
+              <bdi>{e.summary.number}</bdi> ·{' '}
+              <bdi>
+                {formatDate(e.summary.periodStart, i18n.language)} –{' '}
+                {formatDate(e.summary.periodEnd, i18n.language)}
+              </bdi>
+            </>
+          }
+          meta={
+            <>
+              <StatusChip tone={e.summary.status === 'approved' ? 'success' : 'info'}>
+                {t(`evaluations.statuses.${e.summary.status as 'open'}`)}
               </StatusChip>
-            )}
-            {e.summary.rewardStatus && e.summary.rewardStatus !== 'none' && (
-              <StatusChip tone="neutral">
-                {t(`rewards.statuses.${e.summary.rewardStatus as 'draft'}`)}
-              </StatusChip>
-            )}
-          </>
-        }
-      />
-      {e.returnComment && e.summary.status === 'returned' && (
-        <StatusBanner tone="warning" title={t('evaluation.returnComment', { comment: e.returnComment })} />
-      )}
+              {e.summary.score !== null && (
+                <StatusChip tone="neutral">
+                  {t('evaluations.score')}: {formatNumber(e.summary.score, i18n.language)}
+                </StatusChip>
+              )}
+              {e.summary.rewardStatus && e.summary.rewardStatus !== 'none' && (
+                <StatusChip tone="neutral">
+                  {t(`rewards.statuses.${e.summary.rewardStatus as 'draft'}`)}
+                </StatusChip>
+              )}
+            </>
+          }
+        />
+      }
+      status={
+        e.returnComment &&
+        e.summary.status === 'returned' && (
+          <StatusBanner tone="warning" title={t('evaluation.returnComment', { comment: e.returnComment })} />
+        )
+      }
+    >
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList>
           <TabsTrigger value="evaluation">{t('evaluation.steps.criteria')}</TabsTrigger>
@@ -135,7 +180,7 @@ export function EvaluationPage() {
           <RewardsPanel evaluation={e} />
         </TabsContent>
       </Tabs>
-    </div>
+    </RecordLayout>
   );
 }
 

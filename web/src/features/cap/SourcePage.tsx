@@ -13,6 +13,7 @@ import {
   Button,
   FormField,
   PageHeader,
+  RecordLayout,
   Skeleton,
   StatusBanner,
   StatusChip,
@@ -25,7 +26,7 @@ import {
 } from '@/ui';
 import { capApi, useCapRemarks, useCapSource, type CapRemarkValues, type RemarkExtraction } from './api';
 import {
-  CapPageLayout,
+  CapNav,
   PriorityChip,
   Rows,
   SimpleDialog,
@@ -43,6 +44,8 @@ import { ExternalReferencesSection, OriginBadge } from '@/features/integration/E
 const route = getRouteApi('/app/cap/sources/$sourceId');
 
 /** Source page: details, live link to the originating record, its remarks, documents, history. */
+type SourceTab = 'remarks' | 'overview' | 'documents' | 'history';
+
 export function CapSourcePage() {
   const { t } = useTranslation('cap');
   const { t: tc } = useTranslation();
@@ -58,52 +61,81 @@ export function CapSourcePage() {
   const aiFeature = useAiFeature('cap-extract');
   const aiAllowed = useCan('cap.ai.extract');
   const canExtract = aiFeature && aiAllowed;
+  const [tab, setTab] = useState<SourceTab>('remarks');
 
   if (source.isPending) return <Skeleton className="h-96 rounded-lg" />;
   if (source.isError) return <StatusBanner tone="danger" title={errorMessage(tc, source.error)} />;
   const s = source.data;
   const v = s.values;
   return (
-    <CapPageLayout testId="cap-source-page">
-      <Link to="/cap/sources" className="flex items-center gap-1 text-sm text-primary hover:underline">
-        <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden />
-        {t('sources.title')}
-      </Link>
-      <PageHeader
-        title={names.text(v.titleAr, v.titleEn) || s.number}
-        description={
-          <>
-            <bdi data-testid="cap-source-number">{s.number}</bdi> ·{' '}
-            {labels.lookup(lookupTypes.sourceType, v.sourceTypeCode)}
-          </>
-        }
-        meta={
-          <div className="flex flex-wrap items-center gap-2">
-            <OriginBadge type="cap.source" id={s.id} />
-            <StatusChip tone={s.status === 'active' ? 'info' : 'success'}>
-              {k(`sourceStatus.${s.status}`)}
-            </StatusChip>
-            {s.linked && <LinkBadge view={s.linked} />}
-          </div>
-        }
-        actions={
-          s.can.addRemark && (
-            <div className="flex flex-wrap gap-2">
-              {canExtract && (
-                <Button variant="outline" onClick={() => setExtracting(true)} data-testid="cap-ai-extract">
-                  <Sparkles aria-hidden />
-                  {t('ai.extract')}
-                </Button>
-              )}
-              <Button onClick={() => setAdding(emptyRemark())} data-testid="cap-remark-add">
-                <Plus aria-hidden />
-                {t('remark.add')}
-              </Button>
+    <RecordLayout
+      testId="cap-source-page"
+      // CAP's own navigation first, as on every CAP page (CapPageLayout); hidden in the workspace themes (app tabs).
+      back={
+        <>
+          <CapNav />
+          <Link to="/cap/sources" className="flex items-center gap-1 text-sm text-primary hover:underline">
+            <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden />
+            {t('sources.title')}
+          </Link>
+        </>
+      }
+      highlights={[
+        { key: 'number', label: t('fields.number'), value: <bdi>{s.number}</bdi> },
+        {
+          key: 'sourceType',
+          label: t('fields.sourceType'),
+          value: labels.lookup(lookupTypes.sourceType, v.sourceTypeCode),
+        },
+        { key: 'receivedOn', label: t('fields.receivedOn'), value: date(v.receivedOn) },
+        { key: 'unit', label: t('fields.unit'), value: names.unit(s.unit) },
+        { key: 'owner', label: t('fields.sourceOwner'), value: names.person(s.owner) },
+        { key: 'origin', label: t('fields.origin'), value: k(`origin.${s.origin}`) },
+      ]}
+      related={(['remarks', 'documents', 'history'] as const).map((key) => ({
+        key,
+        label: t(`tabs.${key}`),
+        count: key === 'remarks' ? remarks.data?.totalCount : undefined,
+        onOpen: () => setTab(key),
+      }))}
+      header={
+        <PageHeader
+          title={names.text(v.titleAr, v.titleEn) || s.number}
+          description={
+            <>
+              <bdi data-testid="cap-source-number">{s.number}</bdi> ·{' '}
+              {labels.lookup(lookupTypes.sourceType, v.sourceTypeCode)}
+            </>
+          }
+          meta={
+            <div className="flex flex-wrap items-center gap-2">
+              <OriginBadge type="cap.source" id={s.id} />
+              <StatusChip tone={s.status === 'active' ? 'info' : 'success'}>
+                {k(`sourceStatus.${s.status}`)}
+              </StatusChip>
+              {s.linked && <LinkBadge view={s.linked} />}
             </div>
-          )
-        }
-      />
-      <Tabs defaultValue="remarks">
+          }
+          actions={
+            s.can.addRemark && (
+              <div className="flex flex-wrap gap-2">
+                {canExtract && (
+                  <Button variant="outline" onClick={() => setExtracting(true)} data-testid="cap-ai-extract">
+                    <Sparkles aria-hidden />
+                    {t('ai.extract')}
+                  </Button>
+                )}
+                <Button onClick={() => setAdding(emptyRemark())} data-testid="cap-remark-add">
+                  <Plus aria-hidden />
+                  {t('remark.add')}
+                </Button>
+              </div>
+            )
+          }
+        />
+      }
+    >
+      <Tabs value={tab} onValueChange={(value) => setTab(value as SourceTab)}>
         <TabsList>
           <TabsTrigger value="remarks">{t('tabs.remarks')}</TabsTrigger>
           <TabsTrigger value="overview">{t('tabs.overview')}</TabsTrigger>
@@ -153,7 +185,7 @@ export function CapSourcePage() {
           }}
         />
       )}
-    </CapPageLayout>
+    </RecordLayout>
   );
 }
 
