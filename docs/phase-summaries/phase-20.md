@@ -45,8 +45,21 @@ strings or its documentation.
 
 ## Quality gates
 
-Local runs in the build sandbox (SDK 10.0.114; PostgreSQL 16, Mailpit and Gotenberg in Docker; Chromium 1243). The GitHub Actions workflow
-runs when the pull request is opened.
+**CI run 75** (`dcefb49`, GitHub Actions, `workflow_dispatch`): **every job green** — back end (build, format, unit + architecture
+tests, vulnerable packages, API client), front end (lint, format, typecheck, Vitest, build, npm audit, licences), integration tests
+(modules and platform), **visual regression (themes)** in the pinned container, E2E Arabic + English followed by the accessibility audit
+(Classic screens and the per-theme pass over every split-view list and record page) and the first-run setup wizard, container image
+(Trivy, SBOM), deploy scripts on Linux and Windows.
+
+Defects found by CI and fixed on the way (runs 73–75):
+- Dashboard heat-map cells (Portfolio app home's embedded system dashboard) showed white text on mid-intensity primary tints —
+  3.96–4.18 : 1 in every theme. Cells are now a ≤ 45 % tint of the primary over the card with the normal text colour.
+- The axe audit measured the app launcher during its 160 ms fade-in (half-transparent text); the audit helper now waits for finite
+  animations to finish. The single theme-pass test had outgrown its time budget and is now one test per theme × mode.
+
+Local runs in the build sandbox (SDK 10.0.114; PostgreSQL 16, Mailpit and Gotenberg in Docker; Chromium 1243). A local full E2E run on a
+fresh database stopped at test 105 (all passed) when the sandbox container restarted; local accessibility re-runs after the fixes: Arabic
+main screens, all four Arabic theme tests and English Enterprise light / dark pass.
 
 | Gate | Result |
 |---|---|
