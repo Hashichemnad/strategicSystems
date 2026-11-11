@@ -5,7 +5,8 @@ import { translateMessageKey } from '@/api/problem';
 import i18n from '@/i18n';
 import { flowLayout } from './DashboardBuilderPage';
 import { moveItem } from './MyWorkCards';
-import { operatorsFor } from './ReportBuilderPage';
+import { swap, sectionLevels } from './DossierTemplatesPage';
+import { operatorsFor, toTypeDefinition } from './ReportBuilderPage';
 import { formatValue, toRag } from './WidgetRenderer';
 
 /** Every reporting message key the server can return (errors, My Work cards, counts and items) from the C# sources. */
@@ -114,5 +115,81 @@ describe('Widget values', () => {
     expect(toRag('green')).toBe('green');
     expect(toRag('none')).toBe('grey');
     expect(toRag(undefined)).toBeUndefined();
+  });
+});
+
+describe('Reporting 2.0 helpers (ADRs 0181–0184)', () => {
+  it('opens a Phase 17 definition as a single-object report type with qualified fields', () => {
+    const converted = toTypeDefinition({
+      dataset: 'sample.items',
+      columns: ['number', 'nameEn'],
+      filters: [{ field: 'unit', operator: 'eq', values: ['x'] }],
+      groupBy: ['status'],
+      sort: [{ field: 'number', descending: true }],
+    });
+    expect(converted.reportType).toBe('dataset:sample.items');
+    expect(converted.columns).toEqual(['a.number', 'a.nameEn']);
+    expect(converted.filters[0]?.field).toBe('a.unit');
+    expect(converted.groupBy).toEqual(['a.status']);
+    expect(converted.sort[0]).toEqual({ field: 'a.number', descending: true });
+    expect(converted.showDetails).toBe(true);
+    // A type-based definition is kept as it is.
+    expect(toTypeDefinition({ ...converted, reportType: 'portfolio.projects-milestones' }).columns).toEqual(
+      converted.columns,
+    );
+  });
+
+  it('offers relative dates only on date fields', () => {
+    expect(operatorsFor('date')).toContain('relative');
+    expect(operatorsFor('dateTime')).toContain('relative');
+    expect(operatorsFor('number')).not.toContain('relative');
+  });
+
+  it('moves dossier sections and follows a section path to its objects', () => {
+    expect(swap(['a', 'b', 'c'], 0, 1)).toEqual(['b', 'a', 'c']);
+    expect(swap(['a', 'b'], 1, 2)).toEqual(['a', 'b']);
+    const metadata = {
+      datasets: [],
+      relationships: [
+        {
+          code: 'p-m',
+          parentDataset: 'p',
+          parentField: 'id',
+          childDataset: 'm',
+          childField: 'projectId',
+          labelAr: 'م',
+          labelEn: 'M',
+        },
+        {
+          code: 'm-t',
+          parentDataset: 'm',
+          parentField: 'id',
+          childDataset: 't',
+          childField: 'linkedId',
+          labelAr: 'م',
+          labelEn: 'T',
+        },
+      ],
+    };
+    expect(sectionLevels('p', ['p-m', 'm-t'], metadata)).toEqual([
+      { alias: 'a', dataset: 'p' },
+      { alias: 'b', dataset: 'm' },
+      { alias: 'c', dataset: 't' },
+    ]);
+    // A relationship from another object stops the path.
+    expect(sectionLevels('p', ['m-t'], metadata)).toEqual([{ alias: 'a', dataset: 'p' }]);
+  });
+
+  it('has every Reporting 2.0 builder and dossier label in both languages', () => {
+    for (const key of [
+      'builder.reportType',
+      'designer.title',
+      'dossiers.title',
+      'kinds.gantt',
+      'relative.thisQuarter',
+    ] as const) {
+      expect(i18n.t(key, { ns: 'reportBuilder', lng: 'ar' })).not.toBe(key);
+      expect(i18n.t(key, { ns: 'reportBuilder', lng: 'en' })).not.toBe(key);
+    }
   });
 });
