@@ -58,6 +58,13 @@ test.describe('Reporting 2.0', () => {
       tr(language, `reportBuilder:${key}`, params);
     const tag = `${language.toUpperCase()}${Date.now().toString(36).slice(-5).toUpperCase()}`;
 
+    const records = await json<{ id: string; number: string }[]>(
+      await adminApi.get('/api/v1/reporting/dossier-templates/portfolio.project-dossier/records'),
+    );
+    const project = records[0];
+    if (!project)
+      throw new Error('No project to render: run after the Portfolio specs (they create the projects).');
+
     // ---- Report type editor (Settings → Report types): the seeded "projects with milestones and tasks" -------------------------
     await page.goto('/settings/report-types');
     await expect(page.getByTestId('report-type-list')).toBeVisible();
@@ -137,12 +144,6 @@ test.describe('Reporting 2.0', () => {
     await shot('my-reports-folders', { fullPage: true });
 
     // ---- Project dossier: PDF and Word (Word shown through Gotenberg's LibreOffice route) --------------------------------------
-    const records = await json<{ id: string; number: string }[]>(
-      await adminApi.get('/api/v1/reporting/dossier-templates/portfolio.project-dossier/records'),
-    );
-    const project = records[0];
-    if (!project)
-      throw new Error('No project to render: run after the Portfolio specs or load the demo pack.');
     await page.goto(`/portfolio/projects/${project.id}`);
     await page.getByTestId('dossier-open').click();
     await expect(page.getByTestId('dossier-dialog')).toBeVisible();
