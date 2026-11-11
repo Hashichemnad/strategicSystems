@@ -4,8 +4,9 @@
 - **Context:** E3 asks for PDF and Word in Arabic, English or bilingual. CLAUDE.md §4.3 allows MIT / Apache libraries only.
 
 ## Decision
-- One `DossierDocument` model per record → **HTML** (encoded, no script, embedded Arabic fonts, `dir` per language, CSS page header /
-  footer, SVG charts, Gantt and matrix) rendered by **Gotenberg** (as all PDFs, ADR 0096); merged PDFs are one HTML with a page break per
+- One `DossierDocument` model per record → **HTML** (encoded, no script, embedded Arabic fonts, `dir` per language, the template's header
+  line under the cover and footer line at the end of each record — Chromium's fixed-position elements overlapped page content, so they are
+  not repeated per page in PDF; Word repeats them as real header / footer parts —, SVG charts, Gantt and matrix) rendered by **Gotenberg** (as all PDFs, ADR 0096); merged PDFs are one HTML with a page break per
   record (one call).
 - **Word** with **DocumentFormat.OpenXml 3.x** (MIT; already in central package management): paragraphs and tables with `bidi` /
   `bidiVisual` and `rtl` runs for Arabic, heading styles, header / footer, cover page. Charts, Gantt and the matrix are written as native
