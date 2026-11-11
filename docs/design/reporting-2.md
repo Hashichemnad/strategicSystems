@@ -184,7 +184,7 @@ E2E (ar + en) with the screenshots listed in the phase prompt.
 
 ## 11. As built (Phase 21)
 
-- Contract (§1) as designed; `IReportableMetadata` is the registry (`MetricRegistry`), registered scoped. 48 datasets, 46 relationships.
+- Contract (§1) as designed; `IReportableMetadata` is the registry (`MetricRegistry`), registered scoped. 36 datasets (16 new), 38 relationships.
   ★ datasets added: Portfolio 7 (change requests, project risks, RAID, stakeholders, meetings, lessons, project KPIs), Risk 2 (controls,
   KRIs), Teams 1 (evaluations), Audit 3 (reports, follow-ups, finding-risks), Benchmarking 2 (topics, plan items), CAP 1 (sources),
   Document Registry 1 (versions), Workflow 1 (join-only approval history). The template module declares `sample.item-tasks` (used by tests).

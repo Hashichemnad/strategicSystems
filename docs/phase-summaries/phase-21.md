@@ -9,7 +9,7 @@ Requirements: [`docs/SPEC-ADDENDUM.md`](../SPEC-ADDENDUM.md) §E (E1–E3), SPEC
 | Item | Result | Design / ADR |
 |---|---|---|
 | **Reportable metadata contract** (for Phase 22 too) | Additive to `Strategy.Platform.Reporting.Contracts`: `DatasetFieldType.Reference` (record id = join key, never a column) and `RichText` (plain-text projection), `DatasetDefinition.KeyField` / `JoinOnly`, `DatasetRelationship`, `IReportingDatasetSource.Relationships` (default empty), **`IReportableMetadata`** (datasets, fields, relationships, `RelationshipsFrom`, `RunAsync` as a user). The module that owns a reference declares the relationship — across systems by dataset code only. Phase 22 mapping (entity sets / navigation / keys) documented in the design note §1 | `reporting-2.md` §1–2, 0180 |
-| **Record types and relationships in every module** | DATASETS_COUNT datasets (16 new: Portfolio change requests, project risks, RAID, stakeholders, meetings, lessons, project KPIs; Risk controls, KRIs; Teams evaluations; Audit reports, follow-ups, finding ↔ risk links; Benchmarking topics, improvement plan items; CAP sources; Document versions; join-only **approval history** from Workflow) and RELATIONSHIPS_COUNT relationships, including every cross-system pair of E1: project ↔ team members, project KPI ↔ KPI card results, benchmark ↔ CAP remarks → actions, finding ↔ risk, risk ↔ KRI results, document ↔ IP records (plus project / milestone ↔ tasks, requests ↔ approvals) | `reporting-2.md` §2 |
+| **Record types and relationships in every module** | 36 datasets (16 new: Portfolio change requests, project risks, RAID, stakeholders, meetings, lessons, project KPIs; Risk controls, KRIs; Teams evaluations; Audit reports, follow-ups, finding ↔ risk links; Benchmarking topics, improvement plan items; CAP sources; Document versions; join-only **approval history** from Workflow) and 38 relationships, including every cross-system pair of E1: project ↔ team members, project KPI ↔ KPI card results, benchmark ↔ CAP remarks → actions, finding ↔ risk, risk ↔ KRI results, document ↔ IP records (plus project / milestone ↔ tasks, requests ↔ approvals) | `reporting-2.md` §2 |
 | **Report types** | `reporting.report_type` (migration `ReportingTwo`): primary + related objects as a tree (≤ 3 levels below the primary, ≤ 6 objects, siblings allowed), "with" (inner) / "with or without" (outer), offered fields; every dataset is also an implicit single-object type. **17 seeded** (portfolio 5, requests 1, KPI 1, risk 2, audit 2, CAP 1, benchmarking 2, teams 1, documents 2), re-seeded only while unedited. **Settings → Report types** editor (primary, add related object along a relationship offered by the metadata, join, offered fields with "needs a permission" marks) | §3, 0181 |
 | **Joins in the reporting layer** | Primary rows from the module's scoped query (≤ 10 000, flagged truncated), each related object queried in chunks of 500 keys **through its own module's scoped query**, joined in memory (`ReportComposer`); siblings listed one after another (no cross product); output ≤ 50 000 rows; 30 s timeout; all limits in Settings → Reporting. No SQL across schemas | §4, 0181 |
 | **Report builder** | Columns from every object; filters with **relative dates** (today … last / next N days, weeks, months, quarters / years by fiscal start); grouping **up to 3 levels with subtotals** and grand total; **summary formulas** sum / avg / min / max; **charts** bar, stacked bar, line, pie, donut (server-computed, ECharts on screen — `pieOption` added to the chart kit —, SVG in PDF); **conditional highlighting**; exports **Excel** (group lines, RTL sheet, chart data sheet), **PDF** (chart + grouped table, Gotenberg) and **CSV** (UTF-8 BOM, formula guard). Phase 17 reports open in the new builder and keep running unchanged | §5, 0182 |
@@ -49,7 +49,15 @@ per-section permissions · 0185 PDF via Gotenberg, Word via DocumentFormat.OpenX
   (Dossier button), router, settings navigation, chart kit (`pieOption`, PieChart registration), i18n index (`reportBuilder` namespace),
   authorization-matrix "everyone" list (`reporting.dossier.run`), release notes and changelog.
 
-KNOWN_GAPS
+## Known gaps
+- **PDF header / footer:** the dossier PDF prints the template's header line under the cover and its footer line at the end of each record;
+  they are not repeated on every page (Chromium's fixed elements overlapped page content). Word repeats them on every page (ADR 0185).
+- **Project RAG colours** are not stored; the dossier shows progress status, performance and planned progress (ADR 0184).
+- **Lookup labels:** fields whose codes have no lookup type in their dataset (e.g. project stage, milestone status — as in Phase 17) show
+  codes in reports, charts and dossiers.
+- **Paging re-runs the queries** of a type-based report (no result cache); bounded by the row limits and the timeout (ADR 0181).
+- **External-reference columns** in type-based reports are offered only for objects whose rows link to their own record.
+- **E2E:** `reporting2.spec.ts` needs projects from the Portfolio specs (or the CI order); the demo pack has program requests only.
 
 ## How to demo
 ```bash
@@ -68,4 +76,10 @@ cd web && npm ci && npm run dev        # http://localhost:5173
 4. **Ahmed**: the same report type shows only his units' records and related records; his dossier leaves out sections he may not read.
 
 ## Screenshots
-`docs/screenshots/phase-21/` (`ar-*` / `en-*`): SCREENSHOTS_LIST
+`docs/screenshots/phase-21/` (`ar-*` / `en-*`): report type editor (`report-type-editor`), report builder with
+grouping, subtotals, chart and highlighting (`report-builder-grouping-chart`), My reports and folders (`my-reports-folders`), dossier action
+on the project page (`dossier-dialog`), project dossier PDF (`project-dossier-pdf-cover`, `project-dossier-pdf`, `project-dossier-pdf-gantt`
+— rendered from the PDF with pdftoppm), project dossier Word (`project-dossier-word` — the .docx converted by Gotenberg's LibreOffice route
+for the picture), dossier template designer (`dossier-template-designer`), scheduled dossier (`scheduled-dossier`, `scheduled-dossier-email`
+from Mailpit). Taken by `web/e2e/reporting2.spec.ts` (`E2E_SCREENSHOTS=phase-21`), which runs after the Portfolio specs (they create the
+projects).
