@@ -1,6 +1,6 @@
 # 0172 — Application workspaces: an app registry derived from the existing routes
 
-- **Status:** Proposed (Phase 20) — awaiting owner acceptance
+- **Status:** Accepted by the owner (11 Nov 2026), Phase 20
 - **Context:** SPEC-ADDENDUM §C2: in Enterprise and Modern each system feels like a separate application — launcher, workspace header,
   own tabs, own home page (system dashboard + my items + quick actions), accent colour; shared apps My Work, Dashboards, Settings, Tasks,
   Teams; per-system appearance settings; deep links keep working across themes.

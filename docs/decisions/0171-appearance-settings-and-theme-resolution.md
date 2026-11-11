@@ -1,6 +1,6 @@
 # 0171 — Settings → Appearance and server-side theme / mode resolution
 
-- **Status:** Proposed (Phase 20) — awaiting owner acceptance
+- **Status:** Accepted by the owner (11 Nov 2026), Phase 20
 - **Context:** SPEC-ADDENDUM §C1: the administrator enables themes, sets the default theme and mode; "Allow users to choose their theme"
   is **off by default**; when on, users pick among the enabled themes (and mode). Before Phase 20 every user could already choose light /
   dark / system (Phase 0); the addendum does not say whether that choice may be taken away.

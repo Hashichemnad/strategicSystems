@@ -213,6 +213,73 @@ jobs:
             docs/screenshots
           retention-days: 14
 
+  # Visual regression per theme (ADR 0175): the browser runs in a pinned Playwright container with the product fonts installed from the
+  # locked npm packages (tools/visual-regression.sh), so rendering is identical on every run. Required for pull requests.
+  visual:
+    name: Visual regression (themes)
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: strategy
+          POSTGRES_USER: strategy
+          POSTGRES_PASSWORD: strategy
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U strategy" --health-interval 5s --health-timeout 5s --health-retries 20
+      mailpit:
+        image: axllent/mailpit:v1.29
+        ports: ["1025:1025", "8025:8025"]
+      gotenberg:
+        image: gotenberg/gotenberg:8
+        ports: ["3000:3000"]
+    env:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Strategy: Host=localhost;Port=5432;Database=strategy;Username=strategy;Password=strategy
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Pull the pinned Playwright image
+        run: docker pull mcr.microsoft.com/playwright@sha256:f1e7e01021efd65dd1a2c56064be399f3e4de00fd021ac561325f2bfbb2b837a
+      - name: Install and build
+        run: |
+          dotnet build src/Host/Strategy.Host/Strategy.Host.csproj
+          cd web
+          npm ci --no-audit --no-fund
+          npm run build
+      - name: Start the host on a fresh Development database
+        working-directory: web
+        env:
+          Spa__RootPath: ../../../web/dist
+          RateLimiting__PermitLimit: "10000"
+          RateLimiting__AuthPermitLimit: "1000"
+          Seed__AdminTotpKey: JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP
+        run: |
+          nohup dotnet run --no-build --project ../src/Host/Strategy.Host --no-launch-profile --urls http://localhost:5080 > ../host.log 2>&1 &
+          timeout 300 bash -c 'until curl -sf http://localhost:5080/health/ready > /dev/null; do sleep 3; done'
+      - name: Compare with the committed baselines (UPDATE_SNAPSHOTS=1 to rewrite them, ADR 0175)
+        env:
+          E2E_BASE_URL: http://localhost:5080
+          CI: "true"
+        run: tools/visual-regression.sh
+      - name: Upload differences
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-regression
+          path: |
+            web/test-results
+            host.log
+          retention-days: 14
+
   docker:
     name: Container image (build, scan, SBOM, deploy scripts)
     needs: [backend, integration, frontend]

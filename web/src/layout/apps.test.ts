@@ -106,10 +106,15 @@ describe('landing app per role (ADR 0173)', () => {
     [['kpi.editor'], null, 'kpi'],
     [['kpi.editor', 'auditmgmt.office'], null, 'auditmgmt'], // first matching rule wins
     [['portfolio.pmo'], null, 'mywork'], // the rule's app is not accessible
+    [['risk.owner', 'tasks.employee'], null, 'mywork'], // roles that match no rule: My Work
     [['kpi.editor'], 'auditmgmt', 'auditmgmt'], // own default first
     [['kpi.editor'], 'portfolio', 'kpi'], // own default not accessible: rules apply
   ] as const)('roles %j, default %s → %s', (roles, userDefault, expected) => {
     expect(resolveLandingApp(visible, roles, userDefault, rules)).toBe(expected);
+  });
+
+  it('falls back to My Work when no rule is configured', () => {
+    expect(resolveLandingApp(visible, ['kpi.editor', 'auditmgmt.office'], null, [])).toBe('mywork');
   });
 });
 

@@ -2,7 +2,8 @@
 
 Status: **built — awaiting owner acceptance** · version stays **1.0.0** (no tag until the end of Phase 23, SPEC-ADDENDUM A7).
 Requirements: [`docs/SPEC-ADDENDUM.md`](../SPEC-ADDENDUM.md) §C (C1–C5) · design note: [`docs/design/themes.md`](../design/themes.md).
-ADRs **0170–0175 proposed** for owner acceptance.
+ADRs **0170–0175 accepted by the owner** (11 Nov 2026; 0173 with the My Work fallback confirmed and tested, 0175 amended with the
+required CI visual-regression job).
 
 ## What was built
 
@@ -28,10 +29,10 @@ strings or its documentation.
 |---|---|
 | Theme and mode resolution (admin default, user choice only when allowed) | `UnitTests/Settings/AppearanceResolverTests` (8-row resolution table, choice validation, defaults, validation by field — 11 tests); `IntegrationTests/Settings/AppearanceApiTests` (4: defaults Classic / system and choice refused while off; admin default applies to everyone, choice honoured only while allowed **and** enabled, ignored again when turned off, mode choice off; only settings managers change appearance — 403 / 401, validation by field, 409, audited; default app and favourites validated and kept on language-only updates); E2E *the theme menu offers themes only while choosing is allowed* |
 | App launcher shows only accessible systems | Vitest `layout/apps.test.ts` (system access, permissions, no access before `/access/me`, overrides never add access, tab order / hidden tabs, every label in AR and EN, icons and accent contrast ≥ 3 : 1, app codes = server catalogue — 24 tests); E2E *app launcher shows only the systems the user can open* (as the demo editor: every system tile is a system they may open, no Settings app; favourites first) |
-| Landing app per role | Vitest `resolveLandingApp` table (6 rows); E2E: admin rule → the editor lands on Sample; own default app wins; Classic stays on My Work |
+| Landing app per role | Vitest `resolveLandingApp` table (7 rows + *no rule configured*); E2E: **no rule configured, or only a rule for a role the user does not hold → My Work**; admin rule → the editor lands on Sample; own default app wins; Classic stays on My Work |
 | Every main screen in every theme × AR / EN × light / dark without horizontal scroll at 360 px | E2E `themes.spec.ts`: 8 main screens (launcher, app home, list, project record, request wizard, My Work, executive dashboard, Settings → Appearance) × 3 themes × 2 modes, in projects `ar` and `en`: screenshot at 1366 px and `scrollWidth ≤ clientWidth` at 360 px — **96 screen states per language, all pass** |
 | axe WCAG 2.1 AA in all three themes | `a11y.spec.ts` theme pass (Enterprise and Modern × light and dark: My Work, launcher, palette, Portfolio and KPI app homes, project list, project record, Settings → Appearance) — **60 screen states, 0 violations**; Classic: the existing audit (main screens + settings now including `/apps/portfolio`, `/my-work` and Settings → Appearance) |
-| Visual-regression baseline per theme | Playwright projects `visual-ar` / `visual-en` (`visual.spec.ts`, opt-in `E2E_VISUAL=1`): UI kit × 3 themes × 2 modes and the launcher in the workspace themes; baselines in `web/e2e/visual.spec.ts-snapshots/` (ADR 0175) |
+| Visual-regression baseline per theme | Playwright projects `visual-ar` / `visual-en` (`visual.spec.ts`): UI kit × 3 themes × 2 modes and the launcher in the workspace themes; 20 baselines in `web/e2e/visual.spec.ts-snapshots/` generated in the **pinned Playwright container with the product fonts** (`tools/visual-regression.sh`); CI job *Visual regression (themes)*, to be marked required (ADR 0175) |
 | Classic unchanged | The whole existing E2E suite runs in Classic (the default); Classic token values and shell markup are the Phase 19 ones |
 
 ## Defects found while verifying (fixed in this phase)
@@ -62,7 +63,7 @@ runs when the pull request is opened.
 | E2E `themes.spec.ts` (`ar` + `en`) | **22 / 22** (6 theme × mode walks of 8 screens + 360 px reflow, Enterprise record, palette, launcher, landing app, theme menu — per language) |
 | E2E accessibility (`ar-a11y` + `en-a11y`) | theme pass **2 / 2, 0 violations in 60 screen states**; Classic *main screens* and *settings and administration* (now with `/apps/portfolio`, `/my-work`, Settings → Appearance) **4 / 4** |
 | E2E Classic regression subset (`shell`, `platform`, `profile`, `settings`, `search`; `ar` + `en`) | **36 / 36** |
-| Visual regression (`E2E_VISUAL=1`, `visual-ar` + `visual-en`) | baselines created, re-run **12 / 12** |
+| Visual regression (`tools/visual-regression.sh`, pinned container, fresh database) | baselines created with `UPDATE_SNAPSHOTS=1`, then two comparison runs **12 / 12** each |
 
 Not run in this sandbox: the complete E2E suite of all phases (the subset above covers the shell, settings, profile and search that Phase 20
 touches; every other screen is unchanged in Classic) and the container image / Trivy job (no dependency change besides the OFL font
@@ -81,8 +82,8 @@ package) — CI runs them.
 - Workspace tabs filter by permission; a few module navigations also hid entries by module options (e.g. Audit Office-only calendar); in the
   workspace themes such a tab can be visible to a user whose page then answers with its own access check.
 - Inline edit and mass actions remain where earlier phases built them (no new endpoints in Phase 20).
-- Visual-regression baselines are opt-in (`E2E_VISUAL=1`): pixel baselines depend on the machine's font rendering; re-baseline on the
-  reference machine with `--update-snapshots` when tokens change.
+- *Visual regression (themes)* must be added to the protected branch's **required status checks** by a repository administrator (the
+  workflow cannot set branch protection itself).
 
 ## How to demo
 1. Settings → **Appearance** → set the default theme to *Enterprise* (or turn on *Allow users to choose their theme*) → Save.

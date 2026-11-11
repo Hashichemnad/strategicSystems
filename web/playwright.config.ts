@@ -18,6 +18,8 @@ export default defineConfig<E2eOptions>({
   fullyParallel: false,
   workers: 1,
   forbidOnly: Boolean(process.env.CI),
+  // Visual baselines (ADR 0175) are written only on request (UPDATE_SNAPSHOTS=1, tools/visual-regression.sh); a missing one fails.
+  updateSnapshots: process.env.UPDATE_SNAPSHOTS ? 'all' : 'none',
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : [['list']],
   use: {

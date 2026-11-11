@@ -1,6 +1,6 @@
 # 0174 — Modern command palette, split-view lists and the Enterprise utility bar
 
-- **Status:** Proposed (Phase 20) — awaiting owner acceptance
+- **Status:** Accepted by the owner (11 Nov 2026), Phase 20
 - **Context:** SPEC-ADDENDUM §C3–C4 and A1: Ctrl+K command palette (records, pages, actions) in Modern; split-view lists; Enterprise utility
   bar with quick notes / recent items.
 

@@ -267,7 +267,7 @@ test.describe('as a regular user', () => {
     await choose(page, { favouriteApps: [] });
   });
 
-  test('landing app: the role rule applies in workspace themes, the user’s own default wins, Classic stays on My Work', async ({
+  test('landing app: My Work when no rule matches, the role rule applies in workspace themes, the user’s own default wins, Classic stays on My Work', async ({
     page,
     adminApi,
   }) => {
@@ -275,9 +275,25 @@ test.describe('as a regular user', () => {
     const role = access.roles[0];
     test.skip(!role, 'the demo user holds no role');
     const current = (await appearance(adminApi)).value ?? {};
-    await saveAppearance(adminApi, { ...current, landingRules: [{ roleCode: role, app: 'sample' }] });
     try {
       await choose(page, { uiTheme: 'enterprise', theme: 'light', landingApp: '' });
+
+      // No rule matches any of the user's roles (none configured, or only for a role they do not hold): My Work at "/".
+      await saveAppearance(adminApi, { ...current, landingRules: [] });
+      await page.goto('/');
+      await expect(page.getByTestId('workspace-shell')).toBeVisible();
+      await expect(page).toHaveURL(/\/$/);
+      await expect(page.getByTestId('workspace-app')).toHaveAttribute('href', '/my-work');
+      await saveAppearance(adminApi, {
+        ...current,
+        landingRules: [{ roleCode: 'no-such.role', app: 'sample' }],
+      });
+      await page.goto('/');
+      await expect(page.getByTestId('workspace-shell')).toBeVisible();
+      await expect(page).toHaveURL(/\/$/);
+
+      // A rule for one of the user's roles: they land on that app.
+      await saveAppearance(adminApi, { ...current, landingRules: [{ roleCode: role, app: 'sample' }] });
       await page.goto('/');
       await expect(page).toHaveURL(/\/sample(\?|$)/);
 

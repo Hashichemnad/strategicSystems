@@ -1,6 +1,6 @@
 # 0170 — Themes are design-token sets plus layout slots of one component library
 
-- **Status:** Proposed (Phase 20) — awaiting owner acceptance
+- **Status:** Accepted by the owner (11 Nov 2026), Phase 20
 - **Context:** SPEC-ADDENDUM §C1 asks for three themes (Classic, Enterprise, Modern) × light / dark × RTL / LTR that differ in navigation,
   density, record-page layout, list style, card style and typography — "one component library; themes switch tokens and layout slots,
   never duplicate screens". About 300 screens exist (Phases 0–19); duplicating any of them per theme would triple the maintenance and the
