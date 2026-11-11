@@ -41,6 +41,10 @@ public static class TokenScopes
     /// <summary>MCP server access (Phase 5).</summary>
     public const string Mcp = "mcp";
 
+    /// <summary>OData feeds and incremental extracts — integration clients only, never a personal token (ADR 0191).</summary>
+    public const string Feeds = "feeds";
+
+    /// <summary>Scopes of personal access tokens.</summary>
     public static readonly IReadOnlyList<string> All = [ApiRead, ApiWrite, Mcp];
 }
 

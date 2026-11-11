@@ -1,3 +1,4 @@
+using Strategy.Platform.Identity.Authentication;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using OpenIddict.Abstractions;
@@ -88,10 +89,16 @@ public sealed class McpAdministration(
         var result = new List<McpClientDto>();
         await foreach (var application in applications.ListAsync(500, 0, ct).ConfigureAwait(false))
         {
+            var clientId = (await applications.GetClientIdAsync(application, ct).ConfigureAwait(false))!;
+            if (clientId.StartsWith(IntegrationClientKeys.ClientIdPrefix, StringComparison.Ordinal))
+            {
+                continue; // integration clients: Settings → Integrations (ADR 0191)
+            }
+
             var properties = await applications.GetPropertiesAsync(application, ct).ConfigureAwait(false);
             DateTimeOffset? registered = properties.TryGetValue("registered_at", out var at) && at.TryGetDateTimeOffset(out var value) ? value : null;
             result.Add(new McpClientDto(
-                (await applications.GetClientIdAsync(application, ct).ConfigureAwait(false))!,
+                clientId,
                 await applications.GetDisplayNameAsync(application, ct).ConfigureAwait(false),
                 (await applications.GetRedirectUrisAsync(application, ct).ConfigureAwait(false)).ToList(),
                 registered));
@@ -103,7 +110,9 @@ public sealed class McpAdministration(
     /// <summary>Removes a client: its tokens and authorizations are revoked at once (OAuth configuration, not a business record). Audited.</summary>
     public async Task<Result> RevokeClientAsync(string clientId, CancellationToken ct)
     {
-        var application = await applications.FindByClientIdAsync(clientId, ct).ConfigureAwait(false);
+        var application = clientId.StartsWith(IntegrationClientKeys.ClientIdPrefix, StringComparison.Ordinal)
+            ? null // integration clients are revoked in Settings → Integrations
+            : await applications.FindByClientIdAsync(clientId, ct).ConfigureAwait(false);
         if (application is null)
         {
             return Error.NotFound();

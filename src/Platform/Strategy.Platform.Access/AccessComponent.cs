@@ -30,6 +30,7 @@ public sealed class AccessComponent : IPlatformComponent
         services.AddScoped<IUserRoleQuery>(sp => sp.GetRequiredService<UserRoleQuery>());
         services.AddScoped<PrincipalNames>();
         services.AddScoped<AccessAdministration>();
+        services.AddScoped(sp => new ServiceAccountRoles(sp.GetRequiredService<AccessAdministration>()));
         services.AddScoped<AccessReporting>();
         services.AddScoped<MemberAdministration>();
         services.AddNotificationTemplate(MemberNotifications.Added);

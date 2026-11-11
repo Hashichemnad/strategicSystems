@@ -25,6 +25,16 @@ internal sealed class OAuthAuthenticationHandler(
         }
 
         var subject = result.Principal.GetClaim(OpenIddictConstants.Claims.Subject);
+        if (subject is not null && subject.StartsWith(IntegrationClientKeys.ClientIdPrefix, StringComparison.Ordinal))
+        {
+            // A client-credentials token of an integration client (ADR 0191): re-checked on every call by the integration component.
+            var authority = Context.RequestServices.GetService(typeof(IIntegrationClientAuthority)) as IIntegrationClientAuthority;
+            var integration = authority is null
+                ? null
+                : await authority.CreatePrincipalAsync(subject, result.Principal.GetScopes().ToList(), Scheme.Name, Context.RequestAborted).ConfigureAwait(false);
+            return integration is null ? AuthenticateResult.Fail("Invalid token") : AuthenticateResult.Success(new AuthenticationTicket(integration, Scheme.Name));
+        }
+
         var scopes = result.Principal.GetScopes().Where(s => s == McpScopes.Mcp).ToList();
         var client = result.Principal.GetClaim(OpenIddictConstants.Claims.ClientId) ?? result.Principal.GetPresenters().FirstOrDefault();
         if (!Guid.TryParse(subject, out var userId) || scopes.Count == 0)

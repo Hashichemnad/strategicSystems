@@ -152,9 +152,14 @@ internal static class AuthorizationEndpoints
     private static async Task<IResult> TokenAsync(HttpContext context, ISettingsStore settingsStore, TokenPrincipalFactory principals)
     {
         var request = context.GetOpenIddictServerRequest() ?? throw new InvalidOperationException("Not an OpenIddict request.");
+        if (request.IsClientCredentialsGrantType())
+        {
+            return await ClientCredentialsAsync(context, request);
+        }
+
         if (!request.IsAuthorizationCodeGrantType() && !request.IsRefreshTokenGrantType())
         {
-            return Forbid(Errors.UnsupportedGrantType, "Only authorization_code and refresh_token are supported.");
+            return Forbid(Errors.UnsupportedGrantType, "Only authorization_code, refresh_token and client_credentials are supported.");
         }
 
         var result = await context.AuthenticateAsync(OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
@@ -177,6 +182,31 @@ internal static class AuthorizationEndpoints
         refreshed.SetAccessTokenLifetime(TimeSpan.FromMinutes(settings.AccessTokenMinutes));
         refreshed.SetRefreshTokenLifetime(TimeSpan.FromDays(settings.RefreshTokenDays));
         return Results.SignIn(refreshed, authenticationScheme: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+    }
+
+    /// <summary>
+    /// OAuth 2.0 client credentials for integration clients (ADR 0191): OpenIddict has authenticated the confidential client; the integration
+    /// component decides whether it may still call (status, expiry, IP allow-list) and which scopes it gets. Independent of the MCP switch.
+    /// </summary>
+    private static async Task<IResult> ClientCredentialsAsync(HttpContext context, OpenIddictRequest request)
+    {
+        var authority = context.RequestServices.GetService(typeof(IIntegrationClientAuthority)) as IIntegrationClientAuthority;
+        var grant = authority is null || request.ClientId is null
+            ? null
+            : await authority.GrantAsync(request.ClientId, request.GetScopes(), context.Connection.RemoteIpAddress?.ToString(), context.RequestAborted);
+        if (grant is null)
+        {
+            return Forbid(Errors.InvalidClient, "The client may not obtain tokens.");
+        }
+
+        var identity = new ClaimsIdentity(TokenValidationParameters.DefaultAuthenticationType, Claims.Name, Claims.Role);
+        identity.SetClaim(Claims.Subject, grant.ClientId);
+        identity.SetClaim(Claims.Name, grant.ClientId);
+        identity.SetDestinations(_ => [Destinations.AccessToken]);
+        var principal = new ClaimsPrincipal(identity);
+        principal.SetScopes(grant.Scopes);
+        principal.SetAccessTokenLifetime(grant.Lifetime);
+        return Results.SignIn(principal, authenticationScheme: OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
     }
 
     private static IResult Deny(string description) => Forbid(Errors.AccessDenied, description);

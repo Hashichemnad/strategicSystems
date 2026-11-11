@@ -72,10 +72,12 @@ internal sealed class PatAuthenticationHandler(
 /// </summary>
 public static class TokenScopeRules
 {
-    /// <summary>A personal access token or an OAuth access token (never a browser session).</summary>
+    /// <summary>A personal access token, an OAuth access token or an integration client (never a browser session).</summary>
     public static bool IsToken(this ClaimsPrincipal principal) =>
         (principal.FindFirst(StrategyClaims.AuthMethod)?.Value == AuthMethods.Token && principal.Identity?.AuthenticationType == AuthSchemes.PersonalAccessToken)
-        || (principal.FindFirst(StrategyClaims.AuthMethod)?.Value == AuthMethods.OAuth && principal.Identity?.AuthenticationType == AuthSchemes.OAuth);
+        || (principal.FindFirst(StrategyClaims.AuthMethod)?.Value == AuthMethods.OAuth && principal.Identity?.AuthenticationType == AuthSchemes.OAuth)
+        || (principal.FindFirst(StrategyClaims.AuthMethod)?.Value == AuthMethods.Client && principal.IsIntegrationClient()
+            && principal.Identity?.AuthenticationType is AuthSchemes.OAuth or AuthSchemes.Integration);
 
     public static bool Allows(ClaimsPrincipal principal, string method, string path)
     {
@@ -86,12 +88,35 @@ public static class TokenScopeRules
         }
 
         var scopes = (principal.FindFirst(StrategyClaims.TokenScopes)?.Value ?? string.Empty).Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        var readOnly = Microsoft.AspNetCore.Http.HttpMethods.IsGet(method) || Microsoft.AspNetCore.Http.HttpMethods.IsHead(method);
+        if (principal.IsIntegrationClient())
+        {
+            // ADR 0191: feeds open the OData feeds and extracts; api.read opens REST reads except personal and client-administration areas.
+            if (IntegrationPaths.IsFeed(path))
+            {
+                return readOnly && scopes.Contains(TokenScopes.Feeds);
+            }
+
+            return readOnly && scopes.Contains(TokenScopes.ApiRead) && path.StartsWith("/api/v1/", StringComparison.OrdinalIgnoreCase)
+                && !path.StartsWith("/api/v1/me", StringComparison.OrdinalIgnoreCase)
+                && !path.StartsWith("/api/v1/auth", StringComparison.OrdinalIgnoreCase)
+                && !path.StartsWith("/api/v1/integration/clients", StringComparison.OrdinalIgnoreCase)
+                && !path.StartsWith("/api/v1/integration/webhooks", StringComparison.OrdinalIgnoreCase)
+                && !path.StartsWith("/api/v1/ai", StringComparison.OrdinalIgnoreCase)
+                && !path.StartsWith("/api/v1/mcp", StringComparison.OrdinalIgnoreCase);
+        }
+
         if (path.StartsWith("/mcp", StringComparison.OrdinalIgnoreCase))
         {
             return scopes.Contains(TokenScopes.Mcp);
         }
 
-        var readOnly = Microsoft.AspNetCore.Http.HttpMethods.IsGet(method) || Microsoft.AspNetCore.Http.HttpMethods.IsHead(method);
+        // A person's token is not used for system integrations (SPEC-ADDENDUM §F).
+        if (IntegrationPaths.IsFeed(path))
+        {
+            return false;
+        }
+
         return scopes.Contains(TokenScopes.ApiWrite) || (readOnly && scopes.Contains(TokenScopes.ApiRead));
     }
 }

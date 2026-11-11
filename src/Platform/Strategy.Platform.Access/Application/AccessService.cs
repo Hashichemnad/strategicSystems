@@ -16,6 +16,7 @@ internal sealed class AccessService(UserAccessLoader loader, AccessModelCache mo
     public const string VendorPermissionPrefix = "wasel.";
 
     private readonly Dictionary<(Guid, Guid?), (AccessModel, UserAccess)> _perRequest = [];
+    private readonly Dictionary<(Guid, string), (AccessModel, UserAccess)> _perIntegration = [];
 
     public async Task<bool> CanAsync(
         ClaimsPrincipal principal, string permission, ResourceRef? resource = null, CancellationToken cancellationToken = default)
@@ -37,7 +38,7 @@ internal sealed class AccessService(UserAccessLoader loader, AccessModelCache mo
             return false;
         }
 
-        var (model, access) = await SnapshotAsync(userId, principal.EmployeeIdOf(), cancellationToken).ConfigureAwait(false);
+        var (model, access) = await SnapshotAsync(principal, userId, cancellationToken).ConfigureAwait(false);
         if (!SystemOpen(model, access, permission, out var info))
         {
             return false;
@@ -103,7 +104,7 @@ internal sealed class AccessService(UserAccessLoader loader, AccessModelCache mo
             return query.Where(_ => false);
         }
 
-        var (model, access) = await SnapshotAsync(userId, principal.EmployeeIdOf(), cancellationToken).ConfigureAwait(false);
+        var (model, access) = await SnapshotAsync(principal, userId, cancellationToken).ConfigureAwait(false);
         if (!SystemOpen(model, access, permission, out var info))
         {
             return query.Where(_ => false);
@@ -148,7 +149,7 @@ internal sealed class AccessService(UserAccessLoader loader, AccessModelCache mo
             return EffectiveScope.None;
         }
 
-        var (model, access) = await SnapshotAsync(userId, principal.EmployeeIdOf(), cancellationToken).ConfigureAwait(false);
+        var (model, access) = await SnapshotAsync(principal, userId, cancellationToken).ConfigureAwait(false);
         if (!SystemOpen(model, access, permission, out var info))
         {
             return EffectiveScope.None;
@@ -255,6 +256,24 @@ internal sealed class AccessService(UserAccessLoader loader, AccessModelCache mo
         var now = clock.UtcNow;
         return db.RecordRoles.AsNoTracking().Where(g =>
             g.ValidFrom <= now && (g.ValidTo == null || g.ValidTo > now) && g.PrincipalKind == RecordPrincipalKinds.User && g.PrincipalId == userId);
+    }
+
+    /// <summary>The snapshot for a principal: a person's, or an integration client's narrowed one (ADR 0191).</summary>
+    private async Task<(AccessModel Model, UserAccess Access)> SnapshotAsync(ClaimsPrincipal principal, Guid userId, CancellationToken cancellationToken)
+    {
+        if (principal.IntegrationScopeOf() is not { } integration)
+        {
+            return await SnapshotAsync(userId, principal.EmployeeIdOf(), cancellationToken).ConfigureAwait(false);
+        }
+
+        if (_perIntegration.TryGetValue((userId, integration.Key), out var known))
+        {
+            return known;
+        }
+
+        var loaded = await loader.LoadAsync(userId, null, cancellationToken, integration).ConfigureAwait(false);
+        _perIntegration[(userId, integration.Key)] = loaded;
+        return loaded;
     }
 
     /// <summary>The snapshot for a user (also used by the access API and the MFA policy).</summary>
