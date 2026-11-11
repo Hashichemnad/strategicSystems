@@ -65,6 +65,12 @@ public sealed class ReportService(
         var allowed = new List<DatasetField>();
         foreach (var field in dataset.Fields)
         {
+            // Relationship keys are for joins, never columns (ADR 0180).
+            if (field.Type == DatasetFieldType.Reference)
+            {
+                continue;
+            }
+
             if (field.Permission is null || await access.CanAsync(user, field.Permission, cancellationToken: ct).ConfigureAwait(false))
             {
                 allowed.Add(field);
@@ -106,7 +112,7 @@ public sealed class ReportService(
         var result = new List<DatasetDto>();
         foreach (var dataset in registry.Datasets.OrderBy(d => d.SystemCode, StringComparer.Ordinal).ThenBy(d => d.Code, StringComparer.Ordinal))
         {
-            if (!await access.CanAsync(user, dataset.ReadPermission, cancellationToken: ct).ConfigureAwait(false))
+            if (dataset.JoinOnly || !await access.CanAsync(user, dataset.ReadPermission, cancellationToken: ct).ConfigureAwait(false))
             {
                 continue;
             }
@@ -128,7 +134,7 @@ public sealed class ReportService(
             return Error.Validation([Err("dataset", "reporting.errors.columns")]);
         }
 
-        if (!registry.TryDataset(definition.Dataset, out var dataset, out var source)
+        if (!registry.TryDataset(definition.Dataset, out var dataset, out var source) || dataset.JoinOnly
             || !await access.CanAsync(user, dataset.ReadPermission, cancellationToken: ct).ConfigureAwait(false))
         {
             return Error.NotFound();

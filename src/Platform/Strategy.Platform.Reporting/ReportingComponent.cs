@@ -33,6 +33,7 @@ public sealed class ReportingComponent : IPlatformComponent
         services.AddSingleton<ReportingChangeTracker>();
         services.AddSingleton<ISaveChangesObserver>(sp => sp.GetRequiredService<ReportingChangeTracker>());
         services.AddScoped<MetricRegistry>();
+        services.AddScoped<IReportableMetadata>(sp => sp.GetRequiredService<MetricRegistry>());
         services.AddScoped<ReportingClock>();
         services.AddScoped<FactRefresher>();
         services.AddScoped<FactStatus>();

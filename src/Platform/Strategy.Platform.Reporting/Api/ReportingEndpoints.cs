@@ -178,7 +178,8 @@ internal static class ReportingEndpoints
             errors.Add(new FieldError("fiscalStartMonth", "reporting.errors.fiscalStart", "reporting.errors.fiscalStart"));
         }
 
-        if (s.RefreshMinutes is < 1 or > 1440 || s.ExportRowLimit is < 100 or > 500_000 || s.AttachmentLimitMb is < 1 or > 50 || s.DeliveryRetentionDays is < 1 or > 365)
+        if (s.RefreshMinutes is < 1 or > 1440 || s.ExportRowLimit is < 100 or > 500_000 || s.AttachmentLimitMb is < 1 or > 50 || s.DeliveryRetentionDays is < 1 or > 365
+            || s.ReportPrimaryRowLimit is < 100 or > 100_000 || s.ReportTimeoutSeconds is < 5 or > 600 || s.DossierBulkLimit is < 1 or > 1000 || s.DossierSectionRowLimit is < 10 or > 5000)
         {
             errors.Add(new FieldError("limits", "reporting.errors.limits", "reporting.errors.limits"));
         }
