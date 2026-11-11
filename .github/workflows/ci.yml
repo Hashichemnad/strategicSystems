@@ -234,9 +234,6 @@ jobs:
       gotenberg:
         image: gotenberg/gotenberg:8
         ports: ["3000:3000"]
-    env:
-      ASPNETCORE_ENVIRONMENT: Development
-      ConnectionStrings__Strategy: Host=localhost;Port=5432;Database=strategy;Username=strategy;Password=strategy
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
@@ -257,7 +254,10 @@ jobs:
           npm run build
       - name: Start the host on a fresh Development database
         working-directory: web
+        # Only this step sees the Development database: the build's OpenAPI generation must not seed it without the authenticator key.
         env:
+          ASPNETCORE_ENVIRONMENT: Development
+          ConnectionStrings__Strategy: Host=localhost;Port=5432;Database=strategy;Username=strategy;Password=strategy
           Spa__RootPath: ../../../web/dist
           RateLimiting__PermitLimit: "10000"
           RateLimiting__AuthPermitLimit: "1000"
