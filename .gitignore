@@ -28,3 +28,6 @@ deploy/*.local.pem
 # Operations
 backups/
 deploy/secrets/
+
+# Local E2E runs that only verify (E2E_SCREENSHOTS=scratch) — never committed
+docs/screenshots/scratch/
