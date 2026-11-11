@@ -174,7 +174,7 @@ event key) — unique, so outbox retries never duplicate.
 **Headers**: `X-Strategy-Event`, `X-Strategy-Delivery`, `X-Strategy-Timestamp` (Unix seconds), `X-Strategy-Signature: v1=<hex HMAC-SHA256(secret,
 "<timestamp>.<body>")>`; receivers verify and reject timestamps older than 5 minutes (portal sample code).
 
-**Delivery** — job `integration.webhooks` (every 30 s) sends due deliveries: `HttpClient` from `OutboundUrlPolicy.CreateHandler()` (connect-time
+**Delivery** — job `integration.webhooks` (every minute) sends due deliveries: `HttpClient` from `OutboundUrlPolicy.CreateHandler()` (connect-time
 SSRF guard, no redirects), 10 s time-out, 2xx = delivered. Failure → attempt logged (`integration.webhook_attempt`: time, status code,
 duration, error, no response body beyond 500 chars) and next attempt after `RetryBaseSeconds · 2^(n−1)` capped at 6 h (default base 60 s,
 **8 attempts**), then status **dead** (dead-letter list). **Replay** (one or a selection, from the delivery log or the dead-letter list) puts a
@@ -209,7 +209,7 @@ false (Development / tests only via configuration `Integration:AllowHttpWebhooks
 
 ## 10. Events, jobs, audit
 
-Jobs: `integration.webhooks` (30 s), `integration.export` (15 min), `integration.maintenance` (daily: usage / delivery retention).
+Jobs: `integration.webhooks` (every minute), `integration.export` (15 min), `integration.maintenance` (daily: usage / delivery retention).
 Audit events: `integration.client.create|update|revoke|rotate|credential.revoke|roles`, `integration.client.refused`, `integration.feed.query`,
 `integration.webhook.subscription.*`, `integration.webhook.replay`, `integration.export.run`. Entities `[Audited]`: client, credential (hash
 masked), subscription (secret masked), export schedule.

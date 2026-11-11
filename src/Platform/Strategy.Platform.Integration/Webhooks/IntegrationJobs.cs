@@ -14,7 +14,7 @@ namespace Strategy.Platform.Integration.Webhooks;
 internal sealed class WebhookDispatchJob(RequestContext requestContext, WebhookDispatcher dispatcher) : StrategyJob(requestContext)
 {
     public static readonly JobDefinition Definition = new(
-        "integration.webhooks", "إرسال إشعارات Webhook", "Webhook deliveries", "0/30 * * * * ?", typeof(WebhookDispatchJob),
+        "integration.webhooks", "إرسال إشعارات Webhook", "Webhook deliveries", "0 * * * * ?", typeof(WebhookDispatchJob),
         "يرسل أحداث Webhook الموقعة إلى الأنظمة المشتركة ويعيد المحاولة عند الفشل.", "Sends signed webhook events to subscribed systems and retries failures.");
 
     protected override async Task<string?> RunAsync(CancellationToken cancellationToken)

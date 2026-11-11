@@ -12,7 +12,7 @@
   the client, or the event permission).
 - Signature: `X-Strategy-Signature: v1=<hex HMAC-SHA256(secret, "<timestamp>.<body>")>` with `X-Strategy-Timestamp` (Unix seconds); secret
   per subscription, encrypted with Data Protection (needed to sign), shown once, regenerable.
-- Delivery job every 30 s; outbound client from `OutboundUrlPolicy.CreateHandler()` (connect-time SSRF guard, no redirects), URL checked on
+- Delivery job every minute; outbound client from `OutboundUrlPolicy.CreateHandler()` (connect-time SSRF guard, no redirects), URL checked on
   save (https only unless `Integration:AllowHttpWebhooks`); 2xx = delivered; otherwise retry after `base · 2^(n−1)` (cap 6 h, default base 60 s,
   8 attempts) and then **dead**. Replay resets a delivery; every attempt is logged. Times from `IClock`.
 
