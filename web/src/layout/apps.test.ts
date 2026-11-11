@@ -4,6 +4,7 @@ import en from '@/i18n/en/appearance.json';
 import type { MyAccess } from '@/features/access/session';
 import {
   appForPath,
+  gateTabs,
   apps,
   appIcons,
   contrastWithWhite,
@@ -192,5 +193,46 @@ describe('app definitions', () => {
       'settings',
       'sample',
     ]);
+  });
+});
+
+describe('module navigation rules on workspace tabs', () => {
+  const tabsOf = (code: string) => apps.find((a) => a.code === code)?.tabs ?? [];
+  const keys = (tabs: readonly { key: string }[]) => tabs.map((t) => t.key);
+
+  it('Audit Management: office-only, lifecycle and dashboard tabs follow the module options', () => {
+    const tabs = tabsOf('auditmgmt');
+    const department = { canDashboard: false, isOffice: false, lifecycleEnabled: false, canLifecycle: false };
+    expect(keys(gateTabs('auditmgmt', tabs, { auditmgmt: department }))).toEqual([
+      'home',
+      'department',
+      'reports',
+      'findings',
+    ]);
+    const office = { canDashboard: true, isOffice: true, lifecycleEnabled: true, canLifecycle: true };
+    expect(keys(gateTabs('auditmgmt', tabs, { auditmgmt: office }))).toEqual([
+      'home',
+      'dashboard',
+      'reports',
+      'findings',
+      'calendar',
+      'universe',
+      'plans',
+    ]);
+    // Options not loaded yet: no option-gated tab is shown.
+    expect(keys(gateTabs('auditmgmt', tabs, {}))).toEqual(['home', 'reports', 'findings']);
+  });
+
+  it('Risk and KPI hide what their options deny; other apps are unchanged', () => {
+    expect(
+      keys(
+        gateTabs('risk', tabsOf('risk'), {
+          risk: { canReadProjectRisks: false, canDashboard: true, canExport: false },
+        }),
+      ),
+    ).toEqual(['home', 'dashboard', 'register', 'myActions', 'mechanism']);
+    expect(keys(gateTabs('kpi', tabsOf('kpi'), { kpi: { canManagePlans: false } }))).not.toContain('newYear');
+    expect(keys(gateTabs('kpi', tabsOf('kpi'), { kpi: { canManagePlans: true } }))).toContain('newYear');
+    expect(gateTabs('portfolio', tabsOf('portfolio'), {})).toHaveLength(tabsOf('portfolio').length);
   });
 });

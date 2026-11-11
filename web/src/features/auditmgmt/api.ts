@@ -136,8 +136,10 @@ export const auditKeys = { all: ['auditmgmt'] as const };
 const base = '/api/v1/auditmgmt';
 const path = (id: string) => ({ params: { path: { id } } });
 
-export function useAuditOptions() {
+/** `enabled` false: no request (the workspace shell asks only for the current app's options, ADR 0172). */
+export function useAuditOptions(enabled = true) {
   return useQuery({
+    enabled,
     queryKey: [...auditKeys.all, 'options'],
     queryFn: async ({ signal }) => unwrap(await api.GET('/api/v1/auditmgmt/options', { signal })),
     staleTime: 60_000,

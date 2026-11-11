@@ -5,6 +5,9 @@ import { useEffect, useState, type CSSProperties } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAppearance } from '@/app/theme';
 import { AskButton } from '@/features/ai/AskDialog';
+import { useAuditOptions } from '@/features/auditmgmt/api';
+import { useKpiOptions } from '@/features/kpi/api';
+import { useRiskOptions } from '@/features/risk/api';
 import { useMe } from '@/features/auth/session';
 import { useAppName, useVisibleApps } from '@/features/appearance/api';
 import { NotificationBell } from '@/features/notifications/NotificationBell';
@@ -16,7 +19,7 @@ import { pickText } from '@/lib/format';
 import { readPreference, writePreference } from '@/lib/preferences';
 import { Button, ScrollRegion } from '@/ui';
 import { AppLauncher } from './AppLauncher';
-import { appForPath, isTabActive, type AppCode, type AppTab, type ResolvedApp } from './apps';
+import { appForPath, gateTabs, isTabActive, type AppCode, type AppTab, type ResolvedApp } from './apps';
 import { SkipLink } from './SkipLink';
 import { CommandPalette } from './CommandPalette';
 import { LanguageToggle, ProfileMenu, ThemeMenu } from './TopBar';
@@ -26,6 +29,17 @@ export function useTabLabel(): (app: AppCode, tab: Pick<AppTab, 'key'>) => strin
   const { t } = useTranslation('appearance');
   const translate = t as unknown as (key: string) => string;
   return (app, tab) => (tab.key === 'home' ? t('tabs.home') : translate(`tabs.${app}.${tab.key}`));
+}
+
+/**
+ * The current app's tabs, also filtered by the module's own navigation rules (Audit Office-only pages, lifecycle layer, dashboard and
+ * export rights): only the current app's options are requested.
+ */
+export function useGatedTabs(app: ResolvedApp | undefined): AppTab[] {
+  const audit = useAuditOptions(app?.code === 'auditmgmt').data;
+  const risk = useRiskOptions(app?.code === 'risk').data;
+  const kpi = useKpiOptions(app?.code === 'kpi').data;
+  return app ? gateTabs(app.code, app.visibleTabs, { auditmgmt: audit, risk, kpi }) : [];
 }
 
 /** The app of the current page; pages outside every app keep the last app's frame (My Work at first). */
@@ -189,6 +203,7 @@ function AppTabBar({ app }: { app: ResolvedApp }) {
   const appName = useAppName();
   const label = useTabLabel();
   const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const tabs = useGatedTabs(app);
   return (
     <nav
       aria-label={t('workspace.tabs', { name: appName(app) })}
@@ -197,8 +212,8 @@ function AppTabBar({ app }: { app: ResolvedApp }) {
     >
       <ScrollRegion className="flex items-stretch gap-1 overflow-x-auto px-3 md:px-6">
         <span className="hidden items-center gap-2 pe-4 text-base font-semibold md:flex">{appName(app)}</span>
-        {app.visibleTabs.map((tab) => {
-          const active = isTabActive(tab, pathname, app.visibleTabs);
+        {tabs.map((tab) => {
+          const active = isTabActive(tab, pathname, tabs);
           return (
             <Link
               key={tab.key}
@@ -243,6 +258,7 @@ function AppSidebar({
     .filter((a): a is ResolvedApp => !!a);
   const [collapsed, setCollapsed] = useState(() => readPreference('sidebarCollapsed') === '1');
   const recent = useRecentItems(!collapsed);
+  const tabs = useGatedTabs(app);
   const toggle = () => {
     writePreference('sidebarCollapsed', collapsed ? '0' : '1');
     setCollapsed(!collapsed);
@@ -305,8 +321,8 @@ function AppSidebar({
           {app && (
             <nav aria-label={t('workspace.tabs', { name: appName(app) })} data-testid="app-tabs">
               <ul className="flex flex-col gap-0.5">
-                {app.visibleTabs.map((tab) => {
-                  const active = isTabActive(tab, pathname, app.visibleTabs);
+                {tabs.map((tab) => {
+                  const active = isTabActive(tab, pathname, tabs);
                   return (
                     <li key={tab.key}>
                       <Link

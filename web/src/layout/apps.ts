@@ -588,3 +588,51 @@ export function contrastWithWhite(hex: string): number {
   const luminance = 0.2126 * channel(16) + 0.7152 * channel(8) + 0.0722 * channel(0);
   return 1.05 / (luminance + 0.05);
 }
+
+/**
+ * The module options that some systems use to hide entries of their own navigation (Audit Office-only pages, lifecycle layer, dashboard
+ * and export rights). The workspace tabs follow the same rules as the Classic secondary navigation they replace (ADR 0172).
+ */
+export interface TabGateOptions {
+  auditmgmt?: {
+    canDashboard: boolean;
+    isOffice: boolean;
+    lifecycleEnabled: boolean;
+    canLifecycle: boolean;
+  };
+  risk?: { canReadProjectRisks?: boolean; canDashboard?: boolean; canExport?: boolean };
+  kpi?: { canManagePlans?: boolean };
+}
+
+/** Tabs the module's own rules allow. While a module's options are loading, its option-gated tabs stay hidden. */
+export function gateTabs(code: AppCode, tabs: readonly AppTab[], options: TabGateOptions): AppTab[] {
+  const allowed = (tab: AppTab): boolean => {
+    if (code === 'auditmgmt') {
+      const o = options.auditmgmt;
+      switch (tab.key) {
+        case 'dashboard':
+          return !!o?.canDashboard;
+        case 'calendar':
+          return !!o?.isOffice;
+        case 'department':
+          return !!o && !o.isOffice;
+        case 'universe':
+          return !!o?.lifecycleEnabled && o.canLifecycle;
+        case 'plans':
+          return !!o?.lifecycleEnabled;
+        default:
+          return true;
+      }
+    }
+    if (code === 'risk') {
+      const o = options.risk;
+      if (tab.key === 'projectRisks') return !!o && o.canReadProjectRisks !== false;
+      if (tab.key === 'dashboard') return !!o && o.canDashboard !== false;
+      if (tab.key === 'reports') return !!o && o.canExport !== false;
+      return true;
+    }
+    if (code === 'kpi' && tab.key === 'newYear') return !!options.kpi?.canManagePlans;
+    return true;
+  };
+  return tabs.filter(allowed);
+}

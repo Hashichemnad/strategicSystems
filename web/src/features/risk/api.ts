@@ -143,8 +143,10 @@ export const riskKeys = {
 
 const path = (id: string) => ({ params: { path: { id } } });
 
-export function useRiskOptions() {
+/** `enabled` false: no request (the workspace shell asks only for the current app's options, ADR 0172). */
+export function useRiskOptions(enabled = true) {
   return useQuery({
+    enabled,
     queryKey: [...riskKeys.all, 'options'],
     queryFn: async ({ signal }) => unwrap(await api.GET('/api/v1/risk/options', { signal })),
     staleTime: 60_000,
