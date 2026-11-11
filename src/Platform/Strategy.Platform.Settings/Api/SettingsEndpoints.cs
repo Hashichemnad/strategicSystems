@@ -38,6 +38,13 @@ internal static class SettingsEndpoints
                 (await a.SaveAsync(body.Value, body.Version, SettingsAdministration.ValidateBranding, ct)).ToOk())
             .WithName("UpdateBrandingSettings").RequirePermission(SettingsPermissions.GeneralManage);
 
+        // Settings → Appearance (ADR 0171): every signed-in user reads it (the shell needs app overrides and landing rules).
+        group.MapGet("/appearance", (SettingsAdministration a, CancellationToken ct) => a.GetAsync<AppearanceSettings>(ct)).WithName("GetAppearanceSettings")
+            .RequireSignedIn();
+        group.MapPut("/appearance", async (VersionedInput<AppearanceSettings> body, SettingsAdministration a, CancellationToken ct) =>
+                (await a.SaveAsync(body.Value, body.Version, AppearanceResolver.Validate, ct)).ToOk())
+            .WithName("UpdateAppearanceSettings").RequirePermission(SettingsPermissions.GeneralManage);
+
         var logo = group.MapGroup("/branding/logo");
         logo.MapGet("/{kind}", GetLogoAsync).WithName("GetBrandingLogo").AsPublic().Produces(StatusCodes.Status200OK, contentType: "image/png");
         logo.MapPut("/{kind}", PutLogoAsync).WithName("PutBrandingLogo").RequirePermission(SettingsPermissions.GeneralManage).DisableAntiforgery();

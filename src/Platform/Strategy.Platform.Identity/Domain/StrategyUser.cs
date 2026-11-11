@@ -28,6 +28,15 @@ public sealed class StrategyUser : IdentityUser<Guid>
     /// <summary><c>light</c>, <c>dark</c> or <c>system</c>.</summary>
     public string? Theme { get; set; }
 
+    /// <summary>Chosen theme (<c>classic</c>, <c>enterprise</c>, <c>modern</c>); used only while Settings → Appearance allows choosing (ADR 0171).</summary>
+    public string? UiTheme { get; set; }
+
+    /// <summary>The user's own default application (ADR 0173); null = the landing rule of their role.</summary>
+    public string? LandingApp { get; set; }
+
+    /// <summary>Pinned applications in the launcher, comma-separated app codes (ADR 0172).</summary>
+    public string? FavouriteApps { get; set; }
+
     /// <summary>The user has confirmed an authenticator app (TOTP) as a second factor.</summary>
     public bool TotpEnabled { get; set; }
 

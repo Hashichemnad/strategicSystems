@@ -1392,6 +1392,74 @@
         }
       }
     },
+    "/api/v1/settings/appearance": {
+      "get": {
+        "tags": [
+          "settings"
+        ],
+        "operationId": "GetAppearanceSettings",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingsDocumentOfAppearanceSettings"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "settings"
+        ],
+        "operationId": "UpdateAppearanceSettings",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VersionedInputOfAppearanceSettings"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SettingsDocumentOfAppearanceSettings"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/settings/branding/logo/{kind}": {
       "get": {
         "tags": [
@@ -50042,6 +50110,55 @@
         },
         "description": "The token the SPA sends back in string AntiforgerySetup.HeaderName on every state-changing call."
       },
+      "AppearanceSettings": {
+        "type": "object",
+        "properties": {
+          "enabledThemes": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "defaultTheme": {
+            "type": "string",
+            "default": "classic"
+          },
+          "defaultMode": {
+            "type": "string",
+            "default": "system"
+          },
+          "allowUserTheme": {
+            "type": "boolean",
+            "default": false
+          },
+          "allowUserMode": {
+            "type": "boolean",
+            "default": true
+          },
+          "landingRules": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/LandingRule"
+            }
+          },
+          "apps": {
+            "type": [
+              "null",
+              "object"
+            ],
+            "additionalProperties": {
+              "$ref": "#/components/schemas/AppOverride"
+            }
+          }
+        },
+        "description": "Settings → Appearance (SPEC-ADDENDUM §C1, docs/design/themes.md §2, ADR 0171): enabled themes, the installation's default theme and mode,\nwhether users may choose, the landing app per role and per-app overrides. One JSON document like Branding."
+      },
       "ApplyTemplateInput": {
         "required": [
           "templateId"
@@ -50080,6 +50197,60 @@
             "format": "int32"
           }
         }
+      },
+      "AppOverride": {
+        "type": "object",
+        "properties": {
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "icon": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "accent": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "tabOrder": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "hiddenTabs": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "dashboard": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "description": "Administrator overrides of one application workspace (SPEC-ADDENDUM §C2): names, icon, accent colour, tab order / hidden tabs and the\nhome dashboard. Never grants access: tabs and apps stay filtered by the user's permissions."
       },
       "ApprovalActionOptionDto": {
         "required": [
@@ -74801,6 +74972,22 @@
           }
         }
       },
+      "LandingRule": {
+        "required": [
+          "roleCode",
+          "app"
+        ],
+        "type": "object",
+        "properties": {
+          "roleCode": {
+            "type": "string"
+          },
+          "app": {
+            "type": "string"
+          }
+        },
+        "description": "\"Users holding RoleCode land on App\" — the first matching rule wins (ADR 0173)."
+      },
       "LessonDto": {
         "required": [
           "id",
@@ -75855,6 +76042,58 @@
         },
         "description": "Per tool: null keeps the tool's default (read on, write and approve off)."
       },
+      "MeAppearanceDto": {
+        "required": [
+          "theme",
+          "mode",
+          "themeChoice",
+          "landingApp",
+          "favouriteApps",
+          "allowUserTheme",
+          "allowUserMode",
+          "enabledThemes"
+        ],
+        "type": "object",
+        "properties": {
+          "theme": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string"
+          },
+          "themeChoice": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "landingApp": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "favouriteApps": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "allowUserTheme": {
+            "type": "boolean"
+          },
+          "allowUserMode": {
+            "type": "boolean"
+          },
+          "enabledThemes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "description": "The user's effective theme and mode (resolved on the server, ADR 0171), their stored theme choice, default app, favourite apps, and what\nSettings → Appearance lets them choose."
+      },
       "MeasuringMethodRule": {
         "required": [
           "code",
@@ -75907,7 +76146,8 @@
           "employee",
           "mfaEnabled",
           "hasPassword",
-          "authMethod"
+          "authMethod",
+          "appearance"
         ],
         "type": "object",
         "properties": {
@@ -75957,6 +76197,9 @@
           },
           "authMethod": {
             "type": "string"
+          },
+          "appearance": {
+            "$ref": "#/components/schemas/MeAppearanceDto"
           }
         }
       },
@@ -82661,6 +82904,27 @@
               "null",
               "string"
             ]
+          },
+          "uiTheme": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "landingApp": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "favouriteApps": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
           }
         }
       },
@@ -85750,7 +86014,9 @@
           "hasLogoLight",
           "hasLogoDark",
           "regional",
-          "translationsVersion"
+          "translationsVersion",
+          "defaultTheme",
+          "defaultMode"
         ],
         "type": "object",
         "properties": {
@@ -85781,6 +86047,12 @@
           "translationsVersion": {
             "type": "integer",
             "format": "int64"
+          },
+          "defaultTheme": {
+            "type": "string"
+          },
+          "defaultMode": {
+            "type": "string"
           }
         }
       },
@@ -93606,6 +93878,29 @@
           },
           "current": {
             "type": "boolean"
+          }
+        }
+      },
+      "SettingsDocumentOfAppearanceSettings": {
+        "required": [
+          "value",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "value": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/AppearanceSettings"
+              }
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
           }
         }
       },
@@ -103921,6 +104216,29 @@
               "null",
               "string"
             ]
+          }
+        }
+      },
+      "VersionedInputOfAppearanceSettings": {
+        "required": [
+          "value",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "value": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/AppearanceSettings"
+              }
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
           }
         }
       },

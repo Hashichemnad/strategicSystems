@@ -18,6 +18,7 @@ import {
   FormField,
   Input,
   PageHeader,
+  RecordLayout,
   Select,
   Skeleton,
   StatusBanner,
@@ -47,7 +48,7 @@ import {
   type KpiEntryInput,
   type KpiResult,
 } from './api';
-import { KpiPage, PerformanceValue, RagChip, ScoreBar, useKpiT, useNumber, usePercent } from './components';
+import { KpiNav, PerformanceValue, RagChip, ScoreBar, useKpiT, useNumber, usePercent } from './components';
 import { ExternalReferencesSection, OriginBadge } from '@/features/integration/ExternalReferences';
 
 const route = getRouteApi('/app/kpi/results/$resultId');
@@ -75,77 +76,123 @@ function ResultView({ result }: { result: KpiResult }) {
   const onError = (e: unknown) => toast({ tone: 'error', title: errorMessage(tc, e) });
   const current = tab ?? (result.can.review ? 'review' : 'result');
 
+  const go = (next: 'result' | 'review' | 'approvals' | 'tasks' | 'history') =>
+    void navigate({ search: { tab: next } });
   return (
-    <KpiPage testId="kpi-result-page">
-      <Link
-        to="/kpi/cards/$cardId"
-        params={{ cardId: result.card.id }}
-        className="flex items-center gap-1 text-sm text-primary hover:underline"
-      >
-        <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden />
-        <bdi>{result.card.code}</bdi>
-      </Link>
-      <PageHeader
-        title={pickText(language, result.card.nameAr, result.card.nameEn)}
-        description={
-          <>
-            <bdi>{result.card.code}</bdi> · {k(`period.${result.periodCode}`)} {result.year} ·{' '}
-            {formatDate(result.periodStart, language)} – {formatDate(result.periodEnd, language)}
-          </>
-        }
-        meta={
-          <>
-            <OriginBadge type="kpi.result" id={result.id} />
-            <StatusChip tone={resultTone[result.status] ?? 'neutral'}>
-              {k(`resultStatus.${result.status}`)}
-            </StatusChip>
-            <PerformanceValue capped={result.capped} actual={result.actual} />
-            <RagChip rag={result.rag} />
-            {result.late && (
-              <StatusChip tone="warning">{t('result.lateDays', { count: result.daysLate })}</StatusChip>
-            )}
-            {result.notApplicable && <StatusChip tone="neutral">{t('result.na')}</StatusChip>}
-            {result.draftFromMcp && <StatusChip tone="info">{t('result.draftFromMcp')}</StatusChip>}
-          </>
-        }
-        actions={
-          <div className="flex flex-wrap gap-2">
-            {result.can.recall && (
-              <Button
-                variant="outline"
-                loading={recall.isPending}
-                onClick={() => recall.mutate({ id: result.id, version: result.version }, { onError })}
-              >
-                {t('actions.recall')}
-              </Button>
-            )}
-            {result.can.reopen && (
-              <Button variant="outline" onClick={() => setReopen(true)} data-testid="kpi-reopen">
-                {t('actions.reopen')}
-              </Button>
-            )}
-            {result.can.openNow && (
-              <Button
-                variant="outline"
-                loading={openNow.isPending}
-                onClick={() => openNow.mutate(result.id, { onError })}
-              >
-                {t('actions.openNow')}
-              </Button>
-            )}
-          </div>
-        }
-      />
-      <CurrentStatusBanner
-        resourceType="kpi.result"
-        resourceId={result.id}
-        actionLabel={(code) => k(`actions.${code}`)}
-        onAction={(code) => {
-          if (code === 'submit') void navigate({ search: { tab: 'result' } });
-          if (code === 'review') void navigate({ search: { tab: 'review' } });
-          if (code === 'recall') recall.mutate({ id: result.id, version: result.version }, { onError });
-        }}
-      />
+    <RecordLayout
+      testId="kpi-result-page"
+      back={
+        <>
+          <KpiNav />
+          <Link
+            to="/kpi/cards/$cardId"
+            params={{ cardId: result.card.id }}
+            className="flex items-center gap-1 text-sm text-primary hover:underline"
+          >
+            <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden />
+            <bdi>{result.card.code}</bdi>
+          </Link>
+        </>
+      }
+      highlights={[
+        { key: 'code', label: t('fields.code'), value: <bdi>{result.card.code}</bdi> },
+        {
+          key: 'period',
+          label: t('fields.period'),
+          value: `${k(`period.${result.periodCode}`)} ${result.year}`,
+        },
+        {
+          key: 'dueOn',
+          label: t('result.dueOn'),
+          value: result.dueOn ? formatDate(result.dueOn, language) : '—',
+        },
+        {
+          key: 'submittedAt',
+          label: t('result.submittedAt'),
+          value: result.submittedAt ? formatDateTime(result.submittedAt, language) : '—',
+        },
+        {
+          key: 'owner',
+          label: t('result.owner'),
+          value: result.owner ? pickText(language, result.owner.nameAr, result.owner.nameEn) : '—',
+        },
+        {
+          key: 'evidence',
+          label: t('result.evidence'),
+          value: t('result.evidenceCount', { count: result.evidenceCount }),
+        },
+      ]}
+      related={(['review', 'approvals', 'tasks', 'history'] as const).map((key) => ({
+        key,
+        label: t(`result.tabs.${key}`),
+        onOpen: () => go(key),
+      }))}
+      header={
+        <PageHeader
+          title={pickText(language, result.card.nameAr, result.card.nameEn)}
+          description={
+            <>
+              <bdi>{result.card.code}</bdi> · {k(`period.${result.periodCode}`)} {result.year} ·{' '}
+              {formatDate(result.periodStart, language)} – {formatDate(result.periodEnd, language)}
+            </>
+          }
+          meta={
+            <>
+              <OriginBadge type="kpi.result" id={result.id} />
+              <StatusChip tone={resultTone[result.status] ?? 'neutral'}>
+                {k(`resultStatus.${result.status}`)}
+              </StatusChip>
+              <PerformanceValue capped={result.capped} actual={result.actual} />
+              <RagChip rag={result.rag} />
+              {result.late && (
+                <StatusChip tone="warning">{t('result.lateDays', { count: result.daysLate })}</StatusChip>
+              )}
+              {result.notApplicable && <StatusChip tone="neutral">{t('result.na')}</StatusChip>}
+              {result.draftFromMcp && <StatusChip tone="info">{t('result.draftFromMcp')}</StatusChip>}
+            </>
+          }
+          actions={
+            <div className="flex flex-wrap gap-2">
+              {result.can.recall && (
+                <Button
+                  variant="outline"
+                  loading={recall.isPending}
+                  onClick={() => recall.mutate({ id: result.id, version: result.version }, { onError })}
+                >
+                  {t('actions.recall')}
+                </Button>
+              )}
+              {result.can.reopen && (
+                <Button variant="outline" onClick={() => setReopen(true)} data-testid="kpi-reopen">
+                  {t('actions.reopen')}
+                </Button>
+              )}
+              {result.can.openNow && (
+                <Button
+                  variant="outline"
+                  loading={openNow.isPending}
+                  onClick={() => openNow.mutate(result.id, { onError })}
+                >
+                  {t('actions.openNow')}
+                </Button>
+              )}
+            </div>
+          }
+        />
+      }
+      status={
+        <CurrentStatusBanner
+          resourceType="kpi.result"
+          resourceId={result.id}
+          actionLabel={(code) => k(`actions.${code}`)}
+          onAction={(code) => {
+            if (code === 'submit') void navigate({ search: { tab: 'result' } });
+            if (code === 'review') void navigate({ search: { tab: 'review' } });
+            if (code === 'recall') recall.mutate({ id: result.id, version: result.version }, { onError });
+          }}
+        />
+      }
+    >
       <Tabs value={current} onValueChange={(value) => void navigate({ search: { tab: value as 'result' } })}>
         <TabsList className="flex-wrap">
           {(['result', 'review', 'approvals', 'tasks', 'history'] as const).map((key) => (
@@ -186,7 +233,7 @@ function ResultView({ result }: { result: KpiResult }) {
         </TabsContent>
       </Tabs>
       {reopen && <ReopenDialog result={result} onClose={() => setReopen(false)} />}
-    </KpiPage>
+    </RecordLayout>
   );
 }
 

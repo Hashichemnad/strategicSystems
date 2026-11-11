@@ -3,7 +3,8 @@ import { Info, Languages, LogOut, Menu, Monitor, Moon, Sun, UserRound } from 'lu
 import { lazy, Suspense, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { api } from '@/api/client';
-import { useTheme, type ThemePreference } from '@/app/theme';
+import { isThemePreference, isUiTheme, useTheme } from '@/app/theme';
+import { useSavePreferences } from '@/features/appearance/api';
 import { useMe, useSignOut } from '@/features/auth/session';
 import { AskButton } from '@/features/ai/AskDialog';
 import { NotificationBell } from '@/features/notifications/NotificationBell';
@@ -82,39 +83,75 @@ export function LanguageToggle({ saveToProfile = false }: { saveToProfile?: bool
 
 const themeIcons = { light: Sun, dark: Moon, system: Monitor } as const;
 
-function ThemeMenu() {
+/**
+ * Light / dark mode, and the theme when Settings → Appearance lets users choose (ADR 0171). Hidden when neither is allowed; the server
+ * refuses a choice that is not allowed anyway.
+ */
+export function ThemeMenu() {
   const { t } = useTranslation('shell');
-  const { theme, setTheme } = useTheme();
+  const { t: ta } = useTranslation('appearance');
+  const { theme, setTheme, uiTheme, setUiTheme } = useTheme();
+  const me = useMe();
+  const save = useSavePreferences();
+  const appearance = me?.appearance;
+  const allowMode = appearance?.allowUserMode ?? true;
+  const themes = appearance?.allowUserTheme ? appearance.enabledThemes.filter(isUiTheme) : [];
+  if (!allowMode && themes.length < 2) return null;
   const Icon = themeIcons[theme];
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" aria-label={t('theme.label')}>
+        <Button variant="ghost" size="icon" aria-label={t('theme.label')} data-testid="theme-menu">
           <Icon aria-hidden />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>{t('theme.label')}</DropdownMenuLabel>
-        <DropdownMenuRadioGroup
-          value={theme}
-          onValueChange={(value) => {
-            setTheme(value as ThemePreference);
-            void api.PUT('/api/v1/identity/me/preferences', { body: { language: null, theme: value } });
-          }}
-        >
-          {(['light', 'dark', 'system'] as const).map((option) => (
-            <DropdownMenuRadioItem key={option} value={option}>
-              {t(`theme.${option}`)}
-            </DropdownMenuRadioItem>
-          ))}
-        </DropdownMenuRadioGroup>
+        {themes.length > 1 && (
+          <>
+            <DropdownMenuLabel>{ta('menu.theme')}</DropdownMenuLabel>
+            <DropdownMenuRadioGroup
+              value={uiTheme}
+              onValueChange={(value) => {
+                if (!isUiTheme(value)) return;
+                setUiTheme(value);
+                save.mutate({ uiTheme: value });
+              }}
+            >
+              {themes.map((option) => (
+                <DropdownMenuRadioItem key={option} value={option} data-testid={`theme-option-${option}`}>
+                  {ta(`themes.${option}`)}
+                </DropdownMenuRadioItem>
+              ))}
+            </DropdownMenuRadioGroup>
+            {allowMode && <DropdownMenuSeparator />}
+          </>
+        )}
+        {allowMode && (
+          <>
+            <DropdownMenuLabel>{t('theme.label')}</DropdownMenuLabel>
+            <DropdownMenuRadioGroup
+              value={theme}
+              onValueChange={(value) => {
+                if (!isThemePreference(value)) return;
+                setTheme(value);
+                save.mutate({ theme: value });
+              }}
+            >
+              {(['light', 'dark', 'system'] as const).map((option) => (
+                <DropdownMenuRadioItem key={option} value={option}>
+                  {t(`theme.${option}`)}
+                </DropdownMenuRadioItem>
+              ))}
+            </DropdownMenuRadioGroup>
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );
 }
 
 /** The signed-in user: profile and sign out. */
-function ProfileMenu() {
+export function ProfileMenu() {
   const { t, i18n } = useTranslation('shell');
   const { t: ts } = useTranslation('setup');
   const [aboutOpen, setAboutOpen] = useState(false);

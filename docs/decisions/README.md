@@ -151,3 +151,9 @@ Write an ADR for every choice the SPEC or CLAUDE.md leaves open (CLAUDE.md §2 r
 | [0167](0167-delegated-system-administration.md) | Delegated system administration (`<system>.members.manage`) | Proposed |
 | [0168](0168-responsibilities-per-system.md) | Responsibilities page per system: one contract, module-owned reassignment | Proposed |
 | [0169](0169-kpi-picker-search-and-take-over-as-creator.md) | KPI picker search as you type; "take over as creator" for a leaver's tasks | Proposed |
+| [0170](0170-themes-as-token-sets-and-layout-slots.md) | Themes are design-token sets plus layout slots of one component library | Accepted |
+| [0171](0171-appearance-settings-and-theme-resolution.md) | Settings → Appearance and server-side theme / mode resolution | Accepted |
+| [0172](0172-application-workspaces-derived-from-routes.md) | Application workspaces: an app registry derived from the existing routes | Accepted |
+| [0173](0173-landing-app-per-role.md) | Landing app per role | Accepted |
+| [0174](0174-command-palette-split-view-utility-bar.md) | Modern command palette, split-view lists and the Enterprise utility bar | Accepted |
+| [0175](0175-theme-tests-and-visual-baselines.md) | Theme tests: screenshots, reflow, axe per theme and visual baselines | Accepted |

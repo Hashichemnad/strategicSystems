@@ -1,4 +1,5 @@
 import { createContext, use, type ReactNode } from 'react';
+import { useAppearance } from '@/app/theme';
 import { cn } from '@/lib/cn';
 
 interface PageHeaderProps {
@@ -23,6 +24,7 @@ export function EmbeddedPage({ children }: { children: ReactNode }) {
 /** Page or record header: title, meta chips, description and the primary actions (end-aligned). */
 export function PageHeader({ title, description, meta, actions, className }: PageHeaderProps) {
   const embedded = use(EmbeddedPageContext);
+  const { uiTheme } = useAppearance();
   return (
     <header className={cn('flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between', className)}>
       <div className="flex min-w-0 flex-col gap-1.5">
@@ -30,7 +32,18 @@ export function PageHeader({ title, description, meta, actions, className }: Pag
           {embedded ? (
             <h3 className="text-lg font-semibold">{title}</h3>
           ) : (
-            <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
+            <h1
+              className={cn(
+                'font-semibold tracking-tight',
+                uiTheme === 'enterprise'
+                  ? 'text-xl'
+                  : uiTheme === 'modern'
+                    ? 'text-[1.75rem] leading-tight'
+                    : 'text-2xl',
+              )}
+            >
+              {title}
+            </h1>
           )}
           {meta}
         </div>

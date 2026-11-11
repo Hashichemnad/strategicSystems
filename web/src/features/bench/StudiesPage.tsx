@@ -9,10 +9,12 @@ import {
   Button,
   EmptyState,
   Input,
+  ListViewToggle,
   PageHeader,
   Pagination,
   Select,
   Skeleton,
+  SplitView,
   StatusBanner,
   StatusChip,
   Table,
@@ -21,7 +23,9 @@ import {
   TableHead,
   TableHeaderCell,
   TableRow,
+  useListView,
 } from '@/ui';
+import { SplitCard, SplitPreview } from '@/ui';
 import {
   benchLookups,
   studyStages,
@@ -88,6 +92,83 @@ export function StudiesTable({ rows }: { rows: readonly BenchStudyListItem[] }) 
   );
 }
 
+/** Studies as list + preview (workspace themes): the first study is previewed until the user picks another. */
+function StudiesSplit({ rows }: { rows: readonly BenchStudyListItem[] }) {
+  const { t } = useTranslation('bench');
+  const { t: ta } = useTranslation('appearance');
+  const { k } = useBenchT();
+  const names = useNames();
+  const labels = useBenchLabels();
+  const [selectedId, setSelectedId] = useState<string>();
+  const selected = rows.find((s) => s.id === selectedId) ?? rows[0];
+  const target = (s: BenchStudyListItem) => (
+    <bdi>
+      Q{s.targetQuarter} {s.targetYear}
+    </bdi>
+  );
+  return (
+    <SplitView
+      hasSelection={!!selected}
+      list={
+        <ul className="flex flex-col gap-2" data-testid="bench-studies-cards">
+          {rows.map((s) => (
+            <SplitCard
+              key={s.id}
+              selected={s.id === selected?.id}
+              onPreview={() => setSelectedId(s.id)}
+              title={
+                <Link
+                  to="/bench/studies/$studyId"
+                  params={{ studyId: s.id }}
+                  className="min-w-0 font-medium hover:underline"
+                >
+                  <bdi className="block text-xs text-muted-foreground">{s.number}</bdi>
+                  <span dir="auto" className="block">
+                    {names.text(s.titleAr, s.titleEn)}
+                  </span>
+                </Link>
+              }
+              chips={
+                <>
+                  <StageChip stage={s.stage} status={s.status} />
+                  {s.pendingProcess && (
+                    <StatusChip tone="info">{k(`process.${s.pendingProcess}`)}</StatusChip>
+                  )}
+                  {s.returned && <StatusChip tone="warning">{t('study.returned')}</StatusChip>}
+                  <span className="text-xs text-muted-foreground">{target(s)}</span>
+                </>
+              }
+            />
+          ))}
+        </ul>
+      }
+      preview={
+        selected && (
+          <SplitPreview
+            title={names.text(selected.titleAr, selected.titleEn)}
+            rows={[
+              [t('fields.number'), <bdi key="n">{selected.number}</bdi>],
+              [t('fields.responsibleUnit'), names.unit(selected.responsibleUnit)],
+              [t('fields.coordinator'), names.person(selected.responsibleEmployee)],
+              [t('fields.target'), target(selected)],
+              [
+                t('fields.comparisonType'),
+                labels.lookup(benchLookups.comparisonType, selected.comparisonTypeCode),
+              ],
+              [t('fields.stage'), <StageChip key="s" stage={selected.stage} status={selected.status} />],
+            ]}
+            open={
+              <Link to="/bench/studies/$studyId" params={{ studyId: selected.id }}>
+                {ta('split.open')}
+              </Link>
+            }
+          />
+        )
+      }
+    />
+  );
+}
+
 /** Studies (BMS-NNNN): views and filters, scoped on the server. A new study starts as a request (Plan stage). */
 export function BenchStudiesPage() {
   const { t } = useTranslation('bench');
@@ -116,6 +197,8 @@ export function BenchStudiesPage() {
   const set = (patch: Record<string, unknown>) =>
     void navigate({ search: (p) => ({ ...p, ...patch, page: undefined }) });
   const year0 = new Date().getFullYear();
+  // Table or list + preview (Enterprise toggle, Modern default; Classic: table only — ADR 0174).
+  const listView = useListView('bench.studies');
 
   return (
     <BenchPageLayout testId="bench-studies">
@@ -123,17 +206,22 @@ export function BenchStudiesPage() {
         title={t('studies.title')}
         description={t('studies.description')}
         actions={
-          options.data?.canCreate && (
-            <Button asChild>
-              <Link
-                to="/requests/new/$typeCode"
-                params={{ typeCode: options.data.requestTypeCode }}
-                data-testid="bench-new-study"
-              >
-                <Plus aria-hidden />
-                {t('studies.new')}
-              </Link>
-            </Button>
+          (options.data?.canCreate || listView.available) && (
+            <>
+              {listView.available && <ListViewToggle value={listView.view} onChange={listView.setView} />}
+              {options.data?.canCreate && (
+                <Button asChild>
+                  <Link
+                    to="/requests/new/$typeCode"
+                    params={{ typeCode: options.data.requestTypeCode }}
+                    data-testid="bench-new-study"
+                  >
+                    <Plus aria-hidden />
+                    {t('studies.new')}
+                  </Link>
+                </Button>
+              )}
+            </>
           )
         }
       />
@@ -195,7 +283,11 @@ export function BenchStudiesPage() {
         <EmptyState icon={Scale} title={t('studies.empty')} />
       ) : (
         <>
-          <StudiesTable rows={studies.data.items} />
+          {listView.view === 'split' ? (
+            <StudiesSplit rows={studies.data.items} />
+          ) : (
+            <StudiesTable rows={studies.data.items} />
+          )}
           <Pagination
             page={studies.data.page}
             totalPages={studies.data.totalPages ?? 1}

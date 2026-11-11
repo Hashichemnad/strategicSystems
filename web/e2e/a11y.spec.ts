@@ -34,6 +34,8 @@ const screens: Screen[] = [
   { name: 'teams', path: '/teams' },
   { name: 'teams-dashboard', path: '/teams/dashboard' },
   { name: 'portfolio', path: '/portfolio' },
+  { name: 'app-home-portfolio', path: '/apps/portfolio' },
+  { name: 'my-work-page', path: '/my-work' },
   { name: 'portfolio-requests', path: '/portfolio/requests' },
   { name: 'portfolio-request-new', path: '/portfolio/requests/new' },
   { name: 'portfolio-projects', path: '/portfolio/projects' },
@@ -91,6 +93,7 @@ const screens: Screen[] = [
 const settingsScreens: Screen[] = [
   '/settings/regional',
   '/settings/branding',
+  '/settings/appearance',
   '/settings/systems',
   '/settings/features',
   '/settings/lookups',
@@ -287,6 +290,84 @@ test.describe('accessibility — WCAG 2.1 AA (axe-core)', () => {
       await apiPut(page, '/api/v1/identity/me/preferences', { language, theme: 'light' });
     }
   });
+
+  /**
+   * Phase 20 (ADR 0175): the workspace themes in light and dark — launcher, command palette, app home, list (split view), project
+   * record (highlights, path, related lists), Settings → Appearance. Classic is every test above. Settings are put back afterwards.
+   */
+  /** One test per theme × mode, so each has its own time budget (about 35 audited screens each). */
+  for (const uiTheme of ['enterprise', 'modern'] as const) {
+    for (const theme of ['light', 'dark'] as const) {
+      test(`${uiTheme} theme, ${theme}`, async ({ page, language, adminApi }) => {
+        test.setTimeout(900_000);
+        const current = (await (await adminApi.get('/api/v1/settings/appearance')).json()) as {
+          value: Record<string, unknown> | null;
+          version: number;
+        };
+        const allowed = await apiPut(adminApi, '/api/v1/settings/appearance', {
+          value: { ...(current.value ?? {}), allowUserTheme: true },
+          version: current.version,
+        });
+        expect(allowed.status()).toBe(200);
+        // Record pages with the theme's record layout (highlights, path, related lists), found in Classic while lists are tables.
+        const recordPages: { name: string; href: string }[] = [];
+        for (const record of records) {
+          const href = await firstRecordHref(page, record.list, record.href);
+          if (href) recordPages.push({ name: record.name, href });
+        }
+        try {
+          await apiPut(page, '/api/v1/identity/me/preferences', { language, theme, uiTheme });
+          const name = (screen: string) => `${uiTheme}-${theme}-${screen}`;
+          await page.goto('/my-work');
+          await expect(page.locator('html')).toHaveAttribute('data-theme', uiTheme);
+          await expectAccessible(page, name('my-work'));
+          await page.getByTestId('app-launcher').click();
+          await expectAccessible(page, name('launcher'));
+          await page.keyboard.press('Escape');
+          if (uiTheme === 'modern') {
+            await page.keyboard.press('Control+k');
+            await expect(page.getByTestId('command-palette')).toBeVisible();
+            await expectAccessible(page, name('palette'));
+            await page.keyboard.press('Escape');
+          }
+          for (const path of [
+            '/apps/portfolio',
+            '/apps/kpi',
+            '/settings/appearance',
+            // Lists with the split view (list + preview by default in Modern, table in Enterprise).
+            '/portfolio/projects',
+            '/portfolio/requests',
+            '/risk/risks',
+            '/kpi/cards',
+            '/ip',
+            '/documents',
+            '/bench/studies',
+            '/tasks',
+            '/teams',
+            '/cap/remarks',
+            '/audit-management/findings',
+            '/requests/mine',
+          ]) {
+            await page.goto(path);
+            await expectAccessible(page, name(path.replace(/\//gu, '-').slice(1)));
+          }
+          for (const record of recordPages) {
+            await page.goto(record.href);
+            await expectAccessible(page, name(record.name));
+          }
+        } finally {
+          await apiPut(page, '/api/v1/identity/me/preferences', { language, theme: 'light', uiTheme: '' });
+          const latest = (await (await adminApi.get('/api/v1/settings/appearance')).json()) as {
+            version: number;
+          };
+          await apiPut(adminApi, '/api/v1/settings/appearance', {
+            value: current.value ?? {},
+            version: latest.version,
+          });
+        }
+      });
+    }
+  }
 });
 
 test.describe('accessibility — keyboard, focus and reflow', () => {

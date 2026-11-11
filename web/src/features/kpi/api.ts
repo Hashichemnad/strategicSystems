@@ -96,8 +96,10 @@ export const kpiKeys = {
 
 const path = (id: string) => ({ params: { path: { id } } });
 
-export function useKpiOptions() {
+/** `enabled` false: no request (the workspace shell asks only for the current app's options, ADR 0172). */
+export function useKpiOptions(enabled = true) {
   return useQuery({
+    enabled,
     queryKey: [...kpiKeys.all, 'options'],
     queryFn: async ({ signal }) => unwrap(await api.GET('/api/v1/kpi/options', { signal })),
     staleTime: 60_000,

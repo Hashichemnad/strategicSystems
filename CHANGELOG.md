@@ -12,6 +12,15 @@ Not tagged yet: version 1.0.0 is released (tag `v1.0.0`) at the end of Phase 23 
 First release. Self-hosted, bilingual (Arabic / English, full RTL) integrated strategy management suite: one application, one database,
 one login, eleven systems on a shared platform.
 
+### Added — themes and application workspaces (Phase 20)
+- Three themes — **Classic** (unchanged, the default), **Enterprise** (compact workspaces: per-app tabs, highlights panel, path bar,
+  related lists, utility bar) and **Modern** (calm workspaces: collapsible app sidebar, command palette Ctrl+K, list + preview, cards,
+  Arabic-first Kufi headings) — each in light and dark, Arabic and English.
+- **Settings → Appearance**: available themes, default theme and mode, "Allow users to choose their theme" (off by default), choice of
+  light / dark, landing app per role, per-app name / icon / accent colour / tabs / home dashboard. Branding applies in every theme.
+- **App launcher** and a **workspace per system** (header, tabs, home page with quick actions, the user's items and the system dashboard);
+  shared apps My Work, Dashboards, Tasks, Teams, Organisation, Settings; favourites and a default app in the profile. Deep links keep working.
+
 ### Added — installation and operations (Phase 18)
 - Production image `strategy-app:1.0.0` (non-root, read-only root file system, healthcheck, OCI labels), compose file with loopback-only
   database / PDF ports, CycloneDX SBOM and Trivy scan (`deploy/sbom.sh`).

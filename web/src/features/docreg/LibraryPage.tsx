@@ -9,10 +9,12 @@ import {
   Button,
   EmptyState,
   Input,
+  ListViewToggle,
   PageHeader,
   Pagination,
   Select,
   Skeleton,
+  SplitView,
   StatusBanner,
   Table,
   TableBody,
@@ -20,7 +22,9 @@ import {
   TableHead,
   TableHeaderCell,
   TableRow,
+  useListView,
 } from '@/ui';
+import { SplitCard, SplitPreview } from '@/ui';
 import { AiBadge } from '@/features/ai/AiDraft';
 import {
   docregApi,
@@ -97,10 +101,16 @@ export function DocumentLibraryPage() {
     !!filters.expiringWithin ||
     !!filters.search;
   const sensitivityCodes = ['public', 'internal', 'confidential', 'secret'];
+  // Table or list + preview (Enterprise toggle, Modern default; Classic: table only — ADR 0174).
+  const listView = useListView('docreg.library');
 
   return (
     <DocRegPage testId="docreg-library">
-      <PageHeader title={t('library.title')} description={t('library.description')} />
+      <PageHeader
+        title={t('library.title')}
+        description={t('library.description')}
+        actions={listView.available && <ListViewToggle value={listView.view} onChange={listView.setView} />}
+      />
       <AskBox />
       <div className="grid gap-6 lg:grid-cols-[16rem_1fr]">
         <aside className="flex flex-col gap-4" aria-label={t('library.browse')}>
@@ -198,7 +208,11 @@ export function DocumentLibraryPage() {
               <p className="text-sm text-muted-foreground" aria-live="polite">
                 {t('library.results', { count: library.data.page.totalCount })}
               </p>
-              <LibraryTable items={library.data.page.items} language={i18n.language} />
+              {listView.view === 'split' ? (
+                <LibrarySplit items={library.data.page.items} language={i18n.language} />
+              ) : (
+                <LibraryTable items={library.data.page.items} language={i18n.language} />
+              )}
               <Pagination
                 page={library.data.page.page}
                 totalPages={
@@ -213,6 +227,91 @@ export function DocumentLibraryPage() {
         </div>
       </div>
     </DocRegPage>
+  );
+}
+
+type LibraryItem = NonNullable<ReturnType<typeof useLibrary>['data']>['page']['items'][number];
+
+/** Library as list + preview (workspace themes): the first document is previewed until the user picks another. */
+function LibrarySplit({ items, language }: { items: LibraryItem[]; language: string }) {
+  const { t } = useTranslation('docreg');
+  const { t: ta } = useTranslation('appearance');
+  const levelLabel = useLookupLabel('docreg.level');
+  const typeLabel = useLookupLabel('docreg.type');
+  const date = useFormatDate();
+  const [selectedId, setSelectedId] = useState<string>();
+  const selected = items.find((d) => d.id === selectedId) ?? items[0];
+  const expiry = (doc: LibraryItem) => (doc.expiryDate ? date(doc.expiryDate) : t('common.untilSuperseded'));
+  return (
+    <SplitView
+      hasSelection={!!selected}
+      list={
+        <ul className="flex flex-col gap-2" data-testid="library-cards">
+          {items.map((doc) => (
+            <SplitCard
+              key={doc.id}
+              selected={doc.id === selected?.id}
+              onPreview={() => setSelectedId(doc.id)}
+              title={
+                <Link
+                  to="/documents/$documentId"
+                  params={{ documentId: doc.id }}
+                  search={{ tab: 'overview' }}
+                  className="min-w-0 font-medium hover:underline"
+                >
+                  <bdi className="block text-xs text-muted-foreground">{doc.documentNo ?? '—'}</bdi>
+                  <span dir="auto" className="block">
+                    {documentName(language, doc, t('document.untitled'))}
+                  </span>
+                </Link>
+              }
+              chips={
+                <>
+                  <DocStatusChip status={doc.status} />
+                  <SensitivityChip code={doc.sensitivity} />
+                  <ValidityChips
+                    status={doc.status}
+                    expiryDate={doc.expiryDate}
+                    underRevision={doc.underRevision}
+                  />
+                  <span className="text-xs text-muted-foreground">{typeLabel(doc.docType)}</span>
+                </>
+              }
+            />
+          ))}
+        </ul>
+      }
+      preview={
+        selected && (
+          <SplitPreview
+            title={documentName(language, selected, t('document.untitled'))}
+            rows={[
+              [t('fields.documentNo'), <bdi key="n">{selected.documentNo ?? '—'}</bdi>],
+              [t('fields.type'), `${typeLabel(selected.docType)} · ${levelLabel(selected.level)}`],
+              [t('fields.version'), <bdi key="v">{selected.currentVersion ?? '—'}</bdi>],
+              [
+                t('fields.ownerUnit'),
+                selected.ownerUnit
+                  ? pickText(language, selected.ownerUnit.nameAr, selected.ownerUnit.nameEn)
+                  : '—',
+              ],
+              [t('fields.effectiveDate'), date(selected.effectiveDate)],
+              [t('fields.expiryDate'), expiry(selected)],
+              [t('fields.status'), <DocStatusChip key="s" status={selected.status} />],
+            ]}
+            open={
+              <Link
+                to="/documents/$documentId"
+                params={{ documentId: selected.id }}
+                search={{ tab: 'overview' }}
+              >
+                {ta('split.open')}
+              </Link>
+            }
+          />
+        )
+      }
+    />
   );
 }
 

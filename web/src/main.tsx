@@ -4,6 +4,8 @@ import '@fontsource/ibm-plex-sans-arabic/600.css';
 import '@fontsource/ibm-plex-sans/400.css';
 import '@fontsource/ibm-plex-sans/500.css';
 import '@fontsource/ibm-plex-sans/600.css';
+// Modern theme headings in Arabic (OFL); the browser downloads them only when the Modern theme uses them.
+import '@fontsource/noto-kufi-arabic/arabic-600.css';
 import './styles/index.css';
 import './i18n';
 import { StrictMode } from 'react';

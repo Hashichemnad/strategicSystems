@@ -13,6 +13,7 @@ import {
   buttonVariants,
   EmptyState,
   PageHeader,
+  RecordLayout,
   Skeleton,
   StageStepper,
   StatusBanner,
@@ -41,7 +42,7 @@ import {
   type IpRecord,
   type IpSimilarItem,
 } from './api';
-import { actionError, Detail, IpPage, IpStatusChip, useDate, useIpT, useLookupLabel } from './components';
+import { actionError, Detail, IpNav, IpStatusChip, useDate, useIpT, useLookupLabel } from './components';
 import { ContributorsTab } from './ContributorsTab';
 import { HistoryTab } from '@/features/audit/HistoryTab';
 import { ipStageKeys, stageOf } from './logic';
@@ -82,6 +83,7 @@ export function IpRecordPage() {
   const propertyLabel = useLookupLabel(ipLookups.propertyType);
   const protectionLabel = useLookupLabel(ipLookups.protectionType);
   const [dialog, setDialog] = useState<IpDialog>();
+  const date = useDate();
 
   if (record.isPending) return <Skeleton className="h-96 rounded-lg" />;
   if (record.isError) return <StatusBanner tone="danger" title={errorMessage(tc, record.error)} />;
@@ -90,50 +92,95 @@ export function IpRecordPage() {
   const stages: Stage[] = ipStageKeys.map((key) => ({ key, label: k(`stage.${key}`) }));
   const title = pickText(language, data.nameAr, data.nameEn) || data.number;
   const otherName = language === 'ar' ? data.nameEn : data.nameAr;
+  const name = (x: { nameAr: string | null; nameEn: string | null } | null) =>
+    x ? pickText(language, x.nameAr, x.nameEn) || '—' : '—';
 
   return (
-    <IpPage testId="ip-record">
-      <Link to="/ip" className="flex items-center gap-1 text-sm text-primary hover:underline">
-        <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden />
-        {t('register.title')}
-      </Link>
-      <PageHeader
-        title={title}
-        description={
-          <>
-            <bdi>{data.number}</bdi>
-            {otherName && otherName !== title && (
+    <RecordLayout
+      testId="ip-record"
+      // The register's own navigation first (IpPage); hidden in the workspace themes (app tabs).
+      back={
+        <>
+          <IpNav />
+          <Link to="/ip" className="flex items-center gap-1 text-sm text-primary hover:underline">
+            <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden />
+            {t('register.title')}
+          </Link>
+        </>
+      }
+      header={
+        <>
+          <PageHeader
+            title={title}
+            description={
               <>
-                {' · '}
-                <span dir="auto">{otherName}</span>
+                <bdi>{data.number}</bdi>
+                {otherName && otherName !== title && (
+                  <>
+                    {' · '}
+                    <span dir="auto">{otherName}</span>
+                  </>
+                )}
               </>
-            )}
-          </>
-        }
-        meta={
-          <>
-            <OriginBadge type="ip.record" id={data.id} />
-            <IpStatusChip status={data.status} />
-            {data.propertyType && <StatusChip tone="neutral">{propertyLabel(data.propertyType)}</StatusChip>}
-            {data.protectionType && (
-              <StatusChip tone="neutral">{protectionLabel(data.protectionType)}</StatusChip>
-            )}
-            {data.internal && <StatusChip tone="info">{t('record.internal')}</StatusChip>}
-          </>
-        }
-        actions={<Actions record={data} onOpen={setDialog} />}
-      />
-      <SourceLink record={data} />
-      <StageStepper stages={stages} current={stageOf(data.status)} />
-      {data.status === 'rejected_by_moet' && (
-        <StatusBanner
-          tone="danger"
-          title={t('record.rejectedByMoet')}
-          description={data.moetRejectionReason ?? undefined}
-        />
-      )}
-      {data.status === 'expired' && <StatusBanner tone="warning" title={t('record.expired')} />}
-      {(can.file || can.register || can.registerInternally) && <OfficeHint record={data} />}
+            }
+            meta={
+              <>
+                <OriginBadge type="ip.record" id={data.id} />
+                <IpStatusChip status={data.status} />
+                {data.propertyType && (
+                  <StatusChip tone="neutral">{propertyLabel(data.propertyType)}</StatusChip>
+                )}
+                {data.protectionType && (
+                  <StatusChip tone="neutral">{protectionLabel(data.protectionType)}</StatusChip>
+                )}
+                {data.internal && <StatusChip tone="info">{t('record.internal')}</StatusChip>}
+              </>
+            }
+            actions={<Actions record={data} onOpen={setDialog} />}
+          />
+          <SourceLink record={data} />
+        </>
+      }
+      highlights={[
+        { key: 'number', label: t('fields.number'), value: <bdi>{data.number}</bdi> },
+        { key: 'ownerUnit', label: t('fields.ownerUnit'), value: name(data.ownerUnit) },
+        { key: 'requester', label: t('fields.requester'), value: name(data.requester) },
+        { key: 'filingDate', label: t('fields.filingDate'), value: date(data.filingDate) },
+        {
+          key: 'registrationNo',
+          label: t('fields.registrationNo'),
+          value: data.registrationNo ? <bdi>{data.registrationNo}</bdi> : '—',
+        },
+        { key: 'expiryDate', label: t('fields.expiryDate'), value: date(data.expiryDate) },
+      ]}
+      path={<StageStepper stages={stages} current={stageOf(data.status)} />}
+      status={
+        <>
+          {data.status === 'rejected_by_moet' && (
+            <StatusBanner
+              tone="danger"
+              title={t('record.rejectedByMoet')}
+              description={data.moetRejectionReason ?? undefined}
+            />
+          )}
+          {data.status === 'expired' && <StatusBanner tone="warning" title={t('record.expired')} />}
+          {(can.file || can.register || can.registerInternally) && <OfficeHint record={data} />}
+        </>
+      }
+      related={[
+        {
+          key: 'contributors',
+          label: t('record.tabs.contributors'),
+          count: data.contributors.length,
+          onOpen: () => void navigate({ search: { tab: 'contributors' } }),
+        },
+        ...(['registration', 'documents', 'linked'] as const).map((key) => ({
+          key,
+          label: t(`record.tabs.${key}`),
+          onOpen: () => void navigate({ search: { tab: key } }),
+        })),
+      ]}
+    >
       <Tabs value={tab} onValueChange={(value) => void navigate({ search: { tab: value as RecordTab } })}>
         <TabsList className="flex-wrap">
           {recordTabs.map((key) => (
@@ -170,7 +217,7 @@ export function IpRecordPage() {
         </TabsContent>
       </Tabs>
       <RecordActionDialog kind={dialog} record={data} onClose={() => setDialog(undefined)} />
-    </IpPage>
+    </RecordLayout>
   );
 }
 

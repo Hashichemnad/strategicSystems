@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router';
 import { FileText, Plus, Search } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { errorMessage } from '@/api/problem';
 import { formatDate, formatDateTime, pickText } from '@/lib/format';
@@ -8,10 +8,14 @@ import {
   Button,
   EmptyState,
   Input,
+  ListViewToggle,
   PageHeader,
   Pagination,
   Select,
   Skeleton,
+  SplitCard,
+  SplitPreview,
+  SplitView,
   StatusBanner,
   StatusChip,
   Table,
@@ -20,6 +24,7 @@ import {
   TableHead,
   TableHeaderCell,
   TableRow,
+  useListView,
 } from '@/ui';
 import { requestStatuses, useCatalogue, useMyRequests, type RequestListItem } from './api';
 import { RequestStatusChip, useDynamicT } from './components';
@@ -56,6 +61,11 @@ export function MyRequestsPage() {
   });
   const { i18n } = useTranslation();
   const filtered = status !== ANY || type !== ANY || Boolean(search);
+  // Table or list + preview (Enterprise toggle, Modern default; Classic: table only — ADR 0174).
+  const listView = useListView('requests.mine');
+  const [selectedId, setSelectedId] = useState<string>();
+  // The first request is previewed until the user picks another.
+  const selected = requests.data?.items.find((r) => r.id === selectedId) ?? requests.data?.items[0];
 
   return (
     <div className="flex flex-col gap-6">
@@ -63,12 +73,15 @@ export function MyRequestsPage() {
         title={t('mine.title')}
         description={t('mine.description')}
         actions={
-          <Button asChild>
-            <Link to="/requests">
-              <Plus aria-hidden />
-              {t('mine.newRequest')}
-            </Link>
-          </Button>
+          <>
+            {listView.available && <ListViewToggle value={listView.view} onChange={listView.setView} />}
+            <Button asChild>
+              <Link to="/requests">
+                <Plus aria-hidden />
+                {t('mine.newRequest')}
+              </Link>
+            </Button>
+          </>
         }
       />
       <div className="grid gap-3 md:grid-cols-3">
@@ -134,7 +147,44 @@ export function MyRequestsPage() {
         />
       ) : (
         <>
-          <RequestTable items={requests.data.items} busy={requests.isFetching} />
+          {listView.view === 'split' ? (
+            <SplitView
+              hasSelection={!!selected}
+              list={
+                <ul className="flex flex-col gap-2" data-testid="my-requests-cards">
+                  {requests.data.items.map((r) => (
+                    <SplitCard
+                      key={r.id}
+                      selected={r.id === selected?.id}
+                      onPreview={() => setSelectedId(r.id)}
+                      title={
+                        <RequestLink request={r} className="min-w-0 font-medium hover:underline">
+                          <bdi className="block text-xs text-muted-foreground">{r.number}</bdi>
+                          <span dir="auto" className="block">
+                            {pickText(i18n.language, r.titleAr, r.titleEn) ||
+                              pickText(i18n.language, r.typeNameAr, r.typeNameEn) ||
+                              r.typeCode}
+                          </span>
+                        </RequestLink>
+                      }
+                      chips={
+                        <>
+                          <RequestStatusChip status={r.status} />
+                          <span className="text-xs text-muted-foreground">
+                            {pickText(i18n.language, r.stageNameAr, r.stageNameEn)}
+                          </span>
+                          <DueCell item={r} />
+                        </>
+                      }
+                    />
+                  ))}
+                </ul>
+              }
+              preview={selected && <RequestPreview request={selected} />}
+            />
+          ) : (
+            <RequestTable items={requests.data.items} busy={requests.isFetching} />
+          )}
           <Pagination
             page={page}
             totalPages={Math.max(1, Math.ceil(requests.data.totalCount / PAGE_SIZE))}
@@ -206,5 +256,47 @@ function RequestTable({ items, busy }: { items: RequestListItem[]; busy: boolean
         </TableBody>
       </Table>
     </div>
+  );
+}
+
+function RequestLink({
+  request,
+  className,
+  children,
+}: {
+  request: RequestListItem;
+  className?: string;
+  children: ReactNode;
+}) {
+  return (
+    <Link
+      to="/requests/$requestId"
+      params={{ requestId: request.id }}
+      search={{ tab: 'overview' }}
+      className={className}
+    >
+      {children}
+    </Link>
+  );
+}
+
+/** The split view's preview of the selected request (list fields only; the record page has everything). */
+function RequestPreview({ request: r }: { request: RequestListItem }) {
+  const { t, i18n } = useTranslation('requests');
+  const { t: ta } = useTranslation('appearance');
+  const lang = i18n.language;
+  return (
+    <SplitPreview
+      title={pickText(lang, r.titleAr, r.titleEn) || pickText(lang, r.typeNameAr, r.typeNameEn) || r.typeCode}
+      rows={[
+        [t('list.number'), <bdi key="n">{r.number}</bdi>],
+        [t('list.type'), pickText(lang, r.typeNameAr, r.typeNameEn) || r.typeCode],
+        [t('list.status'), <RequestStatusChip key="s" status={r.status} />],
+        [t('list.stage'), pickText(lang, r.stageNameAr, r.stageNameEn) || '—'],
+        [t('list.submitted'), r.submittedAt ? formatDate(r.submittedAt, lang) : '—'],
+        [t('list.due'), <DueCell key="d" item={r} />],
+      ]}
+      open={<RequestLink request={r}>{ta('split.open')}</RequestLink>}
+    />
   );
 }

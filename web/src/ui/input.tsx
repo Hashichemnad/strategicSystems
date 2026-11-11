@@ -9,7 +9,7 @@ export function Input({
   ref,
   ...props
 }: InputHTMLAttributes<HTMLInputElement> & { ref?: Ref<HTMLInputElement> }) {
-  return <input ref={ref} className={cn(fieldClasses, 'h-10', className)} {...props} />;
+  return <input ref={ref} className={cn(fieldClasses, 'h-[var(--control-h)]', className)} {...props} />;
 }
 
 export function Textarea({

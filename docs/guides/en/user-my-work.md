@@ -84,7 +84,12 @@ delegation at any time from the same tab.
 
 - **Language**: the language button in the top bar switches Arabic ⇄ English instantly (the whole layout mirrors). The choice is saved on
   your profile (**My profile → Preferences**) and used for your e-mails too.
-- **Theme**: light, dark or *System*.
+- **Light or dark**: light, dark or *System* (unless your organisation fixed it).
+- **Theme and apps** (when your organisation uses the Enterprise or Modern theme): the **app launcher** (grid button, top bar) opens any
+  system you can use as its own **app** with its tabs and home page (quick actions, *My items in …*, the system dashboard); star apps to
+  pin them as **favourites**. In Modern, **Ctrl + K** opens the command palette (records, pages, actions). **My profile → Preferences →
+  Appearance**: your **Default app** (opened when you sign in), **Favourite apps** and — only if your organisation allows it — your
+  **Theme** (Classic, Enterprise, Modern).
 - **My profile → Security**: change your **Password** (signs you out everywhere else), manage **Two-step verification** (add / turn off a
   method, *New recovery codes*).
 - **My profile → Sessions**: *Where you are signed in*; **Sign out** a device or **Sign out of all other sessions**.

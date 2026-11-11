@@ -17,6 +17,7 @@ import {
   FormField,
   Input,
   PageHeader,
+  RecordLayout,
   Select,
   Skeleton,
   StatusBanner,
@@ -46,7 +47,7 @@ import {
 } from './api';
 import {
   ActionStatusChip,
-  CapPageLayout,
+  CapNav,
   Rows,
   SimpleDialog,
   ValidationChip,
@@ -102,169 +103,207 @@ export function CapActionPage() {
   const home = a.remarks.find((r) => r.home) ?? a.remarks[0];
 
   return (
-    <CapPageLayout testId="cap-action-page">
-      {home && (
-        <Link
-          to="/cap/remarks/$remarkId"
-          params={{ remarkId: home.id }}
-          search={{ tab: 'actions' }}
-          className="flex items-center gap-1 text-sm text-primary hover:underline"
-        >
-          <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden />
-          <bdi>{home.number}</bdi>
-        </Link>
-      )}
-      <PageHeader
-        title={<bdi data-testid="cap-action-number">{a.number}</bdi>}
-        description={
-          <span className="line-clamp-3">{names.text(a.values.detailsAr, a.values.detailsEn)}</span>
-        }
-        meta={
-          <div className="flex flex-wrap items-center gap-2" data-testid="cap-action-meta">
-            <OriginBadge type="cap.action" id={a.id} />
-            <ValidationChip status={a.validationStatus} />
-            {a.validationStatus === 'approved' && <ActionStatusChip status={a.status} />}
-            <ProgressBar
-              value={a.achievedPct}
-              tone={a.status === 'late' ? 'danger' : 'primary'}
-              testId="cap-pct"
-            />
-            <span className="text-sm text-muted-foreground">
-              {t('fields.plannedEnd')}: {date(a.effectiveEnd ?? a.values.plannedEnd)}
-              {a.revisedEnd && ` (${t('action.revised')})`}
-            </span>
-            {a.remarks.length > 1 && (
-              <StatusChip tone="info">{t('actions.sharedWith', { count: a.remarks.length - 1 })}</StatusChip>
-            )}
-          </div>
-        }
-        actions={
-          <div className="flex flex-wrap gap-2">
-            {aiFeature && aiAllowed && a.can.edit && (
-              <Button
-                variant="outline"
-                loading={check.busy}
-                onClick={() => check.run(a.id, setQuality)}
-                data-testid="cap-ai-quality"
-              >
-                <Sparkles aria-hidden />
-                {t('ai.quality')}
-              </Button>
-            )}
-            {a.can.edit && (
-              <Button variant="outline" onClick={() => setDialog('edit')} data-testid="cap-action-edit">
-                <Pencil aria-hidden />
-                {tc('actions.edit')}
-              </Button>
-            )}
-            {a.can.progress && (
-              <Button onClick={() => setDialog('progress')} data-testid="cap-action-progress">
-                <TrendingUp aria-hidden />
-                {t('progress.update')}
-              </Button>
-            )}
-            {a.can.requestExtension && (
-              <Button
-                variant="outline"
-                onClick={() => setDialog('extension')}
-                data-testid="cap-action-extension"
-              >
-                <CalendarClock aria-hidden />
-                {t('extension.request')}
-              </Button>
-            )}
-            {a.can.requestCompletion && (
-              <Button
-                variant="outline"
-                onClick={() => setDialog('completion')}
-                data-testid="cap-action-completion"
-              >
-                <CheckCheck aria-hidden />
-                {t('completion.request')}
-              </Button>
-            )}
-            {a.can.linkProject && (
-              <Button
-                variant="outline"
-                onClick={() => setDialog('project')}
-                data-testid="cap-action-link-project"
-              >
-                <Link2 aria-hidden />
-                {t('validation.project')}
-              </Button>
-            )}
-            {a.can.cancel && (
-              <Button variant="ghost" onClick={() => setDialog('cancel')} data-testid="cap-action-cancel">
-                <Ban aria-hidden />
-                {t('action.cancel')}
-              </Button>
-            )}
-          </div>
-        }
-      />
-      <div data-testid="cap-action-current-status">
-        <CurrentStatusBanner
-          resourceType="cap.action"
-          resourceId={a.id}
-          onAction={(code) => {
-            if (code === 'progress') setDialog('progress');
-            if (code === 'request-completion') setDialog('completion');
-            if (code === 'request-extension') setDialog('extension');
-            if (code === 'decide') go('approvals');
-          }}
-        />
-      </div>
-      {a.validationNote && a.validationStatus !== 'approved' && (
-        <StatusBanner tone="warning" title={t('validation.note')} description={a.validationNote} />
-      )}
-      {a.can.validate && a.validationStatus === 'pending' && (
-        <StatusBanner
-          tone="info"
-          title={t('validation.pendingTitle')}
-          description={
-            <Button
-              size="sm"
-              className="mt-2"
-              onClick={() => setDialog('validate')}
-              data-testid="cap-action-validate"
+    <RecordLayout
+      testId="cap-action-page"
+      // CAP's own navigation first, as on every CAP page (CapPageLayout); hidden in the workspace themes (app tabs).
+      back={
+        <>
+          <CapNav />
+          {home && (
+            <Link
+              to="/cap/remarks/$remarkId"
+              params={{ remarkId: home.id }}
+              search={{ tab: 'actions' }}
+              className="flex items-center gap-1 text-sm text-primary hover:underline"
             >
-              {t('validation.decide')}
-            </Button>
+              <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden />
+              <bdi>{home.number}</bdi>
+            </Link>
+          )}
+        </>
+      }
+      highlights={[
+        { key: 'number', label: t('fields.number'), value: <bdi>{a.number}</bdi> },
+        { key: 'remark', label: t('fields.remark'), value: home ? <bdi>{home.number}</bdi> : '—' },
+        { key: 'assignee', label: t('fields.assignee'), value: names.person(a.assignee) },
+        { key: 'plannedStart', label: t('fields.plannedStart'), value: date(a.values.plannedStart) },
+        {
+          key: 'plannedEnd',
+          label: t('fields.plannedEnd'),
+          value: date(a.effectiveEnd ?? a.values.plannedEnd),
+        },
+        { key: 'actualStart', label: t('fields.actualStart'), value: date(a.actualStart) },
+      ]}
+      related={actionTabs
+        .filter((key) => key !== 'overview')
+        .map((key) => ({
+          key,
+          label: t(`tabs.${key}`),
+          count: key === 'evidence' ? a.evidenceCount : undefined,
+          onOpen: () => go(key),
+        }))}
+      header={
+        <PageHeader
+          title={<bdi data-testid="cap-action-number">{a.number}</bdi>}
+          description={
+            <span className="line-clamp-3">{names.text(a.values.detailsAr, a.values.detailsEn)}</span>
+          }
+          meta={
+            <div className="flex flex-wrap items-center gap-2" data-testid="cap-action-meta">
+              <OriginBadge type="cap.action" id={a.id} />
+              <ValidationChip status={a.validationStatus} />
+              {a.validationStatus === 'approved' && <ActionStatusChip status={a.status} />}
+              <ProgressBar
+                value={a.achievedPct}
+                tone={a.status === 'late' ? 'danger' : 'primary'}
+                testId="cap-pct"
+              />
+              <span className="text-sm text-muted-foreground">
+                {t('fields.plannedEnd')}: {date(a.effectiveEnd ?? a.values.plannedEnd)}
+                {a.revisedEnd && ` (${t('action.revised')})`}
+              </span>
+              {a.remarks.length > 1 && (
+                <StatusChip tone="info">
+                  {t('actions.sharedWith', { count: a.remarks.length - 1 })}
+                </StatusChip>
+              )}
+            </div>
+          }
+          actions={
+            <div className="flex flex-wrap gap-2">
+              {aiFeature && aiAllowed && a.can.edit && (
+                <Button
+                  variant="outline"
+                  loading={check.busy}
+                  onClick={() => check.run(a.id, setQuality)}
+                  data-testid="cap-ai-quality"
+                >
+                  <Sparkles aria-hidden />
+                  {t('ai.quality')}
+                </Button>
+              )}
+              {a.can.edit && (
+                <Button variant="outline" onClick={() => setDialog('edit')} data-testid="cap-action-edit">
+                  <Pencil aria-hidden />
+                  {tc('actions.edit')}
+                </Button>
+              )}
+              {a.can.progress && (
+                <Button onClick={() => setDialog('progress')} data-testid="cap-action-progress">
+                  <TrendingUp aria-hidden />
+                  {t('progress.update')}
+                </Button>
+              )}
+              {a.can.requestExtension && (
+                <Button
+                  variant="outline"
+                  onClick={() => setDialog('extension')}
+                  data-testid="cap-action-extension"
+                >
+                  <CalendarClock aria-hidden />
+                  {t('extension.request')}
+                </Button>
+              )}
+              {a.can.requestCompletion && (
+                <Button
+                  variant="outline"
+                  onClick={() => setDialog('completion')}
+                  data-testid="cap-action-completion"
+                >
+                  <CheckCheck aria-hidden />
+                  {t('completion.request')}
+                </Button>
+              )}
+              {a.can.linkProject && (
+                <Button
+                  variant="outline"
+                  onClick={() => setDialog('project')}
+                  data-testid="cap-action-link-project"
+                >
+                  <Link2 aria-hidden />
+                  {t('validation.project')}
+                </Button>
+              )}
+              {a.can.cancel && (
+                <Button variant="ghost" onClick={() => setDialog('cancel')} data-testid="cap-action-cancel">
+                  <Ban aria-hidden />
+                  {t('action.cancel')}
+                </Button>
+              )}
+            </div>
           }
         />
-      )}
-      {quality && (
-        <Section
-          title={
-            <span className="flex items-center gap-2">
-              {t('ai.quality')} <AiBadge />
-            </span>
-          }
-          testId="cap-ai-quality-result"
-        >
-          {quality.flags.length === 0 && quality.issues.length === 0 ? (
-            <p className="text-sm text-success">{t('ai.qualityOk')}</p>
-          ) : (
-            <>
-              <span className="flex flex-wrap gap-1">
-                {quality.flags.map((f) => (
-                  <QualityFlag key={f} flag={f} />
-                ))}
-              </span>
-              <ul className="list-inside list-disc text-sm">
-                {quality.issues.map((i) => (
-                  <li key={i}>{i}</li>
-                ))}
-              </ul>
-              {(quality.rewriteAr || quality.rewriteEn) && (
-                <p className="rounded bg-muted p-2 text-sm">
-                  {names.text(quality.rewriteAr, quality.rewriteEn)}
-                </p>
-              )}
-            </>
+      }
+      status={
+        <>
+          <div data-testid="cap-action-current-status">
+            <CurrentStatusBanner
+              resourceType="cap.action"
+              resourceId={a.id}
+              onAction={(code) => {
+                if (code === 'progress') setDialog('progress');
+                if (code === 'request-completion') setDialog('completion');
+                if (code === 'request-extension') setDialog('extension');
+                if (code === 'decide') go('approvals');
+              }}
+            />
+          </div>
+          {a.validationNote && a.validationStatus !== 'approved' && (
+            <StatusBanner tone="warning" title={t('validation.note')} description={a.validationNote} />
           )}
-        </Section>
-      )}
+          {a.can.validate && a.validationStatus === 'pending' && (
+            <StatusBanner
+              tone="info"
+              title={t('validation.pendingTitle')}
+              description={
+                <Button
+                  size="sm"
+                  className="mt-2"
+                  onClick={() => setDialog('validate')}
+                  data-testid="cap-action-validate"
+                >
+                  {t('validation.decide')}
+                </Button>
+              }
+            />
+          )}
+        </>
+      }
+      summary={
+        quality && (
+          <Section
+            title={
+              <span className="flex items-center gap-2">
+                {t('ai.quality')} <AiBadge />
+              </span>
+            }
+            testId="cap-ai-quality-result"
+          >
+            {quality.flags.length === 0 && quality.issues.length === 0 ? (
+              <p className="text-sm text-success">{t('ai.qualityOk')}</p>
+            ) : (
+              <>
+                <span className="flex flex-wrap gap-1">
+                  {quality.flags.map((f) => (
+                    <QualityFlag key={f} flag={f} />
+                  ))}
+                </span>
+                <ul className="list-inside list-disc text-sm">
+                  {quality.issues.map((i) => (
+                    <li key={i}>{i}</li>
+                  ))}
+                </ul>
+                {(quality.rewriteAr || quality.rewriteEn) && (
+                  <p className="rounded bg-muted p-2 text-sm">
+                    {names.text(quality.rewriteAr, quality.rewriteEn)}
+                  </p>
+                )}
+              </>
+            )}
+          </Section>
+        )
+      }
+    >
       <Tabs value={tab ?? 'overview'} onValueChange={(value) => go(value as ActionTab)}>
         <TabsList className="flex-wrap" data-testid="cap-action-tabs">
           {actionTabs.map((key) => (
@@ -312,7 +351,7 @@ export function CapActionPage() {
       {dialog === 'cancel' && <CancelDialog action={a} onClose={close} />}
       {dialog === 'validate' && <ValidateDialog action={a} onClose={close} />}
       {dialog === 'project' && <ProjectDialog action={a} onClose={close} />}
-    </CapPageLayout>
+    </RecordLayout>
   );
 }
 

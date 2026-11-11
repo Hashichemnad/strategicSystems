@@ -124,9 +124,11 @@ internal sealed partial class SettingsAdministration(SettingsDbContext db, Setti
         var logos = await cache.GetAsync("logos", async () => (IReadOnlyList<string>)(await files.OwnersWithFilesAsync(BrandingLogos.Purpose.Key, BrandingAssetKinds.All, ct)
             .ConfigureAwait(false)).ToList()).ConfigureAwait(false);
         var translations = await TranslationsVersionAsync(ct).ConfigureAwait(false);
+        var appearance = AppearanceResolver.Resolve(await store.GetAsync<AppearanceSettings>(ct).ConfigureAwait(false), null, null);
         return new PublicSettingsDto(
             branding.OrganisationNameAr, branding.OrganisationNameEn, branding.PrimaryColor,
-            logos.Contains(BrandingAssetKinds.LogoLight), logos.Contains(BrandingAssetKinds.LogoDark), regional, translations);
+            logos.Contains(BrandingAssetKinds.LogoLight), logos.Contains(BrandingAssetKinds.LogoDark), regional, translations,
+            appearance.Theme, appearance.Mode);
     }
 
     // ---- Branding assets ----

@@ -1,26 +1,33 @@
 import { getRouteApi, Link } from '@tanstack/react-router';
 import { CalendarDays, Columns3, LayoutDashboard, List, ListTodo, Plus, Search } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { errorMessage } from '@/api/problem';
 import { useCan } from '@/features/access/session';
 import { cn } from '@/lib/cn';
+import { formatDate, pickText } from '@/lib/format';
 import {
   Button,
   Checkbox,
   EmptyState,
   Input,
+  ListViewToggle,
   PageHeader,
   Pagination,
   Select,
   Skeleton,
+  SplitCard,
+  SplitPreview,
+  SplitView,
   StatusBanner,
   Tabs,
   TabsList,
   TabsTrigger,
+  useListView,
   type SortDirection,
 } from '@/ui';
-import { useTaskCounts, useTasks, type TaskListQuery } from './api';
+import { useTaskCounts, useTasks, type TaskListItem, type TaskListQuery } from './api';
+import { IndicatorChip, PriorityChip, TaskStatusChip } from './TaskChips';
 import { NewTaskDialog } from './NewTaskDialog';
 import { TaskCalendar, TaskKanban, TaskTable } from './TaskViews';
 
@@ -50,6 +57,9 @@ export function TasksPage() {
   const [searchText, setSearchText] = useState(search.search ?? '');
   const [creating, setCreating] = useState(search.new === true);
   const month = search.month ?? currentMonth();
+  // The list view as a table or list + preview (Enterprise toggle, Modern default; Classic: table only — ADR 0174).
+  const listView = useListView('tasks.list');
+  const [selectedId, setSelectedId] = useState<string>();
 
   useEffect(() => {
     if (searchText === (search.search ?? '')) return;
@@ -74,6 +84,8 @@ export function TasksPage() {
     ...(search.view === 'list' && search.openOnly ? { openOnly: true } : {}),
   };
   const tasks = useTasks(query);
+  // The first row is previewed until the user picks another.
+  const selected = tasks.data?.items.find((task) => task.id === selectedId) ?? tasks.data?.items[0];
 
   const sortDirection = (field: string): SortDirection =>
     search.sort === field ? 'asc' : search.sort === `-${field}` ? 'desc' : null;
@@ -98,6 +110,9 @@ export function TasksPage() {
         description={t('description')}
         actions={
           <>
+            {listView.available && search.view === 'list' && (
+              <ListViewToggle value={listView.view} onChange={listView.setView} />
+            )}
             {canDashboard && (
               <Button variant="outline" asChild>
                 <Link to="/tasks/dashboard">
@@ -239,6 +254,31 @@ export function TasksPage() {
         />
       ) : tasks.data.items.length === 0 ? (
         <EmptyState icon={ListTodo} title={t('myWork.empty')} />
+      ) : listView.view === 'split' ? (
+        <div className="flex flex-col gap-3">
+          <SplitView
+            hasSelection={!!selected}
+            list={
+              <ul className="flex flex-col gap-2" data-testid="task-cards">
+                {tasks.data.items.map((task) => (
+                  <TaskCard
+                    key={task.id}
+                    task={task}
+                    selected={task.id === selected?.id}
+                    onPreview={() => setSelectedId(task.id)}
+                  />
+                ))}
+              </ul>
+            }
+            preview={selected && <TaskPreview task={selected} />}
+          />
+          <Pagination
+            page={tasks.data.page}
+            totalPages={tasks.data.totalPages ?? 1}
+            totalCount={tasks.data.totalCount}
+            onPageChange={(page) => void navigate({ search: (prev) => ({ ...prev, page }) })}
+          />
+        </div>
       ) : (
         <div className="flex flex-col gap-3">
           <TaskTable
@@ -259,5 +299,74 @@ export function TasksPage() {
 
       <NewTaskDialog open={creating} onOpenChange={setCreating} />
     </div>
+  );
+}
+
+function TaskLink({ task, children }: { task: TaskListItem; children: ReactNode }) {
+  return (
+    <Link to="/tasks/$taskId" params={{ taskId: task.id }} search={{ tab: 'overview' }}>
+      {children}
+    </Link>
+  );
+}
+
+function TaskCard({
+  task,
+  selected,
+  onPreview,
+}: {
+  task: TaskListItem;
+  selected: boolean;
+  onPreview: () => void;
+}) {
+  const { i18n } = useTranslation();
+  return (
+    <SplitCard
+      selected={selected}
+      onPreview={onPreview}
+      title={
+        <Link
+          to="/tasks/$taskId"
+          params={{ taskId: task.id }}
+          search={{ tab: 'overview' }}
+          className="min-w-0 font-medium hover:underline"
+        >
+          <bdi className="block text-xs text-muted-foreground">{task.number}</bdi>
+          <span dir="auto" className="block">
+            {pickText(i18n.language, task.titleAr, task.titleEn)}
+          </span>
+        </Link>
+      }
+      chips={
+        <>
+          <TaskStatusChip template={task.template} status={task.status} />
+          <PriorityChip priority={task.priority} />
+          <IndicatorChip indicator={task.indicator} />
+          {task.dueDate && (
+            <span className="text-xs text-muted-foreground">{formatDate(task.dueDate, i18n.language)}</span>
+          )}
+        </>
+      }
+    />
+  );
+}
+
+function TaskPreview({ task }: { task: TaskListItem }) {
+  const { t, i18n } = useTranslation('tasks');
+  const { t: ta } = useTranslation('appearance');
+  const lang = i18n.language;
+  return (
+    <SplitPreview
+      title={pickText(lang, task.titleAr, task.titleEn)}
+      rows={[
+        [t('fields.number'), <bdi key="n">{task.number}</bdi>],
+        [t('fields.assignee'), pickText(lang, task.assignee.nameAr, task.assignee.nameEn)],
+        [t('fields.creator'), pickText(lang, task.creator.nameAr, task.creator.nameEn)],
+        [t('fields.status'), <TaskStatusChip key="s" template={task.template} status={task.status} />],
+        [t('fields.priority'), <PriorityChip key="p" priority={task.priority} />],
+        [t('fields.dueDate'), task.dueDate ? formatDate(task.dueDate, lang) : '—'],
+      ]}
+      open={<TaskLink task={task}>{ta('split.open')}</TaskLink>}
+    />
   );
 }

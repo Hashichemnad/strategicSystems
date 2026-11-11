@@ -9,11 +9,15 @@ import {
   ConfirmDialog,
   EmptyState,
   Input,
+  ListViewToggle,
   PageHeader,
   Pagination,
   Select,
   Skeleton,
   SortableHeader,
+  SplitCard,
+  SplitPreview,
+  SplitView,
   StatusBanner,
   StatusChip,
   Table,
@@ -22,6 +26,7 @@ import {
   TableHead,
   TableHeaderCell,
   TableRow,
+  useListView,
   useToast,
   type SortDirection,
 } from '@/ui';
@@ -43,6 +48,9 @@ export function SampleListPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [confirming, setConfirming] = useState<SampleItem | undefined>();
   const changeStatus = useChangeSampleItemStatus();
+  // Table or list + preview (Enterprise toggle, Modern default; Classic: table only — ADR 0174).
+  const listView = useListView('sample.items');
+  const [selectedId, setSelectedId] = useState<string>();
 
   const query = useSampleItems({
     page: search.page,
@@ -82,6 +90,8 @@ export function SampleListPage() {
 
   const data = query.data;
   const filtered = Boolean(search.search || search.status);
+  // The first row is previewed until the user picks another.
+  const selected = data?.items.find((item) => item.id === selectedId) ?? data?.items[0];
 
   return (
     <div className="flex flex-col gap-6">
@@ -89,15 +99,18 @@ export function SampleListPage() {
         title={t('title')}
         description={t('description')}
         actions={
-          <Button
-            onClick={() => {
-              setEditing(undefined);
-              setDialogOpen(true);
-            }}
-          >
-            <Plus aria-hidden />
-            {t('new')}
-          </Button>
+          <>
+            {listView.available && <ListViewToggle value={listView.view} onChange={listView.setView} />}
+            <Button
+              onClick={() => {
+                setEditing(undefined);
+                setDialogOpen(true);
+              }}
+            >
+              <Plus aria-hidden />
+              {t('new')}
+            </Button>
+          </>
         }
       />
 
@@ -160,6 +173,50 @@ export function SampleListPage() {
           title={t(filtered ? 'empty.filteredTitle' : 'empty.title')}
           description={t(filtered ? 'empty.filteredDescription' : 'empty.description')}
         />
+      ) : listView.view === 'split' ? (
+        <div className="flex flex-col gap-3">
+          <SplitView
+            hasSelection={!!selected}
+            list={
+              <ul className="flex flex-col gap-2" data-testid="sample-cards">
+                {data.items.map((item) => (
+                  <SplitCard
+                    key={item.id}
+                    selected={item.id === selected?.id}
+                    onPreview={() => setSelectedId(item.id)}
+                    title={
+                      <Link
+                        to="/sample/items/$itemId"
+                        params={{ itemId: item.id }}
+                        search={{ tab: 'overview' }}
+                        className="min-w-0 font-medium hover:underline"
+                      >
+                        {pickText(i18n.language, item.nameAr, item.nameEn)}
+                      </Link>
+                    }
+                    chips={
+                      <>
+                        <StatusChip tone={item.status === 'active' ? 'success' : 'neutral'}>
+                          {t(item.status === 'active' ? 'status.active' : 'status.inactive')}
+                        </StatusChip>
+                        <span className="text-xs text-muted-foreground">
+                          {formatDateTime(item.updatedAt, i18n.language)}
+                        </span>
+                      </>
+                    }
+                  />
+                ))}
+              </ul>
+            }
+            preview={selected && <SamplePreview item={selected} />}
+          />
+          <Pagination
+            page={data.page}
+            totalPages={data.totalPages ?? Math.ceil(data.totalCount / data.pageSize)}
+            totalCount={data.totalCount}
+            onPageChange={(page) => void navigate({ search: (prev) => ({ ...prev, page }) })}
+          />
+        </div>
       ) : (
         <div className="flex flex-col gap-3">
           <Table aria-busy={query.isFetching}>
@@ -269,5 +326,26 @@ export function SampleListPage() {
         onConfirm={() => confirming && void runStatusChange(confirming, 'deactivate')}
       />
     </div>
+  );
+}
+
+/** The split view's preview of the selected item (list fields only; the record page has everything). */
+function SamplePreview({ item }: { item: SampleItem }) {
+  const { t, i18n } = useTranslation('sample');
+  const { t: ta } = useTranslation('appearance');
+  return (
+    <SplitPreview
+      title={pickText(i18n.language, item.nameAr, item.nameEn)}
+      rows={[
+        [t('fields.name'), pickText(i18n.language, item.nameAr, item.nameEn)],
+        [t('fields.status'), t(item.status === 'active' ? 'status.active' : 'status.inactive')],
+        [t('fields.updatedAt'), formatDateTime(item.updatedAt, i18n.language)],
+      ]}
+      open={
+        <Link to="/sample/items/$itemId" params={{ itemId: item.id }} search={{ tab: 'overview' }}>
+          {ta('split.open')}
+        </Link>
+      }
+    />
   );
 }

@@ -11,10 +11,12 @@ import {
   Button,
   EmptyState,
   Input,
+  ListViewToggle,
   PageHeader,
   Pagination,
   Select,
   Skeleton,
+  SplitView,
   StatusBanner,
   StatusChip,
   Switch,
@@ -24,7 +26,9 @@ import {
   TableHead,
   TableHeaderCell,
   TableRow,
+  useListView,
 } from '@/ui';
+import { SplitCard, SplitPreview } from '@/ui';
 import { ipLookups, ipStatuses, useIpRecords, type IpListQuery } from './api';
 import { IpPage, IpStatusChip, useDate, useIpT, useLookupLabel } from './components';
 
@@ -45,6 +49,7 @@ interface Filters {
 export function IpRegisterPage() {
   const { t } = useTranslation('ip');
   const { t: tc } = useTranslation();
+  const { t: ta } = useTranslation('appearance');
   const { k, language } = useIpT();
   const date = useDate();
   const canDashboard = useCan('ip.dashboard.read');
@@ -86,6 +91,13 @@ export function IpRegisterPage() {
     setPage(1);
   };
   const thisYear = new Date().getFullYear();
+  // Table or list + preview (Enterprise toggle, Modern default; Classic: table only — ADR 0174).
+  const listView = useListView('ip.register');
+  const [selectedId, setSelectedId] = useState<string>();
+  // The first row is previewed until the user picks another.
+  const selected = records.data?.items.find((r) => r.id === selectedId) ?? records.data?.items[0];
+  const unitName = (u: { nameAr: string | null; nameEn: string | null } | null) =>
+    u ? pickText(language, u.nameAr, u.nameEn) : '—';
   const years = Array.from({ length: 6 }, (_, i) => thisYear - i);
 
   return (
@@ -95,6 +107,7 @@ export function IpRegisterPage() {
         description={t('register.description')}
         actions={
           <>
+            {listView.available && <ListViewToggle value={listView.view} onChange={listView.setView} />}
             {canDashboard && (
               <Button variant="outline" asChild>
                 <Link to="/ip/dashboard">
@@ -190,66 +203,133 @@ export function IpRegisterPage() {
         <EmptyState icon={Lightbulb} title={t('register.empty')} description={t('register.emptyHint')} />
       ) : (
         <>
-          <div className="overflow-x-auto rounded-lg border bg-card">
-            <Table data-testid="ip-table">
-              <TableHead>
-                <TableRow>
-                  <TableHeaderCell>{t('fields.number')}</TableHeaderCell>
-                  <TableHeaderCell>{t('fields.name')}</TableHeaderCell>
-                  <TableHeaderCell>{t('fields.propertyType')}</TableHeaderCell>
-                  <TableHeaderCell>{t('fields.protectionType')}</TableHeaderCell>
-                  <TableHeaderCell>{t('fields.status')}</TableHeaderCell>
-                  <TableHeaderCell>{t('fields.ownerUnit')}</TableHeaderCell>
-                  <TableHeaderCell>{t('fields.registrationDate')}</TableHeaderCell>
-                  <TableHeaderCell>{t('fields.expiryDate')}</TableHeaderCell>
-                  <TableHeaderCell>
-                    <span className="sr-only">{t('fields.source')}</span>
-                  </TableHeaderCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {records.data.items.map((item) => (
-                  <TableRow key={item.id} data-testid={`ip-row-${item.id}`}>
-                    <TableCell>
+          {listView.view === 'split' ? (
+            <SplitView
+              hasSelection={!!selected}
+              list={
+                <ul className="flex flex-col gap-2" data-testid="ip-cards">
+                  {records.data.items.map((item) => (
+                    <SplitCard
+                      key={item.id}
+                      selected={item.id === selected?.id}
+                      onPreview={() => setSelectedId(item.id)}
+                      title={
+                        <Link
+                          to="/ip/records/$recordId"
+                          params={{ recordId: item.id }}
+                          search={{ tab: 'overview' }}
+                          className="min-w-0 font-medium hover:underline"
+                        >
+                          <bdi className="block text-xs text-muted-foreground">{item.number}</bdi>
+                          <span dir="auto" className="block">
+                            {pickText(language, item.nameAr, item.nameEn) || '—'}
+                          </span>
+                        </Link>
+                      }
+                      chips={
+                        <>
+                          <IpStatusChip status={item.status} />
+                          {item.expiringSoon && (
+                            <StatusChip tone="warning">{t('register.expiringSoon')}</StatusChip>
+                          )}
+                          <span className="text-xs text-muted-foreground">
+                            {propertyLabel(item.propertyType)}
+                          </span>
+                        </>
+                      }
+                    />
+                  ))}
+                </ul>
+              }
+              preview={
+                selected && (
+                  <SplitPreview
+                    title={pickText(language, selected.nameAr, selected.nameEn) || '—'}
+                    rows={[
+                      [t('fields.number'), <bdi key="n">{selected.number}</bdi>],
+                      [t('fields.propertyType'), propertyLabel(selected.propertyType)],
+                      [t('fields.protectionType'), protectionLabel(selected.protectionType)],
+                      [t('fields.status'), <IpStatusChip key="s" status={selected.status} />],
+                      [t('fields.ownerUnit'), unitName(selected.ownerUnit)],
+                      [t('fields.registrationDate'), date(selected.registrationDate)],
+                      [t('fields.expiryDate'), date(selected.expiryDate)],
+                      [t('fields.source'), k(`source.${selected.source}`)],
+                    ]}
+                    open={
                       <Link
                         to="/ip/records/$recordId"
-                        params={{ recordId: item.id }}
+                        params={{ recordId: selected.id }}
                         search={{ tab: 'overview' }}
-                        className="font-medium whitespace-nowrap text-primary hover:underline"
                       >
-                        <bdi>{item.number}</bdi>
+                        {ta('split.open')}
                       </Link>
-                    </TableCell>
-                    <TableCell className="min-w-48">
-                      {pickText(language, item.nameAr, item.nameEn) || '—'}
-                    </TableCell>
-                    <TableCell>{propertyLabel(item.propertyType)}</TableCell>
-                    <TableCell>{protectionLabel(item.protectionType)}</TableCell>
-                    <TableCell>
-                      <IpStatusChip status={item.status} />
-                    </TableCell>
-                    <TableCell>
-                      {item.ownerUnit
-                        ? pickText(language, item.ownerUnit.nameAr, item.ownerUnit.nameEn)
-                        : '—'}
-                    </TableCell>
-                    <TableCell className="whitespace-nowrap">{date(item.registrationDate)}</TableCell>
-                    <TableCell className="whitespace-nowrap">
-                      <span className="flex flex-wrap items-center gap-2">
-                        {date(item.expiryDate)}
-                        {item.expiringSoon && (
-                          <StatusChip tone="warning">{t('register.expiringSoon')}</StatusChip>
-                        )}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <SourceIcon source={item.source} />
-                    </TableCell>
+                    }
+                  />
+                )
+              }
+            />
+          ) : (
+            <div className="overflow-x-auto rounded-lg border bg-card">
+              <Table data-testid="ip-table">
+                <TableHead>
+                  <TableRow>
+                    <TableHeaderCell>{t('fields.number')}</TableHeaderCell>
+                    <TableHeaderCell>{t('fields.name')}</TableHeaderCell>
+                    <TableHeaderCell>{t('fields.propertyType')}</TableHeaderCell>
+                    <TableHeaderCell>{t('fields.protectionType')}</TableHeaderCell>
+                    <TableHeaderCell>{t('fields.status')}</TableHeaderCell>
+                    <TableHeaderCell>{t('fields.ownerUnit')}</TableHeaderCell>
+                    <TableHeaderCell>{t('fields.registrationDate')}</TableHeaderCell>
+                    <TableHeaderCell>{t('fields.expiryDate')}</TableHeaderCell>
+                    <TableHeaderCell>
+                      <span className="sr-only">{t('fields.source')}</span>
+                    </TableHeaderCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+                </TableHead>
+                <TableBody>
+                  {records.data.items.map((item) => (
+                    <TableRow key={item.id} data-testid={`ip-row-${item.id}`}>
+                      <TableCell>
+                        <Link
+                          to="/ip/records/$recordId"
+                          params={{ recordId: item.id }}
+                          search={{ tab: 'overview' }}
+                          className="font-medium whitespace-nowrap text-primary hover:underline"
+                        >
+                          <bdi>{item.number}</bdi>
+                        </Link>
+                      </TableCell>
+                      <TableCell className="min-w-48">
+                        {pickText(language, item.nameAr, item.nameEn) || '—'}
+                      </TableCell>
+                      <TableCell>{propertyLabel(item.propertyType)}</TableCell>
+                      <TableCell>{protectionLabel(item.protectionType)}</TableCell>
+                      <TableCell>
+                        <IpStatusChip status={item.status} />
+                      </TableCell>
+                      <TableCell>
+                        {item.ownerUnit
+                          ? pickText(language, item.ownerUnit.nameAr, item.ownerUnit.nameEn)
+                          : '—'}
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap">{date(item.registrationDate)}</TableCell>
+                      <TableCell className="whitespace-nowrap">
+                        <span className="flex flex-wrap items-center gap-2">
+                          {date(item.expiryDate)}
+                          {item.expiringSoon && (
+                            <StatusChip tone="warning">{t('register.expiringSoon')}</StatusChip>
+                          )}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <SourceIcon source={item.source} />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
           <Pagination
             page={records.data.page}
             totalPages={records.data.totalPages ?? 1}

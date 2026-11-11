@@ -14,6 +14,8 @@ import arOrg from './ar/org.json';
 import enOrg from './en/org.json';
 import arProfile from './ar/profile.json';
 import enProfile from './en/profile.json';
+import arAppearance from './ar/appearance.json';
+import enAppearance from './en/appearance.json';
 import arCommon from './ar/common.json';
 import arErrors from './ar/errors.json';
 import arSample from './ar/sample.json';
@@ -151,6 +153,7 @@ export const resources = {
     health: arHealth,
     search: arSearch,
     responsibilities: arResponsibilities,
+    appearance: arAppearance,
   },
   en: {
     common: enCommon,
@@ -201,6 +204,7 @@ export const resources = {
     health: enHealth,
     search: enSearch,
     responsibilities: enResponsibilities,
+    appearance: enAppearance,
   },
 } as const;
 

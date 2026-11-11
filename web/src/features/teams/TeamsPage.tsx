@@ -1,6 +1,6 @@
 import { getRouteApi, Link } from '@tanstack/react-router';
 import { LayoutDashboard, Plus, Search, UsersRound } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { errorMessage } from '@/api/problem';
 import { useCan } from '@/features/access/session';
@@ -9,15 +9,20 @@ import {
   Button,
   EmptyState,
   Input,
+  ListViewToggle,
   PageHeader,
   Pagination,
   Select,
   Skeleton,
+  SplitCard,
+  SplitPreview,
+  SplitView,
   StatusBanner,
   StatusChip,
   Tabs,
   TabsList,
   TabsTrigger,
+  useListView,
 } from '@/ui';
 import { statusTone, teamStatuses, useTeamCounts, useTeamOptions, useTeams, type TeamListItem } from './api';
 
@@ -33,6 +38,9 @@ export function TeamsPage() {
   const canRequest = useCan('teams.team.request');
   const canDashboard = useCan('teams.dashboard.read');
   const counts = useTeamCounts();
+  // Card grid or list + preview (Enterprise toggle, Modern default; Classic: the grid only — ADR 0174).
+  const listView = useListView('teams.register');
+  const [selectedId, setSelectedId] = useState<string>();
   const options = useTeamOptions();
   const [text, setText] = useState(search.search ?? '');
   useEffect(() => {
@@ -51,6 +59,8 @@ export function TeamsPage() {
     ...(search.status ? { status: search.status } : {}),
     ...(search.search ? { search: search.search } : {}),
   });
+  // The first team is previewed until the user picks another.
+  const selected = teams.data?.items.find((team) => team.id === selectedId) ?? teams.data?.items[0];
   const count = (view: string) =>
     view === 'mine'
       ? counts.data?.mine
@@ -67,6 +77,7 @@ export function TeamsPage() {
         description={t('description')}
         actions={
           <>
+            {listView.available && <ListViewToggle value={listView.view} onChange={listView.setView} />}
             {canDashboard && (
               <Button variant="outline" asChild>
                 <Link to="/teams/dashboard">
@@ -151,6 +162,50 @@ export function TeamsPage() {
         </div>
       ) : teams.data.items.length === 0 ? (
         <EmptyState icon={UsersRound} title={t('empty')} />
+      ) : listView.view === 'split' ? (
+        <>
+          <SplitView
+            hasSelection={!!selected}
+            list={
+              <ul className="flex flex-col gap-2" data-testid="teams-cards">
+                {teams.data.items.map((team) => (
+                  <SplitCard
+                    key={team.id}
+                    selected={team.id === selected?.id}
+                    onPreview={() => setSelectedId(team.id)}
+                    title={
+                      <TeamLink team={team} className="min-w-0 font-medium hover:underline">
+                        <bdi className="block text-xs text-muted-foreground">{team.number}</bdi>
+                        <span dir="auto" className="block">
+                          {pickText(i18n.language, team.nameAr, team.nameEn)}
+                        </span>
+                      </TeamLink>
+                    }
+                    chips={
+                      <>
+                        <StatusChip tone={statusTone[team.status] ?? 'neutral'}>
+                          {t(`status.${team.status as 'active'}`)}
+                        </StatusChip>
+                        {team.myMembership && <StatusChip tone="info">{t('card.member')}</StatusChip>}
+                        <span className="text-xs text-muted-foreground">
+                          {pickText(i18n.language, team.typeNameAr, team.typeNameEn)} ·{' '}
+                          {t('card.members', { count: team.activeMembers })}
+                        </span>
+                      </>
+                    }
+                  />
+                ))}
+              </ul>
+            }
+            preview={selected && <TeamPreview team={selected} />}
+          />
+          <Pagination
+            page={teams.data.page}
+            totalPages={teams.data.totalPages ?? 1}
+            totalCount={teams.data.totalCount}
+            onPageChange={(page) => void navigate({ search: (p) => ({ ...p, page }) })}
+          />
+        </>
       ) : (
         <>
           <ul className="grid gap-4 md:grid-cols-2 xl:grid-cols-3" data-testid="teams-register">
@@ -224,5 +279,44 @@ function TeamCard({ team }: { team: TeamListItem }) {
         )}
       </div>
     </Link>
+  );
+}
+
+function TeamLink({
+  team,
+  className,
+  children,
+}: {
+  team: TeamListItem;
+  className?: string;
+  children: ReactNode;
+}) {
+  return (
+    <Link to="/teams/$teamId" params={{ teamId: team.id }} search={{ tab: 'overview' }} className={className}>
+      {children}
+    </Link>
+  );
+}
+
+function TeamPreview({ team }: { team: TeamListItem }) {
+  const { t, i18n } = useTranslation('teams');
+  const { t: ta } = useTranslation('appearance');
+  const lang = i18n.language;
+  return (
+    <SplitPreview
+      title={pickText(lang, team.nameAr, team.nameEn)}
+      rows={[
+        [t('fields.type'), pickText(lang, team.typeNameAr, team.typeNameEn)],
+        [t('card.leader'), team.leader ? pickText(lang, team.leader.nameAr, team.leader.nameEn) : '—'],
+        [
+          t('fields.owningUnit'),
+          team.owningUnit ? pickText(lang, team.owningUnit.nameAr, team.owningUnit.nameEn) : '—',
+        ],
+        [t('fields.startDate'), team.startDate ? formatDate(team.startDate, lang) : '—'],
+        [t('fields.endDate'), team.endDate ? formatDate(team.endDate, lang) : t('permanence.permanent')],
+        [t('card.lastScore'), team.lastScore !== null ? formatNumber(team.lastScore, lang) : '—'],
+      ]}
+      open={<TeamLink team={team}>{ta('split.open')}</TeamLink>}
+    />
   );
 }

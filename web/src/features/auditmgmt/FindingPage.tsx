@@ -23,6 +23,7 @@ import { CurrentStatusBanner } from '@/features/workflow/ApprovalPanel';
 import {
   Button,
   PageHeader,
+  RecordLayout,
   Skeleton,
   StatusBanner,
   StatusChip,
@@ -43,7 +44,7 @@ import {
   type RepeatCheck,
 } from './api';
 import {
-  AuditPageLayout,
+  AuditNav,
   FindingStatusChip,
   PriorityChip,
   RecommendationStatusChip,
@@ -91,6 +92,7 @@ export function AuditFindingPage() {
   const finding = useAuditFinding(findingId);
   const recs = useRecommendations(findingId);
   const names = useNames();
+  const date = useDate();
   const pct = usePct();
   const [dialog, setDialog] = useState<Dialog>();
   const close = () => setDialog(undefined);
@@ -102,91 +104,123 @@ export function AuditFindingPage() {
   const go = (next: FindingTab) => void navigate({ search: { tab: next } });
   const recommendations = recs.data ?? [];
 
+  // AuditPageLayout's secondary navigation comes first (Classic keeps the same order); the record layout adds the theme's slots.
   return (
-    <AuditPageLayout testId="audit-finding-page">
-      <Link
-        to="/audit-management/reports/$reportId"
-        params={{ reportId: f.reportId }}
-        className="flex items-center gap-1 text-sm text-primary hover:underline"
-      >
-        <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden />
-        <bdi>{f.reportNumber}</bdi> — {names.text(f.reportTitleAr, f.reportTitleEn)}
-      </Link>
-      <PageHeader
-        title={<bdi data-testid="audit-finding-number">{f.number}</bdi>}
-        description={
-          <span data-testid="audit-finding-title">{names.text(f.values.titleAr, f.values.titleEn)}</span>
-        }
-        meta={
-          <div className="flex flex-wrap items-center gap-3" data-testid="audit-finding-meta">
-            <OriginBadge type="auditmgmt.finding" id={f.id} />
-            <FindingStatusChip status={f.status} />
-            <PriorityChip priority={f.values.priority} />
-            {f.values.repeat && <StatusChip tone="warning">{t('finding.repeat')}</StatusChip>}
-            <span className="text-sm text-muted-foreground">
-              {t('fields.responsibleUnit')}: {names.unit(f.responsibleUnit)}
-            </span>
-            <div className="w-40">
-              <ProgressBar
-                value={f.completion}
-                tone={f.status === 'late' ? 'danger' : 'primary'}
-                testId="audit-pct"
-              />
+    <RecordLayout
+      testId="audit-finding-page"
+      back={
+        <>
+          <AuditNav />
+          <Link
+            to="/audit-management/reports/$reportId"
+            params={{ reportId: f.reportId }}
+            className="flex items-center gap-1 text-sm text-primary hover:underline"
+          >
+            <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden />
+            <bdi>{f.reportNumber}</bdi> — {names.text(f.reportTitleAr, f.reportTitleEn)}
+          </Link>
+        </>
+      }
+      header={
+        <PageHeader
+          title={<bdi data-testid="audit-finding-number">{f.number}</bdi>}
+          description={
+            <span data-testid="audit-finding-title">{names.text(f.values.titleAr, f.values.titleEn)}</span>
+          }
+          meta={
+            <div className="flex flex-wrap items-center gap-3" data-testid="audit-finding-meta">
+              <OriginBadge type="auditmgmt.finding" id={f.id} />
+              <FindingStatusChip status={f.status} />
+              <PriorityChip priority={f.values.priority} />
+              {f.values.repeat && <StatusChip tone="warning">{t('finding.repeat')}</StatusChip>}
+              <span className="text-sm text-muted-foreground">
+                {t('fields.responsibleUnit')}: {names.unit(f.responsibleUnit)}
+              </span>
+              <div className="w-40">
+                <ProgressBar
+                  value={f.completion}
+                  tone={f.status === 'late' ? 'danger' : 'primary'}
+                  testId="audit-pct"
+                />
+              </div>
             </div>
-          </div>
-        }
-        actions={
-          <div className="flex flex-wrap gap-2">
-            {f.can.edit && (
-              <Button
-                variant="outline"
-                onClick={() => setDialog({ kind: 'edit' })}
-                data-testid="audit-finding-edit"
-              >
-                <Pencil aria-hidden />
-                {tc('actions.edit')}
-              </Button>
-            )}
-            {f.can.sendToCap && (
-              <Button
-                variant="outline"
-                loading={sendToCap.busy}
-                onClick={() => sendToCap.run(f.id)}
-                data-testid="audit-send-to-cap"
-              >
-                <Send aria-hidden />
-                {t('finding.sendToCap')}
-              </Button>
-            )}
-            {f.can.cancel && (
-              <Button
-                variant="ghost"
-                onClick={() => setDialog({ kind: 'cancel' })}
-                data-testid="audit-finding-cancel"
-              >
-                <Ban aria-hidden />
-                {t('finding.cancel')}
-              </Button>
-            )}
-          </div>
-        }
-      />
-      {!f.can.edit && (
-        <StatusBanner tone="info" title={t('finding.readOnly')} description={t('finding.readOnlyHint')} />
-      )}
-      <div data-testid="audit-finding-current-status">
-        <CurrentStatusBanner
-          resourceType="auditmgmt.finding"
-          resourceId={f.id}
-          onAction={(code) => {
-            if (code === 'record-follow-up') go('recommendations');
-            if (code === 'add-recommendation') setDialog({ kind: 'add-rec' });
-          }}
+          }
+          actions={
+            <div className="flex flex-wrap gap-2">
+              {f.can.edit && (
+                <Button
+                  variant="outline"
+                  onClick={() => setDialog({ kind: 'edit' })}
+                  data-testid="audit-finding-edit"
+                >
+                  <Pencil aria-hidden />
+                  {tc('actions.edit')}
+                </Button>
+              )}
+              {f.can.sendToCap && (
+                <Button
+                  variant="outline"
+                  loading={sendToCap.busy}
+                  onClick={() => sendToCap.run(f.id)}
+                  data-testid="audit-send-to-cap"
+                >
+                  <Send aria-hidden />
+                  {t('finding.sendToCap')}
+                </Button>
+              )}
+              {f.can.cancel && (
+                <Button
+                  variant="ghost"
+                  onClick={() => setDialog({ kind: 'cancel' })}
+                  data-testid="audit-finding-cancel"
+                >
+                  <Ban aria-hidden />
+                  {t('finding.cancel')}
+                </Button>
+              )}
+            </div>
+          }
         />
-      </div>
-      {f.cancelReason && (
-        <StatusBanner tone="info" title={t('finding.cancelled')} description={f.cancelReason} />
-      )}
+      }
+      highlights={[
+        { key: 'report', label: t('fields.report'), value: <bdi>{f.reportNumber}</bdi> },
+        { key: 'findingDate', label: t('fields.findingDate'), value: date(f.values.findingDate) },
+        { key: 'unit', label: t('fields.responsibleUnit'), value: names.unit(f.responsibleUnit) },
+        { key: 'auditor', label: t('fields.auditor'), value: names.person(f.auditor) },
+        { key: 'expected', label: t('fields.expectedClosingOn'), value: date(f.values.expectedClosingOn) },
+        { key: 'completion', label: t('fields.completion'), value: pct(f.completion) },
+      ]}
+      status={
+        <>
+          {!f.can.edit && (
+            <StatusBanner tone="info" title={t('finding.readOnly')} description={t('finding.readOnlyHint')} />
+          )}
+          <div data-testid="audit-finding-current-status">
+            <CurrentStatusBanner
+              resourceType="auditmgmt.finding"
+              resourceId={f.id}
+              onAction={(code) => {
+                if (code === 'record-follow-up') go('recommendations');
+                if (code === 'add-recommendation') setDialog({ kind: 'add-rec' });
+              }}
+            />
+          </div>
+          {f.cancelReason && (
+            <StatusBanner tone="info" title={t('finding.cancelled')} description={f.cancelReason} />
+          )}
+        </>
+      }
+      related={[
+        {
+          key: 'recommendations',
+          label: t('tabs.recommendations'),
+          count: recommendations.length,
+          onOpen: () => go('recommendations'),
+        },
+        { key: 'evidence', label: t('tabs.evidence'), onOpen: () => go('evidence') },
+        { key: 'links', label: t('tabs.links'), count: f.risks.length, onOpen: () => go('links') },
+      ]}
+    >
       <Tabs value={tab ?? 'overview'} onValueChange={(value) => go(value as FindingTab)}>
         <TabsList className="flex-wrap" data-testid="audit-finding-tabs">
           {findingTabs.map((key) => (
@@ -284,7 +318,7 @@ export function AuditFindingPage() {
           onClose={close}
         />
       )}
-    </AuditPageLayout>
+    </RecordLayout>
   );
 }
 

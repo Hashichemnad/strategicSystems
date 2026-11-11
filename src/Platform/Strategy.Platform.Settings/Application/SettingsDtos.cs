@@ -4,7 +4,7 @@ public sealed record SettingsDocument<T>(T Value, uint Version);
 
 public sealed record PublicSettingsDto(
     string? OrganisationNameAr, string? OrganisationNameEn, string PrimaryColor, bool HasLogoLight, bool HasLogoDark,
-    RegionalSettings Regional, long TranslationsVersion);
+    RegionalSettings Regional, long TranslationsVersion, string DefaultTheme, string DefaultMode);
 
 public sealed record LookupTypeDto(Guid Id, string Code, string SystemCode, string? NameAr, string? NameEn, string? ParentTypeCode, bool Builtin, int ValueCount, uint Version);
 

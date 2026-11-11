@@ -20,6 +20,18 @@ export async function settle(page: Page) {
     .waitFor({ state: 'detached', timeout: 10_000 })
     .catch(() => undefined);
   await page.evaluate(() => document.fonts.ready);
+  // Entrance animations (dialogs, workspace panels) would be measured half-transparent: wait until they have finished.
+  await page
+    .evaluate(() =>
+      Promise.all(
+        document
+          .getAnimations()
+          // Only finite animations: a spinner never finishes.
+          .filter((animation) => Number.isFinite(Number(animation.effect?.getComputedTiming().endTime)))
+          .map((animation) => animation.finished),
+      ),
+    )
+    .catch(() => undefined);
 }
 
 /**

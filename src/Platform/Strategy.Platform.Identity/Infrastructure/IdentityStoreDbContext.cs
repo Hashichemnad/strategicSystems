@@ -57,6 +57,9 @@ internal sealed class StrategyUserConfiguration : IEntityTypeConfiguration<Strat
         builder.Property(u => u.PrincipalType).HasMaxLength(20);
         builder.Property(u => u.Language).HasMaxLength(10);
         builder.Property(u => u.Theme).HasMaxLength(10);
+        builder.Property(u => u.UiTheme).HasMaxLength(20);
+        builder.Property(u => u.LandingApp).HasMaxLength(40);
+        builder.Property(u => u.FavouriteApps).HasMaxLength(1000);
         builder.Ignore(u => u.HasLocalPassword);
         builder.HasIndex(u => u.NormalizedUserName).IsUnique();
         builder.HasIndex(u => u.NormalizedEmail);

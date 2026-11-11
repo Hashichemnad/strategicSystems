@@ -18,6 +18,7 @@ import {
   DialogContent,
   FormField,
   PageHeader,
+  RecordLayout,
   StageStepper,
   Skeleton,
   StatusBanner,
@@ -80,55 +81,95 @@ export function SampleItemPage() {
         ? 'approved'
         : data.approvalStatus;
 
+  const openTab = (next: 'approvals' | 'tasks' | 'teams' | 'documents') =>
+    void navigate({ search: { tab: next } });
   return (
-    <div className="flex flex-col gap-6">
-      <Link
-        to="/sample"
-        search={{ page: 1, sort: '-createdAt' }}
-        className="flex items-center gap-1 text-sm text-primary hover:underline"
-      >
-        <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden />
-        {t('title')}
-      </Link>
-      <PageHeader
-        title={name}
-        description={data.number ?? undefined}
-        meta={
-          <>
-            <OriginBadge type="sample.item" id={data.id} />
-            <StatusChip tone={data.status === 'active' ? 'success' : 'neutral'}>
-              {t(data.status === 'active' ? 'status.active' : 'status.inactive')}
-            </StatusChip>
-            <StatusChip tone={approvalTone[data.approvalStatus] ?? 'neutral'}>
-              {t(`approvalStatus.${data.approvalStatus as 'draft'}`)}
-            </StatusChip>
-          </>
-        }
-        actions={
-          canEdit &&
-          data.approvalStatus !== 'pending' && (
-            <Button variant="outline" onClick={() => setEditing(true)}>
-              <Pencil aria-hidden />
-              {tc('actions.edit')}
-            </Button>
-          )
-        }
-      />
-      <StageStepper
-        stages={[
-          { key: 'draft', label: t('stages.draft') },
-          { key: 'pending', label: t('stages.pending') },
-          { key: 'approved', label: t('stages.approved') },
-        ]}
-        current={stage}
-      />
-      <CurrentStatusBanner
-        resourceType="sample.item"
-        resourceId={data.id}
-        onAction={(code) => {
-          if (code === 'submit' || code === 'resubmit') setSubmitting(true);
-        }}
-      />
+    <RecordLayout
+      back={
+        <Link
+          to="/sample"
+          search={{ page: 1, sort: '-createdAt' }}
+          className="flex items-center gap-1 text-sm text-primary hover:underline"
+        >
+          <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden />
+          {t('title')}
+        </Link>
+      }
+      header={
+        <PageHeader
+          title={name}
+          description={data.number ?? undefined}
+          meta={
+            <>
+              <OriginBadge type="sample.item" id={data.id} />
+              <StatusChip tone={data.status === 'active' ? 'success' : 'neutral'}>
+                {t(data.status === 'active' ? 'status.active' : 'status.inactive')}
+              </StatusChip>
+              <StatusChip tone={approvalTone[data.approvalStatus] ?? 'neutral'}>
+                {t(`approvalStatus.${data.approvalStatus as 'draft'}`)}
+              </StatusChip>
+            </>
+          }
+          actions={
+            canEdit &&
+            data.approvalStatus !== 'pending' && (
+              <Button variant="outline" onClick={() => setEditing(true)}>
+                <Pencil aria-hidden />
+                {tc('actions.edit')}
+              </Button>
+            )
+          }
+        />
+      }
+      highlights={[
+        { key: 'number', label: t('fields.number'), value: data.number ? <bdi>{data.number}</bdi> : '—' },
+        {
+          key: 'status',
+          label: t('fields.status'),
+          value: t(data.status === 'active' ? 'status.active' : 'status.inactive'),
+        },
+        {
+          key: 'approvalStatus',
+          label: t('fields.approvalStatus'),
+          value: t(`approvalStatus.${data.approvalStatus as 'draft'}`),
+        },
+        {
+          key: 'amount',
+          label: t('fields.amount'),
+          value: data.amount === null ? '—' : formatNumber(data.amount, i18n.language),
+        },
+        {
+          key: 'updatedAt',
+          label: t('fields.updatedAt'),
+          value: formatDateTime(data.updatedAt, i18n.language),
+        },
+      ]}
+      path={
+        <StageStepper
+          stages={[
+            { key: 'draft', label: t('stages.draft') },
+            { key: 'pending', label: t('stages.pending') },
+            { key: 'approved', label: t('stages.approved') },
+          ]}
+          current={stage}
+        />
+      }
+      status={
+        <CurrentStatusBanner
+          resourceType="sample.item"
+          resourceId={data.id}
+          onAction={(code) => {
+            if (code === 'submit' || code === 'resubmit') setSubmitting(true);
+          }}
+        />
+      }
+      related={[
+        { key: 'approvals', label: t('tabs.approvals'), onOpen: () => openTab('approvals') },
+        { key: 'tasks', label: tk('linked.title'), onOpen: () => openTab('tasks') },
+        { key: 'teams', label: tt('linked.title'), onOpen: () => openTab('teams') },
+        { key: 'documents', label: tf('tab'), onOpen: () => openTab('documents') },
+      ]}
+    >
       <Tabs value={tab} onValueChange={(value) => void navigate({ search: { tab: value as 'overview' } })}>
         <TabsList>
           <TabsTrigger value="overview">{t('tabs.overview')}</TabsTrigger>
@@ -190,7 +231,7 @@ export function SampleItemPage() {
       </Tabs>
       <SampleItemDialog open={editing} onOpenChange={setEditing} item={data} />
       {submitting && <SubmitDialog item={data} onClose={() => setSubmitting(false)} />}
-    </div>
+    </RecordLayout>
   );
 }
 

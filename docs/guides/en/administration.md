@@ -72,6 +72,7 @@ meantime you are told to reload (no silent overwrite). Every settings change is 
 |---|---|---|
 | **Regional settings** | **Time zone**, **Show Hijri dates**, **Arabic-Indic digits**, **Currency code**, **Date format** | Asia/Dubai, Hijri off (data always stays Gregorian), Latin digits, AED, dd/MM/yyyy. The time zone drives every deadline, reminder and "today". |
 | **Branding** | organisation name (AR / EN), **Primary colour**, logos for the light and dark theme (PNG / JPEG / WebP ≤ 512 KB), e-mail header and footer (AR / EN) | Used in the app shell, every e-mail, PDF (memos, certificates, reports) and the Wasel portal. |
+| **Appearance** | available themes (**Classic**, **Enterprise**, **Modern**), **Default theme** and **Default mode** (light / dark / same as device), **Allow users to choose their theme**, **Allow users to choose light or dark**, **Landing app per role** (ordered rules: role → app), and per **application**: display name AR / EN, icon, accent colour, tab order and hidden tabs, home dashboard | Classic, same as device, choosing the theme **off**, choosing light / dark on. The first matching landing rule wins; a user's own default app comes first; Classic always opens My Work. App settings change only how apps look — never who may open them. Keep accent colours dark enough for white icons (the page warns below 3 : 1). Logo and primary colour from Branding apply in every theme. |
 | **Systems** | switch each system on or off and set its **Owning unit** | Platform components are always on. Switching a system off hides it, its links on other records, its My Work card, MCP tools and AI features — data stays. The owning unit is what approval steps of type "owning unit of this system" resolve to (e.g. move Risk Management from the Audit Office to the Strategy Office in one change). |
 | **Features** | optional features: *Personal access tokens* (on), *KPI definition change control* (on), *Full audit lifecycle (layer 2)* (off) | Portfolio's standards features have their own switches in **Settings → Portfolio** (§7). |
 | **Dashboards** | default dashboards per role, built from the widget catalogue, published without code | See [Dashboards guide](user-dashboards.md) §6. |
@@ -80,6 +81,7 @@ meantime you are told to reload (no silent overwrite). Every settings change is 
 | **Holidays** | public holidays and closures per year, recurring yearly dates, partial days, which business-hours records they apply to, Excel import | Hijri holidays are entered per year as dates. Two active holidays sharing a business-hours record may not overlap. |
 
 ![Systems](../../screenshots/phase-2/en-settings-systems.png)
+![Appearance](../../screenshots/phase-20/en-classic-light-appearance.png)
 ![Business hours](../../screenshots/phase-4/en-settings-business-hours.png)
 
 ## 4. Data and language

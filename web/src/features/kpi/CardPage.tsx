@@ -21,6 +21,7 @@ import {
   FormField,
   Input,
   PageHeader,
+  RecordLayout,
   Select,
   Skeleton,
   StatusBanner,
@@ -57,7 +58,7 @@ import {
   type KpiCardTarget,
   type ProposedChange,
 } from './api';
-import { KpiPage, PerformanceValue, RagChip, usePercent, useKpiT, useNumber } from './components';
+import { KpiNav, PerformanceValue, RagChip, usePercent, useKpiT, useNumber } from './components';
 import { ExternalReferencesSection, OriginBadge } from '@/features/integration/ExternalReferences';
 
 const route = getRouteApi('/app/kpi/cards/$cardId');
@@ -96,86 +97,128 @@ export function KpiCardPage() {
   const data = card.data;
   const plan = plans.data?.find((p) => p.cardId === data.id);
 
+  const goTab = (value: (typeof cardTabs)[number]) => void navigate({ search: { tab: value } });
+  // KpiPage's secondary navigation comes first (Classic keeps the same order); the record layout adds the theme's slots.
   return (
-    <KpiPage testId="kpi-card-page">
-      <Link to="/kpi/cards" className="flex items-center gap-1 text-sm text-primary hover:underline">
-        <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden />
-        {t('cards.title')}
-      </Link>
-      <PageHeader
-        title={pickText(language, data.values.nameAr, data.values.nameEn)}
-        description={
-          <>
-            <bdi>{data.code}</bdi> · {k(`measuringPeriod.${data.values.measuringPeriod}`)} ·{' '}
-            {k(`direction.${data.values.direction}`)}
-          </>
-        }
-        meta={
-          <>
-            <OriginBadge type="kpi.card" id={data.id} />
-            <StatusChip tone={data.status === 'active' ? 'success' : 'neutral'}>
-              {k(`cardStatus.${data.status}`)}
-            </StatusChip>
-            {plan && (
-              <span className="flex items-center gap-2">
-                <PerformanceValue capped={plan.capped} actual={plan.actual} />
-                <RagChip rag={plan.rag} />
-              </span>
-            )}
-            {data.changeControlled && <StatusChip tone="info">{t('card.changeControlled')}</StatusChip>}
-          </>
-        }
-        actions={
-          <div className="flex flex-wrap gap-2">
-            {data.canManage && (
-              <>
-                <Button variant="outline" asChild>
-                  <Link to="/kpi/cards/$cardId/edit" params={{ cardId: data.id }} data-testid="kpi-card-edit">
-                    <Pencil aria-hidden />
-                    {t('actions.edit')}
-                  </Link>
-                </Button>
-                <Button variant="outline" onClick={() => setDialog('targets')}>
-                  {t('card.targets')}
-                </Button>
-                {data.yearStarted && (
+    <RecordLayout
+      testId="kpi-card-page"
+      back={
+        <>
+          <KpiNav />
+          <Link to="/kpi/cards" className="flex items-center gap-1 text-sm text-primary hover:underline">
+            <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden />
+            {t('cards.title')}
+          </Link>
+        </>
+      }
+      header={
+        <PageHeader
+          title={pickText(language, data.values.nameAr, data.values.nameEn)}
+          description={
+            <>
+              <bdi>{data.code}</bdi> · {k(`measuringPeriod.${data.values.measuringPeriod}`)} ·{' '}
+              {k(`direction.${data.values.direction}`)}
+            </>
+          }
+          meta={
+            <>
+              <OriginBadge type="kpi.card" id={data.id} />
+              <StatusChip tone={data.status === 'active' ? 'success' : 'neutral'}>
+                {k(`cardStatus.${data.status}`)}
+              </StatusChip>
+              {plan && (
+                <span className="flex items-center gap-2">
+                  <PerformanceValue capped={plan.capped} actual={plan.actual} />
+                  <RagChip rag={plan.rag} />
+                </span>
+              )}
+              {data.changeControlled && <StatusChip tone="info">{t('card.changeControlled')}</StatusChip>}
+            </>
+          }
+          actions={
+            <div className="flex flex-wrap gap-2">
+              {data.canManage && (
+                <>
+                  <Button variant="outline" asChild>
+                    <Link
+                      to="/kpi/cards/$cardId/edit"
+                      params={{ cardId: data.id }}
+                      data-testid="kpi-card-edit"
+                    >
+                      <Pencil aria-hidden />
+                      {t('actions.edit')}
+                    </Link>
+                  </Button>
+                  <Button variant="outline" onClick={() => setDialog('targets')}>
+                    {t('card.targets')}
+                  </Button>
+                  {data.yearStarted && (
+                    <Button
+                      variant="outline"
+                      onClick={() => setDialog('change')}
+                      data-testid="kpi-request-change"
+                    >
+                      {t('changes.request')}
+                    </Button>
+                  )}
                   <Button
                     variant="outline"
-                    onClick={() => setDialog('change')}
-                    data-testid="kpi-request-change"
+                    loading={status.isPending}
+                    onClick={() =>
+                      status.mutate(
+                        { id: data.id, active: data.status !== 'active', version: data.version },
+                        { onError: (e) => toast({ tone: 'error', title: errorMessage(tc, e) }) },
+                      )
+                    }
                   >
-                    {t('changes.request')}
+                    {data.status === 'active' ? t('actions.deactivate') : t('actions.activate')}
                   </Button>
-                )}
-                <Button
-                  variant="outline"
-                  loading={status.isPending}
-                  onClick={() =>
-                    status.mutate(
-                      { id: data.id, active: data.status !== 'active', version: data.version },
-                      { onError: (e) => toast({ tone: 'error', title: errorMessage(tc, e) }) },
-                    )
-                  }
-                >
-                  {data.status === 'active' ? t('actions.deactivate') : t('actions.activate')}
+                </>
+              )}
+              {aiBuilder && (
+                <Button variant="ghost" onClick={() => setDialog('smart')}>
+                  <Sparkles aria-hidden />
+                  {t('ai.smart.action')}
                 </Button>
-              </>
-            )}
-            {aiBuilder && (
-              <Button variant="ghost" onClick={() => setDialog('smart')}>
-                <Sparkles aria-hidden />
-                {t('ai.smart.action')}
-              </Button>
-            )}
-            {aiTargets && (
-              <Button variant="ghost" onClick={() => setDialog('suggest')}>
-                <Sparkles aria-hidden />
-                {t('ai.targets.action')}
-              </Button>
-            )}
-          </div>
-        }
-      />
+              )}
+              {aiTargets && (
+                <Button variant="ghost" onClick={() => setDialog('suggest')}>
+                  <Sparkles aria-hidden />
+                  {t('ai.targets.action')}
+                </Button>
+              )}
+            </div>
+          }
+        />
+      }
+      highlights={[
+        { key: 'code', label: t('fields.code'), value: <bdi>{data.code}</bdi> },
+        {
+          key: 'period',
+          label: t('fields.measuringPeriod'),
+          value: k(`measuringPeriod.${data.values.measuringPeriod}`),
+        },
+        { key: 'direction', label: t('fields.direction'), value: k(`direction.${data.values.direction}`) },
+        { key: 'level', label: t('fields.level'), value: k(`level.${data.values.level}`) },
+        {
+          key: 'unit',
+          label: t('fields.responsibleUnitId'),
+          value: data.responsibleUnit
+            ? pickText(language, data.responsibleUnit.nameAr, data.responsibleUnit.nameEn)
+            : '—',
+        },
+        {
+          key: 'person',
+          label: t('fields.responsibleEmployeeId'),
+          value: data.responsiblePerson
+            ? pickText(language, data.responsiblePerson.nameAr, data.responsiblePerson.nameEn)
+            : '—',
+        },
+      ]}
+      related={(
+        ['plans', 'performance', 'alignment', 'linked', 'documents', 'versions', 'tasks'] as const
+      ).map((key) => ({ key, label: t(`card.tabs.${key}`), onOpen: () => goTab(key) }))}
+    >
       <Tabs
         value={tab ?? 'details'}
         onValueChange={(value) => void navigate({ search: { tab: value as 'details' } })}
@@ -223,7 +266,7 @@ export function KpiCardPage() {
       {dialog === 'change' && <ChangeDialog card={data} onClose={() => setDialog(undefined)} />}
       {dialog === 'smart' && <SmartDialog cardId={data.id} onClose={() => setDialog(undefined)} />}
       {dialog === 'suggest' && <SuggestDialog cardId={data.id} onClose={() => setDialog(undefined)} />}
-    </KpiPage>
+    </RecordLayout>
   );
 }
 

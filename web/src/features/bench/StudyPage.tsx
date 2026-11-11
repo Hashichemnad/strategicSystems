@@ -18,6 +18,7 @@ import {
   Checkbox,
   FormField,
   PageHeader,
+  RecordLayout,
   Skeleton,
   StageStepper,
   StatusBanner,
@@ -46,7 +47,7 @@ import {
   type BenchStudy,
   type StudySummary,
 } from './api';
-import { BenchPageLayout, StageChip, useBenchAction, useBenchLabels, useBenchT } from './components';
+import { BenchNav, StageChip, useBenchAction, useBenchLabels, useBenchT } from './components';
 import { AnalysisTab, SearchTab, VisitsTab } from './StudyTabs';
 import { ExternalReferencesSection, OriginBadge } from '@/features/integration/ExternalReferences';
 
@@ -85,62 +86,98 @@ export function BenchStudyPage() {
   const go = (next: StudyTab) => void navigate({ search: { tab: next } });
 
   return (
-    <BenchPageLayout testId="bench-study-page">
-      <Link to="/bench/studies" className="flex items-center gap-1 text-sm text-primary hover:underline">
-        <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden />
-        {t('studies.title')}
-      </Link>
-      <PageHeader
-        title={names.text(s.titleAr, s.titleEn) || s.number}
-        description={
-          <>
-            <bdi data-testid="bench-study-number">{s.number}</bdi> · {names.unit(s.responsibleUnit)} ·{' '}
+    <RecordLayout
+      testId="bench-study-page"
+      // Benchmarking's own navigation first (BenchPageLayout); hidden in the workspace themes (app tabs).
+      back={
+        <>
+          <BenchNav />
+          <Link to="/bench/studies" className="flex items-center gap-1 text-sm text-primary hover:underline">
+            <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden />
+            {t('studies.title')}
+          </Link>
+        </>
+      }
+      header={
+        <PageHeader
+          title={names.text(s.titleAr, s.titleEn) || s.number}
+          description={
+            <>
+              <bdi data-testid="bench-study-number">{s.number}</bdi> · {names.unit(s.responsibleUnit)} ·{' '}
+              <bdi>
+                Q{s.targetQuarter} {s.targetYear}
+              </bdi>
+            </>
+          }
+          meta={
+            <div className="flex flex-wrap items-center gap-2">
+              <OriginBadge type="bench.study" id={s.id} />
+              <StageChip stage={s.stage} status={s.status} />
+              {s.pendingProcess && <StatusChip tone="info">{k(`process.${s.pendingProcess}`)}</StatusChip>}
+              {s.returned && <StatusChip tone="warning">{t('study.returned')}</StatusChip>}
+              {s.analysisApprovedAt && <StatusChip tone="success">{t('study.analysisApproved')}</StatusChip>}
+            </div>
+          }
+          actions={
+            s.can.cancel && (
+              <Button variant="ghost" onClick={() => setDialog('cancel')} data-testid="bench-study-cancel">
+                <Ban aria-hidden />
+                {t('study.cancel')}
+              </Button>
+            )
+          }
+        />
+      }
+      highlights={[
+        { key: 'number', label: t('fields.number'), value: <bdi>{s.number}</bdi> },
+        { key: 'responsibleUnit', label: t('fields.responsibleUnit'), value: names.unit(s.responsibleUnit) },
+        { key: 'coordinator', label: t('fields.coordinator'), value: names.person(s.responsibleEmployee) },
+        { key: 'requester', label: t('fields.requester'), value: names.person(s.requester) },
+        {
+          key: 'target',
+          label: t('fields.target'),
+          value: (
             <bdi>
               Q{s.targetQuarter} {s.targetYear}
             </bdi>
-          </>
-        }
-        meta={
-          <div className="flex flex-wrap items-center gap-2">
-            <OriginBadge type="bench.study" id={s.id} />
-            <StageChip stage={s.stage} status={s.status} />
-            {s.pendingProcess && <StatusChip tone="info">{k(`process.${s.pendingProcess}`)}</StatusChip>}
-            {s.returned && <StatusChip tone="warning">{t('study.returned')}</StatusChip>}
-            {s.analysisApprovedAt && <StatusChip tone="success">{t('study.analysisApproved')}</StatusChip>}
+          ),
+        },
+      ]}
+      path={
+        s.status !== 'cancelled' && (
+          <StageStepper
+            stages={studyStages.map((x) => ({ key: x, label: k(`stage.${x}`) }))}
+            current={s.stage}
+          />
+        )
+      }
+      status={
+        <>
+          <div data-testid="bench-current-status">
+            <CurrentStatusBanner
+              resourceType="bench.study"
+              resourceId={s.id}
+              onAction={(code) => {
+                if (code === 'search') go('search');
+                if (code === 'visit') go('visit');
+                if (code === 'analysis') go('analysis');
+                if (code === 'closure') setDialog('closure');
+                if (code === 'impact') go('impact');
+                if (code === 'decide') go('approvals');
+              }}
+            />
           </div>
-        }
-        actions={
-          s.can.cancel && (
-            <Button variant="ghost" onClick={() => setDialog('cancel')} data-testid="bench-study-cancel">
-              <Ban aria-hidden />
-              {t('study.cancel')}
-            </Button>
-          )
-        }
-      />
-      {s.status !== 'cancelled' && (
-        <StageStepper
-          stages={studyStages.map((x) => ({ key: x, label: k(`stage.${x}`) }))}
-          current={s.stage}
-        />
-      )}
-      <div data-testid="bench-current-status">
-        <CurrentStatusBanner
-          resourceType="bench.study"
-          resourceId={s.id}
-          onAction={(code) => {
-            if (code === 'search') go('search');
-            if (code === 'visit') go('visit');
-            if (code === 'analysis') go('analysis');
-            if (code === 'closure') setDialog('closure');
-            if (code === 'impact') go('impact');
-            if (code === 'decide') go('approvals');
-          }}
-        />
-      </div>
-      {s.returned && s.returnComment && (
-        <StatusBanner tone="warning" title={t('study.returnComment')} description={s.returnComment} />
-      )}
+          {s.returned && s.returnComment && (
+            <StatusBanner tone="warning" title={t('study.returnComment')} description={s.returnComment} />
+          )}
+        </>
+      }
+      related={(['search', 'visit', 'analysis', 'actions', 'tasks', 'documents'] as const).map((key) => ({
+        key,
+        label: t(`tabs.${key}`),
+        onOpen: () => go(key),
+      }))}
+    >
       <Tabs value={tab ?? 'overview'} onValueChange={(value) => go(value as StudyTab)}>
         <TabsList className="flex-wrap" data-testid="bench-study-tabs">
           {studyTabs.map((key) => (
@@ -208,7 +245,7 @@ export function BenchStudyPage() {
           onSubmit={(reason) => cancel.run({ id: s.id, reason })}
         />
       )}
-    </BenchPageLayout>
+    </RecordLayout>
   );
 }
 

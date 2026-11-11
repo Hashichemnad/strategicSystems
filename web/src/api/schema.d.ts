@@ -404,6 +404,22 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/settings/appearance': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetAppearanceSettings'];
+    put: operations['UpdateAppearanceSettings'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/settings/branding/logo/{kind}': {
     parameters: {
       query?: never;
@@ -14164,6 +14180,25 @@ export interface components {
       token: string;
       headerName: string;
     };
+    /**
+     * @description Settings → Appearance (SPEC-ADDENDUM §C1, docs/design/themes.md §2, ADR 0171): enabled themes, the installation's default theme and mode,
+     *     whether users may choose, the landing app per role and per-app overrides. One JSON document like Branding.
+     */
+    AppearanceSettings: {
+      enabledThemes?: null | string[];
+      /** @default classic */
+      defaultTheme: string;
+      /** @default system */
+      defaultMode: string;
+      /** @default false */
+      allowUserTheme: boolean;
+      /** @default true */
+      allowUserMode: boolean;
+      landingRules?: null | components['schemas']['LandingRule'][];
+      apps?: null | {
+        [key: string]: components['schemas']['AppOverride'];
+      };
+    };
     ApplyTemplateInput: {
       /** Format: uuid */
       templateId: string;
@@ -14177,6 +14212,19 @@ export interface components {
       risks: number;
       /** Format: int32 */
       epics: number;
+    };
+    /**
+     * @description Administrator overrides of one application workspace (SPEC-ADDENDUM §C2): names, icon, accent colour, tab order / hidden tabs and the
+     *     home dashboard. Never grants access: tabs and apps stay filtered by the user's permissions.
+     */
+    AppOverride: {
+      nameAr?: null | string;
+      nameEn?: null | string;
+      icon?: null | string;
+      accent?: null | string;
+      tabOrder?: null | string[];
+      hiddenTabs?: null | string[];
+      dashboard?: null | string;
     };
     ApprovalActionOptionDto: {
       code: string;
@@ -20194,6 +20242,11 @@ export interface components {
       /** Format: double */
       breachThreshold: number;
     };
+    /** @description "Users holding RoleCode land on App" — the first matching rule wins (ADR 0173). */
+    LandingRule: {
+      roleCode: string;
+      app: string;
+    };
     LessonDto: {
       /** Format: uuid */
       id: string;
@@ -20448,6 +20501,20 @@ export interface components {
       /** Format: int32 */
       rateLimitPerMinute?: null | number;
     };
+    /**
+     * @description The user's effective theme and mode (resolved on the server, ADR 0171), their stored theme choice, default app, favourite apps, and what
+     *     Settings → Appearance lets them choose.
+     */
+    MeAppearanceDto: {
+      theme: string;
+      mode: string;
+      themeChoice: null | string;
+      landingApp: null | string;
+      favouriteApps: string[];
+      allowUserTheme: boolean;
+      allowUserMode: boolean;
+      enabledThemes: string[];
+    };
     /** @description A Measuring Method code mapped to its aggregation rule (SPEC K5). */
     MeasuringMethodRule: {
       code: string;
@@ -20470,6 +20537,7 @@ export interface components {
       mfaEnabled: boolean;
       hasPassword: boolean;
       authMethod: string;
+      appearance: components['schemas']['MeAppearanceDto'];
     };
     MeEmployeeDto: {
       /** Format: uuid */
@@ -22237,6 +22305,9 @@ export interface components {
     PreferencesInput: {
       language: null | string;
       theme: null | string;
+      uiTheme?: null | string;
+      landingApp?: null | string;
+      favouriteApps?: null | string[];
     };
     PreviewApproverDto: {
       /** Format: uuid */
@@ -22974,6 +23045,8 @@ export interface components {
       regional: components['schemas']['RegionalSettings'];
       /** Format: int64 */
       translationsVersion: number;
+      defaultTheme: string;
+      defaultMode: string;
     };
     QuestionInput: {
       question: null | string;
@@ -24910,6 +24983,11 @@ export interface components {
       ipAddress: null | string;
       userAgent: null | string;
       current: boolean;
+    };
+    SettingsDocumentOfAppearanceSettings: {
+      value: null | components['schemas']['AppearanceSettings'];
+      /** Format: uint32 */
+      version: number;
     };
     SettingsDocumentOfAuditMgmtSettings: {
       value: null | components['schemas']['AuditMgmtSettings'];
@@ -27364,6 +27442,11 @@ export interface components {
       summaryAr: null | string;
       summaryEn: null | string;
     };
+    VersionedInputOfAppearanceSettings: {
+      value: null | components['schemas']['AppearanceSettings'];
+      /** Format: uint32 */
+      version: number;
+    };
     VersionedInputOfBrandingSettings: {
       value: null | components['schemas']['BrandingSettings'];
       /** Format: uint32 */
@@ -28649,6 +28732,68 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['SettingsDocumentOfBrandingSettings'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetAppearanceSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SettingsDocumentOfAppearanceSettings'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateAppearanceSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['VersionedInputOfAppearanceSettings'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SettingsDocumentOfAppearanceSettings'];
         };
       };
       /** @description Problem Details (RFC 9457) */
