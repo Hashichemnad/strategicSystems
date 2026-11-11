@@ -31,6 +31,18 @@ public sealed record ReportDefinition
     public List<string> GroupBy { get; init; } = [];
 
     public List<ReportSort> Sort { get; init; } = [];
+
+    /// <summary>Reporting 2.0 (ADR 0181): a report type code (or <c>dataset:&lt;code&gt;</c>); columns are then qualified (<c>b.title</c>).</summary>
+    public string? ReportType { get; init; }
+
+    public List<ReportTypes.ReportSummary> Summaries { get; init; } = [];
+
+    public ReportTypes.ReportChart? Chart { get; init; }
+
+    public List<ReportTypes.ReportHighlight> Highlights { get; init; } = [];
+
+    /// <summary>Grouped reports: list the detail rows under the subtotals (default) or only the subtotals.</summary>
+    public bool ShowDetails { get; init; } = true;
 }
 
 public sealed record ReportColumnDto(string Code, string LabelAr, string LabelEn, string Type);
@@ -40,9 +52,11 @@ public sealed record ReportRowDto(Guid? Id, IReadOnlyList<string?> Cells, string
 public sealed record ReportRunDto(string Dataset, IReadOnlyList<ReportColumnDto> Columns, IReadOnlyList<ReportRowDto> Rows, int Total, int Page, int PageSize,
     IReadOnlyList<string> DroppedColumns);
 
-public sealed record SavedReportDto(Guid Id, string Name, string? Description, string Dataset, ReportDefinition Definition, Guid OwnerUserId, bool CanEdit, uint Version);
+public sealed record SavedReportDto(
+    Guid Id, string Name, string? Description, string Dataset, ReportDefinition Definition, Guid OwnerUserId, bool CanEdit, uint Version, Guid? FolderId = null,
+    bool Shared = false);
 
-public sealed record SavedReportInput(string Name, string? Description, ReportDefinition Definition);
+public sealed record SavedReportInput(string Name, string? Description, ReportDefinition Definition, Guid? FolderId = null);
 
 public sealed record ExportedFile(byte[] Content, string ContentType, string FileName);
 
@@ -52,7 +66,8 @@ public sealed record ExportedFile(byte[] Content, string ContentType, string Fil
 /// </summary>
 public sealed class ReportService(
     MetricRegistry registry, IAccessService access, ReportingDbContext db, ILookupService lookups, IOrgDirectory org, IEmployeeDirectory employees,
-    ISettingsStore settings, IPdfRenderer pdf, IAuditLog audit, DashboardService dashboards, ExternalReferenceColumns externalColumns)
+    ISettingsStore settings, IPdfRenderer pdf, IAuditLog audit, DashboardService dashboards, ExternalReferenceColumns externalColumns,
+    ReportTypes.ReportTypeEngine engine, ReportTypes.ReportTypeExport typeExport)
 {
     public const int MaxPageSize = 200;
 
@@ -350,7 +365,19 @@ public sealed class ReportService(
             return Error.Forbidden();
         }
 
-        var run = await RunAllAsync(definition, language, user, ct).ConfigureAwait(false);
+        if (definition?.ReportType is not null)
+        {
+            var typed = await RenderDefinitionAsync(definition, format, language, title, user, ct).ConfigureAwait(false);
+            if (typed.IsSuccess)
+            {
+                await audit.WriteAsync(new AuditEvent("reporting.report.export", true, ReportingPermissions.SystemCode, "reporting.report-type", definition.ReportType,
+                    new { format, rows = typed.Value.Rows, columns = definition.Columns }), ct).ConfigureAwait(false);
+            }
+
+            return typed.IsSuccess ? typed.Value.File : typed.Error;
+        }
+
+        var run = await RunAllAsync(definition!, language, user, ct).ConfigureAwait(false);
         if (run.IsFailure)
         {
             return run.Error;
@@ -359,11 +386,52 @@ public sealed class ReportService(
         var file = await RenderAsync(run.Value, format, language, title, ct).ConfigureAwait(false);
         if (file.IsSuccess)
         {
-            await audit.WriteAsync(new AuditEvent("reporting.report.export", true, ReportingPermissions.SystemCode, "reporting.dataset", definition.Dataset,
+            await audit.WriteAsync(new AuditEvent("reporting.report.export", true, ReportingPermissions.SystemCode, "reporting.dataset", definition!.Dataset,
                 new { format, rows = run.Value.Rows.Count, columns = run.Value.Columns.Select(c => c.Code) }), ct).ConfigureAwait(false);
         }
 
         return file;
+    }
+
+    /// <summary>
+    /// A file of any definition as <paramref name="user"/> (exports and schedules): type-based definitions through the Reporting 2.0 engine
+    /// (Excel / PDF / CSV), Phase 17 definitions through the dataset path (Excel / PDF).
+    /// </summary>
+    public async Task<Result<(ExportedFile File, int Rows)>> RenderDefinitionAsync(ReportDefinition definition, string format, string language, string title, ClaimsPrincipal user, CancellationToken ct)
+    {
+        ArgumentNullException.ThrowIfNull(definition);
+        var safe = new string(title.Where(ch => char.IsLetterOrDigit(ch) || ch is '-' or '_').ToArray());
+        var name = string.IsNullOrEmpty(safe) ? "report" : safe;
+        if (definition.ReportType is null)
+        {
+            var legacy = await RunAllAsync(definition, language, user, ct).ConfigureAwait(false);
+            if (legacy.IsFailure)
+            {
+                return legacy.Error;
+            }
+
+            var file = await RenderAsync(legacy.Value, format, language, title, ct).ConfigureAwait(false);
+            return file.IsSuccess ? (file.Value, legacy.Value.Rows.Count) : file.Error;
+        }
+
+        var run = await engine.RunAsync(definition, 1, ReportTypes.ReportTypeEngine.MaxPageSize, language, user, ct, all: true).ConfigureAwait(false);
+        if (run.IsFailure)
+        {
+            return run.Error;
+        }
+
+        switch (format)
+        {
+            case "xlsx":
+                return (new ExportedFile(ReportTypes.ReportTypeExport.Excel(run.Value, language, title), ExcelExport.ContentType, name + ".xlsx"), run.Value.Total);
+            case "csv":
+                return (new ExportedFile(ReportTypes.ReportTypeExport.Csv(run.Value, language), ReportTypes.ReportTypeExport.CsvContentType, name + ".csv"), run.Value.Total);
+            case "pdf":
+                var bytes = await typeExport.PdfAsync(run.Value, language, title, ct).ConfigureAwait(false);
+                return bytes.IsSuccess ? (new ExportedFile(bytes.Value, "application/pdf", name + ".pdf"), run.Value.Total) : bytes.Error;
+            default:
+                return Error.Validation([new FieldError("format", "reporting.errors.format", "reporting.errors.format")]);
+        }
     }
 
     public async Task<Result<ExportedFile>> RenderAsync(ReportRunDto run, string format, string language, string title, CancellationToken ct)
@@ -410,13 +478,23 @@ public sealed class ReportService(
     private async Task<bool> CanSeeReportAsync(SavedReport report, ClaimsPrincipal user, CancellationToken ct) =>
         report.Status == "active" && (report.OwnerUserId == user.UserId()
             || await dashboards.MatchesAnyAsync(await db.Shares.AsNoTracking().Where(s => s.TargetKind == "report" && s.TargetId == report.Id).ToListAsync(ct).ConfigureAwait(false), user, ct)
-                .ConfigureAwait(false));
+                .ConfigureAwait(false)
+            || (report.FolderId is { } folderId && await SharedFolderVisibleAsync(folderId, user, ct).ConfigureAwait(false)));
+
+    /// <summary>A shared folder the user matches (ADR 0183): its reports are published to them.</summary>
+    public async Task<bool> SharedFolderVisibleAsync(Guid folderId, ClaimsPrincipal user, CancellationToken ct) =>
+        await db.Folders.AsNoTracking().AnyAsync(f => f.Id == folderId && f.Kind == FolderKinds.Shared && f.Status == DefinitionStatuses.Active, ct).ConfigureAwait(false)
+        && await dashboards.MatchesAnyAsync(await db.Shares.AsNoTracking().Where(s => s.TargetKind == "folder" && s.TargetId == folderId).ToListAsync(ct).ConfigureAwait(false), user, ct)
+            .ConfigureAwait(false);
 
     public async Task<IReadOnlyList<SavedReportDto>> ListAsync(ClaimsPrincipal user, CancellationToken ct)
     {
         var userId = user.UserId();
         var sharedIds = await db.Shares.AsNoTracking().Where(s => s.TargetKind == "report").Select(s => s.TargetId).Distinct().ToListAsync(ct).ConfigureAwait(false);
-        var candidates = await db.Reports.AsNoTracking().Where(r => r.Status == "active" && (r.OwnerUserId == userId || sharedIds.Contains(r.Id)))
+        var sharedFolders = await db.Folders.AsNoTracking().Where(f => f.Kind == FolderKinds.Shared && f.Status == DefinitionStatuses.Active).Select(f => f.Id)
+            .ToListAsync(ct).ConfigureAwait(false);
+        var candidates = await db.Reports.AsNoTracking()
+            .Where(r => r.Status == "active" && (r.OwnerUserId == userId || sharedIds.Contains(r.Id) || (r.FolderId != null && sharedFolders.Contains(r.FolderId.Value))))
             .OrderBy(r => r.Name).ToListAsync(ct).ConfigureAwait(false);
         var result = new List<SavedReportDto>();
         foreach (var r in candidates)
@@ -432,7 +510,7 @@ public sealed class ReportService(
 
     private static SavedReportDto ToDto(SavedReport r, ClaimsPrincipal user) =>
         new(r.Id, r.Name, r.Description, r.Dataset, JsonSerializer.Deserialize<ReportDefinition>(r.DefinitionJson, DashboardService.Json) ?? new ReportDefinition(),
-            r.OwnerUserId, r.OwnerUserId == user.UserId(), r.Version);
+            r.OwnerUserId, r.OwnerUserId == user.UserId(), r.Version, r.FolderId, r.OwnerUserId != user.UserId());
 
     public async Task<Result<SavedReportDto>> GetAsync(Guid id, ClaimsPrincipal user, CancellationToken ct)
     {
@@ -458,15 +536,50 @@ public sealed class ReportService(
         }
 
         // The author may only save what they could run themselves.
-        var prepared = await PrepareAsync(input.Definition, user, ct).ConfigureAwait(false);
-        if (prepared.IsFailure)
+        List<string> droppedColumns;
+        string datasetKey;
+        if (input.Definition.ReportType is { } reportType)
         {
-            return prepared.Error;
+            var typed = await engine.PrepareAsync(input.Definition, user, ct).ConfigureAwait(false);
+            if (typed.IsFailure)
+            {
+                return typed.Error;
+            }
+
+            droppedColumns = typed.Value.Dropped;
+            datasetKey = reportType;
+        }
+        else
+        {
+            var prepared = await PrepareAsync(input.Definition, user, ct).ConfigureAwait(false);
+            if (prepared.IsFailure)
+            {
+                return prepared.Error;
+            }
+
+            droppedColumns = prepared.Value.Dropped;
+            datasetKey = input.Definition.Dataset;
         }
 
-        if (prepared.Value.Dropped.Count > 0)
+        if (droppedColumns.Count > 0)
         {
             return Error.Validation([new FieldError("columns", "reporting.errors.fieldNotAllowed", "reporting.errors.fieldNotAllowed")]);
+        }
+
+        // A private folder of the owner, or (publishing, Report author) a shared folder they own (ADR 0183).
+        if (input.FolderId is { } folderId)
+        {
+            var folder = await db.Folders.AsNoTracking().FirstOrDefaultAsync(f => f.Id == folderId && f.OwnerUserId == userId && f.Status == DefinitionStatuses.Active, ct)
+                .ConfigureAwait(false);
+            if (folder is null)
+            {
+                return Error.Validation([new FieldError("folderId", "reporting.errors.folder", "reporting.errors.folder")]);
+            }
+
+            if (folder.Kind == FolderKinds.Shared && !await access.CanAsync(user, ReportingPermissions.ReportShare, cancellationToken: ct).ConfigureAwait(false))
+            {
+                return Error.Forbidden();
+            }
         }
 
         var json = JsonSerializer.Serialize(input.Definition, DashboardService.Json);
@@ -484,14 +597,16 @@ public sealed class ReportService(
                 return Error.Conflict();
             }
 
-            report.Update(input.Name.Trim(), input.Description, input.Definition.Dataset, json);
+            report.Update(input.Name.Trim(), input.Description, datasetKey, json);
         }
         else
         {
-            report = new SavedReport(userId, input.Name.Trim(), input.Definition.Dataset, json);
-            report.Update(input.Name.Trim(), input.Description, input.Definition.Dataset, json);
+            report = new SavedReport(userId, input.Name.Trim(), datasetKey, json);
+            report.Update(input.Name.Trim(), input.Description, datasetKey, json);
             db.Reports.Add(report);
         }
+
+        report.MoveTo(input.FolderId);
 
         await db.SaveChangesAsync(ct).ConfigureAwait(false);
         return ToDto(report, user);

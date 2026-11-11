@@ -46,6 +46,13 @@ public sealed class ReportingComponent : IPlatformComponent
         services.AddScoped<DashboardService>();
         services.AddScoped<DashboardRenderer>();
         services.AddScoped<ReportService>();
+        services.AddScoped<ReportTypes.ReportValueFormatter>();
+        services.AddScoped<ReportTypes.ReportTypeEngine>();
+        services.AddScoped<ReportTypes.ReportTypeService>();
+        services.AddScoped<ReportTypes.ReportTypeExport>();
+        services.AddScoped<FolderService>();
+        services.AddScoped<Dossiers.DossierBuilder>();
+        services.AddScoped<Dossiers.DossierTemplateService>();
         services.AddScoped<Datasets.ExternalReferenceColumns>();
         services.AddScoped<ScheduleService>();
         services.AddScoped<DeliveryRunner>();

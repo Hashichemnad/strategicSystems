@@ -19,6 +19,9 @@ public static class ReportingPermissions
     public const string Refresh = "reporting.aggregate.refresh";
     public const string BriefGenerate = "reporting.brief.generate";
     public const string SettingsManage = "reporting.settings.manage";
+    public const string ReportTypeManage = "reporting.report-type.manage";
+    public const string DossierRun = "reporting.dossier.run";
+    public const string DossierTemplateManage = "reporting.dossier-template.manage";
 
     public const string ExecutiveViewerRole = "executive-viewer";
     public const string ReportAuthorRole = "report-author";
@@ -44,12 +47,16 @@ internal sealed class ReportingCatalogue : IAccessCatalogueSource
         new(ReportingPermissions.Refresh, "طلب تحديث البيانات المجمّعة", "Request a refresh of the aggregates", false),
         new(ReportingPermissions.BriefGenerate, "إنشاء الموجز التنفيذي بالذكاء الاصطناعي", "Generate the AI executive brief", false),
         new(ReportingPermissions.SettingsManage, "إعدادات التقارير ولوحة المقارنة", "Reporting settings and the comparison scorecard", false),
+        new(ReportingPermissions.ReportTypeManage, "إدارة أنواع التقارير", "Manage report types", false),
+        new(ReportingPermissions.DossierRun, "إنشاء ملفات السجلات (PDF و Word)", "Generate record dossiers (PDF and Word)", false),
+        new(ReportingPermissions.DossierTemplateManage, "تصميم قوالب ملفات السجلات", "Design record dossier templates", false),
     ];
 
     public IEnumerable<RoleSeed> DefaultRoles =>
     [
         new("user", "مستخدم لوحات المعلومات", "Dashboard user",
-            [new(ReportingPermissions.DashboardRead), new(ReportingPermissions.ReportRun), new(ReportingPermissions.ReportExport)], AssignToEveryone: true),
+            [new(ReportingPermissions.DashboardRead), new(ReportingPermissions.ReportRun), new(ReportingPermissions.ReportExport), new(ReportingPermissions.DossierRun)],
+            AssignToEveryone: true),
         new(ReportingPermissions.ExecutiveViewerRole, "مستعرض اللوحة التنفيذية", "Executive viewer",
             [new(ReportingPermissions.ExecutiveRead), new(ReportingPermissions.BriefGenerate), new(ReportingPermissions.ScheduleManage)], RequiresMfa: true),
         new(ReportingPermissions.ReportAuthorRole, "معدّ التقارير", "Report author",
@@ -58,6 +65,7 @@ internal sealed class ReportingCatalogue : IAccessCatalogueSource
         [
             new(ReportingPermissions.DashboardBuild), new(ReportingPermissions.DashboardManage), new(ReportingPermissions.ReportBuild), new(ReportingPermissions.ReportShare),
             new(ReportingPermissions.ScheduleManage), new(ReportingPermissions.ScheduleAdminister), new(ReportingPermissions.Refresh), new(ReportingPermissions.SettingsManage),
+            new(ReportingPermissions.ReportTypeManage), new(ReportingPermissions.DossierTemplateManage),
         ], RequiresMfa: true),
     ];
 }

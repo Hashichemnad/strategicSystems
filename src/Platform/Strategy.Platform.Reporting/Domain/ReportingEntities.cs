@@ -337,6 +337,11 @@ public sealed class SavedReport : AuditableEntity
     /// <summary><c>active</c> or <c>archived</c> (no hard delete).</summary>
     public string Status { get; private set; } = "active";
 
+    /// <summary>The folder (ADR 0183); null = "My reports" root.</summary>
+    public Guid? FolderId { get; private set; }
+
+    public void MoveTo(Guid? folderId) => FolderId = folderId;
+
     public void Update(string name, string? description, string dataset, string definitionJson)
     {
         Name = name;
@@ -400,6 +405,11 @@ public sealed class Schedule : AuditableEntity
     public string RecipientsJson { get; private set; } = "[]";
 
     public bool Active { get; private set; }
+
+    /// <summary>Dossier schedules (ADR 0186): record filters, format, language mode (jsonb); null for dashboards and reports.</summary>
+    public string? OptionsJson { get; private set; }
+
+    public void SetOptions(string? optionsJson) => OptionsJson = optionsJson;
 
     public DateTimeOffset? NextRunAt { get; private set; }
 
@@ -498,4 +508,144 @@ public sealed class ExecutiveBrief : AuditableEntity
 
     /// <summary>Saved unchanged from the AI draft (the label stays until a person edits it).</summary>
     public bool AiGenerated { get; private set; }
+}
+
+public static class DefinitionStatuses
+{
+    public const string Active = "active";
+    public const string Inactive = "inactive";
+}
+
+/// <summary>
+/// A report type (ADR 0181): primary record type + related types along declared relationships. Seeded types carry a <see cref="SeedHash"/>;
+/// re-seeding replaces them only while nobody edited them.
+/// </summary>
+public sealed class ReportType : AuditableEntity
+{
+    private ReportType()
+    {
+    }
+
+    public ReportType(string code, string systemCode, string labelAr, string labelEn, string definitionJson)
+    {
+        Code = code;
+        SystemCode = systemCode;
+        LabelAr = labelAr;
+        LabelEn = labelEn;
+        DefinitionJson = definitionJson;
+        Status = DefinitionStatuses.Active;
+    }
+
+    public string Code { get; private set; } = string.Empty;
+
+    public string SystemCode { get; private set; } = string.Empty;
+
+    public string LabelAr { get; private set; } = string.Empty;
+
+    public string LabelEn { get; private set; } = string.Empty;
+
+    public string? DescriptionAr { get; private set; }
+
+    public string? DescriptionEn { get; private set; }
+
+    public string DefinitionJson { get; private set; } = "{}";
+
+    public string Status { get; private set; } = DefinitionStatuses.Active;
+
+    public string? SeedHash { get; private set; }
+
+    public void Update(string systemCode, string labelAr, string labelEn, string? descriptionAr, string? descriptionEn, string definitionJson, bool active)
+    {
+        SystemCode = systemCode;
+        LabelAr = labelAr;
+        LabelEn = labelEn;
+        DescriptionAr = descriptionAr;
+        DescriptionEn = descriptionEn;
+        DefinitionJson = definitionJson;
+        Status = active ? DefinitionStatuses.Active : DefinitionStatuses.Inactive;
+    }
+
+    public void Seeded(string hash) => SeedHash = hash;
+
+    public void Edited() => SeedHash = null;
+}
+
+public static class FolderKinds
+{
+    public const string Private = "private";
+    public const string Shared = "shared";
+}
+
+/// <summary>A report folder (ADR 0183): private (owner only) or shared (users / roles / units through <see cref="Share"/>).</summary>
+public sealed class ReportFolder : AuditableEntity
+{
+    private ReportFolder()
+    {
+    }
+
+    public ReportFolder(Guid ownerUserId, string name, string kind)
+    {
+        OwnerUserId = ownerUserId;
+        Name = name;
+        Kind = kind;
+        Status = DefinitionStatuses.Active;
+    }
+
+    public Guid OwnerUserId { get; private set; }
+
+    public string Name { get; private set; } = string.Empty;
+
+    public string Kind { get; private set; } = FolderKinds.Private;
+
+    public string Status { get; private set; } = DefinitionStatuses.Active;
+
+    public void Rename(string name) => Name = name;
+
+    public void Archive() => Status = DefinitionStatuses.Inactive;
+}
+
+/// <summary>A record dossier template (ADR 0184): record type, cover, header / footer and ordered sections (jsonb).</summary>
+public sealed class DossierTemplate : AuditableEntity
+{
+    private DossierTemplate()
+    {
+    }
+
+    public DossierTemplate(string code, string dataset, string labelAr, string labelEn, string definitionJson)
+    {
+        Code = code;
+        Dataset = dataset;
+        LabelAr = labelAr;
+        LabelEn = labelEn;
+        DefinitionJson = definitionJson;
+        Status = DefinitionStatuses.Active;
+    }
+
+    public string Code { get; private set; } = string.Empty;
+
+    /// <summary>The record type (a dataset code).</summary>
+    public string Dataset { get; private set; } = string.Empty;
+
+    public string LabelAr { get; private set; } = string.Empty;
+
+    public string LabelEn { get; private set; } = string.Empty;
+
+    public string DefinitionJson { get; private set; } = "{}";
+
+    public string Status { get; private set; } = DefinitionStatuses.Active;
+
+    public string? SeedHash { get; private set; }
+
+    public void Update(string dataset, string labelAr, string labelEn, string definitionJson, bool active)
+    {
+        Dataset = dataset;
+        LabelAr = labelAr;
+        LabelEn = labelEn;
+        DefinitionJson = definitionJson;
+        Status = active ? DefinitionStatuses.Active : DefinitionStatuses.Inactive;
+    }
+
+    public void Seeded(string hash) => SeedHash = hash;
+
+    public void Edited() => SeedHash = null;
 }

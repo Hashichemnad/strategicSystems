@@ -12376,6 +12376,959 @@
         }
       }
     },
+    "/api/v1/reporting/reports/{id}/folder": {
+      "put": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "MoveReport",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportMoveInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/report-types": {
+      "get": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "ListUsableReportTypes",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UsableReportTypeDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/report-types/{code}": {
+      "get": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "GetUsableReportType",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsableReportTypeDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/reports/query": {
+      "post": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "QueryReport",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportRunInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportTypeRunDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/admin/report-types": {
+      "get": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "ListReportTypes",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReportTypeDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "CreateReportType",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportTypeInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportTypeDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/admin/report-types/{id}": {
+      "get": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "GetReportType",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportTypeDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "UpdateReportType",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportTypeBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportTypeDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/admin/reportable": {
+      "get": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "GetReportableMetadata",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportableMetadataDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/admin/dossier-reportable": {
+      "get": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "GetDossierReportableMetadata",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportableMetadataDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/folders": {
+      "get": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "ListReportFolders",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReportFolderDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "CreateReportFolder",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportFolderInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportFolderDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/folders/{id}": {
+      "put": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "UpdateReportFolder",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportFolderInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportFolderDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/folders/{id}/archive": {
+      "post": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "ArchiveReportFolder",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/folders/{id}/shares": {
+      "get": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "ListReportFolderShares",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ShareInput"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "ShareReportFolder",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ShareInput"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/dossier-templates": {
+      "get": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "ListUsableDossierTemplates",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UsableDossierTemplateDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/dossier-templates/{code}/records": {
+      "get": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "ListDossierRecords",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DossierRecordDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/dossiers/{code}/render": {
+      "post": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "RenderDossier",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DossierRenderInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/dossiers/{code}/bulk": {
+      "post": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "RenderDossierSet",
+        "parameters": [
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DossierBulkInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/admin/dossier-templates": {
+      "get": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "ListDossierTemplates",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DossierTemplateDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "CreateDossierTemplate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DossierTemplateInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DossierTemplateDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reporting/admin/dossier-templates/{id}": {
+      "get": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "GetDossierTemplate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DossierTemplateDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "reporting"
+        ],
+        "operationId": "UpdateDossierTemplate",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DossierTemplateBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DossierTemplateDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/reporting/reports/{id}/shares": {
       "get": {
         "tags": [
@@ -65250,6 +66203,511 @@
           }
         }
       },
+      "DossierBulkInput": {
+        "required": [
+          "filters",
+          "format",
+          "language"
+        ],
+        "type": "object",
+        "properties": {
+          "filters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportFilter"
+            }
+          },
+          "format": {
+            "type": "string"
+          },
+          "language": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "DossierCondition": {
+        "type": "object",
+        "properties": {
+          "field": {
+            "type": "string"
+          },
+          "operator": {
+            "type": "string"
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "description": "A section is shown only when the record's field matches (operators as report filters, evaluated on the raw value)."
+      },
+      "DossierCover": {
+        "type": "object",
+        "properties": {
+          "show": {
+            "type": "boolean"
+          },
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "subtitleField": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "A record field shown under the title (qualified, e.g. `a.nameEn`)."
+          },
+          "showOrganisation": {
+            "type": "boolean"
+          },
+          "showDate": {
+            "type": "boolean"
+          }
+        }
+      },
+      "DossierDefinition": {
+        "type": "object",
+        "properties": {
+          "cover": {
+            "$ref": "#/components/schemas/DossierCover"
+          },
+          "numberField": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "The record's number and name fields (file names, record picker, page header)."
+          },
+          "nameFieldAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameFieldEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "headerAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "headerEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "footerAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "footerEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "language": {
+            "type": "string"
+          },
+          "sections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DossierSection"
+            }
+          }
+        }
+      },
+      "DossierRecordDto": {
+        "required": [
+          "id",
+          "number",
+          "nameAr",
+          "nameEn"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "number": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "DossierRenderInput": {
+        "required": [
+          "recordId",
+          "format",
+          "language"
+        ],
+        "type": "object",
+        "properties": {
+          "recordId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "format": {
+            "type": "string"
+          },
+          "language": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "DossierScheduleOptions": {
+        "required": [
+          "filters",
+          "language",
+          "recipientField"
+        ],
+        "type": "object",
+        "properties": {
+          "filters": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportFilter"
+            }
+          },
+          "language": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "recipientField": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "description": "Dossier schedules (ADR 0186): the records (filters on the template's record type), the file (`pdf` merged, `zip-pdf`, `zip-docx`),\nthe language (null = each recipient's) and optionally string? DossierScheduleOptions.RecipientField — an employee field of the record (e.g. `a.owner`):\neach record's person receives the dossiers of their records."
+      },
+      "DossierSection": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "kind": {
+            "type": "string"
+          },
+          "fields": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "description": "`fields`: record fields; `related`: table columns."
+          },
+          "textAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "textEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "path": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "filters": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/ReportFilter"
+            },
+            "description": "Filters on the last object of the path (qualified fields)."
+          },
+          "sort": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/ReportSort"
+            }
+          },
+          "limit": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "description": "Rows of a related list (capped by Settings → Reporting).",
+            "format": "int32"
+          },
+          "chart": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/ReportChart"
+              }
+            ]
+          },
+          "category": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "`trend`: x axis field and the measured fields (one line each)."
+          },
+          "measures": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "labelAr": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "`gantt`: bar label (Arabic / English field), planned and actual dates."
+          },
+          "labelEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "start": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "end": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "actualStart": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "actualEnd": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "likelihood": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "`matrix`: likelihood and impact fields, matrix size (3–7)."
+          },
+          "impact": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "resourceType": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "`approvals`: the record type the approval engine uses (e.g. `portfolio.project`)."
+          },
+          "ownerType": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "`attachments`: the file owner type (e.g. `portfolio.project`)."
+          },
+          "condition": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/DossierCondition"
+              }
+            ]
+          },
+          "pageBreak": {
+            "type": "boolean"
+          }
+        },
+        "description": "One block of a dossier (ADR 0184). Fields are qualified by level: `a` = the record, `b`, `c`, `d` = the objects reached along\nList&lt;string&gt;? DossierSection.Path (relationship codes from the record's dataset, up to three)."
+      },
+      "DossierTemplateBody": {
+        "required": [
+          "template",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "template": {
+            "$ref": "#/components/schemas/DossierTemplateInput"
+          },
+          "version": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          }
+        }
+      },
+      "DossierTemplateDto": {
+        "required": [
+          "id",
+          "code",
+          "dataset",
+          "labelAr",
+          "labelEn",
+          "definition",
+          "active",
+          "seeded",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "dataset": {
+            "type": "string"
+          },
+          "labelAr": {
+            "type": "string"
+          },
+          "labelEn": {
+            "type": "string"
+          },
+          "definition": {
+            "$ref": "#/components/schemas/DossierDefinition"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "seeded": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "DossierTemplateInput": {
+        "required": [
+          "code",
+          "dataset",
+          "labelAr",
+          "labelEn",
+          "definition",
+          "active"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "dataset": {
+            "type": "string"
+          },
+          "labelAr": {
+            "type": "string"
+          },
+          "labelEn": {
+            "type": "string"
+          },
+          "definition": {
+            "$ref": "#/components/schemas/DossierDefinition"
+          },
+          "active": {
+            "type": "boolean"
+          }
+        }
+      },
       "DraftEpicDto": {
         "required": [
           "titleAr",
@@ -87951,6 +89409,253 @@
           }
         }
       },
+      "ReportableDatasetDto": {
+        "required": [
+          "code",
+          "systemCode",
+          "labelAr",
+          "labelEn",
+          "joinOnly",
+          "keyField",
+          "fields"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "systemCode": {
+            "type": "string"
+          },
+          "labelAr": {
+            "type": "string"
+          },
+          "labelEn": {
+            "type": "string"
+          },
+          "joinOnly": {
+            "type": "boolean"
+          },
+          "keyField": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportableFieldDto"
+            }
+          }
+        }
+      },
+      "ReportableFieldDto": {
+        "required": [
+          "code",
+          "labelAr",
+          "labelEn",
+          "type",
+          "permission"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "labelAr": {
+            "type": "string"
+          },
+          "labelEn": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "permission": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "ReportableMetadataDto": {
+        "required": [
+          "datasets",
+          "relationships"
+        ],
+        "type": "object",
+        "properties": {
+          "datasets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportableDatasetDto"
+            }
+          },
+          "relationships": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportableRelationshipDto"
+            }
+          }
+        },
+        "description": "The reportable metadata for the report-type editor (ADR 0180): every dataset, field (with its permission) and relationship."
+      },
+      "ReportableRelationshipDto": {
+        "required": [
+          "code",
+          "parentDataset",
+          "parentField",
+          "childDataset",
+          "childField",
+          "labelAr",
+          "labelEn"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "parentDataset": {
+            "type": "string"
+          },
+          "parentField": {
+            "type": "string"
+          },
+          "childDataset": {
+            "type": "string"
+          },
+          "childField": {
+            "type": "string"
+          },
+          "labelAr": {
+            "type": "string"
+          },
+          "labelEn": {
+            "type": "string"
+          }
+        }
+      },
+      "ReportAggregateDto": {
+        "required": [
+          "column",
+          "function",
+          "value",
+          "raw"
+        ],
+        "type": "object",
+        "properties": {
+          "column": {
+            "type": "string"
+          },
+          "function": {
+            "type": "string"
+          },
+          "value": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "raw": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          }
+        }
+      },
+      "ReportChart": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "series": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "measure": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "aggregate": {
+            "type": "string"
+          }
+        },
+        "description": "A chart on top of the table: categories from string ReportChart.Category, optional string? ReportChart.Series (stacked bar / multi-line), value =\ncount of rows (string? ReportChart.Measure null) or string ReportChart.Aggregate of string? ReportChart.Measure."
+      },
+      "ReportChartDto": {
+        "required": [
+          "type",
+          "categories",
+          "series",
+          "measureLabelAr",
+          "measureLabelEn"
+        ],
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "categories": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "series": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportChartSeriesDto"
+            }
+          },
+          "measureLabelAr": {
+            "type": "string"
+          },
+          "measureLabelEn": {
+            "type": "string"
+          }
+        }
+      },
+      "ReportChartSeriesDto": {
+        "required": [
+          "key",
+          "label",
+          "values"
+        ],
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "label": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "format": "double"
+            }
+          }
+        }
+      },
       "ReportColumnDto": {
         "required": [
           "code",
@@ -88003,6 +89708,39 @@
             "items": {
               "$ref": "#/components/schemas/ReportSort"
             }
+          },
+          "reportType": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Reporting 2.0 (ADR 0181): a report type code (or `dataset:&lt;code&gt;`); columns are then qualified (`b.title`)."
+          },
+          "summaries": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportSummary"
+            }
+          },
+          "chart": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/ReportChart"
+              }
+            ]
+          },
+          "highlights": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportHighlight"
+            }
+          },
+          "showDetails": {
+            "type": "boolean",
+            "description": "Grouped reports: list the detail rows under the subtotals (default) or only the subtotals."
           }
         },
         "description": "A report definition as the builder sends it (also stored as a saved report's definition)."
@@ -88138,6 +89876,114 @@
           }
         },
         "description": "One filter. Values are strings in invariant format (dates ISO, numbers with '.', bools true/false)."
+      },
+      "ReportFolderDto": {
+        "required": [
+          "id",
+          "name",
+          "kind",
+          "ownerUserId",
+          "canEdit",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "ownerUserId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "canEdit": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "ReportFolderInput": {
+        "required": [
+          "name",
+          "kind"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          }
+        }
+      },
+      "ReportGroupDto": {
+        "required": [
+          "level",
+          "keys",
+          "label",
+          "count",
+          "aggregates"
+        ],
+        "type": "object",
+        "properties": {
+          "level": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "keys": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "label": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "aggregates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportAggregateDto"
+            }
+          }
+        }
+      },
+      "ReportHighlight": {
+        "type": "object",
+        "properties": {
+          "column": {
+            "type": "string"
+          },
+          "operator": {
+            "type": "string"
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tone": {
+            "type": "string"
+          }
+        },
+        "description": "Conditional highlighting: cells of string ReportHighlight.Column matching the condition get string ReportHighlight.Tone."
       },
       "ReportingCatalogueDto": {
         "required": [
@@ -88383,6 +90229,21 @@
           }
         }
       },
+      "ReportMoveInput": {
+        "required": [
+          "folderId"
+        ],
+        "type": "object",
+        "properties": {
+          "folderId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          }
+        }
+      },
       "ReportRowDto": {
         "required": [
           "id",
@@ -88505,6 +90366,456 @@
           },
           "descending": {
             "type": "boolean"
+          }
+        }
+      },
+      "ReportSummary": {
+        "type": "object",
+        "properties": {
+          "column": {
+            "type": "string"
+          },
+          "functions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "description": "A summary formula: List&lt;string&gt; ReportSummary.Functions of a numeric (or date, for min / max) column; count is always given."
+      },
+      "ReportTypeBody": {
+        "required": [
+          "reportType",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "reportType": {
+            "$ref": "#/components/schemas/ReportTypeInput"
+          },
+          "version": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "uint32"
+          }
+        }
+      },
+      "ReportTypeColumnDto": {
+        "required": [
+          "code",
+          "alias",
+          "labelAr",
+          "labelEn",
+          "objectLabelAr",
+          "objectLabelEn",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "alias": {
+            "type": "string"
+          },
+          "labelAr": {
+            "type": "string"
+          },
+          "labelEn": {
+            "type": "string"
+          },
+          "objectLabelAr": {
+            "type": "string"
+          },
+          "objectLabelEn": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          }
+        }
+      },
+      "ReportTypeDefinition": {
+        "type": "object",
+        "properties": {
+          "nodes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportTypeNode"
+            }
+          }
+        },
+        "description": "The stored shape of a report type: the primary node first, then related nodes (parents before children)."
+      },
+      "ReportTypeDto": {
+        "required": [
+          "id",
+          "code",
+          "systemCode",
+          "labelAr",
+          "labelEn",
+          "descriptionAr",
+          "descriptionEn",
+          "definition",
+          "active",
+          "seeded",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "systemCode": {
+            "type": "string"
+          },
+          "labelAr": {
+            "type": "string"
+          },
+          "labelEn": {
+            "type": "string"
+          },
+          "descriptionAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "descriptionEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "definition": {
+            "$ref": "#/components/schemas/ReportTypeDefinition"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "seeded": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "ReportTypeFieldDto": {
+        "required": [
+          "code",
+          "field",
+          "labelAr",
+          "labelEn",
+          "type",
+          "filterable",
+          "groupable",
+          "sortable",
+          "lookupType"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "field": {
+            "type": "string"
+          },
+          "labelAr": {
+            "type": "string"
+          },
+          "labelEn": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "filterable": {
+            "type": "boolean"
+          },
+          "groupable": {
+            "type": "boolean"
+          },
+          "sortable": {
+            "type": "boolean"
+          },
+          "lookupType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "ReportTypeInput": {
+        "required": [
+          "code",
+          "systemCode",
+          "labelAr",
+          "labelEn",
+          "descriptionAr",
+          "descriptionEn",
+          "definition",
+          "active"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "systemCode": {
+            "type": "string"
+          },
+          "labelAr": {
+            "type": "string"
+          },
+          "labelEn": {
+            "type": "string"
+          },
+          "descriptionAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "descriptionEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "definition": {
+            "$ref": "#/components/schemas/ReportTypeDefinition"
+          },
+          "active": {
+            "type": "boolean"
+          }
+        }
+      },
+      "ReportTypeNode": {
+        "type": "object",
+        "properties": {
+          "alias": {
+            "type": "string",
+            "description": "Short alias used to qualify columns (`a.number`, `b.title`): lowercase letter(s) unique in the type."
+          },
+          "dataset": {
+            "type": "string"
+          },
+          "relationship": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "parent": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "join": {
+            "type": "string"
+          },
+          "fields": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "description": "One object of a report type (ADR 0181). The first node is the primary object (no relationship, no parent); every other node follows a\ndeclared DatasetRelationship from its parent node. List&lt;string&gt;? ReportTypeNode.Fields: the fields offered (null = every field of the\ndataset); the runner's own field permissions apply on top at every run."
+      },
+      "ReportTypeObjectDto": {
+        "required": [
+          "alias",
+          "dataset",
+          "labelAr",
+          "labelEn",
+          "parent",
+          "join",
+          "relationshipLabelAr",
+          "relationshipLabelEn",
+          "readable",
+          "fields"
+        ],
+        "type": "object",
+        "properties": {
+          "alias": {
+            "type": "string"
+          },
+          "dataset": {
+            "type": "string"
+          },
+          "labelAr": {
+            "type": "string"
+          },
+          "labelEn": {
+            "type": "string"
+          },
+          "parent": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "join": {
+            "type": "string"
+          },
+          "relationshipLabelAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "relationshipLabelEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "readable": {
+            "type": "boolean"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportTypeFieldDto"
+            }
+          }
+        }
+      },
+      "ReportTypeRowDto": {
+        "required": [
+          "cells",
+          "tones",
+          "links",
+          "groupKeys"
+        ],
+        "type": "object",
+        "properties": {
+          "cells": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tones": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "links": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "groupKeys": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "ReportTypeRunDto": {
+        "required": [
+          "reportType",
+          "labelAr",
+          "labelEn",
+          "columns",
+          "rows",
+          "total",
+          "page",
+          "pageSize",
+          "truncated",
+          "droppedColumns",
+          "groupBy",
+          "groups",
+          "grandTotal",
+          "chart"
+        ],
+        "type": "object",
+        "properties": {
+          "reportType": {
+            "type": "string"
+          },
+          "labelAr": {
+            "type": "string"
+          },
+          "labelEn": {
+            "type": "string"
+          },
+          "columns": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportTypeColumnDto"
+            }
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportTypeRowDto"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "truncated": {
+            "type": "boolean"
+          },
+          "droppedColumns": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "groupBy": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "groups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportGroupDto"
+            }
+          },
+          "grandTotal": {
+            "$ref": "#/components/schemas/ReportGroupDto"
+          },
+          "chart": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/ReportChartDto"
+              }
+            ]
           }
         }
       },
@@ -93011,6 +95322,17 @@
           "version": {
             "type": "integer",
             "format": "uint32"
+          },
+          "folderId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "shared": {
+            "type": "boolean",
+            "default": false
           }
         }
       },
@@ -93033,6 +95355,13 @@
           },
           "definition": {
             "$ref": "#/components/schemas/ReportDefinition"
+          },
+          "folderId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
           }
         }
       },
@@ -93290,6 +95619,16 @@
           "version": {
             "type": "integer",
             "format": "uint32"
+          },
+          "dossier": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/DossierScheduleOptions"
+              }
+            ]
           }
         }
       },
@@ -93342,6 +95681,16 @@
           },
           "active": {
             "type": "boolean"
+          },
+          "dossier": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/DossierScheduleOptions"
+              }
+            ]
           }
         }
       },
@@ -101733,6 +104082,90 @@
             "format": "uint32"
           }
         }
+      },
+      "UsableDossierTemplateDto": {
+        "required": [
+          "code",
+          "dataset",
+          "labelAr",
+          "labelEn",
+          "language",
+          "filterFields"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "dataset": {
+            "type": "string"
+          },
+          "labelAr": {
+            "type": "string"
+          },
+          "labelEn": {
+            "type": "string"
+          },
+          "language": {
+            "type": "string"
+          },
+          "filterFields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportTypeFieldDto"
+            }
+          }
+        },
+        "description": "A template the caller may run (its record type is readable)."
+      },
+      "UsableReportTypeDto": {
+        "required": [
+          "code",
+          "systemCode",
+          "labelAr",
+          "labelEn",
+          "descriptionAr",
+          "descriptionEn",
+          "implicit",
+          "objects"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "systemCode": {
+            "type": "string"
+          },
+          "labelAr": {
+            "type": "string"
+          },
+          "labelEn": {
+            "type": "string"
+          },
+          "descriptionAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "descriptionEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "implicit": {
+            "type": "boolean"
+          },
+          "objects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReportTypeObjectDto"
+            }
+          }
+        },
+        "description": "A report type as the builder offers it to the caller: only objects and fields they may see."
       },
       "UserDto": {
         "required": [
