@@ -28,6 +28,7 @@ import {
   FormField,
   Input,
   PageHeader,
+  RecordLayout,
   Select,
   Skeleton,
   StatusBanner,
@@ -65,7 +66,7 @@ import {
 import {
   RatingChip,
   RiskMatrix,
-  RiskPageLayout,
+  RiskNav,
   Rows,
   useAxisLabels,
   useBands,
@@ -99,7 +100,7 @@ type DialogKind = 'submit' | 'closure' | 'reopen' | 'office' | 'escalate' | 'dec
 
 /** Risk page (docs/design/risk.md §12): header with I → R → T chips, current status with actions, approvals and the tabs. */
 export function RiskPage() {
-  const { t } = useTranslation('risk');
+  const { t, i18n } = useTranslation('risk');
   const { t: tc } = useTranslation();
   const { k } = useRiskT();
   const { riskId } = route.useParams();
@@ -118,169 +119,199 @@ export function RiskPage() {
   const r = risk.data;
   const go = (next: RiskTab) => void navigate({ search: { tab: next } });
 
+  const date = (value: string | null) => (value ? formatDate(value, i18n.language) : '—');
+  // RiskPageLayout's secondary navigation comes first (Classic keeps the same order); the record layout adds the theme's slots.
   return (
-    <RiskPageLayout testId="risk-page">
-      <Link to="/risk/risks" className="flex items-center gap-1 text-sm text-primary hover:underline">
-        <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden />
-        {t('register.title')}
-      </Link>
-      <PageHeader
-        title={names.text(r.values.titleAr, r.values.titleEn) || r.number}
-        description={
-          <>
-            <bdi data-testid="risk-number">{r.number}</bdi> · {names.unit(r.unit)} · {t('fields.owner')}:{' '}
-            {names.person(r.owner)}
-          </>
-        }
-        meta={
-          <div className="flex flex-wrap items-center gap-2" data-testid="risk-header-meta">
-            <OriginBadge type="risk.risk" id={r.id} />
-            <StatusChip tone={statusTone[r.status] ?? 'neutral'}>
-              <span data-testid="risk-status">{k(`status.${r.status}`)}</span>
-            </StatusChip>
-            <span className="flex flex-wrap items-center gap-1" data-testid="risk-ratings">
-              <RatingChip
-                band={r.inherentBand}
-                score={r.inherentScore}
-                prefix={t('rating.inherentShort')}
-                testId="risk-chip-inherent"
-              />
-              <span aria-hidden className="rtl:rotate-180">
-                →
+    <RecordLayout
+      testId="risk-page"
+      back={
+        <>
+          <RiskNav />
+          <Link to="/risk/risks" className="flex items-center gap-1 text-sm text-primary hover:underline">
+            <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden />
+            {t('register.title')}
+          </Link>
+        </>
+      }
+      header={
+        <PageHeader
+          title={names.text(r.values.titleAr, r.values.titleEn) || r.number}
+          description={
+            <>
+              <bdi data-testid="risk-number">{r.number}</bdi> · {names.unit(r.unit)} · {t('fields.owner')}:{' '}
+              {names.person(r.owner)}
+            </>
+          }
+          meta={
+            <div className="flex flex-wrap items-center gap-2" data-testid="risk-header-meta">
+              <OriginBadge type="risk.risk" id={r.id} />
+              <StatusChip tone={statusTone[r.status] ?? 'neutral'}>
+                <span data-testid="risk-status">{k(`status.${r.status}`)}</span>
+              </StatusChip>
+              <span className="flex flex-wrap items-center gap-1" data-testid="risk-ratings">
+                <RatingChip
+                  band={r.inherentBand}
+                  score={r.inherentScore}
+                  prefix={t('rating.inherentShort')}
+                  testId="risk-chip-inherent"
+                />
+                <span aria-hidden className="rtl:rotate-180">
+                  →
+                </span>
+                <RatingChip
+                  band={r.residualBand}
+                  score={r.residualScore}
+                  prefix={t('rating.residualShort')}
+                  testId="risk-chip-residual"
+                />
+                {r.targetBand && (
+                  <>
+                    <span aria-hidden className="rtl:rotate-180">
+                      →
+                    </span>
+                    <RatingChip
+                      band={r.targetBand}
+                      score={r.targetScore}
+                      prefix={t('rating.targetShort')}
+                      testId="risk-chip-target"
+                    />
+                  </>
+                )}
               </span>
-              <RatingChip
-                band={r.residualBand}
-                score={r.residualScore}
-                prefix={t('rating.residualShort')}
-                testId="risk-chip-residual"
-              />
-              {r.targetBand && (
+              {r.top10 && (
+                <StatusChip tone="danger">
+                  <Flag className="me-1 size-3" aria-hidden />
+                  {t('flags.top10', { rank: r.top10Rank ?? '' })}
+                </StatusChip>
+              )}
+              {r.escalated && (
+                <StatusChip tone="warning">
+                  <TrendingUp className="me-1 size-3" aria-hidden />
+                  {t('flags.escalated')}
+                </StatusChip>
+              )}
+              {r.reassessmentRequired && (
+                <StatusChip tone="warning">
+                  <TriangleAlert className="me-1 size-3" aria-hidden />
+                  {t('flags.reassessment')}
+                </StatusChip>
+              )}
+              {r.withinAppetite === false && (
+                <StatusChip tone="danger">{t('flags.outsideAppetite')}</StatusChip>
+              )}
+              <span
+                className="text-xs text-muted-foreground"
+                title={r.onCurrentFramework ? undefined : t('risk.oldFramework')}
+                data-testid="risk-framework-version"
+              >
+                {t('risk.frameworkVersion', { version: r.frameworkVersionNo })}
+                {!r.onCurrentFramework && (
+                  <span className="ms-1 text-warning">({t('risk.oldFrameworkShort')})</span>
+                )}
+              </span>
+            </div>
+          }
+          actions={
+            <div className="flex flex-wrap gap-2">
+              {r.can.edit && (
+                <Button variant="outline" asChild>
+                  <Link to="/risk/risks/$riskId/edit" params={{ riskId: r.id }} data-testid="risk-edit">
+                    <Pencil aria-hidden />
+                    {tc('actions.edit')}
+                  </Link>
+                </Button>
+              )}
+              {r.can.requestClosure && (
+                <Button
+                  variant="outline"
+                  onClick={() => setDialog('closure')}
+                  data-testid="risk-request-closure"
+                >
+                  <XCircle aria-hidden />
+                  {t('risk.requestClosure')}
+                </Button>
+              )}
+              {r.can.office && (
                 <>
-                  <span aria-hidden className="rtl:rotate-180">
-                    →
-                  </span>
-                  <RatingChip
-                    band={r.targetBand}
-                    score={r.targetScore}
-                    prefix={t('rating.targetShort')}
-                    testId="risk-chip-target"
-                  />
+                  <Button variant="outline" onClick={() => setDialog('office')} data-testid="risk-office">
+                    <ShieldCheck aria-hidden />
+                    {t('office.action')}
+                  </Button>
+                  <Button variant="outline" onClick={() => setDialog('escalate')} data-testid="risk-escalate">
+                    {r.escalated ? <TrendingDown aria-hidden /> : <TrendingUp aria-hidden />}
+                    {r.escalated ? t('escalation.deescalate') : t('escalation.escalate')}
+                  </Button>
                 </>
               )}
-            </span>
-            {r.top10 && (
-              <StatusChip tone="danger">
-                <Flag className="me-1 size-3" aria-hidden />
-                {t('flags.top10', { rank: r.top10Rank ?? '' })}
-              </StatusChip>
-            )}
-            {r.escalated && (
-              <StatusChip tone="warning">
-                <TrendingUp className="me-1 size-3" aria-hidden />
-                {t('flags.escalated')}
-              </StatusChip>
-            )}
-            {r.reassessmentRequired && (
-              <StatusChip tone="warning">
-                <TriangleAlert className="me-1 size-3" aria-hidden />
-                {t('flags.reassessment')}
-              </StatusChip>
-            )}
-            {r.withinAppetite === false && (
-              <StatusChip tone="danger">{t('flags.outsideAppetite')}</StatusChip>
-            )}
-            <span
-              className="text-xs text-muted-foreground"
-              title={r.onCurrentFramework ? undefined : t('risk.oldFramework')}
-              data-testid="risk-framework-version"
-            >
-              {t('risk.frameworkVersion', { version: r.frameworkVersionNo })}
-              {!r.onCurrentFramework && (
-                <span className="ms-1 text-warning">({t('risk.oldFrameworkShort')})</span>
+              {r.can.committeeDecide && (
+                <Button
+                  variant="outline"
+                  onClick={() => setDialog('decision')}
+                  data-testid="risk-committee-decision"
+                >
+                  <Gavel aria-hidden />
+                  {t('committee.record')}
+                </Button>
               )}
-            </span>
-          </div>
-        }
-        actions={
-          <div className="flex flex-wrap gap-2">
-            {r.can.edit && (
-              <Button variant="outline" asChild>
-                <Link to="/risk/risks/$riskId/edit" params={{ riskId: r.id }} data-testid="risk-edit">
-                  <Pencil aria-hidden />
-                  {tc('actions.edit')}
-                </Link>
-              </Button>
-            )}
-            {r.can.requestClosure && (
-              <Button
-                variant="outline"
-                onClick={() => setDialog('closure')}
-                data-testid="risk-request-closure"
-              >
-                <XCircle aria-hidden />
-                {t('risk.requestClosure')}
-              </Button>
-            )}
-            {r.can.office && (
-              <>
-                <Button variant="outline" onClick={() => setDialog('office')} data-testid="risk-office">
-                  <ShieldCheck aria-hidden />
-                  {t('office.action')}
+              {r.can.discard && (
+                <Button variant="ghost" onClick={() => setDialog('discard')} data-testid="risk-discard">
+                  <Trash2 aria-hidden />
+                  {t('risk.discard')}
                 </Button>
-                <Button variant="outline" onClick={() => setDialog('escalate')} data-testid="risk-escalate">
-                  {r.escalated ? <TrendingDown aria-hidden /> : <TrendingUp aria-hidden />}
-                  {r.escalated ? t('escalation.deescalate') : t('escalation.escalate')}
-                </Button>
-              </>
-            )}
-            {r.can.committeeDecide && (
-              <Button
-                variant="outline"
-                onClick={() => setDialog('decision')}
-                data-testid="risk-committee-decision"
-              >
-                <Gavel aria-hidden />
-                {t('committee.record')}
-              </Button>
-            )}
-            {r.can.discard && (
-              <Button variant="ghost" onClick={() => setDialog('discard')} data-testid="risk-discard">
-                <Trash2 aria-hidden />
-                {t('risk.discard')}
-              </Button>
-            )}
-          </div>
-        }
-      />
-      <div data-testid="risk-current-status">
-        <CurrentStatusBanner
-          resourceType="risk.risk"
-          resourceId={r.id}
-          onAction={(code) => {
-            if (code === 'submit') setDialog('submit');
-            if (code === 'recall') recall.mutate(r.id, { onError });
-            if (code === 'reopen') setDialog('reopen');
-            if (code === 'review') {
-              go('overview');
-              setTimeout(
-                () => document.getElementById('risk-approvals')?.scrollIntoView({ behavior: 'smooth' }),
-                50,
-              );
-            }
-            if (code === 'start-review')
-              startReview.mutate(r.id, {
-                onSuccess: () => go('reviews'),
-                onError: (e) => {
-                  go('reviews');
-                  onError(e);
-                },
-              });
-          }}
+              )}
+            </div>
+          }
         />
-      </div>
-      {r.returned && r.returnComment && (
-        <StatusBanner tone="warning" title={t('risk.returnComment')} description={r.returnComment} />
+      }
+      highlights={[
+        { key: 'number', label: t('fields.number'), value: <bdi>{r.number}</bdi> },
+        { key: 'unit', label: t('fields.unit'), value: names.unit(r.unit) },
+        { key: 'owner', label: t('fields.owner'), value: names.person(r.owner) },
+        { key: 'coordinator', label: t('fields.coordinator'), value: names.person(r.coordinator) },
+        { key: 'lastReview', label: t('fields.lastReviewOn'), value: date(r.lastReviewOn) },
+        { key: 'nextReview', label: t('fields.nextReviewOn'), value: date(r.nextReviewOn) },
+      ]}
+      status={
+        <>
+          <div data-testid="risk-current-status">
+            <CurrentStatusBanner
+              resourceType="risk.risk"
+              resourceId={r.id}
+              onAction={(code) => {
+                if (code === 'submit') setDialog('submit');
+                if (code === 'recall') recall.mutate(r.id, { onError });
+                if (code === 'reopen') setDialog('reopen');
+                if (code === 'review') {
+                  go('overview');
+                  setTimeout(
+                    () => document.getElementById('risk-approvals')?.scrollIntoView({ behavior: 'smooth' }),
+                    50,
+                  );
+                }
+                if (code === 'start-review')
+                  startReview.mutate(r.id, {
+                    onSuccess: () => go('reviews'),
+                    onError: (e) => {
+                      go('reviews');
+                      onError(e);
+                    },
+                  });
+              }}
+            />
+          </div>
+          {r.returned && r.returnComment && (
+            <StatusBanner tone="warning" title={t('risk.returnComment')} description={r.returnComment} />
+          )}
+        </>
+      }
+      related={(['assessment', 'controls', 'actions', 'kris', 'events', 'reviews', 'documents'] as const).map(
+        (key) => ({
+          key,
+          label: t(`tabs.${key}`),
+          onOpen: () => go(key),
+        }),
       )}
+    >
       <Tabs value={tab ?? 'overview'} onValueChange={(value) => go(value as RiskTab)}>
         <TabsList className="flex-wrap" data-testid="risk-tabs">
           {riskTabs.map((key) => (
@@ -331,7 +362,7 @@ export function RiskPage() {
       {dialog === 'escalate' && <EscalationDialog risk={r} onClose={() => setDialog(undefined)} />}
       {dialog === 'decision' && <DecisionDialog risk={r} onClose={() => setDialog(undefined)} />}
       {dialog === 'discard' && <DiscardDialog risk={r} onClose={() => setDialog(undefined)} />}
-    </RiskPageLayout>
+    </RecordLayout>
   );
 }
 

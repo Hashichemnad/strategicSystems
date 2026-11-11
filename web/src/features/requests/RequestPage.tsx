@@ -23,6 +23,7 @@ import {
   EmptyState,
   FormField,
   PageHeader,
+  RecordLayout,
   Select,
   Skeleton,
   StageStepper,
@@ -95,143 +96,175 @@ export function RequestPage() {
       (failure: unknown) => toast({ tone: 'error', title: errorMessage(tc, failure) }),
     );
 
+  const when = (value: string | null) => (value ? formatDateTime(value, lang) : '—');
+  const goTab = (value: (typeof requestTabs)[number]) => void navigate({ search: { tab: value } });
   return (
-    <div className="flex flex-col gap-6">
-      <Link to="/requests/mine" className="flex items-center gap-1 text-sm text-primary hover:underline">
-        <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden />
-        {t('nav.mine')}
-      </Link>
-      <PageHeader
-        title={<span dir="auto">{title}</span>}
-        description={
-          <>
-            <bdi>{data.number}</bdi> · {typeLabel}
-          </>
-        }
-        meta={
-          <>
-            <OriginBadge type="requests.request" id={data.id} />
-            <RequestStatusChip status={data.status} />
-            {data.overdue && <StatusChip tone="danger">{t('list.overdue')}</StatusChip>}
-          </>
-        }
-        actions={
-          <>
-            {data.can.edit && (
-              <Button variant="outline" asChild data-testid="request-action-edit">
-                <Link to="/requests/$requestId/edit" params={{ requestId: data.id }}>
-                  <Pencil aria-hidden />
-                  {tc('actions.edit')}
-                </Link>
-              </Button>
-            )}
-            {data.can.submit && (
-              <Button onClick={() => setDialog({ kind: 'submit' })} data-testid="request-action-submit">
-                <Send aria-hidden />
-                {returned ? t('request.resubmit') : t('request.submit')}
-              </Button>
-            )}
-            {data.can.decide &&
-              data.can.decideActions.map((code) => (
+    <RecordLayout
+      back={
+        <Link to="/requests/mine" className="flex items-center gap-1 text-sm text-primary hover:underline">
+          <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden />
+          {t('nav.mine')}
+        </Link>
+      }
+      header={
+        <PageHeader
+          title={<span dir="auto">{title}</span>}
+          description={
+            <>
+              <bdi>{data.number}</bdi> · {typeLabel}
+            </>
+          }
+          meta={
+            <>
+              <OriginBadge type="requests.request" id={data.id} />
+              <RequestStatusChip status={data.status} />
+              {data.overdue && <StatusChip tone="danger">{t('list.overdue')}</StatusChip>}
+            </>
+          }
+          actions={
+            <>
+              {data.can.edit && (
+                <Button variant="outline" asChild data-testid="request-action-edit">
+                  <Link to="/requests/$requestId/edit" params={{ requestId: data.id }}>
+                    <Pencil aria-hidden />
+                    {tc('actions.edit')}
+                  </Link>
+                </Button>
+              )}
+              {data.can.submit && (
+                <Button onClick={() => setDialog({ kind: 'submit' })} data-testid="request-action-submit">
+                  <Send aria-hidden />
+                  {returned ? t('request.resubmit') : t('request.submit')}
+                </Button>
+              )}
+              {data.can.decide &&
+                data.can.decideActions.map((code) => (
+                  <Button
+                    key={code}
+                    variant={code === 'approve' ? 'primary' : code === 'reject' ? 'danger' : 'outline'}
+                    onClick={() => setDialog({ kind: 'decide', action: code })}
+                    data-testid={`request-decide-${code}`}
+                  >
+                    <DecisionLabel code={code} />
+                  </Button>
+                ))}
+              {data.can.actions.map((action) => (
                 <Button
-                  key={code}
-                  variant={code === 'approve' ? 'primary' : code === 'reject' ? 'danger' : 'outline'}
-                  onClick={() => setDialog({ kind: 'decide', action: code })}
-                  data-testid={`request-decide-${code}`}
+                  key={action.code}
+                  variant={
+                    action.tone === 'danger' ? 'danger' : action.tone === 'secondary' ? 'outline' : 'primary'
+                  }
+                  onClick={() => setDialog({ kind: 'act', action })}
+                  data-testid={`request-action-${action.code}`}
                 >
-                  <DecisionLabel code={code} />
+                  {pickText(lang, action.labelAr, action.labelEn) || action.code}
                 </Button>
               ))}
-            {data.can.actions.map((action) => (
-              <Button
-                key={action.code}
-                variant={
-                  action.tone === 'danger' ? 'danger' : action.tone === 'secondary' ? 'outline' : 'primary'
-                }
-                onClick={() => setDialog({ kind: 'act', action })}
-                data-testid={`request-action-${action.code}`}
-              >
-                {pickText(lang, action.labelAr, action.labelEn) || action.code}
-              </Button>
-            ))}
-            {data.templates.length > 0 && (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" data-testid="request-pdf">
-                    <FileDown aria-hidden />
-                    {t('request.pdf')}
-                    <ChevronDown aria-hidden />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  {data.templates.map((template) => (
-                    <div key={template.code}>
-                      <DropdownMenuLabel>
-                        {pickText(lang, template.nameAr, template.nameEn) || template.code}
-                      </DropdownMenuLabel>
-                      <DropdownMenuItem onSelect={() => pdf(template.code, 'ar')}>
-                        {t('request.pdfAr')}
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onSelect={() => pdf(template.code, 'en')}>
-                        {t('request.pdfEn')}
-                      </DropdownMenuItem>
-                    </div>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            )}
-            {data.can.cancel && (
-              <Button
-                variant="outline"
-                onClick={() => setDialog({ kind: 'cancel' })}
-                data-testid="request-action-cancel"
-              >
-                <XCircle aria-hidden />
-                {t('request.cancel')}
-              </Button>
-            )}
-          </>
-        }
-      />
-      <StageStepper
-        stages={data.stages.map((s) => ({
-          key: s.code,
-          label:
-            s.code === 'completed' && (data.status === 'rejected' || data.status === 'cancelled')
-              ? t(`status.${data.status}`)
-              : pickText(lang, s.nameAr, s.nameEn) || s.code,
-        }))}
-        current={
-          stopped
-            ? stopped.code
-            : data.status === 'rejected' || data.status === 'cancelled'
-              ? 'completed'
-              : currentStage(data)
-        }
-      />
-      <CurrentStatusBanner
-        resourceType={requestResource}
-        resourceId={data.id}
-        actionLabel={(code) =>
-          code === 'submit'
-            ? returned
-              ? t('request.resubmit')
-              : t('request.submit')
-            : code === 'decide'
-              ? t('request.decide')
-              : t('request.act')
-        }
-        onAction={(code) => {
-          if (code === 'submit') setDialog({ kind: 'submit' });
-          if (code === 'decide')
-            setDialog({ kind: 'decide', action: data.can.decideActions[0] ?? 'approve' });
-          if (code === 'act') {
-            const only = data.can.actions.length === 1 ? data.can.actions[0] : undefined;
-            setDialog(only ? { kind: 'act', action: only } : { kind: 'choose' });
+              {data.templates.length > 0 && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" data-testid="request-pdf">
+                      <FileDown aria-hidden />
+                      {t('request.pdf')}
+                      <ChevronDown aria-hidden />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    {data.templates.map((template) => (
+                      <div key={template.code}>
+                        <DropdownMenuLabel>
+                          {pickText(lang, template.nameAr, template.nameEn) || template.code}
+                        </DropdownMenuLabel>
+                        <DropdownMenuItem onSelect={() => pdf(template.code, 'ar')}>
+                          {t('request.pdfAr')}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onSelect={() => pdf(template.code, 'en')}>
+                          {t('request.pdfEn')}
+                        </DropdownMenuItem>
+                      </div>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+              {data.can.cancel && (
+                <Button
+                  variant="outline"
+                  onClick={() => setDialog({ kind: 'cancel' })}
+                  data-testid="request-action-cancel"
+                >
+                  <XCircle aria-hidden />
+                  {t('request.cancel')}
+                </Button>
+              )}
+            </>
           }
-        }}
-      />
-      <Subject request={data} />
+        />
+      }
+      highlights={[
+        { key: 'number', label: t('list.number'), value: <bdi>{data.number}</bdi> },
+        { key: 'type', label: t('request.type'), value: typeLabel },
+        {
+          key: 'requester',
+          label: t('request.requester'),
+          value: pickText(lang, data.requester.nameAr, data.requester.nameEn) || '—',
+        },
+        {
+          key: 'unit',
+          label: t('request.unit'),
+          value: data.unit ? pickText(lang, data.unit.nameAr, data.unit.nameEn) : '—',
+        },
+        { key: 'submitted', label: t('request.submittedAt'), value: when(data.submittedAt) },
+        { key: 'due', label: t('request.dueAt'), value: when(data.stageDueAt) },
+      ]}
+      path={
+        <StageStepper
+          stages={data.stages.map((s) => ({
+            key: s.code,
+            label:
+              s.code === 'completed' && (data.status === 'rejected' || data.status === 'cancelled')
+                ? t(`status.${data.status}`)
+                : pickText(lang, s.nameAr, s.nameEn) || s.code,
+          }))}
+          current={
+            stopped
+              ? stopped.code
+              : data.status === 'rejected' || data.status === 'cancelled'
+                ? 'completed'
+                : currentStage(data)
+          }
+        />
+      }
+      status={
+        <CurrentStatusBanner
+          resourceType={requestResource}
+          resourceId={data.id}
+          actionLabel={(code) =>
+            code === 'submit'
+              ? returned
+                ? t('request.resubmit')
+                : t('request.submit')
+              : code === 'decide'
+                ? t('request.decide')
+                : t('request.act')
+          }
+          onAction={(code) => {
+            if (code === 'submit') setDialog({ kind: 'submit' });
+            if (code === 'decide')
+              setDialog({ kind: 'decide', action: data.can.decideActions[0] ?? 'approve' });
+            if (code === 'act') {
+              const only = data.can.actions.length === 1 ? data.can.actions[0] : undefined;
+              setDialog(only ? { kind: 'act', action: only } : { kind: 'choose' });
+            }
+          }}
+        />
+      }
+      summary={<Subject request={data} />}
+      related={(['approvals', 'timeline', 'documents', 'tasks'] as const).map((key) => ({
+        key,
+        label: t(`request.tabs.${key}`),
+        onOpen: () => goTab(key),
+      }))}
+    >
       <Tabs value={tab} onValueChange={(value) => void navigate({ search: { tab: value as 'overview' } })}>
         <TabsList className="flex-wrap">
           {requestTabs.map((key) => (
@@ -285,7 +318,7 @@ export function RequestPage() {
           </DialogContent>
         </Dialog>
       )}
-    </div>
+    </RecordLayout>
   );
 }
 

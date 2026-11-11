@@ -18,6 +18,7 @@ import {
   FormField,
   Input,
   PageHeader,
+  RecordLayout,
   Select,
   Skeleton,
   StageStepper,
@@ -136,106 +137,162 @@ export function RequestPage() {
     ]),
   );
 
+  const goTab = (value: 'assessment' | 'files' | 'documents' | 'approvals' | 'tasks') => {
+    setBenefitsTab(false);
+    void navigate({ search: { tab: value } });
+  };
   return (
-    <div className="flex flex-col gap-6">
-      <Link
-        to="/portfolio/requests"
-        search={{ view: 'all', page: 1 }}
-        className="flex items-center gap-1 text-sm text-primary hover:underline"
-      >
-        <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden />
-        {t('title')}
-      </Link>
-      <PageHeader
-        title={<span dir="auto">{name}</span>}
-        description={
-          <>
-            <bdi>{data.number}</bdi>
-            {data.unit && <> · {pickText(lang, data.unit.nameAr, data.unit.nameEn)}</>}
-          </>
-        }
-        meta={
-          <>
-            <OriginBadge type="portfolio.request" id={data.id} />
-            <StatusChip tone={statusTone[data.status] ?? 'neutral'}>
-              {t(`status.${data.status as 'draft'}`)}
-            </StatusChip>
-            {data.approvalStatus === 'returned' && data.status === 'draft' && (
-              <StatusChip tone="warning">{t('approvalStatus.returned')}</StatusChip>
-            )}
-            <StatusChip tone="info">
-              {t(`classification.${data.effectiveClassification as 'project'}`)}
-            </StatusChip>
-            {band && (
-              <StatusChip tone={bandTone[band.code] ?? 'neutral'}>
-                {pickText(lang, band.labelAr, band.labelEn)}
-                {data.evaluationScore !== null &&
-                  ` · ${formatNumber(Math.round(data.evaluationScore * 10000) / 100, lang)} %`}
+    <RecordLayout
+      back={
+        <Link
+          to="/portfolio/requests"
+          search={{ view: 'all', page: 1 }}
+          className="flex items-center gap-1 text-sm text-primary hover:underline"
+        >
+          <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden />
+          {t('title')}
+        </Link>
+      }
+      header={
+        <PageHeader
+          title={<span dir="auto">{name}</span>}
+          description={
+            <>
+              <bdi>{data.number}</bdi>
+              {data.unit && <> · {pickText(lang, data.unit.nameAr, data.unit.nameEn)}</>}
+            </>
+          }
+          meta={
+            <>
+              <OriginBadge type="portfolio.request" id={data.id} />
+              <StatusChip tone={statusTone[data.status] ?? 'neutral'}>
+                {t(`status.${data.status as 'draft'}`)}
               </StatusChip>
-            )}
-          </>
-        }
-        actions={
-          <div className="flex flex-wrap gap-2">
-            {data.can.edit && (
-              <Button variant="outline" asChild>
-                <Link to="/portfolio/requests/$requestId/edit" params={{ requestId: data.id }}>
-                  <Pencil aria-hidden />
-                  {t('actions.edit')}
-                </Link>
-              </Button>
-            )}
-            {data.can.manage && (
-              <Button variant="outline" onClick={() => setDialog('override')}>
-                {t('actions.override')}
-              </Button>
-            )}
-            {data.can.cancel && (
-              <Button variant="outline" onClick={() => setDialog('cancel')}>
-                {t('actions.cancel')}
-              </Button>
-            )}
-            {data.project && (
-              <Button asChild>
-                <Link to="/portfolio/projects/$projectId" params={{ projectId: data.project.id }}>
-                  {t('actions.openProject')}
-                </Link>
-              </Button>
-            )}
-          </div>
-        }
-      />
-      <StageStepper
-        stages={stages.map((key) => ({ key, label: t(`stages.${key as 'draft'}`) }))}
-        current={current}
-      />
-      <CurrentStatusBanner
-        resourceType={requestResource}
-        resourceId={data.id}
-        actionLabel={(code, key) => {
-          const known: Record<string, string> = {
-            submit: t('actions.submit'),
-            resubmit: t('actions.resubmit'),
-            'upload-cost-estimation': t('actions.uploadCostEstimation'),
-            'upload-scope': t('actions.uploadScope'),
-            'hand-off': t('actions.handOff'),
-            'upload-quotations': t('actions.uploadQuotations'),
-            'approved-budget': t('actions.setApprovedBudget'),
-            'open-project': t('actions.openProject'),
-          };
-          return known[code] ?? tc(key as 'actions.edit', { defaultValue: code });
-        }}
-        onAction={(code) => {
-          if (code === 'submit' || code === 'resubmit') setDialog('submit');
-          if (code === 'upload-cost-estimation') setDialog('cost-estimation');
-          if (code === 'upload-scope') setDialog('project-scope');
-          if (code === 'upload-quotations') setDialog('quotation');
-          if (code === 'hand-off') doHandOff();
-          if (code === 'approved-budget') setDialog('budget');
-          if (code === 'open-project' && data.project)
-            void go({ to: '/portfolio/projects/$projectId', params: { projectId: data.project.id } });
-        }}
-      />
+              {data.approvalStatus === 'returned' && data.status === 'draft' && (
+                <StatusChip tone="warning">{t('approvalStatus.returned')}</StatusChip>
+              )}
+              <StatusChip tone="info">
+                {t(`classification.${data.effectiveClassification as 'project'}`)}
+              </StatusChip>
+              {band && (
+                <StatusChip tone={bandTone[band.code] ?? 'neutral'}>
+                  {pickText(lang, band.labelAr, band.labelEn)}
+                  {data.evaluationScore !== null &&
+                    ` · ${formatNumber(Math.round(data.evaluationScore * 10000) / 100, lang)} %`}
+                </StatusChip>
+              )}
+            </>
+          }
+          actions={
+            <div className="flex flex-wrap gap-2">
+              {data.can.edit && (
+                <Button variant="outline" asChild>
+                  <Link to="/portfolio/requests/$requestId/edit" params={{ requestId: data.id }}>
+                    <Pencil aria-hidden />
+                    {t('actions.edit')}
+                  </Link>
+                </Button>
+              )}
+              {data.can.manage && (
+                <Button variant="outline" onClick={() => setDialog('override')}>
+                  {t('actions.override')}
+                </Button>
+              )}
+              {data.can.cancel && (
+                <Button variant="outline" onClick={() => setDialog('cancel')}>
+                  {t('actions.cancel')}
+                </Button>
+              )}
+              {data.project && (
+                <Button asChild>
+                  <Link to="/portfolio/projects/$projectId" params={{ projectId: data.project.id }}>
+                    {t('actions.openProject')}
+                  </Link>
+                </Button>
+              )}
+            </div>
+          }
+        />
+      }
+      highlights={[
+        { key: 'number', label: t('fields.number'), value: <bdi>{data.number}</bdi> },
+        {
+          key: 'requester',
+          label: t('fields.requester'),
+          value: data.requester ? pickText(lang, data.requester.nameAr, data.requester.nameEn) : '—',
+        },
+        {
+          key: 'unit',
+          label: t('fields.unit'),
+          value: data.unit ? pickText(lang, data.unit.nameAr, data.unit.nameEn) : '—',
+        },
+        {
+          key: 'classification',
+          label: t('fields.classification'),
+          value: t(`classification.${data.effectiveClassification as 'project'}`),
+        },
+        {
+          key: 'submitted',
+          label: t('fields.submittedAt'),
+          value: data.submittedAt ? formatDate(data.submittedAt, lang) : '—',
+        },
+        {
+          key: 'approvedBudget',
+          label: t('fields.approvedBudget'),
+          value:
+            data.approvedBudget !== null
+              ? `${formatNumber(data.approvedBudget, lang)} ${options.data.currencyCode}`
+              : '—',
+        },
+      ]}
+      path={
+        <StageStepper
+          stages={stages.map((key) => ({ key, label: t(`stages.${key as 'draft'}`) }))}
+          current={current}
+        />
+      }
+      status={
+        <CurrentStatusBanner
+          resourceType={requestResource}
+          resourceId={data.id}
+          actionLabel={(code, key) => {
+            const known: Record<string, string> = {
+              submit: t('actions.submit'),
+              resubmit: t('actions.resubmit'),
+              'upload-cost-estimation': t('actions.uploadCostEstimation'),
+              'upload-scope': t('actions.uploadScope'),
+              'hand-off': t('actions.handOff'),
+              'upload-quotations': t('actions.uploadQuotations'),
+              'approved-budget': t('actions.setApprovedBudget'),
+              'open-project': t('actions.openProject'),
+            };
+            return known[code] ?? tc(key as 'actions.edit', { defaultValue: code });
+          }}
+          onAction={(code) => {
+            if (code === 'submit' || code === 'resubmit') setDialog('submit');
+            if (code === 'upload-cost-estimation') setDialog('cost-estimation');
+            if (code === 'upload-scope') setDialog('project-scope');
+            if (code === 'upload-quotations') setDialog('quotation');
+            if (code === 'hand-off') doHandOff();
+            if (code === 'approved-budget') setDialog('budget');
+            if (code === 'open-project' && data.project)
+              void go({ to: '/portfolio/projects/$projectId', params: { projectId: data.project.id } });
+          }}
+        />
+      }
+      related={[
+        {
+          key: 'assessment',
+          label: t('tabs.assessment'),
+          count: data.assessmentCount,
+          onOpen: () => goTab('assessment'),
+        },
+        { key: 'files', label: t('tabs.files'), onOpen: () => goTab('files') },
+        { key: 'documents', label: t('tabs.documents'), onOpen: () => goTab('documents') },
+        { key: 'approvals', label: t('tabs.approvals'), onOpen: () => goTab('approvals') },
+        { key: 'tasks', label: t('tabs.tasks'), onOpen: () => goTab('tasks') },
+      ]}
+    >
       <Tabs
         value={benefitsOn && benefitsTab ? 'benefits' : tab}
         onValueChange={(value) => {
@@ -298,7 +355,7 @@ export function RequestPage() {
       {(dialog === 'cost-estimation' || dialog === 'project-scope' || dialog === 'quotation') && (
         <UploadDialog request={data} kind={dialog} onClose={() => setDialog(undefined)} />
       )}
-    </div>
+    </RecordLayout>
   );
 }
 

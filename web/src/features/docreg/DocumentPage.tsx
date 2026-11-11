@@ -22,7 +22,7 @@ import { errorMessage } from '@/api/problem';
 import { HistoryTab } from '@/features/audit/HistoryTab';
 import { LinkBadge } from '@/features/links/LinkBadge';
 import { LinkedTasksPanel } from '@/features/tasks/LinkedTasksPanel';
-import { formatDateTime, pickText } from '@/lib/format';
+import { formatDate, formatDateTime, pickText } from '@/lib/format';
 import {
   Button,
   Checkbox,
@@ -33,6 +33,7 @@ import {
   EmptyState,
   FormField,
   PageHeader,
+  RecordLayout,
   Skeleton,
   StatusBanner,
   StatusChip,
@@ -65,6 +66,7 @@ import {
 } from './api';
 import {
   AiDraftPanel,
+  DocRegNav,
   DocRegPage,
   DocStatusChip,
   documentName,
@@ -103,91 +105,145 @@ export function DocumentPage() {
   const name = documentName(i18n.language, doc, t('document.untitled'));
   const can = doc.can;
 
+  const day = (value: string | null) => (value ? formatDate(value, i18n.language) : '—');
+  const goTab = (value: (typeof tabs)[number]) => void navigate({ search: { tab: value } });
+  // DocRegPage's secondary navigation comes first (Classic keeps the same order); the record layout adds the theme's slots.
   return (
-    <DocRegPage testId="document-page">
-      <Link to="/documents" className="flex w-fit items-center gap-1 text-sm text-primary hover:underline">
-        <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden />
-        {t('document.back')}
-      </Link>
-      <PageHeader
-        title={name}
-        description={
-          <span className="flex flex-wrap items-center gap-x-2">
-            <bdi data-testid="document-number">{doc.documentNo ?? t('document.noNumber')}</bdi>
-            {doc.currentVersion && (
-              <>
-                <span aria-hidden>·</span>
-                <span>
-                  {t('fields.version')} <bdi>{doc.currentVersion}</bdi>
-                </span>
-              </>
-            )}
-          </span>
-        }
-        meta={
-          <>
-            <OriginBadge type="docreg.document" id={doc.id} />
-            <DocStatusChip status={doc.status} />
-            <SensitivityChip code={doc.sensitivity} />
-            <ValidityChips
-              status={doc.status}
-              expiryDate={doc.expiryDate}
-              underRevision={doc.underRevision}
-            />
-          </>
-        }
-        actions={
-          <div className="flex flex-wrap gap-2">
-            {can.download && (
-              <Button variant="outline" asChild>
-                <a
-                  href={downloadUrl(doc.id)}
-                  data-testid="document-download"
-                  title={t('document.downloadHint')}
+    <RecordLayout
+      testId="document-page"
+      back={
+        <>
+          <DocRegNav />
+          <Link
+            to="/documents"
+            className="flex w-fit items-center gap-1 text-sm text-primary hover:underline"
+          >
+            <ArrowLeft className="size-4 rtl:rotate-180" aria-hidden />
+            {t('document.back')}
+          </Link>
+        </>
+      }
+      header={
+        <PageHeader
+          title={name}
+          description={
+            <span className="flex flex-wrap items-center gap-x-2">
+              <bdi data-testid="document-number">{doc.documentNo ?? t('document.noNumber')}</bdi>
+              {doc.currentVersion && (
+                <>
+                  <span aria-hidden>·</span>
+                  <span>
+                    {t('fields.version')} <bdi>{doc.currentVersion}</bdi>
+                  </span>
+                </>
+              )}
+            </span>
+          }
+          meta={
+            <>
+              <OriginBadge type="docreg.document" id={doc.id} />
+              <DocStatusChip status={doc.status} />
+              <SensitivityChip code={doc.sensitivity} />
+              <ValidityChips
+                status={doc.status}
+                expiryDate={doc.expiryDate}
+                underRevision={doc.underRevision}
+              />
+            </>
+          }
+          actions={
+            <div className="flex flex-wrap gap-2">
+              {can.download && (
+                <Button variant="outline" asChild>
+                  <a
+                    href={downloadUrl(doc.id)}
+                    data-testid="document-download"
+                    title={t('document.downloadHint')}
+                  >
+                    <Download aria-hidden />
+                    {t('document.download')}
+                  </a>
+                </Button>
+              )}
+              {can.acknowledge && (
+                <Button
+                  loading={acknowledge.isPending}
+                  data-testid="document-acknowledge"
+                  onClick={() =>
+                    acknowledge.mutate(doc.id, {
+                      onSuccess: () => toast({ tone: 'success', title: t('document.acknowledgedToast') }),
+                      onError: (e) => toast({ tone: 'error', title: errorMessage(tc, e) }),
+                    })
+                  }
                 >
-                  <Download aria-hidden />
-                  {t('document.download')}
-                </a>
-              </Button>
-            )}
-            {can.acknowledge && (
-              <Button
-                loading={acknowledge.isPending}
-                data-testid="document-acknowledge"
-                onClick={() =>
-                  acknowledge.mutate(doc.id, {
-                    onSuccess: () => toast({ tone: 'success', title: t('document.acknowledgedToast') }),
-                    onError: (e) => toast({ tone: 'error', title: errorMessage(tc, e) }),
-                  })
-                }
-              >
-                <CheckCheck aria-hidden />
-                {t('document.acknowledge')}
-              </Button>
-            )}
-          </div>
-        }
-      />
-
-      {doc.status === 'withdrawn' && (
-        <StatusBanner
-          tone="warning"
-          title={t('document.withdrawnBanner')}
-          description={doc.withdrawnReason ?? undefined}
+                  <CheckCheck aria-hidden />
+                  {t('document.acknowledge')}
+                </Button>
+              )}
+            </div>
+          }
         />
-      )}
-      {!['published', 'expired', 'withdrawn'].includes(doc.status) && (
-        <StatusBanner tone="info" title={t('document.inReview')} />
-      )}
-      {(doc.status === 'published' || doc.status === 'expired') && (
-        <ValidityBanner
-          doc={doc}
-          onConfirm={() => setDialog('confirm')}
-          onEditExpiry={() => setDialog('expiry')}
-        />
-      )}
-      <AckLine doc={doc} />
-
+      }
+      highlights={[
+        { key: 'number', label: t('fields.documentNo'), value: <bdi>{doc.documentNo ?? '—'}</bdi> },
+        { key: 'version', label: t('fields.version'), value: <bdi>{doc.currentVersion ?? '—'}</bdi> },
+        {
+          key: 'ownerUnit',
+          label: t('fields.ownerUnit'),
+          value: doc.ownerUnit ? pickText(i18n.language, doc.ownerUnit.nameAr, doc.ownerUnit.nameEn) : '—',
+        },
+        {
+          key: 'owner',
+          label: t('fields.owner'),
+          value: doc.owner ? pickText(i18n.language, doc.owner.nameAr, doc.owner.nameEn) : '—',
+        },
+        { key: 'effective', label: t('fields.effectiveDate'), value: day(doc.effectiveDate) },
+        { key: 'expiry', label: t('fields.expiryDate'), value: day(doc.expiryDate) },
+      ]}
+      status={
+        <>
+          {doc.status === 'withdrawn' && (
+            <StatusBanner
+              tone="warning"
+              title={t('document.withdrawnBanner')}
+              description={doc.withdrawnReason ?? undefined}
+            />
+          )}
+          {!['published', 'expired', 'withdrawn'].includes(doc.status) && (
+            <StatusBanner tone="info" title={t('document.inReview')} />
+          )}
+          {(doc.status === 'published' || doc.status === 'expired') && (
+            <ValidityBanner
+              doc={doc}
+              onConfirm={() => setDialog('confirm')}
+              onEditExpiry={() => setDialog('expiry')}
+            />
+          )}
+          <AckLine doc={doc} />
+        </>
+      }
+      related={[
+        {
+          key: 'versions',
+          label: t('document.tabs.versions'),
+          count: doc.versions.length,
+          onOpen: () => goTab('versions'),
+        },
+        {
+          key: 'validity',
+          label: t('document.tabs.validity'),
+          count: doc.validity.length,
+          onOpen: () => goTab('validity'),
+        },
+        {
+          key: 'linked',
+          label: t('document.tabs.linked'),
+          count: doc.linked.length,
+          onOpen: () => goTab('linked'),
+        },
+        { key: 'tasks', label: t('document.tabs.tasks'), onOpen: () => goTab('tasks') },
+      ]}
+    >
       <Tabs
         value={tab}
         onValueChange={(value) => void navigate({ search: { tab: value as (typeof tabs)[number] } })}
@@ -232,7 +288,7 @@ export function DocumentPage() {
 
       {dialog === 'confirm' && <ConfirmDialog doc={doc} onClose={() => setDialog(undefined)} />}
       {dialog === 'expiry' && <ExpiryDialog doc={doc} onClose={() => setDialog(undefined)} />}
-    </DocRegPage>
+    </RecordLayout>
   );
 }
 
