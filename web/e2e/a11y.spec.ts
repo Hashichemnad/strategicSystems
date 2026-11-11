@@ -306,7 +306,12 @@ test.describe('accessibility — WCAG 2.1 AA (axe-core)', () => {
       version: current.version,
     });
     expect(allowed.status()).toBe(200);
-    const project = await firstRecordHref(page, '/portfolio/projects', projectHref);
+    // Record pages with the theme's record layout (highlights, path, related lists), found in Classic while lists are tables.
+    const recordPages: { name: string; href: string }[] = [];
+    for (const record of records) {
+      const href = await firstRecordHref(page, record.list, record.href);
+      if (href) recordPages.push({ name: record.name, href });
+    }
     try {
       for (const uiTheme of ['enterprise', 'modern'] as const) {
         for (const theme of ['light', 'dark'] as const) {
@@ -326,16 +331,28 @@ test.describe('accessibility — WCAG 2.1 AA (axe-core)', () => {
           }
           for (const path of [
             '/apps/portfolio',
-            '/portfolio/projects',
             '/apps/kpi',
             '/settings/appearance',
+            // Lists with the split view (list + preview by default in Modern, table in Enterprise).
+            '/portfolio/projects',
+            '/portfolio/requests',
+            '/risk/risks',
+            '/kpi/cards',
+            '/ip',
+            '/documents',
+            '/bench/studies',
+            '/tasks',
+            '/teams',
+            '/cap/remarks',
+            '/audit-management/findings',
+            '/requests/mine',
           ]) {
             await page.goto(path);
             await expectAccessible(page, name(path.replace(/\//gu, '-').slice(1)));
           }
-          if (project) {
-            await page.goto(project);
-            await expectAccessible(page, name('portfolio-project'));
+          for (const record of recordPages) {
+            await page.goto(record.href);
+            await expectAccessible(page, name(record.name));
           }
         }
       }
