@@ -176,6 +176,7 @@ internal sealed class ProjectService(
     {
         var template = await loader.EnsureTemplateAsync(project, ct).ConfigureAwait(false);
         db.Entry(project).Property(x => x.Version).OriginalValue = version;
+        var stageBefore = project.Stage;
         var applied = project.Apply(ProjectActions.TakeOwnership, template, clock.UtcNow);
         if (applied.IsFailure)
         {
@@ -193,6 +194,7 @@ internal sealed class ProjectService(
             .ConfigureAwait(false);
         await notifier.ToEmployeesAsync(PortfolioNotifications.OwnershipTaken, project, [employeeId], db, ct, stage: ProjectNotifier.StageText(project.Stage))
             .ConfigureAwait(false);
+        await ProjectStageEvents.PublishIfChangedAsync(events, project, stageBefore, clock.UtcNow, db, ct).ConfigureAwait(false);
         await db.SaveChangesAsync(ct).ConfigureAwait(false);
         await transaction.CommitAsync(ct).ConfigureAwait(false);
         return await ToDtoAsync(project, ct).ConfigureAwait(false);
@@ -489,6 +491,7 @@ internal sealed class ProjectService(
         }
 
         db.Entry(project).Property(x => x.Version).OriginalValue = version;
+        var stageBefore = project.Stage;
         var applied = project.Apply(ProjectActions.LpoUploaded, template, clock.UtcNow);
         if (applied.IsFailure)
         {
@@ -512,6 +515,7 @@ internal sealed class ProjectService(
                 .ConfigureAwait(false);
         }
 
+        await ProjectStageEvents.PublishIfChangedAsync(events, project, stageBefore, clock.UtcNow, db, ct).ConfigureAwait(false);
         await db.SaveChangesAsync(ct).ConfigureAwait(false);
         await transaction.CommitAsync(ct).ConfigureAwait(false);
         return await ToDtoAsync(project, ct).ConfigureAwait(false);
@@ -528,6 +532,7 @@ internal sealed class ProjectService(
 
         var template = await loader.EnsureTemplateAsync(project, ct).ConfigureAwait(false);
         db.Entry(project).Property(x => x.Version).OriginalValue = version;
+        var stageBefore = project.Stage;
         var applied = project.Apply(ProjectActions.ConfirmCompletion, template, clock.UtcNow);
         if (applied.IsFailure)
         {
@@ -541,6 +546,7 @@ internal sealed class ProjectService(
         }
 
         await events.PublishAsync(new LinkedRecordClosed(PortfolioPermissions.ProjectResource, project.Id, "completed", clock.UtcNow), db, ct).ConfigureAwait(false);
+        await ProjectStageEvents.PublishIfChangedAsync(events, project, stageBefore, clock.UtcNow, db, ct).ConfigureAwait(false);
         await notifier.ToEmployeesAsync(PortfolioNotifications.StageChanged, project, [project.PmEmployeeId], db, ct, stage: ProjectNotifier.StageText(project.Stage))
             .ConfigureAwait(false);
         await db.SaveChangesAsync(ct).ConfigureAwait(false);

@@ -6,6 +6,7 @@ using Strategy.Modules.Risk.Ai;
 using Strategy.Modules.Risk.Api;
 using Strategy.Modules.Risk.Application;
 using Strategy.Modules.Risk.Contracts;
+using Strategy.Modules.Risk.Domain;
 using Strategy.Modules.Risk.Infrastructure;
 using Strategy.Modules.Risk.Jobs;
 using Strategy.Modules.Risk.Mcp;
@@ -15,6 +16,7 @@ using Strategy.Platform.AI;
 using Strategy.Platform.AI.Tools;
 using Strategy.Platform.Files;
 using Strategy.Platform.Http.Modules;
+using Strategy.Platform.Integration.Webhooks;
 using Strategy.Platform.Kernel;
 using Strategy.Platform.Links;
 using Strategy.Platform.Notifications;
@@ -110,6 +112,28 @@ public sealed class RiskModule : IModule
         services.AddAppTool<RiskTop10Tool>();
         services.AddAppTool<RisksOutsideAppetiteTool>();
         services.AddAppTool<UpdateRiskActionProgressDraftTool>();
+
+        // Phase 22: analytics feeds and extracts (ADR 0190).
+        services.AddReportableRecordSource<Feeds.RiskFeeds>();
+
+        // Phase 22: webhook events (ADR 0194), all about the risk. risk.event.logged is not offered: risk events are no linkable type, so a
+        // subscriber's read access to the event could not be checked per record.
+        var sampleRisk = Guid.Parse("0190a4f0-0000-7000-8000-000000000021");
+        var sampleUnit = Guid.Parse("0190a4f0-0000-7000-8000-000000000022");
+        services.AddWebhookEvent<RiskRatingChanged>(
+            "risk.risk.rating-changed", RiskPermissions.SystemCode, "تغيّر تصنيف خطر", "Risk rating changed", RiskRecord.EntityType, RiskPermissions.Read,
+            e => e.RiskId,
+            new RiskRatingChanged(sampleRisk, "SPMO26-R004", "medium", 9m, "high", 15m, sampleUnit, new DateTimeOffset(2026, 4, 20, 11, 0, 0, TimeSpan.Zero)));
+        services.AddWebhookEvent<RiskKriBreached>(
+            "risk.kri.breached", RiskPermissions.SystemCode, "تجاوز حدّ مؤشر خطر رئيسي", "Key risk indicator breached", RiskRecord.EntityType, RiskPermissions.Read,
+            e => e.RiskId,
+            new RiskKriBreached(sampleRisk, "SPMO26-R004", Guid.Parse("0190a4f0-0000-7000-8000-000000000023"), Guid.Parse("0190a4f0-0000-7000-8000-000000000024"),
+                42m, 40m, "above", new DateTimeOffset(2026, 7, 15, 9, 5, 0, TimeSpan.Zero)));
+        services.AddWebhookEvent<RiskControlRatedIneffective>(
+            "risk.control.ineffective", RiskPermissions.SystemCode, "تقييم ضابط رقابي بأنه غير فعّال", "Risk control rated ineffective", RiskRecord.EntityType,
+            RiskPermissions.Read, e => e.RiskId,
+            new RiskControlRatedIneffective(Guid.Parse("0190a4f0-0000-7000-8000-000000000025"), sampleRisk, "SPMO26-R004", "مراجعة الصلاحيات الدورية",
+                "Periodic access review", sampleUnit, Guid.Parse("0190a4f0-0000-7000-8000-000000000026"), new DateTimeOffset(2026, 5, 10, 7, 45, 0, TimeSpan.Zero)));
     }
 
     public void MapEndpoints(IEndpointRouteBuilder endpoints) => RiskEndpoints.Map(endpoints.MapModuleGroup(this));

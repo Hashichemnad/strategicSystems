@@ -14,6 +14,16 @@
     <ProjectReference Include="..\Strategy.Platform.Persistence\Strategy.Platform.Persistence.csproj" />
     <ProjectReference Include="..\Strategy.Platform.Http\Strategy.Platform.Http.csproj" />
     <ProjectReference Include="..\Strategy.Platform.Settings\Strategy.Platform.Settings.csproj" />
+    <!-- Phase 22 (ADR 0190–0195): clients, feeds, extracts, webhooks. -->
+    <ProjectReference Include="..\Strategy.Platform.Identity\Strategy.Platform.Identity.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Access\Strategy.Platform.Access.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Organisation\Strategy.Platform.Organisation.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Scheduling\Strategy.Platform.Scheduling.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Reporting.Contracts\Strategy.Platform.Reporting.Contracts.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="OpenIddict.AspNetCore" />
+    <PackageReference Include="Microsoft.OData.Core" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Strategy.UnitTests" />

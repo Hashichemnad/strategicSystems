@@ -164,3 +164,9 @@ Write an ADR for every choice the SPEC or CLAUDE.md leaves open (CLAUDE.md §2 r
 | [0184](0184-record-dossier-templates.md) | Record dossier templates and per-section permissions | Accepted |
 | [0185](0185-dossier-pdf-and-word-rendering.md) | Dossier rendering: PDF via Gotenberg, Word via DocumentFormat.OpenXml | Accepted |
 | [0186](0186-scheduled-dossiers.md) | Scheduled dossiers | Accepted |
+| [0190](0190-reportable-record-contract.md) | Reportable record contract shared with Reporting 2.0 (record types, fields, relationships, neutral filters) | Proposed |
+| [0191](0191-integration-clients-and-service-accounts.md) | Integration clients: service accounts, credentials, the access snapshot, gate and usage log | Proposed |
+| [0192](0192-odata-subset-with-microsoft-odata-core.md) | OData v4 with Microsoft.OData.Core parser and CSDL, executed through the record sources | Proposed |
+| [0193](0193-incremental-extracts-and-scheduled-exports.md) | Incremental extracts, deleted feed and scheduled folder exports | Proposed |
+| [0194](0194-signed-webhooks.md) | Webhooks: catalogue from integration events, HMAC signature, back-off, dead letters, replay | Proposed |
+| [0195](0195-developer-portal.md) | Developer portal page and Power BI guide | Proposed |

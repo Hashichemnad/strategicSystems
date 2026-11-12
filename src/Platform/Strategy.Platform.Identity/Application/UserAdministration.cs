@@ -51,7 +51,7 @@ internal sealed class UserAdministration(
 
     public async Task<PagedResult<UserDto>> ListAsync(PageRequest paging, string? search, bool? active, CancellationToken cancellationToken)
     {
-        var query = users.Users.AsNoTracking();
+        var query = users.Users.AsNoTracking().Where(u => u.PrincipalType != ServiceAccounts.PrincipalType); // integration clients: Settings → Integrations
         if (!string.IsNullOrWhiteSpace(search))
         {
             var term = search.Trim().ToUpperInvariant();

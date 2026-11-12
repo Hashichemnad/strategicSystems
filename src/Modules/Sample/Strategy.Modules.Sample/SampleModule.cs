@@ -56,6 +56,9 @@ public sealed class SampleModule : IModule
 
         // Phase 19: global search (ADR 0160).
         services.AddSearchContributor<SampleSearchContributor>("sample");
+
+        // Phase 22: analytics feeds and extracts (ADR 0190).
+        services.AddReportableRecordSource<Feeds.SampleFeeds>();
     }
 
     public void MapEndpoints(IEndpointRouteBuilder endpoints) => SampleEndpoints.Map(endpoints.MapModuleGroup(this));

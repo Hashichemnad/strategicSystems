@@ -44,7 +44,7 @@ internal static class SpaHosting
             FileProvider = files,
             OnPrepareResponse = context => context.Context.Response.Headers[HeaderNames.CacheControl] = "no-cache",
         };
-        app.MapFallbackToFile("{*path:nonfile:regex(^(?!(api|mcp|health|openapi)(/|$)).*$)}", "index.html", options);
+        app.MapFallbackToFile("{*path:nonfile:regex(^(?!(api|mcp|odata|health|openapi)(/|$)).*$)}", "index.html", options);
 
         // SPA routes whose last segment is a dotted code (built-in request types such as docreg.document, dashboards such as kpi.scorecard)
         // look like file names.

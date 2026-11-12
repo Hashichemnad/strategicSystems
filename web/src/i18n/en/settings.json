@@ -195,6 +195,18 @@
     "members": {
       "title": "Members",
       "description": "Administrators, users and extra roles of each system, without the matrix."
+    },
+    "integrationClients": {
+      "title": "Integration clients",
+      "description": "Service accounts of other systems (Power BI, ERP, data warehouse): credentials, permissions and data scope, IP allow-list, rate limit, usage."
+    },
+    "webhookDeliveries": {
+      "title": "Webhook deliveries",
+      "description": "Delivery log of signed webhooks of every client, dead letters and replay."
+    },
+    "developerPortal": {
+      "title": "Developer portal",
+      "description": "OpenAPI, OData feeds and metadata, extracts, webhook catalogue and how to connect Power BI."
     }
   },
   "title": "Settings",

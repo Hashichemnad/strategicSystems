@@ -15,6 +15,21 @@ public sealed class IntegrationDbContext(DbContextOptions<IntegrationDbContext> 
     public DbSet<SourceSystem> SourceSystems => Set<SourceSystem>();
 
     public DbSet<ExternalRef> References => Set<ExternalRef>();
+
+    // Phase 22 (ADR 0191–0194): integration clients, credentials, usage, webhooks, scheduled exports.
+    public DbSet<IntegrationClient> Clients => Set<IntegrationClient>();
+
+    public DbSet<ClientCredential> Credentials => Set<ClientCredential>();
+
+    public DbSet<ClientUsage> Usage => Set<ClientUsage>();
+
+    public DbSet<WebhookSubscription> Subscriptions => Set<WebhookSubscription>();
+
+    public DbSet<WebhookDelivery> Deliveries => Set<WebhookDelivery>();
+
+    public DbSet<WebhookAttempt> Attempts => Set<WebhookAttempt>();
+
+    public DbSet<ExportSchedule> ExportSchedules => Set<ExportSchedule>();
 }
 
 internal sealed class SourceSystemConfiguration : IEntityTypeConfiguration<SourceSystem>

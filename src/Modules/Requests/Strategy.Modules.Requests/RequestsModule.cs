@@ -5,6 +5,7 @@ using Strategy.Modules.Requests.Ai;
 using Strategy.Modules.Requests.Api;
 using Strategy.Modules.Requests.Application;
 using Strategy.Modules.Requests.Contracts;
+using Strategy.Modules.Requests.Domain;
 using Strategy.Modules.Requests.Infrastructure;
 using Strategy.Modules.Requests.Mcp;
 using Strategy.Modules.Requests.Reporting;
@@ -13,6 +14,7 @@ using Strategy.Platform.AI;
 using Strategy.Platform.AI.Tools;
 using Strategy.Platform.Files;
 using Strategy.Platform.Http.Modules;
+using Strategy.Platform.Integration.Webhooks;
 using Strategy.Platform.Links;
 using Strategy.Platform.Notifications;
 using Strategy.Platform.Persistence;
@@ -81,6 +83,15 @@ public sealed class RequestsModule : IModule
         services.AddAppTool<MyRequestsTool>();
         services.AddAppTool<RequestStatusTool>();
         services.AddAppTool<SubmitRequestDraftTool>();
+
+        // Phase 22: analytics feeds and extracts (ADR 0190).
+        services.AddReportableRecordSource<Feeds.RequestFeeds>();
+
+        // Phase 22: webhook events (ADR 0194).
+        services.AddWebhookEvent<RequestDecided>("requests.request.decided", RequestPermissions.SystemCode, "تم البت في طلب", "Request decided",
+            Request.EntityType, RequestPermissions.Read, e => e.RequestId,
+            new RequestDecided(Guid.Parse("0190a4f0-0000-7000-8000-000000000001"), "REQ-0001", "custom-request", RequestDecisions.Approved,
+                new DateTimeOffset(2026, 3, 15, 9, 30, 0, TimeSpan.Zero)));
     }
 
     public void MapEndpoints(IEndpointRouteBuilder endpoints) => RequestEndpoints.Map(endpoints.MapModuleGroup(this));

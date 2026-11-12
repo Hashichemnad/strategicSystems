@@ -55,6 +55,7 @@ public sealed class IdentityComponent : IPlatformComponent
         services.AddScoped<SignInService>();
         services.AddScoped<AccessTokenService>();
         services.AddScoped<TokenPrincipalFactory>();
+        services.AddScoped<ServiceAccounts>();
         services.AddScoped<UserAdministration>();
         services.AddScoped<Setup.SetupService>();
         services.AddHostedService<Setup.SetupTokenIssuer>();
@@ -110,6 +111,8 @@ public sealed class IdentityComponent : IPlatformComponent
             .AddPolicyScheme(AuthSchemes.Default, null, options => options.ForwardDefaultSelector = context =>
                 context.Request.Path.StartsWithSegments(WaselPathPrefix, StringComparison.OrdinalIgnoreCase)
                     ? AuthSchemes.Wasel
+                    : IntegrationClientKeys.IsIntegrationCredential(context.Request)
+                    ? AuthSchemes.Integration
                     : PatAuthenticationHandler.BearerValue(context.Request) is { Length: > 0 } bearer
                         ? AccessTokenService.LooksLikeToken(bearer) ? AuthSchemes.PersonalAccessToken : AuthSchemes.OAuth
                         : IdentityConstants.ApplicationScheme)

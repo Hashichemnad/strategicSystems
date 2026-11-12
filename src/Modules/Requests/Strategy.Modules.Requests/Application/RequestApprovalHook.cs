@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Strategy.Modules.Requests.Contracts;
 using Strategy.Modules.Requests.Domain;
 using Strategy.Modules.Requests.Infrastructure;
+using Strategy.Platform.Kernel.Messaging;
 using Strategy.Platform.Kernel.Results;
 using Strategy.Platform.Persistence;
 using Strategy.Platform.Workflow;
@@ -15,7 +16,8 @@ namespace Strategy.Modules.Requests.Application;
 /// transaction.
 /// </summary>
 internal sealed class RequestApprovalHook(
-    RequestsDbContext db, RequestTypeCache types, RequestEngine engine, FormSecrets secrets, PendingDecision pending, Platform.Kernel.Time.IClock clock) : IApprovalHook
+    RequestsDbContext db, RequestTypeCache types, RequestEngine engine, FormSecrets secrets, PendingDecision pending, Platform.Kernel.Time.IClock clock,
+    IIntegrationEventPublisher events) : IApprovalHook
 {
     public IReadOnlyCollection<string> ProcessKeys => types.ProcessKeys;
 
@@ -76,6 +78,13 @@ internal sealed class RequestApprovalHook(
 
                     await engine.AddEventAsync(request, "approved", fromStatus, fromStage, approvalEvent.Comment, FormSecrets.Masked(form, stored), cancellationToken)
                         .ConfigureAwait(false);
+                    if (request.Status != RequestStatuses.InReview)
+                    {
+                        // Final approval: no further approval stage is pending (Phase 22 webhook event, ADR 0194).
+                        await events.PublishAsync(new RequestDecided(request.Id, request.Number, request.TypeCode, RequestDecisions.Approved, clock.UtcNow), db,
+                            cancellationToken).ConfigureAwait(false);
+                    }
+
                     break;
                 }
 
@@ -93,6 +102,12 @@ internal sealed class RequestApprovalHook(
 
                     await engine.AddEventAsync(request, rejected ? "rejected" : "returned", fromStatus, fromStage, approvalEvent.Comment, null, cancellationToken)
                         .ConfigureAwait(false);
+                    if (rejected)
+                    {
+                        await events.PublishAsync(new RequestDecided(request.Id, request.Number, request.TypeCode, RequestDecisions.Rejected, clock.UtcNow), db,
+                            cancellationToken).ConfigureAwait(false);
+                    }
+
                     // The approval engine tells the submitter (workflow.rejected / workflow.returned).
                     break;
                 }

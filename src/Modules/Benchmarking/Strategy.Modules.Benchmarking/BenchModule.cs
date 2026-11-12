@@ -89,6 +89,9 @@ public sealed class BenchModule : IModule
         services.AddAppTool<BenchStudiesTool>();
         services.AddAppTool<BenchStudyDetailsTool>();
         services.AddAppTool<BenchBestPracticesTool>();
+
+        // Phase 22: analytics feeds and extracts (ADR 0190).
+        services.AddReportableRecordSource<Feeds.BenchFeeds>();
     }
 
     public void MapEndpoints(IEndpointRouteBuilder endpoints) => BenchEndpoints.Map(endpoints.MapModuleGroup(this));

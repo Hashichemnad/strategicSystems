@@ -3460,6 +3460,358 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/integration/settings': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetIntegrationSettings'];
+    put: operations['SaveIntegrationSettings'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/catalogue': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetIntegrationCatalogue'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/clients': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListIntegrationClients'];
+    put?: never;
+    post: operations['CreateIntegrationClient'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/clients/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetIntegrationClient'];
+    put: operations['UpdateIntegrationClient'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/clients/{id}/revoke': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RevokeIntegrationClient'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/clients/{id}/credentials': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListIntegrationClientCredentials'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/clients/{id}/credentials/rotate': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RotateIntegrationClientCredential'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/clients/{id}/credentials/{credentialId}/revoke': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RevokeIntegrationClientCredential'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/clients/{id}/roles': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListIntegrationClientRoles'];
+    put: operations['SetIntegrationClientRoles'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/clients/{id}/usage': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetIntegrationClientUsage'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/clients/{clientId}/webhooks': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListWebhookSubscriptions'];
+    put?: never;
+    post: operations['CreateWebhookSubscription'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/clients/{clientId}/webhooks/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateWebhookSubscription'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/clients/{clientId}/webhooks/{id}/secret': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RegenerateWebhookSecret'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/clients/{clientId}/webhooks/{id}/test': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SendWebhookTest'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/webhooks/events': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListWebhookEvents'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/webhooks/deliveries': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListWebhookDeliveries'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/webhooks/deliveries/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetWebhookDelivery'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/webhooks/deliveries/replay': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ReplayWebhookDeliveries'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/clients/{clientId}/exports': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListExportSchedules'];
+    put?: never;
+    post: operations['CreateExportSchedule'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/clients/{clientId}/exports/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateExportSchedule'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/portal': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetDeveloperPortal'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/portal/metadata/{system}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetDeveloperPortalMetadata'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/search': {
     parameters: {
       query?: never;
@@ -17094,6 +17446,24 @@ export interface components {
       types: components['schemas']['CatalogueTypeDto'][];
       categories: components['schemas']['CategoryDto'][];
     };
+    CatalogueEventDto: {
+      code: string;
+      labelAr: string;
+      labelEn: string;
+    };
+    CatalogueRecordTypeDto: {
+      code: string;
+      entitySet: string;
+      labelAr: string;
+      labelEn: string;
+    };
+    CatalogueSystemDto: {
+      code: string;
+      nameAr: string;
+      nameEn: string;
+      recordTypes: components['schemas']['CatalogueRecordTypeDto'][];
+      events: components['schemas']['CatalogueEventDto'][];
+    };
     CatalogueTypeDto: {
       code: string;
       systemCode: string;
@@ -17362,6 +17732,99 @@ export interface components {
       /** Format: uuid */
       usageId: string;
     };
+    ClientDto: {
+      /** Format: uuid */
+      id: string;
+      clientId: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      description: null | string;
+      authKind: string;
+      scopes: string[];
+      allowedSystems: string[];
+      allowedRecordTypes: string[];
+      ipAllowList: string[];
+      /** Format: int32 */
+      rateLimitPerMinute: number;
+      /** Format: date-time */
+      expiresAt: string;
+      state: string;
+      /** Format: date-time */
+      revokedAt: null | string;
+      revokeReason: null | string;
+      /** Format: uuid */
+      actingUnitId: null | string;
+      actingUnitNameAr: null | string;
+      actingUnitNameEn: null | string;
+      /** Format: date-time */
+      lastUsedAt: null | string;
+      lastUsedIp: null | string;
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: uint32 */
+      version: number;
+    };
+    ClientInput: {
+      nameAr: null | string;
+      nameEn: null | string;
+      description: null | string;
+      authKind: null | string;
+      /** Format: uuid */
+      actingUnitId: null | string;
+      scopes: null | string[];
+      allowedSystems: null | string[];
+      allowedRecordTypes: null | string[];
+      ipAllowList: null | string[];
+      /** Format: int32 */
+      rateLimitPerMinute: null | number;
+      /** Format: date-time */
+      expiresAt: null | string;
+      /**
+       * Format: uint32
+       * @default 0
+       */
+      version: number;
+    };
+    ClientRevokeInput: {
+      reason: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
+    ClientRolesInput: {
+      roleIds: null | string[];
+    };
+    ClientRotateInput: {
+      /** Format: int32 */
+      overlapDays: null | number;
+    };
+    ClientUsageDayDto: {
+      /** Format: date */
+      day: string;
+      /** Format: int32 */
+      calls: number;
+      /** Format: int32 */
+      refused: number;
+      /** Format: int32 */
+      rows: number;
+    };
+    ClientUsageDto: {
+      log: components['schemas']['PagedResultOfClientUsageRowDto'];
+      days: components['schemas']['ClientUsageDayDto'][];
+    };
+    ClientUsageRowDto: {
+      /** Format: date-time */
+      at: string;
+      method: string;
+      path: string;
+      /** Format: int32 */
+      statusCode: number;
+      /** Format: int32 */
+      durationMs: number;
+      /** Format: int32 */
+      rows: null | number;
+      ip: null | string;
+      refusedReason: null | string;
+    };
     ClosureInput: {
       summaryOfAchievement: null | string;
       mainDeliverables: null | string;
@@ -17608,6 +18071,11 @@ export interface components {
       details: components['schemas']['AccessTokenDto'];
       token: string;
     };
+    /** @description A new client with its first credential; string CreatedClientDto.Secret is shown once. */
+    CreatedClientDto: {
+      client: components['schemas']['ClientDto'];
+      secret: string;
+    };
     CreatedTasksDto: {
       tasks: components['schemas']['TaskListItemDto'][];
       /** Format: uuid */
@@ -17673,6 +18141,21 @@ export interface components {
       /** Format: int32 */
       skipped: number;
       taskIds: string[];
+    };
+    CredentialDto: {
+      /** Format: uuid */
+      id: string;
+      kind: string;
+      prefix: string;
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: date-time */
+      expiresAt: null | string;
+      /** Format: date-time */
+      revokedAt: null | string;
+      /** Format: date-time */
+      lastUsedAt: null | string;
+      state: string;
     };
     CriterionInput: {
       code: string;
@@ -18684,6 +19167,38 @@ export interface components {
       /** Format: uint32 */
       version: number;
     };
+    ExportScheduleDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      clientId: string;
+      name: string;
+      recordTypes: string[];
+      format: string;
+      folder: string;
+      /** Format: int32 */
+      everyHours: number;
+      active: boolean;
+      /** Format: date-time */
+      lastRunAt: null | string;
+      lastRunStatus: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
+    ExportScheduleInput: {
+      name: null | string;
+      recordTypes: null | string[];
+      format: null | string;
+      folder: null | string;
+      /** Format: int32 */
+      everyHours: null | number;
+      active: null | boolean;
+      /**
+       * Format: uint32
+       * @default 0
+       */
+      version: number;
+    };
     /**
      * @description One proposed value: never saved by the server; the review UI shows it as a draft (docs/design/ai.md §4.1). Where the source was found:
      *     `LocationKind``page` / `slide` / `image` with its number, and `FromScan` when the text came from OCR (ADR 0033).
@@ -19459,6 +19974,69 @@ export interface components {
       steps: components['schemas']['StepStateDto'][];
       history: components['schemas']['HistoryDto'][];
       myTask: null | components['schemas']['MyTaskDto'];
+    };
+    /** @description Settings → Integrations (docs/design/integrations.md §8). */
+    IntegrationSettings: {
+      /**
+       * Format: int32
+       * @default 730
+       */
+      maxClientDays: number;
+      /**
+       * Format: int32
+       * @default 365
+       */
+      defaultClientDays: number;
+      /**
+       * Format: int32
+       * @default 60
+       */
+      accessTokenMinutes: number;
+      /**
+       * Format: int32
+       * @default 1000
+       */
+      oDataPageSize: number;
+      /**
+       * Format: int32
+       * @default 10000
+       */
+      expandLimit: number;
+      /**
+       * Format: int32
+       * @default 5000
+       */
+      extractMaxPageSize: number;
+      /**
+       * Format: int32
+       * @default 90
+       */
+      usageRetentionDays: number;
+      /**
+       * Format: int32
+       * @default 8
+       */
+      webhookMaxAttempts: number;
+      /**
+       * Format: int32
+       * @default 60
+       */
+      webhookRetryBaseSeconds: number;
+      /**
+       * Format: int32
+       * @default 10
+       */
+      webhookTimeoutSeconds: number;
+    };
+    IntegrationSettingsDto: {
+      settings: components['schemas']['IntegrationSettings'];
+      /** Format: uint32 */
+      version: number;
+    };
+    IntegrationSettingsInput: {
+      settings: components['schemas']['IntegrationSettings'];
+      /** Format: uint32 */
+      version: number;
     };
     InternalInput: {
       notes: null | string;
@@ -21986,6 +22564,18 @@ export interface components {
       totalPages?: number;
     };
     /** @description One page of items plus the total count across all pages. */
+    PagedResultOfClientUsageRowDto: {
+      items: components['schemas']['ClientUsageRowDto'][];
+      /** Format: int32 */
+      page: number;
+      /** Format: int32 */
+      pageSize: number;
+      /** Format: int32 */
+      totalCount: number;
+      /** Format: int32 */
+      totalPages?: number;
+    };
+    /** @description One page of items plus the total count across all pages. */
     PagedResultOfDeliveryDto: {
       items: components['schemas']['DeliveryDto'][];
       /** Format: int32 */
@@ -22144,6 +22734,18 @@ export interface components {
     /** @description One page of items plus the total count across all pages. */
     PagedResultOfUserDto: {
       items: components['schemas']['UserDto'][];
+      /** Format: int32 */
+      page: number;
+      /** Format: int32 */
+      pageSize: number;
+      /** Format: int32 */
+      totalCount: number;
+      /** Format: int32 */
+      totalPages?: number;
+    };
+    /** @description One page of items plus the total count across all pages. */
+    PagedResultOfWebhookDeliveryDto: {
+      items: components['schemas']['WebhookDeliveryDto'][];
       /** Format: int32 */
       page: number;
       /** Format: int32 */
@@ -22414,6 +23016,32 @@ export interface components {
       createdAt: string;
       /** Format: uint32 */
       version: number;
+    };
+    PortalDto: {
+      baseUrl: string;
+      openApiUrl: string;
+      tokenUrl: string;
+      systems: components['schemas']['PortalSystemDto'][];
+    };
+    PortalFieldDto: {
+      code: string;
+      labelAr: string;
+      labelEn: string;
+      type: string;
+      hasLabel: boolean;
+    };
+    PortalRecordTypeDto: {
+      code: string;
+      entitySet: string;
+      labelAr: string;
+      labelEn: string;
+      fields: components['schemas']['PortalFieldDto'][];
+      relationships: string[];
+    };
+    PortalSystemDto: {
+      code: string;
+      oDataUrl: string;
+      recordTypes: components['schemas']['PortalRecordTypeDto'][];
     };
     PortfolioDashboardDto: {
       /** Format: int32 */
@@ -25321,6 +25949,11 @@ export interface components {
       /** Format: uuid */
       usageId: string;
     };
+    /** @description A new credential after rotation; string RotatedCredentialDto.Secret is shown once. */
+    RotatedCredentialDto: {
+      credential: components['schemas']['CredentialDto'];
+      secret: string;
+    };
     /** @description An employee holding the item's "editor" record role. */
     SampleEditorDto: {
       /** Format: uuid */
@@ -25627,6 +26260,17 @@ export interface components {
       roleKeys: string[];
       /** @default true */
       allowShareToAll: boolean;
+    };
+    /** @description A role an integration client's service account may hold (ADR 0191), with its permissions and data scopes. */
+    ServiceAccountRoleOption: {
+      /** Format: uuid */
+      roleId: string;
+      systemCode: string;
+      code: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      permissions: components['schemas']['RolePermissionDto'][];
+      assigned: boolean;
     };
     SessionDto: {
       /** Format: uuid */
@@ -28285,6 +28929,93 @@ export interface components {
       uaePass: boolean;
       uaePassNameAr: null | string;
       uaePassNameEn: null | string;
+    };
+    WebhookAttemptDto: {
+      /** Format: int32 */
+      number: number;
+      /** Format: date-time */
+      at: string;
+      /** Format: int32 */
+      statusCode: null | number;
+      /** Format: int32 */
+      durationMs: number;
+      error: null | string;
+    };
+    WebhookDeliveryDetailDto: {
+      delivery: components['schemas']['WebhookDeliveryDto'];
+      payload: string;
+      attempts: components['schemas']['WebhookAttemptDto'][];
+    };
+    WebhookDeliveryDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      subscriptionId: string;
+      subscriptionName: null | string;
+      /** Format: uuid */
+      clientId: string;
+      clientName: null | string;
+      eventCode: string;
+      resourceType: null | string;
+      /** Format: uuid */
+      resourceId: null | string;
+      status: string;
+      /** Format: int32 */
+      attempts: number;
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: date-time */
+      nextAttemptAt: null | string;
+      /** Format: date-time */
+      deliveredAt: null | string;
+      /** Format: int32 */
+      lastStatusCode: null | number;
+      lastError: null | string;
+    };
+    WebhookEventDto: {
+      code: string;
+      systemCode: string;
+      labelAr: string;
+      labelEn: string;
+      resourceType: string;
+      samplePayload: components['schemas']['JsonElement'];
+    };
+    WebhookReplayInput: {
+      deliveryIds: null | string[];
+    };
+    WebhookSubscriptionDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      clientId: string;
+      name: string;
+      targetUrl: string;
+      events: string[];
+      active: boolean;
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: int32 */
+      pending: number;
+      /** Format: int32 */
+      dead: number;
+      /** Format: uint32 */
+      version: number;
+    };
+    WebhookSubscriptionInput: {
+      name: null | string;
+      targetUrl: null | string;
+      events: null | string[];
+      active: null | boolean;
+      /**
+       * Format: uint32
+       * @default 0
+       */
+      version: number;
+    };
+    /** @description A subscription with its signing secret, shown once (create / regenerate). */
+    WebhookSubscriptionSecretDto: {
+      subscription: components['schemas']['WebhookSubscriptionDto'];
+      secret: string;
     };
     /**
      * @description One widget of a dashboard definition (ADR 0143). Grid: 12 columns, `X` / `Y` / `W` / `H` in grid units.
@@ -36740,6 +37471,911 @@ export interface operations {
         content: {
           'application/json': components['schemas']['RecordReferencesDto'];
         };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetIntegrationSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['IntegrationSettingsDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SaveIntegrationSettings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['IntegrationSettingsInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['IntegrationSettingsDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetIntegrationCatalogue: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CatalogueSystemDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListIntegrationClients: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ClientDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateIntegrationClient: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ClientInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CreatedClientDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetIntegrationClient: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ClientDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateIntegrationClient: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ClientInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ClientDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RevokeIntegrationClient: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ClientRevokeInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ClientDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListIntegrationClientCredentials: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CredentialDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RotateIntegrationClientCredential: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ClientRotateInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RotatedCredentialDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RevokeIntegrationClientCredential: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        credentialId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['CredentialDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListIntegrationClientRoles: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ServiceAccountRoleOption'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SetIntegrationClientRoles: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ClientRolesInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ServiceAccountRoleOption'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetIntegrationClientUsage: {
+    parameters: {
+      query?: {
+        page?: number;
+        pageSize?: number;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ClientUsageDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListWebhookSubscriptions: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        clientId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['WebhookSubscriptionDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateWebhookSubscription: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        clientId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['WebhookSubscriptionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['WebhookSubscriptionSecretDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateWebhookSubscription: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        clientId: string;
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['WebhookSubscriptionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['WebhookSubscriptionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RegenerateWebhookSecret: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        clientId: string;
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['WebhookSubscriptionSecretDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SendWebhookTest: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        clientId: string;
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['WebhookDeliveryDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListWebhookEvents: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['WebhookEventDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListWebhookDeliveries: {
+    parameters: {
+      query?: {
+        clientId?: string;
+        status?: string;
+        page?: number;
+        pageSize?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PagedResultOfWebhookDeliveryDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetWebhookDelivery: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['WebhookDeliveryDetailDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ReplayWebhookDeliveries: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['WebhookReplayInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': number;
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListExportSchedules: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        clientId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ExportScheduleDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateExportSchedule: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        clientId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ExportScheduleInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ExportScheduleDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateExportSchedule: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        clientId: string;
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ExportScheduleInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ExportScheduleDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetDeveloperPortal: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PortalDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetDeveloperPortalMetadata: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        system: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
       };
       /** @description Problem Details (RFC 9457) */
       default: {

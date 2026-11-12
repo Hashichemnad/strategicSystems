@@ -61,7 +61,9 @@ public sealed class McpComponent : IPlatformComponent
                     .SetRevocationEndpointUris("/connect/revoke")
                     .SetConfigurationEndpointUris("/.well-known/oauth-authorization-server", "/.well-known/openid-configuration");
                 server.AllowAuthorizationCodeFlow().AllowRefreshTokenFlow().RequireProofKeyForCodeExchange();
-                server.RegisterScopes(McpScopes.Mcp, OpenIddict.Abstractions.OpenIddictConstants.Scopes.OfflineAccess);
+                // Integration clients (ADR 0191): confidential applications with client credentials, scopes feeds / api.read.
+                server.AllowClientCredentialsFlow();
+                server.RegisterScopes(McpScopes.Mcp, OpenIddict.Abstractions.OpenIddictConstants.Scopes.OfflineAccess, "feeds", "api.read");
                 // RFC 8707: MCP clients name this server's /mcp as the resource. Its URL depends on the installation's host, so the
                 // authorization endpoint checks it per request instead of a static list.
                 server.Configure(options =>

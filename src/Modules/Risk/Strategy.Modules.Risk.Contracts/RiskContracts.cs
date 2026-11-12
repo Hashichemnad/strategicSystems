@@ -81,3 +81,11 @@ public sealed record RiskControlRatedIneffective(
 /// <summary>An approved KPI result breached a key risk indicator threshold (ADR 0104).</summary>
 public sealed record RiskKriBreached(
     Guid RiskId, string RiskNumber, Guid KpiCardId, Guid KpiResultId, decimal Value, decimal Threshold, string Direction, DateTimeOffset At) : IIntegrationEvent;
+
+/// <summary>
+/// A registered (non-draft) risk's residual rating changed when it was rated (assessment, review, control change, framework recalculation):
+/// old and new residual band codes (framework bands) and scores. Offered to webhooks (ADR 0194). Delivered at least once.
+/// </summary>
+public sealed record RiskRatingChanged(
+    Guid RiskId, string Number, string OldResidualBand, decimal OldResidualScore, string NewResidualBand, decimal NewResidualScore, Guid UnitId, DateTimeOffset At)
+    : IIntegrationEvent;

@@ -78,6 +78,9 @@ public sealed class IpRegistryModule : IModule
         services.AddScoped<IpAiService>();
         services.AddAppTool<SearchIpRecordsTool>();
         services.AddAppTool<GetIpRecordTool>();
+
+        // Phase 22: analytics feeds and extracts (ADR 0190).
+        services.AddReportableRecordSource<Feeds.IpFeeds>();
     }
 
     public void MapEndpoints(IEndpointRouteBuilder endpoints) => IpEndpoints.Map(endpoints.MapModuleGroup(this));

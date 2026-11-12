@@ -5,6 +5,7 @@ using Strategy.Modules.Kpi.Ai;
 using Strategy.Modules.Kpi.Api;
 using Strategy.Modules.Kpi.Application;
 using Strategy.Modules.Kpi.Contracts;
+using Strategy.Modules.Kpi.Domain;
 using Strategy.Modules.Kpi.Infrastructure;
 using Strategy.Modules.Kpi.Jobs;
 using Strategy.Modules.Kpi.Mcp;
@@ -14,6 +15,7 @@ using Strategy.Platform.AI;
 using Strategy.Platform.AI.Tools;
 using Strategy.Platform.Files;
 using Strategy.Platform.Http.Modules;
+using Strategy.Platform.Integration.Webhooks;
 using Strategy.Platform.Kernel;
 using Strategy.Platform.Links;
 using Strategy.Platform.Notifications;
@@ -108,6 +110,23 @@ public sealed class KpiModule : IModule
         services.AddAppTool<DepartmentScorecardTool>();
         services.AddAppTool<ApprovalQueueSummaryTool>();
         services.AddAppTool<SubmitKpiResultDraftTool>();
+
+        // Phase 22: analytics feeds and extracts (ADR 0190).
+        services.AddReportableRecordSource<Feeds.KpiFeeds>();
+
+        // Phase 22: webhook events (ADR 0194); both are about the KPI card.
+        services.AddWebhookEvent<KpiResultApproved>(
+            "kpi.result.approved", KpiPermissions.SystemCode, "اعتماد نتيجة مؤشر أداء", "KPI result approved", KpiCard.EntityType, KpiPermissions.CardRead,
+            e => e.CardId,
+            new KpiResultApproved(Guid.Parse("0190a4f0-0000-7000-8000-000000000011"), Guid.Parse("0190a4f0-0000-7000-8000-000000000012"), "KPI-0001", 2026,
+                "q2", 92m, 0.92m, 0.92m, "amber", false, Guid.Parse("0190a4f0-0000-7000-8000-000000000013"), new DateTimeOffset(2026, 7, 15, 9, 0, 0, TimeSpan.Zero)));
+        services.AddWebhookEvent<KpiTargetMissed>(
+            "kpi.result.target-missed", KpiPermissions.SystemCode, "عدم تحقيق مستهدف مؤشر أداء", "KPI target missed", KpiCard.EntityType, KpiPermissions.CardRead,
+            e => e.CardId,
+            new KpiTargetMissed(Guid.Parse("0190a4f0-0000-7000-8000-000000000011"), Guid.Parse("0190a4f0-0000-7000-8000-000000000012"), "KPI-0001",
+                "نسبة رضا المتعاملين", "Customer satisfaction rate", 2026, "q2", 70m, 90m, 0.7778m, "red", 2,
+                Guid.Parse("0190a4f0-0000-7000-8000-000000000013"), Guid.Parse("0190a4f0-0000-7000-8000-000000000014"),
+                new DateTimeOffset(2026, 7, 15, 9, 0, 0, TimeSpan.Zero)));
     }
 
     public void MapEndpoints(IEndpointRouteBuilder endpoints) => KpiEndpoints.Map(endpoints.MapModuleGroup(this));

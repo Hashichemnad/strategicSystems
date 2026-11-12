@@ -25,6 +25,9 @@ public static class AuthMethods
     public const string Token = "pat";
     public const string OAuth = "oauth";
 
+    /// <summary>An integration client (API key, Basic or OAuth client credentials, ADR 0191).</summary>
+    public const string Client = "client";
+
     /// <summary>Wasel vendor portal session cookie (ADR 0110); used for every <c>/api/wasel</c> request and nothing else.</summary>
     public const string Wasel = "wasel";
 
@@ -42,6 +45,9 @@ public static class AuthSchemes
 
     /// <summary>OAuth 2.1 access tokens issued by the built-in authorization server (MCP clients, ADR 0032). Registered by Platform.Mcp.</summary>
     public const string OAuth = "oauth";
+
+    /// <summary>Integration client API keys (<c>Bearer sik_…</c> or HTTP Basic), registered by Platform.Integration (ADR 0191).</summary>
+    public const string Integration = "integration";
 
     /// <summary>Wasel vendor portal session cookie (ADR 0110); used for every <c>/api/wasel</c> request and nothing else.</summary>
     public const string Wasel = "wasel";

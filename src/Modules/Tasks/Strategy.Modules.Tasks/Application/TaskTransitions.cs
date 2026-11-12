@@ -1,5 +1,6 @@
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using Strategy.Modules.Tasks.Contracts;
 using Strategy.Modules.Tasks.Domain;
 using Strategy.Modules.Tasks.Infrastructure;
 using Strategy.Platform.Access;
@@ -34,7 +35,7 @@ public sealed class ActOnTaskValidator : AbstractValidator<ActOnTask>
 /// </summary>
 internal sealed class ActOnTaskHandler(
     TasksDbContext db, TaskVisibility visibility, TaskCreator factory, TaskDeadlines deadlines, TaskAssignees assignees, TaskNotifier notifier, TaskReader reader,
-    ISettingsStore settingsStore, IEmployeeDirectory employees, IAuditLog audit, IRequestContext context, IClock clock)
+    ISettingsStore settingsStore, IEmployeeDirectory employees, IAuditLog audit, IRequestContext context, IClock clock, IIntegrationEventPublisher events)
     : ICommandHandler<ActOnTask, TaskDto>
 {
     public async Task<Result<TaskDto>> HandleAsync(ActOnTask command, CancellationToken cancellationToken)
@@ -130,6 +131,13 @@ internal sealed class ActOnTaskHandler(
         }
 
         await NotifyAsync(task, command, actorEmployee, cancellationToken).ConfigureAwait(false);
+        if (AssignmentGroup.IsFinished(task.Status) && !AssignmentGroup.IsFinished(from))
+        {
+            // Phase 22: other modules and webhook subscribers learn of the completion in the same transaction (outbox, ADR 0043 / 0194).
+            await events.PublishAsync(new TaskCompleted(task.Id, task.Number, from, task.Status, task.LinkedType, task.LinkedId, task.AssigneeEmployeeId,
+                task.CompletedOnTime, now), db, cancellationToken).ConfigureAwait(false);
+        }
+
         await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
 
         // The workflow event in the audit trail (its own connection: after the commit, the chain lock is free).

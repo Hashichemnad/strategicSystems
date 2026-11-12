@@ -14,6 +14,7 @@ using Strategy.Platform.Access;
 using Strategy.Platform.AI;
 using Strategy.Platform.AI.Tools;
 using Strategy.Platform.Http.Modules;
+using Strategy.Platform.Integration.Webhooks;
 using Strategy.Platform.Links;
 using Strategy.Platform.Notifications;
 using Strategy.Platform.Persistence;
@@ -80,6 +81,17 @@ public sealed class DocumentRegistryModule : IModule
         services.AddAppTool<SearchDocumentsTool>();
         services.AddAppTool<GetDocumentTool>();
         services.AddAppTool<DocumentExpiryListTool>();
+
+        // Phase 22: analytics feeds and extracts (ADR 0190).
+        services.AddReportableRecordSource<Feeds.DocRegFeeds>();
+
+        // Phase 22: webhook events (ADR 0194).
+        services.AddWebhookEvent<DocumentPublished>("docreg.document.published", DocRegPermissions.SystemCode, "نشر وثيقة", "Document published",
+            DocumentResource.Type, DocRegPermissions.Read, e => e.DocumentId,
+            new DocumentPublished(Guid.Parse("0190a4f0-0000-7000-8000-000000000011"), Guid.Parse("0190a4f0-0000-7000-8000-000000000012"), "POL-SPMO-001", "1.0",
+                "سياسة إدارة المخاطر", "Risk management policy", "سياسة تحدد إطار إدارة المخاطر في الجهة.", "policy",
+                Guid.Parse("0190a4f0-0000-7000-8000-000000000013"), Guid.Parse("0190a4f0-0000-7000-8000-000000000014"),
+                Guid.Parse("0190a4f0-0000-7000-8000-000000000015"), false, new DateTimeOffset(2026, 4, 1, 8, 0, 0, TimeSpan.Zero)));
     }
 
     public void MapEndpoints(IEndpointRouteBuilder endpoints) => DocRegEndpoints.Map(endpoints.MapModuleGroup(this));

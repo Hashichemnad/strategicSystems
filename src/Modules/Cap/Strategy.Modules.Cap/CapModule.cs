@@ -16,6 +16,7 @@ using Strategy.Platform.AI;
 using Strategy.Platform.AI.Tools;
 using Strategy.Platform.Files;
 using Strategy.Platform.Http.Modules;
+using Strategy.Platform.Integration.Webhooks;
 using Strategy.Platform.Kernel;
 using Strategy.Platform.Links;
 using Strategy.Platform.Notifications;
@@ -109,6 +110,23 @@ public sealed class CapModule : IModule
         services.AddAppTool<CapRemarksBySourceTool>();
         services.AddAppTool<CapOverdueActionsTool>();
         services.AddAppTool<CapUpdateAchievementDraftTool>();
+
+        // Phase 22: analytics feeds and extracts (ADR 0190).
+        services.AddReportableRecordSource<Feeds.CapFeeds>();
+
+        // Phase 22: webhook events (ADR 0194).
+        services.AddWebhookEvent<CapRemarkStatusChanged>(
+            "cap.remark.status-changed", CapPermissions.SystemCode, "ملاحظة جديدة أو تغيّر حالتها", "Remark raised or status changed", Domain.Remark.EntityType,
+            CapPermissions.Read, e => e.RemarkId,
+            new CapRemarkStatusChanged(
+                Guid.Parse("0190a4f0-0000-7000-8000-000000000001"), "CAP-SPMO-2026-001-1", Guid.Parse("0190a4f0-0000-7000-8000-000000000002"), null, null, null, null,
+                null, CapRemarkStatuses.Assigned, Domain.RemarkStages.Analysis, new DateTimeOffset(2026, 3, 15, 9, 30, 0, TimeSpan.Zero)));
+        services.AddWebhookEvent<CapActionCompleted>(
+            "cap.action.completed", CapPermissions.SystemCode, "اعتماد إنجاز إجراء تصحيحي", "Corrective action completed", Domain.CapAction.EntityType,
+            CapPermissions.Read, e => e.ActionId,
+            new CapActionCompleted(
+                Guid.Parse("0190a4f0-0000-7000-8000-000000000003"), "CAP-SPMO-2026-001-1-1", [Guid.Parse("0190a4f0-0000-7000-8000-000000000001")],
+                new DateTimeOffset(2026, 6, 30, 12, 0, 0, TimeSpan.Zero)));
     }
 
     public void MapEndpoints(IEndpointRouteBuilder endpoints) => CapEndpoints.Map(endpoints.MapModuleGroup(this));

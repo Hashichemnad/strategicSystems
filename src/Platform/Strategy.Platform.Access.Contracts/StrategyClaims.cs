@@ -20,6 +20,15 @@ public static class StrategyClaims
     /// <summary>The client behind a token call: <c>pat:&lt;prefix&gt;</c> or the OAuth client id (MCP audit trail).</summary>
     public const string Client = "strategy:client";
 
+    /// <summary>The integration client (ADR 0191) behind a call: its public client id. Only on integration principals.</summary>
+    public const string IntegrationClient = "strategy:integration";
+
+    /// <summary>The integration client's acting unit (Unit / Unit-and-below scopes, ADR 0191).</summary>
+    public const string ActingUnit = "strategy:acting-unit";
+
+    /// <summary>Space-separated system codes an integration client may read (ADR 0191).</summary>
+    public const string AllowedSystems = "strategy:systems";
+
     public const string InternalPrincipal = "internal";
     public const string VendorPrincipal = "vendor";
 
@@ -45,4 +54,28 @@ public static class StrategyClaims
 
     public static Guid? EmployeeIdOf(this ClaimsPrincipal principal) =>
         Guid.TryParse(principal.FindFirst(EmployeeId)?.Value, out var id) ? id : null;
+
+    /// <summary>A call by an integration client (service account, ADR 0191) — never a person.</summary>
+    public static bool IsIntegrationClient(this ClaimsPrincipal principal) =>
+        principal.IsInternal() && principal.FindFirst(IntegrationClient)?.Value is { Length: > 0 };
+
+    /// <summary>The integration scope of an integration principal, or null for everyone else.</summary>
+    public static IntegrationScope? IntegrationScopeOf(this ClaimsPrincipal principal)
+    {
+        if (!principal.IsIntegrationClient())
+        {
+            return null;
+        }
+
+        var unit = Guid.TryParse(principal.FindFirst(ActingUnit)?.Value, out var id) ? id : (Guid?)null;
+        var systems = (principal.FindFirst(AllowedSystems)?.Value ?? string.Empty).Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        return new IntegrationScope(unit, new SortedSet<string>(systems, StringComparer.Ordinal));
+    }
+}
+
+/// <summary>What narrows an integration client's access snapshot (ADR 0191): its acting unit and its allowed systems.</summary>
+public sealed record IntegrationScope(Guid? ActingUnitId, IReadOnlySet<string> Systems)
+{
+    /// <summary>A stable cache key.</summary>
+    public string Key => (ActingUnitId?.ToString("N") ?? "-") + ":" + string.Join(',', Systems.Order(StringComparer.Ordinal));
 }

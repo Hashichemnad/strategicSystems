@@ -1439,6 +1439,43 @@ const sourceSystemsRoute = createRoute({
   ),
 });
 
+// Settings → Integrations: clients, webhook deliveries, developer portal (Phase 22, ADR 0191–0195).
+const integrationClientsRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/integrations/clients',
+  component: lazyRouteComponent(
+    () => import('@/features/integration/IntegrationClientsPage'),
+    'IntegrationClientsPage',
+  ),
+});
+
+const integrationClientRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/integrations/clients/$clientId',
+  component: lazyRouteComponent(
+    () => import('@/features/integration/IntegrationClientPage'),
+    'IntegrationClientPage',
+  ),
+});
+
+const webhookDeliveriesRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/integrations/deliveries',
+  component: lazyRouteComponent(
+    () => import('@/features/integration/WebhookDeliveriesPage'),
+    'WebhookDeliveriesPage',
+  ),
+});
+
+const developerPortalRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/integrations/developer',
+  component: lazyRouteComponent(
+    () => import('@/features/integration/DeveloperPortalPage'),
+    'DeveloperPortalPage',
+  ),
+});
+
 // Administrator Health page (ADR 0151).
 const healthRoute = createRoute({
   getParentRoute: () => settingsLayout,
@@ -1816,6 +1853,10 @@ const routeTree = rootRoute.addChildren([
       jobsRoute,
       healthRoute,
       sourceSystemsRoute,
+      integrationClientsRoute,
+      integrationClientRoute,
+      webhookDeliveriesRoute,
+      developerPortalRoute,
       demoPackRoute,
       businessHoursRoute,
       holidaysRoute,

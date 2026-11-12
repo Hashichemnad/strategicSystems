@@ -253,6 +253,7 @@ npx playwright test -c playwright.setup.config.ts                             # 
 dotnet run --project src/Host/Strategy.Host -- --setup-token                  # new one-time setup token for /setup while no administrator exists (ADR 0150)
 # E2E screenshots go to docs/screenshots/$E2E_SCREENSHOTS (default phase-4); Phase 17: E2E_SCREENSHOTS=phase-17 npx playwright test e2e/reporting.spec.ts (after the other specs, so every system has data). A sandbox Chromium of another revision: E2E_CHROMIUM_PATH=/opt/pw-browsers/chromium
 # The Teams E2E renders the generated memo / certificate PDFs to PNG with pdftoppm (poppler-utils, test machine only)
+# Phase 22 integrations: E2E_SCREENSHOTS=phase-22 npx playwright test e2e/integrations.spec.ts (clients, webhooks, portal, OData feed read with Basic)
 # Phase 20 themes: E2E_SCREENSHOTS=phase-20 npx playwright test e2e/themes.spec.ts (every theme × mode, 360 px reflow; restores Settings → Appearance)
 # Visual regression per theme (ADR 0175, required CI job): tools/visual-regression.sh against a host on an empty Development database
 # (pinned Playwright container + product fonts); UPDATE_SNAPSHOTS=1 tools/visual-regression.sh rewrites the baselines — never from another browser

@@ -18,7 +18,8 @@ public class EndpointCatalogueTests(ApiFixture api) : IClassFixture<ApiFixture>
         endpoints.ShouldNotBeEmpty();
         var undeclared = endpoints
             .Where(e => e.Metadata.GetMetadata<RequiredPermission>() is null && e.Metadata.GetMetadata<PublicEndpoint>() is null
-                && e.Metadata.GetMetadata<SelfServiceEndpoint>() is null && e.Metadata.GetMetadata<VendorEndpoint>() is null)
+                && e.Metadata.GetMetadata<SelfServiceEndpoint>() is null && e.Metadata.GetMetadata<VendorEndpoint>() is null
+                && e.Metadata.GetMetadata<IntegrationClientEndpoint>() is null)
             .Select(e => e.DisplayName)
             .ToList();
         undeclared.ShouldBeEmpty();

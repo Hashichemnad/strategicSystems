@@ -7,6 +7,13 @@ namespace Strategy.Modules.Portfolio.Contracts;
 public sealed record ProjectClosureApproved(Guid ProjectId, string Number, string? NameAr, string? NameEn, Guid? UnitId, Guid? PmEmployeeId, DateTimeOffset ApprovedAt)
     : IIntegrationEvent;
 
+/// <summary>
+/// A project's lifecycle stage changed (<paramref name="FromStage"/> → <paramref name="ToStage"/>, stage codes such as <c>initiation</c>,
+/// <c>planning</c>, <c>execution</c>, <c>closure</c>, <c>impact</c>, <c>completed</c>). Offered to webhooks (ADR 0194). Delivered at least once.
+/// </summary>
+public sealed record ProjectStageChanged(Guid ProjectId, string Number, string FromStage, string ToStage, Guid? UnitId, DateTimeOffset ChangedAt)
+    : IIntegrationEvent;
+
 /// <summary>A project risk with its stored scores (ADR 0074) — the Risk module's future "Project Risks" tab.</summary>
 public sealed record ProjectRiskSummary(
     Guid Id,

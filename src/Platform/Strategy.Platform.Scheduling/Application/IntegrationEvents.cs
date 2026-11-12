@@ -9,7 +9,13 @@ namespace Strategy.Platform.Scheduling;
 /// <summary>A subscription declared with <see cref="IntegrationEventRegistration.AddIntegrationEventHandler{TEvent, THandler}"/>.</summary>
 public sealed record IntegrationEventSubscription(Type EventType, Type HandlerType)
 {
-    public string MessageType => "integration:" + HandlerType.FullName;
+    /// <summary>
+    /// <c>integration:&lt;handler full name&gt;</c>. A generic handler (e.g. the webhook fan-out, ADR 0194) is named by its open type and the
+    /// short names of its arguments, which keeps the name within the outbox column (the assembly-qualified generic name does not fit).
+    /// </summary>
+    public string MessageType => "integration:" + (HandlerType.IsGenericType
+        ? $"{HandlerType.Namespace}.{HandlerType.Name[..HandlerType.Name.IndexOf('`', StringComparison.Ordinal)]}<{string.Join(',', HandlerType.GetGenericArguments().Select(a => a.Name))}>"
+        : HandlerType.FullName);
 }
 
 public static class IntegrationEventRegistration

@@ -52,9 +52,23 @@ internal sealed class UserAccessLoader(
 {
     private static readonly TimeSpan CacheFor = TimeSpan.FromSeconds(60);
 
-    public async Task<(AccessModel Model, UserAccess Access)> LoadAsync(Guid userId, Guid? employeeId, CancellationToken cancellationToken)
+    public async Task<(AccessModel Model, UserAccess Access)> LoadAsync(
+        Guid userId, Guid? employeeId, CancellationToken cancellationToken, IntegrationScope? integration = null)
     {
         var model = await models.GetAsync(cancellationToken).ConfigureAwait(false);
+        if (integration is not null)
+        {
+            var integrationKey = (nameof(IntegrationScope), userId, integration.Key, model.Generation);
+            if (cache.TryGetValue(integrationKey, out UserAccess? known) && known is not null)
+            {
+                return (model, known);
+            }
+
+            var built = await BuildIntegrationAsync(model, userId, integration, cancellationToken).ConfigureAwait(false);
+            cache.Set(integrationKey, built, CacheFor);
+            return (model, built);
+        }
+
         var key = (nameof(UserAccess), userId, employeeId, model.Generation);
         if (cache.TryGetValue(key, out UserAccess? cached) && cached is not null)
         {
@@ -64,6 +78,60 @@ internal sealed class UserAccessLoader(
         var access = await BuildAsync(model, userId, employeeId, cancellationToken).ConfigureAwait(false);
         cache.Set(key, access, CacheFor);
         return (model, access);
+    }
+
+    /// <summary>
+    /// An integration client's snapshot (ADR 0191): only the service account's own role assignments, the acting unit for Unit / Unit-and-below
+    /// scopes, no team and no record roles, systems limited to the client's allowed systems.
+    /// </summary>
+    private async Task<UserAccess> BuildIntegrationAsync(AccessModel model, Guid userId, IntegrationScope integration, CancellationToken cancellationToken)
+    {
+        IReadOnlyList<Guid> scopeUnits = integration.ActingUnitId is { } acting && await org.GetUnitAsync(acting, cancellationToken).ConfigureAwait(false) is not null
+            ? [acting]
+            : [];
+        var subtree = new List<Guid>();
+        foreach (var unit in scopeUnits)
+        {
+            subtree.AddRange(await org.GetSelfAndDescendantIdsAsync(unit, cancellationToken).ConfigureAwait(false));
+        }
+
+        var today = clock.Today;
+        var enabled = model.Systems.Values.Where(s => s.Enabled).ToDictionary(s => s.Code, StringComparer.Ordinal);
+        var roles = model.Assignments
+            .Where(a => a.ActiveOn(today) && a.PrincipalKind == PrincipalKinds.User && a.PrincipalId == userId)
+            .Select(a => model.Roles.GetValueOrDefault(a.RoleId))
+            .OfType<RoleInfo>()
+            .Where(r => r.Active && enabled.ContainsKey(r.SystemCode) && integration.Systems.Contains(r.SystemCode))
+            .DistinctBy(r => r.Id)
+            .ToList();
+        var systems = new HashSet<string>(enabled.Values.Where(s => s.Platform).Select(s => s.Code), StringComparer.Ordinal);
+        systems.UnionWith(roles.Select(r => r.SystemCode));
+
+        var permissions = new Dictionary<string, HashSet<DataScope>>(StringComparer.Ordinal);
+        foreach (var (permission, scope) in roles.SelectMany(r => r.Permissions.Select(p => (p.Key, p.Value))))
+        {
+            if (!permissions.TryGetValue(permission, out var scopes))
+            {
+                permissions[permission] = scopes = [];
+            }
+
+            scopes.Add(scope);
+        }
+
+        return new UserAccess
+        {
+            UserId = userId,
+            EmployeeId = null,
+            UnitId = scopeUnits.Count > 0 ? scopeUnits[0] : null,
+            Systems = systems,
+            Permissions = permissions.ToDictionary(p => p.Key, p => (IReadOnlySet<DataScope>)p.Value, StringComparer.Ordinal),
+            Roles = roles,
+            ScopeUnitIds = scopeUnits,
+            SubtreeUnitIds = [.. subtree.Distinct()],
+            TeamEmployeeIds = [],
+            TeamUserIds = [],
+            RecordUnitIds = [],
+        };
     }
 
     private async Task<UserAccess> BuildAsync(AccessModel model, Guid userId, Guid? employeeId, CancellationToken cancellationToken)
