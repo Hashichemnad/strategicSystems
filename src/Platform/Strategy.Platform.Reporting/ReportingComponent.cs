@@ -54,6 +54,7 @@ public sealed class ReportingComponent : IPlatformComponent
         services.AddScoped<Dossiers.DossierBuilder>();
         services.AddScoped<Dossiers.DossierTemplateService>();
         services.AddScoped<Datasets.ExternalReferenceColumns>();
+        services.AddReportingDimensionLabelSource<Datasets.SystemNameLabels>();
         services.AddScoped<ScheduleService>();
         services.AddScoped<DeliveryRunner>();
         services.AddScoped<BriefService>();

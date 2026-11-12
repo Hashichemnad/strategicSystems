@@ -65,9 +65,9 @@ public sealed record ExportedFile(byte[] Content, string ContentType, string Fil
 /// grouping and sorting; every run (UI, export, schedule) uses the runner's rights, never the author's.
 /// </summary>
 public sealed class ReportService(
-    MetricRegistry registry, IAccessService access, ReportingDbContext db, ILookupService lookups, IOrgDirectory org, IEmployeeDirectory employees,
+    MetricRegistry registry, IAccessService access, ReportingDbContext db, IOrgDirectory org, IEmployeeDirectory employees,
     ISettingsStore settings, IPdfRenderer pdf, IAuditLog audit, DashboardService dashboards, ExternalReferenceColumns externalColumns,
-    ReportTypes.ReportTypeEngine engine, ReportTypes.ReportTypeExport typeExport)
+    ReportTypes.ReportTypeEngine engine, ReportTypes.ReportTypeExport typeExport, ReportTypes.ReportValueFormatter formatter)
 {
     public const int MaxPageSize = 200;
 
@@ -287,13 +287,11 @@ public sealed class ReportService(
             ? new ReportColumnDto(c, f.LabelAr, f.LabelEn, TypeName(f.Type))
             : c == "count" ? new ReportColumnDto(c, "العدد", "Count", "number") : new ReportColumnDto(c, c, c, "text")).ToList();
 
-        // Resolve labels once per run.
-        var lookupLabels = new Dictionary<string, Dictionary<string, (string? Ar, string? En)>>(StringComparer.Ordinal);
-        foreach (var f in fields.Where(f => f.Type == DatasetFieldType.Lookup && f.LookupType is not null && result.Columns.Contains(f.Code)))
-        {
-            var values = await lookups.GetValuesAsync(f.LookupType!, includeInactive: true, ct).ConfigureAwait(false);
-            lookupLabels[f.Code] = values.ToDictionary(v => v.Code, v => (v.LabelAr, v.LabelEn), StringComparer.Ordinal);
-        }
+        // Resolve labels once per run: code labels (lookups, label sources, fixed choices — ADR 0209) through the shared formatter.
+        var coded = result.Columns.Select((c, i) => (Index: i, Field: byCode.GetValueOrDefault(c)))
+            .Where(p => p.Field is { } f && (f.Type == DatasetFieldType.Lookup || (f.Type == DatasetFieldType.Text && f.HasCodeLabels)))
+            .Select(p => (p.Field!, result.Rows.Select(r => r[p.Index]))).ToList();
+        await formatter.PrepareAsync(coded, ct).ConfigureAwait(false);
 
         var unitIds = new HashSet<Guid>();
         var employeeIds = new HashSet<Guid>();
@@ -337,8 +335,7 @@ public sealed class ReportService(
 
             return f.Type switch
             {
-                DatasetFieldType.Lookup when value is string code && lookupLabels.TryGetValue(column, out var map) && map.TryGetValue(code, out var l) =>
-                    (ar ? l.Ar ?? l.En : l.En ?? l.Ar) ?? code,
+                DatasetFieldType.Lookup or DatasetFieldType.Text when value is string && (f.Type == DatasetFieldType.Lookup || f.HasCodeLabels) => formatter.Format(f, value, language),
                 DatasetFieldType.Unit when value is Guid g && units.TryGetValue(g, out var u) => (ar ? u.NameAr ?? u.NameEn : u.NameEn ?? u.NameAr) ?? u.Code,
                 DatasetFieldType.Employee when value is Guid g && people.TryGetValue(g, out var e) => (ar ? e.NameAr ?? e.NameEn : e.NameEn ?? e.NameAr) ?? e.EmployeeNo,
                 DatasetFieldType.Ratio => (Convert.ToDecimal(value, CultureInfo.InvariantCulture) * 100).ToString("0.#", CultureInfo.InvariantCulture) + " %",

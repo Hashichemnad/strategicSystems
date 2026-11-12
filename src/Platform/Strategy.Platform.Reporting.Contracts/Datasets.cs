@@ -14,7 +14,7 @@ public enum DatasetFieldType
     DateTime = 6,
     Bool = 7,
 
-    /// <summary>A lookup code; labels from <see cref="DatasetField.LookupType"/> (or the reporting translations for fixed codes).</summary>
+    /// <summary>A code; labels from <see cref="DatasetField.LookupType"/>, <see cref="DatasetField.LabelSource"/> or <see cref="DatasetField.Choices"/> (ADR 0209).</summary>
     Lookup = 8,
 
     /// <summary>An organisation unit id; shown as its name.</summary>
@@ -36,6 +36,10 @@ public enum DatasetFieldType
 /// <summary>
 /// A report-builder field (ADR 0144). <paramref name="Permission"/>: extra permission the runner needs for this field (e.g. cost fields);
 /// without it the field is not offered, dropped from columns and refused in filters, grouping and sorting.
+/// A field holding codes (<see cref="DatasetFieldType.Lookup"/>, or a <see cref="DatasetFieldType.Text"/> field that holds codes) declares where
+/// its labels come from (ADR 0209), in this order: <paramref name="LookupType"/> (a Settings picklist), <paramref name="LabelSource"/> (codes kept
+/// in module tables or settings, e.g. request types, priority bands) or <paramref name="Choices"/> (fixed codes, e.g. lifecycle statuses).
+/// Reports, charts, dossiers and exports show the label in the reader's language; a code no source knows is shown as it is.
 /// </summary>
 public sealed record DatasetField(
     string Code,
@@ -46,7 +50,23 @@ public sealed record DatasetField(
     bool Groupable = false,
     bool Sortable = true,
     string? Permission = null,
-    string? LookupType = null);
+    string? LookupType = null,
+    IReadOnlyList<RecordFieldChoice>? Choices = null,
+    FieldLabelSource? LabelSource = null)
+{
+    /// <summary>The field declares labels for its codes (a lookup type, a label source or fixed choices).</summary>
+    public bool HasCodeLabels => LookupType is not null || LabelSource is not null || Choices is { Count: > 0 };
+}
+
+/// <summary>
+/// Labels of codes kept in module tables or settings (ADR 0209): the <see cref="IReportingDimensionLabelSource"/> of
+/// <paramref name="SystemCode"/> answers <paramref name="Dimension"/> (the same sources label dashboard breakdowns, Phase 17).
+/// </summary>
+public sealed record FieldLabelSource(string SystemCode, string Dimension)
+{
+    /// <summary>Names of systems (the access catalogue's AR / EN system names), for fields holding a system code.</summary>
+    public static readonly FieldLabelSource SystemNames = new("reporting", "system");
+}
 
 /// <summary>
 /// A report-builder object (one record type) declared by its module. <paramref name="Link"/>: record link with <c>{id}</c>.
