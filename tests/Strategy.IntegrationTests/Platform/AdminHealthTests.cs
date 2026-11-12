@@ -25,7 +25,7 @@ public class AdminHealthTests(ApiFixture api) : IClassFixture<ApiFixture>
         var codes = report.Checks.Select(c => c.Code).ToList();
         codes.ShouldBe(
             ["version", "dataProtection", "certificates", "database", "migrations", "scheduler", "outbox", "email", "pdf", "ai", "ocr", "storage", "disk",
-             "antivirus", "auditChain"],
+             "antivirus", "auditChain", "salesforceSync"],
             ignoreOrder: true);
         report.Checks.ShouldAllBe(c => c.MessageKey.StartsWith("health.", StringComparison.Ordinal));
         report.Checks.ShouldAllBe(c => new[] { "ok", "warning", "error", "notConfigured" }.Contains(c.Status));
