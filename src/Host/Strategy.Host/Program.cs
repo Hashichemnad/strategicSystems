@@ -32,6 +32,10 @@ if (args.Contains("--migrate", StringComparer.Ordinal) || args.Contains("--setup
 
 builder.WebHost.ConfigureKestrel(kestrel => kestrel.AddServerHeader = false);
 builder.AddStrategyHost(PlatformCatalog.All, ModuleCatalog.All);
+if (builder.Environment.IsDevelopment() && builder.Configuration.GetValue("Development:MockSalesforce", defaultValue: false))
+{
+    builder.Services.AddMockSalesforce(); // demonstrations and E2E only (Phase 23); never outside Development
+}
 
 var app = builder.Build();
 

@@ -31,6 +31,7 @@ Version 1.0. The same guides exist in Arabic: [`../ar/README.md`](../ar/README.m
 | [Administrator guide](administration.md) | first-run setup wizard, every Settings area, roles and permissions, approvals, business hours, AI and MCP, identity providers, audit log, health page |
 | [Connecting Claude and other MCP clients](mcp.md) | Claude Desktop, claude.ai, Claude Code, other clients; OAuth and personal access tokens |
 | [Integrations and Power BI](integrations.md) | Integration clients, OData feeds, extracts, webhooks, connecting Power BI / Excel / Tableau / Qlik |
+| [Salesforce standby sync](salesforce-sync.md) | Connected App and integration user, connection, mappings, first full load, schedule, monitoring, failover and return-to-standby runbooks |
 | [Installation guide](installation.md) | Windows and Linux, ports, setup wizard, HTTPS reverse proxy, backup / restore / upgrade, non-Docker install |
 
 Reference documents: [identity providers](../../identity-providers.md) · [SPEC](../../SPEC.md) · [design notes](../../design/).

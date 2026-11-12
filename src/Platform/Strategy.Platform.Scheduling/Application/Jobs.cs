@@ -150,7 +150,7 @@ internal sealed class ScheduleSwitchListener(ScheduleSwitch schedule, StandbyJob
             return true;
         }
 
-        if (await standby.IsSuspendedAsync(context.JobDetail.Key.Name, cancellationToken).ConfigureAwait(false))
+        if (context.JobDetail?.Key?.Name is { } jobKey && await standby.IsSuspendedAsync(jobKey, cancellationToken).ConfigureAwait(false))
         {
             context.Put(JobRunListener.StandbySuspensionKey, true);
             return true;

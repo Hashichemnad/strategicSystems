@@ -19,7 +19,7 @@ public class ScheduleSwitchTests
     [InlineData(false, "MANUAL_TRIGGER", false)] // runs started on request always execute
     public async Task Only_schedule_fired_runs_are_vetoed_and_only_when_schedules_are_off(bool runSchedules, string group, bool vetoed)
     {
-        var listener = new Strategy.Platform.Scheduling.ScheduleSwitchListener(new Strategy.Platform.Scheduling.ScheduleSwitch(runSchedules));
+        var listener = new Strategy.Platform.Scheduling.ScheduleSwitchListener(new Strategy.Platform.Scheduling.ScheduleSwitch(runSchedules), new Strategy.Platform.Scheduling.StandbyJobGate([]));
         (await listener.VetoJobExecution(TriggerIn(group), Substitute.For<IJobExecutionContext>(), TestContext.Current.CancellationToken)).ShouldBe(vetoed);
     }
 }

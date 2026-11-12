@@ -4,13 +4,59 @@ All notable changes to the Integrated Strategy System. Format: [Keep a Changelog
 [Semantic Versioning](https://semver.org/). Release notes for users: *About* in the application
 (`src/Host/Strategy.Host/ReleaseNotes/{en,ar}/`). Details per build phase: `docs/phase-summaries/`.
 
-## [1.0.0] — unreleased
+## [1.0.0] — 2026-11-12
 
-Not tagged yet: version 1.0.0 is released (tag `v1.0.0`) at the end of Phase 23 and this entry is then completed to cover Phases 0–23
-(`docs/SPEC-ADDENDUM.md` A7). Phases 0–18 below were accepted by the owner on 7 Nov 2026.
+Tag `v1.0.0`. Covers build Phases 0–23 (`docs/SPEC.md` and `docs/SPEC-ADDENDUM.md`); Phases 0–18 were accepted by the owner on 7 Nov 2026,
+Phases 19–23 are built and awaiting owner acceptance (`docs/BUILD_PLAN-PART2.md`).
 
 First release. Self-hosted, bilingual (Arabic / English, full RTL) integrated strategy management suite: one application, one database,
 one login, eleven systems on a shared platform.
+
+### Added — Salesforce standby sync (Phase 23)
+- **One-way copy from Salesforce** of all eleven systems' data plus departments, users (matched to employees), teams and tasks, so this
+  system can take over when Salesforce is unavailable. **Never writes to Salesforce** (read-only REST / Bulk API 2.0 client, enforced at
+  the connector boundary and tested).
+- **Connector framework** in Settings → Integrations → **Salesforce sync**: OAuth 2.0 JWT bearer with a Connected App and an integration user
+  (private key encrypted, thumbprint only shown), API version, Bulk API 2.0 for full / large loads and REST for deltas, incremental by
+  `SystemModstamp`, deletions marked "Deleted in Salesforce", API limit tracking, retries; schedule every N hours / daily / weekly, Sync now,
+  full load, per-object enable.
+- **Mapping editor** reading the live Salesforce describe (fields, picklists): field mappings, picklist → code maps, user / contact → employee
+  matching (e-mail, employee number, Federation ID), lookups → external references, record types, defaults, transforms, filters, parent-child
+  load order; validation against the live describe before an object can be enabled; **"ADoF Salesforce" mapping pack** (export / import)
+  covering the objects of SPEC-ADDENDUM G3 with the documented model differences.
+- Files (ContentVersion / ContentDocumentLink / Attachment) into the Files service; approval history (ProcessInstance / Step) and field
+  history (`*__History`) as read-only **source history** on the record page.
+- **Exceptions queue** (unmapped value, unknown user, missing parent, invalid value…) with *Map value*, *Map person*, re-process and ignore.
+- **Standby**: synced records read-only on every channel (UI, REST, MCP, imports, jobs) with a badge; approvals, jobs and notifications of
+  the business systems suspended while Salesforce is primary.
+- **Failover**: *Make this system primary* (reason, MFA re-prompt) with outage period and "Resubmit required"; **outage changes report** from
+  the audit trail (old → new values with Salesforce IDs, Excel / PDF, re-entered marks); *Return to standby* with keep-local / take-Salesforce
+  per record and *Close outage*.
+- Monitoring: status page, run history and log, e-mail alerts on failure or late sync, health-page check. New audit channel `sync`.
+- Guides: `docs/guides/{en,ar}/salesforce-sync.md` (Connected App, integration user, first full load, failover and return-to-standby runbooks).
+
+### Added — integrations for analytics and other systems (Phase 22)
+- **Integration clients** (service accounts with API keys or OAuth 2.0 client credentials): permissions and data scope through the access
+  model, allowed systems / record types, IP allow-list, rate limits, expiry, rotation, usage log.
+- **OData v4 feeds** per system (`/odata/v1/{system}`) with `$select`, `$filter`, `$orderby`, `$top`, `$skip`, `$count`, `$expand`, every row
+  permission-filtered; **Power BI / Excel** connect with Basic credentials.
+- **Incremental extracts** (changed since, deleted feed; JSON / CSV) and scheduled exports to a folder.
+- **Signed webhooks** (HMAC-SHA256 with timestamp) for integration events, retries with back-off, dead letters, replay, SSRF guard.
+- **Developer portal** (OpenAPI, OData metadata, webhook catalogue, Power BI guide in Arabic and English).
+
+### Added — acceptance fixes, external references, members and responsibilities (Phase 19)
+- **Global search** in the top bar (and Ctrl+K) across every system the user can access, Arabic-normalised, with recent items.
+- **Rich text** (Tiptap) for minutes, descriptions, justifications and comments, sanitised on the server.
+- **Security e-mails** (password, MFA, new sign-in, lock, access token); Windows PowerShell 5.1 / 7 install scripts; ZIP releases without
+  `.git`; retries for slow networks.
+- **External references** (source systems; external IDs on every record, shown, searchable, in exports and reports; upsert by external ID
+  in imports, REST and MCP).
+- **Members** and **Responsibilities** pages per system for simple administration of who may do what; KPI picker beyond 200 entries;
+  "take over as creator" for a leaver's tasks.
+
+### Fixed (Phase 23)
+- Reports, charts, dossiers and exports showed raw codes for fields without a lookup type (e.g. project stage, milestone status): every code
+  field now has Arabic and English labels (ADR 0209).
 
 ### Added — Reporting 2.0 (Phase 21)
 - **Report types**: a primary record type with related types up to three levels — also across systems (project ↔ team members, project

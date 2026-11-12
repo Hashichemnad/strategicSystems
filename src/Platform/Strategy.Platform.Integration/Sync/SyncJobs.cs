@@ -273,3 +273,10 @@ internal sealed class SyncSeeder : IDatabaseSeeder
         return (header ?? throw new InvalidOperationException("The ADoF Salesforce mapping pack header is missing.")) with { Objects = objects };
     }
 }
+
+/// <summary>The mapping packs shipped with the product (embedded resources, ADR 0203).</summary>
+public static class ShippedMappingPacks
+{
+    /// <summary>The "ADoF Salesforce" pack as shipped (before any administrator change).</summary>
+    public static Task<MappingPackDocument> AdofSalesforceAsync(CancellationToken cancellationToken = default) => SyncSeeder.LoadPackAsync(cancellationToken);
+}

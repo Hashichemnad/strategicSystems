@@ -150,8 +150,7 @@ roles** of a synced project so scope-based access works as for local records; Te
 
 **Custom writers** (`ISyncTargetWriter`) for types whose invariants are not plain properties: **`org.unit`** (hierarchy path / depth / unit
 versions — written through `UnitAdministration`'s create / update with the parent resolved first) and **`org.employee`** (people objects only
-*match* employees, §7; creating missing employees is an opt-in setting `createUnmatchedEmployees`, default off, through the employee
-administration).
+*match* employees, ADR 0204; employees are HR master data and are never created by the sync — unmatched people go to the exceptions queue).
 
 Targets declared in Phase 23 (module → types): Organisation `org.unit`, `org.employee` · Portfolio `portfolio.request`, `portfolio.project`,
 `portfolio.milestone`, `portfolio.project-kpi`, `portfolio.project-risk`, `portfolio.stakeholder`, `portfolio.planning-item`, `portfolio.challenge`,
@@ -233,9 +232,9 @@ deleted and restored in Salesforce returns to `synced`.
 | 20 | `User` | people | match by `Email`, `EmployeeNumber`, `FederationIdentifier` (order configurable) |
 | 21 | `Contact` | people | match by `Email`, then `Employee_Number__c` — PMS people lookups (`Project_Manager__c`, `Risk_Owner__c`, …) point at Contacts |
 | 30 | `Project_Team__c` | `teams.team` | `Team_Type__c` → team type codes; status values → codes |
-| 31 | `Project_Team__c` (2nd mapping) | `teams.team_evaluation` | scores stored on the team row → **one evaluation record per year** (`{Id}-{year:End_Date__c}`); source score kept |
-| 32 | `Project_Team_Association__c` | `teams.team_member` | `Member_Role__c` → member role codes; `Participation_Level__c` |
-| 33 | `Project_Team_Association__c` (2nd) | `teams.member_evaluation` | member evaluation fields on the association row → one evaluation per year; `Evaluation_Point__c` kept as source score |
+| 31 | `Project_Team_Association__c` | `teams.team_member` | `Member_Role__c` → member role codes; `Participation_Level__c` |
+| 32 | `Project_Team__c` (2nd mapping) | `teams.team_evaluation` | scores stored on the team row → **one evaluation record per year** (`{Id}-{Evaluation_Year__c}`; `End_Date__c` is empty for most standing committees); source score kept |
+| 33 | `Project_Team_Association__c` (2nd) | `teams.member_evaluation` | member evaluation fields on the association row → one evaluation per year (`{Id}-{Evaluation_Year__c}`); `Evaluation_Point__c` kept as points |
 | 40 | `PMS_Project_Request__c` | `portfolio.request` | `Status__c` / `Approval_Status__c` → request status (approval steps become source approval history) |
 | 41 | `PMS_Project__c` | `portfolio.project` | `Approval_Status__c` → **stage + sub-state snapshot**; no live approval instance; `Program_Classification__c` → classification |
 | 42 | `PMS_Work_Plan__c` | `portfolio.milestone` | `Header_Phase__c` → parent phase (multi-pass); weight / achieve → ratios |
