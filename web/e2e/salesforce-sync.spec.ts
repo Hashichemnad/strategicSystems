@@ -144,6 +144,16 @@ async function standby(api: APIRequestContext): Promise<Connection> {
   return c;
 }
 
+/**
+ * Leaves the connection disabled after the spec: while it is in standby, the business systems' jobs and notifications are suspended and
+ * synced records are read-only, which would change every spec that runs after this one (in either language project).
+ */
+test.afterEach(async ({ adminApi }) => {
+  const c = await standby(adminApi);
+  await json(await apiPost(adminApi, `${Sync}/connections/${c.id}/deactivate`));
+  expect((await connection(adminApi)).mode).toBe('disabled');
+});
+
 async function openTab(page: Page, language: 'ar' | 'en', tab: string) {
   await page.getByRole('tab', { name: tr(language, `integration:sync.tabs.${tab}`) }).click();
 }
