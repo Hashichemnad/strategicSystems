@@ -250,8 +250,10 @@ public sealed class SyncFailover(
         var references = await db.References.AsNoTracking().Where(r => r.SourceSystem == connection.SourceSystem && ids.Contains(r.RecordId))
             .ToListAsync(ct).ConfigureAwait(false);
         var flags = await db.OutageRecords.AsNoTracking().Where(r => r.OutageId == outageId).ToListAsync(ct).ConfigureAwait(false);
+        // Audit entity codes can differ from the record types (org.org_unit → org.unit): the reference's type names the record when there is one.
+        var typeOf = grouped.ToDictionary(g => g.Key.Id, g => references.FirstOrDefault(r => r.RecordId == g.Key.Id)?.EntityTypeCode ?? g.Key.Type);
         var resolved = new Dictionary<Guid, ResolvedRecord>();
-        foreach (var byType in grouped.GroupBy(g => g.Key.Type))
+        foreach (var byType in grouped.GroupBy(g => typeOf[g.Key.Id]))
         {
             foreach (var (id, record) in await resolver.ResolveAsync(byType.Key, [.. byType.Select(g => g.Key.Id)], context.User, ct).ConfigureAwait(false))
             {
@@ -264,9 +266,11 @@ public sealed class SyncFailover(
             var r = resolved.GetValueOrDefault(g.Key.Id);
             var reference = references.FirstOrDefault(x => x.RecordId == g.Key.Id && x.IsOrigin) ?? references.FirstOrDefault(x => x.RecordId == g.Key.Id);
             var flag = flags.FirstOrDefault(f => f.RecordId == g.Key.Id);
-            var changes = g.Select(x => x.Entry).OrderBy(e => e.Seq).Select(e => new OutageChangeDto(e.OccurredAt, e.Action, e.EntityType, e.Field, e.OldValue, e.NewValue,
+            var changes = g.Select(x => x.Entry).Where(e => e.Field is null || !e.Field.EndsWith("Search", StringComparison.Ordinal)) // derived search columns
+                .DistinctBy(e => e.ChangeSetId is { } set && e.Field is not null ? $"{set}|{e.Field}|{e.OldValue}|{e.NewValue}" : e.Id.ToString()) // a record and its history row in one save
+                .OrderBy(e => e.Seq).Select(e => new OutageChangeDto(e.OccurredAt, e.Action, e.EntityType, e.Field, e.OldValue, e.NewValue,
                 e.UserName ?? e.OnBehalfOfName, e.Channel, e.Kind)).ToList();
-            return (System: r?.SystemCode ?? g.First().Entry.SystemCode ?? g.Key.Type.Split('.')[0], Dto: new OutageRecordReportDto(g.Key.Type, g.Key.Id, r?.TypeNameAr, r?.TypeNameEn,
+            return (System: r?.SystemCode ?? g.First().Entry.SystemCode ?? g.Key.Type.Split('.')[0], Dto: new OutageRecordReportDto(typeOf[g.Key.Id], g.Key.Id, r?.TypeNameAr, r?.TypeNameEn,
                 r?.Number, r?.TitleAr, r?.TitleEn, r?.Link, reference?.ExternalId, flag?.ResubmitRequired ?? false, flag?.ChangedLocally ?? false, flag?.ReEntered ?? false,
                 flag?.Conflict ?? false, flag?.Resolution, changes));
         }).ToList();

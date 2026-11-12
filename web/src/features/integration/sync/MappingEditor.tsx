@@ -491,7 +491,10 @@ function FieldRow({ index, field, describe, target, targets, canManage, onChange
   const source = describe?.fields.find((f) => f.name.toLowerCase() === (field.source ?? '').toLowerCase());
   const sourceOptions = [
     { value: '-', label: t('sync.editor.chooseField') },
-    ...(describe?.fields ?? []).map((f) => ({ value: f.name, label: `${f.name} — ${f.label}` })),
+    ...(describe?.fields ?? []).map((f) => ({
+      value: f.name,
+      label: f.label && f.label !== f.name ? `${f.name} — ${f.label}` : f.name,
+    })),
   ];
   if (field.source && !source) sourceOptions.push({ value: field.source, label: field.source });
   const targetOptions = [

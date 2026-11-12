@@ -298,7 +298,7 @@ function ObjectTable({ objects }: { objects: readonly SyncObjectStatus[] }) {
       <TableBody>
         {objects.map((o) => (
           <TableRow key={o.id} data-testid={`sync-object-${o.key}`}>
-            <TableCell>
+            <TableCell className="min-w-48 whitespace-nowrap">
               <div className="flex flex-col gap-0.5">
                 <Code>{o.key}</Code>
                 <span className="text-xs text-muted-foreground">
@@ -306,7 +306,7 @@ function ObjectTable({ objects }: { objects: readonly SyncObjectStatus[] }) {
                 </span>
               </div>
             </TableCell>
-            <TableCell>
+            <TableCell className="whitespace-nowrap">
               {o.targetType ? (
                 <Code>{o.targetType}</Code>
               ) : (

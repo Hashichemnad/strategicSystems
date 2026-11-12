@@ -142,7 +142,7 @@ export function MappingsTab({ connection, canManage }: { connection: SyncConnect
             {(mappings.data ?? []).map((m) => (
               <TableRow key={m.id} data-testid={`mapping-${m.key}`}>
                 <TableCell className="text-end tabular-nums">{formatNumber(m.loadOrder, language)}</TableCell>
-                <TableCell>
+                <TableCell className="min-w-48 whitespace-nowrap">
                   <div className="flex flex-col gap-0.5">
                     <Code>{m.key}</Code>
                     <span className="text-xs text-muted-foreground">

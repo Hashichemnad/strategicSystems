@@ -30,15 +30,50 @@ Guides: [`docs/guides/en/salesforce-sync.md`](../guides/en/salesforce-sync.md) �
 
 ## Requested tests
 
-TEST-TABLE
+| Requirement | Evidence |
+|---|---|
+| Fake Salesforce in CI, no live org | `MockSalesforceOrg` (in-process `ISalesforceTransport`: recorded-style describe, REST `queryAll` with paging, Bulk API 2.0 jobs with CSV pages and locators, JWT token endpoint verifying the RS256 assertion, `/limits`, file downloads). Every request is logged; any non-read request is recorded as a violation and every test asserts there are none |
+| Idempotent re-runs create no duplicates | `Full_load_and_incremental_runs_are_idempotent_pick_only_changes_and_mark_deletions`: second run and a second full load → 0 created / 0 updated, one record per number |
+| Incremental picks only changed records | same test: after one change and one new record the REST delta reads only them (plus the record on the watermark overlap, unchanged) |
+| Deletions marked, not removed | same test: `IsDeleted` → reference `deleted_in_source`, record still there, sync-state badge |
+| Picklist and user mapping, unmapped value → exceptions → fix → re-process | `Unmapped_values_and_unknown_users_go_to_the_exceptions_queue_and_reprocess_after_the_fix`: new status value and an unknown user → exceptions with reason / field / value / payload; *Map value* and *Map person* re-process and create the records; bulk re-process clears the queue |
+| Parent-child order | `Projects_load_parent_before_child_with_work_plan_files_and_approval_history`: child department and work-plan task listed before their parents (multi-pass); project → request reference, milestone → header phase |
+| Files and approval history imported | same test: charter PDF through the Files service on the project, approval step and pending instance as source history; second run imports nothing twice |
+| Standby read-only on API, UI, MCP and imports | `Standby_makes_synced_records_read_only_on_api_approvals_mcp_import_and_suspends_jobs_and_notifications`: REST update 409 `integration.sync.readOnly` (the UI uses the same endpoints and shows the badge), submit for approval 409, MCP write tool → `read_only`, organisation import of a synced unit 409; local records stay editable |
+| Jobs and notifications suspended | same test: job gate vetoes `portfolio.*` jobs and not the sync job; a notification of a suspended system is not queued |
+| Failover unlocks and re-enables jobs | `Failover_unlocks_records_reports_every_change_and_return_to_standby_honours_the_choices`: wrong MFA code and missing reason refused; records editable, jobs not suspended, sync now refused while primary; "Resubmit required" from the pending Salesforce approval |
+| Outage report lists every change | same test: old → new values with the Salesforce IDs, no `sync` channel entries, Excel export (acknowledges), re-entered mark |
+| Return to standby honours keep-local choices | same test: report acknowledgement required; both records held as conflicts; *Keep local* keeps the local value through a later run, *Take Salesforce* applies at once; close refused while a conflict is pending; after closing Salesforce wins again and records are read-only |
+| Schedule with the fake clock | `Scheduler_runs_due_connections_on_the_fake_clock_and_alerts_on_failure_and_delay` (due run, next run, *Sync now* picked up, failure e-mail, late e-mail once, health check) and unit `SalesforceSyncRulesTests` (interval / daily / weekly in Asia/Dubai, validation) |
+| Configuration and permissions | `Connection_validation_and_permissions_guard_the_configuration`: invalid key refused, test connection (JWT verified by the fake), live-describe validation, edit clears confirmation, unconfirmed object cannot be enabled, unsafe filter refused, non-admin 403, key never returned; authorization matrix covers every new endpoint |
+| Pure rules | `SalesforceSyncRulesTests` (mode transition table, field mapping kinds / transforms / conversions / issues / hash / external-ID templates, SOQL builder and filter safety, Bulk CSV, JWT assertion, read-only request guard) and the module tests `TeamsSyncTargetsTests`, `KpiSyncTests`, `RiskSyncTests` (pack against declarations, Range rule, re-rating) |
+| E2E (ar + en) | `web/e2e/salesforce-sync.spec.ts` against the Development stand-in org: configuration, full load, status, exceptions, read-only project, make primary with a TOTP code, outage report, return to standby with a conflict, keep local, close — **2 / 2** |
 
 ## Quality gates
 
-GATES
+Local runs in the build sandbox (SDK 10.0.114, PostgreSQL 16, Chromium 1243, Docker for Mailpit / Gotenberg).
+
+| Gate | Result |
+|---|---|
+| `dotnet build` (Host and tests) · `dotnet format Strategy.slnx --verify-no-changes` | 0 warnings, 0 errors · clean |
+| Unit tests | **2 298 / 2 305** — the 7 failures are the OCR tests, which need Tesseract (not installed in this sandbox; CI installs it, CLAUDE.md §18) |
+| Architecture tests | **32 / 32** |
+| Integration tests (real PostgreSQL, full suite) | **3 389 / 3 392** on the full run; the 3 failures: the OCR integration test (Tesseract), the health-page list (gains `salesforceSync`) and the authorization matrix (sent a file to the JSON pack import) — both expected updates fixed and their classes re-run green (**2 940 / 2 940**, incl. the job dashboard list gaining the two sync jobs) |
+| Salesforce sync integration tests | **7 / 7** |
+| `npm run lint` (incl. RTL logical-class check) · `format:check` · `typecheck` | clean |
+| `npm test` (Vitest) | **482 / 482** (server message keys of the sync translated in AR and EN, badges, source history, make-primary dialog, exceptions, outage report) |
+| `npm run build` | OK |
+| OpenAPI document · TS client | regenerated, no drift |
+| E2E `e2e/salesforce-sync.spec.ts` (ar + en) | **2 / 2** |
+
+Not run in this sandbox: the full E2E / accessibility suite, visual regression, `npm audit` / `check-vulnerable.sh` (no new package: ClosedXML was already in the solution) — CI runs them on the pull request.
 
 ## Screenshots (Arabic and English, `docs/screenshots/phase-23/`)
 
-SCREENSHOTS
+`sync-connection` (connection settings), `sync-schedule`, `sync-mapping-editor` (live describe next to the field mappings), `sync-exceptions`,
+`sync-status`, `sync-read-only-record` (project with the "Synced from Salesforce — read-only" badge), `sync-make-primary` (reason and
+MFA code), `sync-outage-report`, `sync-return-to-standby` (conflicts after returning, keep local / take Salesforce) — each as `ar-*.png`
+and `en-*.png`.
 
 ## How to demo
 
@@ -57,4 +92,15 @@ SCREENSHOTS
 0208 files and source history · 0209 labels for fixed-code report fields.
 
 ## Deviations and known gaps
-GAPS
+- **Provisional objects.** The integration user does not see the KPI, Risk, CAP, Audit, Benchmarking, Document Registry, IP and Tasks
+  objects today (G3); their pack entries use plausible names and stay disabled until *Validate* confirms them against the org. Some field
+  names of visible objects (e.g. `Task_Name__c` on the work plan, `Contact` people) are also confirmed only by *Validate*.
+- **Employees are never created by the sync** (ADR 0204): unmatched Salesforce users / contacts go to the exceptions queue.
+- **Source scores not stored**: KPI `Performance__c` and the additive risk score are recalculated here (calculator / framework); the entities
+  have no field for the source value. Per-criterion team / member evaluation answers are not carried (only overall score and points).
+- **"Re-entered" marks are per record**, not per individual change.
+- **KPI result status**: only `Approved__c` is mapped (approved / open); "submitted, awaiting approval" arrives as open.
+- **Audit reports** are derived from the observations' report picklist (no report object in Salesforce) — see the pack notes.
+- **Live org check**: during the build a sub-agent read the connected org's describe and a few records (read-only) to confirm field names;
+  `Evaluation_Year__c` replaced `{year:End_Date__c}` for yearly evaluations because `End_Date__c` is empty for most standing committees.
+- **Mock org** (`Development:MockSalesforce`) is mapped only in the Development environment, like the UAE Pass stand-in (ADR 0154).
