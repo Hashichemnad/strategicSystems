@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Strategy.Modules.Portfolio.Application;
 using Strategy.Modules.Portfolio.Domain;
 using Strategy.Modules.Portfolio.Infrastructure;
+using Strategy.Modules.Portfolio.Reporting;
 using Strategy.Platform.Access;
 using Strategy.Platform.Reporting;
 using Strategy.Platform.Reporting.Records;
@@ -40,11 +41,6 @@ internal sealed class PortfolioFeeds(PortfolioDbContext db, RequestReader reader
         .Field("projectId", r => r.ProjectId)
         .Deleted(r => r.Status == RequestStatuses.Cancelled);
 
-    private static readonly IReadOnlyList<RecordFieldChoice> ClassificationChoices =
-    [
-        new(Classifications.Project, "مشروع", "Project"), new(Classifications.Initiative, "مبادرة", "Initiative"),
-    ];
-
     public string SystemCode => PortfolioPermissions.SystemCode;
 
     public IReadOnlyList<ReportableRecordType> RecordTypes { get; } =
@@ -54,26 +50,11 @@ internal sealed class PortfolioFeeds(PortfolioDbContext db, RequestReader reader
             new("number", "الرقم", "Number", RecordFieldType.Text),
             new("nameAr", "الاسم (عربي)", "Name (Arabic)", RecordFieldType.Text),
             new("nameEn", "الاسم (إنجليزي)", "Name (English)", RecordFieldType.Text),
-            new("classification", "التصنيف", "Classification", RecordFieldType.Lookup, Choices: ClassificationChoices),
-            new("methodology", "المنهجية", "Methodology", RecordFieldType.Lookup, Choices:
-            [
-                new(Methodologies.Waterfall, "تقليدية", "Waterfall"), new(Methodologies.Agile, "رشيقة", "Agile"), new(Methodologies.Hybrid, "هجينة", "Hybrid"),
-            ]),
-            new("stage", "المرحلة", "Stage", RecordFieldType.Lookup, Choices:
-            [
-                new(ProjectStages.Initiation, "البدء", "Initiation"), new(ProjectStages.Planning, "التخطيط", "Planning"),
-                new(ProjectStages.Execution, "التنفيذ", "Execution"), new(ProjectStages.Closure, "الإغلاق", "Closure"),
-                new(ProjectStages.Impact, "قياس الأثر", "Impact"), new(ProjectStages.Completed, "مكتمل", "Completed"),
-            ]),
-            new("status", "الحالة", "Status", RecordFieldType.Lookup, Choices:
-            [
-                new(ProjectStatuses.Active, "نشط", "Active"), new(ProjectStatuses.OnHold, "معلّق", "On hold"),
-                new(ProjectStatuses.Cancelled, "ملغى", "Cancelled"), new(ProjectStatuses.Completed, "مكتمل", "Completed"),
-            ]),
-            new("progressStatus", "حالة التقدم", "Progress status", RecordFieldType.Lookup, Choices:
-            [
-                new(ProgressCalculator.OnTrack, "حسب الخطة", "On track"), new(ProgressCalculator.Delayed, "متأخر", "Delayed"),
-            ]),
+            new("classification", "التصنيف", "Classification", RecordFieldType.Lookup, Choices: PortfolioChoices.Classifications),
+            new("methodology", "المنهجية", "Methodology", RecordFieldType.Lookup, Choices: PortfolioChoices.Methodologies),
+            new("stage", "المرحلة", "Stage", RecordFieldType.Lookup, Choices: PortfolioChoices.ProjectStages),
+            new("status", "الحالة", "Status", RecordFieldType.Lookup, Choices: PortfolioChoices.ProjectStatuses),
+            new("progressStatus", "حالة التقدم", "Progress status", RecordFieldType.Lookup, Choices: PortfolioChoices.ProgressStatuses),
             new("unit", "الإدارة المالكة", "Owning unit", RecordFieldType.Unit),
             new("section", "القسم", "Section", RecordFieldType.Unit),
             new("owner", "مالك المشروع", "Project owner", RecordFieldType.Employee),
@@ -100,11 +81,7 @@ internal sealed class PortfolioFeeds(PortfolioDbContext db, RequestReader reader
             new("titleAr", "العنوان (عربي)", "Title (Arabic)", RecordFieldType.Text),
             new("titleEn", "العنوان (إنجليزي)", "Title (English)", RecordFieldType.Text),
             new("isHeader", "عنوان مجموعة", "Header", RecordFieldType.Bool),
-            new("status", "الحالة", "Status", RecordFieldType.Lookup, Choices:
-            [
-                new(MilestoneStatuses.NotStarted, "لم يبدأ", "Not started"), new(MilestoneStatuses.Active, "قيد التنفيذ", "Active"),
-                new(MilestoneStatuses.Completed, "مكتمل", "Completed"), new(MilestoneStatuses.Cancelled, "ملغى", "Cancelled"),
-            ]),
+            new("status", "الحالة", "Status", RecordFieldType.Lookup, Choices: PortfolioChoices.MilestoneStatuses),
             new("plannedStart", "البداية المخططة", "Planned start", RecordFieldType.Date),
             new("plannedEnd", "النهاية المخططة", "Planned end", RecordFieldType.Date),
             new("actualStart", "البداية الفعلية", "Actual start", RecordFieldType.Date),
@@ -122,14 +99,9 @@ internal sealed class PortfolioFeeds(PortfolioDbContext db, RequestReader reader
             new("number", "الرقم", "Number", RecordFieldType.Text),
             new("nameAr", "الاسم (عربي)", "Name (Arabic)", RecordFieldType.Text),
             new("nameEn", "الاسم (إنجليزي)", "Name (English)", RecordFieldType.Text),
-            new("status", "الحالة", "Status", RecordFieldType.Lookup, Choices:
-            [
-                new(RequestStatuses.Draft, "مسودة", "Draft"), new(RequestStatuses.InApproval, "قيد الاعتماد", "In approval"),
-                new(RequestStatuses.Approved, "معتمد", "Approved"), new(RequestStatuses.Rejected, "مرفوض", "Rejected"),
-                new(RequestStatuses.Cancelled, "ملغى", "Cancelled"),
-            ]),
+            new("status", "الحالة", "Status", RecordFieldType.Lookup, Choices: PortfolioChoices.RequestStatuses),
             new("approvalStep", "خطوة الاعتماد", "Approval step", RecordFieldType.Text),
-            new("classification", "التصنيف", "Classification", RecordFieldType.Lookup, Choices: ClassificationChoices),
+            new("classification", "التصنيف", "Classification", RecordFieldType.Lookup, Choices: PortfolioChoices.Classifications),
             new("priorityBand", "فئة الأولوية", "Priority band", RecordFieldType.Text),
             new("evaluationScore", "درجة التقييم", "Evaluation score", RecordFieldType.Ratio),
             new("strategicObjective", "الهدف الاستراتيجي", "Strategic objective", RecordFieldType.Text),

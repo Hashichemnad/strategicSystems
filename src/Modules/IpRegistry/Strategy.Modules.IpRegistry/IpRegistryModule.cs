@@ -54,6 +54,7 @@ public sealed class IpRegistryModule : IModule
         services.AddScoped<IpReader>();
         services.AddScoped<EmiratesIds>();
         services.AddScoped<IpNotifier>();
+        services.AddIpSyncTargets(); // Phase 23, ADR 0202
         services.AddScoped<IpService>();
         services.AddReportingMetricSource<IpMetricSource>();
         services.AddReportingListSource<IpListSource>();

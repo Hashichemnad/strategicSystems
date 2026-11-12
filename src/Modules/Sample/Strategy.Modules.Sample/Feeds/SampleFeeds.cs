@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Strategy.Modules.Sample.Application;
 using Strategy.Modules.Sample.Domain;
 using Strategy.Modules.Sample.Infrastructure;
+using Strategy.Modules.Sample.Reporting;
 using Strategy.Platform.Access;
 using Strategy.Platform.Reporting;
 using Strategy.Platform.Reporting.Records;
@@ -35,16 +36,8 @@ internal sealed class SampleFeeds(SampleDbContext db, IAccessService access) : I
             new("number", "الرقم", "Number", RecordFieldType.Text),
             new("nameAr", "الاسم بالعربية", "Name (Arabic)", RecordFieldType.Text),
             new("nameEn", "الاسم بالإنجليزية", "Name (English)", RecordFieldType.Text),
-            new("status", "الحالة", "Status", RecordFieldType.Lookup, Choices:
-            [
-                new(SampleItemStatus.Active, "نشط", "Active"), new(SampleItemStatus.Inactive, "غير نشط", "Inactive"),
-            ]),
-            new("approvalStatus", "حالة الموافقة", "Approval status", RecordFieldType.Lookup, Choices:
-            [
-                new(SampleApprovalStatus.Draft, "مسودة", "Draft"), new(SampleApprovalStatus.Pending, "قيد الموافقة", "Pending"),
-                new(SampleApprovalStatus.Approved, "معتمد", "Approved"), new(SampleApprovalStatus.Rejected, "مرفوض", "Rejected"),
-                new(SampleApprovalStatus.Returned, "معاد للتصحيح", "Returned"),
-            ]),
+            new("status", "الحالة", "Status", RecordFieldType.Lookup, Choices: SampleChoices.Statuses),
+            new("approvalStatus", "حالة الموافقة", "Approval status", RecordFieldType.Lookup, Choices: SampleChoices.ApprovalStatuses),
             new("unit", "الوحدة", "Unit", RecordFieldType.Unit),
             new("owner", "المالك", "Owner", RecordFieldType.Employee),
             new("amount", "القيمة", "Amount", RecordFieldType.Money, Permission: SamplePermissions.Update),

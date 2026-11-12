@@ -108,6 +108,8 @@ export default defineConfig<E2eOptions>({
           Seed__AdminTotpKey: process.env.E2E_ADMIN_TOTP_KEY ?? 'JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP',
           // Stand-in UAE Pass issuer for the vendor UAE Pass spec (ADR 0154); Development only.
           Development__MockUaePass: 'true',
+          // Stand-in Salesforce org for the standby-sync spec (Phase 23); Development only, the connector never reaches a real org in E2E.
+          Development__MockSalesforce: 'true',
         },
       },
 });

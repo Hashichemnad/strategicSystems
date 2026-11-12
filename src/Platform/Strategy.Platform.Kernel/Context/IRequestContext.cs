@@ -91,8 +91,11 @@ public static class Channels
     public const string Wasel = "wasel";
     public const string System = "system";
 
+    /// <summary>Writes of a one-way sync from a source system (ADR 0200); the only channel that may write synced records in standby.</summary>
+    public const string Sync = "sync";
+
     public static readonly IReadOnlySet<string> All =
-        new HashSet<string>(StringComparer.Ordinal) { Ui, Api, Mcp, Ai, Job, Import, Wasel, System };
+        new HashSet<string>(StringComparer.Ordinal) { Ui, Api, Mcp, Ai, Job, Import, Wasel, System, Sync };
 
     public static bool IsKnown(string channel) => All.Contains(channel);
 }

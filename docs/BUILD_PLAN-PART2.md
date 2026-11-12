@@ -101,4 +101,4 @@ Use ADR numbers from 0200 upwards. At the end, release version 1.0.0: tag v1.0.0
 | 20 | Themes & application workspaces | ☑ built — awaiting owner acceptance | |
 | 21 | Reporting 2.0 | ☑ built — awaiting owner acceptance | |
 | 22 | Integrations | ☑ built — awaiting owner acceptance | |
-| 23 | Salesforce standby sync + v1.0.0 release | ☐ | |
+| 23 | Salesforce standby sync + v1.0.0 release | ☑ built — awaiting owner acceptance (tag `v1.0.0`) | |

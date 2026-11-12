@@ -26,13 +26,15 @@ internal sealed record ProtectedPart(Dictionary<string, string>? Values, string?
 /// Resolves recipients and their preferences, then writes one outbox message per recipient and channel (CLAUDE.md §14). Mandatory
 /// templates (sign-in codes, password links) ignore preferences and the digest.
 /// </summary>
-internal sealed class NotificationService(
+internal sealed partial class NotificationService(
     NotifyDbContext db,
     IOutbox outbox,
     IEmailTransport transport,
     INotificationRecipientDirectory directory,
     IDataProtectionProvider protection,
-    IClock clock) : INotificationService
+    IClock clock,
+    IEnumerable<Strategy.Platform.Kernel.Integration.IStandbyGuard> standby,
+    Microsoft.Extensions.Logging.ILogger<NotificationService> logger) : INotificationService
 {
     public const string EmailType = "notifications.email";
     public const string InAppType = "notifications.in-app";
@@ -48,6 +50,17 @@ internal sealed class NotificationService(
 
         var template = await db.Templates.AsNoTracking().FirstOrDefaultAsync(t => t.Key == request.TemplateKey, cancellationToken).ConfigureAwait(false)
             ?? throw new InvalidOperationException($"Unknown notification template '{request.TemplateKey}'.");
+        foreach (var guard in standby)
+        {
+            // Standby (SPEC-ADDENDUM §G4, ADR 0206): no duplicate e-mails while the source system is primary.
+            if (await guard.IsActiveAsync(cancellationToken).ConfigureAwait(false)
+                && (await guard.SuspendedSystemsAsync(cancellationToken).ConfigureAwait(false)).Contains(template.SystemCode))
+            {
+                LogSuspended(logger, request.TemplateKey);
+                return Result.Success();
+            }
+        }
+
         var wantsEmail = request.Channels.HasFlag(NotificationChannels.Email);
         var emailReady = wantsEmail && await transport.IsConfiguredAsync(cancellationToken).ConfigureAwait(false);
         if (wantsEmail && !emailReady && request.Channels == NotificationChannels.Email)
@@ -187,4 +200,7 @@ internal sealed class NotificationService(
 
     private static string? DeliveryKey(NotificationRequest request, string to) =>
         request.IdempotencyKey is { } key ? $"{key}:{to.Trim().ToLowerInvariant()}" : null;
+
+    [Microsoft.Extensions.Logging.LoggerMessage(Level = Microsoft.Extensions.Logging.LogLevel.Information, Message = "Notification {TemplateKey} suspended: standby")]
+    private static partial void LogSuspended(Microsoft.Extensions.Logging.ILogger logger, string templateKey);
 }

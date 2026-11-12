@@ -117,6 +117,11 @@ internal static class HostSetup
         app.MapStrategyOpenApi();
         app.MapAntiforgeryEndpoint();
         app.MapSystemInfoEndpoints();
+        if (app.Environment.IsDevelopment() && app.Configuration.GetValue("Development:MockSalesforce", defaultValue: false))
+        {
+            app.MapMockSalesforce(); // demonstrations and E2E only (Phase 23)
+        }
+
         if (app.Environment.IsDevelopment() && app.Configuration.GetValue("Development:MockUaePass", defaultValue: false))
         {
             // Demonstrations and E2E only (ADR 0154): a stand-in UAE Pass issuer; never mapped outside Development.

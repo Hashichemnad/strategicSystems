@@ -28,7 +28,12 @@ import {
 type Job = components['schemas']['JobDto'];
 type JobRun = components['schemas']['JobRunDto'];
 
-const runTone: Record<string, Tone> = { succeeded: 'success', failed: 'danger', running: 'info' };
+const runTone: Record<string, Tone> = {
+  succeeded: 'success',
+  failed: 'danger',
+  running: 'info',
+  suspended: 'warning',
+};
 
 /** Settings → Jobs: every scheduled job with its schedule, next and last run, recent runs, "Run now", pause / resume; outbox status. */
 export function JobsPage() {

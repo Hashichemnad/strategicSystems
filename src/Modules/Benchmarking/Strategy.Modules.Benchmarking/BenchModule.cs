@@ -53,6 +53,7 @@ public sealed class BenchModule : IModule
         services.AddScoped<BenchNotifier>();
         services.AddScoped<BenchViews>();
         services.AddScoped<BenchRoles>();
+        services.AddBenchSyncTargets(); // Phase 23, ADR 0202
 
         services.AddRequestType(BenchRequestTypes.RequestType);
         services.AddRequestTypeHandler<BenchRequestHandler>();

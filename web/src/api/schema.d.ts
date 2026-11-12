@@ -3492,6 +3492,38 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/integration/references/{type}/{id}/sync-state': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetRecordSyncState'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/references/{type}/{id}/source-history': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListRecordSourceHistory'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/integration/clients': {
     parameters: {
       query?: never;
@@ -3806,6 +3838,662 @@ export interface paths {
     get: operations['GetDeveloperPortalMetadata'];
     put?: never;
     post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/sync/connections': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListSyncConnections'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/sync/connections/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetSyncConnection'];
+    put: operations['UpdateSyncConnection'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/sync/connections/{id}/key': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['SetSyncConnectionKey'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/sync/connections/{id}/test': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['TestSyncConnection'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/sync/connections/{id}/activate': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ActivateSyncConnection'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/sync/connections/{id}/deactivate': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['DeactivateSyncConnection'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/sync/connections/{id}/schedule': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetSyncSchedule'];
+    put: operations['SaveSyncSchedule'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/sync/connections/{id}/sync-now': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SyncNow'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/sync/connections/{id}/status': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetSyncStatus'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/sync/connections/{id}/runs': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListSyncRuns'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/sync/connections/{id}/runs/{runId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetSyncRun'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/sync/connections/{id}/source/objects': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListSourceObjects'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/sync/connections/{id}/source/objects/{name}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['DescribeSourceObject'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/sync/targets': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListSyncTargets'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/sync/packs': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListMappingPacks'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/sync/packs/{packId}/mappings': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListObjectMappings'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/sync/packs/{packId}/export': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ExportMappingPack'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/sync/packs/import': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ImportMappingPack'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/sync/mappings/{mappingId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetObjectMapping'];
+    put: operations['UpdateObjectMapping'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/sync/mappings/{mappingId}/enabled': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SetObjectMappingEnabled'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/sync/connections/{id}/mappings/{mappingId}/validate': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ValidateObjectMapping'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/sync/connections/{id}/exceptions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListSyncExceptions'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/sync/exceptions/{exceptionId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetSyncException'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/sync/exceptions/{exceptionId}/reprocess': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ReprocessSyncException'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/sync/exceptions/{exceptionId}/ignore': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['IgnoreSyncException'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/sync/exceptions/{exceptionId}/map-value': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['MapSyncExceptionValue'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/sync/exceptions/{exceptionId}/map-person': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['MapSyncExceptionPerson'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/sync/connections/{id}/exceptions/reprocess': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ReprocessSyncExceptions'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/sync/step-up/methods': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetStepUpMethods'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/sync/step-up/email-code': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SendStepUpEmailCode'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/sync/connections/{id}/make-primary': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['MakeThisSystemPrimary'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/sync/connections/{id}/return-to-standby': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ReturnToStandby'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/sync/connections/{id}/close-outage': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['CloseOutage'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/sync/connections/{id}/outages': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListOutages'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/sync/outages/{outageId}/report': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetOutageReport'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/sync/outages/{outageId}/acknowledge': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['AcknowledgeOutageReport'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/sync/outages/{outageId}/report.xlsx': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ExportOutageReportExcel'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/sync/outages/{outageId}/report.pdf': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ExportOutageReportPdf'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/sync/outages/{outageId}/records/{type}/{recordId}/re-entered': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['SetOutageRecordReEntered'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/sync/outages/{outageId}/conflicts': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListOutageConflicts'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/integration/sync/outages/{outageId}/conflicts/{recordId}/resolve': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ResolveOutageConflict'];
     delete?: never;
     options?: never;
     head?: never;
@@ -14820,6 +15508,19 @@ export interface components {
       token: string;
       headerName: string;
     };
+    /** @description API limits of the source as last read. */
+    ApiLimits: {
+      /** Format: int32 */
+      dailyApiMax: null | number;
+      /** Format: int32 */
+      dailyApiRemaining: null | number;
+      /** Format: int32 */
+      bulkJobsMax: null | number;
+      /** Format: int32 */
+      bulkJobsRemaining: null | number;
+      /** Format: date-time */
+      at: string;
+    };
     /**
      * @description Settings → Appearance (SPEC-ADDENDUM §C1, docs/design/themes.md §2, ADR 0171): enabled themes, the installation's default theme and mode,
      *     whether users may choose, the landing app per role and per-app overrides. One JSON document like Branding.
@@ -19293,6 +19994,24 @@ export interface components {
       messageKey: string;
       params?: null | Record<string, never>;
     };
+    /** @description One field mapping of an object mapping (ADR 0203, docs/design/salesforce-sync.md §3). */
+    FieldMapping: {
+      /** @description Source field API name; one relationship hop allowed (`RecordType.DeveloperName`). Empty for constants. */
+      source?: null | string;
+      /** @description Target field code of the sync target. */
+      target?: string;
+      kind?: string;
+      /** @description Value map (picklist / record type); key `*` = fallback. */
+      values?: null | {
+        [key: string]: string;
+      };
+      transform?: null | string;
+      /** @description Reference mappings: the target type the Salesforce Id points at. */
+      referenceType?: null | string;
+      /** @description Constant value. */
+      value?: null | string;
+      required?: boolean;
+    };
     FileDto: {
       /** Format: uuid */
       id: string;
@@ -21405,6 +22124,79 @@ export interface components {
       parentValueId: null | string;
       metadata: null | string;
     };
+    MakePrimaryInput: {
+      reason: null | string;
+      method: null | string;
+      code: null | string;
+    };
+    MapPersonInput: {
+      /** Format: uuid */
+      employeeId: string;
+    };
+    MappingIssueDto: {
+      severity: string;
+      field: null | string;
+      messageKey: string;
+      params: null | {
+        [key: string]: string;
+      };
+    };
+    /** @description JSON document of a mapping pack (export / import, ADR 0203). No connection settings, secrets or watermarks. */
+    MappingPackDocument: {
+      format?: string;
+      code?: string;
+      /** Format: int32 */
+      version?: number;
+      nameAr?: null | string;
+      nameEn?: null | string;
+      description?: null | string;
+      connector?: string;
+      objects?: components['schemas']['MappingPackObject'][];
+    };
+    MappingPackDto: {
+      /** Format: uuid */
+      id: string;
+      code: string;
+      nameAr: null | string;
+      nameEn: null | string;
+      /** Format: int32 */
+      packVersion: number;
+      description: null | string;
+      connector: string;
+      /** Format: int32 */
+      objects: number;
+      /** Format: uint32 */
+      version: number;
+    };
+    MappingPackObject: {
+      key?: string;
+      sourceObject?: string;
+      kind?: string;
+      targetType?: null | string;
+      /** Format: int32 */
+      loadOrder?: number;
+      where?: null | string;
+      watermarkField?: string;
+      externalIdTemplate?: string;
+      useBulk?: boolean;
+      provisional?: boolean;
+      fields?: components['schemas']['FieldMapping'][];
+      defaults?: Record<string, never>;
+      ignore?: string[];
+      options?: null | components['schemas']['JsonElement'];
+      notesAr?: null | string;
+      notesEn?: null | string;
+    };
+    MappingValidationDto: {
+      ok: boolean;
+      /** Format: date-time */
+      confirmedAt: null | string;
+      issues: components['schemas']['MappingIssueDto'][];
+    };
+    MapValueInput: {
+      value: null | string;
+      code: null | string;
+    };
     MatrixCell: {
       /** Format: int32 */
       likelihood: number;
@@ -22279,6 +23071,80 @@ export interface components {
       pattern: string;
       preview: string;
     };
+    ObjectMappingDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      packId: string;
+      key: string;
+      sourceObject: string;
+      kind: string;
+      targetType: null | string;
+      enabled: boolean;
+      /** Format: int32 */
+      loadOrder: number;
+      /** Format: date-time */
+      confirmedAt: null | string;
+      where: null | string;
+      watermarkField: string;
+      externalIdTemplate: string;
+      useBulk: boolean;
+      fields: components['schemas']['FieldMapping'][];
+      defaults: Record<string, never>;
+      ignore: string[];
+      options: components['schemas']['JsonElement'];
+      notesAr: null | string;
+      notesEn: null | string;
+      provisional: boolean;
+      /** Format: date-time */
+      watermark: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
+    ObjectMappingEnableInput: {
+      enabled: boolean;
+      /** Format: uint32 */
+      version: number;
+    };
+    ObjectMappingInput: {
+      targetType: null | string;
+      /** Format: int32 */
+      loadOrder: number;
+      where: null | string;
+      watermarkField: null | string;
+      externalIdTemplate: null | string;
+      useBulk: boolean;
+      fields: null | components['schemas']['FieldMapping'][];
+      defaults: null | Record<string, never>;
+      ignore: null | string[];
+      options: null | components['schemas']['JsonElement'];
+      notesAr: null | string;
+      notesEn: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
+    /** @description Counters of one object in one run. */
+    ObjectRunStats: {
+      /** Format: int32 */
+      read?: number;
+      /** Format: int32 */
+      created?: number;
+      /** Format: int32 */
+      updated?: number;
+      /** Format: int32 */
+      unchanged?: number;
+      /** Format: int32 */
+      deleted?: number;
+      /** Format: int32 */
+      failed?: number;
+      /** Format: int32 */
+      conflicts?: number;
+      /** Format: int32 */
+      skipped?: number;
+      /** @description `bulk` or `rest`. */
+      api?: null | string;
+      completed?: boolean;
+    };
     OfficeInput: {
       controlEffectivenessOverride: null | string;
       residualStatusOverride: null | string;
@@ -22386,6 +23252,68 @@ export interface components {
       deputy: null | components['schemas']['EmployeeRefDto'];
       costCentre: null | string;
       active: boolean;
+    };
+    OutageChangeDto: {
+      /** Format: date-time */
+      at: string;
+      action: string;
+      entityType: null | string;
+      field: null | string;
+      oldValue: null | string;
+      newValue: null | string;
+      userName: null | string;
+      channel: string;
+      kind: string;
+    };
+    OutageConflictDto: {
+      /** Format: uuid */
+      recordId: string;
+      entityType: string;
+      number: null | string;
+      titleAr: null | string;
+      titleEn: null | string;
+      link: null | string;
+      salesforceId: null | string;
+      conflict: boolean;
+      resolution: string;
+      /** Format: date-time */
+      sourceModifiedAt: null | string;
+      pending: null | {
+        [key: string]: string;
+      };
+    };
+    OutageRecordReportDto: {
+      entityType: string;
+      /** Format: uuid */
+      recordId: string;
+      typeNameAr: null | string;
+      typeNameEn: null | string;
+      number: null | string;
+      titleAr: null | string;
+      titleEn: null | string;
+      link: null | string;
+      salesforceId: null | string;
+      resubmitRequired: boolean;
+      changedLocally: boolean;
+      reEntered: boolean;
+      conflict: boolean;
+      resolution: null | string;
+      changes: components['schemas']['OutageChangeDto'][];
+    };
+    OutageReportDto: {
+      outage: components['schemas']['SyncOutageDto'];
+      /** Format: date-time */
+      from: string;
+      /** Format: date-time */
+      to: string;
+      systems: components['schemas']['OutageSystemReportDto'][];
+      /** Format: int32 */
+      changes: number;
+      truncated: boolean;
+    };
+    OutageSystemReportDto: {
+      systemCode: string;
+      records: components['schemas']['OutageRecordReportDto'][];
     };
     OutboxMessageDto: {
       /** Format: uuid */
@@ -22698,6 +23626,42 @@ export interface components {
     /** @description One page of items plus the total count across all pages. */
     PagedResultOfSampleItemDto: {
       items: components['schemas']['SampleItemDto'][];
+      /** Format: int32 */
+      page: number;
+      /** Format: int32 */
+      pageSize: number;
+      /** Format: int32 */
+      totalCount: number;
+      /** Format: int32 */
+      totalPages?: number;
+    };
+    /** @description One page of items plus the total count across all pages. */
+    PagedResultOfSyncExceptionDto: {
+      items: components['schemas']['SyncExceptionDto'][];
+      /** Format: int32 */
+      page: number;
+      /** Format: int32 */
+      pageSize: number;
+      /** Format: int32 */
+      totalCount: number;
+      /** Format: int32 */
+      totalPages?: number;
+    };
+    /** @description One page of items plus the total count across all pages. */
+    PagedResultOfSyncOutageDto: {
+      items: components['schemas']['SyncOutageDto'][];
+      /** Format: int32 */
+      page: number;
+      /** Format: int32 */
+      pageSize: number;
+      /** Format: int32 */
+      totalCount: number;
+      /** Format: int32 */
+      totalPages?: number;
+    };
+    /** @description One page of items plus the total count across all pages. */
+    PagedResultOfSyncRunDto: {
+      items: components['schemas']['SyncRunDto'][];
       /** Format: int32 */
       page: number;
       /** Format: int32 */
@@ -24426,6 +25390,17 @@ export interface components {
         [key: string]: string;
       };
     };
+    /** @description Standby state of a record as its page shows it (badges; ADR 0206 / 0207). */
+    RecordSyncStateDto: {
+      readOnly: boolean;
+      sourceSystem: null | string;
+      sourceNameAr: null | string;
+      sourceNameEn: null | string;
+      deletedInSource: boolean;
+      resubmitRequired: boolean;
+      /** Format: int32 */
+      sourceHistoryCount: number;
+    };
     RecoveryCodesDto: {
       codes: string[];
     };
@@ -24450,6 +25425,9 @@ export interface components {
       until: null | string;
       /** Format: int32 */
       count: null | number;
+    };
+    ReEnteredInput: {
+      reEntered: boolean;
     };
     ReferenceableTypeDto: {
       resourceType: string;
@@ -24953,6 +25931,18 @@ export interface components {
       grandTotal: components['schemas']['ReportGroupDto'];
       chart: null | components['schemas']['ReportChartDto'];
     };
+    ReprocessInput: {
+      reason?: null | string;
+      mappingKey?: null | string;
+    };
+    ReprocessResultDto: {
+      /** Format: int32 */
+      processed: number;
+      /** Format: int32 */
+      resolved: number;
+      /** Format: int32 */
+      stillOpen: number;
+    };
     RequestActionsDto: {
       edit: boolean;
       submit: boolean;
@@ -25285,6 +26275,9 @@ export interface components {
       newPassword: null | string;
       invitation: boolean;
     };
+    ResolveConflictInput: {
+      choice: null | string;
+    };
     ResponsibilityChangeInput: {
       items: null | components['schemas']['ResponsibilityItemInput'][];
       /** Format: uuid */
@@ -25367,6 +26360,9 @@ export interface components {
       code: string;
       labelAr: string;
       labelEn: string;
+    };
+    ReturnToStandbyInput: {
+      acknowledged: boolean;
     };
     RevealDto: {
       /** Format: uuid */
@@ -26508,6 +27504,49 @@ export interface components {
       to: null | string;
       settings: null | components['schemas']['SmtpSettingsInput'];
     };
+    SourceFieldInfo: {
+      name: string;
+      label: string;
+      type: string;
+      /** Format: int32 */
+      length: number;
+      nillable: boolean;
+      referenceTo: string[];
+      relationshipName: null | string;
+      picklistValues: components['schemas']['SourcePicklistValue'][];
+    };
+    SourceHistoryEntryDto: {
+      /** Format: uuid */
+      id: string;
+      kind: string;
+      /** Format: date-time */
+      occurredAt: string;
+      actorName: null | string;
+      processName: null | string;
+      processInstanceId: null | string;
+      processStatus: null | string;
+      stepStatus: null | string;
+      comments: null | string;
+      field: null | string;
+      oldValue: null | string;
+      newValue: null | string;
+    };
+    SourceObjectDescribe: {
+      name: string;
+      label: string;
+      keyPrefix: null | string;
+      fields: components['schemas']['SourceFieldInfo'][];
+    };
+    SourceObjectDto: {
+      name: string;
+      label: string;
+      custom: boolean;
+    };
+    SourcePicklistValue: {
+      value: string;
+      label: null | string;
+      active: boolean;
+    };
     SourceSystemDto: {
       /** Format: uuid */
       id: string;
@@ -26734,6 +27773,9 @@ export interface components {
       businessHoursNameAr: null | string;
       businessHoursNameEn: null | string;
     };
+    StepUpMethodsDto: {
+      methods: string[];
+    };
     StoryDto: {
       /** Format: uuid */
       id: string;
@@ -26935,6 +27977,228 @@ export interface components {
     };
     SummaryInput: {
       mode: null | string;
+    };
+    SyncConnectionDto: {
+      /** Format: uuid */
+      id: string;
+      sourceSystem: string;
+      sourceNameAr: null | string;
+      sourceNameEn: null | string;
+      connector: string;
+      mode: string;
+      modeActions: string[];
+      loginUrl: string;
+      clientId: null | string;
+      username: null | string;
+      keyStored: boolean;
+      keyThumbprint: null | string;
+      apiVersion: string;
+      /** Format: int32 */
+      bulkThreshold: number;
+      /** Format: int32 */
+      pageSize: number;
+      schedule: components['schemas']['SyncScheduleSettings'];
+      /** Format: date-time */
+      nextRunAt: null | string;
+      /** Format: int32 */
+      lateAfterMinutes: null | number;
+      /** Format: uuid */
+      mappingPackId: null | string;
+      instanceUrl: null | string;
+      limits: null | components['schemas']['ApiLimits'];
+      lastTest: null | components['schemas']['SyncTestDto'];
+      runRequested: boolean;
+      /** Format: uint32 */
+      version: number;
+    };
+    SyncConnectionInput: {
+      loginUrl: null | string;
+      clientId: null | string;
+      username: null | string;
+      apiVersion: null | string;
+      /** Format: int32 */
+      bulkThreshold: null | number;
+      /** Format: int32 */
+      pageSize: null | number;
+      /** Format: uuid */
+      mappingPackId: null | string;
+      /** Format: uint32 */
+      version: number;
+    };
+    SyncExceptionDetailDto: {
+      exception: components['schemas']['SyncExceptionDto'];
+      payload: {
+        [key: string]: string;
+      };
+      targetType: null | string;
+    };
+    SyncExceptionDto: {
+      /** Format: uuid */
+      id: string;
+      /** Format: uuid */
+      mappingId: string;
+      mappingKey: null | string;
+      sourceObject: string;
+      externalId: string;
+      reason: string;
+      field: null | string;
+      value: null | string;
+      messageKey: null | string;
+      status: string;
+      /** Format: int32 */
+      attempts: number;
+      /** Format: date-time */
+      createdAt: string;
+      /** Format: date-time */
+      updatedAt: string;
+      /** Format: date-time */
+      resolvedAt: null | string;
+    };
+    SyncKeyInput: {
+      privateKeyPem: null | string;
+    };
+    SyncNowInput: {
+      /** @default false */
+      full: boolean;
+      objects?: null | string[];
+    };
+    SyncObjectStatusDto: {
+      /** Format: uuid */
+      id: string;
+      key: string;
+      sourceObject: string;
+      kind: string;
+      targetType: null | string;
+      enabled: boolean;
+      confirmed: boolean;
+      provisional: boolean;
+      /** Format: int32 */
+      loadOrder: number;
+      /** Format: date-time */
+      watermark: null | string;
+      /** Format: date-time */
+      lastFullLoadAt: null | string;
+      lastRun: null | components['schemas']['ObjectRunStats'];
+      /** Format: int32 */
+      openExceptions: number;
+    };
+    SyncOutageDto: {
+      /** Format: uuid */
+      id: string;
+      status: string;
+      /** Format: date-time */
+      startedAt: string;
+      startedByName: null | string;
+      reason: string;
+      /** Format: date-time */
+      returnedAt: null | string;
+      /** Format: date-time */
+      reportAcknowledgedAt: null | string;
+      /** Format: date-time */
+      closedAt: null | string;
+      /** Format: int32 */
+      resubmitRequired: number;
+      /** Format: int32 */
+      changedLocally: number;
+      /** Format: int32 */
+      reEntered: number;
+      /** Format: int32 */
+      pendingConflicts: number;
+    };
+    SyncRunDetailDto: {
+      run: components['schemas']['SyncRunDto'];
+      log: components['schemas']['SyncRunLogDto'][];
+    };
+    SyncRunDto: {
+      /** Format: uuid */
+      id: string;
+      trigger: string;
+      full: boolean;
+      status: string;
+      /** Format: date-time */
+      startedAt: string;
+      /** Format: date-time */
+      finishedAt: null | string;
+      /** Format: double */
+      durationSeconds: null | number;
+      objects: {
+        [key: string]: components['schemas']['ObjectRunStats'];
+      };
+      /** Format: int32 */
+      apiCalls: number;
+      messageKey: null | string;
+      params: null | {
+        [key: string]: string;
+      };
+    };
+    SyncRunLogDto: {
+      /** Format: date-time */
+      at: string;
+      level: string;
+      objectKey: null | string;
+      messageKey: string;
+      params: null | {
+        [key: string]: string;
+      };
+    };
+    SyncScheduleDto: {
+      schedule: components['schemas']['SyncScheduleSettings'];
+      /** Format: int32 */
+      lateAfterMinutes: null | number;
+      timeZone: string;
+      nextRuns: string[];
+      /** Format: date-time */
+      nextRunAt: null | string;
+    };
+    SyncScheduleInput: {
+      schedule: components['schemas']['SyncScheduleSettings'];
+      /** Format: int32 */
+      lateAfterMinutes: null | number;
+      /** Format: uint32 */
+      version: number;
+    };
+    /** @description Schedule of a connection (§4): every N hours (anchored at `At`), daily at a time, or weekly on days at a time. */
+    SyncScheduleSettings: {
+      kind?: string;
+      /** Format: int32 */
+      everyHours?: number;
+      /** @description "HH:mm" in the installation time zone. */
+      at?: string;
+      /** @description ISO days (Monday = 1 … Sunday = 7). */
+      days?: number[];
+      businessHoursOnly?: boolean;
+    };
+    SyncStatusDto: {
+      connection: components['schemas']['SyncConnectionDto'];
+      lastRun: null | components['schemas']['SyncRunDto'];
+      lastSuccess: null | components['schemas']['SyncRunDto'];
+      running: boolean;
+      late: boolean;
+      /** Format: int32 */
+      openExceptions: number;
+      objects: components['schemas']['SyncObjectStatusDto'][];
+      outage: null | components['schemas']['SyncOutageDto'];
+    };
+    SyncTargetDto: {
+      code: string;
+      systemCode: string;
+      nameAr: string;
+      nameEn: string;
+      fields: components['schemas']['SyncTargetFieldDto'][];
+    };
+    SyncTargetFieldDto: {
+      code: string;
+      kind: string;
+      required: boolean;
+      lookupType: null | string;
+      referenceType: null | string;
+      choices: null | string[];
+    };
+    SyncTestDto: {
+      /** Format: date-time */
+      at: string;
+      ok: boolean;
+      messageKey: null | string;
     };
     SystemAccessDto: {
       /** Format: uuid */
@@ -37574,6 +38838,70 @@ export interface operations {
       };
     };
   };
+  GetRecordSyncState: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        type: string;
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['RecordSyncStateDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListRecordSourceHistory: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        type: string;
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SourceHistoryEntryDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
   ListIntegrationClients: {
     parameters: {
       query?: never;
@@ -38376,6 +39704,1427 @@ export interface operations {
           [name: string]: unknown;
         };
         content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListSyncConnections: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SyncConnectionDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetSyncConnection: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SyncConnectionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateSyncConnection: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SyncConnectionInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SyncConnectionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SetSyncConnectionKey: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SyncKeyInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SyncConnectionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  TestSyncConnection: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SyncConnectionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ActivateSyncConnection: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SyncConnectionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  DeactivateSyncConnection: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SyncConnectionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetSyncSchedule: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SyncScheduleDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SaveSyncSchedule: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SyncScheduleInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SyncScheduleDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SyncNow: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SyncNowInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SyncConnectionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetSyncStatus: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SyncStatusDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListSyncRuns: {
+    parameters: {
+      query?: {
+        page?: number;
+        pageSize?: number;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PagedResultOfSyncRunDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetSyncRun: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        runId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SyncRunDetailDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListSourceObjects: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SourceObjectDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  DescribeSourceObject: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        name: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SourceObjectDescribe'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListSyncTargets: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SyncTargetDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListMappingPacks: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MappingPackDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListObjectMappings: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        packId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ObjectMappingDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ExportMappingPack: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        packId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MappingPackDocument'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ImportMappingPack: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['MappingPackDocument'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MappingPackDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetObjectMapping: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        mappingId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ObjectMappingDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateObjectMapping: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        mappingId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ObjectMappingInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ObjectMappingDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SetObjectMappingEnabled: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        mappingId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ObjectMappingEnableInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ObjectMappingDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ValidateObjectMapping: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+        mappingId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['MappingValidationDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListSyncExceptions: {
+    parameters: {
+      query?: {
+        status?: string;
+        reason?: string;
+        mapping?: string;
+        search?: string;
+        page?: number;
+        pageSize?: number;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PagedResultOfSyncExceptionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetSyncException: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        exceptionId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SyncExceptionDetailDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ReprocessSyncException: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        exceptionId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SyncExceptionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  IgnoreSyncException: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        exceptionId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SyncExceptionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  MapSyncExceptionValue: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        exceptionId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['MapValueInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SyncExceptionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  MapSyncExceptionPerson: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        exceptionId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['MapPersonInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SyncExceptionDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ReprocessSyncExceptions: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ReprocessInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReprocessResultDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetStepUpMethods: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['StepUpMethodsDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SendStepUpEmailCode: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  MakeThisSystemPrimary: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['MakePrimaryInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SyncStatusDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ReturnToStandby: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ReturnToStandbyInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SyncStatusDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CloseOutage: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SyncStatusDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListOutages: {
+    parameters: {
+      query?: {
+        page?: number;
+        pageSize?: number;
+      };
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PagedResultOfSyncOutageDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetOutageReport: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        outageId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['OutageReportDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  AcknowledgeOutageReport: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        outageId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ExportOutageReportExcel: {
+    parameters: {
+      query?: {
+        lang?: string;
+      };
+      header?: never;
+      path: {
+        outageId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ExportOutageReportPdf: {
+    parameters: {
+      query?: {
+        lang?: string;
+      };
+      header?: never;
+      path: {
+        outageId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  SetOutageRecordReEntered: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        outageId: string;
+        type: string;
+        recordId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ReEnteredInput'];
+      };
+    };
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListOutageConflicts: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        outageId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['OutageConflictDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ResolveOutageConflict: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        outageId: string;
+        recordId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ResolveConflictInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['OutageConflictDto'];
+        };
       };
       /** @description Problem Details (RFC 9457) */
       default: {

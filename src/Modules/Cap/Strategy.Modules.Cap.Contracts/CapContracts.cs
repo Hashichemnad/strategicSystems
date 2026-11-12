@@ -22,6 +22,13 @@ public static class CapSourceTypes
         [Workshop, Benchmarking, InternalAudit, ExternalAudit, ExcellenceAssessment, KpiPerformance, RiskEvent, CustomerComplaint, EmployeeSurvey, ManagementReview, Other];
 }
 
+/// <summary>CAP picklists (Settings lookups) other modules label CAP codes with, e.g. Benchmarking improvement actions (ADR 0209).</summary>
+public static class CapLookupTypes
+{
+    public const string Priority = "cap.priority";
+    public const string ActionType = "cap.action-type";
+}
+
 /// <summary>Remark priority codes (SPEC §9.3 B). Due dates by priority are Settings → CAP.</summary>
 public static class CapPriorities
 {

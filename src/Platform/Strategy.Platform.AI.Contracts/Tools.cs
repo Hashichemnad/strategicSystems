@@ -48,6 +48,9 @@ public static class ToolErrors
     public const string Disabled = "disabled";
     public const string RateLimited = "rate_limited";
     public const string Failed = "failed";
+
+    /// <summary>The record is read-only while its source system is primary (standby sync, ADR 0206).</summary>
+    public const string ReadOnly = "read_only";
 }
 
 public interface IAppTool

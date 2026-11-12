@@ -1,0 +1,10 @@
+{
+  "format": "strategy.sync-pack/1",
+  "code": "adof-salesforce",
+  "version": 1,
+  "nameAr": "حزمة مطابقة Salesforce لدائرة المالية بعجمان",
+  "nameEn": "ADoF Salesforce",
+  "description": "Mappings of the Ajman Department of Finance Salesforce org (PMS, teams, KPI, risk, audit, CAP, benchmarking, document registry, IP, tasks) to this system. Objects not visible to the integration user yet are provisional and disabled until the live describe confirms them (SPEC-ADDENDUM G3).",
+  "connector": "salesforce",
+  "objects": []
+}

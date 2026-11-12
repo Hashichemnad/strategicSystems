@@ -32,6 +32,7 @@ public static class PersistenceServiceCollectionExtensions
         services.TryAddSingleton<RuntimeRoleSetup>();
         services.TryAddScoped<AuditFieldsInterceptor>();
         services.TryAddScoped<AuditTrailInterceptor>();
+        services.TryAddScoped<StandbyWriteInterceptor>();
         services.TryAddScoped<IAuditReason, AuditReason>();
         services.TryAddSingleton<ModuleMigrator>();
         return services;
@@ -52,7 +53,7 @@ public static class PersistenceServiceCollectionExtensions
                     .MigrationsHistoryTable(historyTable, schema)
                     .MigrationsAssembly(typeof(TContext).Assembly.GetName().Name))
             .UseSnakeCaseNamingConvention()
-            .AddInterceptors(sp.GetRequiredService<AuditFieldsInterceptor>(), sp.GetRequiredService<AuditTrailInterceptor>()));
+            .AddInterceptors(sp.GetRequiredService<StandbyWriteInterceptor>(), sp.GetRequiredService<AuditFieldsInterceptor>(), sp.GetRequiredService<AuditTrailInterceptor>()));
 
         services.AddSingleton(new ModuleDatabase(typeof(TContext), schema));
         var checkName = historyTable == MigrationsHistoryTable ? $"db:{schema}" : $"db:{schema}:{typeof(TContext).Name}";

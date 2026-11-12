@@ -43,6 +43,7 @@ public sealed class TasksModule : IModule
         services.AddLookupType(TasksAccessCatalogue.Types);
         services.AddLookupType(TasksAccessCatalogue.Sources);
         services.AddLookupType(TasksAccessCatalogue.Categories);
+        services.AddTasksSyncTargets(); // Phase 23, ADR 0202
         foreach (var template in TaskNotifications.All)
         {
             services.AddNotificationTemplate(template);

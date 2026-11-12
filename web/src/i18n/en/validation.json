@@ -25,5 +25,6 @@
   "precisionScale": "Enter a positive number with at most 2 decimals.",
   "duplicate": "Each entry must be unique.",
   "greaterThan": "Must be more than {{value}}.",
-  "required": "This field is required."
+  "required": "This field is required.",
+  "maxLength": "The value is too long."
 }

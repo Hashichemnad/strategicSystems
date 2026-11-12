@@ -20,7 +20,8 @@
   "statuses": {
     "running": "قيد التشغيل",
     "succeeded": "نجحت",
-    "failed": "فشلت"
+    "failed": "فشلت",
+    "suspended": "موقوف (وضع الاحتياط)"
   },
   "toast": {
     "run": "بدأ تشغيل المهمة",

@@ -40,7 +40,8 @@
     "antivirus": "فحص الفيروسات (ClamAV)",
     "auditChain": "سلامة سجل التدقيق",
     "dataProtection": "مفاتيح حماية البيانات",
-    "certificates": "الشهادات"
+    "certificates": "الشهادات",
+    "salesforceSync": "مزامنة Salesforce"
   },
   "items": {
     "files": "وحدة تخزين الملفات",
@@ -149,5 +150,13 @@
     "expiresSoon": "{{subject}} — تنتهي في {{notAfter}} (بقي {{daysLeft}} يومًا): جدّدها.",
     "expired": "{{subject}} — انتهت في {{notAfter}}.",
     "unreadable": "تتعذر قراءة {{path}} ({{error}})."
+  },
+  "salesforceSync": {
+    "disabled": "المزامنة من {{source}} غير مفعّلة.",
+    "primary": "هذا النظام هو الأساسي: لا تجري مزامنة {{source}} (فترة انقطاع مفتوحة).",
+    "failed": "فشل آخر تشغيل للمزامنة من {{source}}. افتح الإعدادات ← التكاملات ← مزامنة Salesforce لعرض سجل التشغيل.",
+    "late": "لم ينجح أي تشغيل للمزامنة من {{source}} خلال المدة المتوقعة.",
+    "exceptions": "آخر مزامنة ناجحة {{at}}؛ {{exceptions}} من الاستثناءات المفتوحة بحاجة إلى مراجعة.",
+    "ok": "آخر مزامنة ناجحة {{at}}؛ لا توجد استثناءات مفتوحة."
   }
 }

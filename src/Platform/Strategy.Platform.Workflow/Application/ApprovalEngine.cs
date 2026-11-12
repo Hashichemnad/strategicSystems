@@ -46,8 +46,27 @@ internal sealed class ApprovalEngine(
     INotificationService notifications,
     IAuditSink auditSink,
     IBusinessHoursCalculator businessHours,
-    IEnumerable<IApprovalHook> hooks) : IApprovalEngine
+    IEnumerable<IApprovalHook> hooks,
+    IEnumerable<Strategy.Platform.Kernel.Integration.IStandbyGuard> standby) : IApprovalEngine
 {
+    /// <summary>Standby (ADR 0206): no approval on a record that is read-only while its source system is primary.</summary>
+    private async Task<Error?> ReadOnlyAsync(string resourceType, Guid resourceId, CancellationToken cancellationToken)
+    {
+        foreach (var guard in standby)
+        {
+            if (await guard.IsActiveAsync(cancellationToken).ConfigureAwait(false)
+                && (await guard.FindReadOnlyAsync([new(resourceType, resourceId)], cancellationToken).ConfigureAwait(false)).Values.FirstOrDefault() is { } source)
+            {
+                return Error.Conflict(Strategy.Platform.Kernel.Integration.StandbyErrors.Code, Strategy.Platform.Kernel.Integration.StandbyErrors.MessageKey) with
+                {
+                    Params = new Dictionary<string, object?> { ["source"] = source },
+                };
+            }
+        }
+
+        return null;
+    }
+
     private readonly List<ApprovalEvent> _pendingEvents = [];
     private DateTimeOffset _lastStamp;
 
@@ -60,6 +79,11 @@ internal sealed class ApprovalEngine(
         if (process is null || process.ResourceType != submission.Subject.ResourceType)
         {
             return Error.Rule("workflow.process.unknown", "workflow.errors.unknownProcess");
+        }
+
+        if (await ReadOnlyAsync(submission.Subject.ResourceType, submission.Subject.ResourceId, cancellationToken).ConfigureAwait(false) is { } readOnly)
+        {
+            return readOnly;
         }
 
         if (!await db.JoinTransactionAsync(transactionContext, cancellationToken).ConfigureAwait(false))
@@ -116,7 +140,17 @@ internal sealed class ApprovalEngine(
             new { instance.Attempt, previousInstanceId = previous?.Id }, submission.Comment, cancellationToken).ConfigureAwait(false);
         await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         var hooked = await RunHooksAsync(cancellationToken).ConfigureAwait(false);
-        return hooked.IsFailure ? hooked.Error : await SummaryAsync(instance, cancellationToken).ConfigureAwait(false);
+        if (hooked.IsFailure)
+        {
+            return hooked.Error;
+        }
+
+        foreach (var guard in standby)
+        {
+            await guard.OnApprovalSubmittedAsync(new(submission.Subject.ResourceType, submission.Subject.ResourceId), cancellationToken).ConfigureAwait(false);
+        }
+
+        return await SummaryAsync(instance, cancellationToken).ConfigureAwait(false);
     }
 
     public async Task<Result<ApprovalInstanceSummary>> CancelAsync(
@@ -253,6 +287,11 @@ internal sealed class ApprovalEngine(
         if (task.Status != ApprovalTaskStatuses.Pending || instance.Status != ApprovalInstanceStatuses.InProgress)
         {
             return Error.Rule("workflow.task.closed", "workflow.errors.taskClosed");
+        }
+
+        if (await ReadOnlyAsync(instance.ResourceType, instance.ResourceId, cancellationToken).ConfigureAwait(false) is { } readOnly)
+        {
+            return readOnly;
         }
 
         var acting = await ActingAsAsync(task, instance, requestContext.User, input.OnBehalfOfUserId, cancellationToken).ConfigureAwait(false);

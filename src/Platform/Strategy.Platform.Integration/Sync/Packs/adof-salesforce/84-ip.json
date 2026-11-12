@@ -1,0 +1,36 @@
+{
+  "objects": [
+    {
+      "key": "ip-record", "sourceObject": "IP_Registry__c", "kind": "record", "targetType": "ip.record", "loadOrder": 88, "provisional": true,
+      "fields": [
+        { "source": "Name", "target": "number", "kind": "direct", "required": true },
+        { "source": "IP_Name__c", "target": "nameAr", "kind": "direct", "transform": "trim" },
+        { "source": "IP_Name_En__c", "target": "nameEn", "kind": "direct", "transform": "trim" },
+        { "source": "Description__c", "target": "description", "kind": "direct", "transform": "htmlToText" },
+        { "source": "Property_Type__c", "target": "propertyType", "kind": "picklist", "values": {
+          "Methodology": "methodology", "Software": "software", "System": "software", "Software / System": "software", "Literary Work": "literary",
+          "Design": "design", "Invention": "invention", "Trademark": "trademark", "Corporate Document": "document", "Document": "document" } },
+        { "source": "Protection_Type__c", "target": "protectionType", "kind": "picklist", "values": {
+          "Copyright": "copyright", "Industrial Design": "industrial-design", "Patent": "patent", "Utility Model": "utility-model", "Trademark": "trademark",
+          "Trade Secret": "trade-secret", "Internal Registration": "trade-secret" } },
+        { "source": "Document_Registry__c", "target": "documentId", "kind": "reference", "referenceType": "docreg.document" },
+        { "source": "Owner_Department__c", "target": "ownerUnitId", "kind": "reference", "referenceType": "org.unit" },
+        { "source": "CreatedById", "target": "requesterEmployeeId", "kind": "person" },
+        { "source": "Status__c", "target": "status", "kind": "picklist", "values": {
+          "Submitted": "submitted", "Under Review": "under_review", "Returned": "returned", "Rejected": "rejected", "Approved": "approved_to_file",
+          "Approved - To File": "approved_to_file", "Filed": "filed", "Filed with MOET": "filed", "Registered": "registered", "Rejected by MOET": "rejected_by_moet",
+          "Expired": "expired", "Renewed": "renewed", "Withdrawn": "withdrawn" } },
+        { "source": "Filing_Date__c", "target": "filingDate", "kind": "direct", "transform": "dateOnly" },
+        { "source": "Application_Number__c", "target": "applicationNo", "kind": "direct", "transform": "truncate:100" },
+        { "source": "Registration_Number__c", "target": "registrationNo", "kind": "direct", "transform": "truncate:100" },
+        { "source": "Registration_Date__c", "target": "registrationDate", "kind": "direct", "transform": "dateOnly" },
+        { "source": "Expiry_Date__c", "target": "expiryDate", "kind": "direct", "transform": "dateOnly" },
+        { "source": "Notes__c", "target": "notes", "kind": "direct" },
+        { "source": "MOET_Rejection_Reason__c", "target": "moetRejectionReason", "kind": "direct" }
+      ],
+      "ignore": ["OwnerId", "CurrencyIsoCode"],
+      "notesAr": "الاسم والحقول مؤقتة (من مخطط بيانات إدارة الملكية الفكرية في وثائق الإصدار 1.0) ولا يراها مستخدم التكامل حالياً؛ يجب تأكيدها بزر «تحقق» (الوصف الحي) قبل التفعيل. تُحمَّل بعد سجل الوثائق كي تُحلّ الإشارة إلى الوثيقة. فروق النموذج: المساهمون (الأطراف المتنازلة) وأرقام هوياتهم الإماراتية لا تُنقل (لا هدف مزامنة لهم، وتبقى الهويات في Salesforce؛ تُضاف هنا مشفّرة عند الحاجة)؛ فترات التسجيل (التجديدات) لا تُنقل، ويُنقل رقم التسجيل وتاريخ الانتهاء الحاليان فقط؛ الشهادة تأتي مرفقاً. المصدر يُضبط على «طلب» حتى لو كان السجل مرتبطاً بوثيقة (الرابط بالوثيقة يُنقل). «مسودة» بلا رمز وتذهب إلى قائمة الاستثناءات. لا تُرسل رسائل الشهادات ولا تذكيرات التجديد أثناء الاستعداد.",
+      "notesEn": "Names are provisional (from the intellectual property management data model ERD in the 1.0 source documents) and not visible to the integration user today; confirm them with Validate (live describe) before enabling. Loads after the document registry so the document reference resolves. Model differences: contributors (transferring parties) and their Emirates ID numbers are not imported (no sync target; the IDs stay in Salesforce and are added here, encrypted, when needed); registration periods (renewals) are not imported — only the current registration number and expiry date; the certificate arrives as an attachment. The source is set to \"request\" even when the record is linked to a document (the document link itself is imported). \"Draft\" has no code and goes to the exceptions queue. No certificate e-mails or renewal reminders are sent while in standby."
+    }
+  ]
+}

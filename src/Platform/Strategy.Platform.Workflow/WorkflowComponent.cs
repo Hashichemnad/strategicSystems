@@ -35,6 +35,7 @@ public sealed class WorkflowComponent : IPlatformComponent
         services.AddScoped<ApprovalQueries>();
         services.AddMyWorkCardSource<ApprovalsMyWorkCard>();
         services.AddReportingDatasetSource<Reporting.ApprovalHistoryDataset>();
+        services.AddReportingDimensionLabelSource<Reporting.WorkflowDimensionLabels>();
         services.AddScoped<ProcessAdministration>();
         services.AddScoped<SlaEscalation>();
         services.AddScoped<IRoleTransferHook, ApprovalRoleTransferHook>();

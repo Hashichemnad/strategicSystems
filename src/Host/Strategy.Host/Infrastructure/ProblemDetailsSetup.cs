@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Strategy.Platform.Http.Problems;
 using Strategy.Platform.Kernel.Context;
+using Strategy.Platform.Kernel.Integration;
 using Strategy.Platform.Kernel.Results;
 
 namespace Strategy.Host.Infrastructure;
@@ -60,6 +61,10 @@ internal sealed partial class GlobalExceptionHandler(IProblemDetailsService prob
         var error = exception switch
         {
             DbUpdateConcurrencyException => Error.Conflict(),
+            RecordReadOnlyException readOnly => Error.Conflict(StandbyErrors.Code, StandbyErrors.MessageKey) with
+            {
+                Params = new Dictionary<string, object?> { ["source"] = readOnly.SourceName },
+            },
             BadHttpRequestException => new Error("request.malformed", "errors.badRequest", ErrorKind.Validation),
             _ => null,
         };

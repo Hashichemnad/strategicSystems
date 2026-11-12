@@ -235,7 +235,7 @@ inaccessible systems never appear, whatever the layout says.
   documents, IP records, benchmark studies, CAP remarks, CAP actions, audit findings, recommendations, requests.
 - **Field** (`DatasetField`): code, labels, type (text, number, money, ratio, date, lookup, user, unit, bool), filterable / groupable /
   sortable, **field permission** (optional: e.g. budget fields need `portfolio.cost.read`; Emirates ID / masked fields never exposed),
-  lookup type for labels.
+  labels of codes: a lookup type, a module label source or fixed AR / EN choices (ADR 0209).
 - **Definition** `reporting.report`: dataset, columns, filters (field, operator from a whitelist per type, value; relative dates
   "this quarter"), grouping (≤ 2 levels with count / sum / average), sorting, owner, shares (users / roles / units), status.
 - **Execution**: the module runs it in its own DbContext through `DatasetQuery<T>` on **its scoped query** (`ApplyScopeAsync` with the

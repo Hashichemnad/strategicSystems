@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Strategy.Modules.Cap.Application;
 using Strategy.Modules.Cap.Contracts;
 using Strategy.Modules.Cap.Domain;
+using Strategy.Modules.Cap.Reporting;
 using Strategy.Platform.Reporting;
 using Strategy.Platform.Reporting.Records;
 
@@ -86,10 +87,10 @@ internal sealed class CapFeeds(CapReader reader) : IReportableRecordSource
             new("receivedOn", "تاريخ الاستلام", "Received on", RecordFieldType.Date),
             new("owner", "مالك المصدر", "Source owner", RecordFieldType.Employee),
             new("unit", "الوحدة", "Unit", RecordFieldType.Unit),
-            new("origin", "المنشأ", "Origin", RecordFieldType.Lookup, Choices: [new("manual", "يدوي", "Manual"), new("system", "من نظام", "System")]),
+            new("origin", "المنشأ", "Origin", RecordFieldType.Lookup, Choices: CapChoices.Origins),
             new("linkedType", "نوع السجل المرتبط", "Linked record type", RecordFieldType.Text),
             new("linkedId", "السجل المرتبط", "Linked record", RecordFieldType.Id),
-            new("status", "الحالة", "Status", RecordFieldType.Lookup, Choices: [new("active", "نشط", "Active"), new("closed", "مغلق", "Closed")]),
+            new("status", "الحالة", "Status", RecordFieldType.Lookup, Choices: CapChoices.SourceStatuses),
             new("createdAt", "تاريخ الإنشاء", "Created", RecordFieldType.DateTime),
         ],
         [
@@ -101,19 +102,7 @@ internal sealed class CapFeeds(CapReader reader) : IReportableRecordSource
             new("sourceId", "المصدر", "Source", RecordFieldType.Id),
             new("textAr", "نص الملاحظة (عربي)", "Remark (Arabic)", RecordFieldType.Text),
             new("textEn", "نص الملاحظة (إنجليزي)", "Remark (English)", RecordFieldType.Text),
-            new("status", "الحالة", "Status", RecordFieldType.Lookup, Choices:
-            [
-                new(CapRemarkStatuses.Assigned, "مسندة", "Assigned"),
-                new(CapRemarkStatuses.RejectionPending, "رفض بانتظار التأكيد", "Rejection pending"),
-                new(CapRemarkStatuses.Rejected, "مرفوضة", "Rejected"),
-                new(CapRemarkStatuses.Planning, "تخطيط الإجراءات", "Planning actions"),
-                new(CapRemarkStatuses.Validation, "قيد الاعتماد", "In validation"),
-                new(CapRemarkStatuses.Correction, "معادة للتصحيح", "Returned for correction"),
-                new(CapRemarkStatuses.Implementation, "قيد التنفيذ", "In implementation"),
-                new(CapRemarkStatuses.Verification, "التحقق", "Verification"),
-                new(CapRemarkStatuses.Completed, "منجزة", "Completed"),
-                new(CapRemarkStatuses.Cancelled, "ملغاة", "Cancelled"),
-            ]),
+            new("status", "الحالة", "Status", RecordFieldType.Lookup, Choices: CapChoices.RemarkStatuses),
             new("priority", "الأولوية", "Priority", RecordFieldType.Lookup, LookupType: CapPermissions.PriorityLookup),
             new("type", "نوع الملاحظة", "Remark type", RecordFieldType.Lookup, LookupType: CapPermissions.RemarkTypeLookup),
             new("criterion", "المعيار", "Criterion", RecordFieldType.Lookup, LookupType: CapPermissions.CriterionLookup),
@@ -137,22 +126,8 @@ internal sealed class CapFeeds(CapReader reader) : IReportableRecordSource
             new("detailsAr", "تفاصيل الإجراء (عربي)", "Action (Arabic)", RecordFieldType.Text),
             new("detailsEn", "تفاصيل الإجراء (إنجليزي)", "Action (English)", RecordFieldType.Text),
             new("type", "نوع الإجراء", "Action type", RecordFieldType.Lookup, LookupType: CapPermissions.ActionTypeLookup),
-            new("status", "الحالة", "Status", RecordFieldType.Lookup, Choices:
-            [
-                new(ActionStatuses.NotStarted, "لم يبدأ", "Not started"),
-                new(ActionStatuses.InProgress, "قيد التنفيذ", "In progress"),
-                new(ActionStatuses.Late, "متأخر", "Late"),
-                new(ActionStatuses.Completed, "منجز", "Completed"),
-                new(ActionStatuses.Cancelled, "ملغى", "Cancelled"),
-            ]),
-            new("validationStatus", "حالة الاعتماد", "Validation status", RecordFieldType.Lookup, Choices:
-            [
-                new(ValidationStatuses.Draft, "مسودة", "Draft"),
-                new(ValidationStatuses.Pending, "بانتظار المكتب", "Waiting for PMO"),
-                new(ValidationStatuses.Approved, "معتمد", "Approved"),
-                new(ValidationStatuses.Rejected, "مرفوض", "Rejected"),
-                new(ValidationStatuses.Returned, "معاد", "Returned"),
-            ]),
+            new("status", "الحالة", "Status", RecordFieldType.Lookup, Choices: CapChoices.ActionStatuses),
+            new("validationStatus", "حالة الاعتماد", "Validation status", RecordFieldType.Lookup, Choices: CapChoices.ValidationStatuses),
             new("assignee", "المسؤول", "Assigned to", RecordFieldType.Employee),
             new("plannedStart", "تاريخ البدء المخطط", "Planned start", RecordFieldType.Date),
             new("plannedEnd", "تاريخ الانتهاء المخطط", "Planned end", RecordFieldType.Date),

@@ -53,6 +53,7 @@ public sealed class IdentityComponent : IPlatformComponent
         services.AddSingleton<IPostConfigureOptions<CookieAuthenticationOptions>, SessionStoreCookieSetup>();
         services.AddScoped<AuthEventLog>();
         services.AddScoped<SignInService>();
+        services.AddScoped<Application.IStepUpVerifier, Application.StepUpVerifier>();
         services.AddScoped<AccessTokenService>();
         services.AddScoped<TokenPrincipalFactory>();
         services.AddScoped<ServiceAccounts>();

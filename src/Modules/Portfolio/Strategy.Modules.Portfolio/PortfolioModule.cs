@@ -48,6 +48,8 @@ public sealed class PortfolioModule : IModule
             services.AddLookupType(lookup);
         }
 
+        services.AddPortfolioSyncTargets(); // Phase 23, ADR 0202
+
         foreach (var template in PortfolioNotifications.All.Concat(PortfolioNotifications.Wasel))
         {
             services.AddNotificationTemplate(template);
@@ -128,6 +130,7 @@ public sealed class PortfolioModule : IModule
         services.AddReportingMetricSource<PortfolioMetricSource>();
         services.AddReportingListSource<PortfolioListSource>();
         services.AddReportingDatasetSource<PortfolioDatasetSource>();
+        services.AddReportingDimensionLabelSource<PortfolioDimensionLabels>();
         services.AddMyWorkCardSource<PortfolioMyWorkCards>();
         services.AddApprovalHook<RequestApprovalHook>();
         services.AddCurrentStatusProvider<RequestCurrentStatus>();

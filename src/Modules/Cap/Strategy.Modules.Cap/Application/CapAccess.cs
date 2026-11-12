@@ -44,8 +44,8 @@ public static class CapPermissions
     public const string SourceTypeLookup = "cap.source-type";
     public const string RemarkTypeLookup = "cap.remark-type";
     public const string CriterionLookup = "cap.criterion";
-    public const string ActionTypeLookup = "cap.action-type";
-    public const string PriorityLookup = "cap.priority";
+    public const string ActionTypeLookup = CapLookupTypes.ActionType;
+    public const string PriorityLookup = CapLookupTypes.Priority;
 }
 
 /// <summary>Data scope of remarks (ADR 0015 / 0125): own = remark owner, unit = concerned department.</summary>

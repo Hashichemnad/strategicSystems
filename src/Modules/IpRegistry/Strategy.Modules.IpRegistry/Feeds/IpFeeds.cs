@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Strategy.Modules.IpRegistry.Application;
 using Strategy.Modules.IpRegistry.Domain;
+using Strategy.Modules.IpRegistry.Reporting;
 using Strategy.Platform.Reporting;
 using Strategy.Platform.Reporting.Records;
 
@@ -45,12 +46,8 @@ internal sealed class IpFeeds(IpReader reader) : IReportableRecordSource
             new("nameEn", "الاسم (إنجليزي)", "Name (English)", RecordFieldType.Text),
             new("type", "نوع الملكية", "Property type", RecordFieldType.Lookup, LookupType: IpPermissions.PropertyTypeLookup),
             new("protection", "نوع الحماية", "Protection type", RecordFieldType.Lookup, LookupType: IpPermissions.ProtectionTypeLookup),
-            new("status", "الحالة", "Status", RecordFieldType.Lookup, Choices: IpStatuses.All.Select(s => new RecordFieldChoice(s, IpLinkTargets.Label(s, true),
-                IpLinkTargets.Label(s, false))).ToList()),
-            new("source", "المصدر", "Source", RecordFieldType.Lookup, Choices:
-            [
-                new(IpSources.Request, "طلب", "Request"), new(IpSources.Document, "وثيقة", "Document"),
-            ]),
+            new("status", "الحالة", "Status", RecordFieldType.Lookup, Choices: IpChoices.Statuses),
+            new("source", "المصدر", "Source", RecordFieldType.Lookup, Choices: IpChoices.Sources),
             new("unit", "الوحدة المالكة", "Owner unit", RecordFieldType.Unit),
             new("requester", "مقدم الطلب", "Requester", RecordFieldType.Employee),
             new("filingDate", "تاريخ الإيداع", "Filing date", RecordFieldType.Date),

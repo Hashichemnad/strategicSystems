@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Strategy.Modules.Requests.Application;
 using Strategy.Modules.Requests.Contracts;
 using Strategy.Modules.Requests.Domain;
+using Strategy.Modules.Requests.Reporting;
 using Strategy.Platform.Reporting;
 using Strategy.Platform.Reporting.Records;
 
@@ -44,16 +45,7 @@ internal sealed class RequestFeeds(RequestReader reader) : IReportableRecordSour
             new("titleEn", "العنوان (إنجليزي)", "Title (English)", RecordFieldType.Text),
             new("type", "نوع الطلب", "Request type", RecordFieldType.Text),
             new("system", "النظام", "System", RecordFieldType.Text),
-            new("status", "الحالة", "Status", RecordFieldType.Lookup, Choices:
-            [
-                new(RequestStatuses.Draft, "مسودة", "Draft"),
-                new(RequestStatuses.InReview, "قيد المراجعة", "In review"),
-                new(RequestStatuses.Returned, "معاد للتصحيح", "Returned"),
-                new(RequestStatuses.InProgress, "قيد التنفيذ", "In progress"),
-                new(RequestStatuses.Completed, "مكتمل", "Completed"),
-                new(RequestStatuses.Rejected, "مرفوض", "Rejected"),
-                new(RequestStatuses.Cancelled, "ملغى", "Cancelled"),
-            ]),
+            new("status", "الحالة", "Status", RecordFieldType.Lookup, Choices: RequestChoices.Statuses),
             new("stage", "المرحلة", "Stage", RecordFieldType.Text),
             new("outcome", "النتيجة", "Outcome", RecordFieldType.Text),
             new("requester", "مقدم الطلب", "Requester", RecordFieldType.Employee),

@@ -36,6 +36,9 @@ public static class JobRunStatuses
     public const string Running = "running";
     public const string Succeeded = "succeeded";
     public const string Failed = "failed";
+
+    /// <summary>Not run: the job belongs to a system suspended while a source system is primary (standby, ADR 0206).</summary>
+    public const string Suspended = "suspended";
 }
 
 /// <summary>One execution of a scheduled job (job dashboard).</summary>

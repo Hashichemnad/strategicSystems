@@ -39,20 +39,38 @@ internal sealed class ApprovalHistoryDataset(WorkflowDbContext db) : IReportingD
         .Field("completedAt", r => r.Task.CompletedAt)
         .Field("resourceId", r => r.Instance.ResourceId);
 
+    /// <summary>Instance statuses as the approval panel names them (<c>web/src/i18n/*/workflow.json</c>, ADR 0209).</summary>
+    private static readonly IReadOnlyList<RecordFieldChoice> InstanceStatuses =
+    [
+        new(ApprovalInstanceStatuses.InProgress, "قيد الإجراء", "In progress"),
+        new(ApprovalInstanceStatuses.Approved, "معتمد", "Approved"),
+        new(ApprovalInstanceStatuses.Rejected, "مرفوض", "Rejected"),
+        new(ApprovalInstanceStatuses.Returned, "معاد للتصحيح", "Returned for correction"),
+        new(ApprovalInstanceStatuses.Cancelled, "ملغى", "Cancelled"),
+    ];
+
+    /// <summary>Decisions (custom actions are aliases of these), worded as the dossier's approval history.</summary>
+    private static readonly IReadOnlyList<RecordFieldChoice> Outcomes =
+    [
+        new(ApprovalActions.Approve, "اعتماد", "Approved"),
+        new(ApprovalActions.Reject, "رفض", "Rejected"),
+        new(ApprovalActions.Return, "إعادة للتصحيح", "Returned"),
+    ];
+
     public string SystemCode => "workflow";
 
     public IReadOnlyList<DatasetDefinition> Datasets { get; } =
     [
         new(Code, "workflow", "سجل الاعتماد", "Approval history", "reporting.report.run",
         [
-            new("process", "الإجراء", "Process", DatasetFieldType.Text, Groupable: true),
+            new("process", "الإجراء", "Process", DatasetFieldType.Text, Groupable: true, LabelSource: new("workflow", WorkflowDimensionLabels.Process)),
             new("attempt", "المحاولة", "Attempt", DatasetFieldType.Number, Groupable: true),
             new("submittedAt", "تاريخ التقديم", "Submitted on", DatasetFieldType.DateTime),
-            new("instanceStatus", "حالة الاعتماد", "Approval status", DatasetFieldType.Lookup, Groupable: true),
+            new("instanceStatus", "حالة الاعتماد", "Approval status", DatasetFieldType.Lookup, Groupable: true, Choices: InstanceStatuses),
             new("stepSort", "ترتيب الخطوة", "Step order", DatasetFieldType.Number),
             new("stepAr", "الخطوة (عربي)", "Step (Arabic)", DatasetFieldType.Text, Groupable: true),
             new("stepEn", "الخطوة (إنجليزي)", "Step (English)", DatasetFieldType.Text, Groupable: true),
-            new("outcome", "القرار", "Decision", DatasetFieldType.Lookup, Groupable: true),
+            new("outcome", "القرار", "Decision", DatasetFieldType.Lookup, Groupable: true, Choices: Outcomes),
             new("actor", "بواسطة", "By", DatasetFieldType.Text, Groupable: true),
             new("onBehalfOf", "نيابة عن", "On behalf of", DatasetFieldType.Text),
             new("comment", "التعليق", "Comment", DatasetFieldType.Text, Filterable: false, Sortable: false),

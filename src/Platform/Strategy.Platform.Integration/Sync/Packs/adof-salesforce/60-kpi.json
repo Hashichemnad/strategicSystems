@@ -1,0 +1,68 @@
+{
+  "objects": [
+    {
+      "key": "kpi-card", "sourceObject": "Org_Kpi_Goal__c", "kind": "record", "targetType": "kpi.card", "loadOrder": 60, "provisional": true,
+      "fields": [
+        { "source": "Name", "target": "code", "kind": "direct", "required": true, "transform": "trim" },
+        { "source": "Proposed_Kpi_Name__c", "target": "nameAr", "kind": "direct", "required": true, "transform": "trim" },
+        { "source": "Kpi_Description_Ar__c", "target": "descriptionAr", "kind": "direct", "transform": "htmlToText" },
+        { "source": "Kpi_Description_En__c", "target": "descriptionEn", "kind": "direct", "transform": "htmlToText" },
+        { "source": "Kpi_Type__c", "target": "type", "kind": "picklist", "values": {
+          "Strategic": "strategic", "Regulatory": "regulatory", "Operational": "operational", "Sectors": "sectors", "Competitive": "competitive" } },
+        { "source": "Measuring_Unit__c", "target": "unit", "kind": "picklist", "values": {
+          "Number": "number", "Percentage": "percentage", "%": "percentage", "AED": "aed", "Days": "days", "Hours": "hours", "Score": "score" } },
+        { "source": "Measuring_Period__c", "target": "measuringPeriod", "kind": "picklist", "values": {
+          "Quarterly": "quarterly", "Half Yearly": "half_yearly", "Semi-Annual": "half_yearly", "Annual": "annual", "Yearly": "annual",
+          "Two Years": "two_year", "Two Year": "two_year" } },
+        { "source": "Measuring_Direction__c", "target": "direction", "kind": "picklist", "values": {
+          "Increase": "increase", "Decrease": "decrease", "Matching Better": "matching", "Proximity Better": "matching" } },
+        { "source": "Responsible_Department__c", "target": "responsibleUnitId", "kind": "reference", "referenceType": "org.unit" },
+        { "source": "Responsible_Department__c", "target": "departmentUnitId", "kind": "reference", "referenceType": "org.unit" },
+        { "source": "Responsible_Person__c", "target": "responsibleEmployeeId", "kind": "person" },
+        { "source": "Status__c", "target": "status", "kind": "picklist", "values": { "Active": "active", "Inactive": "inactive" } },
+        { "source": "Sector_Goal__c", "target": "sectorGoal", "kind": "direct", "transform": "truncate:1000" },
+        { "source": "Standard__c", "target": "criteriaText", "kind": "direct", "transform": "truncate:2000" },
+        { "source": "GEM_Criteria__c", "target": "excellenceLink", "kind": "direct", "transform": "truncate:1000" }
+      ],
+      "defaults": { "status": "active", "nature": "quantitative", "level": "organisation", "targetType": "single" },
+      "ignore": ["OwnerId", "CurrencyIsoCode", "Department_Goal__c", "Perspective__c", "Link_to_Ajman_Vision__c", "Emirites_Goal__c", "Sub_Standard__c"],
+      "notesAr": "مؤقت (G3): الكائن غير مرئي لمستخدم التكامل بعد، ويبقى معطلاً حتى يؤكد الوصف الحي أسماء الحقول. الرمز من رقم السجل في Salesforce. الهدف الاستراتيجي (Department_Goal__c) والمنظور عنصران في هرم الاستراتيجية هنا وليسا هدف مزامنة، فيربطهما مكتب الاستراتيجية يدوياً. قوائم الرؤية والأهداف الوطنية ومعايير التميز فارغة افتراضياً، لذا تُنسخ معايير GEM والمعيار نصاً، ويُضاف ربط القوائم بعد تهيئة رموزها. قيم وحدة القياس ودورية القياس غير المذكورة تذهب إلى قائمة الاستثناءات.",
+      "notesEn": "Provisional (G3): the object is not visible to the integration user yet and stays disabled until the live describe confirms the field names. The code comes from the Salesforce record number. The strategic objective (Department_Goal__c) and the perspective are elements of the strategy hierarchy here, not a sync target: the Strategy Office links them by hand. The vision-link, national-goal and GEM lists are empty by default, so GEM criteria and the standard are copied as text; picklist mappings to those lists are added once their codes are set up. Measuring-unit / period values not listed go to the exceptions queue."
+    },
+    {
+      "key": "kpi-plan", "sourceObject": "Org_Kpi_Measure__c", "kind": "record", "targetType": "kpi.plan", "loadOrder": 61, "provisional": true,
+      "fields": [
+        { "source": "Org_Kpi_Goal__c", "target": "cardId", "kind": "reference", "referenceType": "kpi.card", "required": true },
+        { "source": "Measuring_Year__c", "target": "year", "kind": "direct", "required": true },
+        { "source": "Direction__c", "target": "direction", "kind": "picklist", "values": {
+          "Increase": "increase", "Decrease": "decrease", "Matching Better": "matching", "Proximity Better": "matching" } },
+        { "source": "Total_Target_Value__c", "target": "target", "kind": "direct" },
+        { "source": "Range_Min_Value__c", "target": "rangeMin", "kind": "direct" },
+        { "source": "Range_Max_Value__c", "target": "rangeMax", "kind": "direct" }
+      ],
+      "defaults": { "status": "confirmed" },
+      "ignore": ["OwnerId", "CurrencyIsoCode", "Total_Target__c", "Total_Achieve__c", "Total_Achieve_Value__c", "Performance__c",
+        "Achieve_Value_Q1__c", "Achieve_Value_Q2__c", "Achieve_Value_Q3__c", "Achieve_Value_Q4__c"],
+      "notesAr": "مؤقت (G3): معطل حتى يؤكد الوصف الحي الحقول. خطة سنوية لكل مؤشر وسنة. الهدف النصي الذي يحوي \"-\" (مثل 80-90) يصبح نوع الهدف «نطاق» من Range_Min_Value__c / Range_Max_Value__c؛ وإلا فالقيمة الرقمية هدفاً مفرداً. الدورية والوحدة والاتجاه والمسؤول تُنسخ من البطاقة عند الإنشاء. الأداء والمحقق الإجمالي وقيم الأرباع لا تُنسخ: يعاد حسابها هنا من النتائج المعتمدة بحاسبة الأداء، ولا يوجد حقل لحفظ قيمة Performance__c الأصلية (تبقى في سجل المصدر).",
+      "notesEn": "Provisional (G3): disabled until the live describe confirms the fields. One annual plan per KPI and year. A text target with \"-\" (e.g. 80-90) becomes the Range target type from Range_Min_Value__c / Range_Max_Value__c; otherwise the numeric value is a single target. Measuring period, unit, direction and responsibility come from the card on create. Performance, total achieved and the quarterly values are not copied: they are re-calculated here from the approved results by the PerformanceCalculator; the plan has no field for the source Performance__c (it stays in the source record)."
+    },
+    {
+      "key": "kpi-result", "sourceObject": "Org_Kpi_Process__c", "kind": "record", "targetType": "kpi.result", "loadOrder": 62, "provisional": true,
+      "fields": [
+        { "source": "Org_Kpi_Measure__c", "target": "planId", "kind": "reference", "referenceType": "kpi.plan", "required": true },
+        { "source": "Quarter__c", "target": "periodCode", "kind": "picklist", "required": true, "values": {
+          "Q1": "q1", "Q2": "q2", "Q3": "q3", "Q4": "q4", "First Half": "h1", "Second Half": "h2", "Full Year": "fy", "Two Year": "ty", "Two Years": "ty" } },
+        { "source": "Target_Value__c", "target": "target", "kind": "direct" },
+        { "source": "Achieve_Value__c", "target": "achieve", "kind": "direct" },
+        { "source": "Causality__c", "target": "causality", "kind": "direct", "transform": "truncate:4000" },
+        { "source": "Corrective_Actions__c", "target": "correctiveActions", "kind": "direct", "transform": "truncate:4000" },
+        { "source": "Notes__c", "target": "notes", "kind": "direct", "transform": "truncate:4000" },
+        { "source": "Approved__c", "target": "status", "kind": "picklist", "values": { "true": "approved", "false": "open" } }
+      ],
+      "defaults": { "status": "open" },
+      "ignore": ["OwnerId", "CurrencyIsoCode", "Target__c", "Achieve__c", "Performance__c", "Result_Submitted__c", "Approval_Submitted__c"],
+      "notesAr": "مؤقت (G3): معطل حتى يؤكد الوصف الحي الحقول. نتيجة لكل خطة وفترة (Q1–Q4، النصف الأول/الثاني، السنة، السنتان). الأداء الفعلي والمحدود يعاد حسابهما بحاسبة الأداء من الهدف والمحقق ثم تُحسب الخطة؛ لا يوجد حقل لحفظ Performance__c الأصلية. النتيجة بلا هدف خاص تأخذ هدف الفترة الافتراضي من الخطة (والنطاق إن كانت الخطة نطاقاً). الحالة: معتمد ← معتمدة، وإلا مفتوحة؛ علامتا الإرسال (Result_Submitted__c / Approval_Submitted__c) لا تُطابقان لأن قيمة الحالة تأتي من حقل واحد، فالنتيجة المرسلة غير المعتمدة تصل مفتوحة ولا يُنشأ مسار اعتماد. البطاقة والسنة وتواريخ الفترة والمسؤول تُنسخ من الخطة.",
+      "notesEn": "Provisional (G3): disabled until the live describe confirms the fields. One result per plan and period (Q1–Q4, first / second half, full year, two years). Actual and capped performance are re-calculated by the PerformanceCalculator from target and achieved, then the plan; the result has no field for the source Performance__c. A result without its own target takes the plan's default period target (and its range when the plan is a range). Status: Approved → approved, else open; the submission flags (Result_Submitted__c / Approval_Submitted__c) are not mapped because the status value comes from one field, so a submitted but unapproved result arrives open and no approval instance is created. Card, year, period dates and owner come from the plan."
+    }
+  ]
+}

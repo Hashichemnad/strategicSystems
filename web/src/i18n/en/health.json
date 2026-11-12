@@ -40,7 +40,8 @@
     "antivirus": "Virus scan (ClamAV)",
     "auditChain": "Audit trail integrity",
     "dataProtection": "Data Protection keys",
-    "certificates": "Certificates"
+    "certificates": "Certificates",
+    "salesforceSync": "Salesforce sync"
   },
   "items": {
     "files": "Files volume",
@@ -149,5 +150,13 @@
     "expiresSoon": "{{subject}} — expires {{notAfter}} ({{daysLeft}} days left): renew it.",
     "expired": "{{subject}} — expired on {{notAfter}}.",
     "unreadable": "{{path}} cannot be read ({{error}})."
+  },
+  "salesforceSync": {
+    "disabled": "The sync from {{source}} is not active.",
+    "primary": "This system is primary: {{source}} is not being synced (outage open).",
+    "failed": "The last sync run from {{source}} failed. Open Settings → Integrations → Salesforce sync for the run log.",
+    "late": "No sync run from {{source}} succeeded within the expected time.",
+    "exceptions": "Last successful sync {{at}}; {{exceptions}} open exceptions to review.",
+    "ok": "Last successful sync {{at}}; no open exceptions."
   }
 }

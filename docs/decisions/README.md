@@ -170,3 +170,13 @@ Write an ADR for every choice the SPEC or CLAUDE.md leaves open (CLAUDE.md §2 r
 | [0193](0193-incremental-extracts-and-scheduled-exports.md) | Incremental extracts, deleted feed and scheduled folder exports | Proposed |
 | [0194](0194-signed-webhooks.md) | Webhooks: catalogue from integration events, HMAC signature, back-off, dead letters, replay | Proposed |
 | [0195](0195-developer-portal.md) | Developer portal page and Power BI guide | Proposed |
+| [0200](0200-sync-engine-and-sync-channel.md) | Sync engine in Platform.Integration and the `sync` channel | Proposed |
+| [0201](0201-salesforce-connector.md) | Salesforce connector: JWT bearer, REST and Bulk API 2.0 reads, SystemModstamp watermarks | Proposed |
+| [0202](0202-sync-targets-declared-by-modules.md) | Sync targets declared by modules, written by a generic entity writer | Proposed |
+| [0203](0203-mapping-packs-as-data.md) | Mapping packs as data, validated against the live describe | Proposed |
+| [0204](0204-people-matching.md) | Salesforce users and contacts are matched to employees | Proposed |
+| [0205](0205-change-detection-and-exceptions.md) | Change detection, idempotent runs and the exceptions queue | Proposed |
+| [0206](0206-standby-guard.md) | Standby guard: synced records read-only, workflows / jobs / notifications suspended | Proposed |
+| [0207](0207-failover-outage-return-to-standby.md) | Failover: make primary, outage period, outage changes report, return to standby | Proposed |
+| [0208](0208-files-and-source-history.md) | Salesforce files into the Files service; approval and field history as read-only source history | Proposed |
+| [0209](0209-labels-for-fixed-code-fields.md) | Labels for code fields without a lookup type: fixed choices and module label sources on dataset fields | Proposed |

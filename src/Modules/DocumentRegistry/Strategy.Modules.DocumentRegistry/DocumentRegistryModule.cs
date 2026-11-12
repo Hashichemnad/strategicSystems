@@ -57,6 +57,7 @@ public sealed class DocumentRegistryModule : IModule
         services.AddScoped<DocRegCalendar>();
         services.AddScoped<DocRegNotifier>();
         services.AddScoped<DocumentService>();
+        services.AddDocRegSyncTargets(); // Phase 23, ADR 0202
         services.AddScoped<Watermark>();
         services.AddScoped<DocumentSearchSource>();
         services.AddScoped<IRecordSearchSource>(sp => sp.GetRequiredService<DocumentSearchSource>());

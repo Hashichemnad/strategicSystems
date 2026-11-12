@@ -1,0 +1,270 @@
+{
+  "objects": [
+    {
+      "key": "program-request", "sourceObject": "PMS_Project_Request__c", "kind": "record", "targetType": "portfolio.request", "loadOrder": 40,
+      "fields": [
+        { "source": "Name", "target": "number", "kind": "direct", "required": true },
+        { "source": "Status__c", "target": "status", "kind": "picklist", "values": {
+          "Draft": "draft", "Waiting Approval": "in-approval", "Manager Approval": "in-approval", "PMO Approval": "in-approval", "DGO Approval": "in-approval",
+          "Budget Approval": "in-approval", "Approved": "approved", "Rejected": "rejected" } },
+        { "source": "Approval_Status__c", "target": "approvalStatus", "kind": "direct" },
+        { "source": "Program_Name__c", "target": "nameAr", "kind": "direct", "transform": "trim" },
+        { "source": "Program_Description__c", "target": "description", "kind": "direct" },
+        { "source": "Program_Justifications__c", "target": "justifications", "kind": "direct" },
+        { "source": "Program_Scope__c", "target": "scopeOfWork", "kind": "direct" },
+        { "source": "Program_Type__c", "target": "programType", "kind": "picklist", "values": { "Digital": "digital", "Non-Digital": "non-digital" } },
+        { "source": "Project_Nature__c", "target": "programNature", "kind": "direct" },
+        { "source": "Program_Estimated_Budget__c", "target": "estimatedBudget", "kind": "direct" },
+        { "source": "Approved_Budget__c", "target": "approvedBudget", "kind": "direct" },
+        { "source": "First_Year_Cost__c", "target": "year1Cost", "kind": "direct" },
+        { "source": "Second_Year_Cost__c", "target": "year2Cost", "kind": "direct" },
+        { "source": "Third_Year_Cost__c", "target": "year3Cost", "kind": "direct" },
+        { "source": "Forth_Year_Cost__c", "target": "year4Cost", "kind": "direct" },
+        { "source": "Approx_Annual_License_Cost__c", "target": "annualLicenceCost", "kind": "direct" },
+        { "source": "Approx_Annual_Maintenance_Cost__c", "target": "annualMaintenanceCost", "kind": "direct" },
+        { "source": "Approx_Annual_Other_Cost__c", "target": "annualOtherCost", "kind": "direct" },
+        { "source": "Department__c", "target": "unitId", "kind": "reference", "referenceType": "org.unit" },
+        { "source": "Section_to_Implement__c", "target": "sectionUnitId", "kind": "reference", "referenceType": "org.unit" },
+        { "source": "CreatedById", "target": "requesterEmployeeId", "kind": "person" },
+        { "source": "Does_it_require_Budget__c", "target": "requiresBudget", "kind": "direct", "transform": "yesNo" },
+        { "source": "Is_the_work_core_to_the_unit__c", "target": "screenCoreWork", "kind": "direct", "transform": "yesNo" },
+        { "source": "Is_the_work_done_once_without_repetition__c", "target": "screenOneTime", "kind": "direct", "transform": "yesNo" },
+        { "source": "Having_Specific_Time_Period__c", "target": "screenTimeBound", "kind": "direct", "transform": "yesNo" },
+        { "source": "Are_there_unique_results_or_outputs__c", "target": "screenUniqueOutput", "kind": "direct", "transform": "yesNo" },
+        { "source": "Does_it_require_at_least_AED_100K__c", "target": "screenMinCost", "kind": "direct", "transform": "yesNo" },
+        { "source": "Are_there_any_operational_costs__c", "target": "screenOperationalCosts", "kind": "direct", "transform": "yesNo" },
+        { "source": "Will_others_bear_the_costs__c", "target": "othersBearCosts", "kind": "direct", "transform": "yesNo" },
+        { "source": "Will_others_cover_implementation_costs__c", "target": "othersCoverImplementation", "kind": "direct", "transform": "yesNo" },
+        { "source": "Will_a_financial_return_be_achieved__c", "target": "returnExpected", "kind": "direct", "transform": "yesNo" },
+        { "source": "Will_my_operational_costs_reduce__c", "target": "reductionExpected", "kind": "direct", "transform": "yesNo" },
+        { "source": "Main_Option__c", "target": "mainOption", "kind": "picklist", "values": {
+          "Contracting with Company": "contracting", "Internal Implementation": "internal", "Outsourcing Employee": "outsourcing-employee", "Public Private Partnership": "ppp" } },
+        { "source": "Main_Option_Advantage__c", "target": "mainAdvantages", "kind": "direct" },
+        { "source": "Main_Option_Disadvantage__c", "target": "mainDisadvantages", "kind": "direct" },
+        { "source": "Alternative_Option__c", "target": "altOption", "kind": "picklist", "values": {
+          "Contracting with Company": "contracting", "Internal Implementation": "internal", "Outsourcing Employee": "outsourcing-employee", "Public Private Partnership": "ppp" } },
+        { "source": "Alternative_Option_Advantage__c", "target": "altAdvantages", "kind": "direct" },
+        { "source": "Alternative_Option_Disadvantage__c", "target": "altDisadvantages", "kind": "direct" },
+        { "source": "Evaluation_Score__c", "target": "evaluationScore", "kind": "direct" },
+        { "source": "Transfer_to_Adminstrative__c", "target": "procurementStatus", "kind": "direct" }
+      ],
+      "ignore": ["OwnerId", "CurrencyIsoCode", "Threshold_Amount__c", "Department_Manager_User__c", "Section_Manager_User__c", "Concern_Employee_to_Implement__c",
+        "Link_to_Ajman_vision_2030_and_Department__c", "Expected_impact_and_added_value__c", "Complexity_Level__c", "Driving_Radical_Change__c",
+        "Strategic_objectives_related_to_Program__c"],
+      "notesAr": "حالة الطلب في Salesforce تُختصر إلى حالة هنا (مسودة / قيد الاعتماد / معتمد / مرفوض)؛ خطوات الاعتماد تُنقل سجلاً تاريخياً للمصدر ولا تُنشأ مسارات اعتماد حية.",
+      "notesEn": "The Salesforce status collapses to a status here (draft / in approval / approved / rejected); the approval steps come over as source approval history — no live approval instance is created."
+    },
+    {
+      "key": "project", "sourceObject": "PMS_Project__c", "kind": "record", "targetType": "portfolio.project", "loadOrder": 41,
+      "fields": [
+        { "source": "Name", "target": "number", "kind": "direct", "required": true },
+        { "source": "Program_Classification__c", "target": "classification", "kind": "picklist", "values": { "Project": "project", "Initiative": "initiative" } },
+        { "source": "PMS_Project_Request__c", "target": "requestId", "kind": "reference", "referenceType": "portfolio.request" },
+        { "source": "Project_Name__c", "target": "nameAr", "kind": "direct", "transform": "trim" },
+        { "source": "Project_Stage__c", "target": "stage", "kind": "picklist", "values": {
+          "Request": "initiation", "Initiation": "initiation", "Planning": "planning", "Execution": "execution", "Closure": "closure", "Impact": "impact", "Completed": "completed" } },
+        { "source": "Project_Status__c", "target": "status", "kind": "picklist", "values": {
+          "Draft": "draft", "Active": "active", "On Hold": "on-hold", "Cancelled": "cancelled", "Completed": "completed" } },
+        { "source": "Approval_Status__c", "target": "subState", "kind": "picklist", "values": {
+          "Section Manager - Charter": "charter-approval", "Department Director - Charter": "charter-approval", "PM Office - Charter": "charter-approval",
+          "Charter Approved": "planning-draft", "Charter Rejected": "charter-draft",
+          "Section Manager - Planning": "planning-approval", "Department Director - Planning": "planning-approval", "PM Office - Planning": "planning-approval",
+          "Planning Approved": "execution", "Planning Rejected": "planning-draft",
+          "Section Manager - Execution": "completion", "Department Director - Execution": "completion", "PM Office - Execution": "completion",
+          "Execution Approved": "closure-draft", "Execution Rejected": "execution",
+          "Section Manager - Closure": "closure-approval", "Department Director - Closure": "closure-approval", "PM Office - Closure": "closure-approval",
+          "Closure Approved": "impact-draft", "Closure Rejected": "closure-draft" } },
+        { "source": "Approval_Status__c", "target": "approvalResult", "kind": "direct" },
+        { "source": "Department_Concerned__c", "target": "unitId", "kind": "reference", "referenceType": "org.unit" },
+        { "source": "Section_to_Implement__c", "target": "sectionUnitId", "kind": "reference", "referenceType": "org.unit" },
+        { "source": "Operational_Themes__c", "target": "operationalThemes", "kind": "picklist", "values": {
+          "Economic Sustainability": "sustainability", "Environmental Sustainability": "sustainability", "Future Readiness": "innovative",
+          "Quality of Life": "customer-experience", "Business Model": "digital-transformation" } },
+        { "source": "Project_Budget__c", "target": "budget", "kind": "direct" },
+        { "source": "C_First_Year_Cost__c", "target": "year1ContractedCost", "kind": "direct" },
+        { "source": "C_Second_Year_Cost__c", "target": "year2ContractedCost", "kind": "direct" },
+        { "source": "C_Third_Year_Cost__c", "target": "year3ContractedCost", "kind": "direct" },
+        { "source": "C_Forth_Year_Cost__c", "target": "year4ContractedCost", "kind": "direct" },
+        { "source": "A_First_Year_Cost__c", "target": "year1ActualCost", "kind": "direct" },
+        { "source": "A_Second_Year_Cost__c", "target": "year2ActualCost", "kind": "direct" },
+        { "source": "A_Third_Year_Cost__c", "target": "year3ActualCost", "kind": "direct" },
+        { "source": "A_Forth_Year_Cost__c", "target": "year4ActualCost", "kind": "direct" },
+        { "source": "Annual_Operational_Cost__c", "target": "annualOperationCost", "kind": "direct" },
+        { "source": "Annual_Maintenance_Cost__c", "target": "annualMaintenanceCost", "kind": "direct" },
+        { "source": "Annual_Support_Cost__c", "target": "annualLicenceCost", "kind": "direct" },
+        { "source": "Annual_Other_Cost__c", "target": "annualOtherCost", "kind": "direct" },
+        { "source": "Planned_Project_Start_Date__c", "target": "plannedStart", "kind": "direct" },
+        { "source": "Planned_Project_End_Date__c", "target": "plannedEnd", "kind": "direct" },
+        { "source": "Project_Owner__c", "target": "ownerEmployeeId", "kind": "person" },
+        { "source": "Project_Manager__c", "target": "pmEmployeeId", "kind": "person" },
+        { "source": "Human_Resources__c", "target": "resourcesHuman", "kind": "direct" },
+        { "source": "Financial_Resource__c", "target": "resourcesFinancial", "kind": "direct" },
+        { "source": "Technical_Resource__c", "target": "resourcesTechnical", "kind": "direct" },
+        { "source": "Contract_Resource__c", "target": "resourcesContract", "kind": "direct" },
+        { "source": "Other_Resource__c", "target": "resourcesOther", "kind": "direct" },
+        { "source": "lpo_file_uploaded__c", "target": "lpoUploaded", "kind": "direct" },
+        { "source": "Total_Achieve__c", "target": "performance", "kind": "direct", "transform": "percentToRatio" },
+        { "source": "Till_Weight__c", "target": "plannedProgress", "kind": "direct", "transform": "percentToRatio" }
+      ],
+      "ignore": ["OwnerId", "CurrencyIsoCode", "Department_Manager_User__c", "Section_Manager_User__c", "Project_Team__c", "Charter_Mandatory_Done__c",
+        "Planning_Mandatory_Done__c", "Closure_Mandatory_Done__c", "Team_Formation_Uploaded__c", "Project_Scope_Uploaded__c", "Expected_Project_Start_Date__c",
+        "Expected_Project_End_Date__c", "Actual_Project_Start_Date__c", "Actual_Project_End_Date__c", "Project_Cost__c", "Total_Milestone_Cost__c", "C_Total_Cost__c",
+        "A_Total_Cost__c", "Total_Weight__c", "Total_HighLevel_Weight__c", "Performance__c", "Updated_Achievement__c", "No_of_KPIs__c", "No_of_Risks__c",
+        "No_of_Stakeholders__c"],
+      "notesAr": "حالة الاعتماد (Approval_Status__c) تُحوَّل إلى المرحلة والحالة الفرعية؛ سجل الاعتماد يأتي من ProcessInstance للعرض فقط ولا تُنشأ مسارات اعتماد. الحقول المحسوبة (العدادات، الإجماليات) تُحسب هنا.",
+      "notesEn": "Approval_Status__c becomes the stage and sub-state snapshot; the approval history comes from ProcessInstance as read-only source history and no live approval instance is created. Roll-up counters and totals are computed here."
+    },
+    {
+      "key": "work-plan", "sourceObject": "PMS_Work_Plan__c", "kind": "record", "targetType": "portfolio.milestone", "loadOrder": 42,
+      "fields": [
+        { "source": "PMS_Project__c", "target": "projectId", "kind": "reference", "referenceType": "portfolio.project", "required": true },
+        { "source": "Name", "target": "code", "kind": "direct", "required": true },
+        { "source": "Header_Phase__c", "target": "parentId", "kind": "reference", "referenceType": "portfolio.milestone" },
+        { "source": "Is_this_header_task__c", "target": "isHeader", "kind": "direct" },
+        { "source": "High_Level_Plan__c", "target": "highLevel", "kind": "direct" },
+        { "source": "Task_Name__c", "target": "titleAr", "kind": "direct", "transform": "trim" },
+        { "source": "Planned_Start_Date__c", "target": "plannedStart", "kind": "direct" },
+        { "source": "Planned_End_Date__c", "target": "plannedEnd", "kind": "direct" },
+        { "source": "Actual_Start_Date__c", "target": "actualStart", "kind": "direct" },
+        { "source": "Actual_End_Date__c", "target": "actualEnd", "kind": "direct" },
+        { "source": "Weight__c", "target": "weight", "kind": "direct", "transform": "percentToRatio" },
+        { "source": "Achieve__c", "target": "achieved", "kind": "direct", "transform": "percentToRatio" },
+        { "source": "Cost__c", "target": "cost", "kind": "direct" },
+        { "source": "Status__c", "target": "status", "kind": "picklist", "values": {
+          "Not Started": "not-started", "Active": "active", "Deactivate": "cancelled", "Cancelled": "cancelled", "Completed": "completed" } },
+        { "source": "Is_this_deliverable__c", "target": "isDeliverable", "kind": "direct" },
+        { "source": "Main_Deliverable__c", "target": "mainDeliverable", "kind": "direct" },
+        { "source": "Acceptance_Criteria__c", "target": "acceptanceCriteria", "kind": "direct" },
+        { "source": "Evidence__c", "target": "evidenceNote", "kind": "direct" }
+      ],
+      "defaults": { "status": "not-started" },
+      "ignore": ["Approved__c", "Completion_Rate__c", "Responsible_Person__c"],
+      "notesAr": "خطة العمل ذاتية الإسناد (المرحلة الرئيسية ← المهام): تُحمَّل على عدة مراحل حتى يظهر الأب. الأوزان والإنجاز بالنسبة المئوية تُحوَّل إلى نسبة (1.0 = 100%).",
+      "notesEn": "The work plan references itself (header phase → tasks) and loads in several passes until the parent exists. Weights and achievement in percent become ratios (1.0 = 100 %)."
+    },
+    {
+      "key": "project-kpi", "sourceObject": "PMS_Project_Kpi__c", "kind": "record", "targetType": "portfolio.project-kpi", "loadOrder": 43,
+      "fields": [
+        { "source": "PMS_Project__c", "target": "projectId", "kind": "reference", "referenceType": "portfolio.project", "required": true },
+        { "source": "KPI_Nature__c", "target": "nature", "kind": "picklist", "values": { "New": "new", "Existing": "existing" } },
+        { "source": "KPI_Goal_Name__c", "target": "nameAr", "kind": "direct" },
+        { "source": "Measuring_Equation__c", "target": "equation", "kind": "direct" },
+        { "source": "Measuring_Direction__c", "target": "direction", "kind": "direct" },
+        { "source": "Target__c", "target": "target", "kind": "direct" },
+        { "source": "Year_of_Achievement__c", "target": "targetYear", "kind": "direct" },
+        { "source": "Current_Result__c", "target": "currentResult", "kind": "direct" },
+        { "source": "Status__c", "target": "status", "kind": "picklist", "values": { "Draft": "draft", "Active": "active", "Inactive": "inactive", "Closed": "closed" } }
+      ],
+      "ignore": ["KPI_Description_Card__c", "Current_Result_Existing__c", "Result_Applicable__c"],
+      "notesAr": "مؤشر «قائم» يرتبط ببطاقة المؤشر بعد مزامنة نظام الأداء.",
+      "notesEn": "An \"Existing\" KPI links to its KPI card once the Performance system is synced."
+    },
+    {
+      "key": "project-risk", "sourceObject": "PMS_Project_Risk__c", "kind": "record", "targetType": "portfolio.project-risk", "loadOrder": 44,
+      "fields": [
+        { "source": "PMS_Project__c", "target": "projectId", "kind": "reference", "referenceType": "portfolio.project", "required": true },
+        { "source": "Risk__c", "target": "title", "kind": "direct" },
+        { "source": "Risk_Specific__c", "target": "riskFactor", "kind": "direct" },
+        { "source": "Probability_Level__c", "target": "probability", "kind": "direct" },
+        { "source": "Impact_Level__c", "target": "impact", "kind": "direct" },
+        { "source": "Inherent_Risk_Score__c", "target": "sourceScore", "kind": "direct" },
+        { "source": "Mitigation_Actions_to_control_the_risks__c", "target": "mitigationActions", "kind": "direct" },
+        { "source": "Implementation_Percentage__c", "target": "implementationPct", "kind": "direct", "transform": "percentToRatio" },
+        { "source": "Implementation_Date__c", "target": "implementationEnd", "kind": "direct" },
+        { "source": "Risk_Owner__c", "target": "ownerEmployeeId", "kind": "person" },
+        { "source": "RMS_Status__c", "target": "rmsStatus", "kind": "direct" },
+        { "source": "RMS_Status__c", "target": "status", "kind": "picklist", "values": { "Draft": "draft", "Active": "active", "Inactive": "inactive", "Closed": "closed" } }
+      ],
+      "ignore": ["Actions_Specific__c"],
+      "notesAr": "درجة Salesforce الجمعية تُحفظ كدرجة المصدر، ويعيد إطار المخاطر هنا التقييم (الاحتمال × الأثر).",
+      "notesEn": "The Salesforce additive score is kept as the source score; the risk framework here re-rates the risk (probability × impact)."
+    },
+    {
+      "key": "project-stakeholder", "sourceObject": "PMS_Project_Stakeholder__c", "kind": "record", "targetType": "portfolio.stakeholder", "loadOrder": 45,
+      "fields": [
+        { "source": "PMS_Project__c", "target": "projectId", "kind": "reference", "referenceType": "portfolio.project", "required": true },
+        { "source": "Stakeholder_Name__c", "target": "name", "kind": "direct" },
+        { "source": "Classification__c", "target": "classification", "kind": "picklist", "values": { "Internal": "internal", "External": "external" } },
+        { "source": "Level_of_Interest__c", "target": "interestLevel", "kind": "direct", "transform": "lower" },
+        { "source": "Impact_Level__c", "target": "impactLevel", "kind": "direct", "transform": "lower" },
+        { "source": "Communication_Method__c", "target": "communicationMethod", "kind": "direct" },
+        { "source": "Communication_Frequency__c", "target": "communicationFrequency", "kind": "direct" },
+        { "source": "Email__c", "target": "email", "kind": "direct" },
+        { "source": "Phone__c", "target": "phone", "kind": "direct" },
+        { "source": "Status__c", "target": "status", "kind": "picklist", "values": { "Draft": "draft", "Active": "active", "Inactive": "inactive", "Closed": "closed" } }
+      ],
+      "ignore": ["Role_in_the_Project__c"]
+    },
+    {
+      "key": "project-planning-item", "sourceObject": "PMS_Project_Planning_Item__c", "kind": "record", "targetType": "portfolio.planning-item", "loadOrder": 46, "provisional": true,
+      "fields": [
+        { "source": "PMS_Project__c", "target": "projectId", "kind": "reference", "referenceType": "portfolio.project", "required": true },
+        { "source": "Category__c", "target": "category", "kind": "picklist", "values": {} },
+        { "source": "Description__c", "target": "description", "kind": "direct" }
+      ],
+      "notesAr": "أسماء الحقول تُؤكَّد من الوصف الحي قبل التفعيل.",
+      "notesEn": "Field names are confirmed from the live describe before activation."
+    },
+    {
+      "key": "project-challenge", "sourceObject": "PMS_Challenges_Constraints__c", "kind": "record", "targetType": "portfolio.challenge", "loadOrder": 47,
+      "fields": [
+        { "source": "PMS_Project__c", "target": "projectId", "kind": "reference", "referenceType": "portfolio.project", "required": true },
+        { "source": "Challenge__c", "target": "text", "kind": "direct" },
+        { "source": "Impact__c", "target": "impact", "kind": "direct" },
+        { "source": "Achieved_Percentage__c", "target": "achievedPct", "kind": "direct", "transform": "percentToRatio" },
+        { "source": "Recommendation_to_Senior__c", "target": "recommendation", "kind": "direct" },
+        { "source": "PMS_Work_Plan__c", "target": "milestoneId", "kind": "reference", "referenceType": "portfolio.milestone" }
+      ],
+      "ignore": ["Action_Taken__c", "Planned_Progress__c", "Deliverable_Received_but_not_Approved__c"]
+    },
+    {
+      "key": "change-request", "sourceObject": "PMS_Change_Request__c", "kind": "record", "targetType": "portfolio.change-request", "loadOrder": 48,
+      "fields": [
+        { "source": "Project_Initiative__c", "target": "projectId", "kind": "reference", "referenceType": "portfolio.project", "required": true },
+        { "source": "Name", "target": "number", "kind": "direct", "required": true },
+        { "source": "Change_Type__c", "target": "type", "kind": "picklist", "values": {
+          "Project Details": "details", "Cancellation": "cancellation", "Postponement": "postponement", "Ownership": "ownership", "Merge": "merge" } },
+        { "source": "Reason_for_Change__c", "target": "reason", "kind": "direct" },
+        { "source": "Modification_Details__c", "target": "proposedDescription", "kind": "direct" },
+        { "source": "Requested_Date__c", "target": "requestedDate", "kind": "direct" },
+        { "source": "Status__c", "target": "status", "kind": "picklist", "values": {
+          "Draft": "draft", "Under Review": "under-review", "Approved": "approved", "Rejected": "rejected", "Cancelled": "cancelled", "Completed": "completed" } },
+        { "source": "Project_Manager__c", "target": "newPmEmployeeId", "kind": "person" },
+        { "source": "Project_Owner__c", "target": "newOwnerEmployeeId", "kind": "person" }
+      ],
+      "ignore": ["Change_Areas__c", "Implemented_Date__c"]
+    },
+    {
+      "key": "contract", "sourceObject": "PMS_Contract__c", "kind": "record", "targetType": "portfolio.contract", "loadOrder": 49,
+      "fields": [
+        { "source": "PMS_Project__c", "target": "projectId", "kind": "reference", "referenceType": "portfolio.project", "required": true },
+        { "source": "Contract_Purchase_Order_Name__c", "target": "name", "kind": "direct" },
+        { "source": "Contract_Purchase_Order_Number__c", "target": "number", "kind": "direct" },
+        { "source": "Supplier_Name__c", "target": "supplier", "kind": "direct" },
+        { "source": "Issue_Date__c", "target": "issueDate", "kind": "direct" },
+        { "source": "Status__c", "target": "contractStatus", "kind": "direct", "transform": "lower" }
+      ]
+    },
+    {
+      "key": "lesson", "sourceObject": "PMS_Lesson_Learned__c", "kind": "record", "targetType": "portfolio.lesson", "loadOrder": 50,
+      "fields": [
+        { "source": "PMS_Project__c", "target": "projectId", "kind": "reference", "referenceType": "portfolio.project", "required": true },
+        { "source": "Project_Stage__c", "target": "stage", "kind": "direct", "transform": "lower" },
+        { "source": "Lesson_Learned__c", "target": "text", "kind": "direct" },
+        { "source": "Type__c", "target": "type", "kind": "picklist", "values": {} },
+        { "source": "Recommendation_to_Improve_System__c", "target": "recommendation", "kind": "direct" }
+      ],
+      "notesAr": "أنواع الدروس في Salesforce (مالي، مؤسسي، فني…) تُطابَق مع قائمة أنواع الدروس هنا من قائمة الاستثناءات.",
+      "notesEn": "Salesforce lesson types (Finance, Institutional, Technical, …) are mapped to this system's lesson types from the exceptions queue."
+    },
+    {
+      "key": "team-meeting", "sourceObject": "PMS_Team_Meeting__c", "kind": "record", "targetType": "portfolio.meeting", "loadOrder": 51,
+      "fields": [
+        { "source": "PMS_Project__c", "target": "projectId", "kind": "reference", "referenceType": "portfolio.project", "required": true },
+        { "source": "Meeting_DateTime__c", "target": "meetingAt", "kind": "direct", "required": true },
+        { "source": "Name", "target": "title", "kind": "direct" },
+        { "source": "Any_Notes__c", "target": "notes", "kind": "direct" }
+      ]
+    }
+  ]
+}
