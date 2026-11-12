@@ -61,6 +61,7 @@ public sealed class CapModule : IModule
         services.AddScoped<CapApprovals>();
         services.AddScoped<SuggestionRaiser>();
         services.AddScoped<ICapRemarkSources, CapRemarkSources>();
+        services.AddCapSyncTargets(); // Phase 23, ADR 0202
 
         services.AddApprovalProcess(CapProcessDefinitions.Validation);
         services.AddApprovalProcess(CapProcessDefinitions.Completion);
