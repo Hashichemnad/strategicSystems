@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Strategy.Modules.Risk.Application;
 using Strategy.Modules.Risk.Domain;
+using Strategy.Modules.Risk.Reporting;
 using Strategy.Platform.Reporting;
 using Strategy.Platform.Reporting.Records;
 
@@ -49,15 +50,8 @@ internal sealed class RiskFeeds(RiskReader reader) : IReportableRecordSource
             new("number", "الرقم", "Number", RecordFieldType.Text),
             new("titleAr", "العنوان (عربي)", "Title (Arabic)", RecordFieldType.Text),
             new("titleEn", "العنوان (إنجليزي)", "Title (English)", RecordFieldType.Text),
-            new("status", "الحالة", "Status", RecordFieldType.Lookup, Choices:
-            [
-                new(RiskStatuses.Draft, "مسودة", "Draft"), new(RiskStatuses.UnderReview, "قيد الاعتماد", "Under review"),
-                new(RiskStatuses.Active, "نشط", "Active"), new(RiskStatuses.Closed, "مغلق", "Closed"), new(RiskStatuses.Rejected, "مرفوض", "Rejected"),
-            ]),
-            new("type", "نوع الخطر", "Risk type", RecordFieldType.Lookup, Choices:
-            [
-                new(RiskTypes.Internal, "داخلي", "Internal"), new(RiskTypes.External, "خارجي", "External"),
-            ]),
+            new("status", "الحالة", "Status", RecordFieldType.Lookup, Choices: RiskChoices.Statuses),
+            new("type", "نوع الخطر", "Risk type", RecordFieldType.Lookup, Choices: RiskChoices.Types),
             new("unit", "الوحدة", "Unit", RecordFieldType.Unit),
             new("owner", "مالك الخطر", "Risk owner", RecordFieldType.Employee),
             new("coordinator", "المنسق", "Coordinator", RecordFieldType.Employee),
@@ -67,11 +61,7 @@ internal sealed class RiskFeeds(RiskReader reader) : IReportableRecordSource
             new("inherentBand", "نطاق الخطر الكامن", "Inherent rating", RecordFieldType.Text),
             new("residualScore", "درجة الخطر المتبقي", "Residual score", RecordFieldType.Number),
             new("residualBand", "نطاق الخطر المتبقي", "Residual rating", RecordFieldType.Text),
-            new("residualStatus", "حالة الخطر المتبقي", "Residual status", RecordFieldType.Lookup, Choices:
-            [
-                new(ResidualStatuses.NoIssue, "لا توجد مشكلة", "No issue"), new(ResidualStatuses.ContinuousReview, "مراجعة مستمرة", "Continuous review"),
-                new(ResidualStatuses.ActiveManagement, "إدارة فعّالة", "Active management"),
-            ]),
+            new("residualStatus", "حالة الخطر المتبقي", "Residual status", RecordFieldType.Lookup, Choices: RiskChoices.ResidualStatuses),
             new("targetScore", "الدرجة المستهدفة", "Target score", RecordFieldType.Number),
             new("targetBand", "النطاق المستهدف", "Target rating", RecordFieldType.Text),
             new("response", "استراتيجية الاستجابة", "Response strategy", RecordFieldType.Lookup, LookupType: RiskPermissions.ResponseLookup),

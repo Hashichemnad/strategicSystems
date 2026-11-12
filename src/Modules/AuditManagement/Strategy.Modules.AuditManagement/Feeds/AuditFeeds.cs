@@ -2,6 +2,7 @@ using System.Security.Claims;
 using Strategy.Modules.AuditManagement.Application;
 using Strategy.Modules.AuditManagement.Contracts;
 using Strategy.Modules.AuditManagement.Domain;
+using Strategy.Modules.AuditManagement.Reporting;
 using Strategy.Platform.Reporting;
 using Strategy.Platform.Reporting.Records;
 
@@ -87,14 +88,7 @@ internal sealed class AuditFeeds(AuditReader reader) : IReportableRecordSource
             new("periodFrom", "بداية فترة التدقيق", "Period from", RecordFieldType.Date),
             new("periodTo", "نهاية فترة التدقيق", "Period to", RecordFieldType.Date),
             new("reportDate", "تاريخ التقرير", "Report date", RecordFieldType.Date),
-            new("status", "الحالة", "Status", RecordFieldType.Lookup, Choices:
-            [
-                new(ReportStatuses.Draft, "مسودة", "Draft"),
-                new(ReportStatuses.Issued, "صادر", "Issued"),
-                new(ReportStatuses.UnderFollowUp, "قيد المتابعة", "Under follow-up"),
-                new(ReportStatuses.Closed, "مغلق", "Closed"),
-                new(ReportStatuses.Cancelled, "ملغى", "Cancelled"),
-            ]),
+            new("status", "الحالة", "Status", RecordFieldType.Lookup, Choices: AuditChoices.ReportStatuses),
             new("capSourceId", "مصدر خطة العمل التصحيحية", "CAP source", RecordFieldType.Id),
             new("issuedAt", "تاريخ الإصدار", "Issued at", RecordFieldType.DateTime),
             new("closedAt", "تاريخ الإغلاق", "Closed at", RecordFieldType.DateTime),
@@ -108,14 +102,7 @@ internal sealed class AuditFeeds(AuditReader reader) : IReportableRecordSource
             new("reportId", "التقرير", "Report", RecordFieldType.Id),
             new("titleAr", "العنوان (عربي)", "Title (Arabic)", RecordFieldType.Text),
             new("titleEn", "العنوان (إنجليزي)", "Title (English)", RecordFieldType.Text),
-            new("status", "الحالة", "Status", RecordFieldType.Lookup, Choices:
-            [
-                new(AuditFindingStatuses.Open, "مفتوحة", "Open"),
-                new(AuditFindingStatuses.Late, "متأخرة", "Late"),
-                new(AuditFindingStatuses.Closed, "مغلقة", "Closed"),
-                new(AuditFindingStatuses.RiskAccepted, "قبول المخاطر", "Risk accepted"),
-                new(AuditFindingStatuses.Cancelled, "ملغاة", "Cancelled"),
-            ]),
+            new("status", "الحالة", "Status", RecordFieldType.Lookup, Choices: AuditChoices.FindingStatuses),
             new("priority", "الأولوية", "Priority", RecordFieldType.Lookup, LookupType: AuditPermissions.PriorityLookup),
             new("type", "نوع الملاحظة", "Finding type", RecordFieldType.Lookup, LookupType: AuditPermissions.FindingTypeLookup),
             new("findingDate", "تاريخ الملاحظة", "Finding date", RecordFieldType.Date),
@@ -141,15 +128,7 @@ internal sealed class AuditFeeds(AuditReader reader) : IReportableRecordSource
             new("findingId", "الملاحظة", "Finding", RecordFieldType.Id),
             new("actionAr", "التوصية (عربي)", "Recommendation (Arabic)", RecordFieldType.Text),
             new("actionEn", "التوصية (إنجليزي)", "Recommendation (English)", RecordFieldType.Text),
-            new("status", "الحالة", "Status", RecordFieldType.Lookup, Choices:
-            [
-                new(RecommendationStatuses.NotStarted, "لم يبدأ", "Not started"),
-                new(RecommendationStatuses.Continuing, "مستمر", "Continuing"),
-                new(RecommendationStatuses.Late, "متأخر", "Late"),
-                new(RecommendationStatuses.Completed, "مكتمل", "Completed"),
-                new(RecommendationStatuses.RiskAccepted, "قبول المخاطر", "Risk accepted"),
-                new(RecommendationStatuses.Cancelled, "ملغى", "Cancelled"),
-            ]),
+            new("status", "الحالة", "Status", RecordFieldType.Lookup, Choices: AuditChoices.RecommendationStatuses),
             new("managementResponse", "رد الإدارة", "Management response", RecordFieldType.Lookup, LookupType: AuditPermissions.ResponseLookup),
             new("contact", "مسؤول التنفيذ", "Contact person", RecordFieldType.Employee),
             new("dueOn", "تاريخ الاستحقاق الأصلي", "Original due date", RecordFieldType.Date),

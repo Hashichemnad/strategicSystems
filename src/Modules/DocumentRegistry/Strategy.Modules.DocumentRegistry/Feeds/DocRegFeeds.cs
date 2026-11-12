@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Strategy.Modules.DocumentRegistry.Application;
 using Strategy.Modules.DocumentRegistry.Domain;
+using Strategy.Modules.DocumentRegistry.Reporting;
 using Strategy.Platform.Reporting;
 using Strategy.Platform.Reporting.Records;
 
@@ -46,17 +47,7 @@ internal sealed class DocRegFeeds(DocumentVisibility visibility) : IReportableRe
             new("level", "المستوى الهرمي", "Hierarchical level", RecordFieldType.Lookup, LookupType: DocRegPermissions.LevelLookup),
             new("type", "نوع الوثيقة", "Document type", RecordFieldType.Lookup, LookupType: DocRegPermissions.TypeLookup),
             new("sensitivity", "مستوى السرية", "Sensitivity", RecordFieldType.Lookup, LookupType: DocRegPermissions.SensitivityLookup),
-            new("status", "الحالة", "Status", RecordFieldType.Lookup, Choices:
-            [
-                new(DocumentStatuses.Submitted, "مقدمة", "Submitted"),
-                new(DocumentStatuses.UnderReview, "قيد المراجعة", "Under review"),
-                new(DocumentStatuses.Returned, "معادة للتصحيح", "Returned"),
-                new(DocumentStatuses.Rejected, "مرفوضة", "Rejected"),
-                new(DocumentStatuses.Approved, "معتمدة", "Approved"),
-                new(DocumentStatuses.Published, "منشورة", "Published"),
-                new(DocumentStatuses.Expired, "منتهية الصلاحية", "Expired"),
-                new(DocumentStatuses.Withdrawn, "مسحوبة", "Withdrawn"),
-            ]),
+            new("status", "الحالة", "Status", RecordFieldType.Lookup, Choices: DocRegChoices.DocumentStatuses),
             new("unit", "الوحدة المالكة", "Owner unit", RecordFieldType.Unit),
             new("owner", "مالك الوثيقة", "Document owner", RecordFieldType.Employee),
             new("requester", "مقدم الطلب", "Requester", RecordFieldType.Employee),

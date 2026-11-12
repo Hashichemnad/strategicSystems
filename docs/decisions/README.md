@@ -179,3 +179,4 @@ Write an ADR for every choice the SPEC or CLAUDE.md leaves open (CLAUDE.md §2 r
 | [0206](0206-standby-guard.md) | Standby guard: synced records read-only, workflows / jobs / notifications suspended | Proposed |
 | [0207](0207-failover-outage-return-to-standby.md) | Failover: make primary, outage period, outage changes report, return to standby | Proposed |
 | [0208](0208-files-and-source-history.md) | Salesforce files into the Files service; approval and field history as read-only source history | Proposed |
+| [0209](0209-labels-for-fixed-code-fields.md) | Labels for code fields without a lookup type: fixed choices and module label sources on dataset fields | Proposed |

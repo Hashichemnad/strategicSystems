@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Strategy.Modules.Benchmarking.Application;
 using Strategy.Modules.Benchmarking.Domain;
 using Strategy.Modules.Benchmarking.Infrastructure;
+using Strategy.Modules.Benchmarking.Reporting;
 using Strategy.Platform.Reporting;
 using Strategy.Platform.Reporting.Records;
 
@@ -56,20 +57,8 @@ internal sealed class BenchFeeds(BenchDbContext db, BenchReader reader) : IRepor
             new("number", "رقم الدراسة", "Study number", RecordFieldType.Text),
             new("titleAr", "العنوان (عربي)", "Title (Arabic)", RecordFieldType.Text),
             new("titleEn", "العنوان (إنجليزي)", "Title (English)", RecordFieldType.Text),
-            new("stage", "المرحلة", "Stage", RecordFieldType.Lookup, Choices:
-            [
-                new(StudyStages.Plan, "التخطيط", "Plan"),
-                new(StudyStages.Search, "البحث", "Search"),
-                new(StudyStages.Acquire, "الاكتساب", "Acquire"),
-                new(StudyStages.Analysis, "التحليل", "Analysis"),
-                new(StudyStages.Completed, "مكتملة", "Completed"),
-            ]),
-            new("status", "الحالة", "Status", RecordFieldType.Lookup, Choices:
-            [
-                new(StudyStatuses.Active, "نشطة", "Active"),
-                new(StudyStatuses.Completed, "مكتملة", "Completed"),
-                new(StudyStatuses.Cancelled, "ملغاة", "Cancelled"),
-            ]),
+            new("stage", "المرحلة", "Stage", RecordFieldType.Lookup, Choices: BenchChoices.Stages),
+            new("status", "الحالة", "Status", RecordFieldType.Lookup, Choices: BenchChoices.Statuses),
             new("targetYear", "السنة المستهدفة", "Target year", RecordFieldType.Number),
             new("targetQuarter", "الربع المستهدف", "Target quarter", RecordFieldType.Number),
             new("unit", "الجهة المسؤولة", "Responsible unit", RecordFieldType.Unit),
