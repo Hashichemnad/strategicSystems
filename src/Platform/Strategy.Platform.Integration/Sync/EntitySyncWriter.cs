@@ -79,12 +79,12 @@ public sealed class EntitySyncWriter(IServiceProvider services, IExternalReferen
             var clr = property.Metadata.ClrType;
             if (value is null && !property.Metadata.IsNullable)
             {
-                if (isNew || field.Required)
+                if (field.Required)
                 {
                     return Fail(field.Code, "integration.sync.exceptions.requiredMissing");
                 }
 
-                continue; // a non-nullable value the source left empty keeps its current value
+                continue; // a non-nullable value the source left empty keeps its current (or initial) value
             }
 
             if (value is string text && property.Metadata.GetMaxLength() is { } max && text.Length > max && property.Metadata.GetColumnType() != "jsonb")

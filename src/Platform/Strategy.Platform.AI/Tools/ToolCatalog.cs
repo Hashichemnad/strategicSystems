@@ -74,6 +74,11 @@ public sealed partial class ToolExecutor(IAuditLog audit, ILogger<ToolExecutor> 
         {
             result = await tool.InvokeAsync(arguments, context, ct).ConfigureAwait(false);
         }
+        catch (Strategy.Platform.Kernel.Integration.RecordReadOnlyException)
+        {
+            // Standby (ADR 0206): the record is synced from a source system and read-only while that system is primary.
+            result = ToolResult.Fail(ToolErrors.ReadOnly, "The record is synced from its source system and read-only while that system is primary.");
+        }
         catch (Exception exception) when (exception is not OperationCanceledException)
         {
             LogToolFailed(logger, tool.Definition.Name, exception);
