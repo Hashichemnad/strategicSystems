@@ -55,6 +55,12 @@ internal sealed class SampleReporting(SampleDbContext db, IAccessService access)
     public IReadOnlyList<ReportingListDefinition> Lists { get; } =
         [new("sample.largest", "sample", "أكبر البنود قيمة", "Largest items", SamplePermissions.Read)];
 
+    /// <summary>Sample items are task-able: an item's tasks (Tasks owns the reference; declared here as the template for modules, ADR 0180).</summary>
+    public IReadOnlyList<DatasetRelationship> Relationships { get; } =
+    [
+        new("sample.item-tasks", "sample.items", "id", "tasks.tasks", "linkedId", "مهام البند", "Item tasks"),
+    ];
+
     public IReadOnlyList<DatasetDefinition> Datasets { get; } =
     [
         new("sample.items", "sample", "البنود", "Items", SamplePermissions.Read,
@@ -67,7 +73,8 @@ internal sealed class SampleReporting(SampleDbContext db, IAccessService access)
             new("unit", "الوحدة", "Unit", DatasetFieldType.Unit, Groupable: true),
             new("amount", "القيمة", "Amount", DatasetFieldType.Money, Permission: SamplePermissions.Update),
             new("createdAt", "تاريخ الإنشاء", "Created", DatasetFieldType.DateTime),
-        ], "/sample/{id}", SamplePermissions.ResourceType),
+            new("id", "المعرّف", "Id", DatasetFieldType.Reference, Sortable: false),
+        ], "/sample/{id}", SamplePermissions.ResourceType) { KeyField = "id" },
     ];
 
     private async Task<IQueryable<SampleItem>> VisibleAsync(ClaimsPrincipal? user, CancellationToken ct) =>
@@ -144,7 +151,8 @@ internal sealed class SampleReporting(SampleDbContext db, IAccessService access)
         .Field("approval", i => i.ApprovalStatus)
         .Field("unit", i => i.UnitId)
         .Field("amount", i => i.Amount)
-        .Field("createdAt", i => i.CreatedAt);
+        .Field("createdAt", i => i.CreatedAt)
+        .Field("id", i => i.Id);
 
     public async Task<ReportResult> RunAsync(ReportQuery query, ClaimsPrincipal user, CancellationToken cancellationToken) =>
         await ItemQuery.RunAsync(await VisibleAsync(user, cancellationToken).ConfigureAwait(false), query, cancellationToken).ConfigureAwait(false);

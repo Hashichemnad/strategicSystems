@@ -22,6 +22,15 @@ public enum DatasetFieldType
 
     /// <summary>An employee id; shown as their name.</summary>
     Employee = 10,
+
+    /// <summary>
+    /// A record id (<see cref="Guid"/>) used as a relationship key (Reporting 2.0, ADR 0180): never offered as a column to people,
+    /// filterable only with <c>eq</c> / <c>in</c> / <c>empty</c> / <c>notEmpty</c>; published in the reportable metadata for joins.
+    /// </summary>
+    Reference = 11,
+
+    /// <summary>Sanitised rich text (HTML, Phase 19): every report, export and dossier shows its plain-text projection.</summary>
+    RichText = 12,
 }
 
 /// <summary>
@@ -52,7 +61,35 @@ public sealed record DatasetDefinition(
     string ReadPermission,
     IReadOnlyList<DatasetField> Fields,
     string Link,
-    string? ResourceType = null);
+    string? ResourceType = null)
+{
+    /// <summary>
+    /// The code of the <see cref="DatasetFieldType.Reference"/> field holding a row's own id (the key related datasets join on), or null when
+    /// the dataset is never a parent (ADR 0180).
+    /// </summary>
+    public string? KeyField { get; init; }
+
+    /// <summary>
+    /// Join-only datasets (e.g. approval history) have no scoped list of their own: the reporting engine reads them only through a relationship,
+    /// restricted to the keys of parent rows the runner already sees, and never offers them as a primary object (ADR 0180).
+    /// </summary>
+    public bool JoinOnly { get; init; }
+}
+
+/// <summary>
+/// A relationship between two datasets (Reporting 2.0, ADR 0180): a parent row matches the child rows whose <paramref name="ChildField"/>
+/// equals the parent's <paramref name="ParentField"/> (usually the parent's key). Both fields are declared fields of their datasets, normally of
+/// type <see cref="DatasetFieldType.Reference"/>. Declared by the module that owns the reference — across systems through the dataset codes
+/// only (no project reference, no cross-schema SQL). The same relationships drive report types, record dossiers and (Phase 22) OData <c>$expand</c>.
+/// </summary>
+public sealed record DatasetRelationship(
+    string Code,
+    string ParentDataset,
+    string ParentField,
+    string ChildDataset,
+    string ChildField,
+    string LabelAr,
+    string LabelEn);
 
 public static class ReportOperators
 {
@@ -100,5 +137,28 @@ public interface IReportingDatasetSource
     IReadOnlyList<DatasetDefinition> Datasets { get; }
 
     /// <summary>Runs on the module's scoped query for <paramref name="user"/> (same reader as its screens), in its own DbContext.</summary>
+    Task<ReportResult> RunAsync(ReportQuery query, ClaimsPrincipal user, CancellationToken cancellationToken);
+
+    /// <summary>Relationships this module declares (from or to its datasets; ADR 0180). Default: none.</summary>
+    IReadOnlyList<DatasetRelationship> Relationships => [];
+}
+
+/// <summary>
+/// Read-only view of everything reportable (ADR 0180): datasets (record types), their fields and the relationships between them, with a
+/// permission-checked runner. Used by report types, record dossiers and integrations (OData <c>$expand</c>, Phase 22). Every run goes through
+/// the owning module's scoped query as <c>user</c>; callers must still drop fields whose <see cref="DatasetField.Permission"/> the user lacks.
+/// </summary>
+public interface IReportableMetadata
+{
+    IReadOnlyList<DatasetDefinition> Datasets { get; }
+
+    IReadOnlyList<DatasetRelationship> Relationships { get; }
+
+    DatasetDefinition? Dataset(string code);
+
+    /// <summary>Relationships whose parent is <paramref name="parentDataset"/>.</summary>
+    IReadOnlyList<DatasetRelationship> RelationshipsFrom(string parentDataset);
+
+    /// <summary>Runs <paramref name="query"/> in the owning module for <paramref name="user"/>. Unknown dataset → <see cref="ArgumentException"/>.</summary>
     Task<ReportResult> RunAsync(ReportQuery query, ClaimsPrincipal user, CancellationToken cancellationToken);
 }

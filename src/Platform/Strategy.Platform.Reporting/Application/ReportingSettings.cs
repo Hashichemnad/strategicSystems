@@ -45,6 +45,18 @@ public sealed record ReportingSettings : ISettingsArea
 
     public int ExportRowLimit { get; init; } = 50_000;
 
+    /// <summary>Report types (ADR 0181): most primary records read for one run; more → the result is marked truncated.</summary>
+    public int ReportPrimaryRowLimit { get; init; } = 10_000;
+
+    /// <summary>Report types: a run (all module queries and the join) is cancelled after this many seconds.</summary>
+    public int ReportTimeoutSeconds { get; init; } = 30;
+
+    /// <summary>Record dossiers (ADR 0185): most records in one bulk run (merged PDF or ZIP) or one scheduled e-mail.</summary>
+    public int DossierBulkLimit { get; init; } = 100;
+
+    /// <summary>Record dossiers: most rows of one related-list section.</summary>
+    public int DossierSectionRowLimit { get; init; } = 200;
+
     /// <summary>Attachments larger than this are sent as a link to the authorised download.</summary>
     public int AttachmentLimitMb { get; init; } = 10;
 

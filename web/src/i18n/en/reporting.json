@@ -41,7 +41,36 @@
     "value": "A filter value is not valid for its field.",
     "widgetId": "Each widget needs a unique identifier.",
     "widgetLayout": "A widget is outside the 12-column grid.",
-    "widgetType": "Unknown widget type."
+    "widgetType": "Unknown widget type.",
+    "chart": "The chart settings are not valid (type, categories or a numeric value).",
+    "code": "The code may use lowercase letters, digits, dots and hyphens (up to 100), and cannot change.",
+    "codeTaken": "This code is already used.",
+    "dossierEmpty": "None of the chosen records is available to you.",
+    "dossierSchedule": "The dossier schedule is not valid: choose a known language and a person field as recipient.",
+    "folder": "Choose one of your folders (a shared folder needs the Report author role).",
+    "highlight": "A highlighting rule is not valid.",
+    "summary": "A summary formula is not valid for this column.",
+    "timeout": "The report took too long. Add filters or fewer related objects and try again.",
+    "reportType": {
+      "alias": "Each object needs a unique short alias (lowercase letters).",
+      "dataset": "An object is not a known record type.",
+      "depth": "Related objects go at most three levels deep.",
+      "fields": "Choose at least one field, and only fields of the object.",
+      "join": "Choose \"with\" or \"with or without\".",
+      "parent": "A related object must follow an object above it.",
+      "primary": "Choose a primary object that can be listed on its own.",
+      "relationship": "The relationship does not link these two objects.",
+      "tooMany": "A report type has at most six objects."
+    },
+    "dossier": {
+      "dataset": "Choose a record type that has its own records.",
+      "field": "A field is not part of the record type.",
+      "kind": "A section type or title is not valid.",
+      "language": "Choose Arabic, English or bilingual.",
+      "path": "The related objects of a section are not valid.",
+      "section": "A section's bindings are not valid for its type.",
+      "sections": "A template needs 1 to 40 sections with unique keys."
+    }
   },
   "myWork": {
     "title": "Your work by system",

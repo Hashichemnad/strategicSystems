@@ -255,5 +255,8 @@ internal sealed class ReportingSeeder : IDatabaseSeeder
         var db = (ReportingDbContext)services.GetService(typeof(ReportingDbContext))!;
         var clock = (IClock)services.GetService(typeof(IClock))!;
         await DefaultDashboards.SeedAsync(db, clock, cancellationToken).ConfigureAwait(false);
+        var registry = (MetricRegistry)services.GetService(typeof(MetricRegistry))!;
+        await ReportTypes.ReportTypeService.SeedAsync(db, registry, cancellationToken).ConfigureAwait(false);
+        await Dossiers.DossierTemplateService.SeedAsync(db, registry, cancellationToken).ConfigureAwait(false);
     }
 }

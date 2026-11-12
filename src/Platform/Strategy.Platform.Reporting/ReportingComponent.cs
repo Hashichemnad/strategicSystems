@@ -33,6 +33,7 @@ public sealed class ReportingComponent : IPlatformComponent
         services.AddSingleton<ReportingChangeTracker>();
         services.AddSingleton<ISaveChangesObserver>(sp => sp.GetRequiredService<ReportingChangeTracker>());
         services.AddScoped<MetricRegistry>();
+        services.AddScoped<IReportableMetadata>(sp => sp.GetRequiredService<MetricRegistry>());
         services.AddScoped<ReportingClock>();
         services.AddScoped<FactRefresher>();
         services.AddScoped<FactStatus>();
@@ -45,6 +46,13 @@ public sealed class ReportingComponent : IPlatformComponent
         services.AddScoped<DashboardService>();
         services.AddScoped<DashboardRenderer>();
         services.AddScoped<ReportService>();
+        services.AddScoped<ReportTypes.ReportValueFormatter>();
+        services.AddScoped<ReportTypes.ReportTypeEngine>();
+        services.AddScoped<ReportTypes.ReportTypeService>();
+        services.AddScoped<ReportTypes.ReportTypeExport>();
+        services.AddScoped<FolderService>();
+        services.AddScoped<Dossiers.DossierBuilder>();
+        services.AddScoped<Dossiers.DossierTemplateService>();
         services.AddScoped<Datasets.ExternalReferenceColumns>();
         services.AddScoped<ScheduleService>();
         services.AddScoped<DeliveryRunner>();

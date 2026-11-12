@@ -38,6 +38,8 @@ public partial class AuthorizationMatrixTests(ApiFixture api) : IClassFixture<Ap
         "teams.ai.minutes",
         // Phase 17: the seeded "Dashboard user" role (assigned to everyone): dashboards, My Work cards, run and export reports.
         "reporting.dashboard.read", "reporting.report.run", "reporting.report.export",
+        // Phase 21: record dossiers for everyone (each record and section is still checked as the reader, ADR 0184).
+        "reporting.dossier.run",
         // Phase 19: the seeded "Integration viewer" role (assigned to everyone): source system names for the External references section (ADR 0164).
         "integration.source-system.read",
     ];

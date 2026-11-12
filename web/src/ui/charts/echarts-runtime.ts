@@ -3,7 +3,7 @@
  * components the builders use are registered, with the SVG renderer (crisp, accessible, exportable). Add a type here when a builder
  * needs it (ADR 0148).
  */
-import { BarChart, FunnelChart, GaugeChart, LineChart, ScatterChart } from 'echarts/charts';
+import { BarChart, FunnelChart, GaugeChart, LineChart, PieChart, ScatterChart } from 'echarts/charts';
 import {
   AriaComponent,
   GridComponent,
@@ -20,6 +20,7 @@ register([
   ScatterChart,
   GaugeChart,
   FunnelChart,
+  PieChart,
   GridComponent,
   TooltipComponent,
   LegendComponent,

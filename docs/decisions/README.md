@@ -157,3 +157,10 @@ Write an ADR for every choice the SPEC or CLAUDE.md leaves open (CLAUDE.md §2 r
 | [0173](0173-landing-app-per-role.md) | Landing app per role | Accepted |
 | [0174](0174-command-palette-split-view-utility-bar.md) | Modern command palette, split-view lists and the Enterprise utility bar | Accepted |
 | [0175](0175-theme-tests-and-visual-baselines.md) | Theme tests: screenshots, reflow, axe per theme and visual baselines | Accepted |
+| [0180](0180-reportable-metadata-contract.md) | Reportable metadata contract: keys, relationships, join-only datasets | Accepted |
+| [0181](0181-report-types-and-in-memory-joins.md) | Report types and joins in the reporting layer | Accepted |
+| [0182](0182-report-builder-grouping-charts-highlights.md) | Report builder: grouping, summaries, charts, highlighting, relative dates, CSV | Accepted |
+| [0183](0183-my-reports-folders-and-publishing.md) | My reports for everyone, folders, publishing needs Report author | Accepted |
+| [0184](0184-record-dossier-templates.md) | Record dossier templates and per-section permissions | Accepted |
+| [0185](0185-dossier-pdf-and-word-rendering.md) | Dossier rendering: PDF via Gotenberg, Word via DocumentFormat.OpenXml | Accepted |
+| [0186](0186-scheduled-dossiers.md) | Scheduled dossiers | Accepted |

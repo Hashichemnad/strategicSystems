@@ -19,12 +19,14 @@
     <ProjectReference Include="..\Strategy.Platform.Scheduling\Strategy.Platform.Scheduling.csproj" />
     <ProjectReference Include="..\Strategy.Platform.Notifications.Contracts\Strategy.Platform.Notifications.Contracts.csproj" />
     <ProjectReference Include="..\Strategy.Platform.Files.Contracts\Strategy.Platform.Files.Contracts.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Workflow.Contracts\Strategy.Platform.Workflow.Contracts.csproj" />
     <ProjectReference Include="..\Strategy.Platform.AI\Strategy.Platform.AI.csproj" />
     <ProjectReference Include="..\Strategy.Platform.AI.Contracts\Strategy.Platform.AI.Contracts.csproj" />
     <ProjectReference Include="..\Strategy.Platform.Identity\Strategy.Platform.Identity.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ClosedXML" />
+    <PackageReference Include="DocumentFormat.OpenXml" />
   </ItemGroup>
   <ItemGroup>
     <!-- IBM Plex Sans Arabic (SIL OFL 1.1, Pdf/Fonts/OFL.txt): Arabic and Latin subsets, regular and bold. -->

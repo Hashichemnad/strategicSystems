@@ -77,6 +77,7 @@ import { GroupingCard } from '../views/GroupingCard';
 import { ProjectGanttTab } from '../views/ProjectGanttTab';
 import { WaselTab } from '../wasel/WaselTab';
 import { ExternalReferencesSection, OriginBadge } from '@/features/integration/ExternalReferences';
+import { DossierButton } from '@/features/reporting/DossiersPage';
 
 const route = getRouteApi('/app/portfolio/projects/$projectId');
 
@@ -252,26 +253,28 @@ export function ProjectPage() {
             </>
           }
           actions={
-            p.permissions.canManage &&
-            live && (
-              <div className="flex flex-wrap gap-2">
-                {p.status === 'active' ? (
-                  <Button variant="outline" onClick={() => setDialog({ kind: 'status', action: 'hold' })}>
-                    <Pause aria-hidden />
-                    {t('project.actions.hold')}
+            <div className="flex flex-wrap gap-2">
+              <DossierButton dataset="portfolio.projects" recordId={p.id} />
+              {p.permissions.canManage && live && (
+                <div className="flex flex-wrap gap-2">
+                  {p.status === 'active' ? (
+                    <Button variant="outline" onClick={() => setDialog({ kind: 'status', action: 'hold' })}>
+                      <Pause aria-hidden />
+                      {t('project.actions.hold')}
+                    </Button>
+                  ) : (
+                    <Button variant="outline" onClick={() => setDialog({ kind: 'status', action: 'resume' })}>
+                      <Play aria-hidden />
+                      {t('actions.resume')}
+                    </Button>
+                  )}
+                  <Button variant="outline" onClick={() => setDialog({ kind: 'status', action: 'cancel' })}>
+                    <Ban aria-hidden />
+                    {t('project.actions.cancel')}
                   </Button>
-                ) : (
-                  <Button variant="outline" onClick={() => setDialog({ kind: 'status', action: 'resume' })}>
-                    <Play aria-hidden />
-                    {t('actions.resume')}
-                  </Button>
-                )}
-                <Button variant="outline" onClick={() => setDialog({ kind: 'status', action: 'cancel' })}>
-                  <Ban aria-hidden />
-                  {t('project.actions.cancel')}
-                </Button>
-              </div>
-            )
+                </div>
+              )}
+            </div>
           }
         />
       }

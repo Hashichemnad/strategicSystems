@@ -53,7 +53,7 @@ Update this file in the same commit that adds a dependency.
 | ModelContextProtocol.AspNetCore | Apache-2.0 | official MCP C# SDK, Streamable HTTP server at `/mcp` |
 | OpenIddict.AspNetCore | Apache-2.0 | built-in OAuth 2.1 authorization server and token validation for MCP clients |
 | OpenIddict.EntityFrameworkCore | Apache-2.0 | OAuth clients, authorizations and tokens in PostgreSQL (schema `mcp`) |
-| DocumentFormat.OpenXml | MIT | text extraction from Word and PowerPoint documents (document-to-form) |
+| DocumentFormat.OpenXml | MIT | text extraction from Word and PowerPoint documents (document-to-form); Word record dossiers (Phase 21, ADR 0185) |
 | PDFtoImage | MIT | renders PDF pages without a text layer to images for OCR (ADR 0033); brings bblanchon.PDFium.* (Apache-2.0 binaries of PDFium, BSD-3-Clause; bundled third-party notices in `src/Host/Strategy.Host/licenses/pdfium/`, shipped in the app's `licenses/` folder) and SkiaSharp + native assets (MIT; notices in `licenses/skiasharp/`) |
 | xunit.v3 | Apache-2.0 | tests |
 | Shouldly | BSD-3-Clause | test assertions |
