@@ -1,0 +1,92 @@
+{
+  "objects": [
+    {
+      "key": "team", "sourceObject": "Project_Team__c", "kind": "record", "targetType": "teams.team", "loadOrder": 30,
+      "fields": [
+        { "source": "Name", "target": "number", "kind": "direct", "transform": "trim" },
+        { "source": "Team_Name__c", "target": "nameAr", "kind": "direct", "transform": "trim" },
+        { "source": "Team_Type__c", "target": "type", "kind": "picklist", "required": true, "values": {
+          "Work Team": "work-team", "Project Team": "project-team", "Standing Committee": "standing-committee", "Temporary Committee": "temporary-committee" } },
+        { "source": "Team_Subject__c", "target": "subject", "kind": "direct", "transform": "trim" },
+        { "source": "Team_Objective__c", "target": "objectives", "kind": "direct", "transform": "trim" },
+        { "source": "Approved_By__c", "target": "approvedBy", "kind": "picklist", "values": { "General Manager": "general-manager", "President": "president" } },
+        { "source": "Memo_Number__c", "target": "memoNumber", "kind": "direct", "transform": "trim" },
+        { "source": "Start_Date__c", "target": "startDate", "kind": "direct" },
+        { "source": "End_Date__c", "target": "endDate", "kind": "direct" },
+        { "source": "Period__c", "target": "cadence", "kind": "picklist", "values": {
+          "Monthly": "monthly", "Quarterly": "quarterly", "Biannually": "biannually", "Annually": "annually", "Other": "other" } },
+        { "source": "Workload_Classification__c", "target": "workload", "kind": "picklist", "values": { "High": "high", "Medium": "medium", "Low": "low" } },
+        { "source": "Status__c", "target": "status", "kind": "picklist", "values": {
+          "Active": "active", "InActive": "inactive", "Pending Evaluation": "pending_evaluation", "Waiting Approval": "evaluation_waiting_approval",
+          "Closed": "closed", "Inactive – Replaced": "replaced" } },
+        { "source": "Team_Leader__c", "target": "leaderEmployeeId", "kind": "person" }
+      ],
+      "defaults": { "status": "active" },
+      "ignore": ["OwnerId", "CurrencyIsoCode", "RecordTypeId", "Is_Office__c", "Reporting__c", "Is_Owner__c", "No_of_Members__c", "Responsible_for_Report__c",
+        "Evaluation_Comments__c", "No_of_Evaluation__c", "Is_Evaluation_Completed__c", "Open_for_Evaluation__c", "Evaluation_Date__c", "Evaluation_Year__c",
+        "Evaluation_Approved__c", "Percentage_of_Recommendations_Closure__c", "Implementation_Effectiveness_Impact__c", "Quality_of_Output__c",
+        "Governance_Discipline_Documentation__c", "Cooperation_and_harmony__c", "Overall_Team_Evaluation_Score__c"],
+      "notesAr": "الفريق / اللجنة: نوع الفريق يُطابَق مع رموز أنواع الفرق المهيأة هنا، والحالة مع حالات دورة حياة الفريق («بانتظار الاعتماد» تُعامَل كاعتماد التقييم). الرقم من Name؛ الدوام (دائم / مؤقت) يُشتق من نوع الفريق وتاريخ الانتهاء، والقائد من العضو صاحب دور القيادة (وإلا Team_Leader__c)، وتُمنح أدوار السجل للأعضاء دون إطلاق أحداث أو إشعارات. عدد الأعضاء محسوب هنا. حقول التقييم على صف الفريق تنتقل إلى سجل تقييم سنوي مستقل (المطابقة team-evaluation). المسؤول عن التقرير (Responsible_for_Report__c) لا مقابل له هنا. الحقلان Team_Leader__c و Responsible_for_Report__c لا يظهران في الوصف الحالي لمستخدم التكامل: يجب أن يؤكدهما التحقق قبل التفعيل.",
+      "notesEn": "Team / committee: the team type maps to this system's configured team type codes and the status to the team lifecycle (\"Waiting Approval\" is treated as the evaluation approval). The number comes from Name; permanence is derived from the team type and the end date, the leader from the member holding a leader role (else Team_Leader__c), and the record roles are granted without events or notifications. The member count is computed here. The evaluation fields on the team row become a separate yearly evaluation record (mapping team-evaluation). Responsible_for_Report__c has no counterpart here. Team_Leader__c and Responsible_for_Report__c are not in the integration user's current describe: the validation must confirm them before activation."
+    },
+    {
+      "key": "team-member", "sourceObject": "Project_Team_Association__c", "kind": "record", "targetType": "teams.team_member", "loadOrder": 31,
+      "fields": [
+        { "source": "Project_Team__c", "target": "teamId", "kind": "reference", "referenceType": "teams.team", "required": true },
+        { "source": "Employee__c", "target": "employeeId", "kind": "person" },
+        { "source": "Employee_Name__c", "target": "externalName", "kind": "direct", "transform": "truncate:300" },
+        { "source": "Member_Role__c", "target": "role", "kind": "picklist", "required": true, "values": {
+          "President": "president", "Deputy": "deputy", "Project Manager": "project-manager", "Member": "member", "Rapporteur": "rapporteur",
+          "Member&Rapporteur": "member-rapporteur", "Secretary": "secretary" } },
+        { "source": "Responsibilities__c", "target": "responsibilities", "kind": "direct", "transform": "trim" },
+        { "source": "Required_Skills__c", "target": "requiredSkills", "kind": "direct", "transform": "trim" },
+        { "source": "Position_Order__c", "target": "position", "kind": "direct" }
+      ],
+      "defaults": { "role": "member", "status": "active" },
+      "ignore": ["Name", "CurrencyIsoCode", "User_Inactive__c", "Team_Name__c", "Participation_Level__c", "Is_Evaluated__c", "Evaluation_Date__c",
+        "Evaluation_Comments__c", "Evaluation_Year__c", "Contribution_to_Achieve_Goal__c", "Commitment_to_attend_meeting_and_submit__c", "Communication_with_teams__c",
+        "Evaluation_Point__c", "Evaluation_Grade__c", "Certificate_of_Appreciation__c", "Financial_Reward__c", "Reward_Amount__c"],
+      "notesAr": "عضوية الفريق: دور العضو يُطابَق مع أدوار الأعضاء المهيأة هنا؛ الموظف من جهة الاتصال (Employee__c)، واسم الموظف يُحفظ للأعضاء غير المطابَقين فقط. القائد وأدوار السجل (عضو، قائد، أمين سر، عرض النتائج) تُحسب للفريق بعد كل عضوية. حقول التقييم على صف العضوية تنتقل إلى تقييم عضو سنوي (المطابقة member-evaluation). الحقل Employee__c لا يظهر في الوصف الحالي لمستخدم التكامل: يجب أن يؤكده التحقق قبل التفعيل.",
+      "notesEn": "Team membership: the member role maps to this system's configured member roles; the employee comes from the Contact (Employee__c) and the employee name is kept for unmatched (external) members only. The leader and the record roles (member, leader, secretary, results viewer) are recomputed for the team after each membership. The evaluation fields on the association row become a yearly member evaluation (mapping member-evaluation). Employee__c is not in the integration user's current describe: the validation must confirm it before activation."
+    },
+    {
+      "key": "team-evaluation", "sourceObject": "Project_Team__c", "kind": "record", "targetType": "teams.team_evaluation", "loadOrder": 32,
+      "externalIdTemplate": "{Id}-{Evaluation_Year__c}",
+      "fields": [
+        { "source": "Id", "target": "teamId", "kind": "reference", "referenceType": "teams.team", "required": true },
+        { "source": "Evaluation_Year__c", "target": "cycle", "kind": "direct", "transform": "trim", "required": true },
+        { "source": "Overall_Team_Evaluation_Score__c", "target": "score", "kind": "direct" },
+        { "source": "Workload_Classification__c", "target": "workload", "kind": "picklist", "values": { "High": "high", "Medium": "medium", "Low": "low" } },
+        { "source": "Evaluation_Approved__c", "target": "status", "kind": "picklist", "values": { "true": "approved", "false": "submitted" } },
+        { "source": "Evaluation_Date__c", "target": "submittedAt", "kind": "direct" }
+      ],
+      "defaults": { "status": "approved" },
+      "ignore": ["Name", "Team_Name__c", "Status__c", "Is_Evaluation_Completed__c", "Open_for_Evaluation__c", "No_of_Evaluation__c", "Evaluation_Comments__c",
+        "Percentage_of_Recommendations_Closure__c", "Implementation_Effectiveness_Impact__c", "Quality_of_Output__c", "Governance_Discipline_Documentation__c",
+        "Cooperation_and_harmony__c", "End_Date__c"],
+      "notesAr": "فرق في النموذج: Salesforce يحفظ درجات التقييم على صف الفريق نفسه، وهنا لكل سنة سجل تقييم مستقل؛ المعرّف الخارجي {Id}-{سنة التقييم} من Evaluation_Year__c (تاريخ الانتهاء فارغ في أغلب اللجان الدائمة، فلا يصلح مفتاحاً)، فتبقى تقييمات السنوات السابقة عند انتقال الصف إلى سنة جديدة، ويُتخطّى الصف بلا سنة. الدرجة الإجمالية تُحفظ درجةً للتقييم؛ درجات المعايير الخمسة (قوائم بقيم 25 / 12.5 / 0 …) لا تُنقل منفردة. الفترة السنوية والقالب المنشور والرقم والمقيِّم (قائد الفريق) تُحسب هنا. التقييم غير المعتمد بلا درجة يبقى مفتوحاً للمقيِّم، وغير المعتمد بدرجة يُعدّ مُرسلاً؛ لا يُنشأ مسار اعتماد.",
+      "notesEn": "Model difference: Salesforce keeps the evaluation scores on the team row itself; here each year is its own evaluation record. The external ID is {Id}-{evaluation year} from Evaluation_Year__c (End_Date__c is empty for most standing committees, so it cannot key the year), so earlier years stay when the row moves to a new year, and a row without a year is skipped. The overall score is kept as the evaluation score; the five criterion picklists (values 25 / 12.5 / 0 …) are not carried individually. The annual period, the published template, the number and the evaluator (the team leader) are derived here. A non-approved evaluation without a score stays open for the evaluator; one with a score counts as submitted; no approval instance is created."
+    },
+    {
+      "key": "member-evaluation", "sourceObject": "Project_Team_Association__c", "kind": "record", "targetType": "teams.member_evaluation", "loadOrder": 33,
+      "externalIdTemplate": "{Id}-{Evaluation_Year__c}",
+      "fields": [
+        { "source": "Project_Team__c", "target": "teamId", "kind": "reference", "referenceType": "teams.team", "required": true },
+        { "source": "Id", "target": "memberId", "kind": "reference", "referenceType": "teams.team_member", "required": true },
+        { "source": "Evaluation_Point__c", "target": "points", "kind": "direct" },
+        { "source": "Participation_Level__c", "target": "grade", "kind": "picklist", "values": { "Very Active": "very-active", "Active": "active", "Not Active": "not-active" } },
+        { "source": "Evaluation_Grade__c", "target": "grade", "kind": "picklist", "values": { "Very Active": "very-active", "Active": "active", "Not Active": "not-active" } },
+        { "source": "Evaluation_Comments__c", "target": "comment", "kind": "direct", "transform": "trim" },
+        { "source": "Evaluation_Date__c", "target": "evaluatedAt", "kind": "direct" },
+        { "source": "Certificate_of_Appreciation__c", "target": "certificate", "kind": "direct" },
+        { "source": "Financial_Reward__c", "target": "financialReward", "kind": "direct" },
+        { "source": "Reward_Amount__c", "target": "calculatedReward", "kind": "direct" },
+        { "source": "Reward_Amount__c", "target": "approvedReward", "kind": "direct" }
+      ],
+      "ignore": ["Name", "Employee__c", "Employee_Name__c", "Member_Role__c", "Team_Name__c", "Is_Evaluated__c", "User_Inactive__c", "Position_Order__c",
+        "Responsibilities__c", "Required_Skills__c", "Contribution_to_Achieve_Goal__c", "Commitment_to_attend_meeting_and_submit__c", "Communication_with_teams__c"],
+      "notesAr": "فرق في النموذج: تقييم العضو محفوظ في Salesforce على صف العضوية، وهنا تقييم عضو لكل سنة ({Id}-{Evaluation_Year__c}) مرتبط بتقييم الفريق لتلك السنة (آخر سنة تقييم للفريق لا تتجاوز سنة تاريخ التقييم، إذ يُقيَّم العام في مطلع العام التالي). نقاط التقييم تُحفظ كنقاط العضو، والتقدير (فعّال جداً / فعّال / غير فعّال) يُطابَق مع فئات قالب التقييم؛ إجابات الأسئلة الثلاثة (1–5) لا تُنقل منفردة. الموظف والدور وصفة القيادة تؤخذ من العضوية. مبلغ المكافأة يُحفظ محسوباً ومعتمداً. أي تقدير آخر يظهر في قائمة الاستثناءات.",
+      "notesEn": "Model difference: Salesforce keeps the member evaluation on the association row; here there is one member evaluation per year ({Id}-{Evaluation_Year__c}) attached to the team's evaluation of that year (the team's latest evaluation year not after the year of the evaluation date, since a year is evaluated early the next year). The evaluation point is kept as the member's points and the grade (Very Active / Active / Not Active) maps to the evaluation template's grade bands; the answers to the three 1–5 questions are not carried individually. The employee, role and leader flag are taken from the membership. The reward amount is kept as calculated and approved reward. Any other grade shows up in the exceptions queue."
+    }
+  ]
+}
