@@ -90,7 +90,23 @@
     "auth_user_created": "إنشاء حساب",
     "auth_user_changed": "تعديل حساب",
     "auth_provider_changed": "تعديل مزوّد هوية",
-    "auth_settings_changed": "تعديل إعدادات الأمان"
+    "auth_settings_changed": "تعديل إعدادات الأمان",
+    "integration_sync_activate": "تفعيل المزامنة",
+    "integration_sync_deactivate": "إيقاف المزامنة",
+    "integration_sync_test": "اختبار الربط",
+    "integration_sync_key_store": "حفظ المفتاح الخاص",
+    "integration_sync_now": "بدء المزامنة",
+    "integration_sync_fullLoad": "بدء التحميل الكامل",
+    "integration_sync_mapping_validate": "التحقق من المطابقة",
+    "integration_sync_pack_import": "استيراد حزمة المطابقة",
+    "integration_sync_pack_export": "تصدير حزمة المطابقة",
+    "integration_sync_exception_reprocess": "إعادة معالجة استثناء",
+    "integration_sync_exception_ignore": "تجاهل استثناء",
+    "integration_sync_exception_mapValue": "مطابقة قيمة",
+    "integration_sync_makePrimary": "جعل هذا النظام أساسياً",
+    "integration_sync_returnToStandby": "العودة إلى وضع الاحتياط",
+    "integration_sync_conflict_resolve": "قرار بشأن تعارض",
+    "integration_sync_closeOutage": "إغلاق فترة الانقطاع"
   },
   "actionGroups": {
     "create": "إنشاء",
@@ -110,7 +126,8 @@
     "job": "مهمة مجدولة",
     "import": "استيراد",
     "wasel": "واصل",
-    "system": "النظام"
+    "system": "النظام",
+    "sync": "المزامنة"
   },
   "systems": {
     "access": "الصلاحيات",

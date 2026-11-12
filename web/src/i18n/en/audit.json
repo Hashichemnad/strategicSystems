@@ -90,7 +90,23 @@
     "auth_user_created": "Account created",
     "auth_user_changed": "Account changed",
     "auth_provider_changed": "Sign-in provider changed",
-    "auth_settings_changed": "Security settings changed"
+    "auth_settings_changed": "Security settings changed",
+    "integration_sync_activate": "Sync activated",
+    "integration_sync_deactivate": "Sync deactivated",
+    "integration_sync_test": "Connection tested",
+    "integration_sync_key_store": "Private key stored",
+    "integration_sync_now": "Sync started",
+    "integration_sync_fullLoad": "Full load started",
+    "integration_sync_mapping_validate": "Mapping validated",
+    "integration_sync_pack_import": "Mapping pack imported",
+    "integration_sync_pack_export": "Mapping pack exported",
+    "integration_sync_exception_reprocess": "Exception re-processed",
+    "integration_sync_exception_ignore": "Exception ignored",
+    "integration_sync_exception_mapValue": "Value mapped",
+    "integration_sync_makePrimary": "Made this system primary",
+    "integration_sync_returnToStandby": "Returned to standby",
+    "integration_sync_conflict_resolve": "Conflict decided",
+    "integration_sync_closeOutage": "Outage closed"
   },
   "actionGroups": {
     "create": "Created",
@@ -110,7 +126,8 @@
     "job": "Scheduled job",
     "import": "Import",
     "wasel": "Wasel",
-    "system": "System"
+    "system": "System",
+    "sync": "Sync"
   },
   "systems": {
     "access": "Access",

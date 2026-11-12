@@ -1476,6 +1476,16 @@ const developerPortalRoute = createRoute({
   ),
 });
 
+// Settings → Integrations → Salesforce sync (Phase 23, ADR 0200–0208; SyncAlerts.Link points here).
+const salesforceSyncRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/integrations/salesforce-sync',
+  component: lazyRouteComponent(
+    () => import('@/features/integration/sync/SalesforceSyncPage'),
+    'SalesforceSyncPage',
+  ),
+});
+
 // Administrator Health page (ADR 0151).
 const healthRoute = createRoute({
   getParentRoute: () => settingsLayout,
@@ -1857,6 +1867,7 @@ const routeTree = rootRoute.addChildren([
       integrationClientRoute,
       webhookDeliveriesRoute,
       developerPortalRoute,
+      salesforceSyncRoute,
       demoPackRoute,
       businessHoursRoute,
       holidaysRoute,

@@ -27,6 +27,7 @@ import {
   ChartColumn,
   ListChecks,
   ListTodo,
+  RefreshCw,
   Rocket,
   Mail,
   MapPinned,
@@ -102,6 +103,7 @@ export type SettingsPageKey =
   | 'integrationClients'
   | 'webhookDeliveries'
   | 'developerPortal'
+  | 'salesforceSync'
   | 'tasks'
   | 'tasksReassign'
   | 'businessHours'
@@ -127,6 +129,7 @@ export type SettingsPath =
   | '/settings/integrations/clients'
   | '/settings/integrations/deliveries'
   | '/settings/integrations/developer'
+  | '/settings/integrations/salesforce-sync'
   | '/settings/dashboards'
   | '/settings/reporting'
   | '/settings/report-types'
@@ -358,6 +361,12 @@ export const settingsGroups: readonly SettingsGroup[] = [
         to: '/settings/integrations/developer',
         icon: FileSpreadsheet,
         permissions: ['integration.portal.view'],
+      },
+      {
+        key: 'salesforceSync',
+        to: '/settings/integrations/salesforce-sync',
+        icon: RefreshCw,
+        permissions: ['integration.sync.view'],
       },
     ],
   },
