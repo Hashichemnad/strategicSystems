@@ -1,6 +1,8 @@
 # Phase 23 — Salesforce standby sync and the version 1.0.0 release: summary
 
-Status: **built — awaiting owner acceptance** · version **1.0.0**, tag `v1.0.0` (covers Phases 0–23).
+Status: **built — awaiting owner acceptance** · version **1.0.0** (covers Phases 0–23). The annotated tag `v1.0.0` was created in the build
+session on the release commit, but that session could push only its working branch: create it on the merged commit of `main`
+(`git tag -a v1.0.0 -m "Integrated Strategy System 1.0.0 (Phases 0–23)" && git push origin v1.0.0`) or with the GitHub release.
 Requirements: [`docs/SPEC-ADDENDUM.md`](../SPEC-ADDENDUM.md) §G (and §B, the external references it builds on) · design note:
 [`docs/design/salesforce-sync.md`](../design/salesforce-sync.md), written and committed before the code. This session ran without an
 interactive approval step, so the design note was written first and implemented as it stands; its open choices are ADRs **0200–0208**
