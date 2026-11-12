@@ -136,7 +136,8 @@ public partial class AuthorizationMatrixTests(ApiFixture api) : IClassFixture<Ap
         {
             // A body every endpoint can bind, so the request reaches the access check (binding errors would answer 400 first).
             var form = new MultipartFormDataContent();
-            if (route.Contains("photo", StringComparison.Ordinal) || route.Contains("import", StringComparison.Ordinal)
+            // The sync mapping-pack import takes the pack as JSON (Phase 23), every other import a file.
+            if (route.Contains("photo", StringComparison.Ordinal) || (route.Contains("import", StringComparison.Ordinal) && !route.EndsWith("/packs/import", StringComparison.Ordinal))
                 || route.Contains("logo", StringComparison.Ordinal) || route.EndsWith("/files/{kind}", StringComparison.Ordinal)
                 || route.EndsWith("/template", StringComparison.Ordinal) || route.EndsWith("/document", StringComparison.Ordinal)
                 || route.EndsWith("/ai-fill", StringComparison.Ordinal) || route.EndsWith("/evidence", StringComparison.Ordinal)
