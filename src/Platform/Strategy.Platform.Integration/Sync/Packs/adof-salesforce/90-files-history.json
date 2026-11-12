@@ -1,0 +1,27 @@
+{
+  "objects": [
+    {
+      "key": "files", "sourceObject": "ContentDocumentLink", "kind": "files", "loadOrder": 100, "useBulk": false,
+      "notesAr": "ملفات Salesforce (ContentVersion الأحدث لكل ContentDocument مرتبط بسجل متزامن) تُرفع إلى خدمة الملفات كمرفقات للسجل، مع فحص النوع والحجم والفيروسات.",
+      "notesEn": "Salesforce files (the latest ContentVersion of each ContentDocument linked to a synced record) are uploaded to the Files service as the record's attachments, with the type, size and virus checks."
+    },
+    {
+      "key": "attachments", "sourceObject": "Attachment", "kind": "attachments", "loadOrder": 101, "useBulk": false,
+      "notesAr": "المرفقات الكلاسيكية (Attachment) للسجلات المتزامنة.",
+      "notesEn": "Classic attachments (Attachment) of synced records."
+    },
+    {
+      "key": "approval-history", "sourceObject": "ProcessInstance", "kind": "approvals", "loadOrder": 110, "useBulk": false,
+      "notesAr": "سجل الاعتمادات (ProcessInstance / ProcessInstanceStep) للعرض فقط في «سجل المصدر»؛ الاعتمادات المعلقة عند التحويل تصبح «مطلوب إعادة التقديم».",
+      "notesEn": "Approval history (ProcessInstance / ProcessInstanceStep), read-only in \"Source history\"; approvals pending at failover become \"Resubmit required\"."
+    },
+    { "key": "history-project", "sourceObject": "PMS_Project__History", "kind": "field_history", "loadOrder": 120, "useBulk": false, "watermarkField": "CreatedDate",
+      "options": { "parentObject": "PMS_Project__c" }, "notesEn": "Field history of projects (read-only source history).", "notesAr": "سجل تغييرات حقول المشاريع (للعرض فقط)." },
+    { "key": "history-request", "sourceObject": "PMS_Project_Request__History", "kind": "field_history", "loadOrder": 121, "useBulk": false, "watermarkField": "CreatedDate",
+      "options": { "parentObject": "PMS_Project_Request__c" }, "notesEn": "Field history of program requests.", "notesAr": "سجل تغييرات حقول طلبات البرامج." },
+    { "key": "history-department", "sourceObject": "Department__History", "kind": "field_history", "loadOrder": 122, "useBulk": false, "watermarkField": "CreatedDate",
+      "options": { "parentObject": "Department__c" }, "notesEn": "Field history of departments.", "notesAr": "سجل تغييرات حقول الإدارات." },
+    { "key": "history-team", "sourceObject": "Project_Team__History", "kind": "field_history", "loadOrder": 123, "useBulk": false, "watermarkField": "CreatedDate", "provisional": true,
+      "options": { "parentObject": "Project_Team__c" }, "notesEn": "Field history of teams (if field history tracking is on).", "notesAr": "سجل تغييرات حقول الفرق (إن كان التتبع مفعلاً)." }
+  ]
+}

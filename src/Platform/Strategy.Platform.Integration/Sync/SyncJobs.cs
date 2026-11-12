@@ -1,5 +1,4 @@
 using System.Globalization;
-using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Strategy.Platform.Access;
@@ -215,7 +214,7 @@ internal sealed class SyncHealthContributor(IntegrationDbContext db, IClock cloc
 /// </summary>
 internal sealed class SyncSeeder : IDatabaseSeeder
 {
-    public const string PackResource = "Strategy.Platform.Integration.Sync.Packs.adof-salesforce.json";
+    public const string PackResourcePrefix = "sync-pack/adof-salesforce/";
     public const string PackCode = "adof-salesforce";
 
     public int Order => 80;
@@ -232,10 +231,7 @@ internal sealed class SyncSeeder : IDatabaseSeeder
 
         if (!await db.MappingPacks.AnyAsync(p => p.Code == PackCode, cancellationToken).ConfigureAwait(false))
         {
-            await using var stream = typeof(SyncSeeder).Assembly.GetManifestResourceStream(PackResource)
-                ?? throw new InvalidOperationException("The ADoF Salesforce mapping pack resource is missing.");
-            var document = await System.Text.Json.JsonSerializer.DeserializeAsync<MappingPackDocument>(stream, SyncJson.Options, cancellationToken).ConfigureAwait(false)
-                ?? throw new InvalidOperationException("The ADoF Salesforce mapping pack is empty.");
+            var document = await LoadPackAsync(cancellationToken).ConfigureAwait(false);
             var imported = await services.GetRequiredService<SyncAdministration>().ImportPackAsync(document, cancellationToken, audited: false).ConfigureAwait(false);
             if (imported.IsFailure)
             {
@@ -254,5 +250,26 @@ internal sealed class SyncSeeder : IDatabaseSeeder
         }
     }
 
-    internal static Assembly Assembly => typeof(SyncSeeder).Assembly;
+    /// <summary>The embedded ADoF pack: <c>pack.json</c> (code, names, version) plus every other file's <c>objects</c>, in file-name order.</summary>
+    public static async Task<MappingPackDocument> LoadPackAsync(CancellationToken cancellationToken)
+    {
+        var assembly = typeof(SyncSeeder).Assembly;
+        var names = assembly.GetManifestResourceNames().Where(n => n.StartsWith(PackResourcePrefix, StringComparison.Ordinal)).Order(StringComparer.Ordinal).ToList();
+        MappingPackDocument? header = null;
+        var objects = new List<MappingPackObject>();
+        foreach (var name in names)
+        {
+            await using var stream = assembly.GetManifestResourceStream(name)!;
+            var part = await System.Text.Json.JsonSerializer.DeserializeAsync<MappingPackDocument>(stream, SyncJson.Options, cancellationToken).ConfigureAwait(false)
+                ?? throw new InvalidOperationException($"Empty mapping pack part {name}.");
+            if (name.EndsWith("/pack.json", StringComparison.Ordinal))
+            {
+                header = part;
+            }
+
+            objects.AddRange(part.Objects);
+        }
+
+        return (header ?? throw new InvalidOperationException("The ADoF Salesforce mapping pack header is missing.")) with { Objects = objects };
+    }
 }

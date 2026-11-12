@@ -1,0 +1,31 @@
+{
+  "objects": [
+    {
+      "key": "department", "sourceObject": "Department__c", "kind": "record", "targetType": "org.unit", "loadOrder": 10, "useBulk": true,
+      "fields": [
+        { "source": "Id", "target": "code", "kind": "direct" },
+        { "source": "Short_Code__c", "target": "code", "kind": "direct", "transform": "trim" },
+        { "source": "Name", "target": "nameAr", "kind": "direct", "transform": "trim" },
+        { "source": "Department_Name_English__c", "target": "nameEn", "kind": "direct", "transform": "trim" },
+        { "source": "Record_Type__c", "target": "levelCode", "kind": "picklist", "values": { "Department": "department", "Section": "section", "Access": "department" } },
+        { "source": "Parent_Department__c", "target": "parentId", "kind": "reference", "referenceType": "org.unit" }
+      ],
+      "defaults": { "levelCode": "department" },
+      "ignore": ["OwnerId", "CurrencyIsoCode", "Main_Department__c", "Main_Department_Id__c", "LastActivityDate"],
+      "notesAr": "الأقسام والإدارات: الرمز المختصر رمزاً للوحدة (وإلا معرّف Salesforce)، والتسلسل من الإدارة الأم على عدة مراحل.",
+      "notesEn": "Departments and sections: the short code becomes the unit code (else the Salesforce Id); the hierarchy comes from Parent_Department__c in several passes."
+    },
+    {
+      "key": "user", "sourceObject": "User", "kind": "people", "loadOrder": 20, "useBulk": true,
+      "options": { "matchOrder": ["email", "employeeNo", "federationId"], "emailField": "Email", "employeeNoField": "EmployeeNumber", "federationIdField": "FederationIdentifier", "nameField": "Name" },
+      "notesAr": "مستخدمو Salesforce يطابَقون مع الموظفين بالبريد ثم رقم الموظف ثم معرّف الاتحاد؛ لا يُنشأ موظف جديد.",
+      "notesEn": "Salesforce users are matched to employees by e-mail, then employee number, then Federation ID; no employee is created."
+    },
+    {
+      "key": "contact", "sourceObject": "Contact", "kind": "people", "loadOrder": 21, "useBulk": true, "provisional": true,
+      "options": { "matchOrder": ["email"], "emailField": "Email", "nameField": "Name" },
+      "notesAr": "حقول الأشخاص في PMS (مدير المشروع، مالك الخطر…) تشير إلى جهات الاتصال؛ المطابقة بالبريد.",
+      "notesEn": "PMS people fields (project manager, risk owner, …) point at Contacts; matched by e-mail."
+    }
+  ]
+}

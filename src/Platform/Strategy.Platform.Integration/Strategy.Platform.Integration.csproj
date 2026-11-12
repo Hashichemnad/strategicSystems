@@ -31,7 +31,8 @@
     <PackageReference Include="ClosedXML" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Sync\Packs\adof-salesforce.json" LogicalName="Strategy.Platform.Integration.Sync.Packs.adof-salesforce.json" />
+    <!-- The "ADoF Salesforce" mapping pack: pack.json (header) + one objects file per system, merged by name order (ADR 0203). -->
+    <EmbeddedResource Include="Sync\Packs\adof-salesforce\*.json" LogicalName="sync-pack/adof-salesforce/%(Filename)%(Extension)" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Strategy.UnitTests" />
