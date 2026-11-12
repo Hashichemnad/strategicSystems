@@ -64,8 +64,7 @@ per-section permissions · 0185 PDF via Gotenberg, Word via DocumentFormat.OpenX
 - **PDF header / footer:** the dossier PDF prints the template's header line under the cover and its footer line at the end of each record;
   they are not repeated on every page (Chromium's fixed elements overlapped page content). Word repeats them on every page (ADR 0185).
 - **Project RAG colours** are not stored; the dossier shows progress status, performance and planned progress (ADR 0184).
-- **Lookup labels:** fields whose codes have no lookup type in their dataset (e.g. project stage, milestone status — as in Phase 17) show
-  codes in reports, charts and dossiers.
+- **Lookup labels:** closed in Phase 23 — every code field declares a lookup type, a module label source or fixed AR / EN choices (ADR 0209).
 - **Paging re-runs the queries** of a type-based report (no result cache); bounded by the row limits and the timeout (ADR 0181).
 - **External-reference columns** in type-based reports are offered only for objects whose rows link to their own record.
 - **E2E:** `reporting2.spec.ts` needs projects from the Portfolio specs (or the CI order); the demo pack has program requests only.

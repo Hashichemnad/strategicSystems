@@ -170,3 +170,4 @@ Write an ADR for every choice the SPEC or CLAUDE.md leaves open (CLAUDE.md §2 r
 | [0193](0193-incremental-extracts-and-scheduled-exports.md) | Incremental extracts, deleted feed and scheduled folder exports | Proposed |
 | [0194](0194-signed-webhooks.md) | Webhooks: catalogue from integration events, HMAC signature, back-off, dead letters, replay | Proposed |
 | [0195](0195-developer-portal.md) | Developer portal page and Power BI guide | Proposed |
+| [0209](0209-labels-for-fixed-code-fields.md) | Labels for code fields without a lookup type: fixed choices and module label sources on dataset fields | Proposed |
