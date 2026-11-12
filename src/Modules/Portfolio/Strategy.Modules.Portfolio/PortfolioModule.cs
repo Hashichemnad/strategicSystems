@@ -128,6 +128,7 @@ public sealed class PortfolioModule : IModule
         services.AddReportingMetricSource<PortfolioMetricSource>();
         services.AddReportingListSource<PortfolioListSource>();
         services.AddReportingDatasetSource<PortfolioDatasetSource>();
+        services.AddReportingDimensionLabelSource<PortfolioDimensionLabels>();
         services.AddMyWorkCardSource<PortfolioMyWorkCards>();
         services.AddApprovalHook<RequestApprovalHook>();
         services.AddCurrentStatusProvider<RequestCurrentStatus>();

@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Strategy.Modules.Tasks.Application;
 using Strategy.Modules.Tasks.Domain;
+using Strategy.Modules.Tasks.Reporting;
 using Strategy.Platform.Reporting;
 using Strategy.Platform.Reporting.Records;
 
@@ -52,27 +53,12 @@ internal sealed class TaskFeeds(TaskVisibility visibility) : IReportableRecordSo
             new("number", "الرقم", "Number", RecordFieldType.Text),
             new("titleAr", "العنوان (عربي)", "Title (Arabic)", RecordFieldType.Text),
             new("titleEn", "العنوان (إنجليزي)", "Title (English)", RecordFieldType.Text),
-            new("status", "الحالة", "Status", RecordFieldType.Lookup, Choices:
-            [
-                new(TaskStatuses.Draft, "مسودة", "Draft"),
-                new(TaskStatuses.Assigned, "مسندة", "Assigned"),
-                new(TaskStatuses.InProgress, "قيد التنفيذ", "In progress"),
-                new(TaskStatuses.OnHold, "متوقفة", "On hold"),
-                new(TaskStatuses.Submitted, "مسلّمة", "Submitted"),
-                new(TaskStatuses.Approved, "معتمدة", "Approved"),
-                new(TaskStatuses.Rejected, "مرفوضة", "Rejected"),
-                new(TaskStatuses.ToDo, "للتنفيذ", "To do"),
-                new(TaskStatuses.Done, "منجزة", "Done"),
-                new(TaskStatuses.Cancelled, "ملغاة", "Cancelled"),
-            ]),
+            new("status", "الحالة", "Status", RecordFieldType.Lookup, Choices: TaskChoices.Statuses),
             new("template", "مسار العمل", "Workflow template", RecordFieldType.Lookup, Choices:
             [
                 new(TaskTemplates.Full, "كامل", "Full"), new(TaskTemplates.Simple, "مبسط", "Simple"),
             ]),
-            new("priority", "الأولوية", "Priority", RecordFieldType.Lookup, Choices:
-            [
-                new(TaskPriorities.High, "عالية", "High"), new(TaskPriorities.Medium, "متوسطة", "Medium"), new(TaskPriorities.Low, "منخفضة", "Low"),
-            ]),
+            new("priority", "الأولوية", "Priority", RecordFieldType.Lookup, Choices: TaskChoices.Priorities),
             new("type", "النوع", "Type", RecordFieldType.Lookup, LookupType: TaskPermissions.TypeLookup),
             new("source", "المصدر", "Source", RecordFieldType.Lookup, LookupType: TaskPermissions.SourceLookup),
             new("category", "الفئة", "Category", RecordFieldType.Lookup, LookupType: TaskPermissions.CategoryLookup),

@@ -64,6 +64,7 @@ public sealed class RequestsModule : IModule
         services.AddMyWorkSource<RequestsMyWork>();
         services.AddReportingMetricSource<RequestMetricSource>();
         services.AddReportingDatasetSource<RequestDatasetSource>();
+        services.AddReportingDimensionLabelSource<RequestDimensionLabels>();
         services.AddMyWorkCardSource<RequestMyWorkCards>();
         services.AddFilePurpose(RequestFilePurposes.Attachment);
         services.AddFileOwnerAccess<RequestFiles>();

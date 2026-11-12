@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Strategy.Modules.Teams.Application;
 using Strategy.Modules.Teams.Domain;
 using Strategy.Modules.Teams.Infrastructure;
+using Strategy.Modules.Teams.Reporting;
 using Strategy.Platform.Reporting;
 using Strategy.Platform.Reporting.Records;
 
@@ -56,27 +57,13 @@ internal sealed class TeamsFeeds(TeamsDbContext db, TeamReader reader) : IReport
             new("nameAr", "الاسم (عربي)", "Name (Arabic)", RecordFieldType.Text),
             new("nameEn", "الاسم (إنجليزي)", "Name (English)", RecordFieldType.Text),
             new("type", "النوع", "Type", RecordFieldType.Text),
-            new("status", "الحالة", "Status", RecordFieldType.Lookup, Choices:
-            [
-                new(TeamStatuses.Draft, "مسودة", "Draft"), new(TeamStatuses.PendingApproval, "بانتظار الاعتماد", "Pending approval"),
-                new(TeamStatuses.Active, "نشط", "Active"), new(TeamStatuses.Inactive, "غير نشط", "Inactive"),
-                new(TeamStatuses.PendingEvaluation, "بانتظار التقييم", "Pending evaluation"),
-                new(TeamStatuses.EvaluationWaitingApproval, "التقييم بانتظار الاعتماد", "Evaluation awaiting approval"),
-                new(TeamStatuses.Closed, "مغلق", "Closed"), new(TeamStatuses.Replaced, "مستبدَل", "Replaced"), new(TeamStatuses.Cancelled, "ملغى", "Cancelled"),
-            ]),
+            new("status", "الحالة", "Status", RecordFieldType.Lookup, Choices: TeamsChoices.TeamStatuses),
             new("permanent", "دائم", "Permanent", RecordFieldType.Bool),
             new("unit", "الوحدة المالكة", "Owning unit", RecordFieldType.Unit),
             new("leader", "القائد", "Leader", RecordFieldType.Employee),
             new("sponsor", "الراعي", "Sponsor", RecordFieldType.Employee),
-            new("cadence", "دورية الاجتماعات", "Meeting cadence", RecordFieldType.Lookup, Choices:
-            [
-                new(Cadences.Monthly, "شهري", "Monthly"), new(Cadences.Quarterly, "ربع سنوي", "Quarterly"), new(Cadences.Biannually, "نصف سنوي", "Twice a year"),
-                new(Cadences.Annually, "سنوي", "Annually"), new(Cadences.Other, "أخرى", "Other"),
-            ]),
-            new("workload", "عبء العمل", "Workload", RecordFieldType.Lookup, Choices:
-            [
-                new(Workloads.High, "عالٍ", "High"), new(Workloads.Medium, "متوسط", "Medium"), new(Workloads.Low, "منخفض", "Low"),
-            ]),
+            new("cadence", "دورية الاجتماعات", "Meeting cadence", RecordFieldType.Lookup, Choices: TeamsChoices.Cadences),
+            new("workload", "عبء العمل", "Workload", RecordFieldType.Lookup, Choices: TeamsChoices.Workloads),
             new("startDate", "تاريخ البدء", "Start date", RecordFieldType.Date),
             new("endDate", "تاريخ الانتهاء", "End date", RecordFieldType.Date),
             new("activatedAt", "تاريخ التفعيل", "Activated on", RecordFieldType.DateTime),
@@ -95,10 +82,7 @@ internal sealed class TeamsFeeds(TeamsDbContext db, TeamReader reader) : IReport
             new("allocation", "نسبة التفرغ", "Allocation", RecordFieldType.Number),
             new("fromDate", "من", "From", RecordFieldType.Date),
             new("toDate", "إلى", "To", RecordFieldType.Date),
-            new("status", "حالة العضوية", "Membership status", RecordFieldType.Lookup, Choices:
-            [
-                new(MemberStatuses.Active, "نشط", "Active"), new(MemberStatuses.Left, "غادر", "Left"), new(MemberStatuses.Replaced, "مستبدَل", "Replaced"),
-            ]),
+            new("status", "حالة العضوية", "Membership status", RecordFieldType.Lookup, Choices: TeamsChoices.MemberStatuses),
         ],
         [
             new("team", "الفريق", "Team", TeamType, "teamId", RecordFields.Id, Many: false),

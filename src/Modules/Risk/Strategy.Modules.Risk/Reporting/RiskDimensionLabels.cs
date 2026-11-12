@@ -5,7 +5,7 @@ using Strategy.Platform.Reporting;
 
 namespace Strategy.Modules.Risk.Reporting;
 
-/// <summary>Names of rating bands (current framework) and risk categories for dashboard breakdowns.</summary>
+/// <summary>Names of rating bands and control effectiveness levels (current framework) and risk categories for dashboard breakdowns, reports and dossiers.</summary>
 internal sealed class RiskDimensionLabels(RiskDbContext db, FrameworkStore frameworks) : IReportingDimensionLabelSource
 {
     public string SystemCode => RiskPermissions.SystemCode;
@@ -18,6 +18,11 @@ internal sealed class RiskDimensionLabels(RiskDbContext db, FrameworkStore frame
                 var framework = await frameworks.ScorerAsync(cancellationToken).ConfigureAwait(false);
                 return framework.Content.Bands.Where(b => codes.Contains(b.Code))
                     .ToDictionary(b => b.Code, b => new DimensionLabel(b.LabelAr ?? b.LabelEn ?? b.Code, b.LabelEn ?? b.LabelAr ?? b.Code), StringComparer.Ordinal);
+            case "effectiveness":
+                var scale = await frameworks.ScorerAsync(cancellationToken).ConfigureAwait(false);
+                return scale.Content.ControlEffectiveness.Where(e => codes.Contains(e.Code)).GroupBy(e => e.Code, StringComparer.Ordinal)
+                    .ToDictionary(g => g.Key, g => new DimensionLabel(g.First().LabelAr ?? g.First().LabelEn ?? g.Key, g.First().LabelEn ?? g.First().LabelAr ?? g.Key),
+                        StringComparer.Ordinal);
             case "category":
                 var list = codes.ToList();
                 var categories = await db.Categories.AsNoTracking().Where(c => list.Contains(c.Code)).Select(c => new { c.Code, c.NameAr, c.NameEn })

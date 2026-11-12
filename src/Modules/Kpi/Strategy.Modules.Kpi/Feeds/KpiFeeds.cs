@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using Strategy.Modules.Kpi.Application;
-using Strategy.Modules.Kpi.Contracts;
 using Strategy.Modules.Kpi.Domain;
+using Strategy.Modules.Kpi.Reporting;
 using Strategy.Platform.Reporting;
 using Strategy.Platform.Reporting.Records;
 
@@ -70,32 +70,14 @@ internal sealed class KpiFeeds(KpiReader reader) : IReportableRecordSource
             new("code", "الرمز", "Code", RecordFieldType.Text),
             new("nameAr", "الاسم (عربي)", "Name (Arabic)", RecordFieldType.Text),
             new("nameEn", "الاسم (إنجليزي)", "Name (English)", RecordFieldType.Text),
-            new("status", "الحالة", "Status", RecordFieldType.Lookup, Choices:
-            [
-                new(CardStatuses.Active, "فعّال", "Active"), new(CardStatuses.Inactive, "موقوف", "Inactive"),
-            ]),
+            new("status", "الحالة", "Status", RecordFieldType.Lookup, Choices: KpiChoices.CardStatuses),
             new("type", "النوع", "Type", RecordFieldType.Lookup, LookupType: KpiPermissions.TypeLookup),
-            new("level", "المستوى", "Level", RecordFieldType.Lookup, Choices:
-            [
-                new(CardLevels.Organisation, "المؤسسة", "Organisation"), new(CardLevels.Department, "الإدارة", "Department"),
-                new(CardLevels.Section, "القسم", "Section"),
-            ]),
-            new("nature", "الطبيعة", "Nature", RecordFieldType.Lookup, Choices:
-            [
-                new(Natures.Quantitative, "كمي", "Quantitative"), new(Natures.Qualitative, "وصفي (سلّم)", "Qualitative (scale)"),
-            ]),
-            new("measuringPeriod", "دورية القياس", "Measuring period", RecordFieldType.Lookup, Choices:
-            [
-                new(MeasuringPeriods.Quarterly, "ربع سنوي", "Quarterly"), new(MeasuringPeriods.HalfYearly, "نصف سنوي", "Half-yearly"),
-                new(MeasuringPeriods.Annual, "سنوي", "Annual"), new(MeasuringPeriods.TwoYear, "كل سنتين", "Every two years"),
-            ]),
+            new("level", "المستوى", "Level", RecordFieldType.Lookup, Choices: KpiChoices.Levels),
+            new("nature", "الطبيعة", "Nature", RecordFieldType.Lookup, Choices: KpiChoices.Natures),
+            new("measuringPeriod", "دورية القياس", "Measuring period", RecordFieldType.Lookup, Choices: KpiChoices.MeasuringPeriods),
             new("measuringMethod", "طريقة القياس", "Measuring method", RecordFieldType.Lookup, LookupType: KpiPermissions.MeasuringMethodLookup),
             new("measureUnit", "وحدة القياس", "Measuring unit", RecordFieldType.Lookup, LookupType: KpiPermissions.UnitLookup),
-            new("direction", "الاتجاه", "Direction", RecordFieldType.Lookup, Choices:
-            [
-                new(Directions.Increase, "الزيادة أفضل", "Increase is better"), new(Directions.Decrease, "الانخفاض أفضل", "Decrease is better"),
-                new(Directions.Matching, "المطابقة أفضل", "Matching is better"),
-            ]),
+            new("direction", "الاتجاه", "Direction", RecordFieldType.Lookup, Choices: KpiChoices.Directions),
             new("department", "الإدارة", "Department", RecordFieldType.Unit),
             new("unit", "الوحدة المسؤولة", "Responsible unit", RecordFieldType.Unit),
             new("owner", "المسؤول", "Owner", RecordFieldType.Employee),
@@ -113,20 +95,10 @@ internal sealed class KpiFeeds(KpiReader reader) : IReportableRecordSource
         [
             new("cardId", "المؤشر", "KPI card", RecordFieldType.Id),
             new("year", "السنة", "Year", RecordFieldType.Number),
-            new("period", "الفترة", "Period", RecordFieldType.Lookup, Choices:
-            [
-                new(PeriodCodes.Q1, "الربع الأول", "Q1"), new(PeriodCodes.Q2, "الربع الثاني", "Q2"), new(PeriodCodes.Q3, "الربع الثالث", "Q3"),
-                new(PeriodCodes.Q4, "الربع الرابع", "Q4"), new(PeriodCodes.H1, "النصف الأول", "H1"), new(PeriodCodes.H2, "النصف الثاني", "H2"),
-                new(PeriodCodes.FullYear, "السنة كاملة", "Full year"), new(PeriodCodes.TwoYear, "سنتان", "Two years"),
-            ]),
+            new("period", "الفترة", "Period", RecordFieldType.Lookup, Choices: KpiChoices.Periods),
             new("periodStart", "بداية الفترة", "Period start", RecordFieldType.Date),
             new("periodEnd", "نهاية الفترة", "Period end", RecordFieldType.Date),
-            new("status", "الحالة", "Status", RecordFieldType.Lookup, Choices:
-            [
-                new(ResultStatuses.Open, "مفتوحة للتحديث", "Open for update"), new(ResultStatuses.PendingApproval, "بانتظار الاعتماد", "Pending approval"),
-                new(ResultStatuses.Returned, "معادة للتصحيح", "Returned"), new(ResultStatuses.Approved, "معتمدة", "Approved"),
-                new(ResultStatuses.Locked, "مقفلة", "Locked"),
-            ]),
+            new("status", "الحالة", "Status", RecordFieldType.Lookup, Choices: KpiChoices.ResultStatuses),
             new("target", "المستهدف", "Target", RecordFieldType.Number),
             new("rangeMin", "الحد الأدنى للنطاق", "Range minimum", RecordFieldType.Number),
             new("rangeMax", "الحد الأعلى للنطاق", "Range maximum", RecordFieldType.Number),
