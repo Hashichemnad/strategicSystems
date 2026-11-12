@@ -236,9 +236,12 @@ public sealed partial class SyncEngine(
             await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
             await LogAsync(state.Run, "info", mapping.Key, "integration.sync.log.objectDone", new()
             {
-                ["read"] = stats.Read.ToString(CultureInfo.InvariantCulture), ["created"] = stats.Created.ToString(CultureInfo.InvariantCulture),
-                ["updated"] = stats.Updated.ToString(CultureInfo.InvariantCulture), ["deleted"] = stats.Deleted.ToString(CultureInfo.InvariantCulture),
-                ["failed"] = stats.Failed.ToString(CultureInfo.InvariantCulture), ["api"] = stats.Api,
+                ["read"] = stats.Read.ToString(CultureInfo.InvariantCulture),
+                ["created"] = stats.Created.ToString(CultureInfo.InvariantCulture),
+                ["updated"] = stats.Updated.ToString(CultureInfo.InvariantCulture),
+                ["deleted"] = stats.Deleted.ToString(CultureInfo.InvariantCulture),
+                ["failed"] = stats.Failed.ToString(CultureInfo.InvariantCulture),
+                ["api"] = stats.Api,
             }, cancellationToken).ConfigureAwait(false);
         }
         catch (SourceConnectorException ex) when (ex.MessageKey is "integration.sync.errors.http" or "integration.sync.errors.bulkFailed")
@@ -862,7 +865,11 @@ public sealed partial class SyncEngine(
     {
         db.SyncRunLog.Add(new SyncRunLog
         {
-            RunId = run.Id, At = clock.UtcNow, Level = level, ObjectKey = objectKey, MessageKey = messageKey,
+            RunId = run.Id,
+            At = clock.UtcNow,
+            Level = level,
+            ObjectKey = objectKey,
+            MessageKey = messageKey,
             Params = parameters is null ? null : SyncJson.Write(parameters),
         });
         await db.SaveChangesAsync(CancellationToken.None).ConfigureAwait(false);

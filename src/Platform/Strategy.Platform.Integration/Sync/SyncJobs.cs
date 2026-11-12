@@ -244,7 +244,9 @@ internal sealed class SyncSeeder : IDatabaseSeeder
             var pack = await db.MappingPacks.FirstAsync(p => p.Code == PackCode, cancellationToken).ConfigureAwait(false);
             db.SyncConnections.Add(new SyncConnection
             {
-                SourceSystem = SyncAdministration.SalesforceSource, MappingPackId = pack.Id, Schedule = SyncJson.Write(new SyncScheduleSettings()),
+                SourceSystem = SyncAdministration.SalesforceSource,
+                MappingPackId = pack.Id,
+                Schedule = SyncJson.Write(new SyncScheduleSettings()),
             });
             await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }

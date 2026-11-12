@@ -120,7 +120,11 @@ public sealed class SalesforceSyncTests(PostgresFixture postgres) : IAsyncLifeti
         var objects = adof.Objects.Where(o => adofKeys.Contains(o.Key)).Select(o => o with { Provisional = false }).ToList();
         objects.Add(new MappingPackObject
         {
-            Key = "item", SourceObject = "Sample_Item__c", Kind = ObjectMappingKinds.Record, TargetType = SampleItem.EntityType, LoadOrder = 60,
+            Key = "item",
+            SourceObject = "Sample_Item__c",
+            Kind = ObjectMappingKinds.Record,
+            TargetType = SampleItem.EntityType,
+            LoadOrder = 60,
             Fields =
             [
                 new FieldMapping { Source = "Name", Target = "number", Kind = FieldMappingKinds.Direct },
@@ -212,8 +216,14 @@ public sealed class SalesforceSyncTests(PostgresFixture postgres) : IAsyncLifeti
         var departments = _fake.Objects["Department__c"];
         var parent = _fake.NewId("a01");
         var child = _fake.NewId("a01");
-        departments.Upsert(child, new() { ["Name"] = "قسم الأنظمة", ["Department_Name_English__c"] = "Systems section", ["Short_Code__c"] = "SYS" + parent[^6..], ["Record_Type__c"] = "Section",
-            ["Parent_Department__c"] = parent });
+        departments.Upsert(child, new()
+        {
+            ["Name"] = "قسم الأنظمة",
+            ["Department_Name_English__c"] = "Systems section",
+            ["Short_Code__c"] = "SYS" + parent[^6..],
+            ["Record_Type__c"] = "Section",
+            ["Parent_Department__c"] = parent
+        });
         departments.Upsert(parent, new() { ["Name"] = "إدارة التقنية", ["Department_Name_English__c"] = "IT department", ["Short_Code__c"] = "IT" + parent[^6..], ["Record_Type__c"] = "Department" });
         var userId = _fake.NewId("005");
         _fake.Objects["User"].Upsert(userId, new() { ["Name"] = "Test User", ["Email"] = email.ToUpperInvariant() });
@@ -401,12 +411,31 @@ public sealed class SalesforceSyncTests(PostgresFixture postgres) : IAsyncLifeti
         await ConfigureAsync("department", "user", "program-request", "project", "work-plan", "files", "approval-history");
         var seed = await SeedOrgAsync();
         var request = _fake.NewId("a0R");
-        _fake.Objects["PMS_Project_Request__c"].Upsert(request, new() { ["Name"] = "PR-0042", ["Status__c"] = "Approved", ["Program_Name__c"] = "منصة البيانات",
-            ["Department__c"] = seed.Parent, ["CreatedById"] = seed.UserId, ["Does_it_require_Budget__c"] = "Yes", ["Program_Type__c"] = "Digital" });
+        _fake.Objects["PMS_Project_Request__c"].Upsert(request, new()
+        {
+            ["Name"] = "PR-0042",
+            ["Status__c"] = "Approved",
+            ["Program_Name__c"] = "منصة البيانات",
+            ["Department__c"] = seed.Parent,
+            ["CreatedById"] = seed.UserId,
+            ["Does_it_require_Budget__c"] = "Yes",
+            ["Program_Type__c"] = "Digital"
+        });
         var project = _fake.NewId("a0P");
-        _fake.Objects["PMS_Project__c"].Upsert(project, new() { ["Name"] = "PROJ-SPMO-2026-007", ["PMS_Project_Request__c"] = request, ["Project_Name__c"] = "منصة البيانات",
-            ["Program_Classification__c"] = "Project", ["Project_Stage__c"] = "Planning", ["Project_Status__c"] = "Active", ["Approval_Status__c"] = "PM Office - Planning",
-            ["Project_Manager__c"] = seed.UserId, ["Department_Concerned__c"] = seed.Parent, ["Total_Achieve__c"] = 35.5m, ["Operational_Themes__c"] = "Future Readiness;Quality of Life" });
+        _fake.Objects["PMS_Project__c"].Upsert(project, new()
+        {
+            ["Name"] = "PROJ-SPMO-2026-007",
+            ["PMS_Project_Request__c"] = request,
+            ["Project_Name__c"] = "منصة البيانات",
+            ["Program_Classification__c"] = "Project",
+            ["Project_Stage__c"] = "Planning",
+            ["Project_Status__c"] = "Active",
+            ["Approval_Status__c"] = "PM Office - Planning",
+            ["Project_Manager__c"] = seed.UserId,
+            ["Department_Concerned__c"] = seed.Parent,
+            ["Total_Achieve__c"] = 35.5m,
+            ["Operational_Themes__c"] = "Future Readiness;Quality of Life"
+        });
         // Work plan: the task is listed before its header phase.
         var header = _fake.NewId("a0W");
         var task = _fake.NewId("a0W");
@@ -414,14 +443,28 @@ public sealed class SalesforceSyncTests(PostgresFixture postgres) : IAsyncLifeti
         _fake.Objects["PMS_Work_Plan__c"].Upsert(header, new() { ["Name"] = "1", ["PMS_Project__c"] = project, ["Is_this_header_task__c"] = true, ["Status__c"] = "Not Started" });
         var document = _fake.NewId("069");
         var version = _fake.NewId("068");
-        _fake.Objects["ContentVersion"].Upsert(version, new() { ["ContentDocumentId"] = document, ["Title"] = "charter", ["PathOnClient"] = "charter.pdf",
-            ["FileExtension"] = "pdf", ["IsLatest"] = true, ["__content"] = MinimalPdf() });
+        _fake.Objects["ContentVersion"].Upsert(version, new()
+        {
+            ["ContentDocumentId"] = document,
+            ["Title"] = "charter",
+            ["PathOnClient"] = "charter.pdf",
+            ["FileExtension"] = "pdf",
+            ["IsLatest"] = true,
+            ["__content"] = MinimalPdf()
+        });
         _fake.Objects["ContentDocumentLink"].Upsert(_fake.NewId("06A"), new() { ["ContentDocumentId"] = document, ["LinkedEntityId"] = project });
         var instance = _fake.NewId("04g");
         _fake.Objects["ProcessInstance"].Upsert(instance, new() { ["TargetObjectId"] = project, ["Status"] = "Pending", ["ProcessDefinition.Name"] = "Planning approval" });
-        _fake.Objects["ProcessInstanceStep"].Upsert(_fake.NewId("04h"), new() { ["ProcessInstanceId"] = instance, ["ProcessInstance.TargetObjectId"] = project,
-            ["ProcessInstance.Status"] = "Pending", ["ProcessInstance.ProcessDefinition.Name"] = "Planning approval", ["StepStatus"] = "Started", ["Actor.Name"] = "Section manager",
-            ["Comments"] = "Submitted for planning approval" });
+        _fake.Objects["ProcessInstanceStep"].Upsert(_fake.NewId("04h"), new()
+        {
+            ["ProcessInstanceId"] = instance,
+            ["ProcessInstance.TargetObjectId"] = project,
+            ["ProcessInstance.Status"] = "Pending",
+            ["ProcessInstance.ProcessDefinition.Name"] = "Planning approval",
+            ["StepStatus"] = "Started",
+            ["Actor.Name"] = "Section manager",
+            ["Comments"] = "Submitted for planning approval"
+        });
 
         var run = await RunAsync();
         run.Status.ShouldBe(RunStatuses.Succeeded, run.MessageKey + " " + string.Join(", ",
@@ -553,8 +596,14 @@ public sealed class SalesforceSyncTests(PostgresFixture postgres) : IAsyncLifeti
         var request = _fake.NewId("a0R");
         _fake.Objects["PMS_Project_Request__c"].Upsert(request, new() { ["Name"] = "PR-0099", ["Status__c"] = "Approved", ["Program_Name__c"] = "طلب" });
         var project = _fake.NewId("a0P");
-        _fake.Objects["PMS_Project__c"].Upsert(project, new() { ["Name"] = "PROJ-SPMO-2026-099", ["PMS_Project_Request__c"] = request, ["Project_Stage__c"] = "Planning",
-            ["Project_Status__c"] = "Active", ["Approval_Status__c"] = "PM Office - Planning" });
+        _fake.Objects["PMS_Project__c"].Upsert(project, new()
+        {
+            ["Name"] = "PROJ-SPMO-2026-099",
+            ["PMS_Project_Request__c"] = request,
+            ["Project_Stage__c"] = "Planning",
+            ["Project_Status__c"] = "Active",
+            ["Approval_Status__c"] = "PM Office - Planning"
+        });
         var pending = _fake.NewId("04g");
         _fake.Objects["ProcessInstance"].Upsert(pending, new() { ["TargetObjectId"] = project, ["Status"] = "Pending", ["ProcessDefinition.Name"] = "Planning approval" });
         (await RunAsync()).Status.ShouldBe(RunStatuses.Succeeded);

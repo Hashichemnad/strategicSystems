@@ -85,8 +85,12 @@ internal sealed class JobRunListener(IServiceScopeFactory scopes, IClock clock) 
         var db = scope.ServiceProvider.GetRequiredService<SchedulingDbContext>();
         db.JobRuns.Add(new JobRun
         {
-            JobKey = context.JobDetail.Key.Name, FiredAt = clock.UtcNow, FinishedAt = clock.UtcNow, Status = JobRunStatuses.Suspended,
-            Message = "standby", Instance = context.Scheduler.SchedulerInstanceId,
+            JobKey = context.JobDetail.Key.Name,
+            FiredAt = clock.UtcNow,
+            FinishedAt = clock.UtcNow,
+            Status = JobRunStatuses.Suspended,
+            Message = "standby",
+            Instance = context.Scheduler.SchedulerInstanceId,
         });
         await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }

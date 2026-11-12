@@ -1,8 +1,8 @@
 using Microsoft.Extensions.DependencyInjection;
-using Strategy.Platform.Access;
-using Strategy.Platform.Integration;
 using Strategy.Modules.Portfolio.Application;
 using Strategy.Modules.Portfolio.Domain;
+using Strategy.Platform.Access;
+using Strategy.Platform.Integration;
 
 namespace Strategy.Modules.Portfolio.Infrastructure;
 

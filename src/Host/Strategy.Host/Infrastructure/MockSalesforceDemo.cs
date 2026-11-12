@@ -31,7 +31,10 @@ public static class MockSalesforceDemo
         var group = endpoints.MapGroup("/dev/mock-salesforce").AllowAnonymous().ExcludeFromDescription();
         group.MapGet("/", (MockSalesforceOrg org) => TypedResults.Ok(new
         {
-            loginUrl = MockSalesforceOrg.LoginUrl, clientId = org.ClientId, username = org.Username, apiVersion = MockSalesforceOrg.ApiVersion,
+            loginUrl = MockSalesforceOrg.LoginUrl,
+            clientId = org.ClientId,
+            username = org.Username,
+            apiVersion = MockSalesforceOrg.ApiVersion,
             privateKeyPem = org.PrivateKeyPem,
         }));
         group.MapPost("/change", Results<Ok<string>, NotFound> (MockSalesforceChange body, MockSalesforceOrg org) =>
@@ -105,38 +108,105 @@ public static class MockSalesforceDemo
         // Data: two departments, the development users, a request, a project with a work plan, a pending approval and a file.
         var it = org.NewId("a01");
         var pmo = org.NewId("a01");
-        org.Objects["Department__c"].Upsert(it, new() { ["Name"] = "إدارة التقنية", ["Department_Name_English__c"] = "Technology Department", ["Short_Code__c"] = "SF-IT",
-            ["Record_Type__c"] = "Department" });
-        org.Objects["Department__c"].Upsert(pmo, new() { ["Name"] = "قسم إدارة المشاريع", ["Department_Name_English__c"] = "Project Management Section", ["Short_Code__c"] = "SF-PMO",
-            ["Record_Type__c"] = "Section", ["Parent_Department__c"] = it });
+        org.Objects["Department__c"].Upsert(it, new()
+        {
+            ["Name"] = "إدارة التقنية",
+            ["Department_Name_English__c"] = "Technology Department",
+            ["Short_Code__c"] = "SF-IT",
+            ["Record_Type__c"] = "Department"
+        });
+        org.Objects["Department__c"].Upsert(pmo, new()
+        {
+            ["Name"] = "قسم إدارة المشاريع",
+            ["Department_Name_English__c"] = "Project Management Section",
+            ["Short_Code__c"] = "SF-PMO",
+            ["Record_Type__c"] = "Section",
+            ["Parent_Department__c"] = it
+        });
         var mariam = org.NewId("005");
         var ahmed = org.NewId("005");
         org.Objects["User"].Upsert(mariam, new() { ["Name"] = "Mariam Al Suwaidi", ["Email"] = "mariam@strategy.local" });
         org.Objects["User"].Upsert(ahmed, new() { ["Name"] = "Ahmed Al Ali", ["Email"] = "ahmed@strategy.local" });
         org.Objects["User"].Upsert(org.NewId("005"), new() { ["Name"] = "Salesforce Admin", ["Email"] = "sf.admin@adof.example" });
         var request = org.NewId("a0R");
-        org.Objects["PMS_Project_Request__c"].Upsert(request, new() { ["Name"] = "PR-0107", ["Status__c"] = "Approved", ["Program_Name__c"] = "منصة البيانات الحكومية",
-            ["Program_Description__c"] = "منصة موحدة لبيانات الدائرة", ["Program_Type__c"] = "Digital", ["Department__c"] = it, ["Section_to_Implement__c"] = pmo,
-            ["CreatedById"] = ahmed, ["Does_it_require_Budget__c"] = "Yes", ["Program_Estimated_Budget__c"] = 850000m, ["Main_Option__c"] = "Contracting with Company" });
+        org.Objects["PMS_Project_Request__c"].Upsert(request, new()
+        {
+            ["Name"] = "PR-0107",
+            ["Status__c"] = "Approved",
+            ["Program_Name__c"] = "منصة البيانات الحكومية",
+            ["Program_Description__c"] = "منصة موحدة لبيانات الدائرة",
+            ["Program_Type__c"] = "Digital",
+            ["Department__c"] = it,
+            ["Section_to_Implement__c"] = pmo,
+            ["CreatedById"] = ahmed,
+            ["Does_it_require_Budget__c"] = "Yes",
+            ["Program_Estimated_Budget__c"] = 850000m,
+            ["Main_Option__c"] = "Contracting with Company"
+        });
         var project = org.NewId("a0P");
-        org.Objects["PMS_Project__c"].Upsert(project, new() { ["Name"] = "PROJ-SPMO-2026-014", ["PMS_Project_Request__c"] = request, ["Project_Name__c"] = "منصة البيانات الحكومية",
-            ["Program_Classification__c"] = "Project", ["Project_Stage__c"] = "Planning", ["Project_Status__c"] = "Active", ["Approval_Status__c"] = "PM Office - Planning",
-            ["Project_Manager__c"] = ahmed, ["Project_Owner__c"] = mariam, ["Department_Concerned__c"] = it, ["Project_Budget__c"] = 850000m,
-            ["Planned_Project_Start_Date__c"] = "2026-03-01", ["Planned_Project_End_Date__c"] = "2027-02-28", ["Total_Achieve__c"] = 18.5m, ["Till_Weight__c"] = 25m,
-            ["Operational_Themes__c"] = "Future Readiness" });
+        org.Objects["PMS_Project__c"].Upsert(project, new()
+        {
+            ["Name"] = "PROJ-SPMO-2026-014",
+            ["PMS_Project_Request__c"] = request,
+            ["Project_Name__c"] = "منصة البيانات الحكومية",
+            ["Program_Classification__c"] = "Project",
+            ["Project_Stage__c"] = "Planning",
+            ["Project_Status__c"] = "Active",
+            ["Approval_Status__c"] = "PM Office - Planning",
+            ["Project_Manager__c"] = ahmed,
+            ["Project_Owner__c"] = mariam,
+            ["Department_Concerned__c"] = it,
+            ["Project_Budget__c"] = 850000m,
+            ["Planned_Project_Start_Date__c"] = "2026-03-01",
+            ["Planned_Project_End_Date__c"] = "2027-02-28",
+            ["Total_Achieve__c"] = 18.5m,
+            ["Till_Weight__c"] = 25m,
+            ["Operational_Themes__c"] = "Future Readiness"
+        });
         var phase = org.NewId("a0W");
-        org.Objects["PMS_Work_Plan__c"].Upsert(phase, new() { ["Name"] = "1", ["PMS_Project__c"] = project, ["Is_this_header_task__c"] = true, ["Status__c"] = "Active",
-            ["Weight__c"] = 40m, ["Planned_Start_Date__c"] = "2026-03-01", ["Planned_End_Date__c"] = "2026-06-30" });
-        org.Objects["PMS_Work_Plan__c"].Upsert(org.NewId("a0W"), new() { ["Name"] = "1.1", ["PMS_Project__c"] = project, ["Header_Phase__c"] = phase, ["Status__c"] = "Completed",
-            ["Weight__c"] = 15m, ["Achieve__c"] = 15m, ["Planned_Start_Date__c"] = "2026-03-01", ["Planned_End_Date__c"] = "2026-04-15" });
+        org.Objects["PMS_Work_Plan__c"].Upsert(phase, new()
+        {
+            ["Name"] = "1",
+            ["PMS_Project__c"] = project,
+            ["Is_this_header_task__c"] = true,
+            ["Status__c"] = "Active",
+            ["Weight__c"] = 40m,
+            ["Planned_Start_Date__c"] = "2026-03-01",
+            ["Planned_End_Date__c"] = "2026-06-30"
+        });
+        org.Objects["PMS_Work_Plan__c"].Upsert(org.NewId("a0W"), new()
+        {
+            ["Name"] = "1.1",
+            ["PMS_Project__c"] = project,
+            ["Header_Phase__c"] = phase,
+            ["Status__c"] = "Completed",
+            ["Weight__c"] = 15m,
+            ["Achieve__c"] = 15m,
+            ["Planned_Start_Date__c"] = "2026-03-01",
+            ["Planned_End_Date__c"] = "2026-04-15"
+        });
         var instance = org.NewId("04g");
         org.Objects["ProcessInstance"].Upsert(instance, new() { ["TargetObjectId"] = project, ["Status"] = "Pending", ["ProcessDefinition.Name"] = "PMS Planning Approval" });
-        org.Objects["ProcessInstanceStep"].Upsert(org.NewId("04h"), new() { ["ProcessInstanceId"] = instance, ["ProcessInstance.TargetObjectId"] = project,
-            ["ProcessInstance.Status"] = "Pending", ["ProcessInstance.ProcessDefinition.Name"] = "PMS Planning Approval", ["StepStatus"] = "Started",
-            ["Actor.Name"] = "Ahmed Al Ali", ["Comments"] = "خطة المشروع جاهزة للاعتماد" });
+        org.Objects["ProcessInstanceStep"].Upsert(org.NewId("04h"), new()
+        {
+            ["ProcessInstanceId"] = instance,
+            ["ProcessInstance.TargetObjectId"] = project,
+            ["ProcessInstance.Status"] = "Pending",
+            ["ProcessInstance.ProcessDefinition.Name"] = "PMS Planning Approval",
+            ["StepStatus"] = "Started",
+            ["Actor.Name"] = "Ahmed Al Ali",
+            ["Comments"] = "خطة المشروع جاهزة للاعتماد"
+        });
         var document = org.NewId("069");
-        org.Objects["ContentVersion"].Upsert(org.NewId("068"), new() { ["ContentDocumentId"] = document, ["Title"] = "Project charter", ["PathOnClient"] = "project-charter.pdf",
-            ["FileExtension"] = "pdf", ["IsLatest"] = true, ["__content"] = Encoding.ASCII.GetBytes("%PDF-1.4\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj 2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj 3 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 200 200]>>endobj\ntrailer<</Root 1 0 R>>\n%%EOF\n") });
+        org.Objects["ContentVersion"].Upsert(org.NewId("068"), new()
+        {
+            ["ContentDocumentId"] = document,
+            ["Title"] = "Project charter",
+            ["PathOnClient"] = "project-charter.pdf",
+            ["FileExtension"] = "pdf",
+            ["IsLatest"] = true,
+            ["__content"] = Encoding.ASCII.GetBytes("%PDF-1.4\n1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj 2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj 3 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 200 200]>>endobj\ntrailer<</Root 1 0 R>>\n%%EOF\n")
+        });
         org.Objects["ContentDocumentLink"].Upsert(org.NewId("06A"), new() { ["ContentDocumentId"] = document, ["LinkedEntityId"] = project });
     }
 }

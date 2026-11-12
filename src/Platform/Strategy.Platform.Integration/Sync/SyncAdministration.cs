@@ -629,10 +629,21 @@ public sealed class SyncAdministration(
 
         var candidate = new MappingPackObject
         {
-            Key = mapping.Key, SourceObject = mapping.SourceObject, Kind = mapping.Kind, TargetType = input.TargetType, LoadOrder = input.LoadOrder, Where = input.Where,
-            WatermarkField = input.WatermarkField ?? mapping.WatermarkField, ExternalIdTemplate = input.ExternalIdTemplate ?? mapping.ExternalIdTemplate, UseBulk = input.UseBulk,
-            Fields = [.. input.Fields ?? []], Defaults = input.Defaults ?? [], Ignore = [.. input.Ignore ?? []], Options = input.Options,
-            NotesAr = input.NotesAr, NotesEn = input.NotesEn,
+            Key = mapping.Key,
+            SourceObject = mapping.SourceObject,
+            Kind = mapping.Kind,
+            TargetType = input.TargetType,
+            LoadOrder = input.LoadOrder,
+            Where = input.Where,
+            WatermarkField = input.WatermarkField ?? mapping.WatermarkField,
+            ExternalIdTemplate = input.ExternalIdTemplate ?? mapping.ExternalIdTemplate,
+            UseBulk = input.UseBulk,
+            Fields = [.. input.Fields ?? []],
+            Defaults = input.Defaults ?? [],
+            Ignore = [.. input.Ignore ?? []],
+            Options = input.Options,
+            NotesAr = input.NotesAr,
+            NotesEn = input.NotesEn,
         };
         var errors = ValidateStructure(candidate);
         if (errors.Count > 0)
@@ -924,7 +935,12 @@ public sealed class SyncAdministration(
             .ConfigureAwait(false);
         return new MappingPackDocument
         {
-            Code = pack.Code, Version = pack.PackVersion, NameAr = pack.NameAr, NameEn = pack.NameEn, Description = pack.Description, Connector = pack.Connector,
+            Code = pack.Code,
+            Version = pack.PackVersion,
+            NameAr = pack.NameAr,
+            NameEn = pack.NameEn,
+            Description = pack.Description,
+            Connector = pack.Connector,
             Objects = [.. rows.Select(m =>
             {
                 using var options = JsonDocument.Parse(string.IsNullOrWhiteSpace(m.Options) ? "{}" : m.Options);
