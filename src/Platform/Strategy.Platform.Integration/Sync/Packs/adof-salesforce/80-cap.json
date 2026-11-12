@@ -1,0 +1,83 @@
+{
+  "objects": [
+    {
+      "key": "cap-source", "sourceObject": "CAP_Remark_Source__c", "kind": "record", "targetType": "cap.source", "loadOrder": 80, "provisional": true,
+      "fields": [
+        { "source": "Name", "target": "number", "kind": "direct", "required": true },
+        { "source": "Source_Title__c", "target": "titleAr", "kind": "direct", "transform": "trim" },
+        { "source": "Source_Type__c", "target": "sourceType", "kind": "picklist", "values": {
+          "Workshop": "workshop", "Benchmarking": "benchmarking", "Internal Audit": "internal-audit", "External Audit": "external-audit",
+          "Excellence Assessment": "excellence-assessment", "GEM": "excellence-assessment", "KPI Performance": "kpi-performance", "Risk Event": "risk-event",
+          "Customer Complaint": "customer-complaint", "Customer Feedback": "customer-complaint", "Employee Survey": "employee-survey",
+          "Management Review": "management-review", "Other": "other" } },
+        { "source": "Description__c", "target": "description", "kind": "direct", "transform": "htmlToText" },
+        { "source": "Received_Date__c", "target": "receivedOn", "kind": "direct", "transform": "dateOnly" },
+        { "source": "Source_Owner__c", "target": "ownerEmployeeId", "kind": "person" },
+        { "source": "Department__c", "target": "unitId", "kind": "reference", "referenceType": "org.unit" }
+      ],
+      "defaults": { "status": "active" },
+      "ignore": ["OwnerId", "CurrencyIsoCode"],
+      "notesAr": "اسم الكائن وأسماء الحقول مؤقتة (مأخوذة من مخطط بيانات خطة العمل التصحيحية في وثائق الإصدار 1.0) ولا يراها مستخدم التكامل حالياً؛ يجب منحه صلاحية القراءة ثم تأكيدها بزر «تحقق» (الوصف الحي) قبل التفعيل. المصادر في Salesforce تُدخل يدوياً من مكتب إدارة المشاريع؛ هنا قد تُنشأ أيضاً تلقائياً من الأنظمة الأخرى (المقارنة المعيارية، التدقيق، المؤشرات، المخاطر)، والمصدر المتزامن يبقى «يدوي» بلا ربط بسجل نظام آخر. إن لم يوجد تاريخ استلام فيمكن ربط CreatedDate بدلاً منه، وإلا يذهب السجل إلى قائمة الاستثناءات.",
+      "notesEn": "Object and field names are provisional (from the Corrective Action Plan data model ERD in the 1.0 source documents) and not visible to the integration user today: grant it read access, then confirm them with Validate (live describe) before enabling. Salesforce sources are entered manually by the PM Office; here sources can also be created automatically by other systems (benchmarking, audit, KPI, risk) — a synced source stays \"manual\" with no linked system record. If there is no received-date field, map CreatedDate instead; otherwise the record goes to the exceptions queue."
+    },
+    {
+      "key": "cap-remark", "sourceObject": "CAP_Remark__c", "kind": "record", "targetType": "cap.remark", "loadOrder": 81, "provisional": true,
+      "fields": [
+        { "source": "Name", "target": "number", "kind": "direct", "required": true },
+        { "source": "CAP_Remark_Source__c", "target": "sourceId", "kind": "reference", "referenceType": "cap.source", "required": true },
+        { "source": "Improvement_Opportunity__c", "target": "textAr", "kind": "direct", "transform": "htmlToText" },
+        { "source": "Criteria__c", "target": "criterion", "kind": "picklist", "values": {
+          "Leadership": "leadership", "Strategy": "strategy", "People": "people", "Human Resources": "people", "Processes": "processes", "Services": "services",
+          "Innovation": "innovation", "Results": "results", "Other": "other" } },
+        { "source": "Department__c", "target": "departmentUnitId", "kind": "reference", "referenceType": "org.unit", "required": true },
+        { "source": "Section__c", "target": "sectionUnitId", "kind": "reference", "referenceType": "org.unit" },
+        { "source": "Remark_Owner__c", "target": "ownerEmployeeId", "kind": "person" },
+        { "source": "Assigned_Date__c", "target": "assignedOn", "kind": "direct", "transform": "dateOnly" },
+        { "source": "Due_Date__c", "target": "dueOn", "kind": "direct", "transform": "dateOnly" },
+        { "source": "Due_Date__c", "target": "dueAt", "kind": "direct" },
+        { "source": "Responded_Date__c", "target": "respondedAt", "kind": "direct" },
+        { "source": "Status__c", "target": "status", "kind": "picklist", "values": {
+          "Assigned": "assigned", "Waiting Acceptance": "assigned", "Accepted": "planning", "Waiting Actions": "planning", "Actions Rejected": "planning",
+          "Waiting PMO Approval": "validation", "Returned for Correction": "correction", "Actions Approved": "implementation", "In Progress": "implementation",
+          "Completed": "completed", "Rejected": "rejected", "Cancelled": "cancelled" } },
+        { "source": "Rejected_Reason__c", "target": "rejectionReason", "kind": "direct" },
+        { "source": "Completed_Date__c", "target": "completedAt", "kind": "direct" }
+      ],
+      "defaults": { "type": "observation", "priority": "medium" },
+      "ignore": ["OwnerId", "CurrencyIsoCode", "Current_Status__c"],
+      "notesAr": "اسم الكائن وأسماء الحقول مؤقتة ويجب تأكيدها بزر «تحقق» (الوصف الحي) قبل التفعيل. فروق النموذج: لا يوجد في Salesforce نوع ولا أولوية للملاحظة، فتُضبط على «ملاحظة» و«متوسطة» (يمكن تعديلها لاحقاً)؛ لا توجد خطوة تحليل السبب الجذري ولا التحقق من الفاعلية، فتبقى فارغة؛ رفض الملاحظة نهائي كما في Salesforce. تاريخ الاستحقاق يُنسخ إلى موعد الاستحقاق (تاريخ ووقت). رسالة الحالة الحالية لا تُنقل لأنها تُشتق هنا من الحالة. قيم الحالة غير المذكورة (مثل حالات انتظار جديدة) تذهب إلى قائمة الاستثناءات حتى تُربط برمز. تُمنح أدوار السجل (مالك الملاحظة، مسؤولو الإجراءات، متابعو النظام المصدر) تلقائياً لكل ملاحظة متزامنة.",
+      "notesEn": "Object and field names are provisional and must be confirmed with Validate (live describe) before enabling. Model differences: Salesforce remarks have no type and no priority, so they get \"observation\" and \"medium\" (editable later); there is no root-cause step and no effectiveness verification, so those stay empty; rejection is final as in Salesforce. The due date is copied into the due date-time. The current-status message is not imported — it is derived from the status here. Status values not listed (e.g. new waiting states) go to the exceptions queue until mapped to a code. The record roles (remark owner, action assignees, source-system viewers) are granted for every synced remark."
+    },
+    {
+      "key": "cap-action", "sourceObject": "CAP_Action_Plan__c", "kind": "record", "targetType": "cap.action", "loadOrder": 82, "provisional": true,
+      "fields": [
+        { "source": "Name", "target": "number", "kind": "direct", "required": true },
+        { "source": "CAP_Remark__c", "target": "homeRemarkId", "kind": "reference", "referenceType": "cap.remark", "required": true },
+        { "source": "Action_Details__c", "target": "detailsAr", "kind": "direct", "transform": "htmlToText" },
+        { "source": "Action_Type__c", "target": "type", "kind": "picklist", "values": {
+          "Correction": "correction", "Corrective Action": "corrective", "Preventive Action": "preventive", "Improvement": "improvement" } },
+        { "source": "Budget_Required__c", "target": "budgetRequired", "kind": "direct", "transform": "yesNo" },
+        { "source": "Budget_Available__c", "target": "budgetAvailable", "kind": "direct", "transform": "yesNo" },
+        { "source": "Estimated_Cost__c", "target": "estimatedCost", "kind": "direct" },
+        { "source": "Related_Process__c", "target": "relatedProcess", "kind": "direct", "transform": "truncate:400" },
+        { "source": "Assigned_Employee__c", "target": "assignedEmployeeId", "kind": "person" },
+        { "source": "Planned_Start_Date__c", "target": "plannedStart", "kind": "direct", "transform": "dateOnly" },
+        { "source": "Planned_End_Date__c", "target": "plannedEnd", "kind": "direct", "transform": "dateOnly" },
+        { "source": "Validation_Status__c", "target": "validationStatus", "kind": "picklist", "values": {
+          "Draft": "draft", "Pending": "pending", "Waiting PMO Approval": "pending", "Approved": "approved", "Rejected": "rejected",
+          "Returned for Correction": "returned" } },
+        { "source": "PMO_Notes__c", "target": "validationNote", "kind": "direct" },
+        { "source": "PMS_Project__c", "target": "projectId", "kind": "reference", "referenceType": "portfolio.project" },
+        { "source": "PMS_Project_Request__c", "target": "programRequestId", "kind": "reference", "referenceType": "portfolio.request" },
+        { "source": "Actual_Start_Date__c", "target": "actualStart", "kind": "direct", "transform": "dateOnly" },
+        { "source": "Actual_End_Date__c", "target": "actualEnd", "kind": "direct", "transform": "dateOnly" },
+        { "source": "Achieved__c", "target": "achievedPct", "kind": "direct", "transform": "percentToRatio" },
+        { "source": "Status__c", "target": "status", "kind": "picklist", "values": {
+          "Not Started": "not_started", "In Progress": "in_progress", "Late": "late", "Completed": "completed", "Cancelled": "cancelled" } }
+      ],
+      "ignore": ["OwnerId", "CurrencyIsoCode"],
+      "notesAr": "CAP_Action_Plan__c كائن معروف (مرتبط من PMS_Project__c) لكنه غير مرئي لمستخدم التكامل حالياً؛ أسماء الحقول مؤقتة ويجب تأكيدها بزر «تحقق» (الوصف الحي) قبل التفعيل. فروق النموذج: تغيير المواعيد في Salesforce غير متتبَّع، فلا تُنقل طلبات التمديد ولا التاريخ المعدَّل؛ سجل تحديثات الإنجاز الشهرية لا يُنقل (تُنقل نسبة الإنجاز الأخيرة فقط، من النسبة المئوية إلى نسبة 1.0 = 100%)؛ أدلة الإنجاز تأتي مرفقات للإجراء. يُربط الإجراء بملاحظته الأساسية فقط؛ إن كانت Salesforce تربط إجراءً قائماً بملاحظات أخرى (علاقة متعدد لمتعدد) فتلك الروابط الإضافية لا تُنقل. إن لم يكن رقم الإجراء بصيغة {رقم الملاحظة}-{n} فيبقى كما هو، والإجراءات المحلية بعد التحويل تُرقَّم بعد آخر رقم متزامن. لا تُنشأ موافقات اعتماد أو إنجاز.",
+      "notesEn": "CAP_Action_Plan__c is a known object (linked from PMS_Project__c) but not visible to the integration user today; field names are provisional and must be confirmed with Validate (live describe) before enabling. Model differences: Salesforce does not track due-date changes, so no extension requests or revised end date come over; the monthly achievement-update history is not imported (only the latest achievement, percent → ratio 1.0 = 100 %); completion evidence arrives as the action's attachments. The action is linked to its home remark only; if Salesforce links an existing action to further remarks (many-to-many), those extra links are not imported. A Name that is not {RemarkNo}-{n} is kept as is; local actions added after failover are numbered after the highest synced number. No validation or completion approval is created."
+    }
+  ]
+}

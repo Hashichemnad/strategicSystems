@@ -1,0 +1,62 @@
+{
+  "objects": [
+    {
+      "key": "audit-report", "sourceObject": "Audit_Observation__c", "kind": "record", "targetType": "auditmgmt.report", "loadOrder": 83, "provisional": true,
+      "where": "Special_Report__c != null", "externalIdTemplate": "{Special_Report__c}",
+      "fields": [
+        { "source": "Special_Report__c", "target": "number", "kind": "direct", "transform": "truncate:60", "required": true },
+        { "source": "Special_Report__c", "target": "titleEn", "kind": "direct", "transform": "truncate:400" },
+        { "source": "Audit_Type__c", "target": "type", "kind": "picklist", "values": {
+          "Internal Audit": "internal-audit", "External Audit": "external-audit", "State Audit Institution": "external-audit", "Special Report": "special-report",
+          "Revenue Audit": "revenue-audit", "Consultancy": "consultancy", "Other": "other" } }
+      ],
+      "defaults": { "status": "under_follow_up" },
+      "notesAr": "في Salesforce لا يوجد سجل لتقرير التدقيق: تُجمَّع الملاحظات بقائمة اختيار «تقرير خاص». لذلك يُشتق هنا تقرير تدقيق واحد لكل قيمة من Special_Report__c (ربط ثانٍ لكائن الملاحظات، المعرّف الخارجي هو القيمة نفسها كي تُحلّ إشارة الملاحظة إليه)، بحالة «قيد المتابعة»، دون مُدقِّق أو فترة أو ملف تقرير أو قائمة توزيع (تُكمل يدوياً بعد التحويل). إن كان في المؤسسة كائن مستقل للتقارير (مثل Audit_Report__c) فيُستبدل هذا الربط به. الملاحظات بلا قيمة «تقرير خاص» تذهب إلى قائمة الاستثناءات (التقرير مطلوب). الاسم والحقول مؤقتة ويجب تأكيدها بزر «تحقق» (الوصف الحي) قبل التفعيل.",
+      "notesEn": "Salesforce has no audit-report record: findings are grouped by a \"Special report\" picklist. One audit report is therefore derived per Special_Report__c value (second mapping of the observation object, the external ID is the value itself so the findings' reference resolves to it), status \"under follow-up\", with no auditor, period, report file or distribution list (completed by hand after failover). If the org has a separate report object (e.g. Audit_Report__c), replace this mapping with it. Observations without a special report go to the exceptions queue (the report is required). Names are provisional and must be confirmed with Validate (live describe) before enabling."
+    },
+    {
+      "key": "audit-finding", "sourceObject": "Audit_Observation__c", "kind": "record", "targetType": "auditmgmt.finding", "loadOrder": 84, "provisional": true,
+      "fields": [
+        { "source": "Name", "target": "number", "kind": "direct", "required": true },
+        { "source": "Special_Report__c", "target": "reportId", "kind": "reference", "referenceType": "auditmgmt.report", "required": true },
+        { "source": "Observation_Title__c", "target": "titleAr", "kind": "direct", "transform": "trim" },
+        { "source": "Observation__c", "target": "condition", "kind": "direct", "transform": "htmlToText" },
+        { "source": "Observation_Date__c", "target": "findingDate", "kind": "direct", "transform": "dateOnly" },
+        { "source": "Department__c", "target": "responsibleUnitId", "kind": "reference", "referenceType": "org.unit", "required": true },
+        { "source": "Expected_Closing_Date__c", "target": "expectedClosingOn", "kind": "direct", "transform": "dateOnly" },
+        { "source": "Actual_Closed_Date__c", "target": "actualClosedOn", "kind": "direct", "transform": "dateOnly" },
+        { "source": "Status__c", "target": "status", "kind": "picklist", "values": {
+          "Open": "open", "In Progress": "open", "Late": "late", "Overdue": "late", "Closed": "closed", "Cancelled": "cancelled" } },
+        { "source": "Overall_Completion__c", "target": "completion", "kind": "direct", "transform": "percentToRatio" },
+        { "source": "Auditor__c", "target": "auditorEmployeeId", "kind": "person" }
+      ],
+      "defaults": { "type": "finding", "priority": "medium" },
+      "ignore": ["OwnerId", "CurrencyIsoCode", "Year__c"],
+      "notesAr": "الاسم والحقول مؤقتة (من مخطط بيانات التدقيق ومواصفته الفنية في وثائق الإصدار 1.0) ويجب تأكيدها بزر «تحقق» (الوصف الحي) قبل التفعيل. فروق النموذج: الملاحظة في Salesforce وصف فقط، فيُنقل الوصف إلى «الحالة» (condition) وتبقى المعايير والسبب والأثر وروابط المخاطر والضوابط والوثائق والملاحظات المتكررة فارغة؛ لا يوجد تصنيف خطورة فتُضبط الأولوية على «متوسطة»؛ لا توجد حالة «قبول المخاطر». السنة تُحسب من تاريخ الملاحظة، والإدارة المعنية تُشتق من الوحدة المسؤولة وتُمنح لها صلاحية الاطلاع (وضع الإدارة). بوابة التدقيق المنفصلة تُستبدل بعرض للقراءة فقط في مساحة العمل نفسها.",
+      "notesEn": "Names are provisional (from the audit data model ERD and technical specification in the 1.0 source documents) and must be confirmed with Validate (live describe) before enabling. Model differences: a Salesforce observation is a description only — it becomes the condition; criteria, cause, effect and links to risks, controls, documents and repeat findings stay empty; there is no risk rating, so priority is \"medium\"; there is no \"risk accepted\" status. The year is computed from the finding date; the concerned department is derived from the responsible unit and gets its read-only record role (department mode). The separate Audit Portal is replaced by read-only access in the same workspace."
+    },
+    {
+      "key": "audit-recommendation", "sourceObject": "Audit_Recommendation__c", "kind": "record", "targetType": "auditmgmt.recommendation", "loadOrder": 85, "provisional": true,
+      "fields": [
+        { "source": "Name", "target": "number", "kind": "direct", "required": true },
+        { "source": "Audit_Observation__c", "target": "findingId", "kind": "reference", "referenceType": "auditmgmt.finding", "required": true },
+        { "source": "Recommended_Action__c", "target": "actionAr", "kind": "direct", "transform": "htmlToText" },
+        { "source": "Implementation_Plan__c", "target": "implementationPlan", "kind": "direct", "transform": "htmlToText" },
+        { "source": "Department_Contact__c", "target": "contactEmployeeId", "kind": "person" },
+        { "source": "Implementation_Date__c", "target": "dueOn", "kind": "direct", "transform": "dateOnly" },
+        { "source": "Status__c", "target": "status", "kind": "picklist", "values": {
+          "Not Started": "not_started", "Continuing": "continuing", "In Progress": "continuing", "Late": "late", "Completed": "completed",
+          "Cancelled": "cancelled" } },
+        { "source": "Achieve__c", "target": "latestPct", "kind": "direct", "transform": "percentToRatio" },
+        { "source": "Completed_Date__c", "target": "completedOn", "kind": "direct", "transform": "dateOnly" },
+        { "source": "Last_Follow_Up_Date__c", "target": "lastFollowUpOn", "kind": "direct", "transform": "dateOnly" },
+        { "source": "Next_Follow_Up_Date__c", "target": "nextFollowUpOn", "kind": "direct", "transform": "dateOnly" },
+        { "source": "Follow_Up_Comment__c", "target": "lastComment", "kind": "direct" },
+        { "source": "Notes__c", "target": "notes", "kind": "direct" }
+      ],
+      "ignore": ["OwnerId", "CurrencyIsoCode"],
+      "notesAr": "الاسم والحقول مؤقتة ويجب تأكيدها بزر «تحقق» (الوصف الحي) قبل التفعيل. فروق النموذج: صفوف تحديث التقدّم (AAQ) وحالة «الاعتماد» النصية عليها لا تُنقل إلى متابعات (تُنقل آخر نسبة إنجاز وآخر وأقرب تاريخ متابعة وتعليقها فقط؛ يبقى التفصيل في سجل المصدر)؛ أدلة الإثبات (حتى 3 ملفات في Salesforce) تأتي مرفقات؛ تغيير تاريخ الاستحقاق غير متتبَّع في Salesforce فلا يُنقل تاريخ معدَّل ولا سبب؛ رد الإدارة و«قبول المخاطر» غير موجودين في Salesforce فيبقيان فارغين. لا تُنشأ مراجعة متابعة.",
+      "notesEn": "Names are provisional and must be confirmed with Validate (live describe) before enabling. Model differences: Salesforce progress-update rows (AAQ) and the \"approval status\" text on them are not imported as follow-ups (only the latest completion, last / next follow-up dates and comment come over; the detail stays in the source history); evidence (up to 3 files in Salesforce) arrives as attachments; due-date changes are untracked in Salesforce, so no revised date or reason comes over; management response and \"risk accepted\" do not exist in Salesforce and stay empty. No follow-up review is created."
+    }
+  ]
+}

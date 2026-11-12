@@ -62,6 +62,7 @@ public sealed class AuditMgmtModule : IModule
         services.AddScoped<AuditQueries>();
         services.AddScoped<AuditImporter>();
         services.AddScoped<AuditLifecycle>();
+        services.AddAuditSyncTargets(); // Phase 23, ADR 0202
 
         services.AddApprovalProcess(AuditProcessDefinitions.FollowUpReview);
         services.AddApprovalProcess(AuditProcessDefinitions.Plan);
