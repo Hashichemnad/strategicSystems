@@ -38,7 +38,13 @@ internal sealed class RequestDatasetSource(RequestReader reader, IClock clock) :
             new("stageDueAt", "استحقاق المرحلة", "Stage due", DatasetFieldType.DateTime),
             new("completedAt", "تاريخ الإنجاز", "Completed", DatasetFieldType.DateTime),
             new("overdue", "متأخر", "Overdue", DatasetFieldType.Bool, Groupable: true),
-        ], "/requests/{id}"),
+            new("id", "المعرّف", "Id", DatasetFieldType.Reference, Sortable: false),
+        ], "/requests/{id}") { KeyField = "id" },
+    ];
+
+    public IReadOnlyList<DatasetRelationship> Relationships { get; } =
+    [
+        new("requests.request-approvals", RequestsDataset, "id", "workflow.approvals", "resourceId", "سجل الاعتماد", "Approval history"),
     ];
 
     public async Task<ReportResult> RunAsync(ReportQuery query, ClaimsPrincipal user, CancellationToken cancellationToken)
@@ -69,7 +75,8 @@ internal sealed class RequestDatasetSource(RequestReader reader, IClock clock) :
             .Field("submittedAt", r => r.SubmittedAt)
             .Field("stageDueAt", r => r.StageDueAt)
             .Field("completedAt", r => r.CompletedAt)
-            .Field("overdue", r => r.StageDueAt != null && r.StageDueAt < now && open.Contains(r.Status));
+            .Field("overdue", r => r.StageDueAt != null && r.StageDueAt < now && open.Contains(r.Status))
+            .Field("id", r => r.Id);
         var requests = await reader.VisibleAsync(user, cancellationToken).ConfigureAwait(false);
         return await dataset.RunAsync(requests, query, cancellationToken).ConfigureAwait(false);
     }

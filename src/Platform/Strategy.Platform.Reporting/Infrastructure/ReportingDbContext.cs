@@ -35,6 +35,12 @@ public sealed class ReportingDbContext(DbContextOptions<ReportingDbContext> opti
     public DbSet<Delivery> Deliveries => Set<Delivery>();
 
     public DbSet<ExecutiveBrief> Briefs => Set<ExecutiveBrief>();
+
+    public DbSet<ReportType> ReportTypes => Set<ReportType>();
+
+    public DbSet<ReportFolder> Folders => Set<ReportFolder>();
+
+    public DbSet<DossierTemplate> DossierTemplates => Set<DossierTemplate>();
 }
 
 internal sealed class FactConfiguration : IEntityTypeConfiguration<MetricFactRow>
@@ -154,10 +160,11 @@ internal sealed class SavedReportConfiguration : IEntityTypeConfiguration<SavedR
         builder.Property(x => x.Id).ValueGeneratedNever();
         builder.Property(x => x.Name).HasMaxLength(200);
         builder.Property(x => x.Description).HasMaxLength(1000);
-        builder.Property(x => x.Dataset).HasMaxLength(100);
+        builder.Property(x => x.Dataset).HasMaxLength(150);
         builder.Property(x => x.Status).HasMaxLength(20);
         builder.Property(x => x.DefinitionJson).HasColumnType("jsonb");
         builder.HasIndex(x => x.OwnerUserId);
+        builder.HasIndex(x => x.FolderId);
     }
 }
 
@@ -173,6 +180,7 @@ internal sealed class ScheduleConfiguration : IEntityTypeConfiguration<Schedule>
         builder.Property(x => x.PeriodRule).HasMaxLength(30);
         builder.Property(x => x.Format).HasMaxLength(10);
         builder.Property(x => x.RecipientsJson).HasColumnType("jsonb");
+        builder.Property(x => x.OptionsJson).HasColumnType("jsonb");
         builder.HasIndex(x => new { x.Active, x.NextRunAt });
     }
 }
@@ -201,5 +209,54 @@ internal sealed class ExecutiveBriefConfiguration : IEntityTypeConfiguration<Exe
         builder.Property(x => x.ScopeDescription).HasMaxLength(500);
         builder.Property(x => x.ContentJson).HasColumnType("jsonb");
         builder.HasIndex(x => x.CreatedBy);
+    }
+}
+
+internal sealed class ReportTypeConfiguration : IEntityTypeConfiguration<ReportType>
+{
+    public void Configure(EntityTypeBuilder<ReportType> builder)
+    {
+        builder.ToTable("report_type");
+        builder.Property(x => x.Id).ValueGeneratedNever();
+        builder.Property(x => x.Code).HasMaxLength(100);
+        builder.Property(x => x.SystemCode).HasMaxLength(50);
+        builder.Property(x => x.LabelAr).HasMaxLength(200);
+        builder.Property(x => x.LabelEn).HasMaxLength(200);
+        builder.Property(x => x.DescriptionAr).HasMaxLength(1000);
+        builder.Property(x => x.DescriptionEn).HasMaxLength(1000);
+        builder.Property(x => x.DefinitionJson).HasColumnType("jsonb");
+        builder.Property(x => x.Status).HasMaxLength(20);
+        builder.Property(x => x.SeedHash).HasMaxLength(64);
+        builder.HasIndex(x => x.Code).IsUnique();
+    }
+}
+
+internal sealed class ReportFolderConfiguration : IEntityTypeConfiguration<ReportFolder>
+{
+    public void Configure(EntityTypeBuilder<ReportFolder> builder)
+    {
+        builder.ToTable("report_folder");
+        builder.Property(x => x.Id).ValueGeneratedNever();
+        builder.Property(x => x.Name).HasMaxLength(200);
+        builder.Property(x => x.Kind).HasMaxLength(20);
+        builder.Property(x => x.Status).HasMaxLength(20);
+        builder.HasIndex(x => x.OwnerUserId);
+    }
+}
+
+internal sealed class DossierTemplateConfiguration : IEntityTypeConfiguration<DossierTemplate>
+{
+    public void Configure(EntityTypeBuilder<DossierTemplate> builder)
+    {
+        builder.ToTable("dossier_template");
+        builder.Property(x => x.Id).ValueGeneratedNever();
+        builder.Property(x => x.Code).HasMaxLength(100);
+        builder.Property(x => x.Dataset).HasMaxLength(100);
+        builder.Property(x => x.LabelAr).HasMaxLength(200);
+        builder.Property(x => x.LabelEn).HasMaxLength(200);
+        builder.Property(x => x.DefinitionJson).HasColumnType("jsonb");
+        builder.Property(x => x.Status).HasMaxLength(20);
+        builder.Property(x => x.SeedHash).HasMaxLength(64);
+        builder.HasIndex(x => x.Code).IsUnique();
     }
 }

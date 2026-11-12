@@ -4212,6 +4212,294 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/reporting/reports/{id}/folder': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['MoveReport'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/report-types': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListUsableReportTypes'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/report-types/{code}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetUsableReportType'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/reports/query': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['QueryReport'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/admin/report-types': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListReportTypes'];
+    put?: never;
+    post: operations['CreateReportType'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/admin/report-types/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetReportType'];
+    put: operations['UpdateReportType'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/admin/reportable': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetReportableMetadata'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/admin/dossier-reportable': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetDossierReportableMetadata'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/folders': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListReportFolders'];
+    put?: never;
+    post: operations['CreateReportFolder'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/folders/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put: operations['UpdateReportFolder'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/folders/{id}/archive': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['ArchiveReportFolder'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/folders/{id}/shares': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListReportFolderShares'];
+    put: operations['ShareReportFolder'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/dossier-templates': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListUsableDossierTemplates'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/dossier-templates/{code}/records': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListDossierRecords'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/dossiers/{code}/render': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RenderDossier'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/dossiers/{code}/bulk': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post: operations['RenderDossierSet'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/admin/dossier-templates': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['ListDossierTemplates'];
+    put?: never;
+    post: operations['CreateDossierTemplate'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/reporting/admin/dossier-templates/{id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get: operations['GetDossierTemplate'];
+    put: operations['UpdateDossierTemplate'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/reporting/reports/{id}/shares': {
     parameters: {
       query?: never;
@@ -18291,6 +18579,133 @@ export interface components {
       nameAr: null | string;
       nameEn: null | string;
     };
+    DossierBulkInput: {
+      filters: components['schemas']['ReportFilter'][];
+      format: string;
+      language: null | string;
+    };
+    /** @description A section is shown only when the record's field matches (operators as report filters, evaluated on the raw value). */
+    DossierCondition: {
+      field?: string;
+      operator?: string;
+      values?: string[];
+    };
+    DossierCover: {
+      show?: boolean;
+      titleAr?: null | string;
+      titleEn?: null | string;
+      /** @description A record field shown under the title (qualified, e.g. `a.nameEn`). */
+      subtitleField?: null | string;
+      showOrganisation?: boolean;
+      showDate?: boolean;
+    };
+    DossierDefinition: {
+      cover?: components['schemas']['DossierCover'];
+      /** @description The record's number and name fields (file names, record picker, page header). */
+      numberField?: null | string;
+      nameFieldAr?: null | string;
+      nameFieldEn?: null | string;
+      headerAr?: null | string;
+      headerEn?: null | string;
+      footerAr?: null | string;
+      footerEn?: null | string;
+      language?: string;
+      sections?: components['schemas']['DossierSection'][];
+    };
+    DossierRecordDto: {
+      /** Format: uuid */
+      id: string;
+      number: null | string;
+      nameAr: null | string;
+      nameEn: null | string;
+    };
+    DossierRenderInput: {
+      /** Format: uuid */
+      recordId: string;
+      format: string;
+      language: null | string;
+    };
+    /**
+     * @description Dossier schedules (ADR 0186): the records (filters on the template's record type), the file (`pdf` merged, `zip-pdf`, `zip-docx`),
+     *     the language (null = each recipient's) and optionally string? DossierScheduleOptions.RecipientField — an employee field of the record (e.g. `a.owner`):
+     *     each record's person receives the dossiers of their records.
+     */
+    DossierScheduleOptions: {
+      filters: components['schemas']['ReportFilter'][];
+      language: null | string;
+      recipientField: null | string;
+    };
+    /**
+     * @description One block of a dossier (ADR 0184). Fields are qualified by level: `a` = the record, `b`, `c`, `d` = the objects reached along
+     *     List&lt;string&gt;? DossierSection.Path (relationship codes from the record's dataset, up to three).
+     */
+    DossierSection: {
+      key?: string;
+      titleAr?: null | string;
+      titleEn?: null | string;
+      kind?: string;
+      /** @description `fields`: record fields; `related`: table columns. */
+      fields?: null | string[];
+      textAr?: null | string;
+      textEn?: null | string;
+      path?: null | string[];
+      /** @description Filters on the last object of the path (qualified fields). */
+      filters?: null | components['schemas']['ReportFilter'][];
+      sort?: null | components['schemas']['ReportSort'][];
+      /**
+       * Format: int32
+       * @description Rows of a related list (capped by Settings → Reporting).
+       */
+      limit?: null | number;
+      chart?: null | components['schemas']['ReportChart'];
+      /** @description `trend`: x axis field and the measured fields (one line each). */
+      category?: null | string;
+      measures?: null | string[];
+      /** @description `gantt`: bar label (Arabic / English field), planned and actual dates. */
+      labelAr?: null | string;
+      labelEn?: null | string;
+      start?: null | string;
+      end?: null | string;
+      actualStart?: null | string;
+      actualEnd?: null | string;
+      /** @description `matrix`: likelihood and impact fields, matrix size (3–7). */
+      likelihood?: null | string;
+      impact?: null | string;
+      /** Format: int32 */
+      size?: number;
+      /** @description `approvals`: the record type the approval engine uses (e.g. `portfolio.project`). */
+      resourceType?: null | string;
+      /** @description `attachments`: the file owner type (e.g. `portfolio.project`). */
+      ownerType?: null | string;
+      condition?: null | components['schemas']['DossierCondition'];
+      pageBreak?: boolean;
+    };
+    DossierTemplateBody: {
+      template: components['schemas']['DossierTemplateInput'];
+      /** Format: uint32 */
+      version: null | number;
+    };
+    DossierTemplateDto: {
+      /** Format: uuid */
+      id: string;
+      code: string;
+      dataset: string;
+      labelAr: string;
+      labelEn: string;
+      definition: components['schemas']['DossierDefinition'];
+      active: boolean;
+      seeded: boolean;
+      /** Format: uint32 */
+      version: number;
+    };
+    DossierTemplateInput: {
+      code: string;
+      dataset: string;
+      labelAr: string;
+      labelEn: string;
+      definition: components['schemas']['DossierDefinition'];
+      active: boolean;
+    };
     DraftEpicDto: {
       titleAr: null | string;
       titleEn: null | string;
@@ -24152,6 +24567,66 @@ export interface components {
       /** Format: uuid */
       usageId: null | string;
     };
+    ReportableDatasetDto: {
+      code: string;
+      systemCode: string;
+      labelAr: string;
+      labelEn: string;
+      joinOnly: boolean;
+      keyField: null | string;
+      fields: components['schemas']['ReportableFieldDto'][];
+    };
+    ReportableFieldDto: {
+      code: string;
+      labelAr: string;
+      labelEn: string;
+      type: string;
+      permission: null | string;
+    };
+    /** @description The reportable metadata for the report-type editor (ADR 0180): every dataset, field (with its permission) and relationship. */
+    ReportableMetadataDto: {
+      datasets: components['schemas']['ReportableDatasetDto'][];
+      relationships: components['schemas']['ReportableRelationshipDto'][];
+    };
+    ReportableRelationshipDto: {
+      code: string;
+      parentDataset: string;
+      parentField: string;
+      childDataset: string;
+      childField: string;
+      labelAr: string;
+      labelEn: string;
+    };
+    ReportAggregateDto: {
+      column: string;
+      function: string;
+      value: null | string;
+      /** Format: double */
+      raw: null | number;
+    };
+    /**
+     * @description A chart on top of the table: categories from string ReportChart.Category, optional string? ReportChart.Series (stacked bar / multi-line), value =
+     *     count of rows (string? ReportChart.Measure null) or string ReportChart.Aggregate of string? ReportChart.Measure.
+     */
+    ReportChart: {
+      type?: string;
+      category?: string;
+      series?: null | string;
+      measure?: null | string;
+      aggregate?: string;
+    };
+    ReportChartDto: {
+      type: string;
+      categories: string[];
+      series: components['schemas']['ReportChartSeriesDto'][];
+      measureLabelAr: string;
+      measureLabelEn: string;
+    };
+    ReportChartSeriesDto: {
+      key: null | string;
+      label: null | string;
+      values: number[];
+    };
     ReportColumnDto: {
       code: string;
       labelAr: string;
@@ -24165,6 +24640,13 @@ export interface components {
       filters?: components['schemas']['ReportFilter'][];
       groupBy?: string[];
       sort?: components['schemas']['ReportSort'][];
+      /** @description Reporting 2.0 (ADR 0181): a report type code (or `dataset:&lt;code&gt;`); columns are then qualified (`b.title`). */
+      reportType?: null | string;
+      summaries?: components['schemas']['ReportSummary'][];
+      chart?: null | components['schemas']['ReportChart'];
+      highlights?: components['schemas']['ReportHighlight'][];
+      /** @description Grouped reports: list the detail rows under the subtotals (default) or only the subtotals. */
+      showDetails?: boolean;
     };
     ReportDto: {
       /** Format: uuid */
@@ -24200,6 +24682,37 @@ export interface components {
       field: string;
       operator: string;
       values: string[];
+    };
+    ReportFolderDto: {
+      /** Format: uuid */
+      id: string;
+      name: string;
+      kind: string;
+      /** Format: uuid */
+      ownerUserId: string;
+      canEdit: boolean;
+      /** Format: uint32 */
+      version: number;
+    };
+    ReportFolderInput: {
+      name: string;
+      kind: string;
+    };
+    ReportGroupDto: {
+      /** Format: int32 */
+      level: number;
+      keys: string[];
+      label: null | string;
+      /** Format: int32 */
+      count: number;
+      aggregates: components['schemas']['ReportAggregateDto'][];
+    };
+    /** @description Conditional highlighting: cells of string ReportHighlight.Column matching the condition get string ReportHighlight.Tone. */
+    ReportHighlight: {
+      column?: string;
+      operator?: string;
+      values?: string[];
+      tone?: string;
     };
     ReportingCatalogueDto: {
       widgetTypes: string[];
@@ -24254,6 +24767,26 @@ export interface components {
       exportRowLimit?: number;
       /**
        * Format: int32
+       * @description Report types (ADR 0181): most primary records read for one run; more → the result is marked truncated.
+       */
+      reportPrimaryRowLimit?: number;
+      /**
+       * Format: int32
+       * @description Report types: a run (all module queries and the join) is cancelled after this many seconds.
+       */
+      reportTimeoutSeconds?: number;
+      /**
+       * Format: int32
+       * @description Record dossiers (ADR 0185): most records in one bulk run (merged PDF or ZIP) or one scheduled e-mail.
+       */
+      dossierBulkLimit?: number;
+      /**
+       * Format: int32
+       * @description Record dossiers: most rows of one related-list section.
+       */
+      dossierSectionRowLimit?: number;
+      /**
+       * Format: int32
        * @description Attachments larger than this are sent as a link to the authorised download.
        */
       attachmentLimitMb?: number;
@@ -24273,6 +24806,10 @@ export interface components {
       summary: string;
       /** Format: uint32 */
       version: number;
+    };
+    ReportMoveInput: {
+      /** Format: uuid */
+      folderId: null | string;
     };
     ReportRowDto: {
       /** Format: uuid */
@@ -24303,6 +24840,118 @@ export interface components {
     ReportSort: {
       field: string;
       descending: boolean;
+    };
+    /** @description A summary formula: List&lt;string&gt; ReportSummary.Functions of a numeric (or date, for min / max) column; count is always given. */
+    ReportSummary: {
+      column?: string;
+      functions?: string[];
+    };
+    ReportTypeBody: {
+      reportType: components['schemas']['ReportTypeInput'];
+      /** Format: uint32 */
+      version: null | number;
+    };
+    ReportTypeColumnDto: {
+      code: string;
+      alias: string;
+      labelAr: string;
+      labelEn: string;
+      objectLabelAr: string;
+      objectLabelEn: string;
+      type: string;
+    };
+    /** @description The stored shape of a report type: the primary node first, then related nodes (parents before children). */
+    ReportTypeDefinition: {
+      nodes?: components['schemas']['ReportTypeNode'][];
+    };
+    ReportTypeDto: {
+      /** Format: uuid */
+      id: string;
+      code: string;
+      systemCode: string;
+      labelAr: string;
+      labelEn: string;
+      descriptionAr: null | string;
+      descriptionEn: null | string;
+      definition: components['schemas']['ReportTypeDefinition'];
+      active: boolean;
+      seeded: boolean;
+      /** Format: uint32 */
+      version: number;
+    };
+    ReportTypeFieldDto: {
+      code: string;
+      field: string;
+      labelAr: string;
+      labelEn: string;
+      type: string;
+      filterable: boolean;
+      groupable: boolean;
+      sortable: boolean;
+      lookupType: null | string;
+    };
+    ReportTypeInput: {
+      code: string;
+      systemCode: string;
+      labelAr: string;
+      labelEn: string;
+      descriptionAr: null | string;
+      descriptionEn: null | string;
+      definition: components['schemas']['ReportTypeDefinition'];
+      active: boolean;
+    };
+    /**
+     * @description One object of a report type (ADR 0181). The first node is the primary object (no relationship, no parent); every other node follows a
+     *     declared DatasetRelationship from its parent node. List&lt;string&gt;? ReportTypeNode.Fields: the fields offered (null = every field of the
+     *     dataset); the runner's own field permissions apply on top at every run.
+     */
+    ReportTypeNode: {
+      /** @description Short alias used to qualify columns (`a.number`, `b.title`): lowercase letter(s) unique in the type. */
+      alias?: string;
+      dataset?: string;
+      relationship?: null | string;
+      parent?: null | string;
+      join?: string;
+      fields?: null | string[];
+    };
+    ReportTypeObjectDto: {
+      alias: string;
+      dataset: string;
+      labelAr: string;
+      labelEn: string;
+      parent: null | string;
+      join: string;
+      relationshipLabelAr: null | string;
+      relationshipLabelEn: null | string;
+      readable: boolean;
+      fields: components['schemas']['ReportTypeFieldDto'][];
+    };
+    ReportTypeRowDto: {
+      cells: string[];
+      tones: string[];
+      links: {
+        [key: string]: string;
+      };
+      groupKeys: string[];
+    };
+    ReportTypeRunDto: {
+      reportType: string;
+      labelAr: string;
+      labelEn: string;
+      columns: components['schemas']['ReportTypeColumnDto'][];
+      rows: components['schemas']['ReportTypeRowDto'][];
+      /** Format: int32 */
+      total: number;
+      /** Format: int32 */
+      page: number;
+      /** Format: int32 */
+      pageSize: number;
+      truncated: boolean;
+      droppedColumns: string[];
+      groupBy: string[];
+      groups: components['schemas']['ReportGroupDto'][];
+      grandTotal: components['schemas']['ReportGroupDto'];
+      chart: null | components['schemas']['ReportChartDto'];
     };
     RequestActionsDto: {
       edit: boolean;
@@ -25379,11 +26028,17 @@ export interface components {
       canEdit: boolean;
       /** Format: uint32 */
       version: number;
+      /** Format: uuid */
+      folderId?: null | string;
+      /** @default false */
+      shared: boolean;
     };
     SavedReportInput: {
       name: string;
       description: null | string;
       definition: components['schemas']['ReportDefinition'];
+      /** Format: uuid */
+      folderId?: null | string;
     };
     SaveInput: {
       data: null | components['schemas']['JsonObject'];
@@ -25452,6 +26107,7 @@ export interface components {
       ownerUserId: string;
       /** Format: uint32 */
       version: number;
+      dossier?: null | components['schemas']['DossierScheduleOptions'];
     };
     ScheduleInput: {
       name: string;
@@ -25466,6 +26122,7 @@ export interface components {
       format: string;
       recipients: components['schemas']['ScheduleRecipient'][];
       active: boolean;
+      dossier?: null | components['schemas']['DossierScheduleOptions'];
     };
     ScheduleRecipient: {
       kind: string;
@@ -27483,6 +28140,28 @@ export interface components {
       effectiveDate: null | string;
       /** Format: uint32 */
       version: number;
+    };
+    /** @description A template the caller may run (its record type is readable). */
+    UsableDossierTemplateDto: {
+      /** Format: uuid */
+      id: string;
+      code: string;
+      dataset: string;
+      labelAr: string;
+      labelEn: string;
+      language: string;
+      filterFields: components['schemas']['ReportTypeFieldDto'][];
+    };
+    /** @description A report type as the builder offers it to the caller: only objects and fields they may see. */
+    UsableReportTypeDto: {
+      code: string;
+      systemCode: string;
+      labelAr: string;
+      labelEn: string;
+      descriptionAr: null | string;
+      descriptionEn: null | string;
+      implicit: boolean;
+      objects: components['schemas']['ReportTypeObjectDto'][];
     };
     UserDto: {
       /** Format: uuid */
@@ -38703,6 +39382,764 @@ export interface operations {
           [name: string]: unknown;
         };
         content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  MoveReport: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ReportMoveInput'];
+      };
+    };
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListUsableReportTypes: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['UsableReportTypeDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetUsableReportType: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        code: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['UsableReportTypeDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  QueryReport: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ReportRunInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReportTypeRunDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListReportTypes: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReportTypeDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateReportType: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ReportTypeInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReportTypeDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetReportType: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReportTypeDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateReportType: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ReportTypeBody'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReportTypeDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetReportableMetadata: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReportableMetadataDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetDossierReportableMetadata: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReportableMetadataDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListReportFolders: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReportFolderDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateReportFolder: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ReportFolderInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReportFolderDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateReportFolder: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ReportFolderInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ReportFolderDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ArchiveReportFolder: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListReportFolderShares: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ShareInput'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ShareReportFolder: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ShareInput'][];
+      };
+    };
+    responses: {
+      /** @description No Content */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListUsableDossierTemplates: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['UsableDossierTemplateDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListDossierRecords: {
+    parameters: {
+      query?: {
+        q?: string;
+      };
+      header?: never;
+      path: {
+        code: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DossierRecordDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RenderDossier: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        code: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['DossierRenderInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  RenderDossierSet: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        code: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['DossierBulkInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  ListDossierTemplates: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DossierTemplateDto'][];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  CreateDossierTemplate: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['DossierTemplateInput'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DossierTemplateDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  GetDossierTemplate: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DossierTemplateDto'];
+        };
+      };
+      /** @description Problem Details (RFC 9457) */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/problem+json': components['schemas']['Problem'];
+        };
+      };
+    };
+  };
+  UpdateDossierTemplate: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['DossierTemplateBody'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DossierTemplateDto'];
+        };
       };
       /** @description Problem Details (RFC 9457) */
       default: {

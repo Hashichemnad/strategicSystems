@@ -18,6 +18,7 @@ namespace Strategy.Platform.Reporting.Application;
 /// <summary>Every metric, list and dataset declared by the modules (ADR 0140).</summary>
 public sealed class MetricRegistry(
     IEnumerable<IReportingMetricSource> metricSources, IEnumerable<IReportingListSource> listSources, IEnumerable<IReportingDatasetSource> datasetSources)
+    : IReportableMetadata
 {
     private readonly Dictionary<string, (MetricDefinition Definition, IReportingMetricSource Source)> _metrics =
         metricSources.SelectMany(s => s.Metrics.Select(m => (m, s))).GroupBy(p => p.m.Code, StringComparer.Ordinal)
@@ -63,6 +64,33 @@ public sealed class MetricRegistry(
         definition = null!;
         source = null!;
         return false;
+    }
+
+    private IReadOnlyList<DatasetRelationship>? _relationships;
+
+    /// <summary>Relationships whose both ends are registered datasets (a relationship to a disabled or missing module is ignored).</summary>
+    public IReadOnlyList<DatasetRelationship> Relationships => _relationships ??= _datasets.Values.Select(v => v.Source).Distinct()
+        .SelectMany(s => s.Relationships)
+        .Where(r => _datasets.ContainsKey(r.ParentDataset) && _datasets.ContainsKey(r.ChildDataset))
+        .GroupBy(r => r.Code, StringComparer.Ordinal).Select(g => g.First())
+        .OrderBy(r => r.Code, StringComparer.Ordinal)
+        .ToList();
+
+    IReadOnlyList<DatasetDefinition> IReportableMetadata.Datasets => _datasets.Values.Select(v => v.Definition).OrderBy(d => d.Code, StringComparer.Ordinal).ToList();
+
+    public DatasetDefinition? Dataset(string code) => _datasets.TryGetValue(code, out var found) ? found.Definition : null;
+
+    public IReadOnlyList<DatasetRelationship> RelationshipsFrom(string parentDataset) =>
+        Relationships.Where(r => r.ParentDataset == parentDataset).ToList();
+
+    public DatasetRelationship? Relationship(string code) => Relationships.FirstOrDefault(r => r.Code == code);
+
+    public Task<ReportResult> RunAsync(ReportQuery query, ClaimsPrincipal user, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(query);
+        return _datasets.TryGetValue(query.Dataset, out var found)
+            ? found.Source.RunAsync(query, user, cancellationToken)
+            : throw new ArgumentException($"Unknown dataset '{query.Dataset}'.", nameof(query));
     }
 
     public bool TryDataset(string code, out DatasetDefinition definition, out IReportingDatasetSource source)

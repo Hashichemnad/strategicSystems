@@ -76,6 +76,8 @@ credentials — the documented substitute for a live Power BI screenshot).
 scheduled exports · 0194 signed webhooks · 0195 developer portal.
 
 ## Deviations and known gaps
+- **Two reportable contracts after the Phase 21 merge**: Phase 21's datasets with relationships (ADR 0180) and this phase's record
+  types (ADR 0190) coexist without conflict; converging them is a follow-up for owner decision (ADR 0190, last section).
 - **SFTP and S3 export targets deferred** (ADR 0193): the folder export plus the REST extract cover the need without storing more remote
   credentials; operators sync the folder.
 - **OAuth secret rotation has no overlap** (OpenIddict keeps one secret per application); API keys overlap up to 30 days.

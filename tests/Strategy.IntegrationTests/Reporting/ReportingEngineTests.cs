@@ -286,8 +286,13 @@ public class ReportingEngineTests(ApiFixture api) : IClassFixture<ApiFixture>
         groups.GetProperty("total").GetInt32().ShouldBeGreaterThanOrEqualTo(2);
 
         // A report shared with the own reader runs with the own reader's rights.
+        // Every user keeps private reports ("My reports", ADR 0183); sharing them needs Report author.
         var save = await w.EditorAClient.PostAsJsonAsync("/api/v1/reporting/reports", new { name = "All items", definition = Definition("number", "nameEn") });
-        save.StatusCode.ShouldBe(HttpStatusCode.Forbidden); // editors may run reports but not build them
+        save.StatusCode.ShouldBe(HttpStatusCode.OK, await save.Content.ReadAsStringAsync());
+        var privateId = (await save.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("id").GetGuid();
+        (await w.EditorAClient.PutAsJsonAsync($"/api/v1/reporting/reports/{privateId}/shares", new[] { new { principalKind = "user", principalRef = w.OwnReader.Id.ToString("D") } }))
+            .StatusCode.ShouldBe(HttpStatusCode.Forbidden);
+        (await w.OwnClient.GetAsync($"/api/v1/reporting/reports/{privateId}")).StatusCode.ShouldBe(HttpStatusCode.NotFound);
         var author = await Factory.CreateUserAsync(roles: ["reporting.report-author", "sample.viewer"]);
         var authorClient = await Factory.SignInAsync(author);
         var saved = await authorClient.PostAsJsonAsync("/api/v1/reporting/reports", new { name = "All items", definition = Definition("number", "nameEn") });

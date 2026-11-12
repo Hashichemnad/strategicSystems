@@ -39,6 +39,12 @@ public sealed record RefreshStatusDto(string SystemCode, DateTimeOffset? At, str
 
 public sealed record BriefRequest(string? Kind, string? From, string? To, Guid? UnitId);
 
+public sealed record ReportTypeBody(ReportTypes.ReportTypeInput ReportType, uint? Version);
+
+public sealed record DossierTemplateBody(Dossiers.DossierTemplateInput Template, uint? Version);
+
+public sealed record ReportMoveInput(Guid? FolderId);
+
 /// <summary><c>/api/v1/reporting</c> (docs/design/reporting.md): every figure is filtered by the caller's access in the engine and the modules.</summary>
 internal static class ReportingEndpoints
 {
@@ -111,12 +117,84 @@ internal static class ReportingEndpoints
         group.MapGet("/reports/{id:guid}", async (Guid id, ClaimsPrincipal user, ReportService s, CancellationToken ct) => (await s.GetAsync(id, user, ct)).ToOk())
             .WithName("GetReport").RequirePermission(ReportingPermissions.ReportRun);
         group.MapPost("/reports", async (SavedReportInput body, ClaimsPrincipal user, ReportService s, CancellationToken ct) => (await s.SaveAsync(null, body, null, user, ct)).ToOk())
-            .WithName("CreateReport").RequirePermission(ReportingPermissions.ReportBuild);
+            .WithName("CreateReport").RequirePermission(ReportingPermissions.ReportRun);
         group.MapPut("/reports/{id:guid}", async (Guid id, SavedReportBody body, ClaimsPrincipal user, ReportService s, CancellationToken ct) =>
                 (await s.SaveAsync(id, body.Report, body.Version, user, ct)).ToOk())
-            .WithName("UpdateReport").RequirePermission(ReportingPermissions.ReportBuild);
+            .WithName("UpdateReport").RequirePermission(ReportingPermissions.ReportRun);
         group.MapPost("/reports/{id:guid}/archive", async (Guid id, ClaimsPrincipal user, ReportService s, CancellationToken ct) => (await s.ArchiveAsync(id, user, ct)).ToNoContent())
-            .WithName("ArchiveReport").RequirePermission(ReportingPermissions.ReportBuild);
+            .WithName("ArchiveReport").RequirePermission(ReportingPermissions.ReportRun);
+        group.MapPut("/reports/{id:guid}/folder", async (Guid id, ReportMoveInput body, ClaimsPrincipal user, FolderService s, CancellationToken ct) =>
+                (await s.MoveAsync(id, body.FolderId, user, ct)).ToNoContent())
+            .WithName("MoveReport").RequirePermission(ReportingPermissions.ReportRun);
+
+        // Reporting 2.0: report types (ADR 0181), multi-object runs (ADR 0182), folders (ADR 0183)
+        group.MapGet("/report-types", async (ClaimsPrincipal user, ReportTypes.ReportTypeService s, CancellationToken ct) => TypedResults.Ok(await s.UsableAsync(user, ct)))
+            .WithName("ListUsableReportTypes").RequirePermission(ReportingPermissions.ReportRun);
+        group.MapGet("/report-types/{code}", async (string code, ClaimsPrincipal user, ReportTypes.ReportTypeService s, CancellationToken ct) =>
+                (await s.UsableAsync(code, user, ct)).ToOk())
+            .WithName("GetUsableReportType").RequirePermission(ReportingPermissions.ReportRun);
+        group.MapPost("/reports/query", async (ReportRunInput body, ClaimsPrincipal user, ReportTypes.ReportTypeEngine s, CancellationToken ct) =>
+                (await s.RunAsync(body.Definition, body.Page ?? 1, body.PageSize ?? 50, body.Language ?? "ar", user, ct)).ToOk())
+            .WithName("QueryReport").RequirePermission(ReportingPermissions.ReportRun);
+        group.MapGet("/admin/report-types", async (ReportTypes.ReportTypeService s, CancellationToken ct) => TypedResults.Ok(await s.ListAsync(ct)))
+            .WithName("ListReportTypes").RequirePermission(ReportingPermissions.ReportTypeManage);
+        group.MapGet("/admin/report-types/{id:guid}", async (Guid id, ReportTypes.ReportTypeService s, CancellationToken ct) => (await s.GetAsync(id, ct)).ToOk())
+            .WithName("GetReportType").RequirePermission(ReportingPermissions.ReportTypeManage);
+        group.MapPost("/admin/report-types", async (ReportTypes.ReportTypeInput body, ClaimsPrincipal user, ReportTypes.ReportTypeService s, CancellationToken ct) =>
+                (await s.SaveAsync(null, body, null, user, ct)).ToOk())
+            .WithName("CreateReportType").RequirePermission(ReportingPermissions.ReportTypeManage);
+        group.MapPut("/admin/report-types/{id:guid}", async (Guid id, ReportTypeBody body, ClaimsPrincipal user, ReportTypes.ReportTypeService s, CancellationToken ct) =>
+                (await s.SaveAsync(id, body.ReportType, body.Version, user, ct)).ToOk())
+            .WithName("UpdateReportType").RequirePermission(ReportingPermissions.ReportTypeManage);
+        group.MapGet("/admin/reportable", (ReportTypes.ReportTypeService s) => TypedResults.Ok(s.Metadata()))
+            .WithName("GetReportableMetadata").RequirePermission(ReportingPermissions.ReportTypeManage);
+        group.MapGet("/admin/dossier-reportable", (ReportTypes.ReportTypeService s) => TypedResults.Ok(s.Metadata()))
+            .WithName("GetDossierReportableMetadata").RequirePermission(ReportingPermissions.DossierTemplateManage);
+        group.MapGet("/folders", async (ClaimsPrincipal user, FolderService s, CancellationToken ct) => TypedResults.Ok(await s.ListAsync(user, ct)))
+            .WithName("ListReportFolders").RequirePermission(ReportingPermissions.ReportRun);
+        group.MapPost("/folders", async (ReportFolderInput body, ClaimsPrincipal user, FolderService s, CancellationToken ct) => (await s.SaveAsync(null, body, user, ct)).ToOk())
+            .WithName("CreateReportFolder").RequirePermission(ReportingPermissions.ReportRun);
+        group.MapPut("/folders/{id:guid}", async (Guid id, ReportFolderInput body, ClaimsPrincipal user, FolderService s, CancellationToken ct) => (await s.SaveAsync(id, body, user, ct)).ToOk())
+            .WithName("UpdateReportFolder").RequirePermission(ReportingPermissions.ReportRun);
+        group.MapPost("/folders/{id:guid}/archive", async (Guid id, ClaimsPrincipal user, FolderService s, CancellationToken ct) => (await s.ArchiveAsync(id, user, ct)).ToNoContent())
+            .WithName("ArchiveReportFolder").RequirePermission(ReportingPermissions.ReportRun);
+        group.MapGet("/folders/{id:guid}/shares", async Task<Results<Ok<IReadOnlyList<ShareInput>>, ProblemHttpResult>> (Guid id, ClaimsPrincipal user, FolderService f, DashboardService s, CancellationToken ct) =>
+                await f.CanShareFolderAsync(id, user, ct) ? TypedResults.Ok(await s.SharesAsync("folder", id, ct)) : Error.NotFound().ToProblem())
+            .WithName("ListReportFolderShares").RequirePermission(ReportingPermissions.ReportShare);
+        group.MapPut("/folders/{id:guid}/shares", async (Guid id, List<ShareInput> body, ClaimsPrincipal user, FolderService f, DashboardService s, CancellationToken ct) =>
+                (await s.ShareAsync("folder", id, body, user, (i, c) => f.CanShareFolderAsync(i, user, c), ct)).ToNoContent())
+            .WithName("ShareReportFolder").RequirePermission(ReportingPermissions.ReportShare);
+
+        // Record dossiers (ADRs 0184–0186)
+        group.MapGet("/dossier-templates", async (ClaimsPrincipal user, Dossiers.DossierTemplateService s, CancellationToken ct) => TypedResults.Ok(await s.UsableAsync(user, ct)))
+            .WithName("ListUsableDossierTemplates").RequirePermission(ReportingPermissions.DossierRun);
+        group.MapGet("/dossier-templates/{code}/records", async (string code, string? q, ClaimsPrincipal user, Dossiers.DossierTemplateService s, CancellationToken ct) =>
+                (await s.RecordsAsync(code, q, user, ct)).ToOk())
+            .WithName("ListDossierRecords").RequirePermission(ReportingPermissions.DossierRun);
+        group.MapPost("/dossiers/{code}/render", async Task<Results<FileContentHttpResult, ProblemHttpResult>> (string code, Dossiers.DossierRenderInput body, ClaimsPrincipal user,
+                Dossiers.DossierTemplateService s, CancellationToken ct) =>
+            {
+                var file = await s.RenderAsync(code, body, user, ct);
+                return file.IsSuccess ? TypedResults.File(file.Value.Content, file.Value.ContentType, file.Value.FileName) : file.Error.ToProblem();
+            })
+            .WithName("RenderDossier").RequirePermission(ReportingPermissions.DossierRun);
+        group.MapPost("/dossiers/{code}/bulk", async Task<Results<FileContentHttpResult, ProblemHttpResult>> (string code, Dossiers.DossierBulkInput body, ClaimsPrincipal user,
+                Dossiers.DossierTemplateService s, CancellationToken ct) =>
+            {
+                var file = await s.BulkAsync(code, body, user, ct);
+                return file.IsSuccess ? TypedResults.File(file.Value.Content, file.Value.ContentType, file.Value.FileName) : file.Error.ToProblem();
+            })
+            .WithName("RenderDossierSet").RequirePermission(ReportingPermissions.DossierRun);
+        group.MapGet("/admin/dossier-templates", async (Dossiers.DossierTemplateService s, CancellationToken ct) => TypedResults.Ok(await s.ListAsync(ct)))
+            .WithName("ListDossierTemplates").RequirePermission(ReportingPermissions.DossierTemplateManage);
+        group.MapGet("/admin/dossier-templates/{id:guid}", async (Guid id, Dossiers.DossierTemplateService s, CancellationToken ct) => (await s.GetAsync(id, ct)).ToOk())
+            .WithName("GetDossierTemplate").RequirePermission(ReportingPermissions.DossierTemplateManage);
+        group.MapPost("/admin/dossier-templates", async (Dossiers.DossierTemplateInput body, ClaimsPrincipal user, Dossiers.DossierTemplateService s, CancellationToken ct) =>
+                (await s.SaveAsync(null, body, null, user, ct)).ToOk())
+            .WithName("CreateDossierTemplate").RequirePermission(ReportingPermissions.DossierTemplateManage);
+        group.MapPut("/admin/dossier-templates/{id:guid}", async (Guid id, DossierTemplateBody body, ClaimsPrincipal user, Dossiers.DossierTemplateService s, CancellationToken ct) =>
+                (await s.SaveAsync(id, body.Template, body.Version, user, ct)).ToOk())
+            .WithName("UpdateDossierTemplate").RequirePermission(ReportingPermissions.DossierTemplateManage);
         group.MapGet("/reports/{id:guid}/shares", async Task<Results<Ok<IReadOnlyList<ShareInput>>, ProblemHttpResult>> (Guid id, ClaimsPrincipal user, ReportService r, DashboardService s, CancellationToken ct) =>
                 await r.CanShareAsync(id, user, ct) ? TypedResults.Ok(await s.SharesAsync("report", id, ct)) : Error.NotFound().ToProblem())
             .WithName("ListReportShares").RequirePermission(ReportingPermissions.ReportShare);
@@ -178,7 +256,8 @@ internal static class ReportingEndpoints
             errors.Add(new FieldError("fiscalStartMonth", "reporting.errors.fiscalStart", "reporting.errors.fiscalStart"));
         }
 
-        if (s.RefreshMinutes is < 1 or > 1440 || s.ExportRowLimit is < 100 or > 500_000 || s.AttachmentLimitMb is < 1 or > 50 || s.DeliveryRetentionDays is < 1 or > 365)
+        if (s.RefreshMinutes is < 1 or > 1440 || s.ExportRowLimit is < 100 or > 500_000 || s.AttachmentLimitMb is < 1 or > 50 || s.DeliveryRetentionDays is < 1 or > 365
+            || s.ReportPrimaryRowLimit is < 100 or > 100_000 || s.ReportTimeoutSeconds is < 5 or > 600 || s.DossierBulkLimit is < 1 or > 1000 || s.DossierSectionRowLimit is < 10 or > 5000)
         {
             errors.Add(new FieldError("limits", "reporting.errors.limits", "reporting.errors.limits"));
         }

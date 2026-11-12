@@ -17,6 +17,7 @@
     <ProjectReference Include="..\Strategy.Platform.Settings\Strategy.Platform.Settings.csproj" />
     <ProjectReference Include="..\Strategy.Platform.Scheduling\Strategy.Platform.Scheduling.csproj" />
     <ProjectReference Include="..\Strategy.Platform.Reporting.Contracts\Strategy.Platform.Reporting.Contracts.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Reporting\Strategy.Platform.Reporting.csproj" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Strategy.UnitTests" />

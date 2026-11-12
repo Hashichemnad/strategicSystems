@@ -23,3 +23,11 @@
 Phase 21 can adopt this contract for report types (fields, relationships, joins in the reporting layer), or map its own contract onto it
 when the branches meet; the names do not collide with Phase 17's dataset types, so both branches compile side by side. Module datasets
 (ADR 0144) stay as they are.
+
+## After Phase 21 merged (ADR 0180)
+Phase 21 merged its own reportable metadata contract: the Phase 17 datasets extended with `KeyField`, `JoinOnly` and `DatasetRelationship`
+(including cross-system relationships). Both contracts now exist side by side and compile without conflict: report types and dossiers use
+ADR 0180, OData feeds and extracts use this one (which adds what feeds need and datasets lack: `modifiedAt`, the deleted condition, keyset
+paging and an OR / NOT filter tree). **Follow-up for owner decision:** converge on one contract — either extend ADR 0180 datasets with those
+four capabilities and move the feeds onto them (cross-system `$expand` would come for free), or keep both. Until then a module declares its
+fields twice (dataset + record type).

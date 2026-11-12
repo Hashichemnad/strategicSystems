@@ -30,7 +30,9 @@ internal sealed class IpDatasetSource(IpReader reader) : IReportingDatasetSource
         .Field("firstPublicationDate", r => r.FirstPublicationDate)
         .Field("expiryDate", r => r.ExpiryDate)
         .Field("internal", r => r.Internal)
-        .Field("createdAt", r => r.CreatedAt);
+        .Field("createdAt", r => r.CreatedAt)
+        .Field("id", r => r.Id)
+        .Field("documentId", r => r.DocumentId);
 
     public string SystemCode => IpPermissions.SystemCode;
 
@@ -55,7 +57,15 @@ internal sealed class IpDatasetSource(IpReader reader) : IReportingDatasetSource
             new("expiryDate", "تاريخ انتهاء الحماية", "Protection expiry", DatasetFieldType.Date),
             new("internal", "تسجيل داخلي", "Internal registration", DatasetFieldType.Bool, Groupable: true),
             new("createdAt", "تاريخ الإنشاء", "Created", DatasetFieldType.DateTime),
-        ], "/ip/records/{id}"),
+            new("id", "المعرّف", "Id", DatasetFieldType.Reference, Sortable: false),
+            new("documentId", "الوثيقة المصدر", "Source document", DatasetFieldType.Reference, Sortable: false),
+        ], "/ip/records/{id}") { KeyField = "id" },
+    ];
+
+    /// <summary>IP owns the reference to the source document, so it declares document → IP records (ADR 0180).</summary>
+    public IReadOnlyList<DatasetRelationship> Relationships { get; } =
+    [
+        new("ip.document-records", "docreg.documents", "id", RecordsDataset, "documentId", "سجلات الملكية الفكرية", "IP records"),
     ];
 
     public async Task<ReportResult> RunAsync(ReportQuery query, ClaimsPrincipal user, CancellationToken cancellationToken)

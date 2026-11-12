@@ -22,11 +22,19 @@ public sealed record ScheduleRecipient(string Kind, string Ref);
 
 public sealed record ScheduleInput(
     string Name, string TargetKind, Guid TargetId, string Frequency, string Time, int Day, string PeriodRule, string Format, IReadOnlyList<ScheduleRecipient> Recipients,
-    bool Active);
+    bool Active, DossierScheduleOptions? Dossier = null);
 
 public sealed record ScheduleDto(
     Guid Id, string Name, string TargetKind, Guid TargetId, string Frequency, string Time, int Day, string PeriodRule, string Format,
-    IReadOnlyList<ScheduleRecipient> Recipients, bool Active, DateTimeOffset? NextRunAt, DateTimeOffset? LastRunAt, Guid OwnerUserId, uint Version);
+    IReadOnlyList<ScheduleRecipient> Recipients, bool Active, DateTimeOffset? NextRunAt, DateTimeOffset? LastRunAt, Guid OwnerUserId, uint Version,
+    DossierScheduleOptions? Dossier = null);
+
+/// <summary>
+/// Dossier schedules (ADR 0186): the records (filters on the template's record type), the file (<c>pdf</c> merged, <c>zip-pdf</c>, <c>zip-docx</c>),
+/// the language (null = each recipient's) and optionally <see cref="RecipientField"/> — an employee field of the record (e.g. <c>a.owner</c>):
+/// each record's person receives the dossiers of their records.
+/// </summary>
+public sealed record DossierScheduleOptions(List<ReportFilter> Filters, string? Language, string? RecipientField);
 
 public sealed record ScheduleDeliveryDto(Guid Id, Guid UserId, string PeriodKey, string Status, string? Format, int Rows, string? Detail, Guid? FileId, DateTimeOffset At);
 
@@ -96,11 +104,13 @@ public static class ScheduleClock
 
 /// <summary>Schedules (ADR 0145): owners schedule what they may open; administrators any.</summary>
 public sealed class ScheduleService(
-    ReportingDbContext db, IAccessService access, DashboardService dashboards, ReportService reports, ISettingsStore settings, ReportingClock clock)
+    ReportingDbContext db, IAccessService access, DashboardService dashboards, ReportService reports, ISettingsStore settings, ReportingClock clock,
+    Dossiers.DossierTemplateService dossiers, ReportTypes.ReportTypeEngine engine)
 {
     private static ScheduleDto ToDto(Schedule s) => new(
         s.Id, s.Name, s.TargetKind, s.TargetId, s.Frequency, s.TimeOfDay.ToString("HH:mm", CultureInfo.InvariantCulture), s.Day, s.PeriodRule, s.Format,
-        JsonSerializer.Deserialize<List<ScheduleRecipient>>(s.RecipientsJson, DashboardService.Json) ?? [], s.Active, s.NextRunAt, s.LastRunAt, s.OwnerUserId, s.Version);
+        JsonSerializer.Deserialize<List<ScheduleRecipient>>(s.RecipientsJson, DashboardService.Json) ?? [], s.Active, s.NextRunAt, s.LastRunAt, s.OwnerUserId, s.Version,
+        s.OptionsJson is null ? null : JsonSerializer.Deserialize<DossierScheduleOptions>(s.OptionsJson, DashboardService.Json));
 
     private async Task<bool> AdministerAsync(ClaimsPrincipal user, CancellationToken ct) =>
         await access.CanAsync(user, ReportingPermissions.ScheduleAdminister, cancellationToken: ct).ConfigureAwait(false);
@@ -163,12 +173,16 @@ public sealed class ScheduleService(
             errors.Add(new FieldError("periodRule", "reporting.errors.periodRule", "reporting.errors.periodRule"));
         }
 
-        if (input.Format is not ("pdf" or "xlsx" or "link"))
+        var dossier = input.TargetKind == "dossier";
+        if (dossier
+                ? input.Format is not (Dossiers.DossierFormats.Pdf or Dossiers.DossierFormats.ZipPdf or Dossiers.DossierFormats.ZipWord) || input.Dossier is null
+                : input.Format is not ("pdf" or "xlsx" or "csv" or "link"))
         {
             errors.Add(new FieldError("format", "reporting.errors.format", "reporting.errors.format"));
         }
 
-        if (input.Recipients is null || input.Recipients.Count is 0 or > 200
+        var byField = dossier && input.Dossier?.RecipientField is not null;
+        if (input.Recipients is null || (input.Recipients.Count == 0 && !byField) || input.Recipients.Count > 200
             || input.Recipients.Any(r => !SharePrincipalKinds.All.Contains(r.Kind, StringComparer.Ordinal) || string.IsNullOrWhiteSpace(r.Ref) || r.Ref.Length > 120))
         {
             errors.Add(new FieldError("recipients", "reporting.errors.recipients", "reporting.errors.recipients"));
@@ -184,11 +198,45 @@ public sealed class ScheduleService(
         {
             "dashboard" => (await dashboards.GetAsync(input.TargetId.ToString("D"), user, ct).ConfigureAwait(false)).IsSuccess,
             "report" => (await reports.GetAsync(input.TargetId, user, ct).ConfigureAwait(false)).IsSuccess,
+            "dossier" => true,
             _ => false,
         };
         if (!visible)
         {
             return Error.NotFound();
+        }
+
+        if (dossier)
+        {
+            // The template is runnable by the owner; the filters and the recipient field are fields of its record type they may see.
+            var template = (await dossiers.ListAsync(ct).ConfigureAwait(false)).FirstOrDefault(t => t.Id == input.TargetId && t.Active);
+            if (template is null || !await access.CanAsync(user, ReportingPermissions.DossierRun, cancellationToken: ct).ConfigureAwait(false))
+            {
+                return Error.NotFound();
+            }
+
+            var type = await engine.ResolveAsync(ReportTypes.ReportTypeRules.ImplicitPrefix + template.Dataset, user, ct).ConfigureAwait(false);
+            if (type is null)
+            {
+                return Error.NotFound();
+            }
+
+            var check = await engine.PrepareAsync(new ReportDefinition
+            {
+                ReportType = ReportTypes.ReportTypeRules.ImplicitPrefix + template.Dataset,
+                Columns = [input.Dossier!.RecipientField ?? template.Definition.NumberField ?? type.Nodes[0].Offered.Keys.Select(k => "a." + k).First()],
+                Filters = input.Dossier.Filters ?? [],
+            }, user, ct).ConfigureAwait(false);
+            if (check.IsFailure)
+            {
+                return check.Error;
+            }
+
+            if ((input.Dossier.Language is { } l && !Dossiers.DossierLanguages.All.Contains(l, StringComparer.Ordinal))
+                || (input.Dossier.RecipientField is { } field && type.Offered(field)?.Type != DatasetFieldType.Employee))
+            {
+                return Error.Validation([new FieldError("dossier", "reporting.errors.dossierSchedule", "reporting.errors.dossierSchedule")]);
+            }
         }
 
         Schedule schedule;
@@ -213,6 +261,7 @@ public sealed class ScheduleService(
 
         schedule.Configure(input.Name.Trim(), input.Frequency, time, input.Day, input.PeriodRule, input.Format,
             JsonSerializer.Serialize(input.Recipients, DashboardService.Json), input.Active);
+        schedule.SetOptions(dossier ? JsonSerializer.Serialize(input.Dossier, DashboardService.Json) : null);
         var regional = await settings.GetAsync<RegionalSettings>(ct).ConfigureAwait(false);
         schedule.Planned(input.Active ? ScheduleClock.Next(input.Frequency, time, input.Day, clock.UtcNow, ScheduleClock.Zone(regional.TimeZone)) : null);
         await db.SaveChangesAsync(ct).ConfigureAwait(false);
@@ -251,7 +300,8 @@ public sealed partial class DeliveryRunner(
         var today = await clock.TodayAsync(ct).ConfigureAwait(false);
         var period = PeriodRules.Resolve(schedule.PeriodRule, today, config.FiscalStartMonth);
         var periodKey = schedule.PeriodRule + ":" + period.From.ToString("yyyy-MM", CultureInfo.InvariantCulture);
-        var targets = await ExpandAsync(JsonSerializer.Deserialize<List<ScheduleRecipient>>(schedule.RecipientsJson, DashboardService.Json) ?? [], ct).ConfigureAwait(false);
+        var targets = (await ExpandAsync(JsonSerializer.Deserialize<List<ScheduleRecipient>>(schedule.RecipientsJson, DashboardService.Json) ?? [], ct).ConfigureAwait(false))
+            .Concat(await FieldRecipientsAsync(schedule, ct).ConfigureAwait(false)).Distinct().ToList();
         var done = await db.Deliveries.AsNoTracking().Where(d => d.ScheduleId == schedule.Id && d.PeriodKey == periodKey).Select(d => d.UserId).ToListAsync(ct)
             .ConfigureAwait(false);
         var resolved = (await recipients.ResolveAsync(targets.Except(done).ToList(), ct).ConfigureAwait(false)).ToDictionary(r => r.UserId);
@@ -356,6 +406,11 @@ public sealed partial class DeliveryRunner(
             return file is null ? null : new Content(data.Value.TitleAr, data.Value.TitleEn, file, data.Value.Data.Count, link);
         }
 
+        if (schedule.TargetKind == "dossier")
+        {
+            return await DossierContentAsync(services, schedule, principal, lang, ct).ConfigureAwait(false);
+        }
+
         var reports = services.GetRequiredService<ReportService>();
         var report = await reports.GetAsync(schedule.TargetId, principal, ct).ConfigureAwait(false);
         if (report.IsFailure)
@@ -363,20 +418,109 @@ public sealed partial class DeliveryRunner(
             return null;
         }
 
-        var run = await reports.RunAllAsync(report.Value.Definition, lang, principal, ct).ConfigureAwait(false);
-        if (run.IsFailure)
+        var reportLink = $"/reports/{schedule.TargetId:D}";
+        if (schedule.Format == "link")
+        {
+            var count = await reports.CountDefinitionAsync(report.Value.Definition, lang, principal, ct).ConfigureAwait(false);
+            return count.IsFailure ? null : new Content(report.Value.Name, report.Value.Name, null, count.Value, reportLink);
+        }
+
+        var rendered = await reports.RenderDefinitionAsync(report.Value.Definition, schedule.Format, lang, report.Value.Name, principal, ct).ConfigureAwait(false);
+        return rendered.IsFailure ? null : new Content(report.Value.Name, report.Value.Name, rendered.Value.File, rendered.Value.Rows, reportLink);
+    }
+
+    /// <summary>
+    /// The dossiers of a dossier schedule for one recipient (ADR 0186), built as them: the schedule's records they may see — only their own
+    /// records when the schedule addresses each record's person — merged into one PDF or a ZIP. Nothing visible → null (no e-mail).
+    /// </summary>
+    private static async Task<Content?> DossierContentAsync(IServiceProvider services, Schedule schedule, ClaimsPrincipal principal, string lang, CancellationToken ct)
+    {
+        var dossiers = services.GetRequiredService<Dossiers.DossierTemplateService>();
+        var template = (await dossiers.ListAsync(ct).ConfigureAwait(false)).FirstOrDefault(t => t.Id == schedule.TargetId && t.Active);
+        var options = schedule.OptionsJson is null ? null : JsonSerializer.Deserialize<DossierScheduleOptions>(schedule.OptionsJson, DashboardService.Json);
+        if (template is null || options is null || !await services.GetRequiredService<IAccessService>().CanAsync(principal, ReportingPermissions.DossierRun, cancellationToken: ct)
+                .ConfigureAwait(false))
         {
             return null;
         }
 
-        var reportLink = $"/reports/{schedule.TargetId:D}";
-        if (schedule.Format == "link")
+        var filters = new List<ReportFilter>(options.Filters ?? []);
+        if (options.RecipientField is { } field)
         {
-            return new Content(report.Value.Name, report.Value.Name, null, run.Value.Rows.Count, reportLink);
+            if (principal.EmployeeIdOf() is not { } me)
+            {
+                return null;
+            }
+
+            filters.Add(new ReportFilter(field, ReportOperators.Equal, [me.ToString("D")]));
         }
 
-        var rendered = await reports.RenderAsync(run.Value, schedule.Format, lang, report.Value.Name, ct).ConfigureAwait(false);
-        return rendered.IsFailure ? null : new Content(report.Value.Name, report.Value.Name, rendered.Value, run.Value.Rows.Count, reportLink);
+        var selected = await dossiers.SelectAsync(template.Code, filters, principal, ct).ConfigureAwait(false);
+        if (selected.IsFailure || selected.Value.Ids.Count == 0)
+        {
+            return null;
+        }
+
+        var docs = new List<Dossiers.DossierDocument>();
+        foreach (var id in selected.Value.Ids)
+        {
+            if (await dossiers.BuildAsync(template, id, principal, ct).ConfigureAwait(false) is { } doc)
+            {
+                docs.Add(doc);
+            }
+        }
+
+        if (docs.Count == 0)
+        {
+            return null;
+        }
+
+        var language = options.Language ?? lang;
+        var file = await dossiers.FileAsync(docs, schedule.Format, language, ct).ConfigureAwait(false);
+        return file.IsFailure ? null : new Content(template.LabelAr, template.LabelEn, file.Value, docs.Count, "/reports/dossiers");
+    }
+
+    /// <summary>Recipients by record field (ADR 0186): the people named in that field of the schedule's records, found as the schedule's owner.</summary>
+    private async Task<IReadOnlyList<Guid>> FieldRecipientsAsync(Schedule schedule, CancellationToken ct)
+    {
+        if (schedule.TargetKind != "dossier" || schedule.OptionsJson is null
+            || JsonSerializer.Deserialize<DossierScheduleOptions>(schedule.OptionsJson, DashboardService.Json) is not { RecipientField: { } field } options)
+        {
+            return [];
+        }
+
+        await using var scope = scopes.CreateAsyncScope();
+        var owner = await scope.ServiceProvider.GetRequiredService<TokenPrincipalFactory>().CreateAsync(schedule.OwnerUserId, "reporting-schedule", "schedule", [], null)
+            .ConfigureAwait(false);
+        if (owner is null)
+        {
+            return [];
+        }
+
+        scope.ServiceProvider.GetRequiredService<RequestContext>().Initialise(context.CorrelationId, Channels.Job, owner);
+        var dossiers = scope.ServiceProvider.GetRequiredService<Dossiers.DossierTemplateService>();
+        var engine = scope.ServiceProvider.GetRequiredService<ReportTypes.ReportTypeEngine>();
+        var template = (await dossiers.ListAsync(ct).ConfigureAwait(false)).FirstOrDefault(t => t.Id == schedule.TargetId && t.Active);
+        if (template is null)
+        {
+            return [];
+        }
+
+        var definition = new ReportDefinition
+        {
+            ReportType = ReportTypes.ReportTypeRules.ImplicitPrefix + template.Dataset,
+            Columns = [field],
+            Filters = options.Filters ?? [],
+        };
+        var prepared = await engine.PrepareAsync(definition, owner, ct).ConfigureAwait(false);
+        if (prepared.IsFailure)
+        {
+            return [];
+        }
+
+        var (rows, _) = await engine.ComposeAsync(prepared.Value.Type, prepared.Value.Effective, owner, ct).ConfigureAwait(false);
+        var employeeIds = rows.Select(r => r.Value(field)).OfType<Guid>().Distinct().ToList();
+        return employeeIds.Count == 0 ? [] : (await users.GetByEmployeesAsync(employeeIds, ct).ConfigureAwait(false)).Where(u => u.Active).Select(u => u.Id).ToList();
     }
 
     private Task RecordAsync(Schedule schedule, Guid userId, string periodKey, string status, string? format, int rows, string? detail, Guid? fileId, CancellationToken ct) =>

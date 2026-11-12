@@ -40,6 +40,8 @@ import arJobs from './ar/jobs.json';
 import enJobs from './en/jobs.json';
 import arReporting from './ar/reporting.json';
 import enReporting from './en/reporting.json';
+import arReportBuilder from './ar/reportBuilder.json';
+import enReportBuilder from './en/reportBuilder.json';
 import arWorkflow from './ar/workflow.json';
 import enWorkflow from './en/workflow.json';
 import arExpressions from './ar/expressions.json';
@@ -124,6 +126,7 @@ export const resources = {
     notifications: arNotifications,
     jobs: arJobs,
     reporting: arReporting,
+    reportBuilder: arReportBuilder,
     workflow: arWorkflow,
     expressions: arExpressions,
     ai: arAi,
@@ -175,6 +178,7 @@ export const resources = {
     notifications: enNotifications,
     jobs: enJobs,
     reporting: enReporting,
+    reportBuilder: enReportBuilder,
     workflow: enWorkflow,
     expressions: enExpressions,
     ai: enAi,

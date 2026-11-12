@@ -11,6 +11,8 @@ import {
   CalendarOff,
   ClipboardCheck,
   FileSpreadsheet,
+  FileStack,
+  Network,
   Flag,
   FormInput,
   Gauge,
@@ -79,6 +81,8 @@ export type SettingsPageKey =
   | 'regional'
   | 'dashboards'
   | 'reporting'
+  | 'reportTypes'
+  | 'dossierTemplates'
   | 'branding'
   | 'appearance'
   | 'systems'
@@ -125,6 +129,8 @@ export type SettingsPath =
   | '/settings/integrations/developer'
   | '/settings/dashboards'
   | '/settings/reporting'
+  | '/settings/report-types'
+  | '/settings/dossier-templates'
   | '/settings/branding'
   | '/settings/appearance'
   | '/settings/systems'
@@ -213,6 +219,18 @@ export const settingsGroups: readonly SettingsGroup[] = [
         to: '/settings/reporting',
         icon: ChartColumn,
         permissions: ['reporting.settings.manage', 'reporting.aggregate.refresh'],
+      },
+      {
+        key: 'reportTypes',
+        to: '/settings/report-types',
+        icon: Network,
+        permissions: ['reporting.report-type.manage'],
+      },
+      {
+        key: 'dossierTemplates',
+        to: '/settings/dossier-templates',
+        icon: FileStack,
+        permissions: ['reporting.dossier-template.manage'],
       },
       { key: 'systems', to: '/settings/systems', icon: SquareStack, permissions: ['access.system.read'] },
       { key: 'features', to: '/settings/features', icon: Flag, permissions: ['settings.feature.manage'] },

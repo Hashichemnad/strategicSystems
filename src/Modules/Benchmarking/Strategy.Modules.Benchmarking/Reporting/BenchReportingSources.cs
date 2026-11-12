@@ -167,9 +167,33 @@ internal sealed class BenchStudyRow
 }
 
 /// <summary>Report-builder object: benchmarking studies, on the Benchmarking reader's scoped query.</summary>
-internal sealed class BenchDatasetSource(BenchReader reader) : IReportingDatasetSource
+internal sealed class BenchDatasetSource(BenchReader reader, BenchDbContext db) : IReportingDatasetSource
 {
     public const string StudiesDataset = "bench.studies";
+    public const string TopicsDataset = "bench.topics";
+    public const string PlanItemsDataset = "bench.plan-items";
+
+    private static readonly DatasetQuery<BenchChildRow<Topic>> TopicQuery = new DatasetQuery<BenchChildRow<Topic>>(t => t.Study.Id)
+        .Field("studyNumber", t => t.Study.Number)
+        .Field("unit", t => t.Study.ResponsibleUnitId)
+        .Field("title", t => t.Item.Title)
+        .Field("owner", t => t.Item.OwnerEmployeeId)
+        .Field("sort", t => t.Item.Sort)
+        .Field("studyId", t => t.Item.StudyId);
+
+    private static readonly DatasetQuery<BenchChildRow<PlanItem>> PlanItemQuery = new DatasetQuery<BenchChildRow<PlanItem>>(t => t.Study.Id)
+        .Field("studyNumber", t => t.Study.Number)
+        .Field("titleAr", t => t.Item.TitleAr)
+        .Field("titleEn", t => t.Item.TitleEn)
+        .Field("owner", t => t.Item.OwnerEmployeeId)
+        .Field("unit", t => t.Item.UnitId)
+        .Field("dueOn", t => t.Item.DueOn)
+        .Field("priority", t => t.Item.Priority)
+        .Field("actionType", t => t.Item.ActionTypeCode)
+        .Field("budgetRequired", t => t.Item.BudgetRequired)
+        .Field("sort", t => t.Item.Sort)
+        .Field("studyId", t => t.Item.StudyId)
+        .Field("remarkId", t => t.Item.RemarkId);
 
     private static readonly DatasetQuery<BenchStudyRow> StudyQuery = new DatasetQuery<BenchStudyRow>(s => s.Id)
         .Field("number", s => s.Number)
@@ -189,7 +213,8 @@ internal sealed class BenchDatasetSource(BenchReader reader) : IReportingDataset
         .Field("planApprovedAt", s => s.PlanApprovedAt)
         .Field("analysisApprovedAt", s => s.AnalysisApprovedAt)
         .Field("closedAt", s => s.ClosedAt)
-        .Field("impactDueOn", s => s.ImpactDueOn);
+        .Field("impactDueOn", s => s.ImpactDueOn)
+        .Field("id", s => s.Id);
 
     public string SystemCode => BenchPermissions.SystemCode;
 
@@ -215,18 +240,74 @@ internal sealed class BenchDatasetSource(BenchReader reader) : IReportingDataset
             new("analysisApprovedAt", "تاريخ اعتماد التحليل", "Analysis approved at", DatasetFieldType.DateTime),
             new("closedAt", "تاريخ الإغلاق", "Closed at", DatasetFieldType.DateTime),
             new("impactDueOn", "موعد قياس الأثر", "Impact review due", DatasetFieldType.Date),
+            new("id", "المعرّف", "Id", DatasetFieldType.Reference, Sortable: false),
+        ], "/bench/studies/{id}") { KeyField = "id" },
+        new(TopicsDataset, BenchPermissions.SystemCode, "محاور المقارنة", "Benchmarking topics", BenchPermissions.Read,
+        [
+            new("studyNumber", "رقم الدراسة", "Study number", DatasetFieldType.Text, Groupable: true),
+            new("unit", "الوحدة المسؤولة", "Responsible unit", DatasetFieldType.Unit, Groupable: true),
+            new("title", "المحور", "Topic", DatasetFieldType.Text),
+            new("owner", "المسؤول", "Owner", DatasetFieldType.Employee, Groupable: true),
+            new("sort", "الترتيب", "Order", DatasetFieldType.Number),
+            new("studyId", "الدراسة", "Study", DatasetFieldType.Reference, Sortable: false),
         ], "/bench/studies/{id}"),
+        new(PlanItemsDataset, BenchPermissions.SystemCode, "إجراءات خطة التحسين", "Improvement plan actions", BenchPermissions.Read,
+        [
+            new("studyNumber", "رقم الدراسة", "Study number", DatasetFieldType.Text, Groupable: true),
+            new("titleAr", "الإجراء (عربي)", "Action (Arabic)", DatasetFieldType.Text),
+            new("titleEn", "الإجراء (إنجليزي)", "Action (English)", DatasetFieldType.Text),
+            new("owner", "المسؤول", "Owner", DatasetFieldType.Employee, Groupable: true),
+            new("unit", "الوحدة", "Unit", DatasetFieldType.Unit, Groupable: true),
+            new("dueOn", "تاريخ الاستحقاق", "Due on", DatasetFieldType.Date),
+            new("priority", "الأولوية", "Priority", DatasetFieldType.Lookup, Groupable: true),
+            new("actionType", "نوع الإجراء", "Action type", DatasetFieldType.Lookup, Groupable: true),
+            new("budgetRequired", "يتطلب ميزانية", "Budget required", DatasetFieldType.Bool, Groupable: true),
+            new("studyId", "الدراسة", "Study", DatasetFieldType.Reference, Sortable: false),
+            new("remarkId", "ملاحظة خطة العمل", "CAP remark", DatasetFieldType.Reference, Sortable: false),
+        ], "/bench/studies/{id}"),
+    ];
+
+    /// <summary>Bench → CAP: CAP remarks carry the study as their linked record (ADR 0127), so a study's remarks are the remarks linked to it.</summary>
+    public IReadOnlyList<DatasetRelationship> Relationships { get; } =
+    [
+        new("bench.study-topics", StudiesDataset, "id", TopicsDataset, "studyId", "المحاور", "Topics"),
+        new("bench.study-plan-items", StudiesDataset, "id", PlanItemsDataset, "studyId", "إجراءات خطة التحسين", "Improvement plan actions"),
+        new("bench.study-cap-remarks", StudiesDataset, "id", "cap.remarks", "linkedId", "ملاحظات خطة العمل التصحيحية", "CAP remarks"),
     ];
 
     public async Task<ReportResult> RunAsync(ReportQuery query, ClaimsPrincipal user, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(query);
-        if (query.Dataset != StudiesDataset)
+        var studies = await reader.StudiesAsync(user, cancellationToken).ConfigureAwait(false);
+        switch (query.Dataset)
         {
-            throw new ArgumentException($"Unknown dataset '{query.Dataset}'.", nameof(query));
+            case TopicsDataset:
+                {
+                    var topics = from t in db.Topics.AsNoTracking()
+                                 join s in studies on t.StudyId equals s.Id
+                                 where !t.Removed
+                                 select new BenchChildRow<Topic> { Study = s, Item = t };
+                    var stable = query.Sort.Count > 0 || query.GroupBy.Count > 0 ? query : query with { Sort = [new ReportSort("studyNumber", false), new ReportSort("sort", false)] };
+                    return await TopicQuery.RunAsync(topics, stable, cancellationToken).ConfigureAwait(false);
+                }
+
+            case PlanItemsDataset:
+                {
+                    var items = from t in db.PlanItems.AsNoTracking()
+                                join s in studies on t.StudyId equals s.Id
+                                where !t.Removed
+                                select new BenchChildRow<PlanItem> { Study = s, Item = t };
+                    var stable = query.Sort.Count > 0 || query.GroupBy.Count > 0 ? query : query with { Sort = [new ReportSort("studyNumber", false), new ReportSort("sort", false)] };
+                    return await PlanItemQuery.RunAsync(items, stable, cancellationToken).ConfigureAwait(false);
+                }
+
+            case StudiesDataset:
+                break;
+            default:
+                throw new ArgumentException($"Unknown dataset '{query.Dataset}'.", nameof(query));
         }
 
-        var rows = (await reader.StudiesAsync(user, cancellationToken).ConfigureAwait(false)).Select(s => new BenchStudyRow
+        var rows = studies.Select(s => new BenchStudyRow
         {
             Id = s.Id,
             Number = s.Number,
@@ -335,4 +416,13 @@ internal static class BenchReportingLabels
         ["late"] = new("متأخر", "Late"),
         ["completed"] = new("منجز", "Completed"),
     };
+}
+
+/// <summary>A study child (topic / plan item) with its (visible) study.</summary>
+internal sealed class BenchChildRow<T>
+    where T : class
+{
+    public Study Study { get; init; } = null!;
+
+    public T Item { get; init; } = null!;
 }

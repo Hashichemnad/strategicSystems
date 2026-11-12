@@ -245,6 +245,12 @@ export const reportSchedulesRoute = createRoute({
   component: lazyRouteComponent(() => import('@/features/reporting/SchedulesPage'), 'SchedulesPage'),
 });
 
+export const reportDossiersRoute = createRoute({
+  getParentRoute: () => appLayout,
+  path: '/reports/dossiers',
+  component: lazyRouteComponent(() => import('@/features/reporting/DossiersPage'), 'DossiersPage'),
+});
+
 export const reportRoute = createRoute({
   getParentRoute: () => appLayout,
   path: '/reports/$reportId',
@@ -1583,6 +1589,21 @@ const reportingSettingsRoute = createRoute({
   ),
 });
 
+const reportTypesSettingsRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/report-types',
+  component: lazyRouteComponent(() => import('@/features/reporting/ReportTypesPage'), 'ReportTypesPage'),
+});
+
+const dossierTemplatesSettingsRoute = createRoute({
+  getParentRoute: () => settingsLayout,
+  path: '/dossier-templates',
+  component: lazyRouteComponent(
+    () => import('@/features/reporting/DossierTemplatesPage'),
+    'DossierTemplatesPage',
+  ),
+});
+
 const capSettingsRoute = createRoute({
   getParentRoute: () => settingsLayout,
   path: '/cap',
@@ -1706,6 +1727,7 @@ const routeTree = rootRoute.addChildren([
     reportsRoute,
     reportNewRoute,
     reportSchedulesRoute,
+    reportDossiersRoute,
     reportRoute,
     sampleRoute,
     sampleItemRoute,
@@ -1819,6 +1841,8 @@ const routeTree = rootRoute.addChildren([
       appearanceRoute,
       dashboardsSettingsRoute,
       reportingSettingsRoute,
+      reportTypesSettingsRoute,
+      dossierTemplatesSettingsRoute,
       systemsRoute,
       featuresRoute,
       lookupsRoute,
