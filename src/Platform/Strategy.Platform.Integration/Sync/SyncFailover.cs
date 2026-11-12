@@ -454,7 +454,7 @@ public sealed class SyncFailover(
         }
         catch (PdfRenderingException ex)
         {
-            return Error.Rule("integration.sync.pdf", ex.Message);
+            return Error.Rule("integration.sync.pdf", ex.MessageKey);
         }
     }
 

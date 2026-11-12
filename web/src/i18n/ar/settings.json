@@ -207,6 +207,10 @@
     "developerPortal": {
       "title": "بوابة المطورين",
       "description": "وثائق OpenAPI وتغذيات OData وبياناتها الوصفية والاستخراجات وكتالوج أحداث Webhook وطريقة ربط Power BI."
+    },
+    "salesforceSync": {
+      "title": "مزامنة Salesforce",
+      "description": "نسخة احتياطية من Salesforce: الربط والجدولة والمطابقات والاستثناءات وعمليات التشغيل والتحويل."
     }
   },
   "title": "الإعدادات",

@@ -40,7 +40,7 @@ const systems = [
   'scheduling',
   'settings',
 ] as const;
-const channels = ['ui', 'api', 'mcp', 'ai', 'job', 'import', 'wasel', 'system'] as const;
+const channels = ['ui', 'api', 'mcp', 'ai', 'job', 'import', 'wasel', 'sync', 'system'] as const;
 const actions = ['create', 'update', 'delete', 'auth', 'file', 'export', 'audit.verify', 'job'] as const;
 
 /** Global Audit Log (SPEC §0.2): search across all systems by user, system, object, record, dates and action; export. */

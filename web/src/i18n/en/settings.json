@@ -207,6 +207,10 @@
     "developerPortal": {
       "title": "Developer portal",
       "description": "OpenAPI, OData feeds and metadata, extracts, webhook catalogue and how to connect Power BI."
+    },
+    "salesforceSync": {
+      "title": "Salesforce sync",
+      "description": "Standby copy of Salesforce: connection, schedule, mappings, exceptions, runs and failover."
     }
   },
   "title": "Settings",

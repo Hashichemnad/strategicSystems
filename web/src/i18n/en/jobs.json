@@ -20,7 +20,8 @@
   "statuses": {
     "running": "Running",
     "succeeded": "Succeeded",
-    "failed": "Failed"
+    "failed": "Failed",
+    "suspended": "Suspended (standby)"
   },
   "toast": {
     "run": "The job was started",
