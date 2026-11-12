@@ -48,6 +48,7 @@ public sealed class TeamsModule : IModule
         }
 
         services.AddLookupType(TeamsAccessCatalogue.ApprovedBy);
+        services.AddTeamsSyncTargets(); // Phase 23, ADR 0202
         foreach (var template in TeamNotifications.All)
         {
             services.AddNotificationTemplate(template);
