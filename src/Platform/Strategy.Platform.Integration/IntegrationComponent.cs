@@ -95,6 +95,8 @@ public sealed class IntegrationComponent : IPlatformComponent
         services.TryAddSingleton<ISalesforceTransport, PolicySalesforceTransport>();
         services.AddSingleton<SalesforceSessionFactory>();
         services.AddSingleton<SyncTargetRegistry>();
+        // Files copied from a source carry a reference (identity and version of the source file, ADR 0208); no record page of their own.
+        services.AddReferenceableType(new ReferenceableTypeDefinition(SyncEngine.FileReferenceType, "files", "ملف", "File", IntegrationPermissions.SyncView, null));
         services.AddSingleton<SyncStandbyGuard>();
         services.AddSingleton<Kernel.Integration.IStandbyGuard>(sp => sp.GetRequiredService<SyncStandbyGuard>());
         services.AddScoped<EntitySyncWriter>();

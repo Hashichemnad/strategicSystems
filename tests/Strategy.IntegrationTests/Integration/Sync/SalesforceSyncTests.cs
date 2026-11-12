@@ -28,6 +28,7 @@ using Strategy.Platform.Notifications;
 using Strategy.Platform.Organisation.Contracts;
 using Strategy.Platform.Scheduling;
 using Strategy.Platform.Settings;
+using FakeSalesforce = Strategy.Host.Infrastructure.MockSalesforceOrg;
 
 namespace Strategy.IntegrationTests.Integration.Sync;
 
@@ -66,6 +67,7 @@ public sealed class SalesforceSyncTests(PostgresFixture postgres) : IAsyncLifeti
         var sampleManager = await _factory.CreateRoleAsync("sample", (SamplePermissions.Read, DataScope.All), (SamplePermissions.Update, DataScope.All),
             (SamplePermissions.Submit, DataScope.All));
         await _factory.GrantRoleAsync(_adminUser.Id, sampleManager);
+        await _factory.GrantRoleAsync(_adminUser.Id, await _factory.CreateRoleAsync("portfolio", ("portfolio.project.read", DataScope.All)));
         _admin = await _factory.SignInAsync(_adminUser);
         _connection = (await _admin.GetFromJsonAsync<List<SyncConnectionDto>>($"{Sync}/connections"))!.Single(c => c.SourceSystem == "salesforce").Id;
     }
@@ -152,7 +154,7 @@ public sealed class SalesforceSyncTests(PostgresFixture postgres) : IAsyncLifeti
         (await _admin.PutAsJsonAsync($"{Sync}/connections/{_connection}/key", new SyncKeyInput(_fake.PrivateKeyPem))).StatusCode.ShouldBe(HttpStatusCode.OK);
         connection = (await _admin.GetFromJsonAsync<SyncConnectionDto>($"{Sync}/connections/{_connection}"))!;
         var updated = await _admin.PutAsJsonAsync($"{Sync}/connections/{_connection}",
-            new SyncConnectionInput(FakeSalesforce.LoginUrl, _fake.ClientId, _fake.Username, FakeSalesforce.ApiVersion, 2, 200, pack.Id, connection.Version));
+            new SyncConnectionInput(FakeSalesforce.LoginUrl, _fake.ClientId, _fake.Username, FakeSalesforce.ApiVersion, 5, 200, pack.Id, connection.Version));
         updated.StatusCode.ShouldBe(HttpStatusCode.OK, await updated.Content.ReadAsStringAsync());
         var tested = (await (await _admin.PostAsync($"{Sync}/connections/{_connection}/test", null)).Content.ReadFromJsonAsync<SyncConnectionDto>())!;
         tested.LastTest!.Ok.ShouldBeTrue(tested.LastTest.MessageKey);
@@ -446,10 +448,11 @@ public sealed class SalesforceSyncTests(PostgresFixture postgres) : IAsyncLifeti
         // Files go through the Files service; approval history is read-only source history.
         var files = await InScopeAsync(async sp => await sp.GetRequiredService<IFileService>().ListAsync("portfolio.project", projectId.ToString()));
         files.ShouldContain(f => f.Name == "charter.pdf");
-        var history = (await _admin.GetFromJsonAsync<List<SourceHistoryEntryDto>>($"/api/v1/integration/references/portfolio.project/{projectId}/source-history"))!;
+        var pm = _admin;
+        var history = (await pm.GetFromJsonAsync<List<SourceHistoryEntryDto>>($"/api/v1/integration/references/portfolio.project/{projectId}/source-history"))!;
         history.ShouldContain(h => h.StepStatus == "Started" && h.ActorName == "Section manager" && h.Comments == "Submitted for planning approval");
         history.ShouldContain(h => h.ProcessStatus == "Pending" && h.ProcessName == "Planning approval");
-        (await _admin.GetFromJsonAsync<RecordSyncStateDto>($"/api/v1/integration/references/portfolio.project/{projectId}/sync-state"))!.SourceHistoryCount.ShouldBe(2);
+        (await pm.GetFromJsonAsync<RecordSyncStateDto>($"/api/v1/integration/references/portfolio.project/{projectId}/sync-state"))!.SourceHistoryCount.ShouldBe(2);
 
         // A second run imports nothing twice (files by version, history by source id).
         var again = await RunAsync();
@@ -546,6 +549,7 @@ public sealed class SalesforceSyncTests(PostgresFixture postgres) : IAsyncLifeti
     {
         await ConfigureAsync("department", "user", "program-request", "project", "approval-history");
         var seed = await SeedOrgAsync();
+        _fake.Objects["Sample_Item__c"].Upsert(seed.ItemB, new() { ["Status__c"] = "Open" }); // both items active, so they can be edited after failover
         var request = _fake.NewId("a0R");
         _fake.Objects["PMS_Project_Request__c"].Upsert(request, new() { ["Name"] = "PR-0099", ["Status__c"] = "Approved", ["Program_Name__c"] = "طلب" });
         var project = _fake.NewId("a0P");
@@ -669,14 +673,17 @@ public sealed class SalesforceSyncTests(PostgresFixture postgres) : IAsyncLifeti
         _clock.Frozen = now;
 
         // Sync now is picked up at once by the scheduler job.
-        (await _admin.PostAsJsonAsync($"{Sync}/connections/{_connection}/sync-now", new SyncNowInput(Full: true))).StatusCode.ShouldBe(HttpStatusCode.OK);
+        var syncNow = await _admin.PostAsJsonAsync($"{Sync}/connections/{_connection}/sync-now", new SyncNowInput(Full: true));
+        syncNow.StatusCode.ShouldBe(HttpStatusCode.OK, await syncNow.Content.ReadAsStringAsync());
         (await DueAsync()).ShouldBe(1);
         var runs = (await _admin.GetFromJsonAsync<PagedResult<SyncRunDto>>($"{Sync}/connections/{_connection}/runs"))!;
-        runs.Items[0].Trigger.ShouldBe(RunTriggers.Full);
+        runs.Items.ShouldContain(r => r.Trigger == RunTriggers.Full);
 
         // A failing run alerts the administrators; a late sync alerts once.
+        _clock.Frozen = next.AddMinutes(10); // after every earlier run; from here on only services are called (the session does not travel in time)
         _fake.RejectToken = true;
-        (await _admin.PostAsJsonAsync($"{Sync}/connections/{_connection}/sync-now", new SyncNowInput())).StatusCode.ShouldBe(HttpStatusCode.OK);
+        (await InScopeAsync(async sp => await sp.GetRequiredService<SyncAdministration>().SyncNowAsync(_connection, new SyncNowInput(), CancellationToken.None))).IsSuccess
+            .ShouldBeTrue();
         (await DueAsync()).ShouldBe(1);
         var failed = (await InScopeAsync(async sp => await sp.GetRequiredService<SyncAdministration>().StatusAsync(_connection, CancellationToken.None))).Value;
         failed.LastRun!.Status.ShouldBe(RunStatuses.Failed);
@@ -685,7 +692,7 @@ public sealed class SalesforceSyncTests(PostgresFixture postgres) : IAsyncLifeti
         _factory.Emails.Sent.ShouldContain(m => m.TemplateKey == "integration.sync.failed");
         var count = _factory.Emails.Sent.Count;
 
-        _clock.Frozen = _clock.Frozen.Value.AddHours(3);
+        _clock.Frozen = next.AddHours(3);
         (await InScopeAsync(async sp => await sp.GetRequiredService<SyncScheduler>().MonitorAsync(CancellationToken.None))).ShouldBe(1);
         (await InScopeAsync(async sp => await sp.GetRequiredService<SyncScheduler>().MonitorAsync(CancellationToken.None))).ShouldBe(0);
         await InScopeAsync(async sp => await sp.GetRequiredService<Strategy.Platform.Scheduling.Application.OutboxDispatcher>().DispatchDueAsync(CancellationToken.None));

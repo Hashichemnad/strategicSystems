@@ -161,7 +161,7 @@ public sealed class SyncFailover(
         }
 
         // Synced records changed here during the outage: a later Salesforce version waits for the admin's choice.
-        var entries = await ReadEntriesAsync(outage.StartedAt, now, ct).ConfigureAwait(false);
+        var entries = await ReadEntriesAsync(outage.StartedAt, now, connection.SourceSystem, ct).ConfigureAwait(false);
         var touched = entries.Entries.Select(e => KeyOf(e)).Where(k => k is not null).Select(k => k!.Value).Distinct().ToList();
         var ids = touched.Select(t => t.Id).ToList();
         var synced = await db.References.AsNoTracking()
@@ -244,7 +244,7 @@ public sealed class SyncFailover(
 
         var connection = await db.SyncConnections.AsNoTracking().FirstAsync(c => c.Id == outage.ConnectionId, ct).ConfigureAwait(false);
         var to = outage.ReturnedAt ?? outage.ClosedAt ?? clock.UtcNow;
-        var (entries, truncated) = await ReadEntriesAsync(outage.StartedAt, to, ct).ConfigureAwait(false);
+        var (entries, truncated) = await ReadEntriesAsync(outage.StartedAt, to, connection.SourceSystem, ct).ConfigureAwait(false);
         var grouped = entries.Select(e => (Key: KeyOf(e), Entry: e)).Where(x => x.Key is not null).GroupBy(x => x.Key!.Value).ToList();
         var ids = grouped.Select(g => g.Key.Id).ToList();
         var references = await db.References.AsNoTracking().Where(r => r.SourceSystem == connection.SourceSystem && ids.Contains(r.RecordId))
@@ -275,35 +275,40 @@ public sealed class SyncFailover(
         return new OutageReportDto(await administration.OutageDtoAsync(outage, ct).ConfigureAwait(false), outage.StartedAt, to, systems, entries.Count, truncated);
     }
 
-    /// <summary>Business changes and approval events made here (not by the sync) in the period, from the audit trail.</summary>
-    private async Task<(IReadOnlyList<AuditEntryDto> Entries, bool Truncated)> ReadEntriesAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken ct)
+    /// <summary>
+    /// Changes and approval events made here (not by the sync) in the period, from the audit trail: every change of the business systems and
+    /// Organisation, and every change of any record (or child row of a record) that came from the source.
+    /// </summary>
+    private async Task<(IReadOnlyList<AuditEntryDto> Entries, bool Truncated)> ReadEntriesAsync(DateTimeOffset from, DateTimeOffset to, string source, CancellationToken ct)
     {
         var options = await settings.GetAsync<SyncSettings>(ct).ConfigureAwait(false);
         var systems = new HashSet<string>(options.EffectiveSuspendedSystems, StringComparer.Ordinal) { "org" };
-        var list = new List<AuditEntryDto>();
+        var candidates = new List<AuditEntryDto>();
+        var truncated = false;
         for (var page = 1; ; page++)
         {
             var result = await auditQuery.SearchAsync(new AuditFilter(From: from, To: to), new PageRequest(page, PageRequest.MaxPageSize), ct).ConfigureAwait(false);
-            foreach (var e in result.Items)
+            candidates.AddRange(result.Items.Where(e => e.Channel != Channels.Sync
+                && ((e.Kind == AuditKinds.Change && e.SystemCode is not ("integration" or "audit" or "scheduling" or "notify" or "notifications"))
+                    || (e.Kind == AuditKinds.Event && e.Action.StartsWith("workflow.", StringComparison.Ordinal) && e.Data is not null))));
+            if (candidates.Count >= MaxReportEntries)
             {
-                if (e.Channel == Channels.Sync)
-                {
-                    continue;
-                }
-
-                var business = e.Kind == AuditKinds.Change && e.SystemCode is { } system && systems.Contains(system);
-                var approval = e.Kind == AuditKinds.Event && e.Action.StartsWith("workflow.", StringComparison.Ordinal) && e.Data is not null;
-                if (business || approval)
-                {
-                    list.Add(e);
-                }
+                truncated = true;
+                break;
             }
 
-            if (result.Items.Count < PageRequest.MaxPageSize || list.Count >= MaxReportEntries)
+            if (result.Items.Count < PageRequest.MaxPageSize)
             {
-                return (list, list.Count >= MaxReportEntries);
+                break;
             }
         }
+
+        var ids = candidates.Select(KeyOf).Where(k => k is not null).Select(k => k!.Value.Id).Distinct().ToList();
+        var synced = (await db.References.AsNoTracking().Where(r => r.SourceSystem == source && r.IsOrigin && ids.Contains(r.RecordId)).Select(r => r.RecordId)
+            .ToListAsync(ct).ConfigureAwait(false)).ToHashSet();
+        var list = candidates.Where(e => (e.SystemCode is { } system && systems.Contains(system)) || e.Kind == AuditKinds.Event
+            || (KeyOf(e) is { } key && synced.Contains(key.Id))).ToList();
+        return (list, truncated);
     }
 
     /// <summary>The record an entry belongs to: its audit parent, the workflow subject of an approval event, or the entry's own record.</summary>

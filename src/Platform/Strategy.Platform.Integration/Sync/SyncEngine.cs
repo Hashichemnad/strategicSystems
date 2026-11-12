@@ -848,8 +848,15 @@ public sealed partial class SyncEngine(
     private async Task LinkInScopeAsync(ExternalReferenceInput input, CancellationToken cancellationToken)
     {
         await using var scope = CreateSyncScope(null);
-        await scope.ServiceProvider.GetRequiredService<IExternalReferenceStore>().LinkAsync(input, null, cancellationToken).ConfigureAwait(false);
+        var linked = await scope.ServiceProvider.GetRequiredService<IExternalReferenceStore>().LinkAsync(input, null, cancellationToken).ConfigureAwait(false);
+        if (linked.IsFailure)
+        {
+            LogLinkFailed(logger, input.EntityType, input.ExternalId, linked.Error!.MessageKey);
+        }
     }
+
+    [LoggerMessage(Level = LogLevel.Warning, Message = "Sync reference {EntityType} {ExternalId} not linked: {MessageKey}")]
+    private static partial void LogLinkFailed(ILogger logger, string entityType, string externalId, string messageKey);
 
     private async Task LogAsync(SyncRun run, string level, string? objectKey, string messageKey, Dictionary<string, string?>? parameters, CancellationToken cancellationToken)
     {

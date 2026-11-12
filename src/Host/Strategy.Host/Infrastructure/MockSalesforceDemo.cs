@@ -7,7 +7,7 @@ using Strategy.Platform.Integration.Sync.Salesforce;
 namespace Strategy.Host.Infrastructure;
 
 /// <summary>Body of <c>POST /dev/mock-salesforce/change</c>: sets one field of one record in the mock org (a "change in Salesforce").</summary>
-public sealed record MockSalesforceChange(string Object, string? Id, string Field, string? Value);
+public sealed record MockSalesforceChange(string ObjectName, string? Id, string Field, string? Value);
 
 /// <summary>
 /// Demonstrations and E2E only (Phase 23 screenshots): a mock Salesforce org with ADoF-like sample data, replacing the Salesforce transport.
@@ -36,7 +36,7 @@ public static class MockSalesforceDemo
         }));
         group.MapPost("/change", Results<Ok<string>, NotFound> (MockSalesforceChange body, MockSalesforceOrg org) =>
         {
-            if (!org.Objects.TryGetValue(body.Object, out var o))
+            if (!org.Objects.TryGetValue(body.ObjectName, out var o))
             {
                 return TypedResults.NotFound();
             }
