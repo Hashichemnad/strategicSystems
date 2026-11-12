@@ -1,0 +1,91 @@
+{
+  "objects": [
+    {
+      "key": "risk", "sourceObject": "RMS_Risk__c", "kind": "record", "targetType": "risk.risk", "loadOrder": 70, "provisional": true,
+      "fields": [
+        { "source": "Name", "target": "number", "kind": "direct", "required": true, "transform": "trim" },
+        { "source": "Risk_Title__c", "target": "titleAr", "kind": "direct", "transform": "trim" },
+        { "source": "Risk_Title_En__c", "target": "titleEn", "kind": "direct", "transform": "trim" },
+        { "source": "Risk_Cause__c", "target": "cause", "kind": "direct", "transform": "htmlToText" },
+        { "source": "Risk_Event__c", "target": "eventText", "kind": "direct", "transform": "htmlToText" },
+        { "source": "Risk_Consequence__c", "target": "consequence", "kind": "direct", "transform": "htmlToText" },
+        { "source": "Risk_Type__c", "target": "riskType", "kind": "picklist", "values": { "Internal": "internal", "External": "external" } },
+        { "source": "Determined_By__c", "target": "determinedBy", "kind": "picklist", "values": {
+          "Risk Workshop": "risk-workshop", "Management": "management", "Audit": "audit", "Project": "project", "Other": "other" } },
+        { "source": "CreatedDate", "target": "identifiedOn", "kind": "direct", "transform": "dateOnly" },
+        { "source": "Identification_Date__c", "target": "identifiedOn", "kind": "direct" },
+        { "source": "Status__c", "target": "status", "kind": "picklist", "values": {
+          "Draft": "draft", "Under Review": "under_review", "Waiting Approval": "under_review", "Active": "active", "Closed": "closed",
+          "Inactive": "closed", "Rejected": "rejected" } },
+        { "source": "Emerging_Risk__c", "target": "emerging", "kind": "direct" },
+        { "source": "Department__c", "target": "unitId", "kind": "reference", "referenceType": "org.unit", "required": true },
+        { "source": "Risk_Owner__c", "target": "ownerEmployeeId", "kind": "person" },
+        { "source": "Risk_Coordinator__c", "target": "coordinatorEmployeeId", "kind": "person" },
+        { "source": "Probability_Level__c", "target": "inherentLikelihood", "kind": "direct", "required": true },
+        { "source": "Impact_Level__c", "target": "inherentImpact", "kind": "direct", "required": true },
+        { "source": "Residual_Probability_Level__c", "target": "residualLikelihood", "kind": "direct" },
+        { "source": "Residual_Impact_Level__c", "target": "residualImpact", "kind": "direct" },
+        { "source": "Response_Strategy__c", "target": "response", "kind": "picklist", "values": {
+          "Accept": "accept", "Avoid": "avoid", "Reduce": "reduce", "Mitigate": "reduce", "Transfer": "transfer" } },
+        { "source": "Last_Review_Date__c", "target": "lastReviewOn", "kind": "direct" }
+      ],
+      "defaults": { "status": "active", "riskType": "internal" },
+      "ignore": ["OwnerId", "CurrencyIsoCode", "Inherent_Risk_Score__c", "Residual_Risk_Score__c", "Risk_Rating__c", "Risk_Category__c"],
+      "notesAr": "مؤقت (G3): أسماء الكائن والحقول مأخوذة من وثائق الإصدار 1.0 وليست مرئية لمستخدم التكامل بعد؛ يبقى معطلاً حتى يؤكدها الوصف الحي. درجة الخطر في Salesforce جمعية (الاحتمال + الأثر) ولا تُنسخ: يعاد تقييم الخطر هنا بإطار المخاطر المعتمد (طريقة الاحتساب والنطاقات وفعالية الضوابط والرغبة في المخاطرة والتصعيد)، ولا يوجد حقل لحفظ الدرجة الأصلية (تبقى في سجل المصدر). تاريخ التحديد من حقله وإلا تاريخ الإنشاء. الفئات تُسند من مكتب المخاطر (ليست قائمة مرجعية). لا يُنشأ سجل تقييم ولا مسار اعتماد ولا حدث تكامل. قيم الحالة والاستجابة غير المذكورة تذهب إلى قائمة الاستثناءات.",
+      "notesEn": "Provisional (G3): object and field names come from the 1.0 source documents and are not visible to the integration user yet; disabled until the live describe confirms them. The Salesforce risk score is additive (likelihood + impact) and is not copied: the risk is re-rated here with the installation's risk framework (scoring method, bands, control effectiveness, appetite, escalation); the risk has no field for the source score (it stays in the source record). The identification date comes from its field, else the created date. Categories are assigned by the Risk Office (they are not a lookup list). No assessment row, approval instance or integration event is created. Status / response values not listed go to the exceptions queue."
+    },
+    {
+      "key": "risk-control", "sourceObject": "RMS_Control__c", "kind": "record", "targetType": "risk.control", "loadOrder": 71, "provisional": true,
+      "fields": [
+        { "source": "RMS_Risk__c", "target": "riskId", "kind": "reference", "referenceType": "risk.risk", "required": true },
+        { "source": "Control_Name__c", "target": "nameAr", "kind": "direct", "transform": "trim" },
+        { "source": "Control_Description__c", "target": "description", "kind": "direct", "transform": "htmlToText" },
+        { "source": "Control_Type__c", "target": "type", "kind": "picklist", "values": {
+          "Preventive": "preventive", "Detective": "detective", "Corrective": "corrective", "Directive": "directive" } },
+        { "source": "Control_Nature__c", "target": "nature", "kind": "picklist", "values": { "Manual": "manual", "Automated": "automated", "Hybrid": "hybrid" } },
+        { "source": "Control_Frequency__c", "target": "frequency", "kind": "picklist", "values": {
+          "Continuous": "continuous", "Daily": "daily", "Weekly": "weekly", "Monthly": "monthly", "Quarterly": "quarterly", "Annually": "annually",
+          "Yearly": "annually", "Ad Hoc": "ad-hoc" } },
+        { "source": "Control_Owner__c", "target": "ownerEmployeeId", "kind": "person" },
+        { "source": "Control_Effectiveness__c", "target": "effectiveness", "kind": "picklist", "values": {
+          "Effective": "effective", "Partially Effective": "partially-effective", "Ineffective": "ineffective", "Not Effective": "ineffective" } },
+        { "source": "Last_Assessment_Date__c", "target": "lastAssessedOn", "kind": "direct" },
+        { "source": "Status__c", "target": "status", "kind": "picklist", "values": { "Active": "active", "Inactive": "retired", "Closed": "retired" } }
+      ],
+      "defaults": { "status": "active" },
+      "ignore": ["OwnerId", "CurrencyIsoCode"],
+      "notesAr": "مؤقت (G3): معطل حتى يؤكد الوصف الحي الحقول. فعالية الضابط تُطابق رموز إطار المخاطر الافتراضي؛ الرمز غير المعروف في الإطار الحالي يُترك بلا تقييم. بعد كل ضابط يعاد تقييم الخطر (المتبقي) وتُمنح صلاحية سجل «مسؤول الضابط».",
+      "notesEn": "Provisional (G3): disabled until the live describe confirms the fields. Control effectiveness maps to the default framework codes; a code the current framework does not know is left unrated. After each control the risk is re-rated (residual) and the control-owner record role is granted."
+    },
+    {
+      "key": "risk-action-control", "sourceObject": "RMS_Risk_Action__c", "kind": "record", "targetType": "risk.control", "loadOrder": 71, "provisional": true,
+      "where": "Became_Control__c = true",
+      "fields": [
+        { "source": "RMS_Risk__c", "target": "riskId", "kind": "reference", "referenceType": "risk.risk", "required": true },
+        { "source": "Action_Name__c", "target": "nameAr", "kind": "direct", "transform": "trim" },
+        { "source": "Action_Description__c", "target": "description", "kind": "direct", "transform": "htmlToText" },
+        { "source": "Action_Owner__c", "target": "ownerEmployeeId", "kind": "person" },
+        { "source": "Actual_End_Date__c", "target": "lastAssessedOn", "kind": "direct" }
+      ],
+      "defaults": { "status": "active" },
+      "ignore": ["OwnerId", "CurrencyIsoCode", "Implementation_Percentage__c", "Planned_Start_Date__c", "Planned_End_Date__c", "Actual_Start_Date__c", "Status__c", "Cost__c"],
+      "notesAr": "مؤقت (G3): معطل حتى يؤكد الوصف الحي الحقول. فرق في النموذج: إجراءات المعالجة التي «أصبحت ضوابط» في Salesforce (Became_Control__c = true) تُنقل ضوابطَ لهذا الخطر (الكائن نفسه مطابق مرة ثانية بشرط where). إجراءات المعالجة الجارية ليست هدف مزامنة في المرحلة 23، فلا يُربط الضابط بإجرائه الأصلي (SourceActionId)، ويبقى الضابط بلا تقييم فعالية حتى يقيّمه مالكه.",
+      "notesEn": "Provisional (G3): disabled until the live describe confirms the fields. Model difference: treatment actions that \"became controls\" in Salesforce (Became_Control__c = true) come over as controls of their risk (the same object mapped a second time with a where condition). Ongoing treatment actions are not a sync target in Phase 23, so the control is not linked to its source action (SourceActionId) and it stays unrated until its owner assesses it."
+    },
+    {
+      "key": "risk-kri", "sourceObject": "Risk_Kpi_Relation__c", "kind": "record", "targetType": "risk.kri", "loadOrder": 72, "provisional": true,
+      "fields": [
+        { "source": "RMS_Risk__c", "target": "riskId", "kind": "reference", "referenceType": "risk.risk", "required": true },
+        { "source": "Org_Kpi_Goal__c", "target": "kpiCardId", "kind": "reference", "referenceType": "kpi.card", "required": true },
+        { "source": "Threshold_Direction__c", "target": "direction", "kind": "picklist", "values": { "Above": "above", "Below": "below" } },
+        { "source": "Warning_Threshold__c", "target": "warningThreshold", "kind": "direct" },
+        { "source": "Breach_Threshold__c", "target": "breachThreshold", "kind": "direct", "required": true },
+        { "source": "Status__c", "target": "status", "kind": "picklist", "values": { "Active": "active", "Inactive": "retired" } }
+      ],
+      "defaults": { "basis": "value", "direction": "above", "status": "active" },
+      "ignore": ["OwnerId", "CurrencyIsoCode"],
+      "notesAr": "مؤقت (G3): معطل حتى يؤكد الوصف الحي الحقول. كائن تابع لبطاقة المؤشر (Org_Kpi_Goal__c) يربط الخطر المؤسسي بمؤشر أداء مع حدود تحذير وتجاوز؛ يُحمَّل بعد مؤشرات الأداء (ترتيب 72) لأنه يشير إلى بطاقة المؤشر. أساس المقارنة «القيمة» افتراضياً. رمز البطاقة واسمها يُنسخان من وحدة المؤشرات عبر العقد.",
+      "notesEn": "Provisional (G3): disabled until the live describe confirms the fields. A child of the KPI card (Org_Kpi_Goal__c) linking an enterprise risk to a KPI with warning / breach thresholds; loaded after the KPIs (order 72) because it references the KPI card. Basis defaults to the value. The card code and name are copied from the KPI module through its contract."
+    }
+  ]
+}
