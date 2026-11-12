@@ -1,0 +1,34 @@
+{
+  "objects": [
+    {
+      "key": "docreg-document", "sourceObject": "Document_Registry__c", "kind": "record", "targetType": "docreg.document", "loadOrder": 87, "provisional": true,
+      "fields": [
+        { "source": "Document_ID__c", "target": "documentNo", "kind": "direct", "transform": "trim" },
+        { "source": "Document_Name__c", "target": "nameAr", "kind": "direct", "transform": "trim" },
+        { "source": "Document_Name_En__c", "target": "nameEn", "kind": "direct", "transform": "trim" },
+        { "source": "Description__c", "target": "description", "kind": "direct", "transform": "htmlToText" },
+        { "source": "Owner_Department__c", "target": "ownerUnitId", "kind": "reference", "referenceType": "org.unit" },
+        { "source": "Document_Owner__c", "target": "ownerEmployeeId", "kind": "person" },
+        { "source": "CreatedById", "target": "requesterEmployeeId", "kind": "person" },
+        { "source": "Hierarchical_Level__c", "target": "level", "kind": "picklist", "values": {
+          "Strategic": "strategic", "Legislative": "legislative", "Operational": "operational" } },
+        { "source": "Document_Type__c", "target": "docType", "kind": "picklist", "values": {
+          "Corporate Policy": "policy", "Policy": "policy", "Procedure": "procedure", "Manual": "manual", "Guide": "manual", "Legal Documents": "legal",
+          "Legal Document": "legal", "Strategy": "strategy", "Form": "form" } },
+        { "source": "Sensitivity__c", "target": "sensitivity", "kind": "picklist", "values": {
+          "Public": "public", "Internal": "internal", "Confidential": "confidential", "Secret": "secret" } },
+        { "source": "Version__c", "target": "currentVersionLabel", "kind": "direct", "transform": "truncate:20" },
+        { "source": "Status__c", "target": "status", "kind": "picklist", "values": {
+          "Submitted": "submitted", "Under Review": "under_review", "Returned": "returned", "Rejected": "rejected", "Approved": "approved",
+          "Published": "published", "Under Revision": "published", "Expired": "expired", "Withdrawn": "withdrawn", "Obsolete": "withdrawn" } },
+        { "source": "Effective_Date__c", "target": "effectiveDate", "kind": "direct", "transform": "dateOnly" },
+        { "source": "Expiry_Date__c", "target": "expiryDate", "kind": "direct", "transform": "dateOnly" },
+        { "source": "Share_to_All_Employees__c", "target": "shareToAll", "kind": "direct" },
+        { "source": "Published_Date__c", "target": "publishedAt", "kind": "direct" }
+      ],
+      "ignore": ["OwnerId", "CurrencyIsoCode", "Review_Period__c", "Next_Review_Date__c"],
+      "notesAr": "الاسم والحقول مؤقتة (من مخطط بيانات إدارة الوثائق المؤسسية في وثائق الإصدار 1.0) ولا يراها مستخدم التكامل حالياً؛ يجب تأكيدها بزر «تحقق» (الوصف الحي) قبل التفعيل. فروق النموذج: دورة المراجعة الثابتة في Salesforce تُستبدل هنا بصلاحية حسب نوع الوثيقة (تاريخ انتهاء أو سارية حتى الاستبدال)، فلا تُنقل فترة المراجعة؛ تاريخ الانتهاء يُنقل كما هو. تُنقل بطاقة الوثيقة فقط: سجل الإصدارات وطلبات التقديم والمراجعة وإقرارات الاطلاع لا تُنقل، والملف النهائي يأتي مرفقاً للوثيقة عبر ربط الملفات وليس إصداراً محكوماً (يُعاد نشره بعد التحويل إن لزم). «قيد التعديل» تُعامل كـ«منشورة» (يبقى الإصدار الحالي سارياً)؛ «مسودة» و«مستبدلة» (حالة إصدار لا وثيقة) بلا رمز وتذهب إلى قائمة الاستثناءات. نشر وثيقة متزامنة لا يُنشئ سجل ملكية فكرية (لا أحداث). الرؤية تتبع مستوى السرية كما في الوثائق المحلية.",
+      "notesEn": "Names are provisional (from the corporate document management data model ERD in the 1.0 source documents) and not visible to the integration user today; confirm them with Validate (live describe) before enabling. Model differences: the fixed Salesforce review cycle is replaced here by validity per document type (expiry date or valid until superseded), so the review period is not imported; the expiry date comes over as is. Only the register entry comes over: version history, submission / review requests and read acknowledgements are not imported, and the final file arrives as the document's attachment through the files mapping, not as a controlled version (re-publish after failover if needed). \"Under Revision\" is treated as Published (the current version stays valid); \"Draft\" and \"Superseded\" (a version status, not a document status) have no code and go to the exceptions queue. A synced document never creates an IP record (no events). Visibility follows sensitivity as for local documents."
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "objects": [
+    {
+      "key": "bench-study", "sourceObject": "Benchmarking_Study__c", "kind": "record", "targetType": "bench.study", "loadOrder": 86, "provisional": true,
+      "fields": [
+        { "source": "Name", "target": "number", "kind": "direct", "required": true },
+        { "source": "Study_Title__c", "target": "titleAr", "kind": "direct", "transform": "trim" },
+        { "source": "Responsible_Department__c", "target": "responsibleUnitId", "kind": "reference", "referenceType": "org.unit", "required": true },
+        { "source": "Relevant_Section__c", "target": "sectionUnitId", "kind": "reference", "referenceType": "org.unit" },
+        { "source": "Responsible_Employee__c", "target": "responsibleEmployeeId", "kind": "person" },
+        { "source": "CreatedById", "target": "requesterEmployeeId", "kind": "person" },
+        { "source": "Target_Year__c", "target": "targetYear", "kind": "direct" },
+        { "source": "Target_Quarter__c", "target": "targetQuarter", "kind": "direct" },
+        { "source": "Comparison_Type__c", "target": "comparisonType", "kind": "picklist", "values": {
+          "Internal": "internal", "Competitive": "competitive", "Functional": "functional", "Generic": "generic" } },
+        { "source": "Purpose_of_Comparison__c", "target": "purpose", "kind": "picklist", "values": {
+          "Policy Development": "policy-development", "Process Improvement": "process-improvement", "Human Skills Development": "human-skills",
+          "Service Quality": "service-quality", "Technology": "technology", "Other": "other" } },
+        { "source": "Scope__c", "target": "scope", "kind": "direct", "transform": "htmlToText" },
+        { "source": "Stage__c", "target": "stage", "kind": "picklist", "values": {
+          "Plan": "plan", "Search": "search", "Acquire": "acquire", "Analyze": "analysis", "Analysis": "analysis", "Completed": "completed" } },
+        { "source": "Status__c", "target": "status", "kind": "picklist", "values": {
+          "Active": "active", "Cancelled": "cancelled", "Completed": "completed", "Completed & Closed": "completed" } }
+      ],
+      "ignore": ["OwnerId", "CurrencyIsoCode", "Current_Status__c", "Request_Type__c"],
+      "notesAr": "الاسم والحقول مؤقتة (من مخطط بيانات المقارنة المعيارية في وثائق الإصدار 1.0) ولا يراها مستخدم التكامل حالياً؛ يجب تأكيدها بزر «تحقق» (الوصف الحي) قبل التفعيل. تُنقل ترويسة الدراسة فقط: مواضيع المقارنة والجهات المقارَن بها والتواصل والزيارات وصفوف مقارنة الممارسات والمؤشرات لا تُنقل (لا أهداف مزامنة لها) وتبقى في سجل المصدر. مرحلة «التخطيط» تجري هنا عبر إطار الطلبات، أما الدراسة المتزامنة فبلا طلب (مرجع الطلب يساوي معرّف الدراسة نفسها). خطة التطوير تُدار هنا في نظام الخطة التصحيحية؛ الدراسة المتزامنة لا تُنشئ مصدر ملاحظات، وما وُجد منها في Salesforce يُنقل عبر كائنات الخطة التصحيحية (نوع المصدر «مقارنة معيارية»). الربع المستهدف رقم من 1 إلى 4؛ إن كان في Salesforce قائمة Q1–Q4 فيلزم حقل معادلة رقمي، وإلا تذهب القيم إلى قائمة الاستثناءات. رسالة الحالة الحالية تُشتق هنا. يُمنح منسق الدراسة دوره على السجل.",
+      "notesEn": "Names are provisional (from the benchmarking data model ERD in the 1.0 source documents) and not visible to the integration user today; confirm them with Validate (live describe) before enabling. Only the study header comes over: comparison topics, comparator entities, outreach, visits and practice / indicator comparison rows are not imported (no sync targets) and stay in the source history. The Plan stage runs here on the Request Framework; a synced study has no request (its request reference is the study's own id). The development plan is managed here in the Corrective Action Plan system; a synced study does not create a remarks source — any Salesforce CAP records for it come over through the CAP objects (source type Benchmarking). The target quarter is a number 1–4; if Salesforce uses a Q1–Q4 picklist, a numeric formula field is needed, otherwise the values go to the exceptions queue. The current-status message is derived here. The study coordinator gets the record role."
+    }
+  ]
+}
