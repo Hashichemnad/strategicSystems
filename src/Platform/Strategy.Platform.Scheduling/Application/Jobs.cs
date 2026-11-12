@@ -74,7 +74,25 @@ internal sealed class JobRunListener(IServiceScopeFactory scopes, IClock clock) 
         await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
-    public Task JobExecutionVetoed(IJobExecutionContext context, CancellationToken cancellationToken = default) => Task.CompletedTask;
+    public async Task JobExecutionVetoed(IJobExecutionContext context, CancellationToken cancellationToken = default)
+    {
+        if (context.Get(StandbySuspensionKey) is not true)
+        {
+            return;
+        }
+
+        await using var scope = scopes.CreateAsyncScope();
+        var db = scope.ServiceProvider.GetRequiredService<SchedulingDbContext>();
+        db.JobRuns.Add(new JobRun
+        {
+            JobKey = context.JobDetail.Key.Name, FiredAt = clock.UtcNow, FinishedAt = clock.UtcNow, Status = JobRunStatuses.Suspended,
+            Message = "standby", Instance = context.Scheduler.SchedulerInstanceId,
+        });
+        await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>Set by <see cref="ScheduleSwitchListener"/> when it vetoes a run because of the standby guard.</summary>
+    public const string StandbySuspensionKey = "strategy.standby";
 
     public async Task JobWasExecuted(IJobExecutionContext context, JobExecutionException? jobException, CancellationToken cancellationToken = default)
     {
@@ -121,12 +139,25 @@ internal sealed record ScheduleSwitch(bool RunSchedules);
 /// Vetoes schedule-fired runs when <see cref="ScheduleSwitch.RunSchedules"/> is off (integration-test hosts, which invoke jobs
 /// explicitly and must not race a job firing every minute). Manual runs use Quartz's own trigger group and are never vetoed.
 /// </summary>
-internal sealed class ScheduleSwitchListener(ScheduleSwitch schedule) : ITriggerListener
+internal sealed class ScheduleSwitchListener(ScheduleSwitch schedule, StandbyJobGate standby) : ITriggerListener
 {
     public string Name => "strategy-schedule-switch";
 
-    public Task<bool> VetoJobExecution(ITrigger trigger, IJobExecutionContext context, CancellationToken cancellationToken = default) =>
-        Task.FromResult(!schedule.RunSchedules && trigger.Key.Group == Application.JobScheduleSynchroniser.Group);
+    public async Task<bool> VetoJobExecution(ITrigger trigger, IJobExecutionContext context, CancellationToken cancellationToken = default)
+    {
+        if (!schedule.RunSchedules && trigger.Key.Group == Application.JobScheduleSynchroniser.Group)
+        {
+            return true;
+        }
+
+        if (await standby.IsSuspendedAsync(context.JobDetail.Key.Name, cancellationToken).ConfigureAwait(false))
+        {
+            context.Put(JobRunListener.StandbySuspensionKey, true);
+            return true;
+        }
+
+        return false;
+    }
 
     public Task TriggerFired(ITrigger trigger, IJobExecutionContext context, CancellationToken cancellationToken = default) => Task.CompletedTask;
 
@@ -134,4 +165,27 @@ internal sealed class ScheduleSwitchListener(ScheduleSwitch schedule) : ITrigger
 
     public Task TriggerComplete(ITrigger trigger, IJobExecutionContext context, SchedulerInstruction triggerInstructionCode, CancellationToken cancellationToken = default) =>
         Task.CompletedTask;
+}
+
+/// <summary>
+/// Jobs of the systems suspended while a source system is primary (SPEC-ADDENDUM §G4, ADR 0206): job keys start with their system code
+/// (<c>kpi.period-window</c>). Scheduled and manual runs are both vetoed; platform jobs keep running.
+/// </summary>
+public sealed class StandbyJobGate(IEnumerable<Strategy.Platform.Kernel.Integration.IStandbyGuard> guards)
+{
+    public async Task<bool> IsSuspendedAsync(string jobKey, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(jobKey);
+        var system = jobKey.Split('.')[0];
+        foreach (var guard in guards)
+        {
+            if (await guard.IsActiveAsync(cancellationToken).ConfigureAwait(false)
+                && (await guard.SuspendedSystemsAsync(cancellationToken).ConfigureAwait(false)).Contains(system))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

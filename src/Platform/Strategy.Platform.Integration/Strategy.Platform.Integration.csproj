@@ -20,10 +20,18 @@
     <ProjectReference Include="..\Strategy.Platform.Organisation\Strategy.Platform.Organisation.csproj" />
     <ProjectReference Include="..\Strategy.Platform.Scheduling\Strategy.Platform.Scheduling.csproj" />
     <ProjectReference Include="..\Strategy.Platform.Reporting.Contracts\Strategy.Platform.Reporting.Contracts.csproj" />
+    <!-- Phase 23 (ADR 0200–0208): Salesforce standby sync — outage report PDF (Gotenberg renderer) and Excel; files; workflow / calendar. -->
+    <ProjectReference Include="..\Strategy.Platform.Reporting\Strategy.Platform.Reporting.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Files.Contracts\Strategy.Platform.Files.Contracts.csproj" />
+    <ProjectReference Include="..\Strategy.Platform.Notifications.Contracts\Strategy.Platform.Notifications.Contracts.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="OpenIddict.AspNetCore" />
     <PackageReference Include="Microsoft.OData.Core" />
+    <PackageReference Include="ClosedXML" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Sync\Packs\adof-salesforce.json" LogicalName="Strategy.Platform.Integration.Sync.Packs.adof-salesforce.json" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Strategy.UnitTests" />

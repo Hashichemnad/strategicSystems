@@ -13,7 +13,11 @@ using Strategy.Platform.Integration.Application;
 using Strategy.Platform.Integration.Clients;
 using Strategy.Platform.Integration.Feeds;
 using Strategy.Platform.Integration.Infrastructure;
+using Strategy.Platform.Http.Health;
 using Strategy.Platform.Integration.Mcp;
+using Strategy.Platform.Integration.Sync;
+using Strategy.Platform.Integration.Sync.Salesforce;
+using Strategy.Platform.Notifications;
 using Strategy.Platform.Integration.Webhooks;
 using Strategy.Platform.Persistence;
 using Strategy.Platform.Scheduling;
@@ -36,6 +40,15 @@ public static class IntegrationPermissions
 
     /// <summary>Developer portal (ADR 0195).</summary>
     public const string PortalView = "integration.portal.view";
+
+    /// <summary>Salesforce standby sync status, runs, exceptions (ADR 0200).</summary>
+    public const string SyncView = "integration.sync.view";
+
+    /// <summary>Connection, key, schedule, mappings, sync now, exceptions (ADR 0200–0205).</summary>
+    public const string SyncManage = "integration.sync.manage";
+
+    /// <summary>Make this system primary, outage report, return to standby (ADR 0207).</summary>
+    public const string SyncFailover = "integration.sync.failover";
 }
 
 /// <summary>External references (<c>/api/v1/integration</c>, schema <c>integration</c>, ADR 0164 / 0165, docs/design/external-references.md).</summary>
@@ -76,6 +89,26 @@ public sealed class IntegrationComponent : IPlatformComponent
         services.AddScheduledJob(ExportJob.Definition);
         services.AddScheduledJob(IntegrationMaintenanceJob.Definition);
         services.AddAuthentication().AddScheme<AuthenticationSchemeOptions, ApiKeyAuthenticationHandler>(AuthSchemes.Integration, null);
+
+        // Phase 23 (docs/design/salesforce-sync.md, ADR 0200–0208): Salesforce standby sync.
+        services.TryAddSingleton(TimeProvider.System);
+        services.TryAddSingleton<ISalesforceTransport, PolicySalesforceTransport>();
+        services.AddSingleton<SalesforceSessionFactory>();
+        services.AddSingleton<SyncTargetRegistry>();
+        services.AddSingleton<SyncStandbyGuard>();
+        services.AddSingleton<Kernel.Integration.IStandbyGuard>(sp => sp.GetRequiredService<SyncStandbyGuard>());
+        services.AddScoped<EntitySyncWriter>();
+        services.AddScoped<SyncEngine>();
+        services.AddScoped<SyncAdministration>();
+        services.AddScoped<SyncFailover>();
+        services.AddScoped<SyncScheduler>();
+        services.AddScoped<SyncAlerts>();
+        services.AddScheduledJob(SalesforceSyncJob.Definition);
+        services.AddScheduledJob(SyncMonitorJob.Definition);
+        services.AddAdminHealthContributor<SyncHealthContributor>();
+        services.AddNotificationTemplate(SyncAlerts.Failed);
+        services.AddNotificationTemplate(SyncAlerts.Late);
+        services.AddScoped<IDatabaseSeeder, SyncSeeder>();
     }
 
     public void UseMiddleware(IApplicationBuilder app) => app.UseMiddleware<IntegrationGateMiddleware>();
@@ -91,6 +124,7 @@ public sealed class IntegrationComponent : IPlatformComponent
         PortalEndpoints.Map(group);
         ODataEndpoints.MapExtracts(group);
         ODataEndpoints.Map(endpoints);
+        SyncEndpoints.Map(group);
     }
 }
 
@@ -105,13 +139,18 @@ internal sealed class IntegrationCatalogue : IAccessCatalogueSource
         new(IntegrationPermissions.ClientManage, "إدارة جهات التكامل وصلاحياتها", "Manage integration clients and their permissions", Scopable: false),
         new(IntegrationPermissions.WebhookManage, "إدارة اشتراكات Webhook وسجل التسليم", "Manage webhook subscriptions and deliveries", Scopable: false),
         new(IntegrationPermissions.PortalView, "عرض بوابة المطورين", "View the developer portal", Scopable: false),
+        new(IntegrationPermissions.SyncView, "عرض حالة المزامنة مع Salesforce", "View the Salesforce sync status", Scopable: false),
+        new(IntegrationPermissions.SyncManage, "إدارة المزامنة والربط والمطابقة", "Manage the sync, connection and mappings", Scopable: false),
+        new(IntegrationPermissions.SyncFailover, "التحويل إلى نظام أساسي والعودة إلى الاحتياط", "Failover and return to standby", Scopable: false),
     ];
 
     public IEnumerable<RoleSeed> DefaultRoles =>
     [
         new("administrator", "مسؤول التكامل", "Integrations administrator",
             [new(IntegrationPermissions.SourceRead), new(IntegrationPermissions.SourceManage), new(IntegrationPermissions.ClientManage),
-             new(IntegrationPermissions.WebhookManage), new(IntegrationPermissions.PortalView)], RequiresMfa: true),
+             new(IntegrationPermissions.WebhookManage), new(IntegrationPermissions.PortalView), new(IntegrationPermissions.SyncView),
+             new(IntegrationPermissions.SyncManage), new(IntegrationPermissions.SyncFailover)], RequiresMfa: true),
+        new("sync-operator", "مشغّل المزامنة", "Sync operator", [new(IntegrationPermissions.SyncView), new(IntegrationPermissions.SyncManage)], RequiresMfa: true),
         new("developer", "مطور التكامل", "Integration developer", [new(IntegrationPermissions.PortalView)]),
         new("viewer", "مستعرض الأنظمة المصدر", "Source systems viewer", [new(IntegrationPermissions.SourceRead)], AssignToEveryone: true),
     ];

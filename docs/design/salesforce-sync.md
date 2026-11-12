@@ -129,7 +129,7 @@ A module declares, in its own project, the record types the sync may write:
 ```csharp
 services.AddSyncTarget(SyncTarget.Entity<PortfolioDbContext, Project>(Project.EntityType, PortfolioPermissions.SystemCode, "مشروع", "Project")
     .Text("number", nameof(Project.Number), required: true).Text("nameAr", nameof(Project.NameAr)) …
-    .Code("stage", nameof(Project.Stage), ProjectStages.ProjectPath) .Lookup("programType", nameof(Project.ProgramTypeCode), "portfolio.program-type")
+    .Choice("stage", nameof(Project.Stage), ProjectStages.ProjectPath) .Lookup("programType", nameof(Project.ProgramTypeCode), "portfolio.program-type")
     .Person("pmEmployeeId", nameof(Project.PmEmployeeId)) .Unit("unitId", nameof(Project.UnitId)) .Reference("requestId", nameof(Project.RequestId), ProgramRequest.EntityType)
     .Date(…) .Decimal(…) .Ratio(…) .Bool(…) .Codes(…) /* jsonb array of codes */ .Defaults(…) .After<ProjectSyncHook>());
 ```

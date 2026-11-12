@@ -47,6 +47,7 @@ public sealed class OrganisationComponent : IPlatformComponent
         services.AddScoped<ILookupBackfillSource, GradeBackfill>();
         services.AddReferenceableType(OrgReferences.Unit);
         services.AddReferenceableType(OrgReferences.Employee);
+        services.AddOrgSyncTargets(); // Phase 23, ADR 0202 / 0204
         services.AddReferenceableRecordSource<UnitReferenceSource>();
         services.AddReferenceableRecordSource<EmployeeReferenceSource>();
     }

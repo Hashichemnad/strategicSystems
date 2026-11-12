@@ -30,6 +30,7 @@ public sealed class SchedulingComponent : IPlatformComponent
         services.AddSingleton<JobRunListener>();
         services.AddSingleton(new ScheduleSwitch(configuration.GetValue("Scheduling:RunSchedules", true)));
         services.AddSingleton<ScheduleSwitchListener>();
+        services.AddSingleton<StandbyJobGate>();
         services.AddScoped<JobAdministration>();
         services.AddAdminHealthContributor<SchedulingHealthContributor>();
         services.AddScheduledJob(SchedulingCleanupJob.Definition);

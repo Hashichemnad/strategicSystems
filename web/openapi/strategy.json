@@ -11164,6 +11164,107 @@
         }
       }
     },
+    "/api/v1/integration/references/{type}/{id}/sync-state": {
+      "get": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "GetRecordSyncState",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecordSyncStateDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integration/references/{type}/{id}/source-history": {
+      "get": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "ListRecordSourceHistory",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SourceHistoryEntryDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/integration/clients": {
       "get": {
         "tags": [
@@ -12307,6 +12408,2003 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integration/sync/connections": {
+      "get": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "ListSyncConnections",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SyncConnectionDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integration/sync/connections/{id}": {
+      "get": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "GetSyncConnection",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyncConnectionDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "UpdateSyncConnection",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SyncConnectionInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyncConnectionDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integration/sync/connections/{id}/key": {
+      "put": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "SetSyncConnectionKey",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SyncKeyInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyncConnectionDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integration/sync/connections/{id}/test": {
+      "post": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "TestSyncConnection",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyncConnectionDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integration/sync/connections/{id}/activate": {
+      "post": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "ActivateSyncConnection",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyncConnectionDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integration/sync/connections/{id}/deactivate": {
+      "post": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "DeactivateSyncConnection",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyncConnectionDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integration/sync/connections/{id}/schedule": {
+      "get": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "GetSyncSchedule",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyncScheduleDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "SaveSyncSchedule",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SyncScheduleInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyncScheduleDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integration/sync/connections/{id}/sync-now": {
+      "post": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "SyncNow",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SyncNowInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyncConnectionDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integration/sync/connections/{id}/status": {
+      "get": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "GetSyncStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyncStatusDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integration/sync/connections/{id}/runs": {
+      "get": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "ListSyncRuns",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResultOfSyncRunDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integration/sync/connections/{id}/runs/{runId}": {
+      "get": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "GetSyncRun",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "runId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyncRunDetailDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integration/sync/connections/{id}/source/objects": {
+      "get": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "ListSourceObjects",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SourceObjectDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integration/sync/connections/{id}/source/objects/{name}": {
+      "get": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "DescribeSourceObject",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "name",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SourceObjectDescribe"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integration/sync/targets": {
+      "get": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "ListSyncTargets",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SyncTargetDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integration/sync/packs": {
+      "get": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "ListMappingPacks",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MappingPackDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integration/sync/packs/{packId}/mappings": {
+      "get": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "ListObjectMappings",
+        "parameters": [
+          {
+            "name": "packId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ObjectMappingDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integration/sync/packs/{packId}/export": {
+      "get": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "ExportMappingPack",
+        "parameters": [
+          {
+            "name": "packId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MappingPackDocument"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integration/sync/packs/import": {
+      "post": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "ImportMappingPack",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MappingPackDocument"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MappingPackDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integration/sync/mappings/{mappingId}": {
+      "get": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "GetObjectMapping",
+        "parameters": [
+          {
+            "name": "mappingId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectMappingDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "UpdateObjectMapping",
+        "parameters": [
+          {
+            "name": "mappingId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ObjectMappingInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectMappingDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integration/sync/mappings/{mappingId}/enabled": {
+      "post": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "SetObjectMappingEnabled",
+        "parameters": [
+          {
+            "name": "mappingId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ObjectMappingEnableInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ObjectMappingDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integration/sync/connections/{id}/mappings/{mappingId}/validate": {
+      "post": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "ValidateObjectMapping",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "mappingId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MappingValidationDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integration/sync/connections/{id}/exceptions": {
+      "get": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "ListSyncExceptions",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "reason",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "mapping",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResultOfSyncExceptionDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integration/sync/exceptions/{exceptionId}": {
+      "get": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "GetSyncException",
+        "parameters": [
+          {
+            "name": "exceptionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyncExceptionDetailDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integration/sync/exceptions/{exceptionId}/reprocess": {
+      "post": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "ReprocessSyncException",
+        "parameters": [
+          {
+            "name": "exceptionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyncExceptionDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integration/sync/exceptions/{exceptionId}/ignore": {
+      "post": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "IgnoreSyncException",
+        "parameters": [
+          {
+            "name": "exceptionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyncExceptionDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integration/sync/exceptions/{exceptionId}/map-value": {
+      "post": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "MapSyncExceptionValue",
+        "parameters": [
+          {
+            "name": "exceptionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MapValueInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyncExceptionDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integration/sync/exceptions/{exceptionId}/map-person": {
+      "post": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "MapSyncExceptionPerson",
+        "parameters": [
+          {
+            "name": "exceptionId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MapPersonInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyncExceptionDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integration/sync/connections/{id}/exceptions/reprocess": {
+      "post": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "ReprocessSyncExceptions",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReprocessInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReprocessResultDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integration/sync/step-up/methods": {
+      "get": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "GetStepUpMethods",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StepUpMethodsDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integration/sync/step-up/email-code": {
+      "post": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "SendStepUpEmailCode",
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integration/sync/connections/{id}/make-primary": {
+      "post": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "MakeThisSystemPrimary",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MakePrimaryInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyncStatusDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integration/sync/connections/{id}/return-to-standby": {
+      "post": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "ReturnToStandby",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReturnToStandbyInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyncStatusDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integration/sync/connections/{id}/close-outage": {
+      "post": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "CloseOutage",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SyncStatusDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integration/sync/connections/{id}/outages": {
+      "get": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "ListOutages",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedResultOfSyncOutageDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integration/sync/outages/{outageId}/report": {
+      "get": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "GetOutageReport",
+        "parameters": [
+          {
+            "name": "outageId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutageReportDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integration/sync/outages/{outageId}/acknowledge": {
+      "post": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "AcknowledgeOutageReport",
+        "parameters": [
+          {
+            "name": "outageId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integration/sync/outages/{outageId}/report.xlsx": {
+      "get": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "ExportOutageReportExcel",
+        "parameters": [
+          {
+            "name": "outageId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "lang",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integration/sync/outages/{outageId}/report.pdf": {
+      "get": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "ExportOutageReportPdf",
+        "parameters": [
+          {
+            "name": "outageId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "lang",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integration/sync/outages/{outageId}/records/{type}/{recordId}/re-entered": {
+      "post": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "SetOutageRecordReEntered",
+        "parameters": [
+          {
+            "name": "outageId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "type",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "recordId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReEnteredInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integration/sync/outages/{outageId}/conflicts": {
+      "get": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "ListOutageConflicts",
+        "parameters": [
+          {
+            "name": "outageId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OutageConflictDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Problem Details (RFC 9457)",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/integration/sync/outages/{outageId}/conflicts/{recordId}/resolve": {
+      "post": {
+        "tags": [
+          "integration"
+        ],
+        "operationId": "ResolveOutageConflict",
+        "parameters": [
+          {
+            "name": "outageId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "recordId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResolveConflictInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OutageConflictDto"
+                }
+              }
+            }
           },
           "default": {
             "description": "Problem Details (RFC 9457)",
@@ -52321,6 +54419,51 @@
         },
         "description": "The token the SPA sends back in string AntiforgerySetup.HeaderName on every state-changing call."
       },
+      "ApiLimits": {
+        "required": [
+          "dailyApiMax",
+          "dailyApiRemaining",
+          "bulkJobsMax",
+          "bulkJobsRemaining",
+          "at"
+        ],
+        "type": "object",
+        "properties": {
+          "dailyApiMax": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "dailyApiRemaining": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "bulkJobsMax": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "bulkJobsRemaining": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "description": "API limits of the source as last read."
+      },
       "AppearanceSettings": {
         "type": "object",
         "properties": {
@@ -70914,6 +73057,59 @@
         },
         "description": "A validation failure on one field."
       },
+      "FieldMapping": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Source field API name; one relationship hop allowed (`RecordType.DeveloperName`). Empty for constants."
+          },
+          "target": {
+            "type": "string",
+            "description": "Target field code of the sync target."
+          },
+          "kind": {
+            "type": "string"
+          },
+          "values": {
+            "type": [
+              "null",
+              "object"
+            ],
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "Value map (picklist / record type); key `*` = fallback."
+          },
+          "transform": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "referenceType": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Reference mappings: the target type the Salesforce Id points at."
+          },
+          "value": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "Constant value."
+          },
+          "required": {
+            "type": "boolean"
+          }
+        },
+        "description": "One field mapping of an object mapping (ADR 0203, docs/design/salesforce-sync.md §3)."
+      },
       "FileDto": {
         "required": [
           "id",
@@ -79210,6 +81406,303 @@
           }
         }
       },
+      "MakePrimaryInput": {
+        "required": [
+          "reason",
+          "method",
+          "code"
+        ],
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "method": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "code": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "MapPersonInput": {
+        "required": [
+          "employeeId"
+        ],
+        "type": "object",
+        "properties": {
+          "employeeId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "MappingIssueDto": {
+        "required": [
+          "severity",
+          "field",
+          "messageKey",
+          "params"
+        ],
+        "type": "object",
+        "properties": {
+          "severity": {
+            "type": "string"
+          },
+          "field": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "messageKey": {
+            "type": "string"
+          },
+          "params": {
+            "type": [
+              "null",
+              "object"
+            ],
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "MappingPackDocument": {
+        "type": "object",
+        "properties": {
+          "format": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "connector": {
+            "type": "string"
+          },
+          "objects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MappingPackObject"
+            }
+          }
+        },
+        "description": "JSON document of a mapping pack (export / import, ADR 0203). No connection settings, secrets or watermarks."
+      },
+      "MappingPackDto": {
+        "required": [
+          "id",
+          "code",
+          "nameAr",
+          "nameEn",
+          "packVersion",
+          "description",
+          "connector",
+          "objects",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "nameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "packVersion": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "description": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "connector": {
+            "type": "string"
+          },
+          "objects": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "MappingPackObject": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "sourceObject": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "targetType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "loadOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "where": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "watermarkField": {
+            "type": "string"
+          },
+          "externalIdTemplate": {
+            "type": "string"
+          },
+          "useBulk": {
+            "type": "boolean"
+          },
+          "provisional": {
+            "type": "boolean"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FieldMapping"
+            }
+          },
+          "defaults": {
+            "type": "object"
+          },
+          "ignore": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "options": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/JsonElement"
+              }
+            ]
+          },
+          "notesAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "notesEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "MappingValidationDto": {
+        "required": [
+          "ok",
+          "confirmedAt",
+          "issues"
+        ],
+        "type": "object",
+        "properties": {
+          "ok": {
+            "type": "boolean"
+          },
+          "confirmedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "issues": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MappingIssueDto"
+            }
+          }
+        }
+      },
+      "MapValueInput": {
+        "required": [
+          "value",
+          "code"
+        ],
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "code": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "MatrixCell": {
         "required": [
           "likelihood",
@@ -82721,6 +85214,296 @@
           }
         }
       },
+      "ObjectMappingDto": {
+        "required": [
+          "id",
+          "packId",
+          "key",
+          "sourceObject",
+          "kind",
+          "targetType",
+          "enabled",
+          "loadOrder",
+          "confirmedAt",
+          "where",
+          "watermarkField",
+          "externalIdTemplate",
+          "useBulk",
+          "fields",
+          "defaults",
+          "ignore",
+          "options",
+          "notesAr",
+          "notesEn",
+          "provisional",
+          "watermark",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "packId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "key": {
+            "type": "string"
+          },
+          "sourceObject": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "targetType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "loadOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "confirmedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "where": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "watermarkField": {
+            "type": "string"
+          },
+          "externalIdTemplate": {
+            "type": "string"
+          },
+          "useBulk": {
+            "type": "boolean"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FieldMapping"
+            }
+          },
+          "defaults": {
+            "type": "object"
+          },
+          "ignore": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "options": {
+            "$ref": "#/components/schemas/JsonElement"
+          },
+          "notesAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "notesEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "provisional": {
+            "type": "boolean"
+          },
+          "watermark": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "ObjectMappingEnableInput": {
+        "required": [
+          "enabled",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "ObjectMappingInput": {
+        "required": [
+          "targetType",
+          "loadOrder",
+          "where",
+          "watermarkField",
+          "externalIdTemplate",
+          "useBulk",
+          "fields",
+          "defaults",
+          "ignore",
+          "options",
+          "notesAr",
+          "notesEn",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "targetType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "loadOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "where": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "watermarkField": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "externalIdTemplate": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "useBulk": {
+            "type": "boolean"
+          },
+          "fields": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "$ref": "#/components/schemas/FieldMapping"
+            }
+          },
+          "defaults": {
+            "type": [
+              "null",
+              "object"
+            ]
+          },
+          "ignore": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          },
+          "options": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/JsonElement"
+              }
+            ]
+          },
+          "notesAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "notesEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "ObjectRunStats": {
+        "type": "object",
+        "properties": {
+          "read": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "created": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "updated": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unchanged": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "deleted": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "failed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "conflicts": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "skipped": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "api": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "description": "`bulk` or `rest`."
+          },
+          "completed": {
+            "type": "boolean"
+          }
+        },
+        "description": "Counters of one object in one run."
+      },
       "OfficeInput": {
         "required": [
           "controlEffectivenessOverride",
@@ -83178,6 +85961,292 @@
           },
           "active": {
             "type": "boolean"
+          }
+        }
+      },
+      "OutageChangeDto": {
+        "required": [
+          "at",
+          "action",
+          "entityType",
+          "field",
+          "oldValue",
+          "newValue",
+          "userName",
+          "channel",
+          "kind"
+        ],
+        "type": "object",
+        "properties": {
+          "at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "action": {
+            "type": "string"
+          },
+          "entityType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "field": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "oldValue": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "newValue": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "userName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "channel": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          }
+        }
+      },
+      "OutageConflictDto": {
+        "required": [
+          "recordId",
+          "entityType",
+          "number",
+          "titleAr",
+          "titleEn",
+          "link",
+          "salesforceId",
+          "conflict",
+          "resolution",
+          "sourceModifiedAt",
+          "pending"
+        ],
+        "type": "object",
+        "properties": {
+          "recordId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "entityType": {
+            "type": "string"
+          },
+          "number": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "link": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "salesforceId": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "conflict": {
+            "type": "boolean"
+          },
+          "resolution": {
+            "type": "string"
+          },
+          "sourceModifiedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "pending": {
+            "type": [
+              "null",
+              "object"
+            ],
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "OutageRecordReportDto": {
+        "required": [
+          "entityType",
+          "recordId",
+          "typeNameAr",
+          "typeNameEn",
+          "number",
+          "titleAr",
+          "titleEn",
+          "link",
+          "salesforceId",
+          "resubmitRequired",
+          "changedLocally",
+          "reEntered",
+          "conflict",
+          "resolution",
+          "changes"
+        ],
+        "type": "object",
+        "properties": {
+          "entityType": {
+            "type": "string"
+          },
+          "recordId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "typeNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "typeNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "number": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "titleEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "link": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "salesforceId": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "resubmitRequired": {
+            "type": "boolean"
+          },
+          "changedLocally": {
+            "type": "boolean"
+          },
+          "reEntered": {
+            "type": "boolean"
+          },
+          "conflict": {
+            "type": "boolean"
+          },
+          "resolution": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "changes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OutageChangeDto"
+            }
+          }
+        }
+      },
+      "OutageReportDto": {
+        "required": [
+          "outage",
+          "from",
+          "to",
+          "systems",
+          "changes",
+          "truncated"
+        ],
+        "type": "object",
+        "properties": {
+          "outage": {
+            "$ref": "#/components/schemas/SyncOutageDto"
+          },
+          "from": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "to": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "systems": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OutageSystemReportDto"
+            }
+          },
+          "changes": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "truncated": {
+            "type": "boolean"
+          }
+        }
+      },
+      "OutageSystemReportDto": {
+        "required": [
+          "systemCode",
+          "records"
+        ],
+        "type": "object",
+        "properties": {
+          "systemCode": {
+            "type": "string"
+          },
+          "records": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OutageRecordReportDto"
+            }
           }
         }
       },
@@ -84095,6 +87164,108 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/SampleItemDto"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "description": "One page of items plus the total count across all pages."
+      },
+      "PagedResultOfSyncExceptionDto": {
+        "required": [
+          "items",
+          "page",
+          "pageSize",
+          "totalCount"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SyncExceptionDto"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "description": "One page of items plus the total count across all pages."
+      },
+      "PagedResultOfSyncOutageDto": {
+        "required": [
+          "items",
+          "page",
+          "pageSize",
+          "totalCount"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SyncOutageDto"
+            }
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "description": "One page of items plus the total count across all pages."
+      },
+      "PagedResultOfSyncRunDto": {
+        "required": [
+          "items",
+          "page",
+          "pageSize",
+          "totalCount"
+        ],
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SyncRunDto"
             }
           },
           "page": {
@@ -91071,6 +94242,52 @@
         },
         "description": "Field values of a record at a point in time, rebuilt from its create snapshot and later field updates."
       },
+      "RecordSyncStateDto": {
+        "required": [
+          "readOnly",
+          "sourceSystem",
+          "sourceNameAr",
+          "sourceNameEn",
+          "deletedInSource",
+          "resubmitRequired",
+          "sourceHistoryCount"
+        ],
+        "type": "object",
+        "properties": {
+          "readOnly": {
+            "type": "boolean"
+          },
+          "sourceSystem": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sourceNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sourceNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "deletedInSource": {
+            "type": "boolean"
+          },
+          "resubmitRequired": {
+            "type": "boolean"
+          },
+          "sourceHistoryCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "description": "Standby state of a record as its page shows it (badges; ADR 0206 / 0207)."
+      },
       "RecoveryCodesDto": {
         "required": [
           "codes"
@@ -91165,6 +94382,17 @@
               "integer"
             ],
             "format": "int32"
+          }
+        }
+      },
+      "ReEnteredInput": {
+        "required": [
+          "reEntered"
+        ],
+        "type": "object",
+        "properties": {
+          "reEntered": {
+            "type": "boolean"
           }
         }
       },
@@ -93010,6 +96238,45 @@
           }
         }
       },
+      "ReprocessInput": {
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "mappingKey": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "ReprocessResultDto": {
+        "required": [
+          "processed",
+          "resolved",
+          "stillOpen"
+        ],
+        "type": "object",
+        "properties": {
+          "processed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "resolved": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "stillOpen": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
       "RequestActionsDto": {
         "required": [
           "edit",
@@ -94485,6 +97752,20 @@
           }
         }
       },
+      "ResolveConflictInput": {
+        "required": [
+          "choice"
+        ],
+        "type": "object",
+        "properties": {
+          "choice": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
       "ResponsibilityChangeInput": {
         "required": [
           "items",
@@ -94861,6 +98142,17 @@
           },
           "labelEn": {
             "type": "string"
+          }
+        }
+      },
+      "ReturnToStandbyInput": {
+        "required": [
+          "acknowledged"
+        ],
+        "type": "object",
+        "properties": {
+          "acknowledged": {
+            "type": "boolean"
           }
         }
       },
@@ -99501,6 +102793,209 @@
           }
         }
       },
+      "SourceFieldInfo": {
+        "required": [
+          "name",
+          "label",
+          "type",
+          "length",
+          "nillable",
+          "referenceTo",
+          "relationshipName",
+          "picklistValues"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "length": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "nillable": {
+            "type": "boolean"
+          },
+          "referenceTo": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "relationshipName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "picklistValues": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SourcePicklistValue"
+            }
+          }
+        }
+      },
+      "SourceHistoryEntryDto": {
+        "required": [
+          "id",
+          "kind",
+          "occurredAt",
+          "actorName",
+          "processName",
+          "processInstanceId",
+          "processStatus",
+          "stepStatus",
+          "comments",
+          "field",
+          "oldValue",
+          "newValue"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "occurredAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "actorName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "processName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "processInstanceId": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "processStatus": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "stepStatus": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "comments": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "field": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "oldValue": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "newValue": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "SourceObjectDescribe": {
+        "required": [
+          "name",
+          "label",
+          "keyPrefix",
+          "fields"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "keyPrefix": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SourceFieldInfo"
+            }
+          }
+        }
+      },
+      "SourceObjectDto": {
+        "required": [
+          "name",
+          "label",
+          "custom"
+        ],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "custom": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SourcePicklistValue": {
+        "required": [
+          "value",
+          "label",
+          "active"
+        ],
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "string"
+          },
+          "label": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "active": {
+            "type": "boolean"
+          }
+        }
+      },
       "SourceSystemDto": {
         "required": [
           "id",
@@ -100509,6 +104004,20 @@
           }
         }
       },
+      "StepUpMethodsDto": {
+        "required": [
+          "methods"
+        ],
+        "type": "object",
+        "properties": {
+          "methods": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
       "StoryDto": {
         "required": [
           "id",
@@ -101391,6 +104900,901 @@
         "type": "object",
         "properties": {
           "mode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "SyncConnectionDto": {
+        "required": [
+          "id",
+          "sourceSystem",
+          "sourceNameAr",
+          "sourceNameEn",
+          "connector",
+          "mode",
+          "modeActions",
+          "loginUrl",
+          "clientId",
+          "username",
+          "keyStored",
+          "keyThumbprint",
+          "apiVersion",
+          "bulkThreshold",
+          "pageSize",
+          "schedule",
+          "nextRunAt",
+          "lateAfterMinutes",
+          "mappingPackId",
+          "instanceUrl",
+          "limits",
+          "lastTest",
+          "runRequested",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sourceSystem": {
+            "type": "string"
+          },
+          "sourceNameAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sourceNameEn": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "connector": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string"
+          },
+          "modeActions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "loginUrl": {
+            "type": "string"
+          },
+          "clientId": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "username": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "keyStored": {
+            "type": "boolean"
+          },
+          "keyThumbprint": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "apiVersion": {
+            "type": "string"
+          },
+          "bulkThreshold": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "schedule": {
+            "$ref": "#/components/schemas/SyncScheduleSettings"
+          },
+          "nextRunAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "lateAfterMinutes": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "mappingPackId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "instanceUrl": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "limits": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/ApiLimits"
+              }
+            ]
+          },
+          "lastTest": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/SyncTestDto"
+              }
+            ]
+          },
+          "runRequested": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "SyncConnectionInput": {
+        "required": [
+          "loginUrl",
+          "clientId",
+          "username",
+          "apiVersion",
+          "bulkThreshold",
+          "pageSize",
+          "mappingPackId",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "loginUrl": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "clientId": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "username": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "apiVersion": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "bulkThreshold": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "pageSize": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "mappingPackId": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "uuid"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "SyncExceptionDetailDto": {
+        "required": [
+          "exception",
+          "payload",
+          "targetType"
+        ],
+        "type": "object",
+        "properties": {
+          "exception": {
+            "$ref": "#/components/schemas/SyncExceptionDto"
+          },
+          "payload": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "targetType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "SyncExceptionDto": {
+        "required": [
+          "id",
+          "mappingId",
+          "mappingKey",
+          "sourceObject",
+          "externalId",
+          "reason",
+          "field",
+          "value",
+          "messageKey",
+          "status",
+          "attempts",
+          "createdAt",
+          "updatedAt",
+          "resolvedAt"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "mappingId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "mappingKey": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "sourceObject": {
+            "type": "string"
+          },
+          "externalId": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "field": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "value": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "messageKey": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "status": {
+            "type": "string"
+          },
+          "attempts": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "resolvedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          }
+        }
+      },
+      "SyncKeyInput": {
+        "required": [
+          "privateKeyPem"
+        ],
+        "type": "object",
+        "properties": {
+          "privateKeyPem": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        }
+      },
+      "SyncNowInput": {
+        "type": "object",
+        "properties": {
+          "full": {
+            "type": "boolean",
+            "default": false
+          },
+          "objects": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "SyncObjectStatusDto": {
+        "required": [
+          "id",
+          "key",
+          "sourceObject",
+          "kind",
+          "targetType",
+          "enabled",
+          "confirmed",
+          "provisional",
+          "loadOrder",
+          "watermark",
+          "lastFullLoadAt",
+          "lastRun",
+          "openExceptions"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "key": {
+            "type": "string"
+          },
+          "sourceObject": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "targetType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "confirmed": {
+            "type": "boolean"
+          },
+          "provisional": {
+            "type": "boolean"
+          },
+          "loadOrder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "watermark": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "lastFullLoadAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "lastRun": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/ObjectRunStats"
+              }
+            ]
+          },
+          "openExceptions": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "SyncOutageDto": {
+        "required": [
+          "id",
+          "status",
+          "startedAt",
+          "startedByName",
+          "reason",
+          "returnedAt",
+          "reportAcknowledgedAt",
+          "closedAt",
+          "resubmitRequired",
+          "changedLocally",
+          "reEntered",
+          "pendingConflicts"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string"
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "startedByName": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "reason": {
+            "type": "string"
+          },
+          "returnedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "reportAcknowledgedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "closedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "resubmitRequired": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "changedLocally": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "reEntered": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pendingConflicts": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "SyncRunDetailDto": {
+        "required": [
+          "run",
+          "log"
+        ],
+        "type": "object",
+        "properties": {
+          "run": {
+            "$ref": "#/components/schemas/SyncRunDto"
+          },
+          "log": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SyncRunLogDto"
+            }
+          }
+        }
+      },
+      "SyncRunDto": {
+        "required": [
+          "id",
+          "trigger",
+          "full",
+          "status",
+          "startedAt",
+          "finishedAt",
+          "durationSeconds",
+          "objects",
+          "apiCalls",
+          "messageKey",
+          "params"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "trigger": {
+            "type": "string"
+          },
+          "full": {
+            "type": "boolean"
+          },
+          "status": {
+            "type": "string"
+          },
+          "startedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "finishedAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          },
+          "durationSeconds": {
+            "type": [
+              "null",
+              "number"
+            ],
+            "format": "double"
+          },
+          "objects": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ObjectRunStats"
+            }
+          },
+          "apiCalls": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "messageKey": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "params": {
+            "type": [
+              "null",
+              "object"
+            ],
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "SyncRunLogDto": {
+        "required": [
+          "at",
+          "level",
+          "objectKey",
+          "messageKey",
+          "params"
+        ],
+        "type": "object",
+        "properties": {
+          "at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "level": {
+            "type": "string"
+          },
+          "objectKey": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "messageKey": {
+            "type": "string"
+          },
+          "params": {
+            "type": [
+              "null",
+              "object"
+            ],
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "SyncScheduleDto": {
+        "required": [
+          "schedule",
+          "lateAfterMinutes",
+          "timeZone",
+          "nextRuns",
+          "nextRunAt"
+        ],
+        "type": "object",
+        "properties": {
+          "schedule": {
+            "$ref": "#/components/schemas/SyncScheduleSettings"
+          },
+          "lateAfterMinutes": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "timeZone": {
+            "type": "string"
+          },
+          "nextRuns": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          "nextRunAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
+          }
+        }
+      },
+      "SyncScheduleInput": {
+        "required": [
+          "schedule",
+          "lateAfterMinutes",
+          "version"
+        ],
+        "type": "object",
+        "properties": {
+          "schedule": {
+            "$ref": "#/components/schemas/SyncScheduleSettings"
+          },
+          "lateAfterMinutes": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "version": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
+      "SyncScheduleSettings": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string"
+          },
+          "everyHours": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "at": {
+            "type": "string",
+            "description": "\"HH:mm\" in the installation time zone."
+          },
+          "days": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "description": "ISO days (Monday = 1 … Sunday = 7)."
+          },
+          "businessHoursOnly": {
+            "type": "boolean"
+          }
+        },
+        "description": "Schedule of a connection (§4): every N hours (anchored at `At`), daily at a time, or weekly on days at a time."
+      },
+      "SyncStatusDto": {
+        "required": [
+          "connection",
+          "lastRun",
+          "lastSuccess",
+          "running",
+          "late",
+          "openExceptions",
+          "objects",
+          "outage"
+        ],
+        "type": "object",
+        "properties": {
+          "connection": {
+            "$ref": "#/components/schemas/SyncConnectionDto"
+          },
+          "lastRun": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/SyncRunDto"
+              }
+            ]
+          },
+          "lastSuccess": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/SyncRunDto"
+              }
+            ]
+          },
+          "running": {
+            "type": "boolean"
+          },
+          "late": {
+            "type": "boolean"
+          },
+          "openExceptions": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "objects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SyncObjectStatusDto"
+            }
+          },
+          "outage": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/SyncOutageDto"
+              }
+            ]
+          }
+        }
+      },
+      "SyncTargetDto": {
+        "required": [
+          "code",
+          "systemCode",
+          "nameAr",
+          "nameEn",
+          "fields"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "systemCode": {
+            "type": "string"
+          },
+          "nameAr": {
+            "type": "string"
+          },
+          "nameEn": {
+            "type": "string"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SyncTargetFieldDto"
+            }
+          }
+        }
+      },
+      "SyncTargetFieldDto": {
+        "required": [
+          "code",
+          "kind",
+          "required",
+          "lookupType",
+          "referenceType",
+          "choices"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string"
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "lookupType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "referenceType": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "choices": {
+            "type": [
+              "null",
+              "array"
+            ],
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "SyncTestDto": {
+        "required": [
+          "at",
+          "ok",
+          "messageKey"
+        ],
+        "type": "object",
+        "properties": {
+          "at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "ok": {
+            "type": "boolean"
+          },
+          "messageKey": {
             "type": [
               "null",
               "string"

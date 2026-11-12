@@ -30,6 +30,27 @@ public sealed class IntegrationDbContext(DbContextOptions<IntegrationDbContext> 
     public DbSet<WebhookAttempt> Attempts => Set<WebhookAttempt>();
 
     public DbSet<ExportSchedule> ExportSchedules => Set<ExportSchedule>();
+
+    // Phase 23 (ADR 0200–0208): Salesforce standby sync.
+    public DbSet<Sync.SyncConnection> SyncConnections => Set<Sync.SyncConnection>();
+
+    public DbSet<Sync.SyncMappingPack> MappingPacks => Set<Sync.SyncMappingPack>();
+
+    public DbSet<Sync.SyncObjectMapping> ObjectMappings => Set<Sync.SyncObjectMapping>();
+
+    public DbSet<Sync.SyncRun> SyncRuns => Set<Sync.SyncRun>();
+
+    public DbSet<Sync.SyncRunLog> SyncRunLog => Set<Sync.SyncRunLog>();
+
+    public DbSet<Sync.SyncException> SyncExceptions => Set<Sync.SyncException>();
+
+    public DbSet<Sync.SyncPerson> SyncPeople => Set<Sync.SyncPerson>();
+
+    public DbSet<Sync.SourceHistoryEntry> SourceHistory => Set<Sync.SourceHistoryEntry>();
+
+    public DbSet<Sync.SyncOutage> Outages => Set<Sync.SyncOutage>();
+
+    public DbSet<Sync.SyncOutageRecord> OutageRecords => Set<Sync.SyncOutageRecord>();
 }
 
 internal sealed class SourceSystemConfiguration : IEntityTypeConfiguration<SourceSystem>

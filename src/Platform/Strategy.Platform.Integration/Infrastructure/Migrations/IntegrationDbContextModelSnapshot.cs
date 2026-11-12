@@ -732,6 +732,949 @@ namespace Strategy.Platform.Integration.Infrastructure.Migrations
 
                     b.ToTable("webhook_subscription", "integration");
                 });
+
+            modelBuilder.Entity("Strategy.Platform.Integration.Sync.SourceHistoryEntry", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("ActorName")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("actor_name");
+
+                    b.Property<string>("Comments")
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)")
+                        .HasColumnName("comments");
+
+                    b.Property<string>("EntityType")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("entity_type");
+
+                    b.Property<string>("ExternalId")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("external_id");
+
+                    b.Property<string>("Field")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("field");
+
+                    b.Property<string>("Kind")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("kind");
+
+                    b.Property<string>("NewValue")
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)")
+                        .HasColumnName("new_value");
+
+                    b.Property<DateTimeOffset>("OccurredAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("occurred_at");
+
+                    b.Property<string>("OldValue")
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)")
+                        .HasColumnName("old_value");
+
+                    b.Property<string>("ProcessInstanceId")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("process_instance_id");
+
+                    b.Property<string>("ProcessName")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("process_name");
+
+                    b.Property<string>("ProcessStatus")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("process_status");
+
+                    b.Property<string>("RecordExternalId")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("record_external_id");
+
+                    b.Property<Guid>("RecordId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("record_id");
+
+                    b.Property<string>("SourceSystem")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("source_system");
+
+                    b.Property<string>("StepStatus")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("step_status");
+
+                    b.HasKey("Id")
+                        .HasName("pk_source_history");
+
+                    b.HasIndex("EntityType", "RecordId", "OccurredAt")
+                        .HasDatabaseName("ix_source_history_entity_type_record_id_occurred_at");
+
+                    b.HasIndex("SourceSystem", "Kind", "ExternalId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_source_history_source_system_kind_external_id");
+
+                    b.ToTable("source_history", "integration");
+                });
+
+            modelBuilder.Entity("Strategy.Platform.Integration.Sync.SyncConnection", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("ApiVersion")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("api_version");
+
+                    b.Property<int>("BulkThreshold")
+                        .HasColumnType("integer")
+                        .HasColumnName("bulk_threshold");
+
+                    b.Property<string>("ClientId")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("client_id");
+
+                    b.Property<string>("Connector")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("connector");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<string>("InstanceUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("instance_url");
+
+                    b.Property<string>("KeyThumbprint")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("key_thumbprint");
+
+                    b.Property<string>("LastLimits")
+                        .HasColumnType("jsonb")
+                        .HasColumnName("last_limits");
+
+                    b.Property<DateTimeOffset?>("LastTestAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_test_at");
+
+                    b.Property<string>("LastTestMessageKey")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("last_test_message_key");
+
+                    b.Property<bool?>("LastTestOk")
+                        .HasColumnType("boolean")
+                        .HasColumnName("last_test_ok");
+
+                    b.Property<int?>("LateAfterMinutes")
+                        .HasColumnType("integer")
+                        .HasColumnName("late_after_minutes");
+
+                    b.Property<DateTimeOffset?>("LateAlertSentAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("late_alert_sent_at");
+
+                    b.Property<string>("LoginUrl")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("login_url");
+
+                    b.Property<Guid?>("MappingPackId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("mapping_pack_id");
+
+                    b.Property<string>("Mode")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("mode");
+
+                    b.Property<DateTimeOffset?>("NextRunAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("next_run_at");
+
+                    b.Property<int>("PageSize")
+                        .HasColumnType("integer")
+                        .HasColumnName("page_size");
+
+                    b.Property<string>("PrivateKeyProtected")
+                        .HasColumnType("text")
+                        .HasColumnName("private_key_protected");
+
+                    b.Property<DateTimeOffset?>("RunRequestedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("run_requested_at");
+
+                    b.Property<Guid?>("RunRequestedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("run_requested_by");
+
+                    b.Property<bool>("RunRequestedFull")
+                        .HasColumnType("boolean")
+                        .HasColumnName("run_requested_full");
+
+                    b.Property<string>("RunRequestedObjects")
+                        .HasColumnType("jsonb")
+                        .HasColumnName("run_requested_objects");
+
+                    b.Property<string>("Schedule")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("schedule");
+
+                    b.Property<string>("SourceSystem")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("source_system");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.Property<string>("Username")
+                        .HasMaxLength(320)
+                        .HasColumnType("character varying(320)")
+                        .HasColumnName("username");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_sync_connection");
+
+                    b.HasIndex("SourceSystem")
+                        .IsUnique()
+                        .HasDatabaseName("ix_sync_connection_source_system");
+
+                    b.ToTable("sync_connection", "integration");
+                });
+
+            modelBuilder.Entity("Strategy.Platform.Integration.Sync.SyncException", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<int>("Attempts")
+                        .HasColumnType("integer")
+                        .HasColumnName("attempts");
+
+                    b.Property<Guid>("ConnectionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("connection_id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("ExternalId")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("external_id");
+
+                    b.Property<string>("Field")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("field");
+
+                    b.Property<Guid>("MappingId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("mapping_id");
+
+                    b.Property<string>("MessageKey")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("message_key");
+
+                    b.Property<string>("Params")
+                        .HasColumnType("jsonb")
+                        .HasColumnName("params");
+
+                    b.Property<string>("Payload")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("payload");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("reason");
+
+                    b.Property<DateTimeOffset?>("ResolvedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("resolved_at");
+
+                    b.Property<Guid?>("ResolvedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("resolved_by");
+
+                    b.Property<Guid?>("RunId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("run_id");
+
+                    b.Property<DateTimeOffset?>("SourceModifiedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("source_modified_at");
+
+                    b.Property<string>("SourceObject")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("source_object");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<string>("Value")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("value");
+
+                    b.HasKey("Id")
+                        .HasName("pk_sync_exception");
+
+                    b.HasIndex("ConnectionId", "MappingId", "ExternalId")
+                        .IsUnique()
+                        .HasDatabaseName("ux_sync_exception_open")
+                        .HasFilter("status = 'open'");
+
+                    b.HasIndex("ConnectionId", "Status", "Reason")
+                        .HasDatabaseName("ix_sync_exception_connection_id_status_reason");
+
+                    b.ToTable("sync_exception", "integration");
+                });
+
+            modelBuilder.Entity("Strategy.Platform.Integration.Sync.SyncMappingPack", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("code");
+
+                    b.Property<string>("Connector")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("connector");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("description");
+
+                    b.Property<string>("NameAr")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("name_ar");
+
+                    b.Property<string>("NameEn")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("name_en");
+
+                    b.Property<int>("PackVersion")
+                        .HasColumnType("integer")
+                        .HasColumnName("pack_version");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_sync_mapping_pack");
+
+                    b.HasIndex("Code")
+                        .IsUnique()
+                        .HasDatabaseName("ix_sync_mapping_pack_code");
+
+                    b.ToTable("sync_mapping_pack", "integration");
+                });
+
+            modelBuilder.Entity("Strategy.Platform.Integration.Sync.SyncObjectMapping", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset?>("ConfirmedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("confirmed_at");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<string>("Defaults")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("defaults");
+
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("boolean")
+                        .HasColumnName("enabled");
+
+                    b.Property<string>("ExternalIdTemplate")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("external_id_template");
+
+                    b.Property<string>("Fields")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("fields");
+
+                    b.Property<string>("Ignore")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("ignore");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("key");
+
+                    b.Property<string>("Kind")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("kind");
+
+                    b.Property<DateTimeOffset?>("LastFullLoadAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_full_load_at");
+
+                    b.Property<int>("LoadOrder")
+                        .HasColumnType("integer")
+                        .HasColumnName("load_order");
+
+                    b.Property<string>("NotesAr")
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)")
+                        .HasColumnName("notes_ar");
+
+                    b.Property<string>("NotesEn")
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)")
+                        .HasColumnName("notes_en");
+
+                    b.Property<string>("Options")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("options");
+
+                    b.Property<Guid>("PackId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("pack_id");
+
+                    b.Property<bool>("Provisional")
+                        .HasColumnType("boolean")
+                        .HasColumnName("provisional");
+
+                    b.Property<string>("SourceObject")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("source_object");
+
+                    b.Property<string>("TargetType")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("target_type");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.Property<bool>("UseBulk")
+                        .HasColumnType("boolean")
+                        .HasColumnName("use_bulk");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<DateTimeOffset?>("Watermark")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("watermark");
+
+                    b.Property<string>("WatermarkField")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("watermark_field");
+
+                    b.Property<string>("Where")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("where");
+
+                    b.HasKey("Id")
+                        .HasName("pk_sync_object_mapping");
+
+                    b.HasIndex("PackId", "Key")
+                        .IsUnique()
+                        .HasDatabaseName("ix_sync_object_mapping_pack_id_key");
+
+                    b.ToTable("sync_object_mapping", "integration");
+                });
+
+            modelBuilder.Entity("Strategy.Platform.Integration.Sync.SyncOutage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset?>("ClosedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("closed_at");
+
+                    b.Property<Guid?>("ClosedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("closed_by");
+
+                    b.Property<Guid>("ConnectionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("connection_id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("reason");
+
+                    b.Property<DateTimeOffset?>("ReportAcknowledgedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("report_acknowledged_at");
+
+                    b.Property<Guid?>("ReportAcknowledgedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("report_acknowledged_by");
+
+                    b.Property<DateTimeOffset?>("ReturnedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("returned_at");
+
+                    b.Property<Guid?>("ReturnedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("returned_by");
+
+                    b.Property<DateTimeOffset>("StartedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("started_at");
+
+                    b.Property<Guid?>("StartedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("started_by");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_sync_outage");
+
+                    b.HasIndex("ConnectionId", "Status")
+                        .HasDatabaseName("ix_sync_outage_connection_id_status");
+
+                    b.ToTable("sync_outage", "integration");
+                });
+
+            modelBuilder.Entity("Strategy.Platform.Integration.Sync.SyncOutageRecord", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<bool>("ChangedLocally")
+                        .HasColumnType("boolean")
+                        .HasColumnName("changed_locally");
+
+                    b.Property<bool>("Conflict")
+                        .HasColumnType("boolean")
+                        .HasColumnName("conflict");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<string>("EntityTypeCode")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("entity_type");
+
+                    b.Property<string>("ExternalId")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("external_id");
+
+                    b.Property<Guid>("OutageId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("outage_id");
+
+                    b.Property<Guid?>("PendingMappingId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("pending_mapping_id");
+
+                    b.Property<string>("PendingPayload")
+                        .HasColumnType("jsonb")
+                        .HasColumnName("pending_payload");
+
+                    b.Property<DateTimeOffset?>("PendingSourceModifiedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("pending_source_modified_at");
+
+                    b.Property<bool>("ReEntered")
+                        .HasColumnType("boolean")
+                        .HasColumnName("re_entered");
+
+                    b.Property<DateTimeOffset?>("ReEnteredAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("re_entered_at");
+
+                    b.Property<Guid?>("ReEnteredBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("re_entered_by");
+
+                    b.Property<Guid>("RecordId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("record_id");
+
+                    b.Property<string>("Resolution")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("resolution");
+
+                    b.Property<bool>("ResubmitRequired")
+                        .HasColumnType("boolean")
+                        .HasColumnName("resubmit_required");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_sync_outage_record");
+
+                    b.HasIndex("EntityTypeCode", "RecordId")
+                        .HasDatabaseName("ix_sync_outage_record_entity_type_record_id");
+
+                    b.HasIndex("OutageId", "EntityTypeCode", "RecordId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_sync_outage_record_outage_id_entity_type_record_id");
+
+                    b.ToTable("sync_outage_record", "integration");
+                });
+
+            modelBuilder.Entity("Strategy.Platform.Integration.Sync.SyncPerson", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid?>("CreatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(320)
+                        .HasColumnType("character varying(320)")
+                        .HasColumnName("email");
+
+                    b.Property<Guid?>("EmployeeId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("employee_id");
+
+                    b.Property<string>("ExternalId")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("external_id");
+
+                    b.Property<string>("MatchedBy")
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("matched_by");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("SourceObject")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("source_object");
+
+                    b.Property<string>("SourceSystem")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("source_system");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpdatedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_sync_person");
+
+                    b.HasIndex("EmployeeId")
+                        .HasDatabaseName("ix_sync_person_employee_id");
+
+                    b.HasIndex("SourceSystem", "ExternalId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_sync_person_source_system_external_id");
+
+                    b.ToTable("sync_person", "integration");
+                });
+
+            modelBuilder.Entity("Strategy.Platform.Integration.Sync.SyncRun", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<int>("ApiCalls")
+                        .HasColumnType("integer")
+                        .HasColumnName("api_calls");
+
+                    b.Property<Guid>("ConnectionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("connection_id");
+
+                    b.Property<DateTimeOffset?>("FinishedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("finished_at");
+
+                    b.Property<bool>("Full")
+                        .HasColumnType("boolean")
+                        .HasColumnName("full");
+
+                    b.Property<string>("MessageKey")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("message_key");
+
+                    b.Property<string>("MessageParams")
+                        .HasColumnType("jsonb")
+                        .HasColumnName("message_params");
+
+                    b.Property<string>("Objects")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("objects");
+
+                    b.Property<DateTimeOffset>("StartedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("started_at");
+
+                    b.Property<Guid?>("StartedBy")
+                        .HasColumnType("uuid")
+                        .HasColumnName("started_by");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<string>("Trigger")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("trigger");
+
+                    b.HasKey("Id")
+                        .HasName("pk_sync_run");
+
+                    b.HasIndex("ConnectionId", "StartedAt")
+                        .HasDatabaseName("ix_sync_run_connection_id_started_at");
+
+                    b.ToTable("sync_run", "integration");
+                });
+
+            modelBuilder.Entity("Strategy.Platform.Integration.Sync.SyncRunLog", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("At")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("at");
+
+                    b.Property<string>("Level")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("level");
+
+                    b.Property<string>("MessageKey")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("message_key");
+
+                    b.Property<string>("ObjectKey")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("object_key");
+
+                    b.Property<string>("Params")
+                        .HasColumnType("jsonb")
+                        .HasColumnName("params");
+
+                    b.Property<Guid>("RunId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("run_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_sync_run_log");
+
+                    b.HasIndex("RunId", "At")
+                        .HasDatabaseName("ix_sync_run_log_run_id_at");
+
+                    b.ToTable("sync_run_log", "integration");
+                });
 #pragma warning restore 612, 618
         }
     }
