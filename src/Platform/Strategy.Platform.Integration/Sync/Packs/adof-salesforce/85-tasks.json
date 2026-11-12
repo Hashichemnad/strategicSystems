@@ -1,0 +1,42 @@
+{
+  "objects": [
+    {
+      "key": "task", "sourceObject": "Task__c", "kind": "record", "targetType": "tasks.task", "loadOrder": 85, "provisional": true,
+      "fields": [
+        { "source": "Name", "target": "number", "kind": "direct", "transform": "trim" },
+        { "source": "Task_Title__c", "target": "titleAr", "kind": "direct", "transform": "truncate:300" },
+        { "source": "Description__c", "target": "description", "kind": "direct", "transform": "htmlToText" },
+        { "source": "Task_Type__c", "target": "type", "kind": "picklist", "values": {
+          "Manager Assignment": "manager-assignment", "Project Task": "project", "Meeting Decision": "meeting-decision", "Personal": "personal" } },
+        { "source": "Task_Source__c", "target": "source", "kind": "picklist", "values": {
+          "Manager Assignment": "manager-assignment", "DG Office": "dg-office", "Committee Decision": "committee-decision", "Project": "project", "Other": "other" } },
+        { "source": "Priority__c", "target": "priority", "kind": "picklist", "values": { "High": "high", "Medium": "medium", "Low": "low" } },
+        { "source": "Status__c", "target": "status", "kind": "picklist", "values": {
+          "Draft": "draft", "Assigned": "assigned", "In Progress": "in_progress", "On Hold": "on_hold", "Submitted": "submitted", "Approved": "approved",
+          "Rejected": "rejected", "Cancelled": "cancelled" } },
+        { "source": "Confidential__c", "target": "confidential", "kind": "direct" },
+        { "source": "Assigned_By__c", "target": "creatorEmployeeId", "kind": "person", "required": true },
+        { "source": "Assigned_To__c", "target": "assigneeEmployeeId", "kind": "person", "required": true },
+        { "source": "Department__c", "target": "unitId", "kind": "reference", "referenceType": "org.unit" },
+        { "source": "Parent_Task__c", "target": "parentTaskId", "kind": "reference", "referenceType": "tasks.task" },
+        { "source": "Start_Date__c", "target": "plannedStart", "kind": "direct" },
+        { "source": "Due_Date__c", "target": "dueDate", "kind": "direct" },
+        { "source": "CreatedDate", "target": "assignedAt", "kind": "direct" },
+        { "source": "Accepted_Date__c", "target": "acceptedAt", "kind": "direct" },
+        { "source": "Completion_Date__c", "target": "completedAt", "kind": "direct" },
+        { "source": "Approval_Date__c", "target": "approvedAt", "kind": "direct" },
+        { "source": "Rejection_Reason__c", "target": "rejectionReason", "kind": "direct", "transform": "truncate:2000" },
+        { "source": "Cancellation_Reason__c", "target": "cancelReason", "kind": "direct", "transform": "truncate:2000" },
+        { "source": "Completion_Comment__c", "target": "completionComment", "kind": "direct", "transform": "truncate:4000" },
+        { "source": "Feedback_Point__c", "target": "feedbackPoint", "kind": "direct" },
+        { "source": "Feedback_Comment__c", "target": "feedbackComment", "kind": "direct", "transform": "truncate:2000" },
+        { "source": "Progress__c", "target": "percentComplete", "kind": "direct" },
+        { "source": "Estimated_Hours__c", "target": "estimatedHours", "kind": "direct" }
+      ],
+      "defaults": { "template": "full", "type": "manager-assignment", "source": "manager-assignment", "priority": "medium", "status": "assigned" },
+      "ignore": ["OwnerId", "CurrencyIsoCode", "Actual_Hours__c"],
+      "notesAr": "مطابقة مؤقتة: كائن المهام وسجلات الوقت وأسماء حقولهما غير مرئية لمستخدم التكامل حالياً؛ الأسماء هنا مقترحة من وثائق المصدر ويجب أن يؤكدها الوصف الحي (التحقق) قبل التفعيل، والمطابقة معطّلة حتى ذلك. المكلِّف والمكلَّف يطابَقان مع الموظفين، وتُمنح أدوار السجل (المنشئ، المكلف) وتُحسب المواعيد بوقت العمل والرقم إن لم يأتِ من المصدر. فترات سجل الوقت (Timesheet) لا تُنقل: الساعات الفعلية تبقى في المصدر، ولا تُنشأ إشعارات أو أحداث في الخط الزمني.",
+      "notesEn": "Provisional mapping: the task and timesheet objects and their field names are not visible to the integration user today; the names here are proposed from the source documents and must be confirmed by the live describe (Validate) before activation — the mapping stays disabled until then. The assigner and the assignee are matched to employees; the creator / assignee record roles are granted, the deadlines computed in working time and a number assigned when the source has none. Timesheet periods are not carried (actual hours stay in the source), and no notifications or timeline entries are produced."
+    }
+  ]
+}
