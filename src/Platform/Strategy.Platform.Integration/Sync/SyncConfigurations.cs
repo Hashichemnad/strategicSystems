@@ -23,6 +23,7 @@ internal sealed class SyncConnectionConfiguration : IEntityTypeConfiguration<Syn
         builder.Property(x => x.InstanceUrl).HasMaxLength(500);
         builder.Property(x => x.LastLimits).HasColumnType("jsonb");
         builder.Property(x => x.LastTestMessageKey).HasMaxLength(200);
+        builder.Property(x => x.LastTestDetail).HasColumnType("jsonb");
         builder.Property(x => x.RunRequestedObjects).HasColumnType("jsonb");
     }
 }

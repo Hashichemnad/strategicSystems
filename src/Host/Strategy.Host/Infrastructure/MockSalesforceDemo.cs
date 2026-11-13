@@ -58,11 +58,20 @@ public static class MockSalesforceDemo
         });
     }
 
+    /// <summary>Standard objects whose describe is recorded from a real org instead of derived from the pack (ADR 0212).</summary>
+    private static readonly string[] RecordedObjects = ["User", "Contact"];
+
     /// <summary>Objects described from the shipped pack (every mapped field exists, picklists list the mapped values) and a small data set.</summary>
     private static void Seed(MockSalesforceOrg org, MappingPackDocument pack)
     {
         string[] standard = ["Id", "IsDeleted", "SystemModstamp", "CreatedDate", "Name", "CreatedById"];
-        foreach (var mapping in pack.Objects.Where(o => o.Kind is ObjectMappingKinds.Record or ObjectMappingKinds.People).DistinctBy(o => o.SourceObject))
+        foreach (var recorded in RecordedObjects)
+        {
+            org.AddRecordedObject(recorded);
+        }
+
+        foreach (var mapping in pack.Objects.Where(o => o.Kind is ObjectMappingKinds.Record or ObjectMappingKinds.People && !RecordedObjects.Contains(o.SourceObject))
+            .DistinctBy(o => o.SourceObject))
         {
             var fields = new Dictionary<string, string>(StringComparer.Ordinal);
             foreach (var f in standard)
@@ -76,13 +85,6 @@ public static class MockSalesforceDemo
                 fields[m.Source!] = m.Kind is FieldMappingKinds.Reference or FieldMappingKinds.Person ? "reference" : m.Kind == FieldMappingKinds.Picklist ? "picklist" : "string";
             }
 
-            if (mapping.Kind == ObjectMappingKinds.People)
-            {
-                fields["Email"] = "email";
-                fields["EmployeeNumber"] = "string";
-                fields["FederationIdentifier"] = "string";
-            }
-
             var o = org.AddObject(mapping.SourceObject, [.. fields.Select(f => (f.Key, f.Value))]);
             foreach (var f in pack.Objects.Where(x => x.SourceObject == mapping.SourceObject).SelectMany(x => x.Fields)
                 .Where(f => f.Kind == FieldMappingKinds.Picklist && f.Values is { Count: > 0 }).DistinctBy(f => f.Source))
@@ -91,16 +93,10 @@ public static class MockSalesforceDemo
             }
         }
 
-        org.AddObject("ContentVersion", ("Id", "id"), ("ContentDocumentId", "reference"), ("Title", "string"), ("PathOnClient", "string"), ("FileExtension", "string"),
-            ("IsLatest", "boolean"), ("SystemModstamp", "datetime"), ("IsDeleted", "boolean"));
-        org.AddObject("ContentDocumentLink", ("Id", "id"), ("ContentDocumentId", "reference"), ("LinkedEntityId", "reference"), ("SystemModstamp", "datetime"));
-        org.AddObject("Attachment", ("Id", "id"), ("ParentId", "reference"), ("Name", "string"), ("ContentType", "string"), ("IsDeleted", "boolean"), ("SystemModstamp", "datetime"));
-        org.AddObject("ProcessInstance", ("Id", "id"), ("TargetObjectId", "reference"), ("Status", "picklist"), ("CreatedDate", "datetime"), ("SystemModstamp", "datetime"));
-        org.AddObject("ProcessInstanceStep", ("Id", "id"), ("ProcessInstanceId", "reference"), ("StepStatus", "picklist"), ("Comments", "textarea"), ("CreatedDate", "datetime"));
+        org.AddStandardObjects();
         foreach (var history in pack.Objects.Where(o => o.Kind == ObjectMappingKinds.FieldHistory))
         {
-            org.AddObject(history.SourceObject, ("Id", "id"), ("ParentId", "reference"), ("Field", "string"), ("OldValue", "string"), ("NewValue", "string"),
-                ("CreatedDate", "datetime"), ("IsDeleted", "boolean"));
+            org.AddHistoryObject(history.SourceObject);
         }
 
         org.Objects["Department__c"].Reference("Parent_Department__c", "Department__c", "Parent_Department__r");

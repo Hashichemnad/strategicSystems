@@ -186,7 +186,8 @@ public static partial class FieldMapper
             return (null, Invalid(field, code));
         }
 
-        if (field.Kind == SyncFieldKinds.Bool)
+        // A value map can fill a non-text field (picklist "3" → whole number 3, ADR 0212): the mapped value is converted to the target kind.
+        if (field.Kind is SyncFieldKinds.Bool or SyncFieldKinds.Number or SyncFieldKinds.Ratio or SyncFieldKinds.WholeNumber or SyncFieldKinds.Date or SyncFieldKinds.DateTime)
         {
             return Convert(field, code);
         }

@@ -137,14 +137,18 @@ public sealed partial class SyncEngine(
             session = sessions.Open(connection);
             await session.AuthenticateAsync(cancellationToken).ConfigureAwait(false);
             connection.InstanceUrl = session.InstanceUrl;
-            var limits = await session.LimitsAsync(cancellationToken).ConfigureAwait(false);
-            connection.LastLimits = SyncJson.Write(limits);
             var options = await settings.GetAsync<SyncSettings>(cancellationToken).ConfigureAwait(false);
-            if (limits is { DailyApiMax: > 0, DailyApiRemaining: { } remaining }
-                && remaining * 100L < limits.DailyApiMax.Value * (long)Math.Clamp(options.ApiReserveRatioPercent, 0, 90))
+            var (limits, refused) = await session.TryLimitsAsync(cancellationToken).ConfigureAwait(false);
+            if (refused is not null)
             {
-                throw new SourceConnectorException("integration.sync.errors.apiLimit");
+                // The Salesforce Integration licence cannot read /limits (ADR 0210): continue, usage comes from the Sforce-Limit-Info header.
+                await LogAsync(run, "warn", null, "integration.sync.log.limitsUnavailable", refused.ToParams(), cancellationToken).ConfigureAwait(false);
+                LogLimitsRefused(logger, connectionId, refused.Status, refused.Call, refused.ErrorCode, refused.Message);
+                await session.ProbeAsync(cancellationToken).ConfigureAwait(false);
             }
+
+            state.Limits = limits;
+            CheckReserve(state, session, options);
 
             var mappings = await db.ObjectMappings.Where(m => m.PackId == connection.MappingPackId && m.Enabled && m.ConfirmedAt != null)
                 .OrderBy(m => m.LoadOrder).ThenBy(m => m.Key).ToListAsync(cancellationToken).ConfigureAwait(false);
@@ -162,6 +166,7 @@ public sealed partial class SyncEngine(
                     break;
                 }
 
+                CheckReserve(state, session, options);
                 await RunObjectAsync(state, session, mapping, full, cancellationToken).ConfigureAwait(false);
             }
 
@@ -175,9 +180,15 @@ public sealed partial class SyncEngine(
         {
             run.Status = RunStatuses.Failed;
             run.MessageKey = ex.MessageKey;
-            run.MessageParams = ex.Detail is null ? null : SyncJson.Write(new Dictionary<string, string?> { ["detail"] = ex.Detail });
-            await LogAsync(run, "error", null, ex.MessageKey, ex.Detail is null ? null : new() { ["detail"] = ex.Detail }, cancellationToken).ConfigureAwait(false);
-            LogRunFailed(logger, connectionId, ex.MessageKey);
+            var parameters = ex.Params();
+            run.MessageParams = parameters is null ? null : SyncJson.Write(parameters);
+            await LogAsync(run, "error", null, ex.MessageKey, parameters, cancellationToken).ConfigureAwait(false);
+            LogRunFailed(logger, connectionId, ex.MessageKey, ex.Error?.Status, ex.Error?.Call, ex.Error?.ErrorCode, ex.Error?.Message ?? ex.Detail);
+        }
+
+        if (session?.CurrentLimits(state.Limits) is { } latest)
+        {
+            connection.LastLimits = SyncJson.Write(latest);
         }
 
         run.ApiCalls = session?.ApiCalls ?? 0;
@@ -190,6 +201,15 @@ public sealed partial class SyncEngine(
 
         await db.SaveChangesAsync(CancellationToken.None).ConfigureAwait(false);
         return run;
+    }
+
+    /// <summary>Stops the run when fewer than the reserve of daily API requests remain, from /limits or the latest usage header (ADR 0206, 0210).</summary>
+    private static void CheckReserve(RunState state, SalesforceSession session, SyncSettings options)
+    {
+        if (session.CurrentLimits(state.Limits) is { } limits && limits.IsBelowReserve(options.ApiReserveRatioPercent))
+        {
+            throw new SourceConnectorException("integration.sync.errors.apiLimit");
+        }
     }
 
     private async Task<bool> StillStandbyAsync(Guid connectionId, CancellationToken cancellationToken) =>
@@ -248,7 +268,8 @@ public sealed partial class SyncEngine(
         {
             // An object Salesforce refuses (no read access, unknown field) fails alone; the others continue.
             stats.Failed++;
-            await LogAsync(state.Run, "error", mapping.Key, ex.MessageKey, ex.Detail is null ? null : new() { ["detail"] = ex.Detail }, cancellationToken).ConfigureAwait(false);
+            await LogAsync(state.Run, "error", mapping.Key, ex.MessageKey, ex.Params(), cancellationToken).ConfigureAwait(false);
+            LogObjectFailed(logger, mapping.Key, ex.MessageKey, ex.Error?.Status, ex.Error?.Call, ex.Error?.ErrorCode, ex.Error?.Message ?? ex.Detail);
         }
     }
 
@@ -296,7 +317,16 @@ public sealed partial class SyncEngine(
         }
 
         var useBulk = await UseBulkAsync(session, mapping, since, Math.Max(1, state.Connection.BulkThreshold), cancellationToken).ConfigureAwait(false);
-        var selected = Soql.FieldsOf(mapping, fields, people);
+
+        // Only fields the object has (ADR 0212): User has no IsDeleted; Contact has no EmployeeNumber / FederationIdentifier.
+        var describe = await session.DescribeAsync(mapping.SourceObject, cancellationToken).ConfigureAwait(false);
+        var selected = Soql.FieldsOf(mapping, fields, people, describe);
+        foreach (var missing in SyncQueries.MissingPeopleFields(people, describe))
+        {
+            await LogAsync(state.Run, "warn", mapping.Key, "integration.sync.log.fieldMissing", new() { ["field"] = missing, ["object"] = mapping.SourceObject }, cancellationToken)
+                .ConfigureAwait(false);
+        }
+
         var deferred = new List<SourceRecord>();
         await foreach (var record in ReadAsync(session, mapping, selected, since, useBulk, stats, null, cancellationToken).ConfigureAwait(false))
         {
@@ -487,7 +517,7 @@ public sealed partial class SyncEngine(
     {
         var source = state.Connection.SourceSystem;
         var person = await db.SyncPeople.FirstOrDefaultAsync(p => p.SourceSystem == source && p.ExternalId == record.Id, cancellationToken).ConfigureAwait(false);
-        if (record.IsDeleted)
+        if (record.IsDeleted && !SyncQueries.IsNeverDeleted(mapping.SourceObject))
         {
             return person is null ? RecordOutcome.Skipped : RecordOutcome.Deleted; // the match stays: history and lookups keep resolving
         }
@@ -554,7 +584,7 @@ public sealed partial class SyncEngine(
         // ContentVersion changed since the watermark (new files and new versions), then their links to synced records.
         var versions = new List<SourceRecord>();
         var versionMapping = new SyncObjectMapping { SourceObject = "ContentVersion", WatermarkField = mapping.WatermarkField, Where = "IsLatest = true", Key = mapping.Key };
-        await foreach (var version in ReadAsync(session, versionMapping, ["Id", "ContentDocumentId", "Title", "PathOnClient", "FileExtension", mapping.WatermarkField], since, false, stats, null, cancellationToken)
+        await foreach (var version in ReadAsync(session, versionMapping, [.. SyncQueries.ContentVersionFields, mapping.WatermarkField], since, false, stats, null, cancellationToken)
             .ConfigureAwait(false))
         {
             versions.Add(version);
@@ -565,7 +595,7 @@ public sealed partial class SyncEngine(
         {
             var ids = string.Join(',', batch.Select(v => Soql.Quote(v["ContentDocumentId"] ?? string.Empty)));
             var links = new List<SourceRecord>();
-            await foreach (var link in session.QueryAsync($"SELECT Id, ContentDocumentId, LinkedEntityId FROM ContentDocumentLink WHERE ContentDocumentId IN ({ids})", cancellationToken)
+            await foreach (var link in session.QueryAsync($"SELECT {string.Join(", ", SyncQueries.ContentDocumentLinkFields)} FROM ContentDocumentLink WHERE ContentDocumentId IN ({ids})", cancellationToken)
                 .ConfigureAwait(false))
             {
                 links.Add(link);
@@ -586,7 +616,7 @@ public sealed partial class SyncEngine(
 
     private async Task RunAttachmentsAsync(RunState state, SalesforceSession session, SyncObjectMapping mapping, DateTimeOffset? since, ObjectRunStats stats, CancellationToken cancellationToken)
     {
-        await foreach (var attachment in ReadAsync(session, mapping, ["Id", "ParentId", "Name", "ContentType", "IsDeleted", mapping.WatermarkField], since, false, stats, null, cancellationToken)
+        await foreach (var attachment in ReadAsync(session, mapping, [.. SyncQueries.AttachmentFields, mapping.WatermarkField], since, false, stats, null, cancellationToken)
             .ConfigureAwait(false))
         {
             stats.Read++;
@@ -655,7 +685,7 @@ public sealed partial class SyncEngine(
     {
         var instances = new SyncObjectMapping { SourceObject = "ProcessInstance", WatermarkField = "SystemModstamp", Key = mapping.Key };
         var instanceStatus = new Dictionary<string, (string? Status, string? Process, string Target)>(StringComparer.Ordinal);
-        await foreach (var instance in ReadAsync(session, instances, ["Id", "TargetObjectId", "Status", "ProcessDefinition.Name", "CreatedDate", "SystemModstamp"], since, false, stats, null, cancellationToken)
+        await foreach (var instance in ReadAsync(session, instances, SyncQueries.ProcessInstanceFields, since, false, stats, null, cancellationToken)
             .ConfigureAwait(false))
         {
             stats.Read++;
@@ -672,8 +702,7 @@ public sealed partial class SyncEngine(
 
         var steps = new SyncObjectMapping { SourceObject = "ProcessInstanceStep", WatermarkField = "CreatedDate", Key = mapping.Key };
         await foreach (var step in ReadAsync(session, steps,
-            ["Id", "ProcessInstanceId", "ProcessInstance.TargetObjectId", "ProcessInstance.Status", "ProcessInstance.ProcessDefinition.Name", "StepStatus", "Actor.Name", "Comments", "CreatedDate"],
-            since, false, stats, null, cancellationToken).ConfigureAwait(false))
+            SyncQueries.ProcessInstanceStepFields, since, false, stats, null, cancellationToken).ConfigureAwait(false))
         {
             stats.Read++;
             Count(stats, await UpsertHistoryAsync(state, step["ProcessInstance.TargetObjectId"], SourceHistoryKinds.Approval, step.Id, step["CreatedDate"], e =>
@@ -697,7 +726,7 @@ public sealed partial class SyncEngine(
 
     private async Task RunFieldHistoryAsync(RunState state, SalesforceSession session, SyncObjectMapping mapping, DateTimeOffset? since, ObjectRunStats stats, CancellationToken cancellationToken)
     {
-        await foreach (var row in ReadAsync(session, mapping, ["Id", "ParentId", "Field", "OldValue", "NewValue", "CreatedDate", "CreatedBy.Name"], since, false, stats, null, cancellationToken)
+        await foreach (var row in ReadAsync(session, mapping, [.. SyncQueries.FieldHistoryFields, mapping.WatermarkField], since, false, stats, null, cancellationToken)
             .ConfigureAwait(false))
         {
             stats.Read++;
@@ -818,9 +847,18 @@ public sealed partial class SyncEngine(
             deferIfSameObjectParent: false, cancellationToken, forceApply: true).ConfigureAwait(false);
     }
 
+    /// <summary>
+    /// End of a run: re-processes open "missing parent" exceptions and "unknown person" record exceptions whose person is matched now
+    /// (the people mappings of this run may have matched them), from their stored payloads.
+    /// </summary>
     private async Task RetryMissingParentsAsync(RunState state, CancellationToken cancellationToken)
     {
-        var open = await db.SyncExceptions.Where(e => e.ConnectionId == state.Connection.Id && e.Status == ExceptionStatuses.Open && e.Reason == ExceptionReasons.MissingParent)
+        var source = state.Connection.SourceSystem;
+        var matched = db.SyncPeople.Where(p => p.SourceSystem == source && p.EmployeeId != null).Select(p => p.ExternalId);
+        var peopleMappings = db.ObjectMappings.Where(m => m.Kind == ObjectMappingKinds.People).Select(m => m.Id);
+        var open = await db.SyncExceptions.Where(e => e.ConnectionId == state.Connection.Id && e.Status == ExceptionStatuses.Open
+                && (e.Reason == ExceptionReasons.MissingParent
+                    || (e.Reason == ExceptionReasons.UnknownUser && !peopleMappings.Contains(e.MappingId) && e.Value != null && matched.Contains(e.Value))))
             .OrderBy(e => e.CreatedAt).Take(1000).ToListAsync(cancellationToken).ConfigureAwait(false);
         foreach (var exception in open)
         {
@@ -890,8 +928,17 @@ public sealed partial class SyncEngine(
         return await scope.ServiceProvider.GetRequiredService<ILookupService>().IsActiveCodeAsync(type, code, cancellationToken).ConfigureAwait(false);
     }
 
-    [LoggerMessage(Level = LogLevel.Warning, Message = "Sync run of connection {ConnectionId} failed: {MessageKey}")]
-    private static partial void LogRunFailed(ILogger logger, Guid connectionId, string messageKey);
+    [LoggerMessage(Level = LogLevel.Warning,
+        Message = "Sync run of connection {ConnectionId} failed: {MessageKey} (HTTP {Status}, call {Call}, Salesforce error {ErrorCode}: {SalesforceMessage})")]
+    private static partial void LogRunFailed(ILogger logger, Guid connectionId, string messageKey, int? status, string? call, string? errorCode, string? salesforceMessage);
+
+    [LoggerMessage(Level = LogLevel.Warning,
+        Message = "Sync object {ObjectKey} failed: {MessageKey} (HTTP {Status}, call {Call}, Salesforce error {ErrorCode}: {SalesforceMessage})")]
+    private static partial void LogObjectFailed(ILogger logger, string objectKey, string messageKey, int? status, string? call, string? errorCode, string? salesforceMessage);
+
+    [LoggerMessage(Level = LogLevel.Information,
+        Message = "Salesforce refused /limits for connection {ConnectionId} (HTTP {Status}, call {Call}, Salesforce error {ErrorCode}: {SalesforceMessage}); API usage is read from the Sforce-Limit-Info header")]
+    private static partial void LogLimitsRefused(ILogger logger, Guid connectionId, int? status, string call, string? errorCode, string? salesforceMessage);
 
     [LoggerMessage(Level = LogLevel.Warning, Message = "Sync write of {TargetType} {ExternalId} failed")]
     private static partial void LogWriteFailed(ILogger logger, string targetType, string externalId, Exception exception);
@@ -904,6 +951,9 @@ public sealed partial class SyncEngine(
         public SyncConnection Connection { get; } = connection;
 
         public Dictionary<string, ObjectRunStats> Stats { get; } = stats;
+
+        /// <summary>Limits read from /limits at the start (null when refused: the usage header is used, ADR 0210).</summary>
+        public ApiLimits? Limits { get; set; }
 
         public Dictionary<string, DateTimeOffset> MaxWatermark { get; } = new(StringComparer.Ordinal);
 
@@ -997,24 +1047,16 @@ public static class Soql
         return $"SELECT COUNT() FROM {objectName}" + (conditions.Count > 0 ? " WHERE " + string.Join(" AND ", conditions) : string.Empty);
     }
 
-    /// <summary>The source fields a mapping needs: Id, IsDeleted, the watermark, mapped fields, template fields and people fields.</summary>
-    public static IReadOnlyList<string> FieldsOf(SyncObjectMapping mapping, IReadOnlyList<FieldMapping> fields, PeopleOptions? people)
-    {
-        ArgumentNullException.ThrowIfNull(mapping);
-        var list = new List<string> { "Id", "IsDeleted", mapping.WatermarkField };
-        list.AddRange(fields.Where(f => f.Kind != FieldMappingKinds.Constant && !string.IsNullOrEmpty(f.Source)).Select(f => f.Source!));
-        foreach (System.Text.RegularExpressions.Match m in System.Text.RegularExpressions.Regex.Matches(mapping.ExternalIdTemplate, "\\{(?:year:)?([A-Za-z0-9_.]+)\\}"))
-        {
-            list.Add(m.Groups[1].Value);
-        }
-
-        if (people is not null)
-        {
-            list.AddRange(new[] { people.EmailField, people.EmployeeNoField, people.FederationIdField, people.NameField }.Where(f => f is not null)!);
-        }
-
-        return [.. list.Distinct(StringComparer.OrdinalIgnoreCase)];
-    }
+    /// <summary>
+    /// The source fields a record / people mapping selects (ADR 0212): Id, the watermark, mapped fields and external-ID template fields always;
+    /// <c>IsDeleted</c> and the people fields only when the object's describe has them (User has no IsDeleted; Contact has no EmployeeNumber /
+    /// FederationIdentifier). Without a describe every field is listed (the strict list Validate checks).
+    /// </summary>
+    public static IReadOnlyList<string> FieldsOf(SyncObjectMapping mapping, IReadOnlyList<FieldMapping> fields, PeopleOptions? people, SourceObjectDescribe? describe = null) =>
+        [.. SyncQueries.RecordFields(mapping, fields, people)
+            .Where(f => !f.Optional || describe is null || describe.Field(f.Field) is not null)
+            .Select(f => f.Field)
+            .Distinct(StringComparer.OrdinalIgnoreCase)];
 
     /// <summary>Allowed WHERE text of a mapping: no statement separators, comments or sub-selects.</summary>
     public static bool IsSafeCondition(string? where) =>
@@ -1041,5 +1083,108 @@ public static class Soql
         {
             throw new SourceConnectorException("integration.sync.errors.invalidField", path);
         }
+    }
+}
+
+/// <summary>One field a sync query selects, with why (Validate reports missing ones per usage, ADR 0212).</summary>
+public sealed record QueriedField(string SourceObject, string Field, string Usage, bool Optional = false);
+
+/// <summary>The single source of the fields every sync query selects; used by the engine and by Validate (ADR 0212).</summary>
+public static class SyncQueries
+{
+    public const string UsageSystem = "system";
+    public const string UsageWatermark = "watermark";
+    public const string UsageMapped = "mapped";
+    public const string UsageExternalId = "externalId";
+    public const string UsagePeople = "people";
+    public const string UsageFiles = "files";
+    public const string UsageApprovals = "approvals";
+    public const string UsageHistory = "history";
+
+    public static readonly IReadOnlyList<string> ContentVersionFields = ["Id", "ContentDocumentId", "Title", "PathOnClient", "FileExtension", "IsLatest"];
+
+    public static readonly IReadOnlyList<string> ContentDocumentLinkFields = ["Id", "ContentDocumentId", "LinkedEntityId"];
+
+    public static readonly IReadOnlyList<string> AttachmentFields = ["Id", "ParentId", "Name", "ContentType", "IsDeleted"];
+
+    public static readonly IReadOnlyList<string> ProcessInstanceFields = ["Id", "TargetObjectId", "Status", "ProcessDefinition.Name", "CreatedDate", "SystemModstamp"];
+
+    public static readonly IReadOnlyList<string> ProcessInstanceStepFields =
+        ["Id", "ProcessInstanceId", "ProcessInstance.TargetObjectId", "ProcessInstance.Status", "ProcessInstance.ProcessDefinition.Name", "StepStatus", "Actor.Name", "Comments", "CreatedDate"];
+
+    public static readonly IReadOnlyList<string> FieldHistoryFields = ["Id", "ParentId", "Field", "OldValue", "NewValue", "CreatedDate", "CreatedBy.Name"];
+
+    /// <summary>Salesforce users are deactivated, never deleted: a User is never marked "Deleted in source".</summary>
+    public static bool IsNeverDeleted(string sourceObject) => string.Equals(sourceObject, "User", StringComparison.OrdinalIgnoreCase);
+
+    /// <summary>Fields of a record / people mapping (IsDeleted and IsActive optional; people fields optional at run time, checked by Validate).</summary>
+    public static IReadOnlyList<QueriedField> RecordFields(SyncObjectMapping mapping, IReadOnlyList<FieldMapping> fields, PeopleOptions? people)
+    {
+        ArgumentNullException.ThrowIfNull(mapping);
+        ArgumentNullException.ThrowIfNull(fields);
+        var o = mapping.SourceObject;
+        var list = new List<QueriedField>
+        {
+            new(o, "Id", UsageSystem),
+            new(o, "IsDeleted", UsageSystem, Optional: true),
+            new(o, mapping.WatermarkField, UsageWatermark),
+        };
+        list.AddRange(fields.Where(f => f.Kind != FieldMappingKinds.Constant && !string.IsNullOrEmpty(f.Source)).Select(f => new QueriedField(o, f.Source!, UsageMapped)));
+        foreach (System.Text.RegularExpressions.Match m in System.Text.RegularExpressions.Regex.Matches(mapping.ExternalIdTemplate, "\\{(?:year:)?([A-Za-z0-9_.]+)\\}"))
+        {
+            list.Add(new(o, m.Groups[1].Value, UsageExternalId));
+        }
+
+        if (people is not null)
+        {
+            list.AddRange(PeopleFields(people).Select(f => new QueriedField(o, f, UsagePeople, Optional: true)));
+        }
+
+        return list;
+    }
+
+    public static IEnumerable<string> PeopleFields(PeopleOptions people)
+    {
+        ArgumentNullException.ThrowIfNull(people);
+        return new[] { people.EmailField, people.EmployeeNoField, people.FederationIdField, people.NameField }.Where(f => !string.IsNullOrWhiteSpace(f)).Select(f => f!);
+    }
+
+    /// <summary>Configured people fields the object does not have (skipped at run time, reported as a warning).</summary>
+    public static IReadOnlyList<string> MissingPeopleFields(PeopleOptions? people, SourceObjectDescribe describe)
+    {
+        ArgumentNullException.ThrowIfNull(describe);
+        return people is null ? [] : [.. PeopleFields(people).Where(f => describe.Field(f) is null)];
+    }
+
+    /// <summary>Every field the run will select for a mapping of any kind, per object (Validate checks all of them, ADR 0212).</summary>
+    public static IReadOnlyList<QueriedField> All(SyncObjectMapping mapping, IReadOnlyList<FieldMapping> fields, PeopleOptions? people)
+    {
+        ArgumentNullException.ThrowIfNull(mapping);
+        return mapping.Kind switch
+        {
+            ObjectMappingKinds.Record or ObjectMappingKinds.People => RecordFields(mapping, fields, people),
+            ObjectMappingKinds.Files =>
+            [
+                .. ContentVersionFields.Select(f => new QueriedField("ContentVersion", f, UsageFiles)),
+                new("ContentVersion", mapping.WatermarkField, UsageWatermark),
+                .. ContentDocumentLinkFields.Select(f => new QueriedField("ContentDocumentLink", f, UsageFiles)),
+            ],
+            ObjectMappingKinds.Attachments =>
+            [
+                .. AttachmentFields.Select(f => new QueriedField(mapping.SourceObject, f, UsageFiles)),
+                new(mapping.SourceObject, mapping.WatermarkField, UsageWatermark),
+            ],
+            ObjectMappingKinds.Approvals =>
+            [
+                .. ProcessInstanceFields.Select(f => new QueriedField("ProcessInstance", f, UsageApprovals)),
+                .. ProcessInstanceStepFields.Select(f => new QueriedField("ProcessInstanceStep", f, UsageApprovals)),
+            ],
+            ObjectMappingKinds.FieldHistory =>
+            [
+                .. FieldHistoryFields.Select(f => new QueriedField(mapping.SourceObject, f, UsageHistory)),
+                new(mapping.SourceObject, mapping.WatermarkField, UsageWatermark),
+            ],
+            _ => [],
+        };
     }
 }

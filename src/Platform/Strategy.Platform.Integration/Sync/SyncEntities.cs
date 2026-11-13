@@ -77,6 +77,10 @@ public sealed class SyncConnection : AuditableEntity
     [NotAudited]
     public string? LastTestMessageKey { get; set; }
 
+    /// <summary>jsonb <see cref="SyncTestDetail"/>: what Salesforce answered to the last test (error, warnings such as /limits refused; ADR 0210, 0211).</summary>
+    [NotAudited]
+    public string? LastTestDetail { get; set; }
+
     /// <summary>"Sync now" request picked up by the scheduler job within a minute (or at once through the job trigger).</summary>
     [NotAudited]
     public DateTimeOffset? RunRequestedAt { get; set; }

@@ -1,0 +1,357 @@
+{
+ "name": "Contact",
+ "label": "Contact",
+ "recorded": "Standard Contact object as the Salesforce Object Reference (API v62.0) lists it, field shapes only, plus the ADoF custom field Employee_Number__c. The connector used on 2026-11-13 could not describe Contact, so this follows the reference. Contact has IsDeleted but no EmployeeNumber and no FederationIdentifier (those are User fields).",
+ "fields": [
+  {
+   "name": "Id",
+   "label": "Contact ID",
+   "type": "id",
+   "length": 18
+  },
+  {
+   "name": "IsDeleted",
+   "label": "Deleted",
+   "type": "boolean"
+  },
+  {
+   "name": "MasterRecordId",
+   "label": "Master Record ID",
+   "type": "reference",
+   "length": 18,
+   "referenceTo": [
+    "Contact"
+   ],
+   "relationshipName": "MasterRecord"
+  },
+  {
+   "name": "AccountId",
+   "label": "Account ID",
+   "type": "reference",
+   "length": 18,
+   "referenceTo": [
+    "Account"
+   ],
+   "relationshipName": "Account"
+  },
+  {
+   "name": "LastName",
+   "label": "Last Name",
+   "type": "string",
+   "length": 80
+  },
+  {
+   "name": "FirstName",
+   "label": "First Name",
+   "type": "string",
+   "length": 40
+  },
+  {
+   "name": "Salutation",
+   "label": "Salutation",
+   "type": "picklist",
+   "length": 40
+  },
+  {
+   "name": "Name",
+   "label": "Full Name",
+   "type": "string",
+   "length": 121
+  },
+  {
+   "name": "OtherStreet",
+   "label": "Other Street",
+   "type": "textarea",
+   "length": 255
+  },
+  {
+   "name": "OtherCity",
+   "label": "Other City",
+   "type": "string",
+   "length": 40
+  },
+  {
+   "name": "OtherState",
+   "label": "Other State/Province",
+   "type": "string",
+   "length": 80
+  },
+  {
+   "name": "OtherPostalCode",
+   "label": "Other Zip/Postal Code",
+   "type": "string",
+   "length": 20
+  },
+  {
+   "name": "OtherCountry",
+   "label": "Other Country",
+   "type": "string",
+   "length": 80
+  },
+  {
+   "name": "OtherAddress",
+   "label": "Other Address",
+   "type": "address"
+  },
+  {
+   "name": "MailingStreet",
+   "label": "Mailing Street",
+   "type": "textarea",
+   "length": 255
+  },
+  {
+   "name": "MailingCity",
+   "label": "Mailing City",
+   "type": "string",
+   "length": 40
+  },
+  {
+   "name": "MailingState",
+   "label": "Mailing State/Province",
+   "type": "string",
+   "length": 80
+  },
+  {
+   "name": "MailingPostalCode",
+   "label": "Mailing Zip/Postal Code",
+   "type": "string",
+   "length": 20
+  },
+  {
+   "name": "MailingCountry",
+   "label": "Mailing Country",
+   "type": "string",
+   "length": 80
+  },
+  {
+   "name": "MailingAddress",
+   "label": "Mailing Address",
+   "type": "address"
+  },
+  {
+   "name": "Phone",
+   "label": "Business Phone",
+   "type": "phone",
+   "length": 40
+  },
+  {
+   "name": "Fax",
+   "label": "Business Fax",
+   "type": "phone",
+   "length": 40
+  },
+  {
+   "name": "MobilePhone",
+   "label": "Mobile Phone",
+   "type": "phone",
+   "length": 40
+  },
+  {
+   "name": "HomePhone",
+   "label": "Home Phone",
+   "type": "phone",
+   "length": 40
+  },
+  {
+   "name": "OtherPhone",
+   "label": "Other Phone",
+   "type": "phone",
+   "length": 40
+  },
+  {
+   "name": "AssistantPhone",
+   "label": "Asst. Phone",
+   "type": "phone",
+   "length": 40
+  },
+  {
+   "name": "ReportsToId",
+   "label": "Reports To ID",
+   "type": "reference",
+   "length": 18,
+   "referenceTo": [
+    "Contact"
+   ],
+   "relationshipName": "ReportsTo"
+  },
+  {
+   "name": "Email",
+   "label": "Email",
+   "type": "email",
+   "length": 80
+  },
+  {
+   "name": "Title",
+   "label": "Title",
+   "type": "string",
+   "length": 128
+  },
+  {
+   "name": "Department",
+   "label": "Department",
+   "type": "string",
+   "length": 80
+  },
+  {
+   "name": "AssistantName",
+   "label": "Assistant's Name",
+   "type": "string",
+   "length": 40
+  },
+  {
+   "name": "LeadSource",
+   "label": "Lead Source",
+   "type": "picklist",
+   "length": 255
+  },
+  {
+   "name": "Birthdate",
+   "label": "Birthdate",
+   "type": "date"
+  },
+  {
+   "name": "Description",
+   "label": "Contact Description",
+   "type": "textarea",
+   "length": 32000
+  },
+  {
+   "name": "CurrencyIsoCode",
+   "label": "Contact Currency",
+   "type": "picklist",
+   "length": 3
+  },
+  {
+   "name": "OwnerId",
+   "label": "Owner ID",
+   "type": "reference",
+   "length": 18,
+   "referenceTo": [
+    "User"
+   ],
+   "relationshipName": "Owner"
+  },
+  {
+   "name": "CreatedDate",
+   "label": "Created Date",
+   "type": "datetime"
+  },
+  {
+   "name": "CreatedById",
+   "label": "Created By ID",
+   "type": "reference",
+   "length": 18,
+   "referenceTo": [
+    "User"
+   ],
+   "relationshipName": "CreatedBy"
+  },
+  {
+   "name": "LastModifiedDate",
+   "label": "Last Modified Date",
+   "type": "datetime"
+  },
+  {
+   "name": "LastModifiedById",
+   "label": "Last Modified By ID",
+   "type": "reference",
+   "length": 18,
+   "referenceTo": [
+    "User"
+   ],
+   "relationshipName": "LastModifiedBy"
+  },
+  {
+   "name": "SystemModstamp",
+   "label": "System Modstamp",
+   "type": "datetime"
+  },
+  {
+   "name": "LastActivityDate",
+   "label": "Last Activity",
+   "type": "date"
+  },
+  {
+   "name": "LastCURequestDate",
+   "label": "Last Stay-in-Touch Request Date",
+   "type": "datetime"
+  },
+  {
+   "name": "LastCUUpdateDate",
+   "label": "Last Stay-in-Touch Save Date",
+   "type": "datetime"
+  },
+  {
+   "name": "LastViewedDate",
+   "label": "Last Viewed Date",
+   "type": "datetime"
+  },
+  {
+   "name": "LastReferencedDate",
+   "label": "Last Referenced Date",
+   "type": "datetime"
+  },
+  {
+   "name": "EmailBouncedReason",
+   "label": "Email Bounced Reason",
+   "type": "string",
+   "length": 255
+  },
+  {
+   "name": "EmailBouncedDate",
+   "label": "Email Bounced Date",
+   "type": "datetime"
+  },
+  {
+   "name": "IsEmailBounced",
+   "label": "Is Email Bounced",
+   "type": "boolean"
+  },
+  {
+   "name": "PhotoUrl",
+   "label": "Photo URL",
+   "type": "url",
+   "length": 255
+  },
+  {
+   "name": "Jigsaw",
+   "label": "Data.com Key",
+   "type": "string",
+   "length": 20
+  },
+  {
+   "name": "JigsawContactId",
+   "label": "Jigsaw Contact ID",
+   "type": "string",
+   "length": 20
+  },
+  {
+   "name": "IndividualId",
+   "label": "Individual ID",
+   "type": "reference",
+   "length": 18,
+   "referenceTo": [
+    "Individual"
+   ],
+   "relationshipName": "Individual"
+  },
+  {
+   "name": "Pronouns",
+   "label": "Pronouns",
+   "type": "picklist",
+   "length": 255
+  },
+  {
+   "name": "GenderIdentity",
+   "label": "Gender Identity",
+   "type": "picklist",
+   "length": 255
+  },
+  {
+   "name": "Employee_Number__c",
+   "label": "Employee Number",
+   "type": "string",
+   "length": 50
+  }
+ ]
+}

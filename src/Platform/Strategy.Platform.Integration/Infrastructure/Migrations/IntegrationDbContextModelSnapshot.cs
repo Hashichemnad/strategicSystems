@@ -888,6 +888,10 @@ namespace Strategy.Platform.Integration.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("last_test_at");
 
+                    b.Property<string>("LastTestDetail")
+                        .HasColumnType("jsonb")
+                        .HasColumnName("last_test_detail");
+
                     b.Property<string>("LastTestMessageKey")
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)")

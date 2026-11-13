@@ -47,9 +47,11 @@ public sealed record PeopleOptions
 
     public string? EmailField { get; init; } = "Email";
 
-    public string? EmployeeNoField { get; init; } = "EmployeeNumber";
+    /// <summary>No default (ADR 0212): <c>EmployeeNumber</c> exists on User but not on Contact; a match key without a field is skipped.</summary>
+    public string? EmployeeNoField { get; init; }
 
-    public string? FederationIdField { get; init; } = "FederationIdentifier";
+    /// <summary>No default (ADR 0212): <c>FederationIdentifier</c> exists on User but not on Contact.</summary>
+    public string? FederationIdField { get; init; }
 
     public string? NameField { get; init; } = "Name";
 }
@@ -86,8 +88,23 @@ public sealed record SyncScheduleSettings
     public bool BusinessHoursOnly { get; init; }
 }
 
-/// <summary>API limits of the source as last read.</summary>
-public sealed record ApiLimits(int? DailyApiMax, int? DailyApiRemaining, int? BulkJobsMax, int? BulkJobsRemaining, DateTimeOffset At);
+/// <summary>
+/// API limits of the source as last read: from <c>/limits</c>, or from the <c>Sforce-Limit-Info</c> header of normal calls when <c>/limits</c>
+/// is refused (ADR 0210; then the Bulk job counts are unknown). <see cref="Source"/> is null on values stored by 1.0.0 (= <c>limits</c>).
+/// </summary>
+public sealed record ApiLimits(int? DailyApiMax, int? DailyApiRemaining, int? BulkJobsMax, int? BulkJobsRemaining, DateTimeOffset At, string? Source = null)
+{
+    /// <summary>True when fewer than <paramref name="reservePercent"/> % of the daily API requests remain (the run stops; ADR 0206).</summary>
+    public bool IsBelowReserve(int reservePercent) =>
+        DailyApiMax is > 0 && DailyApiRemaining is { } remaining
+        && remaining * 100L < DailyApiMax.Value * (long)Math.Clamp(reservePercent, 0, 90);
+}
+
+public static class ApiLimitSources
+{
+    public const string Limits = "limits";
+    public const string Header = "header";
+}
 
 /// <summary>Counters of one object in one run.</summary>
 public sealed class ObjectRunStats

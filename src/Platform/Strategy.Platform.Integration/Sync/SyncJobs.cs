@@ -1,6 +1,7 @@
 using System.Globalization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Strategy.Platform.Access;
 using Strategy.Platform.Http.Health;
 using Strategy.Platform.Integration.Domain;
@@ -212,7 +213,7 @@ internal sealed class SyncHealthContributor(IntegrationDbContext db, IClock cloc
 /// Seeds the Salesforce source system (code <c>salesforce</c>, editable), the "ADoF Salesforce" mapping pack (embedded, imported once) and
 /// a disabled connection that uses it. Never overwrites an administrator's changes.
 /// </summary>
-internal sealed class SyncSeeder : IDatabaseSeeder
+internal sealed partial class SyncSeeder : IDatabaseSeeder
 {
     public const string PackResourcePrefix = "sync-pack/adof-salesforce/";
     public const string PackCode = "adof-salesforce";
@@ -229,7 +230,18 @@ internal sealed class SyncSeeder : IDatabaseSeeder
             await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
 
-        if (!await db.MappingPacks.AnyAsync(p => p.Code == PackCode, cancellationToken).ConfigureAwait(false))
+        var installed = await db.MappingPacks.AsNoTracking().Where(p => p.Code == PackCode).Select(p => (int?)p.PackVersion).FirstOrDefaultAsync(cancellationToken)
+            .ConfigureAwait(false);
+        if (installed is { } version)
+        {
+            var shipped = await LoadPackAsync(cancellationToken).ConfigureAwait(false);
+            if (version < shipped.Version && await LoadPreviousAsync(version, cancellationToken).ConfigureAwait(false) is { } previous)
+            {
+                var (replaced, kept) = await services.GetRequiredService<SyncAdministration>().UpgradeShippedPackAsync(shipped, previous, cancellationToken).ConfigureAwait(false);
+                LogPackUpgraded(services.GetRequiredService<ILogger<SyncSeeder>>(), PackCode, version, shipped.Version, string.Join(", ", replaced), string.Join(", ", kept));
+            }
+        }
+        else
         {
             var document = await LoadPackAsync(cancellationToken).ConfigureAwait(false);
             var imported = await services.GetRequiredService<SyncAdministration>().ImportPackAsync(document, cancellationToken, audited: false).ConfigureAwait(false);
@@ -251,6 +263,17 @@ internal sealed class SyncSeeder : IDatabaseSeeder
             await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         }
     }
+
+    /// <summary>The objects an older pack version shipped that the current version changes (<c>Packs/upgrades/adof-salesforce-v{n}.json</c>, ADR 0213).</summary>
+    public static async Task<MappingPackDocument?> LoadPreviousAsync(int version, CancellationToken cancellationToken)
+    {
+        await using var stream = typeof(SyncSeeder).Assembly.GetManifestResourceStream($"sync-pack-upgrade/{PackCode}-v{version}.json");
+        return stream is null ? null : await System.Text.Json.JsonSerializer.DeserializeAsync<MappingPackDocument>(stream, SyncJson.Options, cancellationToken).ConfigureAwait(false);
+    }
+
+    [LoggerMessage(Level = LogLevel.Warning,
+        Message = "Mapping pack {PackCode} upgraded from version {From} to {To}: replaced (validate again) [{Replaced}], kept because changed by an administrator (re-import the shipped pack to take the fixes) [{Kept}]")]
+    private static partial void LogPackUpgraded(ILogger logger, string packCode, int from, int to, string replaced, string kept);
 
     /// <summary>The embedded ADoF pack: <c>pack.json</c> (code, names, version) plus every other file's <c>objects</c>, in file-name order.</summary>
     public static async Task<MappingPackDocument> LoadPackAsync(CancellationToken cancellationToken)
@@ -281,4 +304,8 @@ public static class ShippedMappingPacks
 {
     /// <summary>The "ADoF Salesforce" pack as shipped (before any administrator change).</summary>
     public static Task<MappingPackDocument> AdofSalesforceAsync(CancellationToken cancellationToken = default) => SyncSeeder.LoadPackAsync(cancellationToken);
+
+    /// <summary>The objects pack <paramref name="version"/> shipped that the current pack changes (upgrade snapshot, ADR 0213); null when none.</summary>
+    public static Task<MappingPackDocument?> AdofSalesforcePreviousAsync(int version, CancellationToken cancellationToken = default) =>
+        SyncSeeder.LoadPreviousAsync(version, cancellationToken);
 }

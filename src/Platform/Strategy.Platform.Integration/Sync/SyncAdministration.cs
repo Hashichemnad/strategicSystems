@@ -1,5 +1,7 @@
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using Strategy.Platform.Audit;
 using Strategy.Platform.Integration.Infrastructure;
 using Strategy.Platform.Integration.Sync.Salesforce;
@@ -14,7 +16,24 @@ namespace Strategy.Platform.Integration.Sync;
 
 // ---- DTOs ----
 
-public sealed record SyncTestDto(DateTimeOffset At, bool Ok, string? MessageKey);
+/// <summary>What Salesforce answered to a failed call (ADR 0211): HTTP status, sanitised call, Salesforce errorCode and message.</summary>
+public sealed record SalesforceErrorDto(int? Status, string Call, string? ErrorCode, string? Message)
+{
+    public static SalesforceErrorDto? From(SalesforceError? error) => error is null ? null : new(error.Status, error.Call, error.ErrorCode, error.Message);
+}
+
+/// <summary>A non-blocking finding of a connection test (e.g. <c>/limits</c> refused, ADR 0210).</summary>
+public sealed record SyncWarningDto(string MessageKey, IReadOnlyDictionary<string, string?>? Params);
+
+/// <summary>Stored detail of the last connection test (<c>sync_connection.last_test_detail</c>).</summary>
+public sealed record SyncTestDetail
+{
+    public SalesforceErrorDto? Error { get; init; }
+
+    public List<SyncWarningDto> Warnings { get; init; } = [];
+}
+
+public sealed record SyncTestDto(DateTimeOffset At, bool Ok, string? MessageKey, SalesforceErrorDto? Error, IReadOnlyList<SyncWarningDto> Warnings);
 
 public sealed record SyncConnectionDto(
     Guid Id,
@@ -172,7 +191,7 @@ public sealed record MappingPackObject
 /// status, runs, live describe, mapping editor with validation, pack export / import, targets, exceptions queue. Permissions are checked by
 /// the endpoints; every change is audited (interceptor + explicit events).
 /// </summary>
-public sealed class SyncAdministration(
+public sealed partial class SyncAdministration(
     IntegrationDbContext db,
     SalesforceSessionFactory sessions,
     SyncTargetRegistry targets,
@@ -182,7 +201,8 @@ public sealed class SyncAdministration(
     ISettingsStore settings,
     IAuditLog audit,
     IRequestContext context,
-    IClock clock)
+    IClock clock,
+    ILogger<SyncAdministration> logger)
 {
     public const string SalesforceSource = "salesforce";
 
@@ -285,13 +305,18 @@ public sealed class SyncAdministration(
         connection.PrivateKeyProtected = sessions.Protect(pem!);
         connection.KeyThumbprint = thumbprint;
         connection.LastTestOk = null;
+        connection.LastTestDetail = null;
         var saved = await SaveAsync(connection, ct).ConfigureAwait(false);
         await audit.WriteAsync(new AuditEvent("integration.sync.key.store", true, IntegrationPermissions.SystemCode, SyncConnection.EntityType,
             id.ToString(), new { thumbprint }), ct).ConfigureAwait(false);
         return saved;
     }
 
-    /// <summary>Test connection: token, limits and describe global (read-only calls).</summary>
+    /// <summary>
+    /// Test connection: token, limits and describe global (read-only calls). A refused <c>/limits</c> (no View Setup and Configuration, as with
+    /// the Salesforce Integration licence) is a warning, not a failure: usage then comes from the <c>Sforce-Limit-Info</c> header (ADR 0210).
+    /// Failures keep what Salesforce answered (ADR 0211).
+    /// </summary>
     public async Task<Result<SyncConnectionDto>> TestAsync(Guid id, CancellationToken ct)
     {
         var connection = await db.SyncConnections.FirstOrDefaultAsync(c => c.Id == id, ct).ConfigureAwait(false);
@@ -301,27 +326,57 @@ public sealed class SyncAdministration(
         }
 
         string? messageKey = null;
+        var detail = new SyncTestDetail();
         try
         {
             var session = sessions.Open(connection);
             await session.AuthenticateAsync(ct).ConfigureAwait(false);
             connection.InstanceUrl = session.InstanceUrl;
-            connection.LastLimits = SyncJson.Write(await session.LimitsAsync(ct).ConfigureAwait(false));
+            var (limits, refused) = await session.TryLimitsAsync(ct).ConfigureAwait(false);
+            if (refused is not null)
+            {
+                detail.Warnings.Add(new SyncWarningDto("integration.sync.warnings.limitsRefused", refused.ToParams()));
+                LogLimitsRefused(logger, id, refused.Status, refused.Call, refused.ErrorCode, refused.Message);
+            }
+
             _ = await session.ListObjectsAsync(ct).ConfigureAwait(false);
+            if (session.CurrentLimits(limits) is { } current)
+            {
+                connection.LastLimits = SyncJson.Write(current);
+            }
         }
         catch (SourceConnectorException ex)
         {
             messageKey = ex.MessageKey;
+            detail = detail with { Error = SalesforceErrorDto.From(ex.Error) };
+            LogTestFailed(logger, id, ex.MessageKey, ex.Error?.Status, ex.Error?.Call, ex.Error?.ErrorCode, ex.Error?.Message ?? ex.Detail);
         }
 
         connection.LastTestAt = clock.UtcNow;
         connection.LastTestOk = messageKey is null;
         connection.LastTestMessageKey = messageKey;
+        connection.LastTestDetail = SyncJson.Write(detail);
         await db.SaveChangesAsync(ct).ConfigureAwait(false);
         await audit.WriteAsync(new AuditEvent("integration.sync.test", messageKey is null, IntegrationPermissions.SystemCode, SyncConnection.EntityType, id.ToString(),
-            new { messageKey }), ct).ConfigureAwait(false);
+            new { messageKey, status = detail.Error?.Status, errorCode = detail.Error?.ErrorCode, warnings = detail.Warnings.Select(w => w.MessageKey).ToList() }), ct)
+            .ConfigureAwait(false);
         return await ToDtoAsync(connection, ct).ConfigureAwait(false);
     }
+
+    /// <summary>A connector failure of an interactive call (object list, describe) as a rule error carrying what Salesforce answered.</summary>
+    private Error ConnectorError(Guid connectionId, SourceConnectorException ex)
+    {
+        LogTestFailed(logger, connectionId, ex.MessageKey, ex.Error?.Status, ex.Error?.Call, ex.Error?.ErrorCode, ex.Error?.Message ?? ex.Detail);
+        return Error.Rule("integration.sync.connector", ex.MessageKey, ex.Params()?.ToDictionary(p => p.Key, p => (object?)p.Value));
+    }
+
+    [LoggerMessage(Level = LogLevel.Warning,
+        Message = "Salesforce call for connection {ConnectionId} failed: {MessageKey} (HTTP {Status}, call {Call}, Salesforce error {ErrorCode}: {SalesforceMessage})")]
+    private static partial void LogTestFailed(ILogger logger, Guid connectionId, string messageKey, int? status, string? call, string? errorCode, string? salesforceMessage);
+
+    [LoggerMessage(Level = LogLevel.Information,
+        Message = "Salesforce refused /limits in the test of {ConnectionId} (HTTP {Status}, call {Call}, Salesforce error {ErrorCode}: {SalesforceMessage}); API usage is read from the Sforce-Limit-Info header")]
+    private static partial void LogLimitsRefused(ILogger logger, Guid connectionId, int? status, string call, string? errorCode, string? salesforceMessage);
 
     /// <summary>Activates (standby) or deactivates the sync. Activation needs a successful test and a mapping pack.</summary>
     public async Task<Result<SyncConnectionDto>> SetActiveAsync(Guid id, bool active, CancellationToken ct)
@@ -556,7 +611,7 @@ public sealed class SyncAdministration(
         }
         catch (SourceConnectorException ex)
         {
-            return Error.Rule("integration.sync.connector", ex.MessageKey);
+            return ConnectorError(id, ex);
         }
     }
 
@@ -574,7 +629,7 @@ public sealed class SyncAdministration(
         }
         catch (SourceConnectorException ex)
         {
-            return Error.Rule("integration.sync.connector", ex.MessageKey);
+            return ConnectorError(id, ex);
         }
     }
 
@@ -709,12 +764,25 @@ public sealed class SyncAdministration(
         try
         {
             var session = sessions.Open(connection);
-            var describe = await session.DescribeAsync(mapping.SourceObject, ct).ConfigureAwait(false);
-            var describes = new Dictionary<string, SourceObjectDescribe>(StringComparer.OrdinalIgnoreCase) { [describe.Name] = describe };
-            async Task<SourceFieldInfo?> FieldAsync(string path)
+            var describes = new Dictionary<string, SourceObjectDescribe>(StringComparer.OrdinalIgnoreCase);
+            async Task<SourceObjectDescribe> DescribeAsync(string name)
+            {
+                if (!describes.TryGetValue(name, out var found))
+                {
+                    found = await session.DescribeAsync(name, ct).ConfigureAwait(false);
+                    describes[name] = found;
+                }
+
+                return found;
+            }
+
+            var describe = await DescribeAsync(mapping.SourceObject).ConfigureAwait(false);
+
+            // A field path on an object; one or more relationship hops (RecordType.DeveloperName, ProcessInstance.ProcessDefinition.Name).
+            async Task<SourceFieldInfo?> FieldOnAsync(string objectName, string path)
             {
                 var parts = path.Split('.');
-                var current = describe;
+                var current = await DescribeAsync(objectName).ConfigureAwait(false);
                 for (var i = 0; i < parts.Length - 1; i++)
                 {
                     var relationship = current.Fields.FirstOrDefault(f => string.Equals(f.RelationshipName, parts[i], StringComparison.OrdinalIgnoreCase));
@@ -723,26 +791,36 @@ public sealed class SyncAdministration(
                         return null;
                     }
 
-                    var name = relationship.ReferenceTo[0];
-                    if (!describes.TryGetValue(name, out var next))
-                    {
-                        next = await session.DescribeAsync(name, ct).ConfigureAwait(false);
-                        describes[name] = next;
-                    }
-
-                    current = next;
+                    current = await DescribeAsync(relationship.ReferenceTo[0]).ConfigureAwait(false);
                 }
 
                 return current.Field(parts[^1]);
             }
 
-            if (mapping.Kind is ObjectMappingKinds.Record or ObjectMappingKinds.People or ObjectMappingKinds.Attachments or ObjectMappingKinds.FieldHistory
-                && await FieldAsync(mapping.WatermarkField).ConfigureAwait(false) is null)
-            {
-                issues.Add(new("error", "watermarkField", "integration.sync.validation.unknownField", new Dictionary<string, string?> { ["field"] = mapping.WatermarkField }));
-            }
+            Task<SourceFieldInfo?> FieldAsync(string path) => FieldOnAsync(mapping.SourceObject, path);
 
             var fields = SyncJson.Read<List<FieldMapping>>(mapping.Fields);
+            var people = mapping.Kind == ObjectMappingKinds.People ? SyncJson.Read<PeopleOptions>(mapping.Options) : null;
+
+            // Every field the run's queries select (system, watermark, external-ID template, people, files, approvals, history; ADR 0212).
+            // Mapped fields are checked below with their targets; IsDeleted is only selected when the object has it.
+            var queried = SyncQueries.All(mapping, fields, people)
+                .Where(q => q.Usage != SyncQueries.UsageMapped && (!q.Optional || q.Usage == SyncQueries.UsagePeople))
+                .DistinctBy(q => (q.SourceObject.ToUpperInvariant(), q.Field.ToUpperInvariant()));
+            foreach (var q in queried)
+            {
+                if (await FieldOnAsync(q.SourceObject, q.Field).ConfigureAwait(false) is not null)
+                {
+                    continue;
+                }
+
+                // A missing people field is skipped at run time (matching continues with the other keys): a warning.
+                issues.Add(new(q.Usage == SyncQueries.UsagePeople ? "warning" : "error",
+                    q.Usage switch { SyncQueries.UsageWatermark => "watermarkField", SyncQueries.UsageExternalId => "externalIdTemplate", SyncQueries.UsagePeople => "options", _ => null },
+                    "integration.sync.validation.unknownField",
+                    new Dictionary<string, string?> { ["field"] = q.Field, ["object"] = q.SourceObject, ["usage"] = q.Usage }));
+            }
+
             var target = targets.Find(mapping.TargetType);
             if (mapping.Kind == ObjectMappingKinds.Record && target is null)
             {
@@ -765,8 +843,21 @@ public sealed class SyncAdministration(
                 var source = await FieldAsync(f.Source).ConfigureAwait(false);
                 if (source is null)
                 {
-                    issues.Add(new("error", f.Target, "integration.sync.validation.unknownField", new Dictionary<string, string?> { ["field"] = f.Source }));
+                    issues.Add(new("error", f.Target, "integration.sync.validation.unknownField",
+                        new Dictionary<string, string?> { ["field"] = f.Source, ["object"] = mapping.SourceObject, ["usage"] = SyncQueries.UsageMapped }));
                     continue;
+                }
+
+                // Picklist → number (ADR 0212): every value the map produces must convert to the target field kind.
+                if (targetField is not null && f.Kind is FieldMappingKinds.Picklist or FieldMappingKinds.RecordType && f.Values is { Count: > 0 }
+                    && targetField.Kind is SyncFieldKinds.Number or SyncFieldKinds.Ratio or SyncFieldKinds.WholeNumber or SyncFieldKinds.Bool or SyncFieldKinds.Date or SyncFieldKinds.DateTime)
+                {
+                    var invalid = f.Values.Values.Distinct(StringComparer.Ordinal).Where(v => FieldMapper.Convert(targetField, v).Issue is not null).ToList();
+                    if (invalid.Count > 0)
+                    {
+                        issues.Add(new("error", f.Target, "integration.sync.validation.valueNotConvertible",
+                            new Dictionary<string, string?> { ["field"] = f.Source, ["values"] = string.Join(", ", invalid), ["targetKind"] = targetField.Kind }));
+                    }
                 }
 
                 if (f.Kind is FieldMappingKinds.Picklist && source.PicklistValues.Count > 0)
@@ -804,7 +895,7 @@ public sealed class SyncAdministration(
         }
         catch (SourceConnectorException ex)
         {
-            issues.Add(new("error", null, ex.MessageKey, ex.Detail is null ? null : new Dictionary<string, string?> { ["detail"] = ex.Detail }));
+            issues.Add(new("error", null, ex.MessageKey, ex.Params()));
         }
 
         var ok = issues.All(i => i.Severity != "error");
@@ -922,6 +1013,68 @@ public sealed class SyncAdministration(
         mapping.Provisional = o.Provisional;
     }
 
+    /// <summary>
+    /// Upgrades an installed shipped pack (ADR 0213): every object of <paramref name="previous"/> (the content the older release shipped for
+    /// the objects the new pack changes) is replaced by the new shipped object only while the installed object still equals that content.
+    /// Replaced objects lose their confirmation and are disabled until validated again (like an import); objects an administrator changed are
+    /// kept and returned, so the guide can tell them to re-import the pack. Sets the pack version.
+    /// </summary>
+    public async Task<(IReadOnlyList<string> Replaced, IReadOnlyList<string> Kept)> UpgradeShippedPackAsync(
+        MappingPackDocument shipped, MappingPackDocument previous, CancellationToken ct)
+    {
+        ArgumentNullException.ThrowIfNull(shipped);
+        ArgumentNullException.ThrowIfNull(previous);
+        var pack = await db.MappingPacks.FirstOrDefaultAsync(p => p.Code == shipped.Code, ct).ConfigureAwait(false);
+        if (pack is null || pack.PackVersion >= shipped.Version || pack.PackVersion != previous.Version)
+        {
+            return ([], []);
+        }
+
+        var rows = await db.ObjectMappings.Where(m => m.PackId == pack.Id).ToListAsync(ct).ConfigureAwait(false);
+        var replaced = new List<string>();
+        var kept = new List<string>();
+        foreach (var old in previous.Objects)
+        {
+            var row = rows.FirstOrDefault(m => m.Key == old.Key);
+            var next = shipped.Objects.FirstOrDefault(o => o.Key == old.Key);
+            if (row is null || next is null)
+            {
+                continue;
+            }
+
+            if (!SameAsShipped(row, old))
+            {
+                kept.Add(old.Key);
+                continue;
+            }
+
+            row.SourceObject = next.SourceObject;
+            row.Kind = next.Kind;
+            Apply(row, next);
+            row.ConfirmedAt = null;
+            row.Enabled = false;
+            replaced.Add(old.Key);
+        }
+
+        pack.PackVersion = shipped.Version;
+        await db.SaveChangesAsync(ct).ConfigureAwait(false);
+        return (replaced, kept);
+    }
+
+    /// <summary>True when an installed object still has exactly the content a release shipped (JSON compared semantically).</summary>
+    private static bool SameAsShipped(SyncObjectMapping row, MappingPackObject shipped)
+    {
+        static JsonNode? Node(string? json) => string.IsNullOrWhiteSpace(json) ? null : JsonNode.Parse(json);
+        var options = shipped.Options is { ValueKind: JsonValueKind.Object } o ? o.GetRawText() : "{}";
+        return row.SourceObject == shipped.SourceObject && row.Kind == shipped.Kind
+            && string.Equals(row.TargetType, string.IsNullOrWhiteSpace(shipped.TargetType) ? null : shipped.TargetType.Trim(), StringComparison.Ordinal)
+            && string.Equals(row.Where, string.IsNullOrWhiteSpace(shipped.Where) ? null : shipped.Where.Trim(), StringComparison.Ordinal)
+            && row.WatermarkField == shipped.WatermarkField && row.ExternalIdTemplate == shipped.ExternalIdTemplate
+            && JsonNode.DeepEquals(Node(row.Fields), Node(SyncJson.Write(shipped.Fields)))
+            && JsonNode.DeepEquals(Node(row.Defaults), Node(SyncJson.Write(shipped.Defaults)))
+            && JsonNode.DeepEquals(Node(row.Options), Node(options));
+    }
+
     public async Task<Result<MappingPackDocument>> ExportPackAsync(Guid packId, CancellationToken ct)
     {
         var pack = await db.MappingPacks.AsNoTracking().FirstOrDefaultAsync(p => p.Id == packId, ct).ConfigureAwait(false);
@@ -1007,11 +1160,11 @@ public sealed class SyncAdministration(
                 db.ObjectMappings.Add(row);
             }
 
-            var before = row.Fields + row.Defaults + row.TargetType + row.Where + row.ExternalIdTemplate + row.WatermarkField + row.SourceObject + row.Kind;
+            var before = row.Fields + row.Defaults + row.TargetType + row.Where + row.ExternalIdTemplate + row.WatermarkField + row.SourceObject + row.Kind + row.Options;
             row.SourceObject = o.SourceObject;
             row.Kind = o.Kind;
             Apply(row, o);
-            var after = row.Fields + row.Defaults + row.TargetType + row.Where + row.ExternalIdTemplate + row.WatermarkField + row.SourceObject + row.Kind;
+            var after = row.Fields + row.Defaults + row.TargetType + row.Where + row.ExternalIdTemplate + row.WatermarkField + row.SourceObject + row.Kind + row.Options;
             if (before != after)
             {
                 row.ConfirmedAt = null;
@@ -1095,6 +1248,8 @@ public sealed class SyncAdministration(
         return ToDto(reloaded, key);
     }
 
+    private const int ReprocessPage = 1000;
+
     public async Task<Result<ReprocessResultDto>> ReprocessManyAsync(Guid connectionId, ReprocessInput input, CancellationToken ct)
     {
         ArgumentNullException.ThrowIfNull(input);
@@ -1110,17 +1265,31 @@ public sealed class SyncAdministration(
             query = query.Where(e => ids.Contains(e.MappingId));
         }
 
-        var rows = await query.OrderBy(e => e.CreatedAt).Take(5000).ToListAsync(ct).ConfigureAwait(false);
-        foreach (var row in rows)
+        // People mappings first (by load order), then records: a User / Contact matched now lets the records that point at it resolve in the
+        // same pass ("Unknown person" bulk re-process). Every open exception of the filter is processed once, page by page.
+        var ordered = from e in query
+                      join m in db.ObjectMappings on e.MappingId equals m.Id
+                      orderby m.Kind == ObjectMappingKinds.People ? 0 : 1, m.LoadOrder, e.CreatedAt, e.Id
+                      select e.Id;
+        var all = await ordered.ToListAsync(ct).ConfigureAwait(false);
+        foreach (var page in all.Chunk(ReprocessPage))
         {
-            await engine.ReprocessAsync(row, null, ct).ConfigureAwait(false);
+            var rows = await db.SyncExceptions.Where(e => page.Contains(e.Id)).ToListAsync(ct).ConfigureAwait(false);
+            foreach (var row in page.Select(id => rows.First(r => r.Id == id)))
+            {
+                if (row.Status == ExceptionStatuses.Open)
+                {
+                    await engine.ReprocessAsync(row, null, ct).ConfigureAwait(false);
+                }
+            }
+
+            db.ChangeTracker.Clear();
         }
 
-        var ids2 = rows.Select(r => r.Id).ToList();
-        var still = await db.SyncExceptions.AsNoTracking().CountAsync(e => ids2.Contains(e.Id) && e.Status == ExceptionStatuses.Open, ct).ConfigureAwait(false);
+        var still = await db.SyncExceptions.AsNoTracking().CountAsync(e => all.Contains(e.Id) && e.Status == ExceptionStatuses.Open, ct).ConfigureAwait(false);
         await audit.WriteAsync(new AuditEvent("integration.sync.exception.reprocess", true, IntegrationPermissions.SystemCode, SyncConnection.EntityType, connectionId.ToString(),
-            new { input.Reason, input.MappingKey, count = rows.Count }), ct).ConfigureAwait(false);
-        return new ReprocessResultDto(rows.Count, rows.Count - still, still);
+            new { input.Reason, input.MappingKey, count = all.Count }), ct).ConfigureAwait(false);
+        return new ReprocessResultDto(all.Count, all.Count - still, still);
     }
 
     public async Task<Result<SyncExceptionDto>> IgnoreAsync(Guid id, CancellationToken ct)
@@ -1247,6 +1416,12 @@ public sealed class SyncAdministration(
             c.ClientId, c.Username, !string.IsNullOrEmpty(c.PrivateKeyProtected), c.KeyThumbprint, c.ApiVersion, c.BulkThreshold, c.PageSize,
             SyncJson.Read<SyncScheduleSettings>(c.Schedule), c.NextRunAt, c.LateAfterMinutes, c.MappingPackId, c.InstanceUrl,
             string.IsNullOrEmpty(c.LastLimits) ? null : JsonSerializer.Deserialize<ApiLimits>(c.LastLimits, SyncJson.Options),
-            c.LastTestAt is { } at ? new SyncTestDto(at, c.LastTestOk == true, c.LastTestMessageKey) : null, c.RunRequestedAt is not null, c.Version);
+            c.LastTestAt is { } at ? TestDto(at, c) : null, c.RunRequestedAt is not null, c.Version);
+    }
+
+    private static SyncTestDto TestDto(DateTimeOffset at, SyncConnection c)
+    {
+        var detail = SyncJson.Read<SyncTestDetail>(c.LastTestDetail);
+        return new SyncTestDto(at, c.LastTestOk == true, c.LastTestMessageKey, detail.Error, detail.Warnings);
     }
 }
