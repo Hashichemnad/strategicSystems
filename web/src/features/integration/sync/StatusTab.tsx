@@ -25,7 +25,7 @@ import {
   type SyncObjectStatus,
   type SyncRun,
 } from './api';
-import { Code, Fact, formatDuration, modeTone, runTone, useMessage, useSyncT } from './shared';
+import { Code, Fact, formatDuration, modeTone, runTone, ServerMessage, useSyncT } from './shared';
 
 interface StatusTabProps {
   connectionId: string;
@@ -40,7 +40,6 @@ const COUNTS = ['created', 'updated', 'unchanged', 'deleted', 'failed', 'conflic
 export function StatusTab({ connectionId, canManage, canFailover, onOpen }: StatusTabProps) {
   const { t, tx, language } = useSyncT();
   const { t: tc } = useTranslation();
-  const message = useMessage();
   const toast = useToast();
   const status = useSyncStatus(connectionId);
   const [confirmFull, setConfirmFull] = useState(false);
@@ -143,7 +142,9 @@ export function StatusTab({ connectionId, canManage, canFailover, onOpen }: Stat
         </Fact>
         {lastRun?.messageKey && (
           <div className="sm:col-span-2 lg:col-span-4">
-            <Fact label={t('sync.status.lastError')}>{message(lastRun.messageKey, lastRun.params)}</Fact>
+            <Fact label={t('sync.status.lastError')}>
+              <ServerMessage messageKey={lastRun.messageKey} params={lastRun.params} />
+            </Fact>
           </div>
         )}
       </dl>
@@ -231,7 +232,7 @@ function LastRun({ run, running }: { run: SyncRun; running: boolean }) {
   );
 }
 
-/** Daily API requests used, from the limits Salesforce reported at the last run. */
+/** Daily API requests used, from /limits or — when the integration user may not read it — the usage header of normal calls (ADR 0210). */
 function ApiUsage({ connection }: { connection: SyncConnection }) {
   const { t, language } = useSyncT();
   const limits = connection.limits;
@@ -269,6 +270,7 @@ function ApiUsage({ connection }: { connection: SyncConnection }) {
               max: formatNumber(limits.bulkJobsMax, language),
             })}`
           : ''}
+        {limits.source === 'header' && ` · ${t('sync.status.limitsFromHeader')}`}
       </span>
     </div>
   );

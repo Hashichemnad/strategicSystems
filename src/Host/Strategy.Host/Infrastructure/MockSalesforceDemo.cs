@@ -85,6 +85,15 @@ public static class MockSalesforceDemo
                 fields[m.Source!] = m.Kind is FieldMappingKinds.Reference or FieldMappingKinds.Person ? "reference" : m.Kind == FieldMappingKinds.Picklist ? "picklist" : "string";
             }
 
+            // Fields of the external-ID templates ({year:Evaluation_Date__c}, {Evaluation_Year__c}) are queried too (ADR 0212).
+            foreach (var template in pack.Objects.Where(o => o.SourceObject == mapping.SourceObject).Select(o => o.ExternalIdTemplate))
+            {
+                foreach (System.Text.RegularExpressions.Match m in System.Text.RegularExpressions.Regex.Matches(template, "\\{(?:year:)?([A-Za-z0-9_]+)\\}"))
+                {
+                    fields.TryAdd(m.Groups[1].Value, "string");
+                }
+            }
+
             var o = org.AddObject(mapping.SourceObject, [.. fields.Select(f => (f.Key, f.Value))]);
             foreach (var f in pack.Objects.Where(x => x.SourceObject == mapping.SourceObject).SelectMany(x => x.Fields)
                 .Where(f => f.Kind == FieldMappingKinds.Picklist && f.Values is { Count: > 0 }).DistinctBy(f => f.Source))

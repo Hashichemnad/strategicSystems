@@ -35,7 +35,7 @@ import {
   type SourceField,
   type SyncTarget,
 } from './api';
-import { Code, isPlainObject, parseJson, severityTone, useMessage, useSyncT } from './shared';
+import { Code, isPlainObject, parseJson, ServerMessage, severityTone, useSyncT } from './shared';
 
 interface EditorProps {
   connectionId: string;
@@ -694,7 +694,6 @@ function ValueMapEditor({
 
 function ValidationResult({ validation }: { validation: MappingValidation }) {
   const { t, tx } = useSyncT();
-  const message = useMessage();
   return (
     <section className="flex flex-col gap-2" aria-live="polite" data-testid="validation-result">
       <StatusBanner
@@ -710,7 +709,9 @@ function ValidationResult({ validation }: { validation: MappingValidation }) {
                 {tx(`sync.severity.${issue.severity}`, { defaultValue: issue.severity })}
               </StatusChip>
               {issue.field && <Code>{issue.field}</Code>}
-              <span className="min-w-0 flex-1">{message(issue.messageKey, issue.params)}</span>
+              <span className="min-w-0 flex-1">
+                <ServerMessage messageKey={issue.messageKey} params={issue.params} />
+              </span>
             </li>
           ))}
         </ul>

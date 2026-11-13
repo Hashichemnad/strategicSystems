@@ -25,7 +25,7 @@ import {
   type SyncSchedule,
   type SyncScheduleView,
 } from './api';
-import { Code, Fact, useMessage, useSyncT } from './shared';
+import { Code, Fact, SalesforceErrorDetails, ServerMessage, useMessage, useSyncT } from './shared';
 
 interface TabProps {
   connection: SyncConnection;
@@ -278,8 +278,14 @@ export function ConnectionTab({ connection, canManage }: TabProps) {
         </h2>
         {last && (
           <StatusBanner
-            tone={last.ok ? 'success' : 'danger'}
-            title={last.ok ? t('sync.connection.testOk') : t('sync.connection.testFailed')}
+            tone={last.ok ? (last.warnings.length > 0 ? 'warning' : 'success') : 'danger'}
+            title={
+              last.ok
+                ? last.warnings.length > 0
+                  ? t('sync.connection.testOkWarnings')
+                  : t('sync.connection.testOk')
+                : t('sync.connection.testFailed')
+            }
             description={
               <>
                 {formatDateTime(last.at, language)}
@@ -287,6 +293,16 @@ export function ConnectionTab({ connection, canManage }: TabProps) {
               </>
             }
           />
+        )}
+        {last && !last.ok && last.error && <SalesforceErrorDetails error={last.error} />}
+        {last?.ok && last.warnings.length > 0 && (
+          <ul className="flex flex-col gap-2 text-sm" data-testid="sync-test-warnings">
+            {last.warnings.map((warning, i) => (
+              <li key={i}>
+                <ServerMessage messageKey={warning.messageKey} params={warning.params} />
+              </li>
+            ))}
+          </ul>
         )}
         {canManage && (
           <div>
