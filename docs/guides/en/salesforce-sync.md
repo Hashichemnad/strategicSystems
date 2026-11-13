@@ -1,6 +1,6 @@
 # Salesforce standby sync: setup, monitoring, failover and return to standby
 
-For administrators (Phase 23, SPEC-ADDENDUM §G, ADRs 0200–0208). Screens: **Settings → Integrations → Salesforce sync**.
+For administrators (Phase 23 and release 1.0.1, SPEC-ADDENDUM §G, ADRs 0200–0208 and 0210–0214). Screens: **Settings → Integrations → Salesforce sync**.
 
 While Salesforce is the **primary** system, this system receives a regular **one-way** copy of its data (departments, users matched to
 employees, teams, projects and all other systems, files and approval history) so it can take over if Salesforce becomes unavailable.
@@ -8,45 +8,68 @@ employees, teams, projects and all other systems, files and approval history) so
 **read-only** here while Salesforce is primary. After an outage, changes made here are re-entered in Salesforce by people, with the
 **outage changes report**.
 
-## 1. In Salesforce: certificate, Connected App and integration user
+## 1. In Salesforce: integration user, permission set, certificate and External Client App
 
-1. **Create a key pair and certificate** (on an administrator's computer, not on the server):
+You need a Salesforce administrator for this part. Since Spring '26 new **Connected Apps** can no longer be created in most orgs: use an
+**External Client App** (an existing Connected App with the same settings keeps working).
+
+1. **Integration user** — Setup → Users → New user:
+   - **User licence: *Salesforce Integration*** and profile **Minimum Access – API Only Integrations** (API-only, cannot sign in to the UI).
+     Do not use a person's account. Orgs without this licence may use a standard licence with an API-only profile.
+   - Then, on the user's page → **Permission Set License Assignments** → Edit → tick **Salesforce API Integration** (the permission set licence
+     that makes object permissions available to this user licence).
+2. **Permission set** "Strategy standby sync — read only" — Setup → Permission Sets → New, **Licence: *Salesforce API Integration***:
+   - System permissions: **API Enabled**. *View Setup and Configuration* is **not needed** (and cannot be given to this licence): without it
+     Salesforce refuses the API limits resource `/limits`, and the sync then reads API usage from Salesforce's response headers (see §6).
+   - Object settings: **Read** and **View All** (so sharing rules do not hide records) on **every synced object**: `Department__c`, `User`,
+     `Contact`, `Project_Team__c`, `Project_Team_Association__c`, `PMS_Project_Request__c`, `PMS_Project__c`, `PMS_Work_Plan__c`,
+     `PMS_Project_Kpi__c`, `PMS_Project_Risk__c`, `PMS_Project_Stakeholder__c`, `PMS_Project_Planning_Item__c`, `PMS_Challenges_Constraints__c`,
+     `PMS_Change_Request__c`, `PMS_Contract__c`, `PMS_Lesson_Learned__c`, `PMS_Team_Meeting__c`, the KPI objects (`Org_Kpi_Goal__c`,
+     `Org_Kpi_Measure__c`, `Org_Kpi_Process__c`), `Risk_Kpi_Relation__c` and the Risk, Audit, CAP, Benchmarking, Document Registry, IP and
+     Tasks objects of your org.
+   - Field permissions: **Read** on **all fields** of those objects (a field the user cannot read is reported by *Validate* as "does not
+     exist"). Include `Contact.Employee_Number__c`, used to match contacts to employees.
+   - Files: give the user access to the libraries / records whose files must be copied. Field history: read access to the `…__History` objects
+     (keep *Track Field History* on for the objects whose history you want in the "Source history" panel).
+   - Never grant *Create*, *Edit*, *Delete*, *Modify All* or *View All Data*: the sync only reads.
+   - **Assign** the permission set to the integration user.
+3. **Certificate and private key** (on an administrator's computer, not on the server). With OpenSSL:
    ```bash
    openssl req -x509 -newkey rsa:2048 -sha256 -days 730 -nodes -keyout strategy-sync.key -out strategy-sync.crt -subj "/CN=Strategy standby sync"
    ```
-   `strategy-sync.crt` goes to Salesforce; `strategy-sync.key` (the private key, PEM) goes to this system in step 2.4 and is then deleted
-   from the computer. Keys smaller than 2048 bits are refused.
-2. **Integration user**: Setup → Users → New user, licence *Salesforce Integration* (or a standard licence if your org does not have it),
-   profile *Minimum Access – API Only Integrations*. Do not use a person's account.
-3. **Read-only permission set** ("Strategy standby sync — read only") assigned to the integration user:
-   - *API Enabled*, *View Setup and Configuration* is **not** needed.
-   - Object permission **Read** (and *View All* so sharing does not hide records) on every mapped object: `Department__c`, `User`, `Contact`,
-     `Project_Team__c`, `Project_Team_Association__c`, `PMS_Project_Request__c`, `PMS_Project__c`, `PMS_Work_Plan__c`, `PMS_Project_Kpi__c`,
-     `PMS_Project_Risk__c`, `PMS_Project_Stakeholder__c`, `PMS_Project_Planning_Item__c`, `PMS_Challenges_Constraints__c`, `PMS_Change_Request__c`,
-     `PMS_Contract__c`, `PMS_Lesson_Learned__c`, `PMS_Team_Meeting__c`, the KPI objects (`Org_Kpi_Goal__c`, `Org_Kpi_Measure__c`, `Org_Kpi_Process__c`),
-     `Risk_Kpi_Relation__c` and the Risk, Audit, CAP, Benchmarking, Document Registry, IP and Tasks objects of your org.
-   - Field-level security **Read** on all fields of those objects (otherwise the mapping editor reports them as unknown).
-   - Files: *View All Data* is not required; give the user access to the libraries / records whose files must be copied.
-   - Never grant *Create*, *Edit*, *Delete* or *Modify All*: the sync does not need them.
-4. **Connected App**: Setup → App Manager → New Connected App: *Enable OAuth Settings*, callback URL `https://localhost/unused` (not used),
-   **Use digital signatures** → upload `strategy-sync.crt`, OAuth scopes **Manage user data via APIs (api)** and **Perform requests at any time
-   (refresh_token, offline_access)**. Save, then *Manage* → *Edit Policies*: **Permitted users: Admin approved users are pre-authorized**,
-   and add the permission set (or the integration user's profile). Copy the **Consumer Key**.
-5. Field history: if you want field history in the "Source history" panel, keep *Track Field History* on for the objects; give the integration
-   user read access to the `…__History` objects.
+   Without OpenSSL installed, one line with Docker (writes both files to the current folder; in PowerShell use `${PWD}` instead of `$PWD`):
+   ```bash
+   docker run --rm -v "$PWD:/out" -w /out alpine/openssl req -x509 -newkey rsa:2048 -sha256 -days 730 -nodes -keyout strategy-sync.key -out strategy-sync.crt -subj "/CN=Strategy standby sync"
+   ```
+   `strategy-sync.crt` goes to Salesforce (step 4); `strategy-sync.key` (the private key, PEM) goes to this system in step 2.4 and is then
+   deleted from the computer. Keys smaller than 2048 bits are refused.
+4. **External Client App** — Setup → **External Client App Manager** → **New External Client App**:
+   - Basic information: name (e.g. *Strategy standby sync*), contact e-mail, distribution state **Local**.
+   - **API (Enable OAuth Settings)**: tick it; callback URL `https://localhost/unused` (not used by the JWT flow); OAuth scopes
+     **Manage user data via APIs (api)** and **Perform requests at any time (refresh_token, offline_access)**.
+   - **Flow enablement**: tick **Enable JWT Bearer Flow** and upload `strategy-sync.crt`. Create the app.
+   - **Policies** tab → Edit → OAuth policies: **Permitted users: Admin approved users are pre-authorized**, then **Select permission sets** →
+     add "Strategy standby sync — read only". Save.
+   - **Settings** tab → **OAuth Settings** → **Consumer Key and Secret** (Salesforce asks for a verification code) → copy the **Consumer Key**.
+     The secret is not used.
+   - It can take a few minutes until a new app accepts sign-ins.
 
 ## 2. In this system: connection
 
 1. Settings → Integrations → **Salesforce sync** → **Connection**.
 2. **Login URL**: `https://login.salesforce.com` (production), `https://test.salesforce.com` (sandbox) or your My Domain URL. HTTPS only.
-3. **Consumer key** (from the Connected App), **Username** of the integration user, **API version** (default `v62.0`; keep it at a version your
+3. **Consumer key** (from the External Client App, step 1.4), **Username** of the integration user, **API version** (default `v62.0`; keep it at a version your
    org supports).
 4. **Private key**: paste `strategy-sync.key` (PEM). It is encrypted at rest and never shown again — only its **thumbprint**, which you can
-   compare with the certificate. Replace it before the certificate expires (step 1.1 again, upload the new certificate to the Connected App first).
+   compare with the certificate. Replace it before the certificate expires (step 1.3 again; upload the new certificate to the app first).
 5. **Bulk threshold** (default 2 000): deltas bigger than this use Bulk API 2.0; smaller deltas use REST. Initial loads always use Bulk API 2.0.
 6. **Mapping pack**: *ADoF Salesforce* (shipped).
-7. **Test connection**: signs in with the JWT bearer flow, reads the API limits and the object list. Fix the message shown before you continue
-   (e.g. *user hasn't approved this consumer* → step 1.4 policies).
+7. **Test connection**: signs in with the JWT bearer flow, reads the API limits and the object list. When it fails, the Connection tab shows
+   **what Salesforce answered**: the HTTP status, the call (e.g. `POST /services/oauth2/token`, `GET /limits`, `GET /sobjects`, a query), Salesforce's
+   error code and message — e.g. `invalid_grant` *user hasn't approved this consumer* → the policies of step 1.4 (pre-authorised users, the
+   permission set assigned). The same details appear in the run log, on the Status tab and in the server log (never tokens, keys or record data).
+   *"The connection works, with warnings"* with **INSUFFICIENT_ACCESS** or **FUNCTIONALITY_NOT_ENABLED** on `GET /limits` is expected with the
+   *Salesforce Integration* licence: the sync continues and reads API usage from the response headers.
 
 ## 3. Mappings (mapping editor)
 
@@ -61,19 +84,40 @@ marked **provisional** and disabled.
 3. **Validate**: checks every field and picklist value against the live describe. An object can be enabled only after it validates; any edit
    clears the confirmation. Warnings list new picklist values that have no code yet and custom fields that are neither mapped nor ignored.
 4. **Export / Import** the pack (JSON) to keep a copy or move it between installations. Secrets and watermarks are never exported.
-5. **People**: Salesforce users and contacts are **matched** to existing employees by e-mail, employee number or Federation ID (in that order).
-   Load employees first (Organisation import). Unmatched people go to the exceptions queue.
+5. **People**: Salesforce users and contacts are **matched** to existing employees (never created). Users: e-mail, then `EmployeeNumber`, then
+   `FederationIdentifier`. Contacts have neither of those fields: the ADoF pack matches them by e-mail, then the custom field
+   `Employee_Number__c`. Only fields the object has are queried; a configured people field the object lacks is a *Validate* warning and is
+   skipped. Unmatched people go to the exceptions queue. Salesforce users are deactivated, never deleted: an inactive user stays matched.
+6. **Picklists into number fields** (e.g. `PMS_Project_Risk__c.Probability_Level__c` and `Impact_Level__c`, picklists with the values `1`–`5`,
+   into the whole-number probability / impact of the project risk): use the kind **picklist → code** with a value map (`1` → `1` … `5` → `5`, or
+   a label → a number). The mapped value is converted to the target field type (whole number, number, percentage, yes/no, date). *Validate*
+   warns about active picklist values without a map entry and refuses a map that gives a value which is not a number for a number field;
+   a "direct" mapping of a picklist to a number field is refused ("does not fit").
+7. *Validate* checks **every field the sync will query**, not only the mapped ones: `Id`, the change-tracking field (watermark), the fields of
+   the external-ID template, the people fields, and for files, approval and field history the fields of `ContentVersion`, `ContentDocumentLink`,
+   `Attachment`, `ProcessInstance`, `ProcessInstanceStep` and the `…__History` object (with their relationships, e.g. `Actor.Name`). A missing
+   field is reported with the object and what it is used for, before any run. `IsDeleted` is queried only where the object has it (User has not).
 
 ## 4. First full load
 
-1. **Activate** on the Status tab (needs a successful connection test). The mode becomes **Standby**.
-2. **Full load**: reads every enabled object with Bulk API 2.0 in load order. Large orgs take a while; the Status tab shows progress per object.
-3. Open **Exceptions** and fix what came up:
+Load in this order, so people and units match:
+
+1. **Departments**: enable only `department` (validate it), **Activate** on the Status tab (needs a successful connection test; the mode
+   becomes **Standby**) and run a **Full load**. Salesforce departments and sections become organisation units (their short code becomes the
+   unit code).
+2. **Employees**: import the employees with the **organisation-structure import** (employees template) into those units. Their **e-mail** and **employee number** must be
+   the same as in Salesforce (User `Email` / `EmployeeNumber`, Contact `Email` / `Employee_Number__c`), or people will not match.
+3. **Users and contacts**: validate and enable `user` and `contact`, run again (full load).
+4. **Everything else**: validate and enable the other objects and run a **Full load**: it reads every enabled object with Bulk API 2.0 in load
+   order. Large orgs take a while; the Status tab shows progress per object.
+5. Open **Exceptions** and fix what came up:
    - *Unmapped value* → **Map value** (adds the value → code to the field's value map) — the record is re-processed at once.
-   - *Unknown user* → **Map person** (choose the employee) — then the records that referred to that person are re-processed.
+   - *Unknown user* → **Map person** (choose the employee) — then the records that referred to that person are re-processed. When many people
+     were unknown because employees were missing, import them and use **Re-process all** with the reason *Unknown user*: people are processed
+     first, then every record that pointed at them. Each run also retries these records once their person matches.
    - *Missing parent* → usually fixes itself when the parent arrives; otherwise check the parent's mapping.
    - *Invalid value* / *Required missing* → correct the mapping (transform, default) and **Re-process**.
-4. Re-running is safe: records are matched by their Salesforce Id; nothing is created twice.
+6. Re-running is safe: records are matched by their Salesforce Id; nothing is created twice.
 
 ## 5. Schedule
 
@@ -89,7 +133,11 @@ marked **"Deleted in Salesforce"** here and never removed.
 - **Runs** tab: history and the log of each run.
 - **E-mail alerts** (bilingual) to the holders of *Manage the sync*: when a run fails and when the sync is late (once per late period).
 - **Health page** (Settings → Health → Integrations): *Salesforce sync* ok / late / failed / exceptions / this system primary.
-- A run stops when less than 10 % of the daily API requests remain (setting).
+- A run stops when less than 10 % of the daily API requests remain (setting), checked before every object. The numbers come from `/limits`
+  or — when the integration user may not read it (the *Salesforce Integration* licence) — from the `Sforce-Limit-Info: api-usage=used/max`
+  header Salesforce sends with every answer; the usage bar then says "from Salesforce's response headers" and the Bulk job counts are not shown.
+- Errors show **what Salesforce answered** (HTTP status, call, error code, message) under the translated message, in the run log and on the
+  Status tab; the server log has the same fields.
 
 ## 7. While Salesforce is primary (standby)
 
@@ -132,3 +180,7 @@ When Salesforce is available again:
 - The private key, the access tokens and the Salesforce data never appear in logs; every administrator action is in the audit trail
   (`integration.sync.*`), and every synced change is audited with the channel **sync**.
 - Moving to another Salesforce org: export the pack, change the connection, validate every object, then run a full load.
+- **Upgrading from 1.0.0** (pack version 1 → 2): the upgrade replaces the `user`, `contact` and `project-risk` mappings of the *ADoF Salesforce*
+  pack when you had not changed them; they are then disabled until you **Validate** and enable them again. A mapping you had changed is kept
+  (the server log names it): apply the fixes by hand (contact options; probability / impact as picklists with a value map) or re-import the
+  shipped pack. Re-process the open *Unknown user* exceptions after the next run.

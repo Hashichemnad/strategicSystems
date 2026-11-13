@@ -108,6 +108,14 @@ fields that are neither mapped nor ignored as warnings).
 mapped with the expected target type, target fields exist and their kinds fit (date ↔ date / datetime, number ↔ double / currency / percent,
 etc.). An object mapping can be **enabled only after a successful validation** (`confirmed_at`), and any later edit clears it.
 
+*Release 1.0.1 (ADR 0212):* Validate checks **every field the run's queries select**, from one list shared with the engine (`SyncQueries`):
+`Id`, the watermark, the external-ID template fields and the people fields of the object (people fields missing → warning: skipped at run
+time), and the fixed fields of the files (`ContentVersion`, `ContentDocumentLink`), attachments, approvals (`ProcessInstance`,
+`ProcessInstanceStep`, with relationship paths such as `ProcessInstance.ProcessDefinition.Name`, `Actor.Name`) and field-history
+(`…__History`, `CreatedBy.Name`) queries, each issue with `field`, `object` and `usage`. **Picklist → number**: a value map may fill a numeric,
+ratio, whole-number, yes/no or date target; the mapped value is converted to the target kind (an unconvertible value → `invalidValue`), and
+Validate refuses a map whose outputs do not convert (`valueNotConvertible`).
+
 **Pack export / import**: JSON document `{ format: "strategy.sync-pack/1", code, version, name, objects: [ … ] }` (no connection settings, no
 secrets, no watermarks). Import creates or replaces the pack by code (objects keep their enabled flag only when unchanged); audited.
 
@@ -219,18 +227,29 @@ rows) with `nextRecordsUrl` paging for deltas; **Bulk API 2.0** `queryAll` jobs 
 paging) for full / large loads (`SELECT COUNT()` above `bulk_threshold`). Incremental condition `{watermark_field} >= watermark − 5 min`
 (commit lag), ordered by the watermark; records whose hash is unchanged are skipped, so the overlap creates nothing twice. **Limits**:
 `/limits` read once per run (DailyApiRequests, DailyBulkV2QueryJobs) → status page; below 10 % remaining the run stops with
-`integration.sync.errors.apiLimit`. **Retries**: 3 attempts with exponential back-off (2, 4, 8 s, on `IClock`-free delays in tests) on network
+`integration.sync.errors.apiLimit`. *1.0.1 (ADR 0210):* `/limits` needs *View Setup and Configuration*, which the *Salesforce Integration*
+licence cannot have; when it is refused (401 / 403 / `INSUFFICIENT_ACCESS` / `FUNCTIONALITY_NOT_ENABLED`) the test and the run continue with
+a warning, one cheap call (`GET /services/data/{v}`) reads the `Sforce-Limit-Info: api-usage=used/max` header that every REST answer carries,
+and the reserve rule is checked **before every object** from the latest known usage (`/limits` or header; `ApiLimits.source`).
+**Errors** (*1.0.1, ADR 0211*): every failure keeps `SalesforceError(status, call, errorCode, message)` — the call is a sanitised description
+(`GET /limits`, `GET /sobjects/{o}/describe`, `GET /queryAll: SELECT … FROM o WHERE …` without literals, `POST /jobs/query: …`,
+`POST /services/oauth2/token`), the message is Salesforce's (truncated to 500 characters); stored in run / run-log params, in
+`sync_connection.last_test_detail` (jsonb, with warnings) and written to the server log; never tokens, assertions, keys or record values.
+**Fields that exist** (*1.0.1, ADR 0212*): record and people queries describe their object once per run and select `IsDeleted` and the people
+fields only when the object has them (User has no `IsDeleted` — users are deactivated, never "Deleted in source"; Contact has no
+`EmployeeNumber` / `FederationIdentifier`, which are no longer `PeopleOptions` defaults). **Retries**: 3 attempts with exponential back-off (2, 4, 8 s, on `IClock`-free delays in tests) on network
 errors, 5xx, `REQUEST_LIMIT_EXCEEDED` is not retried; 401 renews the token once.
 **Deleted records**: `IsDeleted = true` → `external_ref.sync_status = deleted_in_source` (record kept, badge "Deleted in Salesforce"); a record
 deleted and restored in Salesforce returns to `synced`.
 
-**ADoF Salesforce pack** (`adof-salesforce`, version 1) — load order and model differences (each object's `notes_ar` / `notes_en`):
+**ADoF Salesforce pack** (`adof-salesforce`, version 2 since 1.0.1: `PMS_Project_Risk__c.Probability_Level__c` / `Impact_Level__c` are picklists
+`1`–`5` mapped picklist → whole number; Contact matching as below; installs on version 1 are upgraded object by object while unchanged — ADR 0213) — load order and model differences (each object's `notes_ar` / `notes_en`):
 
 | # | Object | Target | Notes (model differences) |
 |---|---|---|---|
 | 10 | `Department__c` | `org.unit` | `Record_Type__c` Department / Section → level codes; `Parent_Department__c` → parent (multi-pass); `Short_Code__c` → code (fallback `Name`) |
 | 20 | `User` | people | match by `Email`, `EmployeeNumber`, `FederationIdentifier` (order configurable) |
-| 21 | `Contact` | people | match by `Email`, then `Employee_Number__c` — PMS people lookups (`Project_Manager__c`, `Risk_Owner__c`, …) point at Contacts |
+| 21 | `Contact` | people | match by `Email`, then `Employee_Number__c` (pack 2; Contact has no `EmployeeNumber` / `FederationIdentifier`) — PMS people lookups (`Project_Manager__c`, `Risk_Owner__c`, …) point at Contacts |
 | 30 | `Project_Team__c` | `teams.team` | `Team_Type__c` → team type codes; status values → codes |
 | 31 | `Project_Team_Association__c` | `teams.team_member` | `Member_Role__c` → member role codes; `Participation_Level__c` |
 | 32 | `Project_Team__c` (2nd mapping) | `teams.team_evaluation` | scores stored on the team row → **one evaluation record per year** (`{Id}-{Evaluation_Year__c}`; `End_Date__c` is empty for most standing committees); source score kept |
@@ -283,13 +302,14 @@ header); exporting sets `report_acknowledged_at`. `POST …/outages/{id}/records
    hash unchanged → `unchanged`; else write (target writer, same transaction as the reference) → created / updated. Errors per record
    never stop the object; a connector error (auth, limits, HTTP after retries) stops the run (`failed`), keeping the watermarks of objects
    already finished.
-3. Same-object deferred rows (multi-pass), then open `missingParent` exceptions of this connection are re-tried once.
+3. Same-object deferred rows (multi-pass), then open `missingParent` exceptions — and, since 1.0.1, `unknownUser` record exceptions whose
+   person is now matched — of this connection are re-tried once.
 4. Watermark = max watermark value of the rows read (only advanced when the object completed). Run status, counts, `next_run_at`.
 5. Failure → notification `integration.sync.failed` to holders of `integration.sync.manage` (bilingual template); the monitor job
    (`integration.sync-monitor`, every 15 min) sends `integration.sync.late` once per late period when `now > last success + late_after_minutes`.
 
 **Re-process** (`POST …/exceptions/{id}/reprocess`, or bulk by object / reason): re-runs step 2 for the stored payload with the current mapping
-(no Salesforce call); a payload older than the reference's `source_modified_at` is resolved as superseded. **Fix helpers**: *Map value*
+(no Salesforce call); bulk re-processing handles people mappings first, then records by load order, page by page until none is left (1.0.1); a payload older than the reference's `source_modified_at` is resolved as superseded. **Fix helpers**: *Map value*
 (adds the value → code to the field's value map, clears `confirmed_at` only when the value is not in the describe) and *Map person*
 (manual employee for a User / Contact) then re-process.
 
@@ -318,7 +338,9 @@ Record pages: badge "Synced from Salesforce — read-only", "Deleted in Salesfor
 
 ## 14. Tests (no live Salesforce in CI)
 
-`FakeSalesforce` (tests, an `HttpMessageHandler` stub with recorded describe JSON and in-memory records per object; parses the SOQL the
+`FakeSalesforce` (`MockSalesforceOrg` in the Host; since 1.0.1 the User and Contact describes are **recorded from real orgs**
+(`Infrastructure/SalesforceDescribes/*.json`), unknown columns answer HTTP 400 `INVALID_FIELD`, every answer carries `Sforce-Limit-Info`, and
+`/limits` can be refused — ADR 0212; an `ISalesforceTransport` stub with in-memory records per object; parses the SOQL the
 connector sends — `SELECT`, `FROM`, `WHERE SystemModstamp >= …` / `LinkedEntityId IN (…)`, `ORDER BY`, `COUNT()` — and serves REST pages,
 Bulk 2.0 jobs (CSV) and the JWT token endpoint, asserting the assertion's signature and that **no write verb** reaches a data endpoint).
 Unit: schedule (fake clock), mode lifecycle table, field mapping / conversions / transforms, hash, JWT assertion, SOQL builder, CSV parsing.

@@ -4,6 +4,38 @@ All notable changes to the Integrated Strategy System. Format: [Keep a Changelog
 [Semantic Versioning](https://semver.org/). Release notes for users: *About* in the application
 (`src/Host/Strategy.Host/ReleaseNotes/{en,ar}/`). Details per build phase: `docs/phase-summaries/`.
 
+## [1.0.1] — 2026-11-13
+
+Tag `v1.0.1`. Fixes from testing the Salesforce standby sync (Phase 23) against a real Salesforce sandbox. ADRs 0210–0214; summary:
+`docs/phase-summaries/v1.0.1.md`. Upgrade with `./deploy/upgrade.sh` (one migration, `SalesforceErrorDetails`); then validate and enable the
+`user`, `contact` and `project-risk` mappings again.
+
+### Fixed — Salesforce standby sync
+- **`/limits` refused** (the *Salesforce Integration* licence cannot have *View Setup and Configuration*): the connection test and every run
+  continue with a warning (401 / 403 / `INSUFFICIENT_ACCESS` / `FUNCTIONALITY_NOT_ENABLED`); API usage comes from the `Sforce-Limit-Info`
+  header (`api-usage=used/max`) of normal calls and the "stop below 10 % remaining" rule is checked before every object (ADR 0210).
+- **Error details**: HTTP status, the call (`/limits`, `/sobjects`, the query shape), Salesforce's `errorCode` and message on the Connection
+  tab, in the run log, on the Status tab and in the server log, with AR / EN labels; never tokens, keys or record data (ADR 0211; new column
+  `integration.sync_connection.last_test_detail`).
+- **SOQL with fields that do not exist**: `IsDeleted` only where the object has it (not `User`; a User is never "Deleted in source");
+  `PeopleOptions` no longer default `EmployeeNumber` / `FederationIdentifier`; people fields only when present; *Validate* checks every field
+  the queries use — system, watermark, external-ID template, people, files and history fields (ADR 0212).
+- **Picklist → number**: picklist value maps convert to the target field type (whole number, number, percentage, yes/no, date); *Validate*
+  refuses maps whose outputs do not convert (ADR 0212).
+- **ADoF pack 2**: `PMS_Project_Risk__c.Probability_Level__c` / `Impact_Level__c` as picklist → number (`1`–`5`); Contact matched by e-mail,
+  then `Employee_Number__c`. Installed packs 1 are upgraded object by object while unchanged (ADR 0213).
+- **Unknown persons**: bulk re-process by reason handles people mappings first and every page; runs retry unknown-person record
+  exceptions once the User / Contact matches an employee.
+- **Project risks** could not be saved with their external reference (`integration.errors.unknownType`): every sync target is now
+  referenceable (ADR 0214).
+
+### Changed
+- Guides `docs/guides/{en,ar}/salesforce-sync.md`: *Salesforce Integration* licence with the *Salesforce API Integration* permission set
+  licence, read-only permission set, **External Client App** (Spring '26), certificate and key with one `docker run alpine/openssl` line,
+  load order (departments → employees → users and contacts → the rest), mapping picklists to numbers, limits and error details.
+- Tests: the fake Salesforce org uses User and Contact describes recorded from real orgs, answers unknown columns with `INVALID_FIELD`, sends
+  the usage header and can refuse `/limits`; the demo org (Development) is validated and fully loaded in CI.
+
 ## [1.0.0] — 2026-11-12
 
 Tag `v1.0.0`. Covers build Phases 0–23 (`docs/SPEC.md` and `docs/SPEC-ADDENDUM.md`); Phases 0–18 were accepted by the owner on 7 Nov 2026,

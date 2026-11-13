@@ -140,12 +140,15 @@ public class SetupWizardTests(PostgresFixture postgres)
 
         var user = await factory.CreateSignedInClientAsync();
         var version = await user.GetFromJsonAsync<JsonElement>("/api/v1/system/version");
-        version.GetProperty("version").GetString().ShouldBe("1.0.0");
+        version.GetProperty("version").GetString().ShouldBe("1.0.1");
 
         var notes = await user.GetFromJsonAsync<List<JsonElement>>("/api/v1/system/release-notes?language=ar");
         notes!.ShouldContain(n => n.GetProperty("version").GetString() == "1.0.0" && n.GetProperty("markdown").GetString()!.Contains("الإصدار"));
+        notes![0].GetProperty("version").GetString().ShouldBe("1.0.1"); // newest first
+        notes[0].GetProperty("markdown").GetString()!.ShouldContain("الإصدار 1.0.1");
         notes = await user.GetFromJsonAsync<List<JsonElement>>("/api/v1/system/release-notes?language=en");
         notes!.ShouldContain(n => n.GetProperty("markdown").GetString()!.StartsWith("# Version 1.0.0", StringComparison.Ordinal));
+        notes![0].GetProperty("markdown").GetString()!.ShouldStartWith("# Version 1.0.1");
     }
 
     private static SetupBootstrapInput Input(string email = "first.admin@example.test") => new(
