@@ -51,6 +51,9 @@ public sealed class PostgresFixture : IAsyncLifetime
 
     public async ValueTask DisposeAsync()
     {
+        // Any scheduler a host left running would keep checking in against the server that stops now (and keep the process alive).
+        await TestSchedulers.ShutdownRemainingAsync();
+
         if (_container is not null)
         {
             await _container.DisposeAsync();

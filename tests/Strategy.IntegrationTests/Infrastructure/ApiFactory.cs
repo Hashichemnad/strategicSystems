@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 using Strategy.Host.Infrastructure;
 using Strategy.Platform.Notifications;
 
@@ -29,6 +30,36 @@ public sealed class ApiFactory(
     }
 
     public string ConnectionString => connectionString;
+
+    private IHost? _host;
+
+    /// <summary>Keeps the started host so its schedulers can be shut down before the host is disposed.</summary>
+    protected override IHost CreateHost(IHostBuilder builder)
+    {
+        _host = base.CreateHost(builder);
+        return _host;
+    }
+
+    /// <summary>Stops this host's Quartz schedulers first, so no scheduler thread outlives the host (or keeps the test process alive).</summary>
+    public override async ValueTask DisposeAsync()
+    {
+        if (_host is { } host)
+        {
+            await TestSchedulers.ShutdownAsync(host.Services);
+        }
+
+        await base.DisposeAsync();
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        if (disposing && _host is { } host)
+        {
+            TestSchedulers.ShutdownAsync(host.Services).GetAwaiter().GetResult();
+        }
+
+        base.Dispose(disposing);
+    }
 
     /// <summary>This host's file store (local provider) in a temporary folder.</summary>
     public string FilesPath { get; } = Path.Combine(Path.GetTempPath(), "strategy-files-" + Guid.CreateVersion7().ToString("N"));
