@@ -139,7 +139,7 @@ Write an ADR for every choice the SPEC or CLAUDE.md leaves open (CLAUDE.md §2 r
 | [0154](0154-uae-pass-for-wasel-vendors.md) | UAE Pass sign-in for Wasel vendors (match by e-mail, second factor still required) | Accepted |
 | [0155](0155-outbound-url-policy-ssrf.md) | Outbound URL policy: SSRF guard on save and at connect time | Accepted |
 | [0156](0156-performance-and-scanning-tools.md) | Performance, image-scanning and SBOM tools (k6, Trivy, Syft) — external, never distributed | Accepted |
-| [0157](0157-backup-restore-upgrade-format.md) | Packaging, install, backup / restore / upgrade format | Accepted |
+| [0157](0157-backup-restore-upgrade-format.md) | Packaging, install, backup / restore / upgrade format | Accepted; superseded in part by 0219 (release images, pull by default) |
 | [0158](0158-load-testing-with-k6.md) | Load testing with k6 (test-only container) against a seeded Release host | Accepted |
 | [0160](0160-global-search.md) | Global search: module contributors, Links-registry resolution, generated search columns | Proposed |
 | [0161](0161-rich-text.md) | Rich text: Tiptap editor, server allow-list (HtmlSanitizer), DOMPurify, no data migration | Proposed |
@@ -185,3 +185,4 @@ Write an ADR for every choice the SPEC or CLAUDE.md leaves open (CLAUDE.md §2 r
 | [0212](0212-describe-driven-soql-and-full-validation.md) | Queries select only fields the object has; Validate checks every queried field; picklist → number | Proposed |
 | [0213](0213-shipped-pack-upgrade.md) | Upgrading the shipped mapping pack on installations that did not change it | Proposed |
 | [0214](0214-sync-targets-are-referenceable.md) | Every sync target can carry external references | Proposed |
+| [0219](0219-release-images-on-ghcr.md) | Release images on ghcr.io (public) and an offline archive with checksum; install / upgrade pull by default, `--build` from source | Proposed |

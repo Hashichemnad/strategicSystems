@@ -2,13 +2,14 @@
 
 | File | Purpose |
 |---|---|
-| `install.sh` / `install.ps1` | One-command install (Linux / Windows Server or Docker Desktop): `.env` with generated passwords, port check, build or load the image, start, print the setup address and token |
+| `install.sh` / `install.ps1` | One-command install (Linux / Windows Server or Docker Desktop): `.env` with generated passwords, port check, pull the release image (or load the offline archive, or build from source), start, print the setup address and token |
 | `backup.sh` / `backup.ps1` | Consistent backup: database (incl. Data Protection keys), files volume, `.env`, optional certificate; manifest with checksums and row counts |
 | `restore.sh` / `restore.ps1` | Restore with verification: checksums, row count of every table, audit hash chain |
 | `upgrade.sh` / `upgrade.ps1` | In-place upgrade: pre-upgrade backup, new image, migrations as the owner, runtime-role grants, health check, rollback command |
 | `lib.sh` / `lib.ps1` | Helpers shared by the scripts |
-| `VERSION` | Version of this release folder = image tag `strategy-app:<version>` |
-| `docker-compose.yml` | Dev dependencies (`postgres`, `gotenberg`, `mailpit`) and the containerised install (profile `app`). Optional profiles: `search`, `antivirus`, `ai` |
+| `VERSION` | Version of this release folder = image tag `<APP_IMAGE>:<version>` (default `ghcr.io/hashichemnad/strategy-app:<version>`) |
+| `docker-compose.yml` | Dev dependencies (`postgres`, `gotenberg`, `mailpit`) and the containerised install (profile `app`, release image). Optional profiles: `search`, `antivirus`, `ai` |
+| `docker-compose.build.yml` | Override with the build section: build the image from this source folder (`--build` / `-Build`, ADR 0219) |
 | `Dockerfile` | Multi-stage build of the single deployable (SPA + host): non-root, read-only-root friendly, OCI labels, healthcheck |
 | `.env.example` | Settings for compose (the installer copies it to `.env`) |
 | `sbom.sh` | CycloneDX SBOM of the image (Syft) and `--scan` vulnerability scan (Trivy) — ADR 0156 |
@@ -17,16 +18,15 @@
 | `postgres/init-roles.sh` | Creates the runtime database role on the first start of an empty volume (ADR 0018) |
 | `empty-ca.pem` | Intentionally empty default for the optional `build_ca` secret (see `BUILD_CA_FILE`) |
 
-Decisions: ADR 0157 (packaging, scripts, backup format), ADR 0018 (database roles). Verification of this release:
+Decisions: ADR 0157 (packaging, scripts, backup format), ADR 0219 (release images on ghcr.io, offline archive), ADR 0018 (database roles). Verification of this release:
 [`docs/operations/verification-1.0.md`](../docs/operations/verification-1.0.md).
 
 ## Requirements
 
 Docker Engine 24+ with Compose v2 (Linux), or Docker Desktop 4.30+ with Linux containers (Windows 10 / 11, Windows Server with WSL 2).
-4 vCPU, 8 GB RAM, 50 GB disk for up to ~500 users; the image build needs about 10 GB free temporarily. Outbound HTTPS only for the AI
-provider you configure (none by default). Offline installs: save the image on a connected machine
-(`docker save strategy-app:1.0.0 -o strategy-app-1.0.0.tar`, plus `postgres:16-alpine` and `gotenberg/gotenberg:8`), load the base images
-with `docker load`, then `./deploy/install.sh --image strategy-app-1.0.0.tar`.
+4 vCPU, 8 GB RAM, 50 GB disk for up to ~500 users (building from source needs about 10 GB more, temporarily). Outbound HTTPS to `ghcr.io`
+(the application image) and Docker Hub (PostgreSQL, Gotenberg) during install / upgrade, and to the AI provider you configure (none by
+default). Offline installs: see *Image* below.
 
 ## Install
 
@@ -38,7 +38,7 @@ powershell -ExecutionPolicy Bypass -File deploy\install.ps1     # Windows (Power
 ```
 
 The installer creates `deploy/.env` with **generated passwords** (kept on later runs; example passwords are refused), checks that the
-ports are free, builds `strategy-app:<version>` (or loads `--image <archive>`), starts PostgreSQL, Gotenberg, `migrate` (migrations as the
+ports are free, pulls `<APP_IMAGE>:<version>` (or loads `--image <archive>`, or builds with `--build`), starts PostgreSQL, Gotenberg, `migrate` (migrations as the
 owner, grants for the runtime role) and the application, waits until it is healthy and prints the address and the **one-time setup token**
 for the setup wizard (`/setup`). It is safe to run again.
 
@@ -56,10 +56,32 @@ changing them never affects it. When a port is taken the installer stops before 
 On Windows: `$env:APP_PORT = 8090; .\deploy\install.ps1`. The chosen ports are saved in `deploy/.env`. Ports held by this installation's own
 containers (a second run) are not reported.
 
-**Image.** `strategy-app` is built locally (or loaded), never pulled: `migrate` has the build section and both services use
-`pull_policy: never`, so the image is built only when its tag is missing (or with `--build`) and `docker compose … run --rm app …` reuses it
-(Phase 17's `pull_policy: build` rebuilt the image on every `run`). The manual equivalent of the installer is still:
-`cp deploy/.env.example deploy/.env` (change the passwords), then `docker compose -f deploy/docker-compose.yml --profile app up -d --build`.
+**Image (ADR 0219).** Each release publishes `ghcr.io/hashichemnad/strategy-app:<version>` (public package; `:latest` follows the newest
+final release) and attaches the same image as an offline archive to the GitHub release. `migrate` and `app` use
+`${APP_IMAGE}:${APP_VERSION}` with `pull_policy: missing`: the image is pulled once, and `docker compose … run --rm app …` reuses it.
+
+| Option (`.sh` / `.ps1`) | Image source |
+|---|---|
+| *(none)* | `docker compose pull migrate app`: `<APP_IMAGE>:<APP_VERSION>` from the registry. A failed pull stops before anything changes and points to `--image`; a copy of the same tag already on the machine is used with a warning |
+| `--image <file>` / `-Image <file>` | Offline: `strategy-app-<version>.tar.gz` (or a `.tar` from `docker save`) from the GitHub release. `<file>.sha256` next to it is verified first (a mismatch refuses the archive, nothing is loaded); then `docker load`. An archive with another repository name and the same tag (the ghcr.io name when `APP_IMAGE` is a mirror, or `strategy-app:<version>` from a source build) is tagged as `<APP_IMAGE>:<version>` |
+| `--build` / `-Build` | Build from this folder with `docker-compose.build.yml` (build section, `BUILD_CA_FILE`, revision and creation labels) |
+| `--no-pull` / `-NoPull` | The image is already on this machine (loaded or pushed by hand). `--no-build` / `-NoBuild` are deprecated aliases |
+
+`APP_IMAGE` (in `deploy/.env`, default `ghcr.io/hashichemnad/strategy-app`) points to a customer registry mirror, e.g.
+`registry.example.org/strategy/strategy-app` (mirror the tags with `docker pull` / `docker tag` / `docker push` or the registry's
+replication). Download and check an archive on a connected machine:
+
+```bash
+curl -LO https://github.com/Hashichemnad/strategicSystems/releases/download/v1.0.2/strategy-app-1.0.2.tar.gz
+curl -LO https://github.com/Hashichemnad/strategicSystems/releases/download/v1.0.2/strategy-app-1.0.2.tar.gz.sha256
+sha256sum -c strategy-app-1.0.2.tar.gz.sha256      # the scripts check it again on the server
+```
+For a machine without any Internet access also save `postgres:16-alpine` and `gotenberg/gotenberg:8` (`docker save … | gzip`) and load them
+with `docker load -i`. Installations from 1.0.0 / 1.0.1 (image built as `strategy-app:<version>`) need nothing: `upgrade` writes `APP_IMAGE`
+to `.env` and tags the old local image with the new name, so the pre-upgrade backup and a rollback still use it.
+
+The manual equivalent of the installer: `cp deploy/.env.example deploy/.env` (change the passwords), then
+`docker compose -f deploy/docker-compose.yml --profile app up -d`; from source add `-f deploy/docker-compose.build.yml` and `--build`.
 
 **Windows PowerShell 5.1 and 7, ZIP releases (ADR 0163).** The `.ps1` scripts run unchanged in Windows PowerShell 5.1 (every Windows
 Server) and PowerShell 7, also with their output redirected (scheduled task, remote shell, CI): docker's progress on standard error is shown
@@ -68,8 +90,8 @@ are ASCII-only and write `.env`, `SHA256SUMS`, `manifest.json` and `table-counts
 Install and upgrade also work from a release folder **without `.git`** (a ZIP): the image's revision label is then empty; git is only run
 when `<release>/.git` exists, and a failing `git rev-parse` means "no revision". The version always comes from `deploy/VERSION`.
 
-**Slow networks (ADR 0163).** The image build retries downloads with longer timeouts; change the defaults in `deploy/.env` (build
-arguments, next build):
+**Slow networks (ADR 0163).** Building from source (`--build`) retries downloads with longer timeouts; change the defaults in `deploy/.env`
+(build arguments, next build):
 
 | Variable | Default | Effect |
 |---|---|---|
@@ -163,20 +185,31 @@ the bash and the PowerShell scripts are interchangeable.
 Unpack the new release folder over the old one (keep `deploy/.env`), then:
 
 ```bash
-./deploy/upgrade.sh          # build from this folder;  --image <archive> offline;  --no-build when the image is already loaded
+./deploy/upgrade.sh          # pull the new image;  --image <archive> offline;  --build from this folder;  --no-pull when already loaded
 ```
 
-1. **Pre-upgrade backup** (mandatory; `--no-backup` only right after a backup). 2. New image `strategy-app:<new version>`. 3. Application
+1. New image `<APP_IMAGE>:<new version>` (pulled, loaded or built while the current version runs; a failure changes nothing).
+2. **Pre-upgrade backup** (mandatory; `--no-backup` only right after a backup). 3. Application
 stopped. 4. `migrate` as the **owner** (`ConnectionStrings__StrategyMigrations`): every module's migrations, then the runtime role's grants
 (`SELECT, INSERT` only on the audit trail). 5. `APP_VERSION` saved in `.env`, application started and health-checked.
 
-**Rollback.** On any failure the script prints the command; the previous image stays on the machine:
+**Rollback.** On any failure the script prints the command; the previous image `<APP_IMAGE>:<previous version>` stays on the machine:
 
 ```bash
 APP_VERSION=<previous version> ./deploy/restore.sh <pre-upgrade backup folder> --yes
 ```
 
 Read the release notes before upgrading (About in the user menu).
+
+## Publishing a release (maintainers)
+
+`.github/workflows/release.yml` (ADR 0219) runs on a pushed tag `v<version>` (it must equal `deploy/VERSION`): builds `deploy/Dockerfile`
+with the version, revision and creation labels, checks non-root / healthcheck / labels, runs the Trivy scan and the SBOM (`sbom.sh --scan`),
+pushes `ghcr.io/<owner>/strategy-app:<version>` (and `:latest` unless the version has a pre-release suffix such as `-rc.1`), and attaches
+`strategy-app-<version>.tar.gz`, its `.sha256` and the CycloneDX SBOM to the GitHub release `v<version>` (created when missing).
+*Run workflow* without `push` is a dry run (assets kept as a workflow artifact for 7 days); with `push: true` it publishes without a pushed
+tag. **Once, after the very first push:** GitHub → *Packages* → `strategy-app` → *Package settings* → *Change visibility* → **Public**
+(owner decision: anonymous pulls, so customers need no GitHub account or token).
 
 ## Non-Docker install
 
@@ -222,9 +255,9 @@ Older installations ran the application as the owner (`POSTGRES_USER`). Move the
 # 1. In deploy/.env choose the runtime role's name and a strong password (they must differ from POSTGRES_USER):
 #      STRATEGY_APP_USER=strategy_app
 #      STRATEGY_APP_PASSWORD=<a long random password>
-# 2. Pull / build the new version, then create the role, upgrade the database and grant the role (idempotent; run it again after a
-#    password change):
-docker compose -f deploy/docker-compose.yml --profile app build
+# 2. Pull the new version (or build it: add -f deploy/docker-compose.build.yml and use build migrate), then create the role, upgrade the
+#    database and grant the role (idempotent; run it again after a password change):
+docker compose -f deploy/docker-compose.yml --profile app pull migrate app
 docker compose -f deploy/docker-compose.yml --profile app run --rm migrate --setup-db-roles
 # 3. Start the application; it now connects as the runtime role:
 docker compose -f deploy/docker-compose.yml --profile app up -d
@@ -248,8 +281,8 @@ Install, backup, restore and upgrade scripts: see above.
   The host needs outbound HTTPS to the chosen provider only.
 - **Text recognition (OCR)** for scanned PDFs and images uses Tesseract with Arabic and English data, installed in the image
   (ADR 0033). Switch it on in Settings → AI → *Data sharing and limits*; the page says whether the engine is installed. To build an image
-  without it: `INSTALL_OCR=false` in `deploy/.env` before `install.sh` / `upgrade.sh` (or `docker compose … build --build-arg
-  INSTALL_OCR=false`) — this also leaves out the one GPL-2+ library, `libjbig0` (kept by the owner, ADR 0033; its notice, the GPL-2 text and
+  without it (release images include it): `INSTALL_OCR=false` in `deploy/.env`, then `install.sh --build` / `upgrade.sh --build` (or
+  `docker compose -f deploy/docker-compose.yml -f deploy/docker-compose.build.yml --profile app build --build-arg INSTALL_OCR=false migrate`) — this also leaves out the one GPL-2+ library, `libjbig0` (kept by the owner, ADR 0033; its notice, the GPL-2 text and
   the Ubuntu source reference are in `/app/licenses/ocr/NOTICE-libjbig0-GPL-2.txt`, `GPL-2.txt`, `SOURCES.txt`). Non-Docker installs: install `tesseract-ocr`, `tesseract-ocr-ara`,
   `tesseract-ocr-eng` (or point `Ocr__TesseractPath` to the binary). The licence notices of every package the OCR install adds are in
   `/app/licenses/ocr/` in the image (with `packages.txt`); PDFium's and SkiaSharp's are in `/app/licenses/`. Scanned PDF pages are rendered

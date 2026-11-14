@@ -1,7 +1,8 @@
 # Installation guide — Integrated Strategy System 1.0
 
-For the IT team installing the system on the organisation's own servers. Everything runs inside your network; no licence key, no
-connection to the vendor and no internet access are needed (only the AI provider you choose, if any).
+For the IT team installing the system on the organisation's own servers. Everything runs inside your network; no licence key and no
+connection to the vendor are needed. Internet access is only used to download the application image from `ghcr.io` during install and
+upgrade (or use the offline archive instead, §2) and for the AI provider you choose, if any.
 
 > Reference material for operators: [`deploy/README.md`](../../../deploy/README.md) (every script and option),
 > [`deploy/linux/README.md`](../../../deploy/linux/README.md) (non-Docker install), and the verification record
@@ -11,7 +12,7 @@ connection to the vendor and no internet access are needed (only the AI provider
 
 | Part | What it does | Where it runs |
 |---|---|---|
-| **Application** (`strategy-app:1.0.0`) | The web application, API, MCP server and scheduled jobs — one program | container (or a Linux service) |
+| **Application** (`ghcr.io/hashichemnad/strategy-app:<version>`) | The web application, API, MCP server and scheduled jobs — one program | container (or a Linux service) |
 | **PostgreSQL 16** | All data, including the encryption keys of stored secrets (Data Protection key ring) | container (or your database server) |
 | **Gotenberg 8** | Turns documents into PDF with correct Arabic shaping | container |
 | Optional: ClamAV, Meilisearch, Ollama | Virus scanning of uploads, search inside documents, a local AI model | containers (`--profile antivirus` / `search` / `ai`) |
@@ -23,22 +24,52 @@ connection to the vendor and no internet access are needed (only the AI provider
 | Server | 4 vCPU, 8 GB RAM, 50 GB SSD | 8 vCPU, 16 GB RAM; keep 20 % disk free |
 | Linux | Docker Engine 24+ with Compose v2 (Ubuntu 22.04 / 24.04, Debian 12, RHEL 9) | — |
 | Windows | Windows Server 2022 / Windows 10–11 with **Docker Desktop 4.30+** (Linux containers, WSL 2); PowerShell 5.1 or 7 | — |
-| Building the image | about 10 GB free disk during the build | — |
-| Network | users reach the application port (or the HTTPS proxy); outbound HTTPS only to the AI provider you configure and your SMTP server | — |
+| Building from source (optional) | about 10 GB free disk during the build | — |
+| Network | users reach the application port (or the HTTPS proxy); outbound HTTPS to `ghcr.io` and Docker Hub during install / upgrade (not with the offline archive), to the AI provider you configure and your SMTP server | — |
 
 **Text recognition (OCR).** The image includes Tesseract OCR with Arabic and English data for scanned documents (switched on in
 *Settings → AI*). The OCR packages include one GPL-2+ library, `libjbig0`; its notice, the GPL-2 text and the source reference are in the
 image under `/app/licenses/ocr/` (also listed in `docs/THIRD_PARTY_LICENSES.md`). To build an image **without** the OCR packages (and without
-`libjbig0`; about 40 MB smaller, scans can then not be read), set `INSTALL_OCR=false` in `deploy/.env` before running the installer, or
-build by hand with `docker compose -f deploy/docker-compose.yml --profile app build --build-arg INSTALL_OCR=false`.
+`libjbig0`; about 40 MB smaller, scans can then not be read), build from source (below) with `INSTALL_OCR=false` in `deploy/.env`:
+`./deploy/install.sh --build` (`-Build` on Windows).
 
-**Offline or restricted networks.** On a connected machine: `docker save strategy-app:1.0.0 -o strategy-app-1.0.0.tar`, and save
-`postgres:16-alpine` and `gotenberg/gotenberg:8` the same way. On the server: `docker load -i …` for each, then install with
-`--image strategy-app-1.0.0.tar` (below). Behind a Docker Hub limit set `REGISTRY_PREFIX=mirror.gcr.io/` (or your own registry mirror);
-behind a TLS-inspecting proxy point `BUILD_CA_FILE` to your organisation's CA bundle (used only while building, never stored in the image).
+### The application image
 
-**Slow or unreliable connections.** The image build downloads npm and NuGet packages and Ubuntu updates. It already retries with
-longer timeouts; on a very slow line raise the values in `deploy/.env` before running the installer (they take effect on the next build):
+Every release is published as a ready-made image; nothing has to be built on your server. Choose one way to get it:
+
+| Way | Command | When |
+|---|---|---|
+| **Download (default)** | `./deploy/install.sh` | the server can reach `ghcr.io` (public package, no account or token needed) |
+| **Offline archive** | `./deploy/install.sh --image strategy-app-<version>.tar.gz` | no Internet access on the server |
+| **Your registry mirror** | `APP_IMAGE=registry.example.org/strategy/strategy-app` in `deploy/.env`, then `./deploy/install.sh` | the organisation only allows its own registry |
+| **Build from source** | `./deploy/install.sh --build` | you build images yourself (about 10 GB disk, 10–20 minutes) |
+
+On Windows the options are `-Image <file>`, `-Build` and `-NoPull`. `--no-pull` (`-NoPull`) uses an image that is already on the machine;
+the older `--no-build` (`-NoBuild`) still works and means the same.
+
+**Offline archive.** On any connected computer, open the release on GitHub (*Releases* → `v<version>`) and download two files:
+`strategy-app-<version>.tar.gz` and `strategy-app-<version>.tar.gz.sha256`. Copy **both** into the same folder on the server, then:
+
+```bash
+./deploy/install.sh --image /path/to/strategy-app-1.0.2.tar.gz
+```
+
+The script first checks the archive against the `.sha256` file and refuses it when the checksum does not match (download it again; nothing
+is changed), then loads it. Check it yourself with `sha256sum -c strategy-app-1.0.2.tar.gz.sha256` (Linux) or
+`Get-FileHash strategy-app-1.0.2.tar.gz` (Windows, compare with the file's content). A server without any Internet access also needs the
+two base images: on the connected computer `docker pull postgres:16-alpine gotenberg/gotenberg:8`, `docker save postgres:16-alpine | gzip >
+postgres.tar.gz` (the same for Gotenberg), then `docker load -i …` on the server.
+
+**Registry mirror.** Copy the release tag into your registry with `docker pull`, `docker tag` and `docker push` (or your registry's
+replication), for example from `ghcr.io/hashichemnad/strategy-app:1.0.2` to `registry.example.org/strategy/strategy-app:1.0.2`, and set
+`APP_IMAGE` in `deploy/.env` to the name without the tag. An offline archive can be used with a mirror name as well: the script tags the
+loaded image with `APP_IMAGE`.
+
+Behind a Docker Hub limit set `REGISTRY_PREFIX=mirror.gcr.io/` (or your own registry mirror) for PostgreSQL and Gotenberg; when building from
+source behind a TLS-inspecting proxy point `BUILD_CA_FILE` to your organisation's CA bundle (used only while building, never stored in the image).
+
+**Slow or unreliable connections (building from source).** The build downloads npm and NuGet packages and Ubuntu updates. It already retries
+with longer timeouts; on a very slow line raise the values in `deploy/.env` before running `--build` (they take effect on the next build):
 
 | Setting in `deploy/.env` | Default | What it changes |
 |---|---|---|
@@ -51,7 +82,7 @@ longer timeouts; on a very slow line raise the values in `deploy/.env` before ru
 | `APT_RETRIES` / `APT_HTTP_TIMEOUT` | 5 / 120 | attempts and timeout (seconds) for the Ubuntu packages of the runtime image |
 
 For example `NUGET_RESTORE_ATTEMPTS=6` and `NPM_FETCH_RETRIES=10`. A connection that fails completely still fails the build — then use
-the offline install above.
+the released image (download or offline archive) instead.
 
 ## 3. Install with Docker (recommended)
 
@@ -70,7 +101,9 @@ powershell -ExecutionPolicy Bypass -File deploy\install.ps1
 The installer:
 1. creates `deploy/.env` with **generated passwords** (kept on later runs; the example passwords are refused);
 2. checks that the ports are free (see §4);
-3. builds the image `strategy-app:1.0.0` — or loads it with `--image <archive>` / `-Image <archive>`;
+3. downloads the application image `ghcr.io/hashichemnad/strategy-app:<version>` (or `APP_IMAGE`) — or loads the offline archive with
+   `--image <archive>` / `-Image <archive>`, or builds it with `--build` / `-Build` (§2, *The application image*); if the download fails it
+   stops before starting anything and tells you to use `--image`;
 4. starts PostgreSQL, Gotenberg, the one-off `migrate` step (creates the database objects as the owner role and grants the runtime role)
    and the application;
 5. waits until the application is healthy and prints its address and the **one-time setup token**.
@@ -174,10 +207,13 @@ run the installer first, then the restore (add `--with-env` to bring back the ol
 Unpack the new release over the old folder (keep `deploy/.env`), read the release notes, then:
 
 ```bash
-./deploy/upgrade.sh                         # Windows: .\deploy\upgrade.ps1     offline: --image <archive>
+./deploy/upgrade.sh                         # Windows: .\deploy\upgrade.ps1
+./deploy/upgrade.sh --image strategy-app-1.0.2.tar.gz     # offline: the archive and its .sha256 from the GitHub release
+./deploy/upgrade.sh --build                 # build the new version from this folder instead
 ```
 
-The script builds the new image while the old version still runs, takes the **pre-upgrade backup**, stops the application, applies the
+The script downloads (or loads / builds) the new image while the old version still runs — a failure there changes nothing — takes the
+**pre-upgrade backup**, stops the application, applies the
 migrations as the owner role, re-grants the runtime role, starts the new version and checks its health. If anything fails it prints the
 rollback command, for example:
 
@@ -186,6 +222,9 @@ APP_VERSION=0.17.0 ./deploy/restore.sh <pre-upgrade backup folder> --yes
 ```
 
 After an upgrade from a build before 1.0: scheduled reminders, digests and escalations now run on their schedules — tell your users.
+
+Upgrading an installation of 1.0.0 or 1.0.1 (whose image was built on the server as `strategy-app:<version>`) needs no extra step: the
+script adds `APP_IMAGE` to `deploy/.env` and gives the old local image the new name, so the pre-upgrade backup and a rollback still use it.
 
 ## 10. Install without Docker (Linux service)
 
@@ -210,9 +249,19 @@ instructions, including the two database roles, the first migration, backup, res
 | `/setup` says the wizard is closed | an administrator already exists — sign in, or use *Forgot password* |
 | Setup token refused | tokens expire after 24 hours and after a restart; print a new one (§5) |
 | "Run --migrate first" from `--create-admin` | run `docker compose -f deploy/docker-compose.yml --profile app run --rm migrate`, then retry |
-| Image build fails on certificates | set `BUILD_CA_FILE` to your proxy's CA bundle |
+| "Could not pull ghcr.io/hashichemnad/strategy-app:…" | the server cannot reach `ghcr.io`: use the offline archive (`--image`, §2), or your registry mirror (`APP_IMAGE`) |
+| "Checksum mismatch" with `--image` | the archive is damaged or incomplete: download it and its `.sha256` again |
+| "The archive does not contain …" | the archive is of another version than `deploy/VERSION`: download the archive of this release |
+| Image build fails on certificates (`--build`) | set `BUILD_CA_FILE` to your proxy's CA bundle |
 | Image build fails with timeouts (`ETIMEDOUT`, `ECONNRESET`, `NU1301`, "Unable to load the service index") | raise the retry settings in `deploy/.env` (§2, *Slow or unreliable connections*) and run the installer again (steps already completed are taken from Docker's build cache) |
 | Docker Hub "too many requests" | set `REGISTRY_PREFIX=mirror.gcr.io/` (or your mirror) in `deploy/.env` |
 | PDFs fail | *Settings → System health* → PDF service; check the `gotenberg` container (`docker compose … ps`) |
 | E-mails not sent | *Settings → E-mail server* → *Send test e-mail*; *Settings → System health* → outbox |
 | Logs | `docker compose -f deploy/docker-compose.yml --profile app logs app` (structured JSON; secrets are never logged) |
+
+## 13. For the product owner: publishing a release
+
+Pushing the tag `v<version>` (equal to `deploy/VERSION`) runs the *Release* workflow: it builds and scans the image, pushes
+`ghcr.io/hashichemnad/strategy-app:<version>` (and `:latest` for a final release) and attaches `strategy-app-<version>.tar.gz`, its `.sha256`
+and the SBOM to the GitHub release (`deploy/README.md`, *Publishing a release*). **Once, after the very first push**, make the package public
+so customers can download it without an account: GitHub → *Packages* → `strategy-app` → *Package settings* → *Change visibility* → *Public*.
