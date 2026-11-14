@@ -6,6 +6,10 @@ DEPLOY_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$DEPLOY_DIR/.." && pwd)"
 ENV_FILE="$DEPLOY_DIR/.env"
 COMPOSE_FILE_PATH="$DEPLOY_DIR/docker-compose.yml"
+# Override with the build section, only for building from source (--build, ADR 0219).
+COMPOSE_BUILD_FILE_PATH="$DEPLOY_DIR/docker-compose.build.yml"
+# Release images (ADR 0219): public package on GitHub's container registry; APP_IMAGE in deploy/.env points to a customer mirror.
+DEFAULT_APP_IMAGE="ghcr.io/hashichemnad/strategy-app"
 
 say() { printf '%s\n' "$*"; }
 info() { printf '\033[1;34m==>\033[0m %s\n' "$*"; }
@@ -15,7 +19,7 @@ die() {
   exit "${2:-1}"
 }
 
-# Version of this release folder (deploy/VERSION), used as the image tag strategy-app:<version>.
+# Version of this release folder (deploy/VERSION), used as the image tag <APP_IMAGE>:<version>.
 release_version() { tr -d ' \r\n' < "$DEPLOY_DIR/VERSION"; }
 
 # Reads KEY from deploy/.env (last occurrence; empty when absent). Never prints the value.
@@ -51,6 +55,85 @@ setting() {
 }
 
 compose() { docker compose -f "$COMPOSE_FILE_PATH" --env-file "$ENV_FILE" --profile app "$@"; }
+# compose with the build override (docker-compose.build.yml): building from source only.
+compose_build() { docker compose -f "$COMPOSE_FILE_PATH" -f "$COMPOSE_BUILD_FILE_PATH" --env-file "$ENV_FILE" --profile app "$@"; }
+
+# Image repository of the application (without tag): the caller's environment, deploy/.env, then the release default.
+app_image() { setting APP_IMAGE "$DEFAULT_APP_IMAGE"; }
+
+image_present() { docker image inspect "$1" > /dev/null 2>&1; }
+
+# True when <image>:<version> is on this machine. Installations before 1.0.2 built the image as strategy-app:<version>: such a local image
+# is tagged with the current name, so backups, rollbacks and restores to those versions keep working without a pull.
+ensure_local_image() {
+  local ref="$1" legacy
+  image_present "$ref" && return 0
+  legacy="strategy-app:${ref##*:}"
+  if [ "$legacy" = "$ref" ] || ! image_present "$legacy"; then return 1; fi
+  info "Tagging the locally built $legacy as $ref"
+  docker tag "$legacy" "$ref" > /dev/null
+}
+
+# Pulls <image>:<version> for migrate and app (APP_IMAGE / APP_VERSION exported by the caller). Returns 1 with an explanation when the
+# registry cannot be reached and the image is not on this machine either; a local copy of the same tag is used with a warning.
+pull_app_image() {
+  local ref="$1"
+  info "Pulling $ref"
+  if compose pull migrate app; then return 0; fi
+  if ensure_local_image "$ref"; then
+    warn "Could not pull $ref; using the copy already on this machine."
+    return 0
+  fi
+  {
+    say ""
+    say "  Could not pull $ref (no connection to the registry, or the image does not exist there)."
+    say "  Offline machine: download strategy-app-<version>.tar.gz and its .sha256 file from the GitHub release on a connected machine,"
+    say "  copy both here and run the script again with --image <file>. Own registry mirror: set APP_IMAGE in deploy/.env."
+    say "  Build from this source folder instead: --build."
+  } >&2
+  return 1
+}
+
+# Loads an offline image archive (docker save; .tar or .tar.gz) and makes sure <image>:<version> exists afterwards. <archive>.sha256 next
+# to the archive (sha256sum format) is verified first: a mismatch refuses the archive before anything is loaded. An archive saved under
+# another repository name with the same tag (the ghcr.io name for a mirror, or strategy-app:<version> of a source build) is tagged.
+load_image_archive() {
+  local archive="$1" ref="$2" version expected actual loaded name
+  version="${ref##*:}"
+  [ -f "$archive" ] || die "Image archive $archive not found." 4
+  if [ -f "$archive.sha256" ]; then
+    expected="$(awk 'NF { print tolower($1); exit }' "$archive.sha256" | tr -d '\r')"
+    actual="$(sha256_of "$archive")"
+    [ "$expected" = "$actual" ] \
+      || die "Checksum mismatch: $archive has SHA-256 $actual but $archive.sha256 expects $expected. Download the archive again; nothing was loaded." 4
+    info "Checksum verified ($archive.sha256)"
+  else
+    warn "No $archive.sha256 next to the archive: its checksum was not verified."
+  fi
+  info "Loading the image from $archive"
+  loaded="$(docker load -i "$archive")" || die "docker load failed for $archive." 4
+  say "$loaded"
+  if ! image_present "$ref"; then
+    while IFS= read -r name; do
+      case "$name" in
+        *strategy-app:"$version")
+          info "Tagging $name as $ref"
+          docker tag "$name" "$ref" || die "docker tag $name $ref failed." 4
+          break
+          ;;
+      esac
+    done < <(printf '%s\n' "$loaded" | sed -n 's/^Loaded image: //p')
+  fi
+  image_present "$ref" || die "The archive does not contain $ref (nor another strategy-app:$version to tag)." 4
+}
+
+# Builds <APP_IMAGE>:<APP_VERSION> from this source folder with the build override (CA bundle, revision and creation labels).
+build_app_image() {
+  local revision
+  prepare_build_ca
+  revision="$(source_revision)"
+  GIT_REVISION="$revision" BUILD_CREATED="$(date -u +%Y-%m-%dT%H:%M:%SZ)" compose_build build migrate
+}
 
 require_docker() {
   command -v docker > /dev/null 2>&1 || die "Docker is not installed. Install Docker Engine 24+ (https://docs.docker.com/engine/install/) and run this script again." 10

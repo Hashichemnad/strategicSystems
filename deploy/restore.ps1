@@ -32,13 +32,17 @@ if ($WithEnv) {
 if (-not (Test-Path $script:EnvFile)) { Stop-WithError 'deploy\.env not found. Run .\deploy\install.ps1 first (new machine) or pass -WithEnv.' 2 }
 if ($env:APP_VERSION) { Set-EnvValue 'APP_VERSION' $env:APP_VERSION }
 $env:APP_VERSION = Get-Setting 'APP_VERSION' (Get-ReleaseVersion)
-if ((Invoke-Native -Command 'docker' -Arguments @('image', 'inspect', "strategy-app:$($env:APP_VERSION)") -Quiet).Code -ne 0) { Stop-WithError "Image strategy-app:$($env:APP_VERSION) is not on this machine. Build it (docker compose -f deploy\docker-compose.yml --profile app build) or load it (docker load -i ...)." 4 }
+$env:APP_IMAGE = Get-AppImage
+$imageRef = "$($env:APP_IMAGE):$($env:APP_VERSION)"
+if (-not (Confirm-LocalImage $imageRef) -and -not (Invoke-PullAppImage $imageRef)) {
+    Stop-WithError "Image $imageRef is not on this machine and could not be pulled. Load the release archive (docker load -i strategy-app-$($env:APP_VERSION).tar.gz) or build it (docker compose -f deploy\docker-compose.yml -f deploy\docker-compose.build.yml --profile app build migrate), then run the restore again. Nothing was changed." 4
+}
 $db = Get-Setting 'POSTGRES_DB' 'strategy'
 $owner = Get-Setting 'POSTGRES_USER' 'strategy'
 
 Write-Host ''
 Write-Host "  Backup:   $Backup (version $($manifest.version))"
-Write-Host "  Restore into database '$db' of this installation with image strategy-app:$($env:APP_VERSION)."
+Write-Host "  Restore into database '$db' of this installation with image $imageRef."
 Write-Host '  The CURRENT database and files are replaced.'
 if (-not $Yes) {
     if ((Read-Host '  Type RESTORE to continue') -ne 'RESTORE') { Stop-WithError 'Cancelled; nothing changed.' 1 }
@@ -97,7 +101,7 @@ Write-Step '7/7 Verifying the audit hash chain'
 # (No embedded double quotes in native arguments: Windows PowerShell 5.1 would strip them.)
 # ($null | ConvertFrom-Json is a terminating error in Windows PowerShell 5.1: only parse non-empty output.)
 $labels = $null
-$inspect = Invoke-Native -Command 'docker' -Arguments @('image', 'inspect', '-f', '{{json .Config.Labels}}', "strategy-app:$($env:APP_VERSION)") -Capture -Quiet
+$inspect = Invoke-Native -Command 'docker' -Arguments @('image', 'inspect', '-f', '{{json .Config.Labels}}', $imageRef) -Capture -Quiet
 $labelsJson = ($inspect.Output -join "`n").Trim()
 if ($inspect.Code -eq 0 -and $labelsJson -and $labelsJson -ne 'null') {
     try { $labels = $labelsJson | ConvertFrom-Json } catch { $labels = $null }
@@ -105,7 +109,7 @@ if ($inspect.Code -eq 0 -and $labelsJson -and $labelsJson -ne 'null') {
 if ($labels -and ($labels.PSObject.Properties.Name -contains 'org.opencontainers.image.title') -and $labels.'org.opencontainers.image.title' -eq 'Integrated Strategy System') {
     if ((Invoke-Native -Command 'docker' -Arguments (@(Get-ComposeArguments) + @('run', '--rm', '--no-deps', 'app', '--verify-audit-chain'))).Code -ne 0) { Stop-WithError 'The audit chain of the restored database does not verify. The application was NOT started.' 9 }
 } else {
-    Write-Warn "strategy-app:$($env:APP_VERSION) predates 1.0 and cannot verify the chain from the command line: after the start use Audit -> Verification -> Verify now."
+    Write-Warn "$imageRef predates 1.0 and cannot verify the chain from the command line: after the start use Audit -> Verification -> Verify now."
     $chainNote = "; audit chain: verify on the screen"
 }
 

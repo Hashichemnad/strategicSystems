@@ -1,11 +1,13 @@
 # Integrated Strategy System — development dependencies and a containerised install.
 #
 #   Dev dependencies:   docker compose -f deploy/docker-compose.yml up -d postgres gotenberg mailpit
-#   Full stack:         docker compose -f deploy/docker-compose.yml --profile app up -d --build
+#   Full stack:         docker compose -f deploy/docker-compose.yml --profile app up -d            (release image from ghcr.io)
+#   From source:        docker compose -f deploy/docker-compose.yml -f deploy/docker-compose.build.yml --profile app up -d --build
 #   Optional services:  --profile search (Meilisearch) · --profile antivirus (ClamAV) · --profile ai (Ollama)
 #
 # Customer installs: deploy/install.sh (Linux) or deploy/install.ps1 (Windows) — they write .env with random passwords, check the ports,
-# build, start and print the setup address. Backup / restore / upgrade: deploy/backup.*, restore.*, upgrade.* (deploy/README.md).
+# pull the release image (or load the offline archive, or build with --build), start and print the setup address.
+# Backup / restore / upgrade: deploy/backup.*, restore.*, upgrade.* (deploy/README.md).
 # Copy .env.example to .env (same folder) and change the passwords before any non-dev use.
 # Behind a Docker Hub rate limit or in a restricted network set REGISTRY_PREFIX (e.g. "mirror.gcr.io/").
 #
@@ -65,37 +67,15 @@ services:
       - "${MAILPIT_SMTP_PORT:-1025}:1025"
 
   # One-shot: applies every module's pending migrations, then exits. The app waits for it.
-  # strategy-app is built locally (or loaded with `docker load`), never pulled: `pull_policy: never` + the build section builds it only
-  # when the tag is missing (or with --build), so `up -d --build` works on a fresh machine without "pull access denied", and
-  # `run --rm migrate` / `run --rm app --create-admin` reuse the existing image instead of rebuilding it. `app` reuses the same image.
+  # strategy-app is a release image (ADR 0219): pulled from ghcr.io (public package) or loaded from the release's offline archive with
+  # `docker load`. `pull_policy: missing` pulls it only when the tag is not on the machine, so `run --rm migrate` / `run --rm app
+  # --create-admin` reuse the local image. APP_IMAGE points to a customer mirror. Building from source: docker-compose.build.yml (override,
+  # used by install / upgrade --build). `app` uses the same image.
   migrate:
     profiles: ["app"]
-    image: strategy-app:${APP_VERSION:-1.0.0}
-    pull_policy: never
+    image: ${APP_IMAGE:-ghcr.io/hashichemnad/strategy-app}:${APP_VERSION:-1.0.1}
+    pull_policy: missing
     logging: *logging
-    build:
-      context: ..
-      dockerfile: deploy/Dockerfile
-      args:
-        REGISTRY_PREFIX: ${REGISTRY_PREFIX:-}
-        APP_VERSION: ${APP_VERSION:-1.0.0}
-        GIT_REVISION: ${GIT_REVISION:-}
-        BUILD_CREATED: ${BUILD_CREATED:-}
-        # false: no Tesseract OCR packages (and no GPL-2+ libjbig0) in the image; scanned documents cannot be read (ADR 0033).
-        INSTALL_OCR: ${INSTALL_OCR:-true}
-        # Slow networks (ADR 0163): retries and timeouts of npm (ms), NuGet and apt; the defaults change nothing on a good connection.
-        NPM_FETCH_RETRIES: ${NPM_FETCH_RETRIES:-5}
-        NPM_FETCH_RETRY_MINTIMEOUT: ${NPM_FETCH_RETRY_MINTIMEOUT:-20000}
-        NPM_FETCH_RETRY_MAXTIMEOUT: ${NPM_FETCH_RETRY_MAXTIMEOUT:-120000}
-        NPM_FETCH_TIMEOUT: ${NPM_FETCH_TIMEOUT:-600000}
-        NUGET_ENHANCED_MAX_NETWORK_TRY_COUNT: ${NUGET_ENHANCED_MAX_NETWORK_TRY_COUNT:-10}
-        NUGET_ENHANCED_NETWORK_RETRY_DELAY_MILLISECONDS: ${NUGET_ENHANCED_NETWORK_RETRY_DELAY_MILLISECONDS:-3000}
-        NUGET_RESTORE_ATTEMPTS: ${NUGET_RESTORE_ATTEMPTS:-3}
-        NUGET_RESTORE_DISABLE_PARALLEL: ${NUGET_RESTORE_DISABLE_PARALLEL:-false}
-        APT_RETRIES: ${APT_RETRIES:-5}
-        APT_HTTP_TIMEOUT: ${APT_HTTP_TIMEOUT:-120}
-      secrets:
-        - build_ca
     command: ["dotnet", "Strategy.Host.dll", "--migrate"]
     environment:
       # Migrations run as the owner; the seeder then grants the runtime role (append-only on audit.entry).
@@ -108,8 +88,8 @@ services:
 
   app:
     profiles: ["app"]
-    image: strategy-app:${APP_VERSION:-1.0.0}
-    pull_policy: never
+    image: ${APP_IMAGE:-ghcr.io/hashichemnad/strategy-app}:${APP_VERSION:-1.0.1}
+    pull_policy: missing
     restart: unless-stopped
     logging: *logging
     # Hardening: read-only root file system (only /tmp and the files volume are writable), no privilege escalation, no capabilities.
@@ -174,11 +154,6 @@ services:
     profiles: ["ai"]
     volumes:
       - ollama-data:/root/.ollama
-
-secrets:
-  # Optional CA bundle for builds behind a TLS-inspecting proxy; an empty file means "not needed".
-  build_ca:
-    file: ${BUILD_CA_FILE:-./empty-ca.pem}
 
 volumes:
   postgres-data:

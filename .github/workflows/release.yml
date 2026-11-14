@@ -1,0 +1,147 @@
+# Release images (ADR 0219): builds deploy/Dockerfile like the CI docker job, pushes ghcr.io/<owner>/strategy-app:<version> (and :latest for
+# a final release), saves the offline archive strategy-app-<version>.tar.gz with its .sha256 and the CycloneDX SBOM, and attaches them to
+# the GitHub release v<version>. Steps are plain shell commands (docker, gh) so they port to Azure DevOps unchanged.
+#
+#   git tag v1.0.2 && git push origin v1.0.2          # publish (the tag must equal deploy/VERSION)
+#   Actions → Release → Run workflow                   # dry run: build, check, scan, archive as a workflow artifact; nothing published
+#   Actions → Release → Run workflow, push: true       # publish without pushing a tag first (creates the release and tag v<version>)
+#
+# The ghcr.io package is public (owner decision): after the very first push make it public once in GitHub → Packages → strategy-app →
+# Package settings → Change visibility (docs/guides/en/installation.md).
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version without the v (default: deploy/VERSION). Publishing requires it to equal deploy/VERSION."
+        required: false
+        type: string
+      push:
+        description: "Publish: push the image to ghcr.io and create / update the GitHub release"
+        required: false
+        type: boolean
+        default: false
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  image:
+    name: Release image (build, scan, SBOM, archive, push, GitHub release)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Version, image name and publishing
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+          INPUT_PUSH: ${{ inputs.push }}
+          OWNER: ${{ github.repository_owner }}
+        run: |
+          set -euo pipefail
+          FILE_VERSION="$(tr -d ' \r\n' < deploy/VERSION)"
+          if [ "$GITHUB_EVENT_NAME" = "push" ]; then
+            VERSION="${GITHUB_REF_NAME#v}"
+            PUBLISH=true
+          else
+            VERSION="${INPUT_VERSION:-$FILE_VERSION}"
+            VERSION="${VERSION#v}"
+            PUBLISH="${INPUT_PUSH:-false}"
+          fi
+          if ! printf '%s' "$VERSION" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$'; then
+            echo "::error::Version '$VERSION' is not MAJOR.MINOR.PATCH[-prerelease]."
+            exit 1
+          fi
+          if [ "$PUBLISH" = "true" ] && [ "$VERSION" != "$FILE_VERSION" ]; then
+            echo "::error::Release $VERSION does not match deploy/VERSION ($FILE_VERSION): the install scripts pull <image>:<deploy/VERSION>."
+            exit 1
+          fi
+          case "$VERSION" in *-*) PRERELEASE=true ;; *) PRERELEASE=false ;; esac
+          IMAGE="ghcr.io/${OWNER,,}/strategy-app"
+          {
+            echo "VERSION=$VERSION"
+            echo "IMAGE=$IMAGE"
+            echo "PUBLISH=$PUBLISH"
+            echo "PRERELEASE=$PRERELEASE"
+            echo "ARCHIVE=strategy-app-$VERSION.tar.gz"
+          } >> "$GITHUB_ENV"
+          echo "Release $VERSION → $IMAGE:$VERSION (publish: $PUBLISH, prerelease: $PRERELEASE)"
+      - name: Build the versioned image
+        run: |
+          docker build -f deploy/Dockerfile -t "$IMAGE:$VERSION" \
+            --build-arg APP_VERSION="$VERSION" --build-arg GIT_REVISION="${GITHUB_SHA::7}" \
+            --build-arg BUILD_CREATED="$(date -u +%Y-%m-%dT%H:%M:%SZ)" .
+      - name: Image runs as non-root with labels and a healthcheck
+        run: |
+          test "$(docker image inspect -f '{{.Config.User}}' "$IMAGE:$VERSION")" != "root"
+          test -n "$(docker image inspect -f '{{.Config.Healthcheck}}' "$IMAGE:$VERSION")"
+          test "$(docker image inspect -f '{{index .Config.Labels "org.opencontainers.image.version"}}' "$IMAGE:$VERSION")" = "$VERSION"
+          test "$(docker image inspect -f '{{index .Config.Labels "org.opencontainers.image.revision"}}' "$IMAGE:$VERSION")" = "${GITHUB_SHA::7}"
+      - name: Vulnerability scan (Trivy — High / Critical with a fix fail, ADR 0156) and CycloneDX SBOM
+        run: IMAGE="$IMAGE:$VERSION" ./deploy/sbom.sh --scan
+      - name: Offline archive (docker save → gzip) and checksum
+        run: |
+          set -euo pipefail
+          mkdir -p release/assets
+          docker save "$IMAGE:$VERSION" | gzip -6 > "release/assets/$ARCHIVE"
+          (cd release/assets && sha256sum "$ARCHIVE" > "$ARCHIVE.sha256" && cat "$ARCHIVE.sha256")
+          cp "release/sbom/strategy-app-$VERSION.cdx.json" release/assets/
+          ls -l release/assets
+      - name: Keep the assets of a dry run
+        if: env.PUBLISH != 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-${{ env.VERSION }}
+          path: release/assets/
+          retention-days: 7
+      - name: Push to ghcr.io
+        if: env.PUBLISH == 'true'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          printf '%s' "$GITHUB_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+          docker push "$IMAGE:$VERSION"
+          if [ "$PRERELEASE" = "false" ]; then
+            docker tag "$IMAGE:$VERSION" "$IMAGE:latest"
+            docker push "$IMAGE:latest"
+          fi
+          docker logout ghcr.io
+      - name: GitHub release v${{ env.VERSION }} with the archive, checksum and SBOM
+        if: env.PUBLISH == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          TAG="v$VERSION"
+          NOTES="release/notes.md"
+          # Release notes: the version's CHANGELOG section, then how to install it.
+          awk -v v="$VERSION" '$0 ~ "^## \\[" { if (found) exit; if (index($0, "## [" v "]") == 1) { found = 1; next } } found' CHANGELOG.md > "$NOTES" || true
+          [ -s "$NOTES" ] || echo "See CHANGELOG.md." > "$NOTES"
+          cat >> "$NOTES" <<EOF
+
+          ## Install or upgrade
+
+          Unpack the release folder (*Source code*), then \`./deploy/install.sh\` or \`./deploy/upgrade.sh\` (Windows: \`deploy\\install.ps1\`,
+          \`deploy\\upgrade.ps1\`). The scripts pull \`$IMAGE:$VERSION\`.
+
+          Offline: download \`$ARCHIVE\` and \`$ARCHIVE.sha256\` into the same folder, then \`./deploy/install.sh --image $ARCHIVE\`
+          (or \`upgrade.sh --image\`, \`-Image\` on Windows); the checksum is verified before the image is loaded.
+          Guide: \`docs/guides/en/installation.md\` (Arabic: \`docs/guides/ar/installation.md\`).
+          EOF
+          ASSETS=("release/assets/$ARCHIVE" "release/assets/$ARCHIVE.sha256" "release/assets/strategy-app-$VERSION.cdx.json")
+          if gh release view "$TAG" > /dev/null 2>&1; then
+            gh release upload "$TAG" "${ASSETS[@]}" --clobber
+          else
+            FLAGS=(--title "Integrated Strategy System $VERSION" --notes-file "$NOTES")
+            if [ "$PRERELEASE" = "true" ]; then FLAGS+=(--prerelease); else FLAGS+=(--latest); fi
+            if [ "$GITHUB_EVENT_NAME" = "push" ]; then FLAGS+=(--verify-tag); else FLAGS+=(--target "$GITHUB_SHA"); fi
+            gh release create "$TAG" "${ASSETS[@]}" "${FLAGS[@]}"
+          fi

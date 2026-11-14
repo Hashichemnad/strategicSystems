@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 # Integrated Strategy System — one-command install on Linux (Docker Engine + Compose v2). ADR 0157, docs/guides/en/installation.md.
 #
-#   ./deploy/install.sh                       # build the image from this release folder, start, print the setup address
-#   ./deploy/install.sh --image strategy-app-1.0.0.tar   # offline install: load a saved image instead of building
+#   ./deploy/install.sh                       # pull the release image (ghcr.io, or APP_IMAGE), start, print the setup address
+#   ./deploy/install.sh --image strategy-app-1.0.1.tar.gz   # offline: load the release archive (checks <file>.sha256 when present)
+#   ./deploy/install.sh --build               # build the image from this source folder instead (docker-compose.build.yml)
+#   ./deploy/install.sh --no-pull             # the image <APP_IMAGE>:<version> is already on this machine (--no-build: old name)
 #   APP_PORT=8090 ./deploy/install.sh         # another port (also POSTGRES_PORT, GOTENBERG_PORT; saved in deploy/.env)
 #
 # Safe to run again: an existing deploy/.env (passwords) is kept, running containers are updated in place.
@@ -11,12 +13,15 @@ set -euo pipefail
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib.sh"
 
 IMAGE_ARCHIVE=""
-SKIP_BUILD=false
+MODE=pull
+set_mode() { [ "$MODE" = pull ] || [ "$MODE" = "$1" ] || die "Choose one of --image, --build and --no-pull." 2; MODE="$1"; }
 while [ $# -gt 0 ]; do
   case "$1" in
-    --image) IMAGE_ARCHIVE="${2:?--image needs the path of a saved image (docker save)}"; shift 2 ;;
-    --no-build) SKIP_BUILD=true; shift ;;
-    -h | --help) sed -n '2,9p' "$0"; exit 0 ;;
+    --image) IMAGE_ARCHIVE="${2:?--image needs the path of the release image archive (.tar or .tar.gz)}"; set_mode archive; shift 2 ;;
+    --build) set_mode build; shift ;;
+    --no-pull) set_mode local; shift ;;
+    --no-build) warn "--no-build is deprecated: use --no-pull (the image is pulled by default since 1.0.2)."; set_mode local; shift ;;
+    -h | --help) sed -n '2,11p' "$0"; exit 0 ;;
     *) die "Unknown option: $1 (see --help)" 2 ;;
   esac
 done
@@ -64,25 +69,26 @@ done
 [ "$busy" -eq 0 ] || { say ""; die "Installation stopped: port(s) in use. Nothing was started." 3; }
 
 # Ports and options given on the command line are saved, so later commands (backup, upgrade) use the same values.
-for key in APP_PORT POSTGRES_PORT GOTENBERG_PORT APP_BIND REGISTRY_PREFIX BUILD_CA_FILE; do
+for key in APP_PORT POSTGRES_PORT GOTENBERG_PORT APP_BIND REGISTRY_PREFIX BUILD_CA_FILE APP_IMAGE; do
   if [ -n "${!key:-}" ]; then env_set "$key" "${!key}"; fi
 done
 [ -n "$(env_get APP_VERSION)" ] || env_set APP_VERSION "$VERSION"
+[ -n "$(env_get APP_IMAGE)" ] || env_set APP_IMAGE "$DEFAULT_APP_IMAGE"
 APP_VERSION="$(env_get APP_VERSION)"
-export APP_VERSION
+APP_IMAGE="$(env_get APP_IMAGE)"
+export APP_VERSION APP_IMAGE
+IMAGE_REF="$APP_IMAGE:$APP_VERSION"
 
-
-# 3. Image: load a saved image (offline) or build it from this folder.
-if [ -n "$IMAGE_ARCHIVE" ]; then
-  info "Loading the image from $IMAGE_ARCHIVE"
-  docker load -i "$IMAGE_ARCHIVE"
-  docker image inspect "strategy-app:$APP_VERSION" > /dev/null 2>&1 || die "The archive does not contain strategy-app:$APP_VERSION." 4
-elif [ "$SKIP_BUILD" = false ]; then
-  info "Building strategy-app:$APP_VERSION (first build takes several minutes)"
-  prepare_build_ca
-  revision="$(source_revision)"
-  GIT_REVISION="$revision" BUILD_CREATED="$(date -u +%Y-%m-%dT%H:%M:%SZ)" compose build migrate
-fi
+# 3. Image: pull the release image (default), load the offline archive, build it from this folder, or use the local copy.
+case "$MODE" in
+  pull) pull_app_image "$IMAGE_REF" || die "Installation stopped: image $IMAGE_REF not available. Nothing was started." 4 ;;
+  archive) load_image_archive "$IMAGE_ARCHIVE" "$IMAGE_REF" ;;
+  build)
+    info "Building $IMAGE_REF from this folder (first build takes several minutes)"
+    build_app_image
+    ;;
+  local) ensure_local_image "$IMAGE_REF" || die "--no-pull: image $IMAGE_REF is not on this machine. Run without --no-pull to pull it, or use --image <archive>." 4 ;;
+esac
 
 # 4. Start: postgres, gotenberg, migrate (owner role, grants the runtime role), app.
 info "Starting the services"

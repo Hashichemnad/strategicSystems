@@ -8,6 +8,10 @@ $script:DeployDir = $PSScriptRoot
 $script:RootDir = Split-Path -Parent $script:DeployDir
 $script:EnvFile = Join-Path $script:DeployDir '.env'
 $script:ComposeFile = Join-Path $script:DeployDir 'docker-compose.yml'
+# Override with the build section, only for building from source (-Build, ADR 0219).
+$script:ComposeBuildFile = Join-Path $script:DeployDir 'docker-compose.build.yml'
+# Release images (ADR 0219): public package on GitHub's container registry; APP_IMAGE in deploy\.env points to a customer mirror.
+$script:DefaultAppImage = 'ghcr.io/hashichemnad/strategy-app'
 
 function Write-Step([string]$Message) { Write-Host "==> $Message" -ForegroundColor Cyan }
 function Write-Warn([string]$Message) { Write-Host "Warning: $Message" -ForegroundColor Yellow }
@@ -115,6 +119,91 @@ function Invoke-Compose {
 function Invoke-ComposeQuiet {
     $arguments = @($args)
     return (Invoke-Native -Command 'docker' -Arguments (@(Get-ComposeArguments) + $arguments) -Capture -Quiet)
+}
+
+# docker compose with the build override (docker-compose.build.yml): building from source only. Throws on a non-zero exit code.
+function Invoke-ComposeBuild {
+    $arguments = @($args)
+    $all = @('compose', '-f', $script:ComposeFile, '-f', $script:ComposeBuildFile, '--env-file', $script:EnvFile, '--profile', 'app') + $arguments
+    $r = Invoke-Native -Command 'docker' -Arguments $all
+    if ($r.Code -ne 0) { throw "docker compose $($arguments -join ' ') failed (exit $($r.Code))." }
+}
+
+# Image repository of the application (without tag): the environment, deploy\.env, then the release default.
+function Get-AppImage { Get-Setting 'APP_IMAGE' $script:DefaultAppImage }
+
+function Test-Image([string]$Ref) { (Invoke-Native -Command 'docker' -Arguments @('image', 'inspect', $Ref) -Quiet).Code -eq 0 }
+
+# True when <image>:<version> is on this machine. Installations before 1.0.2 built the image as strategy-app:<version>: such a local image
+# is tagged with the current name, so backups, rollbacks and restores to those versions keep working without a pull.
+function Confirm-LocalImage([string]$Ref) {
+    if (Test-Image $Ref) { return $true }
+    $legacy = 'strategy-app:' + $Ref.Substring($Ref.LastIndexOf(':') + 1)
+    if ($legacy -eq $Ref -or -not (Test-Image $legacy)) { return $false }
+    Write-Step "Tagging the locally built $legacy as $Ref"
+    return ((Invoke-Native -Command 'docker' -Arguments @('tag', $legacy, $Ref) -Quiet).Code -eq 0)
+}
+
+# Pulls <image>:<version> for migrate and app ($env:APP_IMAGE / $env:APP_VERSION set by the caller). Returns $false with an explanation
+# when the registry cannot be reached and the image is not on this machine either; a local copy of the same tag is used with a warning.
+function Invoke-PullAppImage([string]$Ref) {
+    Write-Step "Pulling $Ref"
+    if ((Invoke-Native -Command 'docker' -Arguments (@(Get-ComposeArguments) + @('pull', 'migrate', 'app'))).Code -eq 0) { return $true }
+    if (Confirm-LocalImage $Ref) {
+        Write-Warn "Could not pull $Ref; using the copy already on this machine."
+        return $true
+    }
+    Write-Host ''
+    Write-Host "  Could not pull $Ref (no connection to the registry, or the image does not exist there)."
+    Write-Host '  Offline machine: download strategy-app-<version>.tar.gz and its .sha256 file from the GitHub release on a connected machine,'
+    Write-Host '  copy both here and run the script again with -Image <file>. Own registry mirror: set APP_IMAGE in deploy\.env.'
+    Write-Host '  Build from this source folder instead: -Build.'
+    return $false
+}
+
+# Loads an offline image archive (docker save; .tar or .tar.gz) and makes sure <image>:<version> exists afterwards. <archive>.sha256 next
+# to the archive (sha256sum format) is verified first: a mismatch refuses the archive before anything is loaded. An archive saved under
+# another repository name with the same tag (the ghcr.io name for a mirror, or strategy-app:<version> of a source build) is tagged.
+# Throws with the reason on any failure.
+function Import-ImageArchive([string]$Archive, [string]$Ref) {
+    $version = $Ref.Substring($Ref.LastIndexOf(':') + 1)
+    if (-not (Test-Path -LiteralPath $Archive -PathType Leaf)) { throw "Image archive $Archive not found." }
+    $sumFile = "$Archive.sha256"
+    if (Test-Path -LiteralPath $sumFile -PathType Leaf) {
+        $line = @(Read-Utf8Lines $sumFile | Where-Object { $_.Trim() }) | Select-Object -First 1
+        $expected = ''
+        if ($line) { $expected = ((([string]$line).Trim() -split '\s+')[0]).ToLowerInvariant() }
+        $actual = (Get-FileHash -Algorithm SHA256 -LiteralPath (Get-FullPath $Archive)).Hash.ToLowerInvariant()
+        if ($expected -ne $actual) {
+            throw "Checksum mismatch: $Archive has SHA-256 $actual but $sumFile expects $expected. Download the archive again; nothing was loaded."
+        }
+        Write-Step "Checksum verified ($sumFile)"
+    } else {
+        Write-Warn "No $sumFile next to the archive: its checksum was not verified."
+    }
+    Write-Step "Loading the image from $Archive"
+    $load = Invoke-Native -Command 'docker' -Arguments @('load', '-i', (Get-FullPath $Archive)) -Capture
+    $load.Output | ForEach-Object { Write-Host $_ }
+    if ($load.Code -ne 0) { throw "docker load failed for $Archive." }
+    if (-not (Test-Image $Ref)) {
+        foreach ($line in @($load.Output)) {
+            $m = [regex]::Match([string]$line, '^Loaded image: (\S*strategy-app:' + [regex]::Escape($version) + ')\s*$')
+            if ($m.Success) {
+                Write-Step "Tagging $($m.Groups[1].Value) as $Ref"
+                if ((Invoke-Native -Command 'docker' -Arguments @('tag', $m.Groups[1].Value, $Ref) -Quiet).Code -ne 0) { throw "docker tag $($m.Groups[1].Value) $Ref failed." }
+                break
+            }
+        }
+    }
+    if (-not (Test-Image $Ref)) { throw "The archive does not contain $Ref (nor another strategy-app:$version to tag)." }
+}
+
+# Builds <APP_IMAGE>:<APP_VERSION> from this source folder with the build override (CA bundle, revision and creation labels).
+function Invoke-BuildAppImage {
+    $env:GIT_REVISION = Get-SourceRevision
+    $env:BUILD_CREATED = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ', [Globalization.CultureInfo]::InvariantCulture)
+    Initialize-BuildCa
+    Invoke-ComposeBuild build migrate
 }
 
 function Assert-Docker {

@@ -4,7 +4,7 @@
 #
 #   ./deploy/sbom.sh                       # → release/sbom/strategy-app-<version>.cdx.json
 #   ./deploy/sbom.sh --scan                # also: Trivy scan, fails (exit 1) on High / Critical vulnerabilities that have a fix
-#   IMAGE=strategy-app:1.0.0 ./deploy/sbom.sh
+#   IMAGE=ghcr.io/hashichemnad/strategy-app:1.0.1 ./deploy/sbom.sh    # default: <APP_IMAGE>:<APP_VERSION>
 set -euo pipefail
 # shellcheck source=deploy/lib.sh
 . "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/lib.sh"
@@ -12,16 +12,18 @@ set -euo pipefail
 SCAN=false
 [ "${1:-}" = "--scan" ] && SCAN=true
 VERSION="$(setting APP_VERSION "$(release_version)")"
-IMAGE="${IMAGE:-strategy-app:$VERSION}"
+IMAGE="${IMAGE:-$(app_image):$VERSION}"
 PREFIX="$(setting REGISTRY_PREFIX)"
 SYFT_IMAGE="${SYFT_IMAGE:-${PREFIX}anchore/syft:v1.57.0}"
 TRIVY_IMAGE="${TRIVY_IMAGE:-${PREFIX}aquasec/trivy:0.76.2}"
 OUT_DIR="$ROOT_DIR/release/sbom"
 
 require_docker
-docker image inspect "$IMAGE" > /dev/null 2>&1 || die "Image $IMAGE not found: build it first (./deploy/install.sh or docker compose … build)." 4
+docker image inspect "$IMAGE" > /dev/null 2>&1 || die "Image $IMAGE not found: pull, load or build it first (./deploy/install.sh)." 4
 mkdir -p "$OUT_DIR"
-OUT="$OUT_DIR/${IMAGE//[:\/]/-}.cdx.json"
+# File name from the last path part of the image (registry and owner left out): strategy-app-<version>.cdx.json.
+NAME="${IMAGE##*/}"
+OUT="$OUT_DIR/${NAME//:/-}.cdx.json"
 
 info "SBOM of $IMAGE (CycloneDX JSON, Syft)"
 docker run --rm -v /var/run/docker.sock:/var/run/docker.sock:ro "$SYFT_IMAGE" \

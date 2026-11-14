@@ -1,32 +1,47 @@
 <#
 .SYNOPSIS
   In-place upgrade of a Docker installation to the version of this release folder (ADR 0157):
-  new image (built while the current version runs) -> pre-upgrade backup -> migrations as the owner + runtime-role grants -> start -> health check.
+  new image (pulled while the current version runs) -> pre-upgrade backup -> migrations as the owner + runtime-role grants -> start -> health check.
 .EXAMPLE
-  .\deploy\upgrade.ps1
+  .\deploy\upgrade.ps1                                 # pull the new release image (ghcr.io, or APP_IMAGE in deploy\.env)
 .EXAMPLE
-  .\deploy\upgrade.ps1 -NoBuild                         # the new image strategy-app:<version> is already loaded
+  .\deploy\upgrade.ps1 -Image strategy-app-1.0.2.tar.gz  # offline: load the release archive (checks <file>.sha256 when present)
 .EXAMPLE
-  .\deploy\upgrade.ps1 -Image strategy-app-1.0.1.tar     # offline: load the new image
+  .\deploy\upgrade.ps1 -Build                          # build the new image from this source folder (docker-compose.build.yml)
+.EXAMPLE
+  .\deploy\upgrade.ps1 -NoPull                         # the new image <APP_IMAGE>:<version> is already loaded (-NoBuild: old name)
 .NOTES
   Rollback (printed again on failure): $env:APP_VERSION='<previous>'; .\deploy\restore.ps1 -Backup <pre-upgrade backup> -Yes
 #>
 [CmdletBinding()]
-param([string]$Image = '', [switch]$NoBackup, [switch]$NoBuild)
+param([string]$Image = '', [switch]$NoBackup, [switch]$Build, [switch]$NoPull, [switch]$NoBuild)
 . (Join-Path $PSScriptRoot 'lib.ps1')
+
+if ($NoBuild) {
+    Write-Warn '-NoBuild is deprecated: use -NoPull (the image is pulled by default since 1.0.2).'
+    $NoPull = [switch]$true
+}
+if (@(@([bool]$Image, [bool]$Build, [bool]$NoPull) | Where-Object { $_ }).Count -gt 1) { Stop-WithError 'Choose one of -Image, -Build and -NoPull.' 2 }
 
 Assert-Docker
 if (-not (Test-Path $script:EnvFile)) { Stop-WithError 'deploy\.env not found: no installation here. Use .\deploy\install.ps1 for a new installation.' 2 }
 $oldVersion = Get-Setting 'APP_VERSION' 'dev'
 $newVersion = $env:NEW_VERSION
 if (-not $newVersion) { $newVersion = Get-ReleaseVersion }
+# Installations before 1.0.2 have no APP_IMAGE in deploy\.env (their image was built as strategy-app:<version>): the release default.
+if (-not (Get-EnvValue 'APP_IMAGE')) { Set-EnvValue 'APP_IMAGE' (Get-AppImage) }
+$env:APP_IMAGE = Get-AppImage
+$oldRef = "$($env:APP_IMAGE):$oldVersion"
+$newRef = "$($env:APP_IMAGE):$newVersion"
 Write-Step "Upgrade strategy-app $oldVersion -> $newVersion"
 
 $backupDir = ''
+# The running version's image under the current name (tags a pre-1.0.2 strategy-app:<version>): the pre-upgrade backup and a rollback use it.
+if (-not (Confirm-LocalImage $oldRef)) { Write-Warn "The current image $oldRef is not on this machine; the pre-upgrade backup and a rollback will try to pull it." }
 
 function Show-Rollback {
     Write-Host ''
-    Write-Host "  The upgrade did not complete. The previous image strategy-app:$oldVersion is still on this machine."
+    Write-Host "  The upgrade did not complete. The previous image $oldRef is still on this machine."
     if ($backupDir) {
         Write-Host '  Roll back (restores the database and files taken just before the upgrade):'
         Write-Host "      `$env:APP_VERSION = '$oldVersion'; .\deploy\restore.ps1 -Backup '$backupDir' -Yes"
@@ -36,22 +51,18 @@ function Show-Rollback {
     Write-Host '  Logs: docker compose -f deploy\docker-compose.yml --profile app logs migrate app'
 }
 
-# 1. New image first, while the current version keeps running (a failed build changes nothing).
+# 1. New image first, while the current version keeps running (a failed pull, load or build changes nothing).
 try {
+    $env:APP_VERSION = $newVersion
     if ($Image) {
-        Write-Step 'Loading the new image'
-        if ((Invoke-Native -Command 'docker' -Arguments @('load', '-i', $Image)).Code -ne 0) { throw 'docker load failed.' }
-    } elseif ($NoBuild) {
-        if ((Invoke-Native -Command 'docker' -Arguments @('image', 'inspect', "strategy-app:$newVersion") -Quiet).Code -ne 0) {
-            throw "-NoBuild: image strategy-app:$newVersion is not on this machine."
-        }
-    } else {
-        Write-Step "Building strategy-app:$newVersion (the current version keeps running)"
-        $env:GIT_REVISION = Get-SourceRevision
-        $env:BUILD_CREATED = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ', [Globalization.CultureInfo]::InvariantCulture)
-        Initialize-BuildCa
-        $env:APP_VERSION = $newVersion
-        Invoke-Compose build migrate
+        Import-ImageArchive $Image $newRef
+    } elseif ($Build) {
+        Write-Step "Building $newRef (the current version keeps running)"
+        Invoke-BuildAppImage
+    } elseif ($NoPull) {
+        if (-not (Confirm-LocalImage $newRef)) { throw "-NoPull: image $newRef is not on this machine." }
+    } elseif (-not (Invoke-PullAppImage $newRef)) {
+        throw "Upgrade stopped: image $newRef not available."
     }
 } catch {
     Stop-WithError "$($_.Exception.Message) The running version is unchanged." 4
@@ -84,7 +95,7 @@ try {
 }
 Set-EnvValue 'APP_VERSION' $newVersion
 
-Write-Step "Starting strategy-app:$newVersion"
+Write-Step "Starting $newRef"
 Invoke-Compose up -d --no-build
 if (-not (Wait-App 420)) {
     Show-Rollback

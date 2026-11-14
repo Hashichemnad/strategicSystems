@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 # In-place upgrade of a Docker installation to the version of this release folder (ADR 0157):
-# new image (built while the current version runs) → pre-upgrade backup → migrations as the owner + runtime-role grants → start → health check.
+# new image (pulled while the current version runs) → pre-upgrade backup → migrations as the owner + runtime-role grants → start → health check.
 #
-#   ./deploy/upgrade.sh                              # build the new image from this folder
-#   ./deploy/upgrade.sh --image strategy-app-1.0.1.tar   # offline: load the new image
-#   ./deploy/upgrade.sh --no-build                   # the new image strategy-app:<version> is already on this machine
+#   ./deploy/upgrade.sh                              # pull the new release image (ghcr.io, or APP_IMAGE in deploy/.env)
+#   ./deploy/upgrade.sh --image strategy-app-1.0.2.tar.gz   # offline: load the release archive (checks <file>.sha256 when present)
+#   ./deploy/upgrade.sh --build                      # build the new image from this source folder (docker-compose.build.yml)
+#   ./deploy/upgrade.sh --no-pull                    # the new image <APP_IMAGE>:<version> is already on this machine (--no-build: old name)
 #   ./deploy/upgrade.sh --no-backup                  # only when a backup was just taken
 #
 # Rollback (printed again on failure): APP_VERSION=<previous version> ./deploy/restore.sh <pre-upgrade backup> --yes
@@ -14,13 +15,16 @@ set -euo pipefail
 
 IMAGE_ARCHIVE=""
 BACKUP=true
-SKIP_BUILD=false
+MODE=pull
+set_mode() { [ "$MODE" = pull ] || [ "$MODE" = "$1" ] || die "Choose one of --image, --build and --no-pull." 2; MODE="$1"; }
 while [ $# -gt 0 ]; do
   case "$1" in
-    --image) IMAGE_ARCHIVE="${2:?--image needs the path of a saved image}"; shift 2 ;;
+    --image) IMAGE_ARCHIVE="${2:?--image needs the path of the release image archive (.tar or .tar.gz)}"; set_mode archive; shift 2 ;;
     --no-backup) BACKUP=false; shift ;;
-    --no-build) SKIP_BUILD=true; shift ;;
-    -h | --help) sed -n '2,11p' "$0"; exit 0 ;;
+    --build) set_mode build; shift ;;
+    --no-pull) set_mode local; shift ;;
+    --no-build) warn "--no-build is deprecated: use --no-pull (the image is pulled by default since 1.0.2)."; set_mode local; shift ;;
+    -h | --help) sed -n '2,12p' "$0"; exit 0 ;;
     *) die "Unknown option: $1 (see --help)" 2 ;;
   esac
 done
@@ -29,12 +33,20 @@ require_docker
 [ -f "$ENV_FILE" ] || die "deploy/.env not found: no installation here. Use ./deploy/install.sh for a new installation." 2
 OLD_VERSION="$(setting APP_VERSION dev)"
 NEW_VERSION="${NEW_VERSION:-$(release_version)}"
+# Installations before 1.0.2 have no APP_IMAGE in deploy/.env (their image was built as strategy-app:<version>): the release default.
+[ -n "$(env_get APP_IMAGE)" ] || env_set APP_IMAGE "$(app_image)"
+APP_IMAGE="$(app_image)"
+export APP_IMAGE
+OLD_REF="$APP_IMAGE:$OLD_VERSION"
+NEW_REF="$APP_IMAGE:$NEW_VERSION"
 info "Upgrade strategy-app $OLD_VERSION → $NEW_VERSION"
 BACKUP_DIR=""
+# The running version's image under the current name (tags a pre-1.0.2 strategy-app:<version>): the pre-upgrade backup and a rollback use it.
+ensure_local_image "$OLD_REF" || warn "The current image $OLD_REF is not on this machine; the pre-upgrade backup and a rollback will try to pull it."
 
 rollback_help() {
   say ""
-  say "  The upgrade did not complete. The previous image strategy-app:$OLD_VERSION is still on this machine."
+  say "  The upgrade did not complete. The previous image $OLD_REF is still on this machine."
   if [ -n "$BACKUP_DIR" ]; then
     say "  Roll back (restores the database and files taken just before the upgrade):"
     say "      APP_VERSION=$OLD_VERSION ./deploy/restore.sh $BACKUP_DIR --yes"
@@ -44,20 +56,16 @@ rollback_help() {
   say "  Logs: docker compose -f deploy/docker-compose.yml --profile app logs migrate app"
 }
 
-# 1. New image first, while the current version keeps running (a failed build changes nothing).
-if [ -n "$IMAGE_ARCHIVE" ]; then
-  info "Loading the new image"
-  docker load -i "$IMAGE_ARCHIVE"
-  docker image inspect "strategy-app:$NEW_VERSION" > /dev/null 2>&1 || die "The archive does not contain strategy-app:$NEW_VERSION; nothing changed." 4
-elif [ "$SKIP_BUILD" = true ]; then
-  docker image inspect "strategy-app:$NEW_VERSION" > /dev/null 2>&1 || die "--no-build: image strategy-app:$NEW_VERSION is not on this machine; nothing changed." 4
-else
-  info "Building strategy-app:$NEW_VERSION (the current version keeps running)"
-  prepare_build_ca
-  revision="$(source_revision)"
-  APP_VERSION="$NEW_VERSION" GIT_REVISION="$revision" BUILD_CREATED="$(date -u +%Y-%m-%dT%H:%M:%SZ)" compose build migrate \
-    || die "Image build failed; the running version is unchanged." 4
-fi
+# 1. New image first, while the current version keeps running (a failed pull, load or build changes nothing).
+case "$MODE" in
+  pull) APP_VERSION="$NEW_VERSION" pull_app_image "$NEW_REF" || die "Upgrade stopped: image $NEW_REF not available; the running version is unchanged." 4 ;;
+  archive) load_image_archive "$IMAGE_ARCHIVE" "$NEW_REF" ;;
+  build)
+    info "Building $NEW_REF (the current version keeps running)"
+    APP_VERSION="$NEW_VERSION" build_app_image || die "Image build failed; the running version is unchanged." 4
+    ;;
+  local) ensure_local_image "$NEW_REF" || die "--no-pull: image $NEW_REF is not on this machine; nothing changed." 4 ;;
+esac
 
 # 2. Pre-upgrade backup with the current version; the application stays stopped afterwards.
 if [ "$BACKUP" = true ]; then
@@ -83,7 +91,7 @@ if ! compose run --rm migrate; then
 fi
 env_set APP_VERSION "$NEW_VERSION"
 
-info "Starting strategy-app:$NEW_VERSION"
+info "Starting $NEW_REF"
 compose up -d --no-build
 if ! wait_for_app 420; then
   compose logs --tail 60 app >&2 || true
