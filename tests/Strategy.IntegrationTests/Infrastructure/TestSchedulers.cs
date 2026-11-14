@@ -1,4 +1,3 @@
-using Microsoft.Extensions.DependencyInjection;
 using Quartz;
 using Quartz.Impl;
 
@@ -13,14 +12,10 @@ public static class TestSchedulers
 {
     private static readonly TimeSpan Limit = TimeSpan.FromSeconds(30);
 
-    /// <summary>Every scheduler of one host (before the host itself is disposed).</summary>
-    public static async Task ShutdownAsync(IServiceProvider services)
+    /// <summary>Every scheduler of one host's scheduler factory (taken while the host was alive; called before the host is disposed).</summary>
+    public static async Task ShutdownAsync(ISchedulerFactory factory)
     {
-        if (services.GetService<ISchedulerFactory>() is not { } factory)
-        {
-            return;
-        }
-
+        ArgumentNullException.ThrowIfNull(factory);
         IReadOnlyList<IScheduler> schedulers;
         try
         {

@@ -31,34 +31,39 @@ public sealed class ApiFactory(
 
     public string ConnectionString => connectionString;
 
-    private IHost? _host;
+    // The started host's scheduler factory, taken while the host is alive: base.DisposeAsync disposes the host and then calls Dispose(true).
+    private Quartz.ISchedulerFactory? _schedulers;
 
-    /// <summary>Keeps the started host so its schedulers can be shut down before the host is disposed.</summary>
     protected override IHost CreateHost(IHostBuilder builder)
     {
-        _host = base.CreateHost(builder);
-        return _host;
+        var host = base.CreateHost(builder);
+        _schedulers = host.Services.GetService<Quartz.ISchedulerFactory>();
+        return host;
     }
 
     /// <summary>Stops this host's Quartz schedulers first, so no scheduler thread outlives the host (or keeps the test process alive).</summary>
     public override async ValueTask DisposeAsync()
     {
-        if (_host is { } host)
-        {
-            await TestSchedulers.ShutdownAsync(host.Services);
-        }
-
+        await StopSchedulersAsync();
         await base.DisposeAsync();
     }
 
     protected override void Dispose(bool disposing)
     {
-        if (disposing && _host is { } host)
+        if (disposing)
         {
-            TestSchedulers.ShutdownAsync(host.Services).GetAwaiter().GetResult();
+            StopSchedulersAsync().GetAwaiter().GetResult();
         }
 
         base.Dispose(disposing);
+    }
+
+    private async Task StopSchedulersAsync()
+    {
+        if (Interlocked.Exchange(ref _schedulers, null) is { } schedulers)
+        {
+            await TestSchedulers.ShutdownAsync(schedulers);
+        }
     }
 
     /// <summary>This host's file store (local provider) in a temporary folder.</summary>
