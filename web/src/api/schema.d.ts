@@ -22156,6 +22156,11 @@ export interface components {
       description?: null | string;
       connector?: string;
       objects?: components['schemas']['MappingPackObject'][];
+      /**
+       * @description Lookup values the pack's value maps produce (release 1.0.2, ADR 0216): organisation-specific picklist values live in the pack, not in
+       *     code. Import and upgrade add the codes a lookup type does not have yet and never change existing values.
+       */
+      lookups?: components['schemas']['MappingPackLookup'][];
     };
     MappingPackDto: {
       /** Format: uuid */
@@ -22171,6 +22176,15 @@ export interface components {
       objects: number;
       /** Format: uint32 */
       version: number;
+    };
+    MappingPackLookup: {
+      type?: string;
+      values?: components['schemas']['MappingPackLookupValue'][];
+    };
+    MappingPackLookupValue: {
+      code: string;
+      labelAr: null | string;
+      labelEn: null | string;
     };
     MappingPackObject: {
       key?: string;
@@ -23148,6 +23162,9 @@ export interface components {
       /** @description `bulk` or `rest`. */
       api?: null | string;
       completed?: boolean;
+      /** @description The object was read from scratch (first load or full run): reconciliation applies (release 1.0.2, fix 6). */
+      fullLoad?: boolean;
+      reconciliation?: null | components['schemas']['ReconciliationResult'];
     };
     OfficeInput: {
       controlEffectivenessOverride: null | string;
@@ -25326,6 +25343,23 @@ export interface components {
       /** Format: date */
       dueOn: string;
       notes: null | string;
+    };
+    /**
+     * @description Per object after a full load (release 1.0.2, fix 6): `Source` = Salesforce `SELECT COUNT()` of live rows (the mapping's filter, not
+     *     deleted); `Synced` = records of the target type held with status "synced"; `OpenExceptions` = open exceptions of the mappings of that
+     *     target; `Difference` = Source − Synced − OpenExceptions (0 = every Salesforce row is either here or waiting in the queue). Mappings that
+     *     share a target type (e.g. two Salesforce objects → controls) are reconciled together and named in `Mappings`.
+     */
+    ReconciliationResult: {
+      /** Format: int32 */
+      source: number;
+      /** Format: int32 */
+      synced: number;
+      /** Format: int32 */
+      openExceptions: number;
+      /** Format: int32 */
+      difference: number;
+      mappings: string[];
     };
     /** @description One reference of a record as the record page shows it (source names resolved). */
     RecordReferenceDto: {
@@ -28065,6 +28099,9 @@ export interface components {
       updatedAt: string;
       /** Format: date-time */
       resolvedAt: null | string;
+      params?: null | {
+        [key: string]: string;
+      };
     };
     SyncKeyInput: {
       privateKeyPem: null | string;

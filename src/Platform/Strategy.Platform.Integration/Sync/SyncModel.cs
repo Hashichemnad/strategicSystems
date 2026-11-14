@@ -129,7 +129,21 @@ public sealed class ObjectRunStats
     public string? Api { get; set; }
 
     public bool Completed { get; set; }
+
+    /// <summary>The object was read from scratch (first load or full run): reconciliation applies (release 1.0.2, fix 6).</summary>
+    public bool FullLoad { get; set; }
+
+    /// <summary>Salesforce COUNT() versus synced records plus open exceptions after a full load; null for incremental runs.</summary>
+    public ReconciliationResult? Reconciliation { get; set; }
 }
+
+/// <summary>
+/// Per object after a full load (release 1.0.2, fix 6): <c>Source</c> = Salesforce <c>SELECT COUNT()</c> of live rows (the mapping's filter, not
+/// deleted); <c>Synced</c> = records of the target type held with status "synced"; <c>OpenExceptions</c> = open exceptions of the mappings of that
+/// target; <c>Difference</c> = Source − Synced − OpenExceptions (0 = every Salesforce row is either here or waiting in the queue). Mappings that
+/// share a target type (e.g. two Salesforce objects → controls) are reconciled together and named in <c>Mappings</c>.
+/// </summary>
+public sealed record ReconciliationResult(int Source, int Synced, int OpenExceptions, int Difference, IReadOnlyList<string> Mappings);
 
 internal static class SyncJson
 {

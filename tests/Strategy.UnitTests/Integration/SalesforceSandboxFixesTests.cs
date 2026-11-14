@@ -371,7 +371,7 @@ public sealed class SalesforceSandboxFixesTests
     public async Task The_adof_pack_maps_risk_levels_as_picklists_to_numbers_and_matches_contacts_by_employee_number()
     {
         var pack = await ShippedMappingPacks.AdofSalesforceAsync();
-        pack.Version.ShouldBe(2);
+        pack.Version.ShouldBeGreaterThanOrEqualTo(2);
         var risk = pack.Objects.Single(o => o.Key == "project-risk");
         foreach (var source in new[] { "Probability_Level__c", "Impact_Level__c" })
         {

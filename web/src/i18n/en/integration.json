@@ -765,7 +765,9 @@
       "transform": "Unknown transform.",
       "unknownTarget": "Unknown target record type.",
       "unreachable": "Salesforce could not be reached.",
-      "where": "The filter is not allowed (no semicolons or sub-queries)."
+      "where": "The filter is not allowed (no semicolons or sub-queries).",
+      "unknownLookupType": "The pack adds values to the lookup list {{type}}, which this installation does not have.",
+      "packLookups": "The pack's lookup values are not valid (a type or a code is empty)."
     },
     "exceptions": {
       "unmappedValue": "The value “{{value}}” of {{field}} has no code in the value map.",
@@ -794,7 +796,9 @@
       "objectDone": "Done: {{read}} read, {{created}} created, {{updated}} updated, {{deleted}} deleted, {{failed}} failed ({{api}}).",
       "cancelled": "The run was cancelled because this system became primary.",
       "limitsUnavailable": "Salesforce refused the API limits (/limits); API usage is read from the response headers and the run continues.",
-      "fieldMissing": "{{object}} has no field {{field}}: it is not queried (people matching continues with the other keys)."
+      "fieldMissing": "{{object}} has no field {{field}}: it is not queried (people matching continues with the other keys).",
+      "reconciled": "Reconciled {{target}}: {{source}} in Salesforce = {{synced}} synced + {{open}} open exceptions.",
+      "reconcileDifference": "Reconciliation of {{target}} differs by {{difference}}: {{source}} in Salesforce, {{synced}} synced, {{open}} open exceptions."
     },
     "errorDetails": {
       "title": "What Salesforce answered",

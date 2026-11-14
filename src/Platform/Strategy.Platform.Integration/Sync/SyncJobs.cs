@@ -265,10 +265,32 @@ internal sealed partial class SyncSeeder : IDatabaseSeeder
     }
 
     /// <summary>The objects an older pack version shipped that the current version changes (<c>Packs/upgrades/adof-salesforce-v{n}.json</c>, ADR 0213).</summary>
+    /// <remarks>
+    /// Release 1.0.2 (ADR 0217): snapshots chain. Snapshot <c>vN</c> holds the version-N content of the objects version N+1 changed, so the
+    /// content an installation of version <paramref name="version"/> received for an object is its first appearance in the snapshots
+    /// <c>v{version}</c>, <c>v{version+1}</c>, … (an object a release did not change keeps its content until the snapshot of the release that does).
+    /// </remarks>
     public static async Task<MappingPackDocument?> LoadPreviousAsync(int version, CancellationToken cancellationToken)
     {
-        await using var stream = typeof(SyncSeeder).Assembly.GetManifestResourceStream($"sync-pack-upgrade/{PackCode}-v{version}.json");
-        return stream is null ? null : await System.Text.Json.JsonSerializer.DeserializeAsync<MappingPackDocument>(stream, SyncJson.Options, cancellationToken).ConfigureAwait(false);
+        MappingPackDocument? result = null;
+        for (var v = version; ; v++)
+        {
+            await using var stream = typeof(SyncSeeder).Assembly.GetManifestResourceStream($"sync-pack-upgrade/{PackCode}-v{v}.json");
+            if (stream is null)
+            {
+                return result;
+            }
+
+            var snapshot = await System.Text.Json.JsonSerializer.DeserializeAsync<MappingPackDocument>(stream, SyncJson.Options, cancellationToken).ConfigureAwait(false);
+            if (snapshot is null)
+            {
+                return result;
+            }
+
+            result = result is null
+                ? snapshot with { Version = version }
+                : result with { Objects = [.. result.Objects, .. snapshot.Objects.Where(o => result.Objects.All(r => r.Key != o.Key))] };
+        }
     }
 
     [LoggerMessage(Level = LogLevel.Warning,
@@ -282,6 +304,7 @@ internal sealed partial class SyncSeeder : IDatabaseSeeder
         var names = assembly.GetManifestResourceNames().Where(n => n.StartsWith(PackResourcePrefix, StringComparison.Ordinal)).Order(StringComparer.Ordinal).ToList();
         MappingPackDocument? header = null;
         var objects = new List<MappingPackObject>();
+        var lookups = new List<MappingPackLookup>();
         foreach (var name in names)
         {
             await using var stream = assembly.GetManifestResourceStream(name)!;
@@ -293,9 +316,10 @@ internal sealed partial class SyncSeeder : IDatabaseSeeder
             }
 
             objects.AddRange(part.Objects);
+            lookups.AddRange(part.Lookups);
         }
 
-        return (header ?? throw new InvalidOperationException("The ADoF Salesforce mapping pack header is missing.")) with { Objects = objects };
+        return (header ?? throw new InvalidOperationException("The ADoF Salesforce mapping pack header is missing.")) with { Objects = objects, Lookups = lookups };
     }
 }
 

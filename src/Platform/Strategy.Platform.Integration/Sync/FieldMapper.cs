@@ -9,7 +9,8 @@ using Strategy.Platform.Integration.Sync.Salesforce;
 namespace Strategy.Platform.Integration.Sync;
 
 /// <summary>Why a record could not be mapped (→ exceptions queue, ADR 0205).</summary>
-public sealed record MappingIssue(string Reason, string? Field, string? Value, string MessageKey);
+/// <summary>Why a record was not written. <c>Params</c>: message parameters, e.g. the database's error details (ADR 0220).</summary>
+public sealed record MappingIssue(string Reason, string? Field, string? Value, string MessageKey, IReadOnlyDictionary<string, string?>? Params = null);
 
 /// <summary>Resolves Salesforce Ids during mapping (cached per run by the engine).</summary>
 public interface IMappingResolver
@@ -347,4 +348,47 @@ public static partial class FieldMapper
 
     [GeneratedRegex("\\{(year:)?([A-Za-z0-9_.]+)\\}", RegexOptions.CultureInvariant)]
     private static partial Regex Token();
+}
+
+/// <summary>
+/// The database's own reason for a failed write (ADR 0220): SQLSTATE, constraint, table, column and the server message — never the detail line,
+/// which can quote row values. Other exceptions give their type and message.
+/// </summary>
+public static class WriteFailure
+{
+    public static IReadOnlyDictionary<string, string?> Details(Exception exception)
+    {
+        ArgumentNullException.ThrowIfNull(exception);
+        if (Postgres(exception) is { } pg)
+        {
+            return new Dictionary<string, string?>(StringComparer.Ordinal)
+            {
+                ["sqlState"] = pg.SqlState,
+                ["constraint"] = pg.ConstraintName,
+                ["table"] = pg.SchemaName is null ? pg.TableName : pg.SchemaName + "." + pg.TableName,
+                ["column"] = pg.ColumnName,
+                ["message"] = Cut(pg.MessageText),
+            };
+        }
+
+        var inner = exception is Microsoft.EntityFrameworkCore.DbUpdateException { InnerException: { } i } ? i : exception;
+        return new Dictionary<string, string?>(StringComparer.Ordinal) { ["error"] = inner.GetType().Name, ["message"] = Cut(inner.Message) };
+    }
+
+    public static string? Column(Exception exception) => Postgres(exception)?.ColumnName;
+
+    private static Npgsql.PostgresException? Postgres(Exception exception)
+    {
+        for (var e = exception; e is not null; e = e.InnerException)
+        {
+            if (e is Npgsql.PostgresException pg)
+            {
+                return pg;
+            }
+        }
+
+        return null;
+    }
+
+    private static string Cut(string text) => text.Length <= 500 ? text : text[..500];
 }

@@ -173,6 +173,7 @@ public sealed partial class SyncEngine(
             if (run.Status != RunStatuses.Cancelled)
             {
                 await RetryMissingParentsAsync(state, cancellationToken).ConfigureAwait(false);
+                await ReconcileAsync(state, session, mappings, cancellationToken).ConfigureAwait(false);
                 run.Status = stats.Values.Any(s => s.Failed > 0) ? RunStatuses.Partial : RunStatuses.Succeeded;
             }
         }
@@ -221,6 +222,7 @@ public sealed partial class SyncEngine(
     {
         var stats = state.Stats[mapping.Key] = new ObjectRunStats();
         var since = full || mapping.Watermark is null ? (DateTimeOffset?)null : mapping.Watermark.Value - WatermarkOverlap;
+        stats.FullLoad = since is null && mapping.Kind == ObjectMappingKinds.Record;
         try
         {
             switch (mapping.Kind)
@@ -474,11 +476,14 @@ public sealed partial class SyncEngine(
             await ResolveExceptionAsync(state.Connection.Id, mapping.Id, externalId, cancellationToken).ConfigureAwait(false);
             return written.Value.Created ? RecordOutcome.Created : RecordOutcome.Updated;
         }
-        catch (DbUpdateException ex)
+        catch (Exception ex) when (ex is DbUpdateException or InvalidOperationException or ArgumentException or FormatException or NotSupportedException
+            or Npgsql.PostgresException or System.Text.Json.JsonException)
         {
+            // Per-record write failures never stop the run; the real reason is stored with the exception (ADR 0220), never row values.
             LogWriteFailed(logger, target.Code, externalId, ex);
             await RecordExceptionAsync(state, mapping, externalId, record, modified,
-                new MappingIssue(ExceptionReasons.WriteFailed, null, null, "integration.sync.exceptions.writeFailed"), cancellationToken).ConfigureAwait(false);
+                new MappingIssue(ExceptionReasons.WriteFailed, WriteFailure.Column(ex), null, "integration.sync.exceptions.writeFailed", WriteFailure.Details(ex)),
+                cancellationToken).ConfigureAwait(false);
             return RecordOutcome.Failed;
         }
     }
@@ -790,6 +795,7 @@ public sealed partial class SyncEngine(
         row.Field = issue.Field;
         row.Value = Truncate(issue.Value, 1000);
         row.MessageKey = issue.MessageKey;
+        row.Params = issue.Params is { Count: > 0 } parameters ? SyncJson.Write(parameters) : null;
         row.Payload = record.ToJson();
         row.SourceModifiedAt = modified;
         row.Attempts++;
@@ -806,7 +812,7 @@ public sealed partial class SyncEngine(
     }
 
     /// <summary>Re-processes one open exception from its stored payload with the current mapping (no source call).</summary>
-    public async Task<RecordOutcome> ReprocessAsync(SyncException exception, Guid? runId, CancellationToken cancellationToken)
+    public async Task<RecordOutcome> ReprocessAsync(SyncException exception, Guid? runId, CancellationToken cancellationToken, bool cascade = true)
     {
         ArgumentNullException.ThrowIfNull(exception);
         var connection = await db.SyncConnections.FirstAsync(c => c.Id == exception.ConnectionId, cancellationToken).ConfigureAwait(false);
@@ -826,8 +832,85 @@ public sealed partial class SyncEngine(
             return RecordOutcome.Skipped;
         }
 
-        return await ProcessRecordAsync(state, mapping, target, SyncJson.Read<List<FieldMapping>>(mapping.Fields), record, deferIfSameObjectParent: false, cancellationToken)
-            .ConfigureAwait(false);
+        var outcome = await ProcessRecordAsync(state, mapping, target, SyncJson.Read<List<FieldMapping>>(mapping.Fields), record, deferIfSameObjectParent: false,
+            cancellationToken).ConfigureAwait(false);
+        if (outcome is RecordOutcome.Created or RecordOutcome.Updated or RecordOutcome.Unchanged && cascade)
+        {
+            await ReprocessDependentsAsync(connection.Id, record.Id, runId, [record.Id], cancellationToken).ConfigureAwait(false);
+        }
+
+        return outcome;
+    }
+
+    /// <summary>
+    /// Release 1.0.2 (fix 6): once a parent is written, the open "missing parent" exceptions that wait for its Salesforce Id are re-processed at
+    /// once — by load order, then age — and so on down the hierarchy (department → project → work plan → task …). <paramref name="visited"/>
+    /// guards against cycles.
+    /// </summary>
+    private async Task ReprocessDependentsAsync(Guid connectionId, string parentSourceId, Guid? runId, HashSet<string> visited, CancellationToken cancellationToken)
+    {
+        var waiting = await (from e in db.SyncExceptions
+                             join m in db.ObjectMappings on e.MappingId equals m.Id
+                             where e.ConnectionId == connectionId && e.Status == ExceptionStatuses.Open && e.Reason == ExceptionReasons.MissingParent
+                                 && e.Value == parentSourceId
+                             orderby m.LoadOrder, e.CreatedAt, e.Id
+                             select e).Take(1000).ToListAsync(cancellationToken).ConfigureAwait(false);
+        foreach (var dependent in waiting)
+        {
+            var record = SourceRecord.FromJson(dependent.Payload);
+            if (dependent.Status != ExceptionStatuses.Open || !visited.Add(record.Id))
+            {
+                continue;
+            }
+
+            await ReprocessAsync(dependent, runId, cancellationToken).ConfigureAwait(false);
+        }
+    }
+
+    /// <summary>
+    /// Release 1.0.2 (fix 6): after each full load, per target type of the objects read from scratch, Salesforce COUNT() of live rows versus
+    /// records held here plus open exceptions (<see cref="ReconciliationResult"/>). A difference is logged as a warning on the run.
+    /// </summary>
+    private async Task ReconcileAsync(RunState state, SalesforceSession session, IReadOnlyList<SyncObjectMapping> mappings, CancellationToken cancellationToken)
+    {
+        var source = state.Connection.SourceSystem;
+        // One record per Salesforce row ({Id}) only: templates such as {Id}-{year:…} hold several records per row and cannot be counted against it.
+        var full = mappings.Where(m => state.Stats.TryGetValue(m.Key, out var st) && st.FullLoad && st.Completed && m.TargetType is not null
+            && m.ExternalIdTemplate == "{Id}").ToList();
+        foreach (var group in full.GroupBy(m => m.TargetType!, StringComparer.Ordinal))
+        {
+            // Every mapping of the target counts (also those that were not part of this run), so shared targets reconcile as a whole.
+            var all = await db.ObjectMappings.AsNoTracking().Where(m => m.PackId == state.Connection.MappingPackId && m.Enabled && m.ConfirmedAt != null
+                && m.Kind == ObjectMappingKinds.Record && m.TargetType == group.Key && m.ExternalIdTemplate == "{Id}").ToListAsync(cancellationToken).ConfigureAwait(false);
+            var sourceCount = 0;
+            foreach (var mapping in all)
+            {
+                var live = SyncQueries.IsNeverDeleted(mapping.SourceObject) ? null : "IsDeleted = false";
+                var where = string.IsNullOrWhiteSpace(mapping.Where) ? live : live is null ? mapping.Where : $"({mapping.Where}) AND {live}";
+                sourceCount += await session.CountAsync(Soql.Count(mapping.SourceObject, where, mapping.WatermarkField, null), cancellationToken).ConfigureAwait(false);
+            }
+
+            var ids = all.Select(m => m.Id).ToList();
+            var synced = await db.References.AsNoTracking().CountAsync(r => r.SourceSystem == source && r.EntityTypeCode == group.Key
+                && r.SyncStatus == SyncStatuses.Synced, cancellationToken).ConfigureAwait(false);
+            var open = await db.SyncExceptions.AsNoTracking().CountAsync(e => e.ConnectionId == state.Connection.Id && ids.Contains(e.MappingId)
+                && e.Status == ExceptionStatuses.Open, cancellationToken).ConfigureAwait(false);
+            var result = new ReconciliationResult(sourceCount, synced, open, sourceCount - synced - open, [.. all.Select(m => m.Key).Order(StringComparer.Ordinal)]);
+            foreach (var mapping in group)
+            {
+                state.Stats[mapping.Key].Reconciliation = result;
+            }
+
+            await LogAsync(state.Run, result.Difference == 0 ? "info" : "warn", group.First().Key,
+                result.Difference == 0 ? "integration.sync.log.reconciled" : "integration.sync.log.reconcileDifference", new()
+                {
+                    ["target"] = group.Key,
+                    ["source"] = result.Source.ToString(CultureInfo.InvariantCulture),
+                    ["synced"] = result.Synced.ToString(CultureInfo.InvariantCulture),
+                    ["open"] = result.OpenExceptions.ToString(CultureInfo.InvariantCulture),
+                    ["difference"] = result.Difference.ToString(CultureInfo.InvariantCulture),
+                }, cancellationToken).ConfigureAwait(false);
+        }
     }
 
     /// <summary>Applies a held Salesforce version of an outage record ("Take Salesforce").</summary>
@@ -863,13 +946,14 @@ public sealed partial class SyncEngine(
         foreach (var exception in open)
         {
             var mapping = await db.ObjectMappings.AsNoTracking().FirstOrDefaultAsync(m => m.Id == exception.MappingId, cancellationToken).ConfigureAwait(false);
-            if (mapping is null || !state.Stats.TryGetValue(mapping.Key, out var stats))
+            if (mapping is null || !mapping.Enabled || exception.Status != ExceptionStatuses.Open)
             {
                 continue;
             }
 
-            var outcome = await ReprocessAsync(exception, state.Run.Id, cancellationToken).ConfigureAwait(false);
-            if (outcome is RecordOutcome.Created or RecordOutcome.Updated)
+            // Release 1.0.2: also exceptions of objects that did not run this time (their parent may have arrived in this run).
+            var outcome = await ReprocessAsync(exception, state.Run.Id, cancellationToken, cascade: false).ConfigureAwait(false);
+            if (outcome is RecordOutcome.Created or RecordOutcome.Updated && state.Stats.TryGetValue(mapping.Key, out var stats))
             {
                 stats.Failed = Math.Max(0, stats.Failed - 1);
                 Count(stats, outcome);

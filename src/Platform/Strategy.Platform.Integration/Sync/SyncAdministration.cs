@@ -117,7 +117,8 @@ public sealed record SourceObjectDto(string Name, string Label, bool Custom);
 
 public sealed record SyncExceptionDto(
     Guid Id, Guid MappingId, string? MappingKey, string SourceObject, string ExternalId, string Reason, string? Field, string? Value, string? MessageKey,
-    string Status, int Attempts, DateTimeOffset CreatedAt, DateTimeOffset UpdatedAt, DateTimeOffset? ResolvedAt);
+    string Status, int Attempts, DateTimeOffset CreatedAt, DateTimeOffset UpdatedAt, DateTimeOffset? ResolvedAt,
+    IReadOnlyDictionary<string, string?>? Params = null);
 
 public sealed record SyncExceptionDetailDto(SyncExceptionDto Exception, IReadOnlyDictionary<string, string?> Payload, string? TargetType);
 
@@ -149,7 +150,22 @@ public sealed record MappingPackDocument
     public string Connector { get; init; } = Connectors.Salesforce;
 
     public List<MappingPackObject> Objects { get; init; } = [];
+
+    /// <summary>
+    /// Lookup values the pack's value maps produce (release 1.0.2, ADR 0216): organisation-specific picklist values live in the pack, not in
+    /// code. Import and upgrade add the codes a lookup type does not have yet and never change existing values.
+    /// </summary>
+    public List<MappingPackLookup> Lookups { get; init; } = [];
 }
+
+public sealed record MappingPackLookup
+{
+    public string Type { get; init; } = string.Empty;
+
+    public List<MappingPackLookupValue> Values { get; init; } = [];
+}
+
+public sealed record MappingPackLookupValue(string Code, string? LabelAr, string? LabelEn);
 
 public sealed record MappingPackObject
 {
@@ -202,6 +218,7 @@ public sealed partial class SyncAdministration(
     IAuditLog audit,
     IRequestContext context,
     IClock clock,
+    ILookupProvisioning lookups,
     ILogger<SyncAdministration> logger)
 {
     public const string SalesforceSource = "salesforce";
@@ -1056,9 +1073,49 @@ public sealed partial class SyncAdministration(
             replaced.Add(old.Key);
         }
 
+        // Release 1.0.2 (ADR 0217): objects the new pack adds are inserted (disabled, unconfirmed); shipped objects the new pack drops are
+        // disabled while they still equal what was shipped (e.g. objects that used names Salesforce does not have).
+        foreach (var added in shipped.Objects.Where(o => rows.All(r => r.Key != o.Key)))
+        {
+            var row = new SyncObjectMapping { PackId = pack.Id, Key = added.Key, SourceObject = added.SourceObject, Kind = added.Kind };
+            Apply(row, added);
+            row.Enabled = false;
+            db.ObjectMappings.Add(row);
+            replaced.Add(added.Key);
+        }
+
+        foreach (var dropped in previous.Objects.Where(o => shipped.Objects.All(n => n.Key != o.Key)))
+        {
+            if (rows.FirstOrDefault(r => r.Key == dropped.Key) is { } row && SameAsShipped(row, dropped))
+            {
+                row.Enabled = false;
+                row.ConfirmedAt = null;
+                replaced.Add(dropped.Key);
+            }
+        }
+
         pack.PackVersion = shipped.Version;
         await db.SaveChangesAsync(ct).ConfigureAwait(false);
+        await ProvisionLookupsAsync(shipped, ct).ConfigureAwait(false);
         return (replaced, kept);
+    }
+
+    /// <summary>Adds the pack's lookup values that are missing (ADR 0216); returns errors for lookup types this installation does not have.</summary>
+    private async Task<IReadOnlyList<FieldError>> ProvisionLookupsAsync(MappingPackDocument document, CancellationToken ct)
+    {
+        var errors = new List<FieldError>();
+        foreach (var (lookup, i) in document.Lookups.Select((l, i) => (l, i)))
+        {
+            var added = await lookups.AddMissingAsync(lookup.Type, [.. lookup.Values.Select(v => new LookupSeed(v.Code, v.LabelAr ?? v.Code, v.LabelEn ?? v.Code))], ct)
+                .ConfigureAwait(false);
+            if (added.IsFailure)
+            {
+                errors.Add(new FieldError($"lookups[{i}].type", "unknownLookupType", "integration.sync.errors.unknownLookupType",
+                    new Dictionary<string, object?> { ["type"] = lookup.Type }));
+            }
+        }
+
+        return errors;
     }
 
     /// <summary>True when an installed object still has exactly the content a release shipped (JSON compared semantically).</summary>
@@ -1133,6 +1190,11 @@ public sealed partial class SyncAdministration(
             errors.Add(new FieldError("objects", "duplicateKey", "integration.sync.errors.duplicateKey"));
         }
 
+        if (document.Lookups.Any(l => string.IsNullOrWhiteSpace(l.Type) || l.Values.Count > 2000 || l.Values.Any(v => string.IsNullOrWhiteSpace(v.Code))))
+        {
+            errors.Add(new FieldError("lookups", "invalid", "integration.sync.errors.packLookups"));
+        }
+
         if (errors.Count > 0)
         {
             return Error.Validation(errors);
@@ -1178,6 +1240,12 @@ public sealed partial class SyncAdministration(
         }
 
         await db.SaveChangesAsync(ct).ConfigureAwait(false);
+        var lookupErrors = await ProvisionLookupsAsync(document, ct).ConfigureAwait(false);
+        if (lookupErrors.Count > 0)
+        {
+            return Error.Validation(lookupErrors);
+        }
+
         if (audited)
         {
             await audit.WriteAsync(new AuditEvent("integration.sync.pack.import", true, IntegrationPermissions.SystemCode, SyncMappingPack.EntityType, pack.Id.ToString(),
@@ -1217,7 +1285,8 @@ public sealed partial class SyncAdministration(
     }
 
     private static SyncExceptionDto ToDto(SyncException e, string? key) =>
-        new(e.Id, e.MappingId, key, e.SourceObject, e.ExternalId, e.Reason, e.Field, e.Value, e.MessageKey, e.Status, e.Attempts, e.CreatedAt, e.UpdatedAt, e.ResolvedAt);
+        new(e.Id, e.MappingId, key, e.SourceObject, e.ExternalId, e.Reason, e.Field, e.Value, e.MessageKey, e.Status, e.Attempts, e.CreatedAt, e.UpdatedAt, e.ResolvedAt,
+            e.Params is null ? null : SyncJson.Read<Dictionary<string, string?>>(e.Params));
 
     public async Task<Result<SyncExceptionDetailDto>> ExceptionAsync(Guid id, CancellationToken ct)
     {
@@ -1272,18 +1341,34 @@ public sealed partial class SyncAdministration(
                       orderby m.Kind == ObjectMappingKinds.People ? 0 : 1, m.LoadOrder, e.CreatedAt, e.Id
                       select e.Id;
         var all = await ordered.ToListAsync(ct).ConfigureAwait(false);
-        foreach (var page in all.Chunk(ReprocessPage))
+
+        // Release 1.0.2 (fix 6): passes repeat while a pass resolves something, so dependants whose parent resolved later in the same pass
+        // (or whose parent came from another filter) are not left open. Writing a parent also re-processes its waiting dependants (engine).
+        var remaining = all;
+        while (remaining.Count > 0)
         {
-            var rows = await db.SyncExceptions.Where(e => page.Contains(e.Id)).ToListAsync(ct).ConfigureAwait(false);
-            foreach (var row in page.Select(id => rows.First(r => r.Id == id)))
+            foreach (var page in remaining.Chunk(ReprocessPage))
             {
-                if (row.Status == ExceptionStatuses.Open)
+                var rows = await db.SyncExceptions.Where(e => page.Contains(e.Id)).ToListAsync(ct).ConfigureAwait(false);
+                foreach (var row in page.Select(id => rows.First(r => r.Id == id)))
                 {
-                    await engine.ReprocessAsync(row, null, ct).ConfigureAwait(false);
+                    if (row.Status == ExceptionStatuses.Open)
+                    {
+                        await engine.ReprocessAsync(row, null, ct).ConfigureAwait(false);
+                    }
                 }
+
+                db.ChangeTracker.Clear();
             }
 
-            db.ChangeTracker.Clear();
+            var open = await db.SyncExceptions.AsNoTracking().Where(e => remaining.Contains(e.Id) && e.Status == ExceptionStatuses.Open).Select(e => e.Id)
+                .ToListAsync(ct).ConfigureAwait(false);
+            if (open.Count == remaining.Count)
+            {
+                break;
+            }
+
+            remaining = [.. remaining.Where(open.Contains)];
         }
 
         var still = await db.SyncExceptions.AsNoTracking().CountAsync(e => all.Contains(e.Id) && e.Status == ExceptionStatuses.Open, ct).ConfigureAwait(false);

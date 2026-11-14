@@ -81523,6 +81523,13 @@
             "items": {
               "$ref": "#/components/schemas/MappingPackObject"
             }
+          },
+          "lookups": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MappingPackLookup"
+            },
+            "description": "Lookup values the pack's value maps produce (release 1.0.2, ADR 0216): organisation-specific picklist values live in the pack, not in\ncode. Import and upgrade add the codes a lookup type does not have yet and never change existing values."
           }
         },
         "description": "JSON document of a mapping pack (export / import, ADR 0203). No connection settings, secrets or watermarks."
@@ -81580,6 +81587,45 @@
           "version": {
             "type": "integer",
             "format": "uint32"
+          }
+        }
+      },
+      "MappingPackLookup": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string"
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MappingPackLookupValue"
+            }
+          }
+        }
+      },
+      "MappingPackLookupValue": {
+        "required": [
+          "code",
+          "labelAr",
+          "labelEn"
+        ],
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "labelAr": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "labelEn": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         }
       },
@@ -85506,6 +85552,21 @@
           },
           "completed": {
             "type": "boolean"
+          },
+          "fullLoad": {
+            "type": "boolean",
+            "description": "The object was read from scratch (first load or full run): reconciliation applies (release 1.0.2, fix 6)."
+          },
+          "reconciliation": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "description": "Salesforce COUNT() versus synced records plus open exceptions after a full load; null for incremental runs.",
+                "$ref": "#/components/schemas/ReconciliationResult"
+              }
+            ]
           }
         },
         "description": "Counters of one object in one run."
@@ -93986,6 +94047,41 @@
             ]
           }
         }
+      },
+      "ReconciliationResult": {
+        "required": [
+          "source",
+          "synced",
+          "openExceptions",
+          "difference",
+          "mappings"
+        ],
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "synced": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "openExceptions": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "difference": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "mappings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "description": "Per object after a full load (release 1.0.2, fix 6): `Source` = Salesforce `SELECT COUNT()` of live rows (the mapping's filter, not\ndeleted); `Synced` = records of the target type held with status \"synced\"; `OpenExceptions` = open exceptions of the mappings of that\ntarget; `Difference` = Source − Synced − OpenExceptions (0 = every Salesforce row is either here or waiting in the queue). Mappings that\nshare a target type (e.g. two Salesforce objects → controls) are reconciled together and named in `Mappings`."
       },
       "RecordReferenceDto": {
         "required": [
@@ -105271,6 +105367,15 @@
               "string"
             ],
             "format": "date-time"
+          },
+          "params": {
+            "type": [
+              "null",
+              "object"
+            ],
+            "additionalProperties": {
+              "type": "string"
+            }
           }
         }
       },

@@ -1,0 +1,3624 @@
+{
+  "format": "strategy.sync-pack/1",
+  "code": "adof-salesforce",
+  "version": 2,
+  "description": "Upgrade snapshot (ADR 0213 / 0217): the content pack version 2 (release 1.0.1) shipped for every object; pack 3 (release 1.0.2) changes or replaces them. Never edit.",
+  "objects": [
+    {
+      "key": "department",
+      "sourceObject": "Department__c",
+      "kind": "record",
+      "targetType": "org.unit",
+      "loadOrder": 10,
+      "useBulk": true,
+      "fields": [
+        {
+          "source": "Id",
+          "target": "code",
+          "kind": "direct"
+        },
+        {
+          "source": "Short_Code__c",
+          "target": "code",
+          "kind": "direct",
+          "transform": "trim"
+        },
+        {
+          "source": "Name",
+          "target": "nameAr",
+          "kind": "direct",
+          "transform": "trim"
+        },
+        {
+          "source": "Department_Name_English__c",
+          "target": "nameEn",
+          "kind": "direct",
+          "transform": "trim"
+        },
+        {
+          "source": "Record_Type__c",
+          "target": "levelCode",
+          "kind": "picklist",
+          "values": {
+            "Department": "department",
+            "Section": "section",
+            "Access": "department"
+          }
+        },
+        {
+          "source": "Parent_Department__c",
+          "target": "parentId",
+          "kind": "reference",
+          "referenceType": "org.unit"
+        }
+      ],
+      "defaults": {
+        "levelCode": "department"
+      },
+      "ignore": [
+        "OwnerId",
+        "CurrencyIsoCode",
+        "Main_Department__c",
+        "Main_Department_Id__c",
+        "LastActivityDate"
+      ],
+      "notesAr": "الأقسام والإدارات: الرمز المختصر رمزاً للوحدة (وإلا معرّف Salesforce)، والتسلسل من الإدارة الأم على عدة مراحل.",
+      "notesEn": "Departments and sections: the short code becomes the unit code (else the Salesforce Id); the hierarchy comes from Parent_Department__c in several passes."
+    },
+    {
+      "key": "user",
+      "sourceObject": "User",
+      "kind": "people",
+      "loadOrder": 20,
+      "useBulk": true,
+      "options": {
+        "matchOrder": [
+          "email",
+          "employeeNo",
+          "federationId"
+        ],
+        "emailField": "Email",
+        "employeeNoField": "EmployeeNumber",
+        "federationIdField": "FederationIdentifier",
+        "nameField": "Name"
+      },
+      "notesAr": "مستخدمو Salesforce يطابَقون مع الموظفين بالبريد ثم رقم الموظف ثم معرّف الاتحاد؛ لا يُنشأ موظف جديد.",
+      "notesEn": "Salesforce users are matched to employees by e-mail, then employee number, then Federation ID; no employee is created."
+    },
+    {
+      "key": "contact",
+      "sourceObject": "Contact",
+      "kind": "people",
+      "loadOrder": 21,
+      "useBulk": true,
+      "provisional": true,
+      "options": {
+        "matchOrder": [
+          "email",
+          "employeeNo"
+        ],
+        "emailField": "Email",
+        "employeeNoField": "Employee_Number__c",
+        "federationIdField": null,
+        "nameField": "Name"
+      },
+      "notesAr": "حقول الأشخاص في PMS (مدير المشروع، مالك الخطر…) تشير إلى جهات الاتصال؛ المطابقة بالبريد ثم رقم الموظف (Employee_Number__c). لا تحتوي جهة الاتصال على EmployeeNumber ولا FederationIdentifier.",
+      "notesEn": "PMS people fields (project manager, risk owner, …) point at Contacts; matched by e-mail, then employee number (Employee_Number__c). Contact has no EmployeeNumber or FederationIdentifier."
+    },
+    {
+      "key": "team",
+      "sourceObject": "Project_Team__c",
+      "kind": "record",
+      "targetType": "teams.team",
+      "loadOrder": 30,
+      "fields": [
+        {
+          "source": "Name",
+          "target": "number",
+          "kind": "direct",
+          "transform": "trim"
+        },
+        {
+          "source": "Team_Name__c",
+          "target": "nameAr",
+          "kind": "direct",
+          "transform": "trim"
+        },
+        {
+          "source": "Team_Type__c",
+          "target": "type",
+          "kind": "picklist",
+          "required": true,
+          "values": {
+            "Work Team": "work-team",
+            "Project Team": "project-team",
+            "Standing Committee": "standing-committee",
+            "Temporary Committee": "temporary-committee"
+          }
+        },
+        {
+          "source": "Team_Subject__c",
+          "target": "subject",
+          "kind": "direct",
+          "transform": "trim"
+        },
+        {
+          "source": "Team_Objective__c",
+          "target": "objectives",
+          "kind": "direct",
+          "transform": "trim"
+        },
+        {
+          "source": "Approved_By__c",
+          "target": "approvedBy",
+          "kind": "picklist",
+          "values": {
+            "General Manager": "general-manager",
+            "President": "president"
+          }
+        },
+        {
+          "source": "Memo_Number__c",
+          "target": "memoNumber",
+          "kind": "direct",
+          "transform": "trim"
+        },
+        {
+          "source": "Start_Date__c",
+          "target": "startDate",
+          "kind": "direct"
+        },
+        {
+          "source": "End_Date__c",
+          "target": "endDate",
+          "kind": "direct"
+        },
+        {
+          "source": "Period__c",
+          "target": "cadence",
+          "kind": "picklist",
+          "values": {
+            "Monthly": "monthly",
+            "Quarterly": "quarterly",
+            "Biannually": "biannually",
+            "Annually": "annually",
+            "Other": "other"
+          }
+        },
+        {
+          "source": "Workload_Classification__c",
+          "target": "workload",
+          "kind": "picklist",
+          "values": {
+            "High": "high",
+            "Medium": "medium",
+            "Low": "low"
+          }
+        },
+        {
+          "source": "Status__c",
+          "target": "status",
+          "kind": "picklist",
+          "values": {
+            "Active": "active",
+            "InActive": "inactive",
+            "Pending Evaluation": "pending_evaluation",
+            "Waiting Approval": "evaluation_waiting_approval",
+            "Closed": "closed",
+            "Inactive – Replaced": "replaced"
+          }
+        },
+        {
+          "source": "Team_Leader__c",
+          "target": "leaderEmployeeId",
+          "kind": "person"
+        }
+      ],
+      "defaults": {
+        "status": "active"
+      },
+      "ignore": [
+        "OwnerId",
+        "CurrencyIsoCode",
+        "RecordTypeId",
+        "Is_Office__c",
+        "Reporting__c",
+        "Is_Owner__c",
+        "No_of_Members__c",
+        "Responsible_for_Report__c",
+        "Evaluation_Comments__c",
+        "No_of_Evaluation__c",
+        "Is_Evaluation_Completed__c",
+        "Open_for_Evaluation__c",
+        "Evaluation_Date__c",
+        "Evaluation_Year__c",
+        "Evaluation_Approved__c",
+        "Percentage_of_Recommendations_Closure__c",
+        "Implementation_Effectiveness_Impact__c",
+        "Quality_of_Output__c",
+        "Governance_Discipline_Documentation__c",
+        "Cooperation_and_harmony__c",
+        "Overall_Team_Evaluation_Score__c"
+      ],
+      "notesAr": "الفريق / اللجنة: نوع الفريق يُطابَق مع رموز أنواع الفرق المهيأة هنا، والحالة مع حالات دورة حياة الفريق («بانتظار الاعتماد» تُعامَل كاعتماد التقييم). الرقم من Name؛ الدوام (دائم / مؤقت) يُشتق من نوع الفريق وتاريخ الانتهاء، والقائد من العضو صاحب دور القيادة (وإلا Team_Leader__c)، وتُمنح أدوار السجل للأعضاء دون إطلاق أحداث أو إشعارات. عدد الأعضاء محسوب هنا. حقول التقييم على صف الفريق تنتقل إلى سجل تقييم سنوي مستقل (المطابقة team-evaluation). المسؤول عن التقرير (Responsible_for_Report__c) لا مقابل له هنا. الحقلان Team_Leader__c و Responsible_for_Report__c لا يظهران في الوصف الحالي لمستخدم التكامل: يجب أن يؤكدهما التحقق قبل التفعيل.",
+      "notesEn": "Team / committee: the team type maps to this system's configured team type codes and the status to the team lifecycle (\"Waiting Approval\" is treated as the evaluation approval). The number comes from Name; permanence is derived from the team type and the end date, the leader from the member holding a leader role (else Team_Leader__c), and the record roles are granted without events or notifications. The member count is computed here. The evaluation fields on the team row become a separate yearly evaluation record (mapping team-evaluation). Responsible_for_Report__c has no counterpart here. Team_Leader__c and Responsible_for_Report__c are not in the integration user's current describe: the validation must confirm them before activation."
+    },
+    {
+      "key": "team-member",
+      "sourceObject": "Project_Team_Association__c",
+      "kind": "record",
+      "targetType": "teams.team_member",
+      "loadOrder": 31,
+      "fields": [
+        {
+          "source": "Project_Team__c",
+          "target": "teamId",
+          "kind": "reference",
+          "referenceType": "teams.team",
+          "required": true
+        },
+        {
+          "source": "Employee__c",
+          "target": "employeeId",
+          "kind": "person"
+        },
+        {
+          "source": "Employee_Name__c",
+          "target": "externalName",
+          "kind": "direct",
+          "transform": "truncate:300"
+        },
+        {
+          "source": "Member_Role__c",
+          "target": "role",
+          "kind": "picklist",
+          "required": true,
+          "values": {
+            "President": "president",
+            "Deputy": "deputy",
+            "Project Manager": "project-manager",
+            "Member": "member",
+            "Rapporteur": "rapporteur",
+            "Member&Rapporteur": "member-rapporteur",
+            "Secretary": "secretary"
+          }
+        },
+        {
+          "source": "Responsibilities__c",
+          "target": "responsibilities",
+          "kind": "direct",
+          "transform": "trim"
+        },
+        {
+          "source": "Required_Skills__c",
+          "target": "requiredSkills",
+          "kind": "direct",
+          "transform": "trim"
+        },
+        {
+          "source": "Position_Order__c",
+          "target": "position",
+          "kind": "direct"
+        }
+      ],
+      "defaults": {
+        "role": "member",
+        "status": "active"
+      },
+      "ignore": [
+        "Name",
+        "CurrencyIsoCode",
+        "User_Inactive__c",
+        "Team_Name__c",
+        "Participation_Level__c",
+        "Is_Evaluated__c",
+        "Evaluation_Date__c",
+        "Evaluation_Comments__c",
+        "Evaluation_Year__c",
+        "Contribution_to_Achieve_Goal__c",
+        "Commitment_to_attend_meeting_and_submit__c",
+        "Communication_with_teams__c",
+        "Evaluation_Point__c",
+        "Evaluation_Grade__c",
+        "Certificate_of_Appreciation__c",
+        "Financial_Reward__c",
+        "Reward_Amount__c"
+      ],
+      "notesAr": "عضوية الفريق: دور العضو يُطابَق مع أدوار الأعضاء المهيأة هنا؛ الموظف من جهة الاتصال (Employee__c)، واسم الموظف يُحفظ للأعضاء غير المطابَقين فقط. القائد وأدوار السجل (عضو، قائد، أمين سر، عرض النتائج) تُحسب للفريق بعد كل عضوية. حقول التقييم على صف العضوية تنتقل إلى تقييم عضو سنوي (المطابقة member-evaluation). الحقل Employee__c لا يظهر في الوصف الحالي لمستخدم التكامل: يجب أن يؤكده التحقق قبل التفعيل.",
+      "notesEn": "Team membership: the member role maps to this system's configured member roles; the employee comes from the Contact (Employee__c) and the employee name is kept for unmatched (external) members only. The leader and the record roles (member, leader, secretary, results viewer) are recomputed for the team after each membership. The evaluation fields on the association row become a yearly member evaluation (mapping member-evaluation). Employee__c is not in the integration user's current describe: the validation must confirm it before activation."
+    },
+    {
+      "key": "team-evaluation",
+      "sourceObject": "Project_Team__c",
+      "kind": "record",
+      "targetType": "teams.team_evaluation",
+      "loadOrder": 32,
+      "externalIdTemplate": "{Id}-{Evaluation_Year__c}",
+      "fields": [
+        {
+          "source": "Id",
+          "target": "teamId",
+          "kind": "reference",
+          "referenceType": "teams.team",
+          "required": true
+        },
+        {
+          "source": "Evaluation_Year__c",
+          "target": "cycle",
+          "kind": "direct",
+          "transform": "trim",
+          "required": true
+        },
+        {
+          "source": "Overall_Team_Evaluation_Score__c",
+          "target": "score",
+          "kind": "direct"
+        },
+        {
+          "source": "Workload_Classification__c",
+          "target": "workload",
+          "kind": "picklist",
+          "values": {
+            "High": "high",
+            "Medium": "medium",
+            "Low": "low"
+          }
+        },
+        {
+          "source": "Evaluation_Approved__c",
+          "target": "status",
+          "kind": "picklist",
+          "values": {
+            "true": "approved",
+            "false": "submitted"
+          }
+        },
+        {
+          "source": "Evaluation_Date__c",
+          "target": "submittedAt",
+          "kind": "direct"
+        }
+      ],
+      "defaults": {
+        "status": "approved"
+      },
+      "ignore": [
+        "Name",
+        "Team_Name__c",
+        "Status__c",
+        "Is_Evaluation_Completed__c",
+        "Open_for_Evaluation__c",
+        "No_of_Evaluation__c",
+        "Evaluation_Comments__c",
+        "Percentage_of_Recommendations_Closure__c",
+        "Implementation_Effectiveness_Impact__c",
+        "Quality_of_Output__c",
+        "Governance_Discipline_Documentation__c",
+        "Cooperation_and_harmony__c",
+        "End_Date__c"
+      ],
+      "notesAr": "فرق في النموذج: Salesforce يحفظ درجات التقييم على صف الفريق نفسه، وهنا لكل سنة سجل تقييم مستقل؛ المعرّف الخارجي {Id}-{سنة التقييم} من Evaluation_Year__c (تاريخ الانتهاء فارغ في أغلب اللجان الدائمة، فلا يصلح مفتاحاً)، فتبقى تقييمات السنوات السابقة عند انتقال الصف إلى سنة جديدة، ويُتخطّى الصف بلا سنة. الدرجة الإجمالية تُحفظ درجةً للتقييم؛ درجات المعايير الخمسة (قوائم بقيم 25 / 12.5 / 0 …) لا تُنقل منفردة. الفترة السنوية والقالب المنشور والرقم والمقيِّم (قائد الفريق) تُحسب هنا. التقييم غير المعتمد بلا درجة يبقى مفتوحاً للمقيِّم، وغير المعتمد بدرجة يُعدّ مُرسلاً؛ لا يُنشأ مسار اعتماد.",
+      "notesEn": "Model difference: Salesforce keeps the evaluation scores on the team row itself; here each year is its own evaluation record. The external ID is {Id}-{evaluation year} from Evaluation_Year__c (End_Date__c is empty for most standing committees, so it cannot key the year), so earlier years stay when the row moves to a new year, and a row without a year is skipped. The overall score is kept as the evaluation score; the five criterion picklists (values 25 / 12.5 / 0 …) are not carried individually. The annual period, the published template, the number and the evaluator (the team leader) are derived here. A non-approved evaluation without a score stays open for the evaluator; one with a score counts as submitted; no approval instance is created."
+    },
+    {
+      "key": "member-evaluation",
+      "sourceObject": "Project_Team_Association__c",
+      "kind": "record",
+      "targetType": "teams.member_evaluation",
+      "loadOrder": 33,
+      "externalIdTemplate": "{Id}-{Evaluation_Year__c}",
+      "fields": [
+        {
+          "source": "Project_Team__c",
+          "target": "teamId",
+          "kind": "reference",
+          "referenceType": "teams.team",
+          "required": true
+        },
+        {
+          "source": "Id",
+          "target": "memberId",
+          "kind": "reference",
+          "referenceType": "teams.team_member",
+          "required": true
+        },
+        {
+          "source": "Evaluation_Point__c",
+          "target": "points",
+          "kind": "direct"
+        },
+        {
+          "source": "Participation_Level__c",
+          "target": "grade",
+          "kind": "picklist",
+          "values": {
+            "Very Active": "very-active",
+            "Active": "active",
+            "Not Active": "not-active"
+          }
+        },
+        {
+          "source": "Evaluation_Grade__c",
+          "target": "grade",
+          "kind": "picklist",
+          "values": {
+            "Very Active": "very-active",
+            "Active": "active",
+            "Not Active": "not-active"
+          }
+        },
+        {
+          "source": "Evaluation_Comments__c",
+          "target": "comment",
+          "kind": "direct",
+          "transform": "trim"
+        },
+        {
+          "source": "Evaluation_Date__c",
+          "target": "evaluatedAt",
+          "kind": "direct"
+        },
+        {
+          "source": "Certificate_of_Appreciation__c",
+          "target": "certificate",
+          "kind": "direct"
+        },
+        {
+          "source": "Financial_Reward__c",
+          "target": "financialReward",
+          "kind": "direct"
+        },
+        {
+          "source": "Reward_Amount__c",
+          "target": "calculatedReward",
+          "kind": "direct"
+        },
+        {
+          "source": "Reward_Amount__c",
+          "target": "approvedReward",
+          "kind": "direct"
+        }
+      ],
+      "ignore": [
+        "Name",
+        "Employee__c",
+        "Employee_Name__c",
+        "Member_Role__c",
+        "Team_Name__c",
+        "Is_Evaluated__c",
+        "User_Inactive__c",
+        "Position_Order__c",
+        "Responsibilities__c",
+        "Required_Skills__c",
+        "Contribution_to_Achieve_Goal__c",
+        "Commitment_to_attend_meeting_and_submit__c",
+        "Communication_with_teams__c"
+      ],
+      "notesAr": "فرق في النموذج: تقييم العضو محفوظ في Salesforce على صف العضوية، وهنا تقييم عضو لكل سنة ({Id}-{Evaluation_Year__c}) مرتبط بتقييم الفريق لتلك السنة (آخر سنة تقييم للفريق لا تتجاوز سنة تاريخ التقييم، إذ يُقيَّم العام في مطلع العام التالي). نقاط التقييم تُحفظ كنقاط العضو، والتقدير (فعّال جداً / فعّال / غير فعّال) يُطابَق مع فئات قالب التقييم؛ إجابات الأسئلة الثلاثة (1–5) لا تُنقل منفردة. الموظف والدور وصفة القيادة تؤخذ من العضوية. مبلغ المكافأة يُحفظ محسوباً ومعتمداً. أي تقدير آخر يظهر في قائمة الاستثناءات.",
+      "notesEn": "Model difference: Salesforce keeps the member evaluation on the association row; here there is one member evaluation per year ({Id}-{Evaluation_Year__c}) attached to the team's evaluation of that year (the team's latest evaluation year not after the year of the evaluation date, since a year is evaluated early the next year). The evaluation point is kept as the member's points and the grade (Very Active / Active / Not Active) maps to the evaluation template's grade bands; the answers to the three 1–5 questions are not carried individually. The employee, role and leader flag are taken from the membership. The reward amount is kept as calculated and approved reward. Any other grade shows up in the exceptions queue."
+    },
+    {
+      "key": "program-request",
+      "sourceObject": "PMS_Project_Request__c",
+      "kind": "record",
+      "targetType": "portfolio.request",
+      "loadOrder": 40,
+      "fields": [
+        {
+          "source": "Name",
+          "target": "number",
+          "kind": "direct",
+          "required": true
+        },
+        {
+          "source": "Status__c",
+          "target": "status",
+          "kind": "picklist",
+          "values": {
+            "Draft": "draft",
+            "Waiting Approval": "in-approval",
+            "Manager Approval": "in-approval",
+            "PMO Approval": "in-approval",
+            "DGO Approval": "in-approval",
+            "Budget Approval": "in-approval",
+            "Approved": "approved",
+            "Rejected": "rejected"
+          }
+        },
+        {
+          "source": "Approval_Status__c",
+          "target": "approvalStatus",
+          "kind": "direct"
+        },
+        {
+          "source": "Program_Name__c",
+          "target": "nameAr",
+          "kind": "direct",
+          "transform": "trim"
+        },
+        {
+          "source": "Program_Description__c",
+          "target": "description",
+          "kind": "direct"
+        },
+        {
+          "source": "Program_Justifications__c",
+          "target": "justifications",
+          "kind": "direct"
+        },
+        {
+          "source": "Program_Scope__c",
+          "target": "scopeOfWork",
+          "kind": "direct"
+        },
+        {
+          "source": "Program_Type__c",
+          "target": "programType",
+          "kind": "picklist",
+          "values": {
+            "Digital": "digital",
+            "Non-Digital": "non-digital"
+          }
+        },
+        {
+          "source": "Project_Nature__c",
+          "target": "programNature",
+          "kind": "direct"
+        },
+        {
+          "source": "Program_Estimated_Budget__c",
+          "target": "estimatedBudget",
+          "kind": "direct"
+        },
+        {
+          "source": "Approved_Budget__c",
+          "target": "approvedBudget",
+          "kind": "direct"
+        },
+        {
+          "source": "First_Year_Cost__c",
+          "target": "year1Cost",
+          "kind": "direct"
+        },
+        {
+          "source": "Second_Year_Cost__c",
+          "target": "year2Cost",
+          "kind": "direct"
+        },
+        {
+          "source": "Third_Year_Cost__c",
+          "target": "year3Cost",
+          "kind": "direct"
+        },
+        {
+          "source": "Forth_Year_Cost__c",
+          "target": "year4Cost",
+          "kind": "direct"
+        },
+        {
+          "source": "Approx_Annual_License_Cost__c",
+          "target": "annualLicenceCost",
+          "kind": "direct"
+        },
+        {
+          "source": "Approx_Annual_Maintenance_Cost__c",
+          "target": "annualMaintenanceCost",
+          "kind": "direct"
+        },
+        {
+          "source": "Approx_Annual_Other_Cost__c",
+          "target": "annualOtherCost",
+          "kind": "direct"
+        },
+        {
+          "source": "Department__c",
+          "target": "unitId",
+          "kind": "reference",
+          "referenceType": "org.unit"
+        },
+        {
+          "source": "Section_to_Implement__c",
+          "target": "sectionUnitId",
+          "kind": "reference",
+          "referenceType": "org.unit"
+        },
+        {
+          "source": "CreatedById",
+          "target": "requesterEmployeeId",
+          "kind": "person"
+        },
+        {
+          "source": "Does_it_require_Budget__c",
+          "target": "requiresBudget",
+          "kind": "direct",
+          "transform": "yesNo"
+        },
+        {
+          "source": "Is_the_work_core_to_the_unit__c",
+          "target": "screenCoreWork",
+          "kind": "direct",
+          "transform": "yesNo"
+        },
+        {
+          "source": "Is_the_work_done_once_without_repetition__c",
+          "target": "screenOneTime",
+          "kind": "direct",
+          "transform": "yesNo"
+        },
+        {
+          "source": "Having_Specific_Time_Period__c",
+          "target": "screenTimeBound",
+          "kind": "direct",
+          "transform": "yesNo"
+        },
+        {
+          "source": "Are_there_unique_results_or_outputs__c",
+          "target": "screenUniqueOutput",
+          "kind": "direct",
+          "transform": "yesNo"
+        },
+        {
+          "source": "Does_it_require_at_least_AED_100K__c",
+          "target": "screenMinCost",
+          "kind": "direct",
+          "transform": "yesNo"
+        },
+        {
+          "source": "Are_there_any_operational_costs__c",
+          "target": "screenOperationalCosts",
+          "kind": "direct",
+          "transform": "yesNo"
+        },
+        {
+          "source": "Will_others_bear_the_costs__c",
+          "target": "othersBearCosts",
+          "kind": "direct",
+          "transform": "yesNo"
+        },
+        {
+          "source": "Will_others_cover_implementation_costs__c",
+          "target": "othersCoverImplementation",
+          "kind": "direct",
+          "transform": "yesNo"
+        },
+        {
+          "source": "Will_a_financial_return_be_achieved__c",
+          "target": "returnExpected",
+          "kind": "direct",
+          "transform": "yesNo"
+        },
+        {
+          "source": "Will_my_operational_costs_reduce__c",
+          "target": "reductionExpected",
+          "kind": "direct",
+          "transform": "yesNo"
+        },
+        {
+          "source": "Main_Option__c",
+          "target": "mainOption",
+          "kind": "picklist",
+          "values": {
+            "Contracting with Company": "contracting",
+            "Internal Implementation": "internal",
+            "Outsourcing Employee": "outsourcing-employee",
+            "Public Private Partnership": "ppp"
+          }
+        },
+        {
+          "source": "Main_Option_Advantage__c",
+          "target": "mainAdvantages",
+          "kind": "direct"
+        },
+        {
+          "source": "Main_Option_Disadvantage__c",
+          "target": "mainDisadvantages",
+          "kind": "direct"
+        },
+        {
+          "source": "Alternative_Option__c",
+          "target": "altOption",
+          "kind": "picklist",
+          "values": {
+            "Contracting with Company": "contracting",
+            "Internal Implementation": "internal",
+            "Outsourcing Employee": "outsourcing-employee",
+            "Public Private Partnership": "ppp"
+          }
+        },
+        {
+          "source": "Alternative_Option_Advantage__c",
+          "target": "altAdvantages",
+          "kind": "direct"
+        },
+        {
+          "source": "Alternative_Option_Disadvantage__c",
+          "target": "altDisadvantages",
+          "kind": "direct"
+        },
+        {
+          "source": "Evaluation_Score__c",
+          "target": "evaluationScore",
+          "kind": "direct"
+        },
+        {
+          "source": "Transfer_to_Adminstrative__c",
+          "target": "procurementStatus",
+          "kind": "direct"
+        }
+      ],
+      "ignore": [
+        "OwnerId",
+        "CurrencyIsoCode",
+        "Threshold_Amount__c",
+        "Department_Manager_User__c",
+        "Section_Manager_User__c",
+        "Concern_Employee_to_Implement__c",
+        "Link_to_Ajman_vision_2030_and_Department__c",
+        "Expected_impact_and_added_value__c",
+        "Complexity_Level__c",
+        "Driving_Radical_Change__c",
+        "Strategic_objectives_related_to_Program__c"
+      ],
+      "notesAr": "حالة الطلب في Salesforce تُختصر إلى حالة هنا (مسودة / قيد الاعتماد / معتمد / مرفوض)؛ خطوات الاعتماد تُنقل سجلاً تاريخياً للمصدر ولا تُنشأ مسارات اعتماد حية.",
+      "notesEn": "The Salesforce status collapses to a status here (draft / in approval / approved / rejected); the approval steps come over as source approval history — no live approval instance is created."
+    },
+    {
+      "key": "project",
+      "sourceObject": "PMS_Project__c",
+      "kind": "record",
+      "targetType": "portfolio.project",
+      "loadOrder": 41,
+      "fields": [
+        {
+          "source": "Name",
+          "target": "number",
+          "kind": "direct",
+          "required": true
+        },
+        {
+          "source": "Program_Classification__c",
+          "target": "classification",
+          "kind": "picklist",
+          "values": {
+            "Project": "project",
+            "Initiative": "initiative"
+          }
+        },
+        {
+          "source": "PMS_Project_Request__c",
+          "target": "requestId",
+          "kind": "reference",
+          "referenceType": "portfolio.request"
+        },
+        {
+          "source": "Project_Name__c",
+          "target": "nameAr",
+          "kind": "direct",
+          "transform": "trim"
+        },
+        {
+          "source": "Project_Stage__c",
+          "target": "stage",
+          "kind": "picklist",
+          "values": {
+            "Request": "initiation",
+            "Initiation": "initiation",
+            "Planning": "planning",
+            "Execution": "execution",
+            "Closure": "closure",
+            "Impact": "impact",
+            "Completed": "completed"
+          }
+        },
+        {
+          "source": "Project_Status__c",
+          "target": "status",
+          "kind": "picklist",
+          "values": {
+            "Draft": "draft",
+            "Active": "active",
+            "On Hold": "on-hold",
+            "Cancelled": "cancelled",
+            "Completed": "completed"
+          }
+        },
+        {
+          "source": "Approval_Status__c",
+          "target": "subState",
+          "kind": "picklist",
+          "values": {
+            "Section Manager - Charter": "charter-approval",
+            "Department Director - Charter": "charter-approval",
+            "PM Office - Charter": "charter-approval",
+            "Charter Approved": "planning-draft",
+            "Charter Rejected": "charter-draft",
+            "Section Manager - Planning": "planning-approval",
+            "Department Director - Planning": "planning-approval",
+            "PM Office - Planning": "planning-approval",
+            "Planning Approved": "execution",
+            "Planning Rejected": "planning-draft",
+            "Section Manager - Execution": "completion",
+            "Department Director - Execution": "completion",
+            "PM Office - Execution": "completion",
+            "Execution Approved": "closure-draft",
+            "Execution Rejected": "execution",
+            "Section Manager - Closure": "closure-approval",
+            "Department Director - Closure": "closure-approval",
+            "PM Office - Closure": "closure-approval",
+            "Closure Approved": "impact-draft",
+            "Closure Rejected": "closure-draft"
+          }
+        },
+        {
+          "source": "Approval_Status__c",
+          "target": "approvalResult",
+          "kind": "direct"
+        },
+        {
+          "source": "Department_Concerned__c",
+          "target": "unitId",
+          "kind": "reference",
+          "referenceType": "org.unit"
+        },
+        {
+          "source": "Section_to_Implement__c",
+          "target": "sectionUnitId",
+          "kind": "reference",
+          "referenceType": "org.unit"
+        },
+        {
+          "source": "Operational_Themes__c",
+          "target": "operationalThemes",
+          "kind": "picklist",
+          "values": {
+            "Economic Sustainability": "sustainability",
+            "Environmental Sustainability": "sustainability",
+            "Future Readiness": "innovative",
+            "Quality of Life": "customer-experience",
+            "Business Model": "digital-transformation"
+          }
+        },
+        {
+          "source": "Project_Budget__c",
+          "target": "budget",
+          "kind": "direct"
+        },
+        {
+          "source": "C_First_Year_Cost__c",
+          "target": "year1ContractedCost",
+          "kind": "direct"
+        },
+        {
+          "source": "C_Second_Year_Cost__c",
+          "target": "year2ContractedCost",
+          "kind": "direct"
+        },
+        {
+          "source": "C_Third_Year_Cost__c",
+          "target": "year3ContractedCost",
+          "kind": "direct"
+        },
+        {
+          "source": "C_Forth_Year_Cost__c",
+          "target": "year4ContractedCost",
+          "kind": "direct"
+        },
+        {
+          "source": "A_First_Year_Cost__c",
+          "target": "year1ActualCost",
+          "kind": "direct"
+        },
+        {
+          "source": "A_Second_Year_Cost__c",
+          "target": "year2ActualCost",
+          "kind": "direct"
+        },
+        {
+          "source": "A_Third_Year_Cost__c",
+          "target": "year3ActualCost",
+          "kind": "direct"
+        },
+        {
+          "source": "A_Forth_Year_Cost__c",
+          "target": "year4ActualCost",
+          "kind": "direct"
+        },
+        {
+          "source": "Annual_Operational_Cost__c",
+          "target": "annualOperationCost",
+          "kind": "direct"
+        },
+        {
+          "source": "Annual_Maintenance_Cost__c",
+          "target": "annualMaintenanceCost",
+          "kind": "direct"
+        },
+        {
+          "source": "Annual_Support_Cost__c",
+          "target": "annualLicenceCost",
+          "kind": "direct"
+        },
+        {
+          "source": "Annual_Other_Cost__c",
+          "target": "annualOtherCost",
+          "kind": "direct"
+        },
+        {
+          "source": "Planned_Project_Start_Date__c",
+          "target": "plannedStart",
+          "kind": "direct"
+        },
+        {
+          "source": "Planned_Project_End_Date__c",
+          "target": "plannedEnd",
+          "kind": "direct"
+        },
+        {
+          "source": "Project_Owner__c",
+          "target": "ownerEmployeeId",
+          "kind": "person"
+        },
+        {
+          "source": "Project_Manager__c",
+          "target": "pmEmployeeId",
+          "kind": "person"
+        },
+        {
+          "source": "Human_Resources__c",
+          "target": "resourcesHuman",
+          "kind": "direct"
+        },
+        {
+          "source": "Financial_Resource__c",
+          "target": "resourcesFinancial",
+          "kind": "direct"
+        },
+        {
+          "source": "Technical_Resource__c",
+          "target": "resourcesTechnical",
+          "kind": "direct"
+        },
+        {
+          "source": "Contract_Resource__c",
+          "target": "resourcesContract",
+          "kind": "direct"
+        },
+        {
+          "source": "Other_Resource__c",
+          "target": "resourcesOther",
+          "kind": "direct"
+        },
+        {
+          "source": "lpo_file_uploaded__c",
+          "target": "lpoUploaded",
+          "kind": "direct"
+        },
+        {
+          "source": "Total_Achieve__c",
+          "target": "performance",
+          "kind": "direct",
+          "transform": "percentToRatio"
+        },
+        {
+          "source": "Till_Weight__c",
+          "target": "plannedProgress",
+          "kind": "direct",
+          "transform": "percentToRatio"
+        }
+      ],
+      "ignore": [
+        "OwnerId",
+        "CurrencyIsoCode",
+        "Department_Manager_User__c",
+        "Section_Manager_User__c",
+        "Project_Team__c",
+        "Charter_Mandatory_Done__c",
+        "Planning_Mandatory_Done__c",
+        "Closure_Mandatory_Done__c",
+        "Team_Formation_Uploaded__c",
+        "Project_Scope_Uploaded__c",
+        "Expected_Project_Start_Date__c",
+        "Expected_Project_End_Date__c",
+        "Actual_Project_Start_Date__c",
+        "Actual_Project_End_Date__c",
+        "Project_Cost__c",
+        "Total_Milestone_Cost__c",
+        "C_Total_Cost__c",
+        "A_Total_Cost__c",
+        "Total_Weight__c",
+        "Total_HighLevel_Weight__c",
+        "Performance__c",
+        "Updated_Achievement__c",
+        "No_of_KPIs__c",
+        "No_of_Risks__c",
+        "No_of_Stakeholders__c"
+      ],
+      "notesAr": "حالة الاعتماد (Approval_Status__c) تُحوَّل إلى المرحلة والحالة الفرعية؛ سجل الاعتماد يأتي من ProcessInstance للعرض فقط ولا تُنشأ مسارات اعتماد. الحقول المحسوبة (العدادات، الإجماليات) تُحسب هنا.",
+      "notesEn": "Approval_Status__c becomes the stage and sub-state snapshot; the approval history comes from ProcessInstance as read-only source history and no live approval instance is created. Roll-up counters and totals are computed here."
+    },
+    {
+      "key": "work-plan",
+      "sourceObject": "PMS_Work_Plan__c",
+      "kind": "record",
+      "targetType": "portfolio.milestone",
+      "loadOrder": 42,
+      "fields": [
+        {
+          "source": "PMS_Project__c",
+          "target": "projectId",
+          "kind": "reference",
+          "referenceType": "portfolio.project",
+          "required": true
+        },
+        {
+          "source": "Name",
+          "target": "code",
+          "kind": "direct",
+          "required": true
+        },
+        {
+          "source": "Header_Phase__c",
+          "target": "parentId",
+          "kind": "reference",
+          "referenceType": "portfolio.milestone"
+        },
+        {
+          "source": "Is_this_header_task__c",
+          "target": "isHeader",
+          "kind": "direct"
+        },
+        {
+          "source": "High_Level_Plan__c",
+          "target": "highLevel",
+          "kind": "direct"
+        },
+        {
+          "source": "Task_Name__c",
+          "target": "titleAr",
+          "kind": "direct",
+          "transform": "trim"
+        },
+        {
+          "source": "Planned_Start_Date__c",
+          "target": "plannedStart",
+          "kind": "direct"
+        },
+        {
+          "source": "Planned_End_Date__c",
+          "target": "plannedEnd",
+          "kind": "direct"
+        },
+        {
+          "source": "Actual_Start_Date__c",
+          "target": "actualStart",
+          "kind": "direct"
+        },
+        {
+          "source": "Actual_End_Date__c",
+          "target": "actualEnd",
+          "kind": "direct"
+        },
+        {
+          "source": "Weight__c",
+          "target": "weight",
+          "kind": "direct",
+          "transform": "percentToRatio"
+        },
+        {
+          "source": "Achieve__c",
+          "target": "achieved",
+          "kind": "direct",
+          "transform": "percentToRatio"
+        },
+        {
+          "source": "Cost__c",
+          "target": "cost",
+          "kind": "direct"
+        },
+        {
+          "source": "Status__c",
+          "target": "status",
+          "kind": "picklist",
+          "values": {
+            "Not Started": "not-started",
+            "Active": "active",
+            "Deactivate": "cancelled",
+            "Cancelled": "cancelled",
+            "Completed": "completed"
+          }
+        },
+        {
+          "source": "Is_this_deliverable__c",
+          "target": "isDeliverable",
+          "kind": "direct"
+        },
+        {
+          "source": "Main_Deliverable__c",
+          "target": "mainDeliverable",
+          "kind": "direct"
+        },
+        {
+          "source": "Acceptance_Criteria__c",
+          "target": "acceptanceCriteria",
+          "kind": "direct"
+        },
+        {
+          "source": "Evidence__c",
+          "target": "evidenceNote",
+          "kind": "direct"
+        }
+      ],
+      "defaults": {
+        "status": "not-started"
+      },
+      "ignore": [
+        "Approved__c",
+        "Completion_Rate__c",
+        "Responsible_Person__c"
+      ],
+      "notesAr": "خطة العمل ذاتية الإسناد (المرحلة الرئيسية ← المهام): تُحمَّل على عدة مراحل حتى يظهر الأب. الأوزان والإنجاز بالنسبة المئوية تُحوَّل إلى نسبة (1.0 = 100%).",
+      "notesEn": "The work plan references itself (header phase → tasks) and loads in several passes until the parent exists. Weights and achievement in percent become ratios (1.0 = 100 %)."
+    },
+    {
+      "key": "project-kpi",
+      "sourceObject": "PMS_Project_Kpi__c",
+      "kind": "record",
+      "targetType": "portfolio.project-kpi",
+      "loadOrder": 43,
+      "fields": [
+        {
+          "source": "PMS_Project__c",
+          "target": "projectId",
+          "kind": "reference",
+          "referenceType": "portfolio.project",
+          "required": true
+        },
+        {
+          "source": "KPI_Nature__c",
+          "target": "nature",
+          "kind": "picklist",
+          "values": {
+            "New": "new",
+            "Existing": "existing"
+          }
+        },
+        {
+          "source": "KPI_Goal_Name__c",
+          "target": "nameAr",
+          "kind": "direct"
+        },
+        {
+          "source": "Measuring_Equation__c",
+          "target": "equation",
+          "kind": "direct"
+        },
+        {
+          "source": "Measuring_Direction__c",
+          "target": "direction",
+          "kind": "direct"
+        },
+        {
+          "source": "Target__c",
+          "target": "target",
+          "kind": "direct"
+        },
+        {
+          "source": "Year_of_Achievement__c",
+          "target": "targetYear",
+          "kind": "direct"
+        },
+        {
+          "source": "Current_Result__c",
+          "target": "currentResult",
+          "kind": "direct"
+        },
+        {
+          "source": "Status__c",
+          "target": "status",
+          "kind": "picklist",
+          "values": {
+            "Draft": "draft",
+            "Active": "active",
+            "Inactive": "inactive",
+            "Closed": "closed"
+          }
+        }
+      ],
+      "ignore": [
+        "KPI_Description_Card__c",
+        "Current_Result_Existing__c",
+        "Result_Applicable__c"
+      ],
+      "notesAr": "مؤشر «قائم» يرتبط ببطاقة المؤشر بعد مزامنة نظام الأداء.",
+      "notesEn": "An \"Existing\" KPI links to its KPI card once the Performance system is synced."
+    },
+    {
+      "key": "project-risk",
+      "sourceObject": "PMS_Project_Risk__c",
+      "kind": "record",
+      "targetType": "portfolio.project-risk",
+      "loadOrder": 44,
+      "fields": [
+        {
+          "source": "PMS_Project__c",
+          "target": "projectId",
+          "kind": "reference",
+          "referenceType": "portfolio.project",
+          "required": true
+        },
+        {
+          "source": "Risk__c",
+          "target": "title",
+          "kind": "direct"
+        },
+        {
+          "source": "Risk_Specific__c",
+          "target": "riskFactor",
+          "kind": "direct"
+        },
+        {
+          "source": "Probability_Level__c",
+          "target": "probability",
+          "kind": "picklist",
+          "values": {
+            "1": "1",
+            "2": "2",
+            "3": "3",
+            "4": "4",
+            "5": "5"
+          }
+        },
+        {
+          "source": "Impact_Level__c",
+          "target": "impact",
+          "kind": "picklist",
+          "values": {
+            "1": "1",
+            "2": "2",
+            "3": "3",
+            "4": "4",
+            "5": "5"
+          }
+        },
+        {
+          "source": "Inherent_Risk_Score__c",
+          "target": "sourceScore",
+          "kind": "direct"
+        },
+        {
+          "source": "Mitigation_Actions_to_control_the_risks__c",
+          "target": "mitigationActions",
+          "kind": "direct"
+        },
+        {
+          "source": "Implementation_Percentage__c",
+          "target": "implementationPct",
+          "kind": "direct",
+          "transform": "percentToRatio"
+        },
+        {
+          "source": "Implementation_Date__c",
+          "target": "implementationEnd",
+          "kind": "direct"
+        },
+        {
+          "source": "Risk_Owner__c",
+          "target": "ownerEmployeeId",
+          "kind": "person"
+        },
+        {
+          "source": "RMS_Status__c",
+          "target": "rmsStatus",
+          "kind": "direct"
+        },
+        {
+          "source": "RMS_Status__c",
+          "target": "status",
+          "kind": "picklist",
+          "values": {
+            "Draft": "draft",
+            "Active": "active",
+            "Inactive": "inactive",
+            "Closed": "closed"
+          }
+        }
+      ],
+      "ignore": [
+        "Actions_Specific__c"
+      ],
+      "notesAr": "درجة Salesforce الجمعية تُحفظ كدرجة المصدر، ويعيد إطار المخاطر هنا التقييم (الاحتمال × الأثر).",
+      "notesEn": "The Salesforce additive score is kept as the source score; the risk framework here re-rates the risk (probability × impact)."
+    },
+    {
+      "key": "project-stakeholder",
+      "sourceObject": "PMS_Project_Stakeholder__c",
+      "kind": "record",
+      "targetType": "portfolio.stakeholder",
+      "loadOrder": 45,
+      "fields": [
+        {
+          "source": "PMS_Project__c",
+          "target": "projectId",
+          "kind": "reference",
+          "referenceType": "portfolio.project",
+          "required": true
+        },
+        {
+          "source": "Stakeholder_Name__c",
+          "target": "name",
+          "kind": "direct"
+        },
+        {
+          "source": "Classification__c",
+          "target": "classification",
+          "kind": "picklist",
+          "values": {
+            "Internal": "internal",
+            "External": "external"
+          }
+        },
+        {
+          "source": "Level_of_Interest__c",
+          "target": "interestLevel",
+          "kind": "direct",
+          "transform": "lower"
+        },
+        {
+          "source": "Impact_Level__c",
+          "target": "impactLevel",
+          "kind": "direct",
+          "transform": "lower"
+        },
+        {
+          "source": "Communication_Method__c",
+          "target": "communicationMethod",
+          "kind": "direct"
+        },
+        {
+          "source": "Communication_Frequency__c",
+          "target": "communicationFrequency",
+          "kind": "direct"
+        },
+        {
+          "source": "Email__c",
+          "target": "email",
+          "kind": "direct"
+        },
+        {
+          "source": "Phone__c",
+          "target": "phone",
+          "kind": "direct"
+        },
+        {
+          "source": "Status__c",
+          "target": "status",
+          "kind": "picklist",
+          "values": {
+            "Draft": "draft",
+            "Active": "active",
+            "Inactive": "inactive",
+            "Closed": "closed"
+          }
+        }
+      ],
+      "ignore": [
+        "Role_in_the_Project__c"
+      ]
+    },
+    {
+      "key": "project-planning-item",
+      "sourceObject": "PMS_Project_Planning_Item__c",
+      "kind": "record",
+      "targetType": "portfolio.planning-item",
+      "loadOrder": 46,
+      "provisional": true,
+      "fields": [
+        {
+          "source": "PMS_Project__c",
+          "target": "projectId",
+          "kind": "reference",
+          "referenceType": "portfolio.project",
+          "required": true
+        },
+        {
+          "source": "Category__c",
+          "target": "category",
+          "kind": "picklist",
+          "values": {}
+        },
+        {
+          "source": "Description__c",
+          "target": "description",
+          "kind": "direct"
+        }
+      ],
+      "notesAr": "أسماء الحقول تُؤكَّد من الوصف الحي قبل التفعيل.",
+      "notesEn": "Field names are confirmed from the live describe before activation."
+    },
+    {
+      "key": "project-challenge",
+      "sourceObject": "PMS_Challenges_Constraints__c",
+      "kind": "record",
+      "targetType": "portfolio.challenge",
+      "loadOrder": 47,
+      "fields": [
+        {
+          "source": "PMS_Project__c",
+          "target": "projectId",
+          "kind": "reference",
+          "referenceType": "portfolio.project",
+          "required": true
+        },
+        {
+          "source": "Challenge__c",
+          "target": "text",
+          "kind": "direct"
+        },
+        {
+          "source": "Impact__c",
+          "target": "impact",
+          "kind": "direct"
+        },
+        {
+          "source": "Achieved_Percentage__c",
+          "target": "achievedPct",
+          "kind": "direct",
+          "transform": "percentToRatio"
+        },
+        {
+          "source": "Recommendation_to_Senior__c",
+          "target": "recommendation",
+          "kind": "direct"
+        },
+        {
+          "source": "PMS_Work_Plan__c",
+          "target": "milestoneId",
+          "kind": "reference",
+          "referenceType": "portfolio.milestone"
+        }
+      ],
+      "ignore": [
+        "Action_Taken__c",
+        "Planned_Progress__c",
+        "Deliverable_Received_but_not_Approved__c"
+      ]
+    },
+    {
+      "key": "change-request",
+      "sourceObject": "PMS_Change_Request__c",
+      "kind": "record",
+      "targetType": "portfolio.change-request",
+      "loadOrder": 48,
+      "fields": [
+        {
+          "source": "Project_Initiative__c",
+          "target": "projectId",
+          "kind": "reference",
+          "referenceType": "portfolio.project",
+          "required": true
+        },
+        {
+          "source": "Name",
+          "target": "number",
+          "kind": "direct",
+          "required": true
+        },
+        {
+          "source": "Change_Type__c",
+          "target": "type",
+          "kind": "picklist",
+          "values": {
+            "Project Details": "details",
+            "Cancellation": "cancellation",
+            "Postponement": "postponement",
+            "Ownership": "ownership",
+            "Merge": "merge"
+          }
+        },
+        {
+          "source": "Reason_for_Change__c",
+          "target": "reason",
+          "kind": "direct"
+        },
+        {
+          "source": "Modification_Details__c",
+          "target": "proposedDescription",
+          "kind": "direct"
+        },
+        {
+          "source": "Requested_Date__c",
+          "target": "requestedDate",
+          "kind": "direct"
+        },
+        {
+          "source": "Status__c",
+          "target": "status",
+          "kind": "picklist",
+          "values": {
+            "Draft": "draft",
+            "Under Review": "under-review",
+            "Approved": "approved",
+            "Rejected": "rejected",
+            "Cancelled": "cancelled",
+            "Completed": "completed"
+          }
+        },
+        {
+          "source": "Project_Manager__c",
+          "target": "newPmEmployeeId",
+          "kind": "person"
+        },
+        {
+          "source": "Project_Owner__c",
+          "target": "newOwnerEmployeeId",
+          "kind": "person"
+        }
+      ],
+      "ignore": [
+        "Change_Areas__c",
+        "Implemented_Date__c"
+      ]
+    },
+    {
+      "key": "contract",
+      "sourceObject": "PMS_Contract__c",
+      "kind": "record",
+      "targetType": "portfolio.contract",
+      "loadOrder": 49,
+      "fields": [
+        {
+          "source": "PMS_Project__c",
+          "target": "projectId",
+          "kind": "reference",
+          "referenceType": "portfolio.project",
+          "required": true
+        },
+        {
+          "source": "Contract_Purchase_Order_Name__c",
+          "target": "name",
+          "kind": "direct"
+        },
+        {
+          "source": "Contract_Purchase_Order_Number__c",
+          "target": "number",
+          "kind": "direct"
+        },
+        {
+          "source": "Supplier_Name__c",
+          "target": "supplier",
+          "kind": "direct"
+        },
+        {
+          "source": "Issue_Date__c",
+          "target": "issueDate",
+          "kind": "direct"
+        },
+        {
+          "source": "Status__c",
+          "target": "contractStatus",
+          "kind": "direct",
+          "transform": "lower"
+        }
+      ]
+    },
+    {
+      "key": "lesson",
+      "sourceObject": "PMS_Lesson_Learned__c",
+      "kind": "record",
+      "targetType": "portfolio.lesson",
+      "loadOrder": 50,
+      "fields": [
+        {
+          "source": "PMS_Project__c",
+          "target": "projectId",
+          "kind": "reference",
+          "referenceType": "portfolio.project",
+          "required": true
+        },
+        {
+          "source": "Project_Stage__c",
+          "target": "stage",
+          "kind": "direct",
+          "transform": "lower"
+        },
+        {
+          "source": "Lesson_Learned__c",
+          "target": "text",
+          "kind": "direct"
+        },
+        {
+          "source": "Type__c",
+          "target": "type",
+          "kind": "picklist",
+          "values": {}
+        },
+        {
+          "source": "Recommendation_to_Improve_System__c",
+          "target": "recommendation",
+          "kind": "direct"
+        }
+      ],
+      "notesAr": "أنواع الدروس في Salesforce (مالي، مؤسسي، فني…) تُطابَق مع قائمة أنواع الدروس هنا من قائمة الاستثناءات.",
+      "notesEn": "Salesforce lesson types (Finance, Institutional, Technical, …) are mapped to this system's lesson types from the exceptions queue."
+    },
+    {
+      "key": "team-meeting",
+      "sourceObject": "PMS_Team_Meeting__c",
+      "kind": "record",
+      "targetType": "portfolio.meeting",
+      "loadOrder": 51,
+      "fields": [
+        {
+          "source": "PMS_Project__c",
+          "target": "projectId",
+          "kind": "reference",
+          "referenceType": "portfolio.project",
+          "required": true
+        },
+        {
+          "source": "Meeting_DateTime__c",
+          "target": "meetingAt",
+          "kind": "direct",
+          "required": true
+        },
+        {
+          "source": "Name",
+          "target": "title",
+          "kind": "direct"
+        },
+        {
+          "source": "Any_Notes__c",
+          "target": "notes",
+          "kind": "direct"
+        }
+      ]
+    },
+    {
+      "key": "kpi-card",
+      "sourceObject": "Org_Kpi_Goal__c",
+      "kind": "record",
+      "targetType": "kpi.card",
+      "loadOrder": 60,
+      "provisional": true,
+      "fields": [
+        {
+          "source": "Name",
+          "target": "code",
+          "kind": "direct",
+          "required": true,
+          "transform": "trim"
+        },
+        {
+          "source": "Proposed_Kpi_Name__c",
+          "target": "nameAr",
+          "kind": "direct",
+          "required": true,
+          "transform": "trim"
+        },
+        {
+          "source": "Kpi_Description_Ar__c",
+          "target": "descriptionAr",
+          "kind": "direct",
+          "transform": "htmlToText"
+        },
+        {
+          "source": "Kpi_Description_En__c",
+          "target": "descriptionEn",
+          "kind": "direct",
+          "transform": "htmlToText"
+        },
+        {
+          "source": "Kpi_Type__c",
+          "target": "type",
+          "kind": "picklist",
+          "values": {
+            "Strategic": "strategic",
+            "Regulatory": "regulatory",
+            "Operational": "operational",
+            "Sectors": "sectors",
+            "Competitive": "competitive"
+          }
+        },
+        {
+          "source": "Measuring_Unit__c",
+          "target": "unit",
+          "kind": "picklist",
+          "values": {
+            "Number": "number",
+            "Percentage": "percentage",
+            "%": "percentage",
+            "AED": "aed",
+            "Days": "days",
+            "Hours": "hours",
+            "Score": "score"
+          }
+        },
+        {
+          "source": "Measuring_Period__c",
+          "target": "measuringPeriod",
+          "kind": "picklist",
+          "values": {
+            "Quarterly": "quarterly",
+            "Half Yearly": "half_yearly",
+            "Semi-Annual": "half_yearly",
+            "Annual": "annual",
+            "Yearly": "annual",
+            "Two Years": "two_year",
+            "Two Year": "two_year"
+          }
+        },
+        {
+          "source": "Measuring_Direction__c",
+          "target": "direction",
+          "kind": "picklist",
+          "values": {
+            "Increase": "increase",
+            "Decrease": "decrease",
+            "Matching Better": "matching",
+            "Proximity Better": "matching"
+          }
+        },
+        {
+          "source": "Responsible_Department__c",
+          "target": "responsibleUnitId",
+          "kind": "reference",
+          "referenceType": "org.unit"
+        },
+        {
+          "source": "Responsible_Department__c",
+          "target": "departmentUnitId",
+          "kind": "reference",
+          "referenceType": "org.unit"
+        },
+        {
+          "source": "Responsible_Person__c",
+          "target": "responsibleEmployeeId",
+          "kind": "person"
+        },
+        {
+          "source": "Status__c",
+          "target": "status",
+          "kind": "picklist",
+          "values": {
+            "Active": "active",
+            "Inactive": "inactive"
+          }
+        },
+        {
+          "source": "Sector_Goal__c",
+          "target": "sectorGoal",
+          "kind": "direct",
+          "transform": "truncate:1000"
+        },
+        {
+          "source": "Standard__c",
+          "target": "criteriaText",
+          "kind": "direct",
+          "transform": "truncate:2000"
+        },
+        {
+          "source": "GEM_Criteria__c",
+          "target": "excellenceLink",
+          "kind": "direct",
+          "transform": "truncate:1000"
+        }
+      ],
+      "defaults": {
+        "status": "active",
+        "nature": "quantitative",
+        "level": "organisation",
+        "targetType": "single"
+      },
+      "ignore": [
+        "OwnerId",
+        "CurrencyIsoCode",
+        "Department_Goal__c",
+        "Perspective__c",
+        "Link_to_Ajman_Vision__c",
+        "Emirites_Goal__c",
+        "Sub_Standard__c"
+      ],
+      "notesAr": "مؤقت (G3): الكائن غير مرئي لمستخدم التكامل بعد، ويبقى معطلاً حتى يؤكد الوصف الحي أسماء الحقول. الرمز من رقم السجل في Salesforce. الهدف الاستراتيجي (Department_Goal__c) والمنظور عنصران في هرم الاستراتيجية هنا وليسا هدف مزامنة، فيربطهما مكتب الاستراتيجية يدوياً. قوائم الرؤية والأهداف الوطنية ومعايير التميز فارغة افتراضياً، لذا تُنسخ معايير GEM والمعيار نصاً، ويُضاف ربط القوائم بعد تهيئة رموزها. قيم وحدة القياس ودورية القياس غير المذكورة تذهب إلى قائمة الاستثناءات.",
+      "notesEn": "Provisional (G3): the object is not visible to the integration user yet and stays disabled until the live describe confirms the field names. The code comes from the Salesforce record number. The strategic objective (Department_Goal__c) and the perspective are elements of the strategy hierarchy here, not a sync target: the Strategy Office links them by hand. The vision-link, national-goal and GEM lists are empty by default, so GEM criteria and the standard are copied as text; picklist mappings to those lists are added once their codes are set up. Measuring-unit / period values not listed go to the exceptions queue."
+    },
+    {
+      "key": "kpi-plan",
+      "sourceObject": "Org_Kpi_Measure__c",
+      "kind": "record",
+      "targetType": "kpi.plan",
+      "loadOrder": 61,
+      "provisional": true,
+      "fields": [
+        {
+          "source": "Org_Kpi_Goal__c",
+          "target": "cardId",
+          "kind": "reference",
+          "referenceType": "kpi.card",
+          "required": true
+        },
+        {
+          "source": "Measuring_Year__c",
+          "target": "year",
+          "kind": "direct",
+          "required": true
+        },
+        {
+          "source": "Direction__c",
+          "target": "direction",
+          "kind": "picklist",
+          "values": {
+            "Increase": "increase",
+            "Decrease": "decrease",
+            "Matching Better": "matching",
+            "Proximity Better": "matching"
+          }
+        },
+        {
+          "source": "Total_Target_Value__c",
+          "target": "target",
+          "kind": "direct"
+        },
+        {
+          "source": "Range_Min_Value__c",
+          "target": "rangeMin",
+          "kind": "direct"
+        },
+        {
+          "source": "Range_Max_Value__c",
+          "target": "rangeMax",
+          "kind": "direct"
+        }
+      ],
+      "defaults": {
+        "status": "confirmed"
+      },
+      "ignore": [
+        "OwnerId",
+        "CurrencyIsoCode",
+        "Total_Target__c",
+        "Total_Achieve__c",
+        "Total_Achieve_Value__c",
+        "Performance__c",
+        "Achieve_Value_Q1__c",
+        "Achieve_Value_Q2__c",
+        "Achieve_Value_Q3__c",
+        "Achieve_Value_Q4__c"
+      ],
+      "notesAr": "مؤقت (G3): معطل حتى يؤكد الوصف الحي الحقول. خطة سنوية لكل مؤشر وسنة. الهدف النصي الذي يحوي \"-\" (مثل 80-90) يصبح نوع الهدف «نطاق» من Range_Min_Value__c / Range_Max_Value__c؛ وإلا فالقيمة الرقمية هدفاً مفرداً. الدورية والوحدة والاتجاه والمسؤول تُنسخ من البطاقة عند الإنشاء. الأداء والمحقق الإجمالي وقيم الأرباع لا تُنسخ: يعاد حسابها هنا من النتائج المعتمدة بحاسبة الأداء، ولا يوجد حقل لحفظ قيمة Performance__c الأصلية (تبقى في سجل المصدر).",
+      "notesEn": "Provisional (G3): disabled until the live describe confirms the fields. One annual plan per KPI and year. A text target with \"-\" (e.g. 80-90) becomes the Range target type from Range_Min_Value__c / Range_Max_Value__c; otherwise the numeric value is a single target. Measuring period, unit, direction and responsibility come from the card on create. Performance, total achieved and the quarterly values are not copied: they are re-calculated here from the approved results by the PerformanceCalculator; the plan has no field for the source Performance__c (it stays in the source record)."
+    },
+    {
+      "key": "kpi-result",
+      "sourceObject": "Org_Kpi_Process__c",
+      "kind": "record",
+      "targetType": "kpi.result",
+      "loadOrder": 62,
+      "provisional": true,
+      "fields": [
+        {
+          "source": "Org_Kpi_Measure__c",
+          "target": "planId",
+          "kind": "reference",
+          "referenceType": "kpi.plan",
+          "required": true
+        },
+        {
+          "source": "Quarter__c",
+          "target": "periodCode",
+          "kind": "picklist",
+          "required": true,
+          "values": {
+            "Q1": "q1",
+            "Q2": "q2",
+            "Q3": "q3",
+            "Q4": "q4",
+            "First Half": "h1",
+            "Second Half": "h2",
+            "Full Year": "fy",
+            "Two Year": "ty",
+            "Two Years": "ty"
+          }
+        },
+        {
+          "source": "Target_Value__c",
+          "target": "target",
+          "kind": "direct"
+        },
+        {
+          "source": "Achieve_Value__c",
+          "target": "achieve",
+          "kind": "direct"
+        },
+        {
+          "source": "Causality__c",
+          "target": "causality",
+          "kind": "direct",
+          "transform": "truncate:4000"
+        },
+        {
+          "source": "Corrective_Actions__c",
+          "target": "correctiveActions",
+          "kind": "direct",
+          "transform": "truncate:4000"
+        },
+        {
+          "source": "Notes__c",
+          "target": "notes",
+          "kind": "direct",
+          "transform": "truncate:4000"
+        },
+        {
+          "source": "Approved__c",
+          "target": "status",
+          "kind": "picklist",
+          "values": {
+            "true": "approved",
+            "false": "open"
+          }
+        }
+      ],
+      "defaults": {
+        "status": "open"
+      },
+      "ignore": [
+        "OwnerId",
+        "CurrencyIsoCode",
+        "Target__c",
+        "Achieve__c",
+        "Performance__c",
+        "Result_Submitted__c",
+        "Approval_Submitted__c"
+      ],
+      "notesAr": "مؤقت (G3): معطل حتى يؤكد الوصف الحي الحقول. نتيجة لكل خطة وفترة (Q1–Q4، النصف الأول/الثاني، السنة، السنتان). الأداء الفعلي والمحدود يعاد حسابهما بحاسبة الأداء من الهدف والمحقق ثم تُحسب الخطة؛ لا يوجد حقل لحفظ Performance__c الأصلية. النتيجة بلا هدف خاص تأخذ هدف الفترة الافتراضي من الخطة (والنطاق إن كانت الخطة نطاقاً). الحالة: معتمد ← معتمدة، وإلا مفتوحة؛ علامتا الإرسال (Result_Submitted__c / Approval_Submitted__c) لا تُطابقان لأن قيمة الحالة تأتي من حقل واحد، فالنتيجة المرسلة غير المعتمدة تصل مفتوحة ولا يُنشأ مسار اعتماد. البطاقة والسنة وتواريخ الفترة والمسؤول تُنسخ من الخطة.",
+      "notesEn": "Provisional (G3): disabled until the live describe confirms the fields. One result per plan and period (Q1–Q4, first / second half, full year, two years). Actual and capped performance are re-calculated by the PerformanceCalculator from target and achieved, then the plan; the result has no field for the source Performance__c. A result without its own target takes the plan's default period target (and its range when the plan is a range). Status: Approved → approved, else open; the submission flags (Result_Submitted__c / Approval_Submitted__c) are not mapped because the status value comes from one field, so a submitted but unapproved result arrives open and no approval instance is created. Card, year, period dates and owner come from the plan."
+    },
+    {
+      "key": "risk",
+      "sourceObject": "RMS_Risk__c",
+      "kind": "record",
+      "targetType": "risk.risk",
+      "loadOrder": 70,
+      "provisional": true,
+      "fields": [
+        {
+          "source": "Name",
+          "target": "number",
+          "kind": "direct",
+          "required": true,
+          "transform": "trim"
+        },
+        {
+          "source": "Risk_Title__c",
+          "target": "titleAr",
+          "kind": "direct",
+          "transform": "trim"
+        },
+        {
+          "source": "Risk_Title_En__c",
+          "target": "titleEn",
+          "kind": "direct",
+          "transform": "trim"
+        },
+        {
+          "source": "Risk_Cause__c",
+          "target": "cause",
+          "kind": "direct",
+          "transform": "htmlToText"
+        },
+        {
+          "source": "Risk_Event__c",
+          "target": "eventText",
+          "kind": "direct",
+          "transform": "htmlToText"
+        },
+        {
+          "source": "Risk_Consequence__c",
+          "target": "consequence",
+          "kind": "direct",
+          "transform": "htmlToText"
+        },
+        {
+          "source": "Risk_Type__c",
+          "target": "riskType",
+          "kind": "picklist",
+          "values": {
+            "Internal": "internal",
+            "External": "external"
+          }
+        },
+        {
+          "source": "Determined_By__c",
+          "target": "determinedBy",
+          "kind": "picklist",
+          "values": {
+            "Risk Workshop": "risk-workshop",
+            "Management": "management",
+            "Audit": "audit",
+            "Project": "project",
+            "Other": "other"
+          }
+        },
+        {
+          "source": "CreatedDate",
+          "target": "identifiedOn",
+          "kind": "direct",
+          "transform": "dateOnly"
+        },
+        {
+          "source": "Identification_Date__c",
+          "target": "identifiedOn",
+          "kind": "direct"
+        },
+        {
+          "source": "Status__c",
+          "target": "status",
+          "kind": "picklist",
+          "values": {
+            "Draft": "draft",
+            "Under Review": "under_review",
+            "Waiting Approval": "under_review",
+            "Active": "active",
+            "Closed": "closed",
+            "Inactive": "closed",
+            "Rejected": "rejected"
+          }
+        },
+        {
+          "source": "Emerging_Risk__c",
+          "target": "emerging",
+          "kind": "direct"
+        },
+        {
+          "source": "Department__c",
+          "target": "unitId",
+          "kind": "reference",
+          "referenceType": "org.unit",
+          "required": true
+        },
+        {
+          "source": "Risk_Owner__c",
+          "target": "ownerEmployeeId",
+          "kind": "person"
+        },
+        {
+          "source": "Risk_Coordinator__c",
+          "target": "coordinatorEmployeeId",
+          "kind": "person"
+        },
+        {
+          "source": "Probability_Level__c",
+          "target": "inherentLikelihood",
+          "kind": "direct",
+          "required": true
+        },
+        {
+          "source": "Impact_Level__c",
+          "target": "inherentImpact",
+          "kind": "direct",
+          "required": true
+        },
+        {
+          "source": "Residual_Probability_Level__c",
+          "target": "residualLikelihood",
+          "kind": "direct"
+        },
+        {
+          "source": "Residual_Impact_Level__c",
+          "target": "residualImpact",
+          "kind": "direct"
+        },
+        {
+          "source": "Response_Strategy__c",
+          "target": "response",
+          "kind": "picklist",
+          "values": {
+            "Accept": "accept",
+            "Avoid": "avoid",
+            "Reduce": "reduce",
+            "Mitigate": "reduce",
+            "Transfer": "transfer"
+          }
+        },
+        {
+          "source": "Last_Review_Date__c",
+          "target": "lastReviewOn",
+          "kind": "direct"
+        }
+      ],
+      "defaults": {
+        "status": "active",
+        "riskType": "internal"
+      },
+      "ignore": [
+        "OwnerId",
+        "CurrencyIsoCode",
+        "Inherent_Risk_Score__c",
+        "Residual_Risk_Score__c",
+        "Risk_Rating__c",
+        "Risk_Category__c"
+      ],
+      "notesAr": "مؤقت (G3): أسماء الكائن والحقول مأخوذة من وثائق الإصدار 1.0 وليست مرئية لمستخدم التكامل بعد؛ يبقى معطلاً حتى يؤكدها الوصف الحي. درجة الخطر في Salesforce جمعية (الاحتمال + الأثر) ولا تُنسخ: يعاد تقييم الخطر هنا بإطار المخاطر المعتمد (طريقة الاحتساب والنطاقات وفعالية الضوابط والرغبة في المخاطرة والتصعيد)، ولا يوجد حقل لحفظ الدرجة الأصلية (تبقى في سجل المصدر). تاريخ التحديد من حقله وإلا تاريخ الإنشاء. الفئات تُسند من مكتب المخاطر (ليست قائمة مرجعية). لا يُنشأ سجل تقييم ولا مسار اعتماد ولا حدث تكامل. قيم الحالة والاستجابة غير المذكورة تذهب إلى قائمة الاستثناءات.",
+      "notesEn": "Provisional (G3): object and field names come from the 1.0 source documents and are not visible to the integration user yet; disabled until the live describe confirms them. The Salesforce risk score is additive (likelihood + impact) and is not copied: the risk is re-rated here with the installation's risk framework (scoring method, bands, control effectiveness, appetite, escalation); the risk has no field for the source score (it stays in the source record). The identification date comes from its field, else the created date. Categories are assigned by the Risk Office (they are not a lookup list). No assessment row, approval instance or integration event is created. Status / response values not listed go to the exceptions queue."
+    },
+    {
+      "key": "risk-control",
+      "sourceObject": "RMS_Control__c",
+      "kind": "record",
+      "targetType": "risk.control",
+      "loadOrder": 71,
+      "provisional": true,
+      "fields": [
+        {
+          "source": "RMS_Risk__c",
+          "target": "riskId",
+          "kind": "reference",
+          "referenceType": "risk.risk",
+          "required": true
+        },
+        {
+          "source": "Control_Name__c",
+          "target": "nameAr",
+          "kind": "direct",
+          "transform": "trim"
+        },
+        {
+          "source": "Control_Description__c",
+          "target": "description",
+          "kind": "direct",
+          "transform": "htmlToText"
+        },
+        {
+          "source": "Control_Type__c",
+          "target": "type",
+          "kind": "picklist",
+          "values": {
+            "Preventive": "preventive",
+            "Detective": "detective",
+            "Corrective": "corrective",
+            "Directive": "directive"
+          }
+        },
+        {
+          "source": "Control_Nature__c",
+          "target": "nature",
+          "kind": "picklist",
+          "values": {
+            "Manual": "manual",
+            "Automated": "automated",
+            "Hybrid": "hybrid"
+          }
+        },
+        {
+          "source": "Control_Frequency__c",
+          "target": "frequency",
+          "kind": "picklist",
+          "values": {
+            "Continuous": "continuous",
+            "Daily": "daily",
+            "Weekly": "weekly",
+            "Monthly": "monthly",
+            "Quarterly": "quarterly",
+            "Annually": "annually",
+            "Yearly": "annually",
+            "Ad Hoc": "ad-hoc"
+          }
+        },
+        {
+          "source": "Control_Owner__c",
+          "target": "ownerEmployeeId",
+          "kind": "person"
+        },
+        {
+          "source": "Control_Effectiveness__c",
+          "target": "effectiveness",
+          "kind": "picklist",
+          "values": {
+            "Effective": "effective",
+            "Partially Effective": "partially-effective",
+            "Ineffective": "ineffective",
+            "Not Effective": "ineffective"
+          }
+        },
+        {
+          "source": "Last_Assessment_Date__c",
+          "target": "lastAssessedOn",
+          "kind": "direct"
+        },
+        {
+          "source": "Status__c",
+          "target": "status",
+          "kind": "picklist",
+          "values": {
+            "Active": "active",
+            "Inactive": "retired",
+            "Closed": "retired"
+          }
+        }
+      ],
+      "defaults": {
+        "status": "active"
+      },
+      "ignore": [
+        "OwnerId",
+        "CurrencyIsoCode"
+      ],
+      "notesAr": "مؤقت (G3): معطل حتى يؤكد الوصف الحي الحقول. فعالية الضابط تُطابق رموز إطار المخاطر الافتراضي؛ الرمز غير المعروف في الإطار الحالي يُترك بلا تقييم. بعد كل ضابط يعاد تقييم الخطر (المتبقي) وتُمنح صلاحية سجل «مسؤول الضابط».",
+      "notesEn": "Provisional (G3): disabled until the live describe confirms the fields. Control effectiveness maps to the default framework codes; a code the current framework does not know is left unrated. After each control the risk is re-rated (residual) and the control-owner record role is granted."
+    },
+    {
+      "key": "risk-action-control",
+      "sourceObject": "RMS_Risk_Action__c",
+      "kind": "record",
+      "targetType": "risk.control",
+      "loadOrder": 71,
+      "provisional": true,
+      "where": "Became_Control__c = true",
+      "fields": [
+        {
+          "source": "RMS_Risk__c",
+          "target": "riskId",
+          "kind": "reference",
+          "referenceType": "risk.risk",
+          "required": true
+        },
+        {
+          "source": "Action_Name__c",
+          "target": "nameAr",
+          "kind": "direct",
+          "transform": "trim"
+        },
+        {
+          "source": "Action_Description__c",
+          "target": "description",
+          "kind": "direct",
+          "transform": "htmlToText"
+        },
+        {
+          "source": "Action_Owner__c",
+          "target": "ownerEmployeeId",
+          "kind": "person"
+        },
+        {
+          "source": "Actual_End_Date__c",
+          "target": "lastAssessedOn",
+          "kind": "direct"
+        }
+      ],
+      "defaults": {
+        "status": "active"
+      },
+      "ignore": [
+        "OwnerId",
+        "CurrencyIsoCode",
+        "Implementation_Percentage__c",
+        "Planned_Start_Date__c",
+        "Planned_End_Date__c",
+        "Actual_Start_Date__c",
+        "Status__c",
+        "Cost__c"
+      ],
+      "notesAr": "مؤقت (G3): معطل حتى يؤكد الوصف الحي الحقول. فرق في النموذج: إجراءات المعالجة التي «أصبحت ضوابط» في Salesforce (Became_Control__c = true) تُنقل ضوابطَ لهذا الخطر (الكائن نفسه مطابق مرة ثانية بشرط where). إجراءات المعالجة الجارية ليست هدف مزامنة في المرحلة 23، فلا يُربط الضابط بإجرائه الأصلي (SourceActionId)، ويبقى الضابط بلا تقييم فعالية حتى يقيّمه مالكه.",
+      "notesEn": "Provisional (G3): disabled until the live describe confirms the fields. Model difference: treatment actions that \"became controls\" in Salesforce (Became_Control__c = true) come over as controls of their risk (the same object mapped a second time with a where condition). Ongoing treatment actions are not a sync target in Phase 23, so the control is not linked to its source action (SourceActionId) and it stays unrated until its owner assesses it."
+    },
+    {
+      "key": "risk-kri",
+      "sourceObject": "Risk_Kpi_Relation__c",
+      "kind": "record",
+      "targetType": "risk.kri",
+      "loadOrder": 72,
+      "provisional": true,
+      "fields": [
+        {
+          "source": "RMS_Risk__c",
+          "target": "riskId",
+          "kind": "reference",
+          "referenceType": "risk.risk",
+          "required": true
+        },
+        {
+          "source": "Org_Kpi_Goal__c",
+          "target": "kpiCardId",
+          "kind": "reference",
+          "referenceType": "kpi.card",
+          "required": true
+        },
+        {
+          "source": "Threshold_Direction__c",
+          "target": "direction",
+          "kind": "picklist",
+          "values": {
+            "Above": "above",
+            "Below": "below"
+          }
+        },
+        {
+          "source": "Warning_Threshold__c",
+          "target": "warningThreshold",
+          "kind": "direct"
+        },
+        {
+          "source": "Breach_Threshold__c",
+          "target": "breachThreshold",
+          "kind": "direct",
+          "required": true
+        },
+        {
+          "source": "Status__c",
+          "target": "status",
+          "kind": "picklist",
+          "values": {
+            "Active": "active",
+            "Inactive": "retired"
+          }
+        }
+      ],
+      "defaults": {
+        "basis": "value",
+        "direction": "above",
+        "status": "active"
+      },
+      "ignore": [
+        "OwnerId",
+        "CurrencyIsoCode"
+      ],
+      "notesAr": "مؤقت (G3): معطل حتى يؤكد الوصف الحي الحقول. كائن تابع لبطاقة المؤشر (Org_Kpi_Goal__c) يربط الخطر المؤسسي بمؤشر أداء مع حدود تحذير وتجاوز؛ يُحمَّل بعد مؤشرات الأداء (ترتيب 72) لأنه يشير إلى بطاقة المؤشر. أساس المقارنة «القيمة» افتراضياً. رمز البطاقة واسمها يُنسخان من وحدة المؤشرات عبر العقد.",
+      "notesEn": "Provisional (G3): disabled until the live describe confirms the fields. A child of the KPI card (Org_Kpi_Goal__c) linking an enterprise risk to a KPI with warning / breach thresholds; loaded after the KPIs (order 72) because it references the KPI card. Basis defaults to the value. The card code and name are copied from the KPI module through its contract."
+    },
+    {
+      "key": "cap-source",
+      "sourceObject": "CAP_Remark_Source__c",
+      "kind": "record",
+      "targetType": "cap.source",
+      "loadOrder": 80,
+      "provisional": true,
+      "fields": [
+        {
+          "source": "Name",
+          "target": "number",
+          "kind": "direct",
+          "required": true
+        },
+        {
+          "source": "Source_Title__c",
+          "target": "titleAr",
+          "kind": "direct",
+          "transform": "trim"
+        },
+        {
+          "source": "Source_Type__c",
+          "target": "sourceType",
+          "kind": "picklist",
+          "values": {
+            "Workshop": "workshop",
+            "Benchmarking": "benchmarking",
+            "Internal Audit": "internal-audit",
+            "External Audit": "external-audit",
+            "Excellence Assessment": "excellence-assessment",
+            "GEM": "excellence-assessment",
+            "KPI Performance": "kpi-performance",
+            "Risk Event": "risk-event",
+            "Customer Complaint": "customer-complaint",
+            "Customer Feedback": "customer-complaint",
+            "Employee Survey": "employee-survey",
+            "Management Review": "management-review",
+            "Other": "other"
+          }
+        },
+        {
+          "source": "Description__c",
+          "target": "description",
+          "kind": "direct",
+          "transform": "htmlToText"
+        },
+        {
+          "source": "Received_Date__c",
+          "target": "receivedOn",
+          "kind": "direct",
+          "transform": "dateOnly"
+        },
+        {
+          "source": "Source_Owner__c",
+          "target": "ownerEmployeeId",
+          "kind": "person"
+        },
+        {
+          "source": "Department__c",
+          "target": "unitId",
+          "kind": "reference",
+          "referenceType": "org.unit"
+        }
+      ],
+      "defaults": {
+        "status": "active"
+      },
+      "ignore": [
+        "OwnerId",
+        "CurrencyIsoCode"
+      ],
+      "notesAr": "اسم الكائن وأسماء الحقول مؤقتة (مأخوذة من مخطط بيانات خطة العمل التصحيحية في وثائق الإصدار 1.0) ولا يراها مستخدم التكامل حالياً؛ يجب منحه صلاحية القراءة ثم تأكيدها بزر «تحقق» (الوصف الحي) قبل التفعيل. المصادر في Salesforce تُدخل يدوياً من مكتب إدارة المشاريع؛ هنا قد تُنشأ أيضاً تلقائياً من الأنظمة الأخرى (المقارنة المعيارية، التدقيق، المؤشرات، المخاطر)، والمصدر المتزامن يبقى «يدوي» بلا ربط بسجل نظام آخر. إن لم يوجد تاريخ استلام فيمكن ربط CreatedDate بدلاً منه، وإلا يذهب السجل إلى قائمة الاستثناءات.",
+      "notesEn": "Object and field names are provisional (from the Corrective Action Plan data model ERD in the 1.0 source documents) and not visible to the integration user today: grant it read access, then confirm them with Validate (live describe) before enabling. Salesforce sources are entered manually by the PM Office; here sources can also be created automatically by other systems (benchmarking, audit, KPI, risk) — a synced source stays \"manual\" with no linked system record. If there is no received-date field, map CreatedDate instead; otherwise the record goes to the exceptions queue."
+    },
+    {
+      "key": "cap-remark",
+      "sourceObject": "CAP_Remark__c",
+      "kind": "record",
+      "targetType": "cap.remark",
+      "loadOrder": 81,
+      "provisional": true,
+      "fields": [
+        {
+          "source": "Name",
+          "target": "number",
+          "kind": "direct",
+          "required": true
+        },
+        {
+          "source": "CAP_Remark_Source__c",
+          "target": "sourceId",
+          "kind": "reference",
+          "referenceType": "cap.source",
+          "required": true
+        },
+        {
+          "source": "Improvement_Opportunity__c",
+          "target": "textAr",
+          "kind": "direct",
+          "transform": "htmlToText"
+        },
+        {
+          "source": "Criteria__c",
+          "target": "criterion",
+          "kind": "picklist",
+          "values": {
+            "Leadership": "leadership",
+            "Strategy": "strategy",
+            "People": "people",
+            "Human Resources": "people",
+            "Processes": "processes",
+            "Services": "services",
+            "Innovation": "innovation",
+            "Results": "results",
+            "Other": "other"
+          }
+        },
+        {
+          "source": "Department__c",
+          "target": "departmentUnitId",
+          "kind": "reference",
+          "referenceType": "org.unit",
+          "required": true
+        },
+        {
+          "source": "Section__c",
+          "target": "sectionUnitId",
+          "kind": "reference",
+          "referenceType": "org.unit"
+        },
+        {
+          "source": "Remark_Owner__c",
+          "target": "ownerEmployeeId",
+          "kind": "person"
+        },
+        {
+          "source": "Assigned_Date__c",
+          "target": "assignedOn",
+          "kind": "direct",
+          "transform": "dateOnly"
+        },
+        {
+          "source": "Due_Date__c",
+          "target": "dueOn",
+          "kind": "direct",
+          "transform": "dateOnly"
+        },
+        {
+          "source": "Due_Date__c",
+          "target": "dueAt",
+          "kind": "direct"
+        },
+        {
+          "source": "Responded_Date__c",
+          "target": "respondedAt",
+          "kind": "direct"
+        },
+        {
+          "source": "Status__c",
+          "target": "status",
+          "kind": "picklist",
+          "values": {
+            "Assigned": "assigned",
+            "Waiting Acceptance": "assigned",
+            "Accepted": "planning",
+            "Waiting Actions": "planning",
+            "Actions Rejected": "planning",
+            "Waiting PMO Approval": "validation",
+            "Returned for Correction": "correction",
+            "Actions Approved": "implementation",
+            "In Progress": "implementation",
+            "Completed": "completed",
+            "Rejected": "rejected",
+            "Cancelled": "cancelled"
+          }
+        },
+        {
+          "source": "Rejected_Reason__c",
+          "target": "rejectionReason",
+          "kind": "direct"
+        },
+        {
+          "source": "Completed_Date__c",
+          "target": "completedAt",
+          "kind": "direct"
+        }
+      ],
+      "defaults": {
+        "type": "observation",
+        "priority": "medium"
+      },
+      "ignore": [
+        "OwnerId",
+        "CurrencyIsoCode",
+        "Current_Status__c"
+      ],
+      "notesAr": "اسم الكائن وأسماء الحقول مؤقتة ويجب تأكيدها بزر «تحقق» (الوصف الحي) قبل التفعيل. فروق النموذج: لا يوجد في Salesforce نوع ولا أولوية للملاحظة، فتُضبط على «ملاحظة» و«متوسطة» (يمكن تعديلها لاحقاً)؛ لا توجد خطوة تحليل السبب الجذري ولا التحقق من الفاعلية، فتبقى فارغة؛ رفض الملاحظة نهائي كما في Salesforce. تاريخ الاستحقاق يُنسخ إلى موعد الاستحقاق (تاريخ ووقت). رسالة الحالة الحالية لا تُنقل لأنها تُشتق هنا من الحالة. قيم الحالة غير المذكورة (مثل حالات انتظار جديدة) تذهب إلى قائمة الاستثناءات حتى تُربط برمز. تُمنح أدوار السجل (مالك الملاحظة، مسؤولو الإجراءات، متابعو النظام المصدر) تلقائياً لكل ملاحظة متزامنة.",
+      "notesEn": "Object and field names are provisional and must be confirmed with Validate (live describe) before enabling. Model differences: Salesforce remarks have no type and no priority, so they get \"observation\" and \"medium\" (editable later); there is no root-cause step and no effectiveness verification, so those stay empty; rejection is final as in Salesforce. The due date is copied into the due date-time. The current-status message is not imported — it is derived from the status here. Status values not listed (e.g. new waiting states) go to the exceptions queue until mapped to a code. The record roles (remark owner, action assignees, source-system viewers) are granted for every synced remark."
+    },
+    {
+      "key": "cap-action",
+      "sourceObject": "CAP_Action_Plan__c",
+      "kind": "record",
+      "targetType": "cap.action",
+      "loadOrder": 82,
+      "provisional": true,
+      "fields": [
+        {
+          "source": "Name",
+          "target": "number",
+          "kind": "direct",
+          "required": true
+        },
+        {
+          "source": "CAP_Remark__c",
+          "target": "homeRemarkId",
+          "kind": "reference",
+          "referenceType": "cap.remark",
+          "required": true
+        },
+        {
+          "source": "Action_Details__c",
+          "target": "detailsAr",
+          "kind": "direct",
+          "transform": "htmlToText"
+        },
+        {
+          "source": "Action_Type__c",
+          "target": "type",
+          "kind": "picklist",
+          "values": {
+            "Correction": "correction",
+            "Corrective Action": "corrective",
+            "Preventive Action": "preventive",
+            "Improvement": "improvement"
+          }
+        },
+        {
+          "source": "Budget_Required__c",
+          "target": "budgetRequired",
+          "kind": "direct",
+          "transform": "yesNo"
+        },
+        {
+          "source": "Budget_Available__c",
+          "target": "budgetAvailable",
+          "kind": "direct",
+          "transform": "yesNo"
+        },
+        {
+          "source": "Estimated_Cost__c",
+          "target": "estimatedCost",
+          "kind": "direct"
+        },
+        {
+          "source": "Related_Process__c",
+          "target": "relatedProcess",
+          "kind": "direct",
+          "transform": "truncate:400"
+        },
+        {
+          "source": "Assigned_Employee__c",
+          "target": "assignedEmployeeId",
+          "kind": "person"
+        },
+        {
+          "source": "Planned_Start_Date__c",
+          "target": "plannedStart",
+          "kind": "direct",
+          "transform": "dateOnly"
+        },
+        {
+          "source": "Planned_End_Date__c",
+          "target": "plannedEnd",
+          "kind": "direct",
+          "transform": "dateOnly"
+        },
+        {
+          "source": "Validation_Status__c",
+          "target": "validationStatus",
+          "kind": "picklist",
+          "values": {
+            "Draft": "draft",
+            "Pending": "pending",
+            "Waiting PMO Approval": "pending",
+            "Approved": "approved",
+            "Rejected": "rejected",
+            "Returned for Correction": "returned"
+          }
+        },
+        {
+          "source": "PMO_Notes__c",
+          "target": "validationNote",
+          "kind": "direct"
+        },
+        {
+          "source": "PMS_Project__c",
+          "target": "projectId",
+          "kind": "reference",
+          "referenceType": "portfolio.project"
+        },
+        {
+          "source": "PMS_Project_Request__c",
+          "target": "programRequestId",
+          "kind": "reference",
+          "referenceType": "portfolio.request"
+        },
+        {
+          "source": "Actual_Start_Date__c",
+          "target": "actualStart",
+          "kind": "direct",
+          "transform": "dateOnly"
+        },
+        {
+          "source": "Actual_End_Date__c",
+          "target": "actualEnd",
+          "kind": "direct",
+          "transform": "dateOnly"
+        },
+        {
+          "source": "Achieved__c",
+          "target": "achievedPct",
+          "kind": "direct",
+          "transform": "percentToRatio"
+        },
+        {
+          "source": "Status__c",
+          "target": "status",
+          "kind": "picklist",
+          "values": {
+            "Not Started": "not_started",
+            "In Progress": "in_progress",
+            "Late": "late",
+            "Completed": "completed",
+            "Cancelled": "cancelled"
+          }
+        }
+      ],
+      "ignore": [
+        "OwnerId",
+        "CurrencyIsoCode"
+      ],
+      "notesAr": "CAP_Action_Plan__c كائن معروف (مرتبط من PMS_Project__c) لكنه غير مرئي لمستخدم التكامل حالياً؛ أسماء الحقول مؤقتة ويجب تأكيدها بزر «تحقق» (الوصف الحي) قبل التفعيل. فروق النموذج: تغيير المواعيد في Salesforce غير متتبَّع، فلا تُنقل طلبات التمديد ولا التاريخ المعدَّل؛ سجل تحديثات الإنجاز الشهرية لا يُنقل (تُنقل نسبة الإنجاز الأخيرة فقط، من النسبة المئوية إلى نسبة 1.0 = 100%)؛ أدلة الإنجاز تأتي مرفقات للإجراء. يُربط الإجراء بملاحظته الأساسية فقط؛ إن كانت Salesforce تربط إجراءً قائماً بملاحظات أخرى (علاقة متعدد لمتعدد) فتلك الروابط الإضافية لا تُنقل. إن لم يكن رقم الإجراء بصيغة {رقم الملاحظة}-{n} فيبقى كما هو، والإجراءات المحلية بعد التحويل تُرقَّم بعد آخر رقم متزامن. لا تُنشأ موافقات اعتماد أو إنجاز.",
+      "notesEn": "CAP_Action_Plan__c is a known object (linked from PMS_Project__c) but not visible to the integration user today; field names are provisional and must be confirmed with Validate (live describe) before enabling. Model differences: Salesforce does not track due-date changes, so no extension requests or revised end date come over; the monthly achievement-update history is not imported (only the latest achievement, percent → ratio 1.0 = 100 %); completion evidence arrives as the action's attachments. The action is linked to its home remark only; if Salesforce links an existing action to further remarks (many-to-many), those extra links are not imported. A Name that is not {RemarkNo}-{n} is kept as is; local actions added after failover are numbered after the highest synced number. No validation or completion approval is created."
+    },
+    {
+      "key": "audit-report",
+      "sourceObject": "Audit_Observation__c",
+      "kind": "record",
+      "targetType": "auditmgmt.report",
+      "loadOrder": 83,
+      "provisional": true,
+      "where": "Special_Report__c != null",
+      "externalIdTemplate": "{Special_Report__c}",
+      "fields": [
+        {
+          "source": "Special_Report__c",
+          "target": "number",
+          "kind": "direct",
+          "transform": "truncate:60",
+          "required": true
+        },
+        {
+          "source": "Special_Report__c",
+          "target": "titleEn",
+          "kind": "direct",
+          "transform": "truncate:400"
+        },
+        {
+          "source": "Audit_Type__c",
+          "target": "type",
+          "kind": "picklist",
+          "values": {
+            "Internal Audit": "internal-audit",
+            "External Audit": "external-audit",
+            "State Audit Institution": "external-audit",
+            "Special Report": "special-report",
+            "Revenue Audit": "revenue-audit",
+            "Consultancy": "consultancy",
+            "Other": "other"
+          }
+        }
+      ],
+      "defaults": {
+        "status": "under_follow_up"
+      },
+      "notesAr": "في Salesforce لا يوجد سجل لتقرير التدقيق: تُجمَّع الملاحظات بقائمة اختيار «تقرير خاص». لذلك يُشتق هنا تقرير تدقيق واحد لكل قيمة من Special_Report__c (ربط ثانٍ لكائن الملاحظات، المعرّف الخارجي هو القيمة نفسها كي تُحلّ إشارة الملاحظة إليه)، بحالة «قيد المتابعة»، دون مُدقِّق أو فترة أو ملف تقرير أو قائمة توزيع (تُكمل يدوياً بعد التحويل). إن كان في المؤسسة كائن مستقل للتقارير (مثل Audit_Report__c) فيُستبدل هذا الربط به. الملاحظات بلا قيمة «تقرير خاص» تذهب إلى قائمة الاستثناءات (التقرير مطلوب). الاسم والحقول مؤقتة ويجب تأكيدها بزر «تحقق» (الوصف الحي) قبل التفعيل.",
+      "notesEn": "Salesforce has no audit-report record: findings are grouped by a \"Special report\" picklist. One audit report is therefore derived per Special_Report__c value (second mapping of the observation object, the external ID is the value itself so the findings' reference resolves to it), status \"under follow-up\", with no auditor, period, report file or distribution list (completed by hand after failover). If the org has a separate report object (e.g. Audit_Report__c), replace this mapping with it. Observations without a special report go to the exceptions queue (the report is required). Names are provisional and must be confirmed with Validate (live describe) before enabling."
+    },
+    {
+      "key": "audit-finding",
+      "sourceObject": "Audit_Observation__c",
+      "kind": "record",
+      "targetType": "auditmgmt.finding",
+      "loadOrder": 84,
+      "provisional": true,
+      "fields": [
+        {
+          "source": "Name",
+          "target": "number",
+          "kind": "direct",
+          "required": true
+        },
+        {
+          "source": "Special_Report__c",
+          "target": "reportId",
+          "kind": "reference",
+          "referenceType": "auditmgmt.report",
+          "required": true
+        },
+        {
+          "source": "Observation_Title__c",
+          "target": "titleAr",
+          "kind": "direct",
+          "transform": "trim"
+        },
+        {
+          "source": "Observation__c",
+          "target": "condition",
+          "kind": "direct",
+          "transform": "htmlToText"
+        },
+        {
+          "source": "Observation_Date__c",
+          "target": "findingDate",
+          "kind": "direct",
+          "transform": "dateOnly"
+        },
+        {
+          "source": "Department__c",
+          "target": "responsibleUnitId",
+          "kind": "reference",
+          "referenceType": "org.unit",
+          "required": true
+        },
+        {
+          "source": "Expected_Closing_Date__c",
+          "target": "expectedClosingOn",
+          "kind": "direct",
+          "transform": "dateOnly"
+        },
+        {
+          "source": "Actual_Closed_Date__c",
+          "target": "actualClosedOn",
+          "kind": "direct",
+          "transform": "dateOnly"
+        },
+        {
+          "source": "Status__c",
+          "target": "status",
+          "kind": "picklist",
+          "values": {
+            "Open": "open",
+            "In Progress": "open",
+            "Late": "late",
+            "Overdue": "late",
+            "Closed": "closed",
+            "Cancelled": "cancelled"
+          }
+        },
+        {
+          "source": "Overall_Completion__c",
+          "target": "completion",
+          "kind": "direct",
+          "transform": "percentToRatio"
+        },
+        {
+          "source": "Auditor__c",
+          "target": "auditorEmployeeId",
+          "kind": "person"
+        }
+      ],
+      "defaults": {
+        "type": "finding",
+        "priority": "medium"
+      },
+      "ignore": [
+        "OwnerId",
+        "CurrencyIsoCode",
+        "Year__c"
+      ],
+      "notesAr": "الاسم والحقول مؤقتة (من مخطط بيانات التدقيق ومواصفته الفنية في وثائق الإصدار 1.0) ويجب تأكيدها بزر «تحقق» (الوصف الحي) قبل التفعيل. فروق النموذج: الملاحظة في Salesforce وصف فقط، فيُنقل الوصف إلى «الحالة» (condition) وتبقى المعايير والسبب والأثر وروابط المخاطر والضوابط والوثائق والملاحظات المتكررة فارغة؛ لا يوجد تصنيف خطورة فتُضبط الأولوية على «متوسطة»؛ لا توجد حالة «قبول المخاطر». السنة تُحسب من تاريخ الملاحظة، والإدارة المعنية تُشتق من الوحدة المسؤولة وتُمنح لها صلاحية الاطلاع (وضع الإدارة). بوابة التدقيق المنفصلة تُستبدل بعرض للقراءة فقط في مساحة العمل نفسها.",
+      "notesEn": "Names are provisional (from the audit data model ERD and technical specification in the 1.0 source documents) and must be confirmed with Validate (live describe) before enabling. Model differences: a Salesforce observation is a description only — it becomes the condition; criteria, cause, effect and links to risks, controls, documents and repeat findings stay empty; there is no risk rating, so priority is \"medium\"; there is no \"risk accepted\" status. The year is computed from the finding date; the concerned department is derived from the responsible unit and gets its read-only record role (department mode). The separate Audit Portal is replaced by read-only access in the same workspace."
+    },
+    {
+      "key": "audit-recommendation",
+      "sourceObject": "Audit_Recommendation__c",
+      "kind": "record",
+      "targetType": "auditmgmt.recommendation",
+      "loadOrder": 85,
+      "provisional": true,
+      "fields": [
+        {
+          "source": "Name",
+          "target": "number",
+          "kind": "direct",
+          "required": true
+        },
+        {
+          "source": "Audit_Observation__c",
+          "target": "findingId",
+          "kind": "reference",
+          "referenceType": "auditmgmt.finding",
+          "required": true
+        },
+        {
+          "source": "Recommended_Action__c",
+          "target": "actionAr",
+          "kind": "direct",
+          "transform": "htmlToText"
+        },
+        {
+          "source": "Implementation_Plan__c",
+          "target": "implementationPlan",
+          "kind": "direct",
+          "transform": "htmlToText"
+        },
+        {
+          "source": "Department_Contact__c",
+          "target": "contactEmployeeId",
+          "kind": "person"
+        },
+        {
+          "source": "Implementation_Date__c",
+          "target": "dueOn",
+          "kind": "direct",
+          "transform": "dateOnly"
+        },
+        {
+          "source": "Status__c",
+          "target": "status",
+          "kind": "picklist",
+          "values": {
+            "Not Started": "not_started",
+            "Continuing": "continuing",
+            "In Progress": "continuing",
+            "Late": "late",
+            "Completed": "completed",
+            "Cancelled": "cancelled"
+          }
+        },
+        {
+          "source": "Achieve__c",
+          "target": "latestPct",
+          "kind": "direct",
+          "transform": "percentToRatio"
+        },
+        {
+          "source": "Completed_Date__c",
+          "target": "completedOn",
+          "kind": "direct",
+          "transform": "dateOnly"
+        },
+        {
+          "source": "Last_Follow_Up_Date__c",
+          "target": "lastFollowUpOn",
+          "kind": "direct",
+          "transform": "dateOnly"
+        },
+        {
+          "source": "Next_Follow_Up_Date__c",
+          "target": "nextFollowUpOn",
+          "kind": "direct",
+          "transform": "dateOnly"
+        },
+        {
+          "source": "Follow_Up_Comment__c",
+          "target": "lastComment",
+          "kind": "direct"
+        },
+        {
+          "source": "Notes__c",
+          "target": "notes",
+          "kind": "direct"
+        }
+      ],
+      "ignore": [
+        "OwnerId",
+        "CurrencyIsoCode"
+      ],
+      "notesAr": "الاسم والحقول مؤقتة ويجب تأكيدها بزر «تحقق» (الوصف الحي) قبل التفعيل. فروق النموذج: صفوف تحديث التقدّم (AAQ) وحالة «الاعتماد» النصية عليها لا تُنقل إلى متابعات (تُنقل آخر نسبة إنجاز وآخر وأقرب تاريخ متابعة وتعليقها فقط؛ يبقى التفصيل في سجل المصدر)؛ أدلة الإثبات (حتى 3 ملفات في Salesforce) تأتي مرفقات؛ تغيير تاريخ الاستحقاق غير متتبَّع في Salesforce فلا يُنقل تاريخ معدَّل ولا سبب؛ رد الإدارة و«قبول المخاطر» غير موجودين في Salesforce فيبقيان فارغين. لا تُنشأ مراجعة متابعة.",
+      "notesEn": "Names are provisional and must be confirmed with Validate (live describe) before enabling. Model differences: Salesforce progress-update rows (AAQ) and the \"approval status\" text on them are not imported as follow-ups (only the latest completion, last / next follow-up dates and comment come over; the detail stays in the source history); evidence (up to 3 files in Salesforce) arrives as attachments; due-date changes are untracked in Salesforce, so no revised date or reason comes over; management response and \"risk accepted\" do not exist in Salesforce and stay empty. No follow-up review is created."
+    },
+    {
+      "key": "bench-study",
+      "sourceObject": "Benchmarking_Study__c",
+      "kind": "record",
+      "targetType": "bench.study",
+      "loadOrder": 86,
+      "provisional": true,
+      "fields": [
+        {
+          "source": "Name",
+          "target": "number",
+          "kind": "direct",
+          "required": true
+        },
+        {
+          "source": "Study_Title__c",
+          "target": "titleAr",
+          "kind": "direct",
+          "transform": "trim"
+        },
+        {
+          "source": "Responsible_Department__c",
+          "target": "responsibleUnitId",
+          "kind": "reference",
+          "referenceType": "org.unit",
+          "required": true
+        },
+        {
+          "source": "Relevant_Section__c",
+          "target": "sectionUnitId",
+          "kind": "reference",
+          "referenceType": "org.unit"
+        },
+        {
+          "source": "Responsible_Employee__c",
+          "target": "responsibleEmployeeId",
+          "kind": "person"
+        },
+        {
+          "source": "CreatedById",
+          "target": "requesterEmployeeId",
+          "kind": "person"
+        },
+        {
+          "source": "Target_Year__c",
+          "target": "targetYear",
+          "kind": "direct"
+        },
+        {
+          "source": "Target_Quarter__c",
+          "target": "targetQuarter",
+          "kind": "direct"
+        },
+        {
+          "source": "Comparison_Type__c",
+          "target": "comparisonType",
+          "kind": "picklist",
+          "values": {
+            "Internal": "internal",
+            "Competitive": "competitive",
+            "Functional": "functional",
+            "Generic": "generic"
+          }
+        },
+        {
+          "source": "Purpose_of_Comparison__c",
+          "target": "purpose",
+          "kind": "picklist",
+          "values": {
+            "Policy Development": "policy-development",
+            "Process Improvement": "process-improvement",
+            "Human Skills Development": "human-skills",
+            "Service Quality": "service-quality",
+            "Technology": "technology",
+            "Other": "other"
+          }
+        },
+        {
+          "source": "Scope__c",
+          "target": "scope",
+          "kind": "direct",
+          "transform": "htmlToText"
+        },
+        {
+          "source": "Stage__c",
+          "target": "stage",
+          "kind": "picklist",
+          "values": {
+            "Plan": "plan",
+            "Search": "search",
+            "Acquire": "acquire",
+            "Analyze": "analysis",
+            "Analysis": "analysis",
+            "Completed": "completed"
+          }
+        },
+        {
+          "source": "Status__c",
+          "target": "status",
+          "kind": "picklist",
+          "values": {
+            "Active": "active",
+            "Cancelled": "cancelled",
+            "Completed": "completed",
+            "Completed & Closed": "completed"
+          }
+        }
+      ],
+      "ignore": [
+        "OwnerId",
+        "CurrencyIsoCode",
+        "Current_Status__c",
+        "Request_Type__c"
+      ],
+      "notesAr": "الاسم والحقول مؤقتة (من مخطط بيانات المقارنة المعيارية في وثائق الإصدار 1.0) ولا يراها مستخدم التكامل حالياً؛ يجب تأكيدها بزر «تحقق» (الوصف الحي) قبل التفعيل. تُنقل ترويسة الدراسة فقط: مواضيع المقارنة والجهات المقارَن بها والتواصل والزيارات وصفوف مقارنة الممارسات والمؤشرات لا تُنقل (لا أهداف مزامنة لها) وتبقى في سجل المصدر. مرحلة «التخطيط» تجري هنا عبر إطار الطلبات، أما الدراسة المتزامنة فبلا طلب (مرجع الطلب يساوي معرّف الدراسة نفسها). خطة التطوير تُدار هنا في نظام الخطة التصحيحية؛ الدراسة المتزامنة لا تُنشئ مصدر ملاحظات، وما وُجد منها في Salesforce يُنقل عبر كائنات الخطة التصحيحية (نوع المصدر «مقارنة معيارية»). الربع المستهدف رقم من 1 إلى 4؛ إن كان في Salesforce قائمة Q1–Q4 فيلزم حقل معادلة رقمي، وإلا تذهب القيم إلى قائمة الاستثناءات. رسالة الحالة الحالية تُشتق هنا. يُمنح منسق الدراسة دوره على السجل.",
+      "notesEn": "Names are provisional (from the benchmarking data model ERD in the 1.0 source documents) and not visible to the integration user today; confirm them with Validate (live describe) before enabling. Only the study header comes over: comparison topics, comparator entities, outreach, visits and practice / indicator comparison rows are not imported (no sync targets) and stay in the source history. The Plan stage runs here on the Request Framework; a synced study has no request (its request reference is the study's own id). The development plan is managed here in the Corrective Action Plan system; a synced study does not create a remarks source — any Salesforce CAP records for it come over through the CAP objects (source type Benchmarking). The target quarter is a number 1–4; if Salesforce uses a Q1–Q4 picklist, a numeric formula field is needed, otherwise the values go to the exceptions queue. The current-status message is derived here. The study coordinator gets the record role."
+    },
+    {
+      "key": "docreg-document",
+      "sourceObject": "Document_Registry__c",
+      "kind": "record",
+      "targetType": "docreg.document",
+      "loadOrder": 87,
+      "provisional": true,
+      "fields": [
+        {
+          "source": "Document_ID__c",
+          "target": "documentNo",
+          "kind": "direct",
+          "transform": "trim"
+        },
+        {
+          "source": "Document_Name__c",
+          "target": "nameAr",
+          "kind": "direct",
+          "transform": "trim"
+        },
+        {
+          "source": "Document_Name_En__c",
+          "target": "nameEn",
+          "kind": "direct",
+          "transform": "trim"
+        },
+        {
+          "source": "Description__c",
+          "target": "description",
+          "kind": "direct",
+          "transform": "htmlToText"
+        },
+        {
+          "source": "Owner_Department__c",
+          "target": "ownerUnitId",
+          "kind": "reference",
+          "referenceType": "org.unit"
+        },
+        {
+          "source": "Document_Owner__c",
+          "target": "ownerEmployeeId",
+          "kind": "person"
+        },
+        {
+          "source": "CreatedById",
+          "target": "requesterEmployeeId",
+          "kind": "person"
+        },
+        {
+          "source": "Hierarchical_Level__c",
+          "target": "level",
+          "kind": "picklist",
+          "values": {
+            "Strategic": "strategic",
+            "Legislative": "legislative",
+            "Operational": "operational"
+          }
+        },
+        {
+          "source": "Document_Type__c",
+          "target": "docType",
+          "kind": "picklist",
+          "values": {
+            "Corporate Policy": "policy",
+            "Policy": "policy",
+            "Procedure": "procedure",
+            "Manual": "manual",
+            "Guide": "manual",
+            "Legal Documents": "legal",
+            "Legal Document": "legal",
+            "Strategy": "strategy",
+            "Form": "form"
+          }
+        },
+        {
+          "source": "Sensitivity__c",
+          "target": "sensitivity",
+          "kind": "picklist",
+          "values": {
+            "Public": "public",
+            "Internal": "internal",
+            "Confidential": "confidential",
+            "Secret": "secret"
+          }
+        },
+        {
+          "source": "Version__c",
+          "target": "currentVersionLabel",
+          "kind": "direct",
+          "transform": "truncate:20"
+        },
+        {
+          "source": "Status__c",
+          "target": "status",
+          "kind": "picklist",
+          "values": {
+            "Submitted": "submitted",
+            "Under Review": "under_review",
+            "Returned": "returned",
+            "Rejected": "rejected",
+            "Approved": "approved",
+            "Published": "published",
+            "Under Revision": "published",
+            "Expired": "expired",
+            "Withdrawn": "withdrawn",
+            "Obsolete": "withdrawn"
+          }
+        },
+        {
+          "source": "Effective_Date__c",
+          "target": "effectiveDate",
+          "kind": "direct",
+          "transform": "dateOnly"
+        },
+        {
+          "source": "Expiry_Date__c",
+          "target": "expiryDate",
+          "kind": "direct",
+          "transform": "dateOnly"
+        },
+        {
+          "source": "Share_to_All_Employees__c",
+          "target": "shareToAll",
+          "kind": "direct"
+        },
+        {
+          "source": "Published_Date__c",
+          "target": "publishedAt",
+          "kind": "direct"
+        }
+      ],
+      "ignore": [
+        "OwnerId",
+        "CurrencyIsoCode",
+        "Review_Period__c",
+        "Next_Review_Date__c"
+      ],
+      "notesAr": "الاسم والحقول مؤقتة (من مخطط بيانات إدارة الوثائق المؤسسية في وثائق الإصدار 1.0) ولا يراها مستخدم التكامل حالياً؛ يجب تأكيدها بزر «تحقق» (الوصف الحي) قبل التفعيل. فروق النموذج: دورة المراجعة الثابتة في Salesforce تُستبدل هنا بصلاحية حسب نوع الوثيقة (تاريخ انتهاء أو سارية حتى الاستبدال)، فلا تُنقل فترة المراجعة؛ تاريخ الانتهاء يُنقل كما هو. تُنقل بطاقة الوثيقة فقط: سجل الإصدارات وطلبات التقديم والمراجعة وإقرارات الاطلاع لا تُنقل، والملف النهائي يأتي مرفقاً للوثيقة عبر ربط الملفات وليس إصداراً محكوماً (يُعاد نشره بعد التحويل إن لزم). «قيد التعديل» تُعامل كـ«منشورة» (يبقى الإصدار الحالي سارياً)؛ «مسودة» و«مستبدلة» (حالة إصدار لا وثيقة) بلا رمز وتذهب إلى قائمة الاستثناءات. نشر وثيقة متزامنة لا يُنشئ سجل ملكية فكرية (لا أحداث). الرؤية تتبع مستوى السرية كما في الوثائق المحلية.",
+      "notesEn": "Names are provisional (from the corporate document management data model ERD in the 1.0 source documents) and not visible to the integration user today; confirm them with Validate (live describe) before enabling. Model differences: the fixed Salesforce review cycle is replaced here by validity per document type (expiry date or valid until superseded), so the review period is not imported; the expiry date comes over as is. Only the register entry comes over: version history, submission / review requests and read acknowledgements are not imported, and the final file arrives as the document's attachment through the files mapping, not as a controlled version (re-publish after failover if needed). \"Under Revision\" is treated as Published (the current version stays valid); \"Draft\" and \"Superseded\" (a version status, not a document status) have no code and go to the exceptions queue. A synced document never creates an IP record (no events). Visibility follows sensitivity as for local documents."
+    },
+    {
+      "key": "ip-record",
+      "sourceObject": "IP_Registry__c",
+      "kind": "record",
+      "targetType": "ip.record",
+      "loadOrder": 88,
+      "provisional": true,
+      "fields": [
+        {
+          "source": "Name",
+          "target": "number",
+          "kind": "direct",
+          "required": true
+        },
+        {
+          "source": "IP_Name__c",
+          "target": "nameAr",
+          "kind": "direct",
+          "transform": "trim"
+        },
+        {
+          "source": "IP_Name_En__c",
+          "target": "nameEn",
+          "kind": "direct",
+          "transform": "trim"
+        },
+        {
+          "source": "Description__c",
+          "target": "description",
+          "kind": "direct",
+          "transform": "htmlToText"
+        },
+        {
+          "source": "Property_Type__c",
+          "target": "propertyType",
+          "kind": "picklist",
+          "values": {
+            "Methodology": "methodology",
+            "Software": "software",
+            "System": "software",
+            "Software / System": "software",
+            "Literary Work": "literary",
+            "Design": "design",
+            "Invention": "invention",
+            "Trademark": "trademark",
+            "Corporate Document": "document",
+            "Document": "document"
+          }
+        },
+        {
+          "source": "Protection_Type__c",
+          "target": "protectionType",
+          "kind": "picklist",
+          "values": {
+            "Copyright": "copyright",
+            "Industrial Design": "industrial-design",
+            "Patent": "patent",
+            "Utility Model": "utility-model",
+            "Trademark": "trademark",
+            "Trade Secret": "trade-secret",
+            "Internal Registration": "trade-secret"
+          }
+        },
+        {
+          "source": "Document_Registry__c",
+          "target": "documentId",
+          "kind": "reference",
+          "referenceType": "docreg.document"
+        },
+        {
+          "source": "Owner_Department__c",
+          "target": "ownerUnitId",
+          "kind": "reference",
+          "referenceType": "org.unit"
+        },
+        {
+          "source": "CreatedById",
+          "target": "requesterEmployeeId",
+          "kind": "person"
+        },
+        {
+          "source": "Status__c",
+          "target": "status",
+          "kind": "picklist",
+          "values": {
+            "Submitted": "submitted",
+            "Under Review": "under_review",
+            "Returned": "returned",
+            "Rejected": "rejected",
+            "Approved": "approved_to_file",
+            "Approved - To File": "approved_to_file",
+            "Filed": "filed",
+            "Filed with MOET": "filed",
+            "Registered": "registered",
+            "Rejected by MOET": "rejected_by_moet",
+            "Expired": "expired",
+            "Renewed": "renewed",
+            "Withdrawn": "withdrawn"
+          }
+        },
+        {
+          "source": "Filing_Date__c",
+          "target": "filingDate",
+          "kind": "direct",
+          "transform": "dateOnly"
+        },
+        {
+          "source": "Application_Number__c",
+          "target": "applicationNo",
+          "kind": "direct",
+          "transform": "truncate:100"
+        },
+        {
+          "source": "Registration_Number__c",
+          "target": "registrationNo",
+          "kind": "direct",
+          "transform": "truncate:100"
+        },
+        {
+          "source": "Registration_Date__c",
+          "target": "registrationDate",
+          "kind": "direct",
+          "transform": "dateOnly"
+        },
+        {
+          "source": "Expiry_Date__c",
+          "target": "expiryDate",
+          "kind": "direct",
+          "transform": "dateOnly"
+        },
+        {
+          "source": "Notes__c",
+          "target": "notes",
+          "kind": "direct"
+        },
+        {
+          "source": "MOET_Rejection_Reason__c",
+          "target": "moetRejectionReason",
+          "kind": "direct"
+        }
+      ],
+      "ignore": [
+        "OwnerId",
+        "CurrencyIsoCode"
+      ],
+      "notesAr": "الاسم والحقول مؤقتة (من مخطط بيانات إدارة الملكية الفكرية في وثائق الإصدار 1.0) ولا يراها مستخدم التكامل حالياً؛ يجب تأكيدها بزر «تحقق» (الوصف الحي) قبل التفعيل. تُحمَّل بعد سجل الوثائق كي تُحلّ الإشارة إلى الوثيقة. فروق النموذج: المساهمون (الأطراف المتنازلة) وأرقام هوياتهم الإماراتية لا تُنقل (لا هدف مزامنة لهم، وتبقى الهويات في Salesforce؛ تُضاف هنا مشفّرة عند الحاجة)؛ فترات التسجيل (التجديدات) لا تُنقل، ويُنقل رقم التسجيل وتاريخ الانتهاء الحاليان فقط؛ الشهادة تأتي مرفقاً. المصدر يُضبط على «طلب» حتى لو كان السجل مرتبطاً بوثيقة (الرابط بالوثيقة يُنقل). «مسودة» بلا رمز وتذهب إلى قائمة الاستثناءات. لا تُرسل رسائل الشهادات ولا تذكيرات التجديد أثناء الاستعداد.",
+      "notesEn": "Names are provisional (from the intellectual property management data model ERD in the 1.0 source documents) and not visible to the integration user today; confirm them with Validate (live describe) before enabling. Loads after the document registry so the document reference resolves. Model differences: contributors (transferring parties) and their Emirates ID numbers are not imported (no sync target; the IDs stay in Salesforce and are added here, encrypted, when needed); registration periods (renewals) are not imported — only the current registration number and expiry date; the certificate arrives as an attachment. The source is set to \"request\" even when the record is linked to a document (the document link itself is imported). \"Draft\" has no code and goes to the exceptions queue. No certificate e-mails or renewal reminders are sent while in standby."
+    },
+    {
+      "key": "task",
+      "sourceObject": "Task__c",
+      "kind": "record",
+      "targetType": "tasks.task",
+      "loadOrder": 85,
+      "provisional": true,
+      "fields": [
+        {
+          "source": "Name",
+          "target": "number",
+          "kind": "direct",
+          "transform": "trim"
+        },
+        {
+          "source": "Task_Title__c",
+          "target": "titleAr",
+          "kind": "direct",
+          "transform": "truncate:300"
+        },
+        {
+          "source": "Description__c",
+          "target": "description",
+          "kind": "direct",
+          "transform": "htmlToText"
+        },
+        {
+          "source": "Task_Type__c",
+          "target": "type",
+          "kind": "picklist",
+          "values": {
+            "Manager Assignment": "manager-assignment",
+            "Project Task": "project",
+            "Meeting Decision": "meeting-decision",
+            "Personal": "personal"
+          }
+        },
+        {
+          "source": "Task_Source__c",
+          "target": "source",
+          "kind": "picklist",
+          "values": {
+            "Manager Assignment": "manager-assignment",
+            "DG Office": "dg-office",
+            "Committee Decision": "committee-decision",
+            "Project": "project",
+            "Other": "other"
+          }
+        },
+        {
+          "source": "Priority__c",
+          "target": "priority",
+          "kind": "picklist",
+          "values": {
+            "High": "high",
+            "Medium": "medium",
+            "Low": "low"
+          }
+        },
+        {
+          "source": "Status__c",
+          "target": "status",
+          "kind": "picklist",
+          "values": {
+            "Draft": "draft",
+            "Assigned": "assigned",
+            "In Progress": "in_progress",
+            "On Hold": "on_hold",
+            "Submitted": "submitted",
+            "Approved": "approved",
+            "Rejected": "rejected",
+            "Cancelled": "cancelled"
+          }
+        },
+        {
+          "source": "Confidential__c",
+          "target": "confidential",
+          "kind": "direct"
+        },
+        {
+          "source": "Assigned_By__c",
+          "target": "creatorEmployeeId",
+          "kind": "person",
+          "required": true
+        },
+        {
+          "source": "Assigned_To__c",
+          "target": "assigneeEmployeeId",
+          "kind": "person",
+          "required": true
+        },
+        {
+          "source": "Department__c",
+          "target": "unitId",
+          "kind": "reference",
+          "referenceType": "org.unit"
+        },
+        {
+          "source": "Parent_Task__c",
+          "target": "parentTaskId",
+          "kind": "reference",
+          "referenceType": "tasks.task"
+        },
+        {
+          "source": "Start_Date__c",
+          "target": "plannedStart",
+          "kind": "direct"
+        },
+        {
+          "source": "Due_Date__c",
+          "target": "dueDate",
+          "kind": "direct"
+        },
+        {
+          "source": "CreatedDate",
+          "target": "assignedAt",
+          "kind": "direct"
+        },
+        {
+          "source": "Accepted_Date__c",
+          "target": "acceptedAt",
+          "kind": "direct"
+        },
+        {
+          "source": "Completion_Date__c",
+          "target": "completedAt",
+          "kind": "direct"
+        },
+        {
+          "source": "Approval_Date__c",
+          "target": "approvedAt",
+          "kind": "direct"
+        },
+        {
+          "source": "Rejection_Reason__c",
+          "target": "rejectionReason",
+          "kind": "direct",
+          "transform": "truncate:2000"
+        },
+        {
+          "source": "Cancellation_Reason__c",
+          "target": "cancelReason",
+          "kind": "direct",
+          "transform": "truncate:2000"
+        },
+        {
+          "source": "Completion_Comment__c",
+          "target": "completionComment",
+          "kind": "direct",
+          "transform": "truncate:4000"
+        },
+        {
+          "source": "Feedback_Point__c",
+          "target": "feedbackPoint",
+          "kind": "direct"
+        },
+        {
+          "source": "Feedback_Comment__c",
+          "target": "feedbackComment",
+          "kind": "direct",
+          "transform": "truncate:2000"
+        },
+        {
+          "source": "Progress__c",
+          "target": "percentComplete",
+          "kind": "direct"
+        },
+        {
+          "source": "Estimated_Hours__c",
+          "target": "estimatedHours",
+          "kind": "direct"
+        }
+      ],
+      "defaults": {
+        "template": "full",
+        "type": "manager-assignment",
+        "source": "manager-assignment",
+        "priority": "medium",
+        "status": "assigned"
+      },
+      "ignore": [
+        "OwnerId",
+        "CurrencyIsoCode",
+        "Actual_Hours__c"
+      ],
+      "notesAr": "مطابقة مؤقتة: كائن المهام وسجلات الوقت وأسماء حقولهما غير مرئية لمستخدم التكامل حالياً؛ الأسماء هنا مقترحة من وثائق المصدر ويجب أن يؤكدها الوصف الحي (التحقق) قبل التفعيل، والمطابقة معطّلة حتى ذلك. المكلِّف والمكلَّف يطابَقان مع الموظفين، وتُمنح أدوار السجل (المنشئ، المكلف) وتُحسب المواعيد بوقت العمل والرقم إن لم يأتِ من المصدر. فترات سجل الوقت (Timesheet) لا تُنقل: الساعات الفعلية تبقى في المصدر، ولا تُنشأ إشعارات أو أحداث في الخط الزمني.",
+      "notesEn": "Provisional mapping: the task and timesheet objects and their field names are not visible to the integration user today; the names here are proposed from the source documents and must be confirmed by the live describe (Validate) before activation — the mapping stays disabled until then. The assigner and the assignee are matched to employees; the creator / assignee record roles are granted, the deadlines computed in working time and a number assigned when the source has none. Timesheet periods are not carried (actual hours stay in the source), and no notifications or timeline entries are produced."
+    },
+    {
+      "key": "files",
+      "sourceObject": "ContentDocumentLink",
+      "kind": "files",
+      "loadOrder": 100,
+      "useBulk": false,
+      "notesAr": "ملفات Salesforce (ContentVersion الأحدث لكل ContentDocument مرتبط بسجل متزامن) تُرفع إلى خدمة الملفات كمرفقات للسجل، مع فحص النوع والحجم والفيروسات.",
+      "notesEn": "Salesforce files (the latest ContentVersion of each ContentDocument linked to a synced record) are uploaded to the Files service as the record's attachments, with the type, size and virus checks."
+    },
+    {
+      "key": "attachments",
+      "sourceObject": "Attachment",
+      "kind": "attachments",
+      "loadOrder": 101,
+      "useBulk": false,
+      "notesAr": "المرفقات الكلاسيكية (Attachment) للسجلات المتزامنة.",
+      "notesEn": "Classic attachments (Attachment) of synced records."
+    },
+    {
+      "key": "approval-history",
+      "sourceObject": "ProcessInstance",
+      "kind": "approvals",
+      "loadOrder": 110,
+      "useBulk": false,
+      "notesAr": "سجل الاعتمادات (ProcessInstance / ProcessInstanceStep) للعرض فقط في «سجل المصدر»؛ الاعتمادات المعلقة عند التحويل تصبح «مطلوب إعادة التقديم».",
+      "notesEn": "Approval history (ProcessInstance / ProcessInstanceStep), read-only in \"Source history\"; approvals pending at failover become \"Resubmit required\"."
+    },
+    {
+      "key": "history-project",
+      "sourceObject": "PMS_Project__History",
+      "kind": "field_history",
+      "loadOrder": 120,
+      "useBulk": false,
+      "watermarkField": "CreatedDate",
+      "options": {
+        "parentObject": "PMS_Project__c"
+      },
+      "notesEn": "Field history of projects (read-only source history).",
+      "notesAr": "سجل تغييرات حقول المشاريع (للعرض فقط)."
+    },
+    {
+      "key": "history-request",
+      "sourceObject": "PMS_Project_Request__History",
+      "kind": "field_history",
+      "loadOrder": 121,
+      "useBulk": false,
+      "watermarkField": "CreatedDate",
+      "options": {
+        "parentObject": "PMS_Project_Request__c"
+      },
+      "notesEn": "Field history of program requests.",
+      "notesAr": "سجل تغييرات حقول طلبات البرامج."
+    },
+    {
+      "key": "history-department",
+      "sourceObject": "Department__History",
+      "kind": "field_history",
+      "loadOrder": 122,
+      "useBulk": false,
+      "watermarkField": "CreatedDate",
+      "options": {
+        "parentObject": "Department__c"
+      },
+      "notesEn": "Field history of departments.",
+      "notesAr": "سجل تغييرات حقول الإدارات."
+    },
+    {
+      "key": "history-team",
+      "sourceObject": "Project_Team__History",
+      "kind": "field_history",
+      "loadOrder": 123,
+      "useBulk": false,
+      "watermarkField": "CreatedDate",
+      "provisional": true,
+      "options": {
+        "parentObject": "Project_Team__c"
+      },
+      "notesEn": "Field history of teams (if field history tracking is on).",
+      "notesAr": "سجل تغييرات حقول الفرق (إن كان التتبع مفعلاً)."
+    }
+  ]
+}

@@ -765,7 +765,9 @@
       "transform": "تحويل غير معروف.",
       "unknownTarget": "نوع سجل الهدف غير معروف.",
       "unreachable": "تعذّر الوصول إلى Salesforce.",
-      "where": "عامل التصفية غير مسموح (دون فواصل منقوطة أو استعلامات فرعية)."
+      "where": "عامل التصفية غير مسموح (دون فواصل منقوطة أو استعلامات فرعية).",
+      "unknownLookupType": "تضيف الحزمة قيمًا إلى القائمة المرجعية {{type}} غير الموجودة في هذا النظام.",
+      "packLookups": "القيم المرجعية في الحزمة غير صالحة (نوع أو رمز فارغ)."
     },
     "exceptions": {
       "unmappedValue": "القيمة «{{value}}» في الحقل {{field}} ليس لها رمز في جدول القيم.",
@@ -794,7 +796,9 @@
       "objectDone": "اكتمل: {{read}} مقروء، {{created}} منشأ، {{updated}} محدَّث، {{deleted}} محذوف، {{failed}} فاشل ({{api}}).",
       "cancelled": "أُلغي التشغيل لأن هذا النظام أصبح أساسياً.",
       "limitsUnavailable": "رفض Salesforce قراءة حدود واجهة البرمجة (‎/limits)؛ يُقرأ الاستهلاك من ترويسات الردود ويستمر التشغيل.",
-      "fieldMissing": "لا يحتوي {{object}} على الحقل {{field}}: لا يُستعلم عنه (تستمر مطابقة الأشخاص بالمفاتيح الأخرى)."
+      "fieldMissing": "لا يحتوي {{object}} على الحقل {{field}}: لا يُستعلم عنه (تستمر مطابقة الأشخاص بالمفاتيح الأخرى).",
+      "reconciled": "تمت المطابقة لـ {{target}}: {{source}} في Salesforce = {{synced}} متزامن + {{open}} استثناء مفتوح.",
+      "reconcileDifference": "المطابقة لـ {{target}} فيها فرق {{difference}}: {{source}} في Salesforce، {{synced}} متزامن، {{open}} استثناء مفتوح."
     },
     "errorDetails": {
       "title": "ما أجاب به Salesforce",

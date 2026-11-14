@@ -1,6 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
     <None Include="AI\Samples\*" CopyToOutputDirectory="PreserveNewest" />
+    <!-- Release 1.0.2 (ADR 0215): the owner's Salesforce export, the checklist the shipped pack must cover. -->
+    <EmbeddedResource Include="..\..\docs\salesforce\adof-export.json" LogicalName="adof-export.json" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NSubstitute" />

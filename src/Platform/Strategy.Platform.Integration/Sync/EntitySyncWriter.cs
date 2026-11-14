@@ -2,6 +2,7 @@ using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Strategy.Platform.Kernel.Results;
+using Strategy.Platform.Settings;
 
 namespace Strategy.Platform.Integration.Sync;
 
@@ -100,6 +101,16 @@ public sealed class EntitySyncWriter(IServiceProvider services, IExternalReferen
             if (!Equals(property.CurrentValue, converted))
             {
                 property.CurrentValue = converted;
+            }
+        }
+
+        // Display numbers are labels of synced records (ADR 0220): the local counter continues after them.
+        var numbering = services.GetService<INumberingService>();
+        foreach (var field in target.Fields.Where(f => f.NumberingFormat is not null))
+        {
+            if (numbering is not null && effective.TryGetValue(field.Code, out var number) && number is string { Length: > 0 } label)
+            {
+                await numbering.ObserveAsync(db, field.NumberingFormat!, label, cancellationToken).ConfigureAwait(false);
             }
         }
 

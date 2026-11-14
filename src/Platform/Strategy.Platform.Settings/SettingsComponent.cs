@@ -26,6 +26,7 @@ public sealed class SettingsComponent : IPlatformComponent
         services.AddScoped<ISettingsStore, SettingsStore>();
         services.AddScoped<ILookupService, LookupService>();
         services.AddScoped<IFeatureFlags, FeatureFlags>();
+        services.AddScoped<ILookupProvisioning, LookupProvisioning>();
         services.AddScoped<NumberingService>();
         services.AddScoped<INumberingService>(sp => sp.GetRequiredService<NumberingService>());
         services.AddScoped<SettingsAdministration>();

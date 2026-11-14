@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Strategy.Platform.Kernel.Results;
 
 namespace Strategy.Platform.Settings;
 
@@ -80,6 +81,16 @@ public interface ILookupService
     Task<bool> IsActiveCodeAsync(string typeCode, string code, CancellationToken cancellationToken = default);
 }
 
+/// <summary>
+/// Adds lookup values that a mapping pack ships (release 1.0.2, ADR 0216): only codes the type does not have yet are added (active, after the
+/// existing values); values that exist — possibly renamed, re-sorted or deactivated by an administrator — are never changed. Audited by the
+/// entity interceptor. Returns the number of values added; unknown types are refused.
+/// </summary>
+public interface ILookupProvisioning
+{
+    Task<Result<int>> AddMissingAsync(string typeCode, IReadOnlyList<LookupSeed> values, CancellationToken cancellationToken = default);
+}
+
 /// <summary>Existing codes to add to a lookup type at start-up (e.g. Phase 1 free-text grades, ADR 0014).</summary>
 public interface ILookupBackfillSource
 {
@@ -105,6 +116,13 @@ public interface INumberingService
     /// transaction: open one around "next number + save" so a failed save does not consume the number.
     /// </summary>
     Task<string> NextAsync(DbContext caller, string formatKey, NumberingContext context, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Records that <paramref name="number"/> exists already (a display number synced from another system, ADR 0220): when it has the shape of
+    /// the format's pattern, the counter of its partition is raised to at least its sequence, so <see cref="NextAsync"/> continues after it.
+    /// A number of another shape changes nothing. Runs on <paramref name="caller"/>'s connection and transaction.
+    /// </summary>
+    Task ObserveAsync(DbContext caller, string formatKey, string number, CancellationToken cancellationToken = default);
 }
 
 /// <summary>A switchable feature declared in code (Settings → Features).</summary>

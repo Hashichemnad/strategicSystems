@@ -13,6 +13,8 @@
     <!-- Recorded Salesforce describes of the fake org (MockSalesforceOrg, ADR 0212): embedded, never published as content. -->
     <Content Remove="Infrastructure\SalesforceDescribes\*.json" />
     <EmbeddedResource Include="Infrastructure\SalesforceDescribes\*.json" LogicalName="Strategy.Host.SalesforceDescribes.%(Filename)%(Extension)" />
+    <!-- Release 1.0.2: the owner's Salesforce export (44 objects, field shapes and picklist values; tools/salesforce/export_snapshot.py). -->
+    <EmbeddedResource Include="..\..\..\docs\salesforce\adof-export.json" LogicalName="Strategy.Host.SalesforceDescribes.adof-export.json" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Platform\Strategy.Platform.Kernel\Strategy.Platform.Kernel.csproj" />

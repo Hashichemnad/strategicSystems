@@ -73,6 +73,60 @@ public static partial class NumberingPattern
         return Partition(pattern, context).Replace(SeqMarker, number, StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Reads a number back against the pattern (ADR 0220): its counter partition and sequence, or null when the number does not have the
+    /// pattern's shape (e.g. a Salesforce auto-number of another format). Token values are matched as rendered: four / two digits for the
+    /// date tokens, letters and digits for unit / type / organisation codes, digits for the sequence.
+    /// </summary>
+    public static (string Partition, long Sequence)? Parse(string pattern, string number)
+    {
+        ArgumentNullException.ThrowIfNull(pattern);
+        if (string.IsNullOrWhiteSpace(number))
+        {
+            return null;
+        }
+
+        var regex = new StringBuilder("^");
+        var names = new List<string>();
+        var position = 0;
+        foreach (Match token in Token().Matches(pattern))
+        {
+            regex.Append(Regex.Escape(pattern[position..token.Index]));
+            var name = token.Groups["name"].Value;
+            names.Add(name);
+            regex.Append(name switch
+            {
+                "YYYY" => @"(\d{4})",
+                "YY" or "MM" => @"(\d{2})",
+                "SEQ" => @"(\d{1,18})",
+                _ => @"([A-Za-z0-9]+?)",
+            });
+            position = token.Index + token.Length;
+        }
+
+        regex.Append(Regex.Escape(pattern[position..])).Append('$');
+        var match = Regex.Match(number.Trim(), regex.ToString(), RegexOptions.CultureInvariant, TimeSpan.FromMilliseconds(100));
+        if (!match.Success)
+        {
+            return null;
+        }
+
+        var index = 0;
+        long sequence = 0;
+        var partition = Token().Replace(pattern, token =>
+        {
+            var value = match.Groups[++index].Value;
+            if (token.Groups["name"].Value == "SEQ")
+            {
+                sequence = long.Parse(value, CultureInfo.InvariantCulture);
+                return SeqMarker;
+            }
+
+            return value.ToUpperInvariant();
+        });
+        return (partition, sequence);
+    }
+
     [GeneratedRegex(@"\{(?<name>YYYY|YY|MM|UNIT|TYPE|ORG|SEQ)(:(?<digits>[1-9]))?\}")]
     private static partial Regex Token();
 

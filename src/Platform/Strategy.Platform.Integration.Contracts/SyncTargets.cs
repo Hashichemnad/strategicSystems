@@ -40,7 +40,9 @@ public static class SyncFieldKinds
 /// <summary>
 /// One writable field of a sync target. <c>Property</c> is the entity property (generic writer) or a key the custom writer understands.
 /// <c>Choices</c>: the fixed codes of a <see cref="SyncFieldKinds.Code"/> field; <c>LookupType</c>: of a lookup / codes field;
-/// <c>ReferenceType</c>: the target type of a reference.
+/// <c>ReferenceType</c>: the target type of a reference. <c>NumberingFormat</c> (release 1.0.2, ADR 0220): the field is a display number —
+/// a label of the synced record, never unique — and the numbering service's counter of that format is raised past the synced value, so a
+/// number made here later never repeats a Salesforce label.
 /// </summary>
 public sealed record SyncTargetField(
     string Code,
@@ -50,7 +52,8 @@ public sealed record SyncTargetField(
     string? LookupType = null,
     string? ReferenceType = null,
     IReadOnlyList<string>? Choices = null,
-    int? MaxLength = null);
+    int? MaxLength = null,
+    string? NumberingFormat = null);
 
 /// <summary>
 /// A record type the sync may write, declared by its owning module (ADR 0202). With <c>ContextType</c> / <c>EntityType</c> the generic entity
@@ -114,6 +117,10 @@ public sealed class SyncTargetDefinition
 
     public SyncTargetDefinition Text(string code, string property, bool required = false, int? maxLength = null) =>
         Add(new(code, SyncFieldKinds.Text, property, required, MaxLength: maxLength));
+
+    /// <summary>A display number (a label, not unique; ADR 0220) of the numbering format <paramref name="numberingFormat"/>.</summary>
+    public SyncTargetDefinition DisplayNumber(string code, string property, string numberingFormat, bool required = false) =>
+        Add(new(code, SyncFieldKinds.Text, property, required, NumberingFormat: numberingFormat));
 
     public SyncTargetDefinition Date(string code, string property, bool required = false) => Add(new(code, SyncFieldKinds.Date, property, required));
 

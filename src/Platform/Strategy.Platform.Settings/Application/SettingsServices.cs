@@ -4,6 +4,8 @@ using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.Caching.Memory;
+using Strategy.Platform.Kernel.Results;
+using Strategy.Platform.Settings.Domain;
 using Strategy.Platform.Settings.Infrastructure;
 
 namespace Strategy.Platform.Settings.Application;
@@ -115,6 +117,47 @@ internal sealed class NumberingService(SettingsDbContext db, SettingsCache cache
         }
     }
 
+    private const string Raise = """
+        INSERT INTO settings.numbering_counter (format_key, partition, last_value) VALUES (@key, @partition, @value)
+        ON CONFLICT (format_key, partition) DO UPDATE SET last_value = GREATEST(settings.numbering_counter.last_value, EXCLUDED.last_value)
+        """;
+
+    public async Task ObserveAsync(DbContext caller, string formatKey, string number, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(caller);
+        var pattern = await PatternAsync(formatKey, cancellationToken).ConfigureAwait(false);
+        if (NumberingPattern.Parse(pattern, number) is not { } parsed)
+        {
+            return;
+        }
+
+        var connection = caller.Database.GetDbConnection();
+        var opened = false;
+        if (connection.State != ConnectionState.Open)
+        {
+            await caller.Database.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+            opened = true;
+        }
+
+        try
+        {
+            await using var command = connection.CreateCommand();
+            command.CommandText = Raise;
+            command.Transaction = caller.Database.CurrentTransaction?.GetDbTransaction();
+            Add(command, "key", formatKey);
+            Add(command, "partition", parsed.Partition);
+            Add(command, "value", parsed.Sequence);
+            await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+        }
+        finally
+        {
+            if (opened)
+            {
+                await caller.Database.CloseConnectionAsync().ConfigureAwait(false);
+            }
+        }
+    }
+
     public Task<string> PatternAsync(string formatKey, CancellationToken cancellationToken) =>
         cache.GetAsync("numbering:" + formatKey, async () =>
             await db.NumberingFormats.AsNoTracking().Where(f => f.Key == formatKey).Select(f => f.Pattern).FirstOrDefaultAsync(cancellationToken)
@@ -128,4 +171,51 @@ internal sealed class NumberingService(SettingsDbContext db, SettingsCache cache
         parameter.Value = value;
         command.Parameters.Add(parameter);
     }
+}
+
+internal sealed partial class LookupProvisioning(SettingsDbContext db, SettingsCache cache) : ILookupProvisioning
+{
+    public async Task<Result<int>> AddMissingAsync(string typeCode, IReadOnlyList<LookupSeed> values, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(values);
+        if (!await db.LookupTypes.AsNoTracking().AnyAsync(t => t.Code == typeCode, cancellationToken).ConfigureAwait(false))
+        {
+            return Error.NotFound("settings.lookupType.unknown");
+        }
+
+        var existing = await db.LookupValues.AsNoTracking().Where(v => v.TypeCode == typeCode).Select(v => new { v.Code, v.Sort })
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
+        var codes = existing.Select(v => v.Code).ToHashSet(StringComparer.Ordinal);
+        var sort = existing.Count == 0 ? 0 : existing.Max(v => v.Sort);
+        var added = 0;
+        foreach (var value in values)
+        {
+            if (!ValueCode().IsMatch(value.Code) || !codes.Add(value.Code))
+            {
+                continue;
+            }
+
+            db.LookupValues.Add(LookupValue.Create(typeCode, value.Code, Cut(value.LabelAr), Cut(value.LabelEn), sort += 10, null, null));
+            added++;
+        }
+
+        if (added > 0)
+        {
+            try
+            {
+                await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            }
+            finally
+            {
+                cache.Invalidate();
+            }
+        }
+
+        return added;
+    }
+
+    private static string? Cut(string? label) => label is { Length: > LookupValue.LabelMaxLength } ? label[..LookupValue.LabelMaxLength] : label;
+
+    [System.Text.RegularExpressions.GeneratedRegex(@"^[A-Za-z0-9][A-Za-z0-9_\-.]{0,99}$")]
+    private static partial System.Text.RegularExpressions.Regex ValueCode();
 }

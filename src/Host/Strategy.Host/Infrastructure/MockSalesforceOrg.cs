@@ -102,6 +102,51 @@ public sealed partial class MockSalesforceOrg : ISalesforceTransport
         return o;
     }
 
+    /// <summary>
+    /// The objects of the owner's Salesforce export (<c>docs/salesforce/adof-export.json</c>, release 1.0.2): real field names, types,
+    /// references and active picklist values, so a query of a field the org does not have fails as it does in Salesforce. Objects already
+    /// added (e.g. recorded describes) are kept. Returns the names added.
+    /// </summary>
+    public IReadOnlyList<string> AddExportedObjects(Func<string, bool>? include = null)
+    {
+        using var stream = typeof(MockSalesforceOrg).Assembly.GetManifestResourceStream("Strategy.Host.SalesforceDescribes.adof-export.json")
+            ?? throw new InvalidOperationException("The Salesforce export snapshot is not embedded.");
+        using var json = JsonDocument.Parse(stream);
+        var added = new List<string>();
+        foreach (var o in json.RootElement.GetProperty("objects").EnumerateObject())
+        {
+            if (Objects.ContainsKey(o.Name) || include?.Invoke(o.Name) == false)
+            {
+                continue;
+            }
+
+            var fields = new List<MockField>();
+            foreach (var f in o.Value.GetProperty("fields").EnumerateObject())
+            {
+                var type = f.Name == "Id" ? "id" : f.Value.GetProperty("type").GetString()!;
+                var referenceTo = f.Value.TryGetProperty("referenceTo", out var r) ? r.GetString() : null;
+                var field = new MockField(f.Name, type)
+                {
+                    ReferenceTo = f.Name == "Id" ? null : referenceTo,
+                    RelationshipName = type == "reference" && f.Name != "Id"
+                        ? f.Name.EndsWith("__c", StringComparison.Ordinal) ? f.Name[..^3] + "__r" : f.Name.EndsWith("Id", StringComparison.Ordinal) ? f.Name[..^2] : null
+                        : null,
+                };
+                if (f.Value.TryGetProperty("values", out var values))
+                {
+                    field.Picklist.AddRange(values.EnumerateArray().Where(v => v.GetProperty("active").GetBoolean()).Select(v => v.GetProperty("value").GetString()!));
+                }
+
+                fields.Add(field);
+            }
+
+            Objects[o.Name] = new MockObject(o.Name, fields);
+            added.Add(o.Name);
+        }
+
+        return added;
+    }
+
     /// <summary>The standard objects of files, attachments and approvals, with their real relationship fields (for Validate's full field check).</summary>
     public void AddStandardObjects()
     {

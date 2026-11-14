@@ -70,7 +70,10 @@ public static class MockSalesforceDemo
             org.AddRecordedObject(recorded);
         }
 
-        foreach (var mapping in pack.Objects.Where(o => o.Kind is ObjectMappingKinds.Record or ObjectMappingKinds.People && !RecordedObjects.Contains(o.SourceObject))
+        // Release 1.0.2: the objects of the owner's export are described as Salesforce has them; the pack only fills in objects it lacks.
+        org.AddExportedObjects();
+
+        foreach (var mapping in pack.Objects.Where(o => o.Kind is ObjectMappingKinds.Record or ObjectMappingKinds.People && !org.Objects.ContainsKey(o.SourceObject))
             .DistinctBy(o => o.SourceObject))
         {
             var fields = new Dictionary<string, string>(StringComparer.Ordinal);
@@ -108,7 +111,6 @@ public static class MockSalesforceDemo
             org.AddHistoryObject(history.SourceObject);
         }
 
-        org.Objects["Department__c"].Reference("Parent_Department__c", "Department__c", "Parent_Department__r");
 
         // Data: two departments, the development users, a request, a project with a work plan, a pending approval and a file.
         var it = org.NewId("a01");
