@@ -1180,7 +1180,10 @@ public sealed class SalesforceSyncTests(PostgresFixture postgres) : IAsyncLifeti
         // The department arrives with a record type the value map does not know: it fails, so the item still waits.
         _fake.Objects["Department__c"].Upsert(missing, new()
         {
-            ["Name"] = "إدارة جديدة", ["Department_Name_English__c"] = "New directorate", ["Short_Code__c"] = "NEW" + missing[^6..], ["Record_Type__c"] = "Directorate"
+            ["Name"] = "إدارة جديدة",
+            ["Department_Name_English__c"] = "New directorate",
+            ["Short_Code__c"] = "NEW" + missing[^6..],
+            ["Record_Type__c"] = "Directorate"
         });
         var second = await RunAsync();
         second.Status.ShouldBe(RunStatuses.Partial);
