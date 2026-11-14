@@ -4,6 +4,9 @@
 Usage (run isolated, the xlsx files are data):
   python3 -I tools/salesforce/export_snapshot.py snapshot   # docs/salesforce/*.xlsx -> docs/salesforce/adof-export.json
   python3 -I tools/salesforce/export_snapshot.py coverage   # pack + snapshot -> docs/salesforce/field-coverage.md (exit 1 on gaps)
+  python3 -I tools/salesforce/export_snapshot.py values <Object> <Field> [<lookup type>]
+      # the value map and pack lookup values of one picklist (codes from code_of, labels from the export)
+  python3 -I tools/salesforce/export_snapshot.py fields <Object>   # data fields of one object (type, length, held / not held)
 
 The snapshot is the single source for the fake org's describes (MockSalesforceOrg) and for ShippedPackCoversExportTests.
 """
@@ -93,6 +96,45 @@ def snapshot() -> None:
     print(f"{SNAPSHOT.relative_to(ROOT)}: {len(objects)} objects, {sum(len(o['fields']) for o in objects.values())} fields")
 
 
+def code_of(value: str) -> str:
+    """Stable lookup code of a Salesforce picklist value (ADR 0216): lower-case ASCII words joined by '-', at most 60 characters;
+    values without ASCII letters or digits (e.g. Arabic-only) get 'v-' + the first 10 hex digits of their SHA-1."""
+    import hashlib
+    import unicodedata
+
+    text = unicodedata.normalize("NFKD", value).encode("ascii", "ignore").decode("ascii").lower()
+    slug = re.sub(r"[^a-z0-9]+", "-", text).strip("-")
+    if not slug or len(re.sub(r"[^a-z0-9]", "", slug)) < max(1, len(value.strip()) // 4):
+        return "v-" + hashlib.sha1(value.encode("utf-8")).hexdigest()[:10]
+    return slug[:60].strip("-")
+
+
+def values(obj: str, field: str, lookup_type: str | None) -> None:
+    doc = json.loads(SNAPSHOT.read_text(encoding="utf-8"))
+    f = doc["objects"][obj]["fields"][field]
+    entries = f.get("values", [])
+    value_map = {v["value"]: code_of(v["value"]) for v in entries}
+    print(json.dumps({"source": field, "kind": "picklist", "values": value_map}, ensure_ascii=False))
+    if lookup_type:
+        arabic = re.compile(r"[\u0600-\u06FF]")
+        lookup = {"type": lookup_type, "values": [
+            {"code": code_of(v["value"]),
+             "labelAr": v["label"] if arabic.search(v["label"] or "") else (v["value"] if arabic.search(v["value"]) else v["label"]),
+             "labelEn": v["label"] if not arabic.search(v["label"] or "") else (v["value"] if not arabic.search(v["value"]) else v["label"])}
+            for v in entries if v["active"]]}
+        print(json.dumps(lookup, ensure_ascii=False))
+
+
+def fields(obj: str) -> None:
+    doc = json.loads(SNAPSHOT.read_text(encoding="utf-8"))
+    mapped = {f["source"].split(".")[0] for o in pack_objects() if o["sourceObject"] == obj for f in o.get("fields", [])}
+    for api, f in doc["objects"][obj]["fields"].items():
+        if f["category"] != "data":
+            continue
+        print(f"{api:55} {f['sfType']:45} {'held' if api in mapped else 'NOT HELD'}"
+              + (f"  [{len(f.get('values', []))} values]" if f.get("values") else ""))
+
+
 def pack_objects() -> list[dict]:
     out = []
     for path in sorted(PACK.glob("*.json")):
@@ -157,6 +199,12 @@ def coverage() -> int:
 
 if __name__ == "__main__":
     step = sys.argv[1] if len(sys.argv) > 1 else "coverage"
+    if step == "values":
+        values(sys.argv[2], sys.argv[3], sys.argv[4] if len(sys.argv) > 4 else None)
+        sys.exit(0)
+    if step == "fields":
+        fields(sys.argv[2])
+        sys.exit(0)
     if step == "snapshot":
         snapshot()
         sys.exit(0)

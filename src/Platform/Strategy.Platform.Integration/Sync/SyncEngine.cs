@@ -641,8 +641,7 @@ public sealed partial class SyncEngine(
         string versionKey, string fileName, Func<Task<byte[]>> download, SourceRecord payload, CancellationToken cancellationToken)
     {
         var source = state.Connection.SourceSystem;
-        var owner = string.IsNullOrEmpty(parentExternalId) ? null : await db.References.AsNoTracking()
-            .Where(r => r.SourceSystem == source && r.ExternalId == parentExternalId && r.IsOrigin).FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
+        var owner = string.IsNullOrEmpty(parentExternalId) ? null : await OwnerOfAsync(source, parentExternalId, forFiles: true, cancellationToken).ConfigureAwait(false);
         if (owner is null)
         {
             return RecordOutcome.Skipped; // linked to a record that is not synced (user, library…)
@@ -754,8 +753,7 @@ public sealed partial class SyncEngine(
             return RecordOutcome.Skipped;
         }
 
-        var owner = await db.References.AsNoTracking().Where(r => r.SourceSystem == source && r.ExternalId == recordExternalId && r.IsOrigin)
-            .Select(r => new { r.EntityTypeCode, r.RecordId }).FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
+        var owner = await OwnerOfAsync(source, recordExternalId, forFiles: false, cancellationToken).ConfigureAwait(false);
         if (owner is null)
         {
             return RecordOutcome.Skipped;
@@ -912,6 +910,37 @@ public sealed partial class SyncEngine(
                 }, cancellationToken).ConfigureAwait(false);
         }
     }
+
+    /// <summary>The target type that owns a request + record pair's files (pack option <c>fileOwner</c>, ADR 0218).</summary>
+    public const string FileOwnerOption = "fileOwner";
+
+    /// <summary>
+    /// The record a Salesforce Id belongs to for files and source history. One Salesforce record can be two records here (request + registry
+    /// record, ADR 0218): files go to the target whose mapping has <c>"fileOwner": true</c>, approval history to the request
+    /// (<c>requests.request</c>); otherwise the first by type code, so the choice is always the same.
+    /// </summary>
+    private async Task<Domain.ExternalRef?> OwnerOfAsync(string source, string externalId, bool forFiles, CancellationToken cancellationToken)
+    {
+        var candidates = await db.References.AsNoTracking().Where(r => r.SourceSystem == source && r.ExternalId == externalId && r.IsOrigin)
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
+        if (candidates.Count <= 1)
+        {
+            return candidates.FirstOrDefault();
+        }
+
+        var types = candidates.Select(c => c.EntityTypeCode).ToList();
+        var owners = (await db.ObjectMappings.AsNoTracking().Where(m => m.TargetType != null && types.Contains(m.TargetType)).Select(m => new { m.TargetType, m.Options })
+                .ToListAsync(cancellationToken).ConfigureAwait(false))
+            .Where(m => m.Options is { Length: > 2 } options && System.Text.Json.Nodes.JsonNode.Parse(options)?[FileOwnerOption]?.GetValue<bool>() == true)
+            .Select(m => m.TargetType!).ToHashSet(StringComparer.Ordinal);
+        return candidates
+            .OrderBy(c => forFiles ? (owners.Contains(c.EntityTypeCode) ? 0 : 1) : (c.EntityTypeCode == RequestTargetType ? 0 : 1))
+            .ThenBy(c => c.EntityTypeCode, StringComparer.Ordinal)
+            .First();
+    }
+
+    /// <summary>The Request Framework's sync target (ADR 0218).</summary>
+    public const string RequestTargetType = "requests.request";
 
     /// <summary>Applies a held Salesforce version of an outage record ("Take Salesforce").</summary>
     public async Task<RecordOutcome> ApplyPendingAsync(SyncConnection connection, SyncOutageRecord held, CancellationToken cancellationToken)

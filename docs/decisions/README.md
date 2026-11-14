@@ -185,4 +185,9 @@ Write an ADR for every choice the SPEC or CLAUDE.md leaves open (CLAUDE.md §2 r
 | [0212](0212-describe-driven-soql-and-full-validation.md) | Queries select only fields the object has; Validate checks every queried field; picklist → number | Proposed |
 | [0213](0213-shipped-pack-upgrade.md) | Upgrading the shipped mapping pack on installations that did not change it | Proposed |
 | [0214](0214-sync-targets-are-referenceable.md) | Every sync target can carry external references | Proposed |
+| [0215](0215-standby-holds-every-salesforce-field.md) | The ADoF standby holds every Salesforce data field (export snapshot, coverage test) | Proposed |
+| [0216](0216-pack-lookup-values.md) | Picklist values ship in the mapping pack (`lookups` section), lookup types declared empty | Proposed |
+| [0217](0217-pack-upgrade-adds-objects.md) | The shipped-pack upgrade also adds and retires objects; upgrade snapshots chain | Proposed |
+| [0218](0218-request-and-record-pairs.md) | One Salesforce record → a Request Framework request and its registry record | Proposed |
 | [0219](0219-release-images-on-ghcr.md) | Release images on ghcr.io (public) and an offline archive with checksum; install / upgrade pull by default, `--build` from source | Proposed |
+| [0220](0220-display-numbers-are-labels.md) | Display numbers of synced records are labels; real database errors in exceptions | Proposed |

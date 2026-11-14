@@ -1065,6 +1065,11 @@ public sealed partial class SyncAdministration(
                 continue;
             }
 
+            if (row.SourceObject != next.SourceObject)
+            {
+                row.Watermark = null; // another Salesforce object (ADR 0217): read it from the start
+            }
+
             row.SourceObject = next.SourceObject;
             row.Kind = next.Kind;
             Apply(row, next);
@@ -1223,6 +1228,11 @@ public sealed partial class SyncAdministration(
             }
 
             var before = row.Fields + row.Defaults + row.TargetType + row.Where + row.ExternalIdTemplate + row.WatermarkField + row.SourceObject + row.Kind + row.Options;
+            if (row.SourceObject != o.SourceObject)
+            {
+                row.Watermark = null;
+            }
+
             row.SourceObject = o.SourceObject;
             row.Kind = o.Kind;
             Apply(row, o);
