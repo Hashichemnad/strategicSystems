@@ -295,6 +295,7 @@ function ObjectTable({ objects }: { objects: readonly SyncObjectStatus[] }) {
             </TableHeaderCell>
           ))}
           <TableHeaderCell className="text-end">{t('sync.objects.openExceptions')}</TableHeaderCell>
+          <TableHeaderCell>{t('sync.objects.reconciliation')}</TableHeaderCell>
         </TableRow>
       </TableHead>
       <TableBody>
@@ -337,6 +338,27 @@ function ObjectTable({ objects }: { objects: readonly SyncObjectStatus[] }) {
             ))}
             <TableCell className="text-end tabular-nums">
               {formatNumber(o.openExceptions, language)}
+            </TableCell>
+            <TableCell className="whitespace-nowrap" data-testid={`sync-reconciliation-${o.key}`}>
+              {o.reconciliation ? (
+                <span title={o.reconciledAt ? formatDateTime(o.reconciledAt, language) : undefined}>
+                  <StatusChip tone={o.reconciliation.difference === 0 ? 'success' : 'warning'}>
+                    {t(
+                      o.reconciliation.difference === 0
+                        ? 'sync.objects.reconciled'
+                        : 'sync.objects.reconcileDifference',
+                      {
+                        source: formatNumber(o.reconciliation.source, language),
+                        synced: formatNumber(o.reconciliation.synced, language),
+                        open: formatNumber(o.reconciliation.openExceptions, language),
+                        difference: formatNumber(o.reconciliation.difference, language),
+                      },
+                    )}
+                  </StatusChip>
+                </span>
+              ) : (
+                '—'
+              )}
             </TableCell>
           </TableRow>
         ))}

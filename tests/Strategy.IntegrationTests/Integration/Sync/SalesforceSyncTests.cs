@@ -57,7 +57,7 @@ public sealed class SalesforceSyncTests(PostgresFixture postgres) : IAsyncLifeti
             services.AddSingleton<ISalesforceTransport>(_fake);
             // A test-only target on the template module: the same generic writer every module uses (ADR 0202).
             services.AddSyncTarget(SyncTarget.Entity<SampleDbContext, SampleItem>(SampleItem.EntityType, "sample", "عنصر", "Item")
-                .Text("number", nameof(SampleItem.Number)).Text("nameEn", nameof(SampleItem.NameEn)).Text("nameAr", nameof(SampleItem.NameAr))
+                .DisplayNumber("number", nameof(SampleItem.Number), SamplePermissions.NumberingFormat).Text("nameEn", nameof(SampleItem.NameEn)).Text("nameAr", nameof(SampleItem.NameAr))
                 .Choice("status", nameof(SampleItem.Status), SampleItemStatus.All, required: true)
                 .Person("ownerEmployeeId", nameof(SampleItem.OwnerEmployeeId)).Unit("unitId", nameof(SampleItem.UnitId))
                 .Number("amount", nameof(SampleItem.Amount)));
@@ -1081,13 +1081,16 @@ public sealed class SalesforceSyncTests(PostgresFixture postgres) : IAsyncLifeti
     {
         var shipped = await ShippedMappingPacks.AdofSalesforceAsync();
         var previous = (await ShippedMappingPacks.AdofSalesforcePreviousAsync(1))!;
-        previous.Objects.Select(o => o.Key).ShouldBe(["user", "contact", "project-risk"]);
+        // Snapshots chain (ADR 0217): pack 1's own content for the objects pack 2 changed, then pack 2's content for the others.
+        previous.Version.ShouldBe(1);
+        previous.Objects.Take(3).Select(o => o.Key).ShouldBe(["user", "contact", "project-risk"]);
+        previous.Objects.Select(o => o.Key).ShouldBeUnique();
 
         // An installation of 1.0.0: pack 1, and an administrator changed the user mapping.
         await InScopeAsync(async sp =>
         {
             var admin = sp.GetRequiredService<SyncAdministration>();
-            var v1 = shipped with { Version = 1, Objects = [.. shipped.Objects.Select(o => previous.Objects.FirstOrDefault(p => p.Key == o.Key) ?? o)] };
+            var v1 = shipped with { Version = 1, Lookups = [], Objects = [.. previous.Objects] };
             (await admin.ImportPackAsync(v1, CancellationToken.None, audited: false)).IsSuccess.ShouldBeTrue();
             var db = sp.GetRequiredService<IntegrationDbContext>();
             var pack = await db.MappingPacks.SingleAsync(p => p.Code == "adof-salesforce");
@@ -1113,7 +1116,7 @@ public sealed class SalesforceSyncTests(PostgresFixture postgres) : IAsyncLifeti
             var pack = await db.MappingPacks.AsNoTracking().SingleAsync(p => p.Code == "adof-salesforce");
             return (pack.PackVersion, await db.ObjectMappings.AsNoTracking().Where(m => m.PackId == pack.Id).ToListAsync());
         });
-        version.ShouldBe(2);
+        version.ShouldBe(shipped.Version);
         var contact = rows.Single(m => m.Key == "contact");
         contact.Options.ShouldContain("Employee_Number__c");
         contact.Enabled.ShouldBeFalse();
@@ -1122,6 +1125,127 @@ public sealed class SalesforceSyncTests(PostgresFixture postgres) : IAsyncLifeti
         riskFields.Single(f => f.Source == "Probability_Level__c").Kind.ShouldBe(FieldMappingKinds.Picklist);
         riskFields.Single(f => f.Source == "Impact_Level__c").Values!["5"].ShouldBe("5");
         JsonSerializer.Deserialize<PeopleOptions>(rows.Single(m => m.Key == "user").Options!, SyncJsonOptions)!.MatchOrder.ShouldBe(["email"]); // kept
+
+        // Every shipped object is installed (new ones added, ADR 0217), with the shipped source object; objects pack 3 dropped are disabled.
+        foreach (var o in shipped.Objects.Where(o => o.Key != "user"))
+        {
+            rows.Single(m => m.Key == o.Key).SourceObject.ShouldBe(o.SourceObject);
+        }
+
+        foreach (var dropped in previous.Objects.Where(o => shipped.Objects.All(n => n.Key != o.Key)))
+        {
+            rows.Single(m => m.Key == dropped.Key).Enabled.ShouldBeFalse();
+        }
+
+        // The pack's lookup values are added (ADR 0216).
+        await InScopeAsync(async sp =>
+        {
+            var lookups = sp.GetRequiredService<ILookupService>();
+            foreach (var lookup in shipped.Lookups)
+            {
+                var codes = (await lookups.GetValuesAsync(lookup.Type)).Select(v => v.Code).ToList();
+                lookup.Values.Select(v => v.Code).Except(codes).ShouldBeEmpty();
+            }
+
+            return true;
+        });
+    }
+
+    // ------------------------------------------------------------------ release 1.0.2 part 1 (fixes 6 and 7)
+
+    [Fact]
+    public async Task A_parent_fixed_later_reprocesses_its_waiting_children_and_full_loads_reconcile_with_salesforce()
+    {
+        await ConfigureAsync("department", "user");
+        await SeedOrgAsync();
+        var missing = _fake.NewId("a01");
+        var waiting = _fake.NewId("a0X");
+        _fake.Objects["Sample_Item__c"].Upsert(waiting, new() { ["Name"] = "ITEM-W", ["Title__c"] = "Waits for its department", ["Status__c"] = "Open", ["Department__c"] = missing });
+
+        // Full load: the item's department does not exist yet → missing parent; reconciliation counts it as an open exception.
+        var run = await RunAsync(full: true);
+        run.Status.ShouldBe(RunStatuses.Partial);
+        var item = (await OpenExceptionsAsync()).Single(e => e.ExternalId == waiting);
+        item.Reason.ShouldBe(ExceptionReasons.MissingParent);
+        var reconciliation = Stats(run, "item").Reconciliation.ShouldNotBeNull();
+        reconciliation.Source.ShouldBe(3);
+        reconciliation.Synced.ShouldBe(2);
+        reconciliation.OpenExceptions.ShouldBe(1);
+        reconciliation.Difference.ShouldBe(0);
+        Stats(run, "department").Reconciliation!.Difference.ShouldBe(0);
+        var status = (await _admin.GetFromJsonAsync<SyncStatusDto>($"{Sync}/connections/{_connection}/status"))!;
+        status.Objects.Single(o => o.Key == "item").Reconciliation!.Source.ShouldBe(3);
+        (await RunDetailAsync(run.Id)).Log.ShouldContain(l => l.MessageKey == "integration.sync.log.reconciled");
+
+        // The department arrives with a record type the value map does not know: it fails, so the item still waits.
+        _fake.Objects["Department__c"].Upsert(missing, new()
+        {
+            ["Name"] = "إدارة جديدة", ["Department_Name_English__c"] = "New directorate", ["Short_Code__c"] = "NEW" + missing[^6..], ["Record_Type__c"] = "Directorate"
+        });
+        var second = await RunAsync();
+        second.Status.ShouldBe(RunStatuses.Partial);
+        var department = (await OpenExceptionsAsync()).Single(e => e.ExternalId == missing);
+        department.Reason.ShouldBe(ExceptionReasons.UnmappedValue);
+        (await OpenExceptionsAsync()).ShouldContain(e => e.ExternalId == waiting);
+
+        // Fixing the department re-processes it and, in the same step, the item that waited for it (fix 6).
+        var mapped = await _admin.PostAsJsonAsync($"{Sync}/exceptions/{department.Id}/map-value", new MapValueInput(null, (await MappingAsync("department")).Fields
+            .Single(f => f.Source == "Record_Type__c").Values!.Values.First()));
+        mapped.StatusCode.ShouldBe(HttpStatusCode.OK, await mapped.Content.ReadAsStringAsync());
+        (await RecordOfAsync("org.unit", missing)).ShouldNotBeNull();
+        (await RecordOfAsync(SampleItem.EntityType, waiting)).ShouldNotBeNull();
+        (await OpenExceptionsAsync()).ShouldNotContain(e => e.ExternalId == waiting || e.ExternalId == missing);
+
+        // A full load after the fix reconciles without open exceptions.
+        var third = await RunAsync(full: true);
+        Stats(third, "item").Reconciliation.ShouldBe(new ReconciliationResult(3, 3, 0, 0, ["item"]), new ReconciliationComparer());
+    }
+
+    [Fact]
+    public async Task Synced_display_numbers_move_the_local_counter_and_write_failures_keep_the_database_reason()
+    {
+        await ConfigureAsync("department", "user");
+        await SeedOrgAsync();
+        var year = ((IClock)_clock).Today.Year;
+        var numbered = _fake.NewId("a0X");
+        var duplicate = _fake.NewId("a0X");
+        _fake.Objects["Sample_Item__c"].Upsert(numbered, new() { ["Name"] = $"SMP-{year}-0041", ["Title__c"] = "Synced label", ["Status__c"] = "Open" });
+        _fake.Objects["Sample_Item__c"].Upsert(duplicate, new() { ["Name"] = "ITEM-1", ["Title__c"] = "Same number as another item", ["Status__c"] = "Open" });
+
+        var run = await RunAsync(full: true);
+        run.Status.ShouldBe(RunStatuses.Partial);
+        (await RecordOfAsync(SampleItem.EntityType, numbered)).ShouldNotBeNull();
+
+        // A number made here continues after the synced label (ADR 0220).
+        var next = await InScopeAsync(async sp =>
+        {
+            var db = sp.GetRequiredService<SampleDbContext>();
+            await using var transaction = await db.Database.BeginTransactionAsync();
+            var number = await sp.GetRequiredService<INumberingService>().NextAsync(db, SamplePermissions.NumberingFormat, new NumberingContext(((IClock)_clock).Today));
+            await transaction.RollbackAsync();
+            return number;
+        });
+        next.ShouldBe($"SMP-{year}-0042");
+
+        // The template module keeps a unique number index: the database's reason is stored, never the row values.
+        var failed = (await OpenExceptionsAsync()).Single(e => e.ExternalId == duplicate);
+        failed.Reason.ShouldBe(ExceptionReasons.WriteFailed);
+        failed.Params.ShouldNotBeNull();
+        failed.Params["sqlState"].ShouldBe("23505");
+        failed.Params["constraint"].ShouldNotBeNullOrEmpty();
+        failed.Params["table"].ShouldBe("sample.sample_items");
+        failed.Params.Values.ShouldAllBe(v => v == null || !v.Contains("Same number", StringComparison.Ordinal));
+        failed.Params.ContainsKey("detail").ShouldBeFalse();
+        _ = run;
+    }
+
+    private sealed class ReconciliationComparer : IEqualityComparer<ReconciliationResult?>
+    {
+        public bool Equals(ReconciliationResult? x, ReconciliationResult? y) =>
+            x is not null && y is not null && x.Source == y.Source && x.Synced == y.Synced && x.OpenExceptions == y.OpenExceptions && x.Difference == y.Difference
+            && x.Mappings.SequenceEqual(y.Mappings);
+
+        public int GetHashCode(ReconciliationResult? obj) => obj?.Source ?? 0;
     }
 
     private static byte[] MinimalPdf() => Encoding.ASCII.GetBytes(

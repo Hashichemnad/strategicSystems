@@ -82,7 +82,8 @@ public sealed record SyncRunDetailDto(SyncRunDto Run, IReadOnlyList<SyncRunLogDt
 
 public sealed record SyncObjectStatusDto(
     Guid Id, string Key, string SourceObject, string Kind, string? TargetType, bool Enabled, bool Confirmed, bool Provisional, int LoadOrder,
-    DateTimeOffset? Watermark, DateTimeOffset? LastFullLoadAt, ObjectRunStats? LastRun, int OpenExceptions);
+    DateTimeOffset? Watermark, DateTimeOffset? LastFullLoadAt, ObjectRunStats? LastRun, int OpenExceptions,
+    ReconciliationResult? Reconciliation = null, DateTimeOffset? ReconciledAt = null);
 
 public sealed record SyncOutageDto(
     Guid Id, string Status, DateTimeOffset StartedAt, string? StartedByName, string Reason, DateTimeOffset? ReturnedAt, DateTimeOffset? ReportAcknowledgedAt,
@@ -554,8 +555,24 @@ public sealed partial class SyncAdministration(
         var mappings = connection.MappingPackId is null ? [] : await db.ObjectMappings.AsNoTracking().Where(m => m.PackId == connection.MappingPackId)
             .OrderBy(m => m.LoadOrder).ThenBy(m => m.Key).ToListAsync(ct).ConfigureAwait(false);
         var lastStats = last is null ? [] : SyncJson.Read<Dictionary<string, ObjectRunStats>>(last.Objects);
+
+        // The latest reconciliation per object (release 1.0.2, fix 6): from the most recent run that full-loaded it.
+        var reconciled = new Dictionary<string, (ReconciliationResult Result, DateTimeOffset At)>(StringComparer.Ordinal);
+        foreach (var run in await runs.Where(r => r.Status != RunStatuses.Running).OrderByDescending(r => r.StartedAt).Take(50)
+                     .Select(r => new { r.Objects, r.StartedAt }).ToListAsync(ct).ConfigureAwait(false))
+        {
+            foreach (var (key, stats) in SyncJson.Read<Dictionary<string, ObjectRunStats>>(run.Objects))
+            {
+                if (stats.Reconciliation is { } result)
+                {
+                    reconciled.TryAdd(key, (result, run.StartedAt));
+                }
+            }
+        }
+
         var objects = mappings.Select(m => new SyncObjectStatusDto(m.Id, m.Key, m.SourceObject, m.Kind, m.TargetType, m.Enabled, m.ConfirmedAt is not null, m.Provisional,
-            m.LoadOrder, m.Watermark, m.LastFullLoadAt, lastStats.GetValueOrDefault(m.Key), exceptions.GetValueOrDefault(m.Id))).ToList();
+            m.LoadOrder, m.Watermark, m.LastFullLoadAt, lastStats.GetValueOrDefault(m.Key), exceptions.GetValueOrDefault(m.Id),
+            reconciled.TryGetValue(m.Key, out var r) ? r.Result : null, reconciled.TryGetValue(m.Key, out var at) ? at.At : null)).ToList();
         var late = SyncModes.IsStandby(connection.Mode)
             && (lastSuccess?.FinishedAt ?? connection.UpdatedAt) < clock.UtcNow.AddMinutes(-LateMinutes(connection));
         return new SyncStatusDto(await ToDtoAsync(connection, ct).ConfigureAwait(false), last is null ? null : ToDto(last), lastSuccess is null ? null : ToDto(lastSuccess),

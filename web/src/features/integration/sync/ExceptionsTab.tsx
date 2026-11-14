@@ -290,6 +290,31 @@ export function ExceptionDialog({
                 </div>
               )}
             </dl>
+            {e.params && Object.keys(e.params).length > 0 && (
+              <section
+                aria-labelledby="write-details-title"
+                className="flex flex-col gap-2"
+                data-testid="exception-write-details"
+              >
+                <h3 id="write-details-title" className="font-medium">
+                  {t('sync.exceptionsTab.writeDetails')}
+                </h3>
+                <dl className="grid gap-2 text-sm sm:grid-cols-2">
+                  {Object.entries(e.params)
+                    .filter(([, value]) => value)
+                    .map(([key, value]) => (
+                      <div key={key}>
+                        <dt className="text-xs text-muted-foreground">
+                          {tx(`sync.exceptionsTab.writeDetail.${key}`, { defaultValue: key })}
+                        </dt>
+                        <dd dir="ltr" className="break-words">
+                          <Code>{value}</Code>
+                        </dd>
+                      </div>
+                    ))}
+                </dl>
+              </section>
+            )}
             {canManage && e.status === 'open' && <ExceptionActions detail={detail.data} onDone={onClose} />}
             <section aria-labelledby="payload-title" className="flex flex-col gap-2">
               <h3 id="payload-title" className="font-medium">

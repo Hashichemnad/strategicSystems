@@ -360,7 +360,10 @@
       "disabled": "Disabled",
       "confirmed": "Confirmed",
       "notConfirmed": "Not confirmed",
-      "provisional": "Provisional"
+      "provisional": "Provisional",
+      "reconciliation": "Reconciliation (last full load)",
+      "reconciled": "{{source}} = {{synced}} + {{open}} open",
+      "reconcileDifference": "Difference {{difference}}: {{source}} in Salesforce, {{synced}} here, {{open}} open"
     },
     "counts": {
       "read": "Read",
@@ -591,7 +594,16 @@
       "reprocessed": "{{processed}} re-processed: {{resolved}} resolved, {{open}} still open",
       "resolved": "The exception is resolved",
       "stillOpen": "The record still has an exception",
-      "ignored": "The exception is ignored"
+      "ignored": "The exception is ignored",
+      "writeDetails": "What the database answered",
+      "writeDetail": {
+        "sqlState": "SQLSTATE",
+        "constraint": "Constraint",
+        "table": "Table",
+        "column": "Column",
+        "message": "Message",
+        "error": "Error"
+      }
     },
     "runs": {
       "empty": "No runs yet",

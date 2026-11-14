@@ -360,7 +360,10 @@
       "disabled": "معطّل",
       "confirmed": "مؤكَّد",
       "notConfirmed": "غير مؤكَّد",
-      "provisional": "مؤقت"
+      "provisional": "مؤقت",
+      "reconciliation": "المطابقة (آخر تحميل كامل)",
+      "reconciled": "{{source}} = {{synced}} + {{open}} مفتوح",
+      "reconcileDifference": "فرق {{difference}}: {{source}} في Salesforce، {{synced}} هنا، {{open}} مفتوح"
     },
     "counts": {
       "read": "مقروء",
@@ -591,7 +594,16 @@
       "reprocessed": "أُعيدت معالجة {{processed}}: تمت معالجة {{resolved}}، وما زال {{open}} مفتوحاً",
       "resolved": "تمت معالجة الاستثناء",
       "stillOpen": "ما زال للسجل استثناء",
-      "ignored": "تم تجاهل الاستثناء"
+      "ignored": "تم تجاهل الاستثناء",
+      "writeDetails": "رد قاعدة البيانات",
+      "writeDetail": {
+        "sqlState": "رمز SQLSTATE",
+        "constraint": "القيد",
+        "table": "الجدول",
+        "column": "العمود",
+        "message": "الرسالة",
+        "error": "الخطأ"
+      }
     },
     "runs": {
       "empty": "لا توجد عمليات تشغيل بعد",

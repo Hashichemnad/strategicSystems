@@ -105,7 +105,7 @@ public static partial class NumberingPattern
         }
 
         regex.Append(Regex.Escape(pattern[position..])).Append('$');
-        var match = Regex.Match(number.Trim(), regex.ToString(), RegexOptions.CultureInvariant, TimeSpan.FromMilliseconds(100));
+        var match = Regex.Match(number.Trim(), regex.ToString(), RegexOptions.CultureInvariant | RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(100));
         if (!match.Success)
         {
             return null;

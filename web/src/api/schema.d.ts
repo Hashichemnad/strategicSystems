@@ -28130,6 +28130,9 @@ export interface components {
       lastRun: null | components['schemas']['ObjectRunStats'];
       /** Format: int32 */
       openExceptions: number;
+      reconciliation?: null | components['schemas']['ReconciliationResult'];
+      /** Format: date-time */
+      reconciledAt?: null | string;
     };
     SyncOutageDto: {
       /** Format: uuid */

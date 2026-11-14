@@ -37,6 +37,25 @@ public class NumberingPatternTests
     public void Refuses_invalid_patterns(string pattern, string messageKey) =>
         NumberingPattern.Validate(pattern).ShouldBe(messageKey);
 
+    // Release 1.0.2 (ADR 0220): a synced display number is read back against the pattern, so the counter continues after it.
+    [Theory]
+    [InlineData("PR-{SEQ:4}", "PR-0107", "PR-{SEQ}", 107)]
+    [InlineData("PROJ-{UNIT}-{YYYY}-{SEQ:3}", "PROJ-SPMO-2026-014", "PROJ-SPMO-2026-{SEQ}", 14)]
+    [InlineData("PROJ-{UNIT}-{YYYY}-{SEQ:3}", "proj-spmo-2026-1234", "PROJ-SPMO-2026-{SEQ}", 1234)]
+    [InlineData("CAP/{YY}/{MM}/{SEQ}", "CAP/26/03/0007", "CAP/26/03/{SEQ}", 7)]
+    [InlineData("{SEQ:1}", "123", "{SEQ}", 123)]
+    public void A_number_of_the_pattern_gives_its_partition_and_sequence(string pattern, string number, string partition, long sequence) =>
+        NumberingPattern.Parse(pattern, number).ShouldBe((partition, sequence));
+
+    [Theory]
+    [InlineData("PR-{SEQ:4}", "RISK-0001")]
+    [InlineData("PR-{SEQ:4}", "PR-")]
+    [InlineData("PROJ-{UNIT}-{YYYY}-{SEQ:3}", "PROJ-SPMO-26-001")]
+    [InlineData("PR-{SEQ:4}", "1.1")]
+    [InlineData("PR-{SEQ:4}", "")]
+    public void A_number_of_another_shape_is_ignored(string pattern, string number) =>
+        NumberingPattern.Parse(pattern, number).ShouldBeNull();
+
     [Fact]
     public void Unit_token_requires_a_unit_code() =>
         Should.Throw<InvalidOperationException>(() => NumberingPattern.Partition("X-{UNIT}-{SEQ}", new NumberingContext(new DateOnly(2026, 1, 1))));

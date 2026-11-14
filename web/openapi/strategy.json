@@ -105488,6 +105488,23 @@
           "openExceptions": {
             "type": "integer",
             "format": "int32"
+          },
+          "reconciliation": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/ReconciliationResult"
+              }
+            ]
+          },
+          "reconciledAt": {
+            "type": [
+              "null",
+              "string"
+            ],
+            "format": "date-time"
           }
         }
       },
