@@ -1,6 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import { execFileSync, spawn, type ChildProcess } from 'node:child_process';
-import { createWriteStream, existsSync, mkdirSync } from 'node:fs';
+import { createWriteStream, existsSync, mkdirSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -15,6 +15,8 @@ import { nextTotp, tr, type Language } from './fixtures';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const hostDir = join(here, '..', '..', 'src', 'Host', 'Strategy.Host');
+/** The product version the host reports (deploy/VERSION, ADR 0152): no spec edit on a version bump. */
+const productVersion = readFileSync(join(here, '..', '..', 'deploy', 'VERSION'), 'utf8').trim();
 const hostDll = join(hostDir, 'bin', 'Debug', 'net10.0', 'Strategy.Host.dll');
 const screenshotDir = join(
   here,
@@ -241,6 +243,6 @@ test('a fresh installation is set up through the wizard and the first administra
   // Branding from the wizard is in place, and the About dialog shows the version.
   await page.getByTestId('profile-menu').click();
   await page.getByTestId('about-menu').click();
-  await expect(page.getByTestId('about-version')).toContainText('1.0.0');
+  await expect(page.getByTestId('about-version')).toContainText(productVersion);
   await shot(page, language, 'setup-15-about');
 });
