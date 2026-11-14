@@ -41,21 +41,35 @@ public sealed class ApiFactory(
         return host;
     }
 
-    /// <summary>Stops this host's Quartz schedulers first, so no scheduler thread outlives the host (or keeps the test process alive).</summary>
+    /// <summary>
+    /// Stops the host as usual (its hosted service shuts Quartz down, waiting for running jobs), then shuts down any scheduler still running —
+    /// e.g. after a stop that timed out — so no scheduler thread outlives the host or keeps the test process alive.
+    /// </summary>
     public override async ValueTask DisposeAsync()
     {
-        await StopSchedulersAsync();
-        await base.DisposeAsync();
+        try
+        {
+            await base.DisposeAsync();
+        }
+        finally
+        {
+            await StopSchedulersAsync();
+        }
     }
 
     protected override void Dispose(bool disposing)
     {
-        if (disposing)
+        try
         {
-            StopSchedulersAsync().GetAwaiter().GetResult();
+            base.Dispose(disposing);
         }
-
-        base.Dispose(disposing);
+        finally
+        {
+            if (disposing)
+            {
+                StopSchedulersAsync().GetAwaiter().GetResult();
+            }
+        }
     }
 
     private async Task StopSchedulersAsync()

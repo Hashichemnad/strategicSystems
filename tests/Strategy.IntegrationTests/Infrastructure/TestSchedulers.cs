@@ -6,7 +6,8 @@ namespace Strategy.IntegrationTests.Infrastructure;
 /// <summary>
 /// Shuts Quartz schedulers down explicitly. A scheduler that outlives its host keeps its cluster manager checking in against a test database
 /// that is gone, and keeps the test process alive after the last test ("Foreground threads were left running, forcing process exit").
-/// Shutdown does not wait for running jobs: the tests that run jobs await them themselves.
+/// Called after the host stopped: shuts down only schedulers that are still running, without waiting for jobs, and never throws (cleanup
+/// must not fail a test or leave the rest of the host undisposed).
 /// </summary>
 public static class TestSchedulers
 {
@@ -21,7 +22,7 @@ public static class TestSchedulers
         {
             schedulers = [.. await factory.GetAllSchedulers()];
         }
-        catch (ObjectDisposedException)
+        catch (Exception ex) when (ex is ObjectDisposedException or SchedulerException or InvalidOperationException)
         {
             return;
         }
@@ -34,15 +35,16 @@ public static class TestSchedulers
 
     private static async Task ShutdownAsync(IReadOnlyList<IScheduler> schedulers)
     {
-        foreach (var scheduler in schedulers.Where(s => !s.IsShutdown))
+        foreach (var scheduler in schedulers.Where(s => s is { IsShutdown: false }))
         {
             try
             {
                 await scheduler.Shutdown(waitForJobsToComplete: false).WaitAsync(Limit);
             }
-            catch (Exception ex) when (ex is SchedulerException or TimeoutException or ObjectDisposedException or InvalidOperationException)
+#pragma warning disable CA1031 // Best effort: a scheduler whose store is unreachable still stops its own threads; nothing here may fail the run.
+            catch (Exception)
+#pragma warning restore CA1031
             {
-                // Best effort: a scheduler whose store is unreachable still stops its own threads; a timeout must not fail the run.
             }
         }
     }
