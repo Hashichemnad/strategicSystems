@@ -809,14 +809,14 @@ public sealed class SalesforceSyncTests(PostgresFixture postgres) : IAsyncLifeti
         failed.LastRun!.Status.ShouldBe(RunStatuses.Failed);
         failed.LastRun.MessageKey.ShouldBe("integration.sync.errors.authFailed");
         await InScopeAsync(async sp => await sp.GetRequiredService<Strategy.Platform.Scheduling.Application.OutboxDispatcher>().DispatchDueAsync(CancellationToken.None));
-        _factory.Emails.Sent.ShouldContain(m => m.TemplateKey == "integration.sync.failed");
+        await _factory.Emails.AnyAsync("integration.sync.failed");
         var count = _factory.Emails.Sent.Count;
 
         _clock.Frozen = next.AddHours(3);
         (await InScopeAsync(async sp => await sp.GetRequiredService<SyncScheduler>().MonitorAsync(CancellationToken.None))).ShouldBe(1);
         (await InScopeAsync(async sp => await sp.GetRequiredService<SyncScheduler>().MonitorAsync(CancellationToken.None))).ShouldBe(0);
         await InScopeAsync(async sp => await sp.GetRequiredService<Strategy.Platform.Scheduling.Application.OutboxDispatcher>().DispatchDueAsync(CancellationToken.None));
-        _factory.Emails.Sent.ShouldContain(m => m.TemplateKey == "integration.sync.late");
+        await _factory.Emails.AnyAsync("integration.sync.late");
 
         // The health page reports the failure.
         var checks = await InScopeAsync(async sp => await sp.GetRequiredService<SyncHealthContributor>().CheckAsync(CancellationToken.None));
