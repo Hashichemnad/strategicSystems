@@ -7,13 +7,24 @@
 .EXAMPLE
   $env:APP_PORT = 8090; .\deploy\install.ps1          # another port (also POSTGRES_PORT, GOTENBERG_PORT; saved in deploy\.env)
 .EXAMPLE
-  .\deploy\install.ps1 -Image strategy-app-1.0.0.tar  # offline install: load a saved image instead of building
+  .\deploy\install.ps1 -Image strategy-app-1.0.1.tar.gz   # offline: load the release archive (checks <file>.sha256 when present)
+.EXAMPLE
+  .\deploy\install.ps1 -Build                      # build the image from this source folder (docker-compose.build.yml)
+.EXAMPLE
+  .\deploy\install.ps1 -NoPull                     # the image <APP_IMAGE>:<version> is already on this machine (-NoBuild: old name)
 .NOTES
+  Default: pull the release image <APP_IMAGE>:<version> (public package on ghcr.io, or APP_IMAGE in deploy\.env for a mirror).
   Safe to run again: an existing deploy\.env (passwords) is kept.
 #>
 [CmdletBinding()]
-param([string]$Image = '', [switch]$NoBuild)
+param([string]$Image = '', [switch]$Build, [switch]$NoPull, [switch]$NoBuild)
 . (Join-Path $PSScriptRoot 'lib.ps1')
+
+if ($NoBuild) {
+    Write-Warn '-NoBuild is deprecated: use -NoPull (the image is pulled by default since 1.0.2).'
+    $NoPull = [switch]$true
+}
+if (@(@([bool]$Image, [bool]$Build, [bool]$NoPull) | Where-Object { $_ }).Count -gt 1) { Stop-WithError 'Choose one of -Image, -Build and -NoPull.' 2 }
 
 $version = Get-ReleaseVersion
 Write-Step "Integrated Strategy System $version - installation"
@@ -55,24 +66,26 @@ foreach ($p in $ports) {
 if ($busy) { Write-Host ''; Stop-WithError 'Installation stopped: port(s) in use. Nothing was started.' 3 }
 
 # Ports and options given in the environment are saved, so later commands (backup, upgrade) use the same values.
-foreach ($key in 'APP_PORT', 'POSTGRES_PORT', 'GOTENBERG_PORT', 'APP_BIND', 'REGISTRY_PREFIX', 'BUILD_CA_FILE') {
+foreach ($key in 'APP_PORT', 'POSTGRES_PORT', 'GOTENBERG_PORT', 'APP_BIND', 'REGISTRY_PREFIX', 'BUILD_CA_FILE', 'APP_IMAGE') {
     $value = [Environment]::GetEnvironmentVariable($key)
     if ($value) { Set-EnvValue $key $value }
 }
 if (-not (Get-EnvValue 'APP_VERSION')) { Set-EnvValue 'APP_VERSION' $version }
+if (-not (Get-EnvValue 'APP_IMAGE')) { Set-EnvValue 'APP_IMAGE' $script:DefaultAppImage }
 $env:APP_VERSION = Get-EnvValue 'APP_VERSION'
+$env:APP_IMAGE = Get-EnvValue 'APP_IMAGE'
+$imageRef = "$($env:APP_IMAGE):$($env:APP_VERSION)"
 
-
-# 3. Image: load a saved image (offline) or build it from this folder.
+# 3. Image: pull the release image (default), load the offline archive, build it from this folder, or use the local copy.
 if ($Image) {
-    Write-Step "Loading the image from $Image"
-    if ((Invoke-Native -Command 'docker' -Arguments @('load', '-i', $Image)).Code -ne 0) { Stop-WithError 'docker load failed.' 4 }
-} elseif (-not $NoBuild) {
-    Write-Step "Building strategy-app:$($env:APP_VERSION) (first build takes several minutes)"
-    $env:GIT_REVISION = Get-SourceRevision
-    $env:BUILD_CREATED = (Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ssZ', [Globalization.CultureInfo]::InvariantCulture)
-    Initialize-BuildCa
-    Invoke-Compose build migrate
+    try { Import-ImageArchive $Image $imageRef } catch { Stop-WithError $_.Exception.Message 4 }
+} elseif ($Build) {
+    Write-Step "Building $imageRef from this folder (first build takes several minutes)"
+    Invoke-BuildAppImage
+} elseif ($NoPull) {
+    if (-not (Confirm-LocalImage $imageRef)) { Stop-WithError "-NoPull: image $imageRef is not on this machine. Run without -NoPull to pull it, or use -Image <archive>." 4 }
+} elseif (-not (Invoke-PullAppImage $imageRef)) {
+    Stop-WithError "Installation stopped: image $imageRef not available. Nothing was started." 4
 }
 
 # 4. Start: postgres, gotenberg, migrate (owner role, grants the runtime role), app.

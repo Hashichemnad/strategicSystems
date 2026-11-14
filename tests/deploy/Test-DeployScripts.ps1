@@ -103,7 +103,7 @@ function Invoke-Script([string]$Release, [string]$Script, [string[]]$Arguments =
     $psi.EnvironmentVariables['PATH'] = $bin + [IO.Path]::PathSeparator + $env:PATH
     $psi.EnvironmentVariables['FAKE_DOCKER_STATE'] = $state
     $psi.EnvironmentVariables['FAKE_DOCKER_PYTHON'] = $Python
-    foreach ($k in 'APP_PORT', 'POSTGRES_PORT', 'GOTENBERG_PORT', 'APP_VERSION', 'NEW_VERSION', 'FAKE_DOCKER_FAIL', 'GIT_REVISION') {
+    foreach ($k in 'APP_PORT', 'POSTGRES_PORT', 'GOTENBERG_PORT', 'APP_VERSION', 'NEW_VERSION', 'FAKE_DOCKER_FAIL', 'GIT_REVISION', 'APP_IMAGE', 'FAKE_DOCKER_IMAGES', 'FAKE_DOCKER_LOAD_IMAGE') {
         if ($psi.EnvironmentVariables.ContainsKey($k)) { $psi.EnvironmentVariables.Remove($k) }
     }
     # Ports nobody uses on a CI runner or a developer machine (the installer refuses busy ports).
@@ -125,6 +125,33 @@ function Invoke-Script([string]$Release, [string]$Script, [string[]]$Arguments =
 
 function Get-Cmds($Result) { @($Result.Calls | ForEach-Object { $_.cmd }) }
 function Find-Call($Result, [string]$Cmd) { @($Result.Calls | Where-Object { $_.cmd -eq $Cmd }) }
+# Compose files (-f base names, space-separated) of the first call with this command line.
+function Get-CallFiles($Result, [string]$Cmd) {
+    $c = @(Find-Call $Result $Cmd)
+    if ($c.Count -eq 0) { return '<no call>' }
+    return (@($c[0].files) -join ' ')
+}
+function Test-NoCallLike($Result, [string]$Pattern) { -not (@(Get-Cmds $Result | Where-Object { $_ -match $Pattern }).Count -gt 0) }
+function Test-Before($Result, [string]$First, [string]$Second) {
+    $cmds = @(Get-Cmds $Result)
+    $a = [Array]::IndexOf($cmds, $First); $b = [Array]::IndexOf($cmds, $Second)
+    return ($a -ge 0 -and $b -ge 0 -and $a -lt $b)
+}
+function Get-FirstDump($Result) { @(Get-Cmds $Result | Where-Object { $_ -like 'compose exec -T postgres pg_dump *' }) | Select-Object -First 1 }
+
+# Offline release archives (contents do not matter to the fake docker) with sha256sum-format checksum files, as release.yml publishes them.
+$ghcr = 'ghcr.io/hashichemnad/strategy-app'
+function New-Archive([string]$Version, [switch]$BadChecksum) {
+    $dir = Join-Path $work "archives-$nonAscii"
+    New-Item -ItemType Directory -Force -Path $dir | Out-Null
+    $file = Join-Path $dir "strategy-app-$Version.tar.gz"
+    [IO.File]::WriteAllBytes($file, [byte[]](@(0x1f, 0x8b) + [Text.Encoding]::ASCII.GetBytes("fake image archive $Version`n")))
+    $hash = (Get-FileHash -Algorithm SHA256 -LiteralPath $file).Hash.ToLowerInvariant()
+    if ($BadChecksum) { $hash = '0' * 64 }
+    [IO.File]::WriteAllText("$file.sha256", "$hash  strategy-app-$Version.tar.gz`n", $utf8)
+    return $file
+}
+$noPullOrBuild = '^compose (pull|build)( |$)'
 function Show-OnFailure($Result) {
     if ($script:Failures.Count -gt $script:ShownFailures) {
         Write-Host '    --- script output ---'
@@ -180,25 +207,23 @@ try {
     $cmds = @(Get-Cmds $r)
     Assert-True ($cmds -contains 'info') 'docker info checked'
     Assert-True ($cmds -contains 'compose version') 'docker compose version checked'
-    $build = @(Find-Call $r 'compose build migrate')
-    Assert-True ($build.Count -eq 1) 'image built once (compose build migrate)'
-    if ($build.Count -eq 1) {
-        Assert-True ($build[0].env.GIT_REVISION -eq '') 'no .git: GIT_REVISION empty'
-        Assert-True ($build[0].env.APP_VERSION -eq $current) 'APP_VERSION from deploy/VERSION'
-        # PowerShell 7's ConvertFrom-Json turns an ISO 8601 string into a DateTime (Kind Utc for a trailing Z); 5.1 keeps the string.
-        $created = $build[0].env.BUILD_CREATED
-        if ($created -is [datetime]) { $createdOk = $created.Kind -eq [DateTimeKind]::Utc -and $created.Millisecond -eq 0 }
-        else { $createdOk = [string]$created -match '^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ$' }
-        Assert-True $createdOk "BUILD_CREATED in UTC ($created)"
+    $pull = @(Find-Call $r 'compose pull migrate app')
+    Assert-True ($pull.Count -eq 1) 'release image pulled by default (compose pull migrate app)'
+    if ($pull.Count -eq 1) {
+        Assert-True ($pull[0].env.APP_VERSION -eq $current) 'APP_VERSION from deploy/VERSION'
+        Assert-True ($pull[0].env.APP_IMAGE -eq $ghcr) 'APP_IMAGE = ghcr.io release package'
     }
+    Assert-True ((Get-CallFiles $r 'compose pull migrate app') -eq 'docker-compose.yml') 'pulled without the build override'
+    Assert-True (Test-NoCallLike $r '^compose build( |$)') 'nothing built'
     Assert-True ($cmds -contains 'compose up -d --no-build') 'services started'
-    Assert-True ([Array]::IndexOf($cmds, 'compose build migrate') -lt [Array]::IndexOf($cmds, 'compose up -d --no-build')) 'build before start'
+    Assert-True (Test-Before $r 'compose pull migrate app' 'compose up -d --no-build') 'pull before start'
     $envFile = Join-Path $release 'deploy/.env'
     Assert-True (Test-Utf8File $envFile) '.env is UTF-8 without BOM with LF line endings'
     Assert-True ((Get-EnvLine $release 'POSTGRES_PASSWORD') -match '^[0-9a-f]{48}$') 'generated POSTGRES_PASSWORD'
     Assert-True ((Get-EnvLine $release 'STRATEGY_APP_PASSWORD') -match '^[0-9a-f]{48}$') 'generated STRATEGY_APP_PASSWORD'
     Assert-True ((Get-EnvLine $release 'APP_VERSION') -eq $current) 'APP_VERSION saved'
     Assert-True ((Get-EnvLine $release 'APP_PORT') -eq '18431') 'APP_PORT from the environment saved'
+    Assert-True ((Get-EnvLine $release 'APP_IMAGE') -eq $ghcr) 'APP_IMAGE saved'
     $example = [IO.File]::ReadAllLines((Join-Path $release 'deploy/.env.example'), $utf8)
     $written = [IO.File]::ReadAllLines($envFile, $utf8)
     $changed = @($example | Where-Object { $_ -notmatch '^(POSTGRES_PASSWORD|STRATEGY_APP_PASSWORD|MEILI_MASTER_KEY|APP_VERSION|APP_PORT|POSTGRES_PORT|GOTENBERG_PORT)=' -and $written -notcontains $_ })
@@ -293,10 +318,10 @@ try {
     Assert-True ($r.Code -eq 0) "exit code 0 (was $($r.Code))"
     Assert-True (Test-NoNativeErrors $r) 'no stderr turned into PowerShell errors'
     $cmds = @(Get-Cmds $r)
-    $build = @(Find-Call $r 'compose build migrate')
-    Assert-True ($build.Count -eq 1 -and $build[0].env.APP_VERSION -eq $next -and $build[0].env.GIT_REVISION -eq '') "new image built as $next without revision"
-    $dump = [Array]::IndexOf($cmds, ($cmds | Where-Object { $_ -like 'compose exec -T postgres pg_dump *' } | Select-Object -First 1))
-    Assert-True ($dump -gt [Array]::IndexOf($cmds, 'compose build migrate')) 'pre-upgrade backup after the build'
+    $pull = @(Find-Call $r 'compose pull migrate app')
+    Assert-True ($pull.Count -eq 1 -and $pull[0].env.APP_VERSION -eq $next -and $pull[0].env.APP_IMAGE -eq $ghcr) "new image pulled as $($ghcr):$next"
+    Assert-True (Test-NoCallLike $r '^compose build( |$)') 'nothing built'
+    Assert-True (Test-Before $r 'compose pull migrate app' (Get-FirstDump $r)) 'pre-upgrade backup after the pull'
     Assert-True ($cmds -contains 'compose run --rm migrate') 'migrations as the owner'
     Assert-True ((Get-EnvLine $release 'APP_VERSION') -eq $next) "APP_VERSION=$next saved"
     Assert-True (Test-Utf8File $envFile) '.env still UTF-8 without BOM, LF'
@@ -306,20 +331,160 @@ try {
     Assert-True ($r.Output -match "checked the application: .*strategy-$currentRe-\d{8}T\d{6}Z") 'pre-upgrade backup folder handed over from backup.ps1'
     Show-OnFailure $r
 
-    $script:Test = 'upgrade with failing migrations'
+    $script:Test = 'upgrade with failing migrations (-NoBuild, deprecated alias of -NoPull)'
     Write-Host "  $($script:Test)"
     $r = Invoke-Script $release 'upgrade.ps1' @('-NoBuild') @{ NEW_VERSION = $after; FAKE_DOCKER_FAIL = 'compose run --rm migrate=3' }
     Assert-True ($r.Code -eq 7) "exit code 7 (was $($r.Code))"
+    Assert-True ($r.Output -match '-NoBuild is deprecated: use -NoPull') 'deprecation warning'
+    Assert-True (Test-NoCallLike $r $noPullOrBuild) 'nothing pulled or built'
     Assert-True ($r.Output -match 'restore\.ps1 -Backup') 'rollback command printed'
+    Assert-True ($r.Output -match "previous image $([regex]::Escape("$($ghcr):$next")) is still on this machine") 'previous image named'
     Assert-True ((Get-EnvLine $release 'APP_VERSION') -eq $next) 'APP_VERSION unchanged'
     Show-OnFailure $r
 
     # -----------------------------------------------------------------------------------------------------------------------------
-    $script:Test = 'install with a broken .git (git fails on stderr)'
+    $script:Test = 'install -Build (from source, build override)'
+    Write-Host "  $($script:Test)"
+    $source = New-Release 'source'
+    $r = Invoke-Script $source 'install.ps1' @('-Build')
+    Assert-True ($r.Code -eq 0) "exit code 0 (was $($r.Code))"
+    Assert-True (Test-NoNativeErrors $r) 'no stderr turned into PowerShell errors'
+    $build = @(Find-Call $r 'compose build migrate')
+    Assert-True ($build.Count -eq 1) 'image built once (compose build migrate)'
+    Assert-True ((Get-CallFiles $r 'compose build migrate') -eq 'docker-compose.yml docker-compose.build.yml') 'built with docker-compose.build.yml'
+    if ($build.Count -eq 1) {
+        Assert-True ($build[0].env.GIT_REVISION -eq '') 'no .git: GIT_REVISION empty'
+        Assert-True ($build[0].env.APP_VERSION -eq $current) 'APP_VERSION from deploy/VERSION'
+        Assert-True ($build[0].env.APP_IMAGE -eq $ghcr) 'built as the release image name'
+        # PowerShell 7's ConvertFrom-Json turns an ISO 8601 string into a DateTime (Kind Utc for a trailing Z); 5.1 keeps the string.
+        $created = $build[0].env.BUILD_CREATED
+        if ($created -is [datetime]) { $createdOk = $created.Kind -eq [DateTimeKind]::Utc -and $created.Millisecond -eq 0 }
+        else { $createdOk = [string]$created -match '^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ$' }
+        Assert-True $createdOk "BUILD_CREATED in UTC ($created)"
+    }
+    Assert-True (Test-NoCallLike $r '^compose pull( |$)') 'nothing pulled'
+    Assert-True (Test-Before $r 'compose build migrate' 'compose up -d --no-build') 'build before start'
+    Show-OnFailure $r
+
+    $script:Test = 'upgrade -Build'
+    Write-Host "  $($script:Test)"
+    $r = Invoke-Script $source 'upgrade.ps1' @('-Build', '-NoBackup') @{ NEW_VERSION = $next }
+    Assert-True ($r.Code -eq 0) "exit code 0 (was $($r.Code))"
+    $build = @(Find-Call $r 'compose build migrate')
+    Assert-True ($build.Count -eq 1 -and $build[0].env.APP_VERSION -eq $next) "new image built as $next"
+    Assert-True ((Get-CallFiles $r 'compose build migrate') -eq 'docker-compose.yml docker-compose.build.yml') 'built with docker-compose.build.yml'
+    Assert-True (Test-NoCallLike $r '^compose pull( |$)') 'nothing pulled'
+    Assert-True ((Get-EnvLine $source 'APP_VERSION') -eq $next) "APP_VERSION=$next saved"
+    Show-OnFailure $r
+
+    # -----------------------------------------------------------------------------------------------------------------------------
+    $script:Test = 'install -Image <archive>.tar.gz (checksum verified, ghcr.io name inside)'
+    Write-Host "  $($script:Test)"
+    $offline = New-Release 'offline'
+    $archive = New-Archive $current
+    $r = Invoke-Script $offline 'install.ps1' @('-Image', $archive) @{ FAKE_DOCKER_IMAGES = 'none'; FAKE_DOCKER_LOAD_IMAGE = "$($ghcr):$current" }
+    Assert-True ($r.Code -eq 0) "exit code 0 (was $($r.Code))"
+    Assert-True (Test-NoNativeErrors $r) 'no stderr turned into PowerShell errors'
+    Assert-True ($r.Output -match 'Checksum verified') 'checksum verified'
+    Assert-True ((Get-Cmds $r) -contains "load -i $archive") 'archive loaded'
+    Assert-True (Test-NoCallLike $r '^tag ') 'no retag needed'
+    Assert-True (Test-NoCallLike $r $noPullOrBuild) 'nothing pulled or built'
+    Assert-True ((Get-Cmds $r) -contains 'compose up -d --no-build') 'services started'
+    Show-OnFailure $r
+
+    $script:Test = 'upgrade -Image <archive>.tar.gz (strategy-app:<version> inside is tagged)'
+    Write-Host "  $($script:Test)"
+    $archiveNext = New-Archive $next
+    $r = Invoke-Script $offline 'upgrade.ps1' @('-Image', $archiveNext) @{ NEW_VERSION = $next; FAKE_DOCKER_IMAGES = "$($ghcr):$current"; FAKE_DOCKER_LOAD_IMAGE = "strategy-app:$next" }
+    Assert-True ($r.Code -eq 0) "exit code 0 (was $($r.Code))"
+    Assert-True ($r.Output -match 'Checksum verified') 'checksum verified'
+    Assert-True ((Get-Cmds $r) -contains "tag strategy-app:$next $($ghcr):$next") "tagged as $($ghcr):$next"
+    Assert-True (Test-NoCallLike $r $noPullOrBuild) 'nothing pulled or built'
+    Assert-True (Test-Before $r "load -i $archiveNext" (Get-FirstDump $r)) 'load before the pre-upgrade backup'
+    Assert-True ((Get-EnvLine $offline 'APP_VERSION') -eq $next) "APP_VERSION=$next saved"
+    Show-OnFailure $r
+
+    $script:Test = 'install -Image with a checksum mismatch (refused)'
+    Write-Host "  $($script:Test)"
+    $mirror = New-Release 'mirror'
+    $bad = New-Archive $after -BadChecksum
+    $r = Invoke-Script $mirror 'install.ps1' @('-Image', $bad) @{ FAKE_DOCKER_IMAGES = 'none' }
+    Assert-True ($r.Code -eq 4) "exit code 4 (was $($r.Code))"
+    Assert-True ($r.Output -match 'Checksum mismatch') 'mismatch reported'
+    Assert-True (Test-NoCallLike $r '^load ') 'nothing loaded'
+    Assert-True (Test-NoCallLike $r '^compose up') 'nothing started'
+    Show-OnFailure $r
+
+    $script:Test = 'install -Image for a registry mirror (APP_IMAGE): ghcr.io name tagged'
+    Write-Host "  $($script:Test)"
+    $r = Invoke-Script $mirror 'install.ps1' @('-Image', $archive) @{ APP_IMAGE = 'registry.example.org/strategy/strategy-app'; FAKE_DOCKER_IMAGES = 'none'; FAKE_DOCKER_LOAD_IMAGE = "$($ghcr):$current" }
+    Assert-True ($r.Code -eq 0) "exit code 0 (was $($r.Code))"
+    Assert-True ((Get-Cmds $r) -contains "tag $($ghcr):$current registry.example.org/strategy/strategy-app:$current") 'tagged with the mirror name'
+    Assert-True ((Get-EnvLine $mirror 'APP_IMAGE') -eq 'registry.example.org/strategy/strategy-app') 'APP_IMAGE saved'
+    Show-OnFailure $r
+
+    # -----------------------------------------------------------------------------------------------------------------------------
+    $script:Test = 'install -NoPull (image on this machine)'
+    Write-Host "  $($script:Test)"
+    $local = New-Release 'local'
+    $r = Invoke-Script $local 'install.ps1' @('-NoPull')
+    Assert-True ($r.Code -eq 0) "exit code 0 (was $($r.Code))"
+    Assert-True ((Get-Cmds $r) -contains "image inspect $($ghcr):$current") 'image checked'
+    Assert-True (Test-NoCallLike $r $noPullOrBuild) 'nothing pulled or built'
+    Assert-True ((Get-Cmds $r) -contains 'compose up -d --no-build') 'services started'
+    Show-OnFailure $r
+
+    $script:Test = 'install -NoBuild (deprecated alias of -NoPull)'
+    Write-Host "  $($script:Test)"
+    $r = Invoke-Script $local 'install.ps1' @('-NoBuild')
+    Assert-True ($r.Code -eq 0) "exit code 0 (was $($r.Code))"
+    Assert-True ($r.Output -match '-NoBuild is deprecated: use -NoPull') 'deprecation warning'
+    Assert-True (Test-NoCallLike $r $noPullOrBuild) 'nothing pulled or built'
+    Show-OnFailure $r
+
+    $script:Test = 'upgrade of a pre-1.0.2 installation (no APP_IMAGE, image built as strategy-app:<version>)'
+    Write-Host "  $($script:Test)"
+    $envLocal = Join-Path $local 'deploy/.env'
+    $kept = @([IO.File]::ReadAllLines($envLocal, $utf8) | Where-Object { -not $_.StartsWith('APP_IMAGE=') })
+    [IO.File]::WriteAllText($envLocal, (($kept -join "`n") + "`n"), $utf8)
+    $r = Invoke-Script $local 'upgrade.ps1' @() @{ NEW_VERSION = $next; FAKE_DOCKER_IMAGES = "strategy-app:$current" }
+    Assert-True ($r.Code -eq 0) "exit code 0 (was $($r.Code))"
+    Assert-True ((Get-EnvLine $local 'APP_IMAGE') -eq $ghcr) 'APP_IMAGE default written to .env'
+    Assert-True (Test-Before $r "tag strategy-app:$current $($ghcr):$current" (Get-FirstDump $r)) 'old image tagged with the release name before the backup'
+    $pull = @(Find-Call $r 'compose pull migrate app')
+    Assert-True ($pull.Count -eq 1 -and $pull[0].env.APP_VERSION -eq $next) "new image pulled as $next"
+    Show-OnFailure $r
+
+    $script:Test = 'install -NoPull without the image'
+    Write-Host "  $($script:Test)"
+    $noImage = New-Release 'no-image'
+    $r = Invoke-Script $noImage 'install.ps1' @('-NoPull') @{ FAKE_DOCKER_IMAGES = 'none' }
+    Assert-True ($r.Code -eq 4) "exit code 4 (was $($r.Code))"
+    Assert-True ($r.Output -match "-NoPull: image $([regex]::Escape("$($ghcr):$current")) is not on this machine") 'message names the image'
+    Assert-True (Test-NoCallLike $r '^compose up') 'nothing started'
+    Show-OnFailure $r
+
+    $script:Test = 'install when the pull fails (offline machine)'
+    Write-Host "  $($script:Test)"
+    $r = Invoke-Script $noImage 'install.ps1' @() @{ FAKE_DOCKER_IMAGES = 'none'; FAKE_DOCKER_FAIL = 'compose pull=1' }
+    Assert-True ($r.Code -eq 4) "exit code 4 (was $($r.Code))"
+    Assert-True (Test-NoNativeErrors $r) 'no stderr turned into PowerShell errors'
+    Assert-True ($r.Output -match 'run the script again with -Image <file>') 'points to -Image'
+    Assert-True (Test-NoCallLike $r '^compose up') 'nothing started'
+    Show-OnFailure $r
+
+    $script:Test = 'install with -Build and -NoPull (refused)'
+    Write-Host "  $($script:Test)"
+    $r = Invoke-Script $noImage 'install.ps1' @('-Build', '-NoPull')
+    Assert-True ($r.Code -eq 2) "exit code 2 (was $($r.Code))"
+    Show-OnFailure $r
+
+    # -----------------------------------------------------------------------------------------------------------------------------
+    $script:Test = 'install -Build with a broken .git (git fails on stderr)'
     Write-Host "  $($script:Test)"
     if (Get-Command git -CommandType Application -ErrorAction SilentlyContinue) {
         $broken = New-Release 'broken-git' -BrokenGit
-        $r = Invoke-Script $broken 'install.ps1'
+        $r = Invoke-Script $broken 'install.ps1' @('-Build')
         Assert-True ($r.Code -eq 0) "exit code 0 (was $($r.Code))"
         Assert-True (Test-NoNativeErrors $r) 'no stderr turned into PowerShell errors'
         $build = @(Find-Call $r 'compose build migrate')
@@ -332,7 +497,7 @@ try {
     $script:Test = 'install with a failing image build'
     Write-Host "  $($script:Test)"
     $other = New-Release 'build-fails'
-    $r = Invoke-Script $other 'install.ps1' @() @{ FAKE_DOCKER_FAIL = 'compose build=17' }
+    $r = Invoke-Script $other 'install.ps1' @('-Build') @{ FAKE_DOCKER_FAIL = 'compose build=17' }
     Assert-True ($r.Code -ne 0) "non-zero exit code (was $($r.Code))"
     Assert-True ($r.Output -match 'docker compose build migrate failed \(exit 17\)') 'error names the failed command and its exit code'
     Assert-True (-not ((Get-Cmds $r) -contains 'compose up -d --no-build')) 'nothing started'

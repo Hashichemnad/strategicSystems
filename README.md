@@ -56,7 +56,7 @@ Screenshots for review are written to `docs/screenshots/phase-<n>/`.
 | Apply migrations (install / upgrade) | `dotnet run --project src/Host/Strategy.Host -- --migrate` |
 | Regenerate the TS client after an API change | `dotnet build src/Host/Strategy.Host && (cd web && npm run api:generate)` |
 | Add an npm dependency | `cd web && npx npm@11 install <pkg>` (see ADR 0008), then update `docs/THIRD_PARTY_LICENSES.md` |
-| Run everything in containers | `docker compose -f deploy/docker-compose.yml --profile app up -d --build` → http://localhost:8080 |
+| Run everything in containers | `docker compose -f deploy/docker-compose.yml -f deploy/docker-compose.build.yml --profile app up -d --build` (from source; without the second file and `--build`: the release image from ghcr.io, ADR 0219) → http://localhost:8080 |
 
 ### Restricted networks and cloud sessions
 

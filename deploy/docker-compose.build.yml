@@ -1,0 +1,43 @@
+# Build strategy-app from this source folder instead of pulling the release image (ADR 0219). Used only together with
+# docker-compose.yml, by install / upgrade --build (-Build) and by developers:
+#
+#   docker compose -f deploy/docker-compose.yml -f deploy/docker-compose.build.yml --profile app build migrate
+#   docker compose -f deploy/docker-compose.yml -f deploy/docker-compose.build.yml --profile app up -d --build
+#
+# The image keeps its name ${APP_IMAGE}:${APP_VERSION}, so the started services and later commands without this file use the built image.
+# `pull_policy: never` here: with the build section the image is built when the tag is missing (or with --build) and never pulled, and
+# `run --rm migrate` / `run --rm app …` reuse the existing image instead of rebuilding it (ADR 0157). `app` reuses the image `migrate` builds.
+services:
+  migrate:
+    pull_policy: never
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+      args:
+        REGISTRY_PREFIX: ${REGISTRY_PREFIX:-}
+        APP_VERSION: ${APP_VERSION:-1.0.1}
+        GIT_REVISION: ${GIT_REVISION:-}
+        BUILD_CREATED: ${BUILD_CREATED:-}
+        # false: no Tesseract OCR packages (and no GPL-2+ libjbig0) in the image; scanned documents cannot be read (ADR 0033).
+        INSTALL_OCR: ${INSTALL_OCR:-true}
+        # Slow networks (ADR 0163): retries and timeouts of npm (ms), NuGet and apt; the defaults change nothing on a good connection.
+        NPM_FETCH_RETRIES: ${NPM_FETCH_RETRIES:-5}
+        NPM_FETCH_RETRY_MINTIMEOUT: ${NPM_FETCH_RETRY_MINTIMEOUT:-20000}
+        NPM_FETCH_RETRY_MAXTIMEOUT: ${NPM_FETCH_RETRY_MAXTIMEOUT:-120000}
+        NPM_FETCH_TIMEOUT: ${NPM_FETCH_TIMEOUT:-600000}
+        NUGET_ENHANCED_MAX_NETWORK_TRY_COUNT: ${NUGET_ENHANCED_MAX_NETWORK_TRY_COUNT:-10}
+        NUGET_ENHANCED_NETWORK_RETRY_DELAY_MILLISECONDS: ${NUGET_ENHANCED_NETWORK_RETRY_DELAY_MILLISECONDS:-3000}
+        NUGET_RESTORE_ATTEMPTS: ${NUGET_RESTORE_ATTEMPTS:-3}
+        NUGET_RESTORE_DISABLE_PARALLEL: ${NUGET_RESTORE_DISABLE_PARALLEL:-false}
+        APT_RETRIES: ${APT_RETRIES:-5}
+        APT_HTTP_TIMEOUT: ${APT_HTTP_TIMEOUT:-120}
+      secrets:
+        - build_ca
+
+  app:
+    pull_policy: never
+
+secrets:
+  # Optional CA bundle for builds behind a TLS-inspecting proxy; an empty file means "not needed".
+  build_ca:
+    file: ${BUILD_CA_FILE:-./empty-ca.pem}

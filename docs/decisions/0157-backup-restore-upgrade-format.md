@@ -1,6 +1,8 @@
 # 0157 — Packaging, install, backup / restore / upgrade format
 
-- **Status:** Accepted by the owner (Phase 18)
+- **Status:** Accepted by the owner (Phase 18). **Superseded in part by [0219](0219-release-images-on-ghcr.md)** (release 1.0.2): the image
+  is published on ghcr.io and pulled by default (`pull_policy: missing`); building moved to `docker-compose.build.yml` and `--build`;
+  `--no-build` became `--no-pull`. The backup / restore format and the rest of the upgrade flow are unchanged.
 - **Context:** SPEC §0.0 (single-tenant, self-hosted, restricted / offline networks) and §0.5 (*guided installer*, *Docker-based deployment
   plus plain server install*, *versioned migrations and an in-place upgrade path*, *backup / restore tooling*). Until Phase 17 an install was
   a manual sequence from `deploy/README.md` and there were no backup, restore or upgrade tools. Customers run Linux servers, Windows Server

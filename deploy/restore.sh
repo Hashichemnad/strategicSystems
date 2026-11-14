@@ -41,15 +41,17 @@ fi
 [ -f "$ENV_FILE" ] || die "deploy/.env not found. Run ./deploy/install.sh first (new machine) or pass --with-env to use the backup's settings." 2
 if [ -n "${APP_VERSION:-}" ]; then env_set APP_VERSION "$APP_VERSION"; fi
 APP_VERSION="$(setting APP_VERSION "$(release_version)")"
-export APP_VERSION
-docker image inspect "strategy-app:$APP_VERSION" > /dev/null 2>&1 \
-  || die "Image strategy-app:$APP_VERSION is not on this machine. Build it (./deploy/install.sh --no-build is not enough: run docker compose -f deploy/docker-compose.yml --profile app build) or load it (docker load -i …)." 4
+APP_IMAGE="$(app_image)"
+export APP_VERSION APP_IMAGE
+IMAGE_REF="$APP_IMAGE:$APP_VERSION"
+ensure_local_image "$IMAGE_REF" || pull_app_image "$IMAGE_REF" \
+  || die "Image $IMAGE_REF is not on this machine and could not be pulled. Load the release archive (docker load -i strategy-app-$APP_VERSION.tar.gz) or build it (docker compose -f deploy/docker-compose.yml -f deploy/docker-compose.build.yml --profile app build migrate), then run the restore again. Nothing was changed." 4
 DB="$(setting POSTGRES_DB strategy)"
 OWNER="$(setting POSTGRES_USER strategy)"
 
 say ""
 say "  Backup:   $BACKUP (version $backup_version)"
-say "  Restore into database '$DB' of this installation with image strategy-app:$APP_VERSION."
+say "  Restore into database '$DB' of this installation with image $IMAGE_REF."
 say "  The CURRENT database and files are replaced."
 if [ "$ASSUME_YES" = false ]; then
   read -r -p "  Type RESTORE to continue: " answer
@@ -97,10 +99,10 @@ compose run --rm --no-deps migrate
 
 info "7/7 Verifying the audit hash chain"
 # Images before 1.0 (no "Integrated Strategy System" title label; the base image has its own version label) have no --verify-audit-chain command: a rollback to them verifies on the screen instead.
-if docker image inspect -f '{{json .Config.Labels}}' "strategy-app:$APP_VERSION" 2> /dev/null | grep -q '"org.opencontainers.image.title":"Integrated Strategy System"'; then
+if docker image inspect -f '{{json .Config.Labels}}' "$IMAGE_REF" 2> /dev/null | grep -q '"org.opencontainers.image.title":"Integrated Strategy System"'; then
   compose run --rm --no-deps app --verify-audit-chain || die "The audit chain of the restored database does not verify. The application was NOT started." 9
 else
-  warn "strategy-app:$APP_VERSION predates 1.0 and cannot verify the chain from the command line: after the start use Audit → Verification → Verify now."
+  warn "$IMAGE_REF predates 1.0 and cannot verify the chain from the command line: after the start use Audit → Verification → Verify now."
   CHAIN_NOTE="; audit chain: verify on the screen"
 fi
 

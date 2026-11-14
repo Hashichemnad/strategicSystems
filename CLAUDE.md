@@ -261,8 +261,10 @@ dotnet run --project src/Host/Strategy.Host -- --setup-token                  # 
 dotnet run --project src/Host/Strategy.Host -- --seed-demo --password-file <f>   # optional demo pack (ADR 0153); --remove-demo cancels / deactivates it
 dotnet run --project src/Host/Strategy.Host -- --verify-audit-chain            # exit 0 when the audit hash chain is intact (restore verification)
 
-# Containerised install (http://localhost:8080) and operations (ADR 0157, docs/guides/en/installation.md)
+# Containerised install (http://localhost:8080) and operations (ADR 0157, 0219, docs/guides/en/installation.md)
 ./deploy/install.sh                     # Windows: deploy\install.ps1 · ports APP_PORT / POSTGRES_PORT / GOTENBERG_PORT · prints the setup token
+# install / upgrade pull ${APP_IMAGE:-ghcr.io/hashichemnad/strategy-app}:<deploy/VERSION>; --image <tar.gz> offline (checks .sha256),
+# --build from source (deploy/docker-compose.build.yml), --no-pull image already loaded (PowerShell: -Image · -Build · -NoPull)
 ./deploy/backup.sh · ./deploy/restore.sh <folder> · ./deploy/upgrade.sh    # PowerShell twins: backup.ps1 · restore.ps1 · upgrade.ps1
 ./deploy/sbom.sh [--scan]               # CycloneDX SBOM (Syft) and Trivy scan of the image (ADR 0156)
 tests/perf/run.sh                       # k6 load tests: seeds its own database (test-only bulk seed), Release host, Mailpit (docs/performance.md, ADR 0158)
