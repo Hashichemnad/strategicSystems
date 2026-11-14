@@ -23,9 +23,9 @@
     },
     {
       "key": "contact", "sourceObject": "Contact", "kind": "people", "loadOrder": 21, "useBulk": true, "provisional": true,
-      "options": { "matchOrder": ["email"], "emailField": "Email", "nameField": "Name" },
-      "notesAr": "حقول الأشخاص في PMS (مدير المشروع، مالك الخطر…) تشير إلى جهات الاتصال؛ المطابقة بالبريد.",
-      "notesEn": "PMS people fields (project manager, risk owner, …) point at Contacts; matched by e-mail."
+      "options": { "matchOrder": ["email", "employeeNo"], "emailField": "Email", "employeeNoField": "Employee_Number__c", "federationIdField": null, "nameField": "Name" },
+      "notesAr": "حقول الأشخاص في PMS (مدير المشروع، مالك الخطر…) تشير إلى جهات الاتصال؛ المطابقة بالبريد ثم رقم الموظف (Employee_Number__c). لا تحتوي جهة الاتصال على EmployeeNumber ولا FederationIdentifier.",
+      "notesEn": "PMS people fields (project manager, risk owner, …) point at Contacts; matched by e-mail, then employee number (Employee_Number__c). Contact has no EmployeeNumber or FederationIdentifier."
     }
   ]
 }

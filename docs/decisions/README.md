@@ -180,3 +180,8 @@ Write an ADR for every choice the SPEC or CLAUDE.md leaves open (CLAUDE.md §2 r
 | [0207](0207-failover-outage-return-to-standby.md) | Failover: make primary, outage period, outage changes report, return to standby | Proposed |
 | [0208](0208-files-and-source-history.md) | Salesforce files into the Files service; approval and field history as read-only source history | Proposed |
 | [0209](0209-labels-for-fixed-code-fields.md) | Labels for code fields without a lookup type: fixed choices and module label sources on dataset fields | Proposed |
+| [0210](0210-api-limits-without-view-setup.md) | API limits without "View Setup and Configuration": /limits refused is a warning, usage from the Sforce-Limit-Info header | Proposed |
+| [0211](0211-salesforce-error-details.md) | What Salesforce answered: HTTP status, call, error code and message on the Connection tab, run log and server log | Proposed |
+| [0212](0212-describe-driven-soql-and-full-validation.md) | Queries select only fields the object has; Validate checks every queried field; picklist → number | Proposed |
+| [0213](0213-shipped-pack-upgrade.md) | Upgrading the shipped mapping pack on installations that did not change it | Proposed |
+| [0214](0214-sync-targets-are-referenceable.md) | Every sync target can carry external references | Proposed |

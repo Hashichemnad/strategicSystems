@@ -19,7 +19,7 @@ import {
   TableRow,
 } from '@/ui';
 import { useSyncRun, useSyncRuns, type SyncRun } from './api';
-import { Code, formatDuration, runTone, severityTone, useMessage, useSyncT } from './shared';
+import { Code, formatDuration, runTone, ServerMessage, severityTone, useSyncT } from './shared';
 
 function totals(run: SyncRun) {
   const sum = { read: 0, created: 0, updated: 0, failed: 0 };
@@ -35,7 +35,6 @@ function totals(run: SyncRun) {
 /** Run history with paging; a run opens its per-object counts and log (translated message keys). */
 export function RunsTab({ connectionId }: { connectionId: string }) {
   const { t, tx, language } = useSyncT();
-  const message = useMessage();
   const [page, setPage] = useState(1);
   const [open, setOpen] = useState<string | null>(null);
   const runs = useSyncRuns(connectionId, page);
@@ -78,7 +77,7 @@ export function RunsTab({ connectionId }: { connectionId: string }) {
                     </StatusChip>
                     {run.messageKey && (
                       <span className="text-xs text-muted-foreground">
-                        {message(run.messageKey, run.params)}
+                        <ServerMessage messageKey={run.messageKey} params={run.params} />
                       </span>
                     )}
                   </div>
@@ -123,7 +122,6 @@ function RunDialog({
 }) {
   const { t, tx, language } = useSyncT();
   const { t: tc } = useTranslation();
-  const message = useMessage();
   const detail = useSyncRun(connectionId, runId);
   const run = detail.data?.run;
   return (
@@ -199,7 +197,9 @@ function RunDialog({
                           })}
                         </StatusChip>
                         {line.objectKey && <Code>{line.objectKey}</Code>}
-                        <span className="min-w-0 flex-1">{message(line.messageKey, line.params)}</span>
+                        <span className="min-w-0 flex-1">
+                          <ServerMessage messageKey={line.messageKey} params={line.params} />
+                        </span>
                       </li>
                     ))}
                   </ol>

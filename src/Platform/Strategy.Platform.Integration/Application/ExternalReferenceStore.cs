@@ -18,10 +18,13 @@ namespace Strategy.Platform.Integration.Application;
 /// leaves the caller's transaction usable.
 /// </summary>
 internal sealed class ExternalReferenceStore(
-    IntegrationDbContext db, IClock clock, ILinkRegistry links, IEnumerable<ReferenceableTypeDefinition> referenceable, NpgsqlDataSource dataSource)
+    IntegrationDbContext db, IClock clock, ILinkRegistry links, IEnumerable<ReferenceableTypeDefinition> referenceable, IEnumerable<SyncTargetDefinition> syncTargets,
+    NpgsqlDataSource dataSource)
     : IExternalReferenceStore
 {
-    private readonly HashSet<string> _registered = referenceable.Select(d => d.ResourceType).ToHashSet(StringComparer.Ordinal);
+    // Every sync target carries the Salesforce Id of its records (ADR 0202): e.g. project risks, which are neither linkable nor registered.
+    // Visibility of such records still goes through the Links registry or a registered source only (unknown types resolve to nothing).
+    private readonly HashSet<string> _registered = referenceable.Select(d => d.ResourceType).Concat(syncTargets.Select(t => t.Code)).ToHashSet(StringComparer.Ordinal);
 
     public bool IsReferenceable(string entityType) => _registered.Contains(entityType) || links.Find(entityType) is not null;
 

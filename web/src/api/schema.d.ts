@@ -15508,7 +15508,10 @@ export interface components {
       token: string;
       headerName: string;
     };
-    /** @description API limits of the source as last read. */
+    /**
+     * @description API limits of the source as last read: from `/limits`, or from the `Sforce-Limit-Info` header of normal calls when `/limits`
+     *     is refused (ADR 0210; then the Bulk job counts are unknown). string? ApiLimits.Source is null on values stored by 1.0.0 (= `limits`).
+     */
     ApiLimits: {
       /** Format: int32 */
       dailyApiMax: null | number;
@@ -15520,6 +15523,7 @@ export interface components {
       bulkJobsRemaining: null | number;
       /** Format: date-time */
       at: string;
+      source?: null | string;
     };
     /**
      * @description Settings → Appearance (SPEC-ADDENDUM §C1, docs/design/themes.md §2, ADR 0171): enabled themes, the installation's default theme and mode,
@@ -26950,6 +26954,14 @@ export interface components {
       credential: components['schemas']['CredentialDto'];
       secret: string;
     };
+    /** @description What Salesforce answered to a failed call (ADR 0211): HTTP status, sanitised call, Salesforce errorCode and message. */
+    SalesforceErrorDto: {
+      /** Format: int32 */
+      status: null | number;
+      call: string;
+      errorCode: null | string;
+      message: null | string;
+    };
     /** @description An employee holding the item's "editor" record role. */
     SampleEditorDto: {
       /** Format: uuid */
@@ -28199,6 +28211,15 @@ export interface components {
       at: string;
       ok: boolean;
       messageKey: null | string;
+      error: null | components['schemas']['SalesforceErrorDto'];
+      warnings: components['schemas']['SyncWarningDto'][];
+    };
+    /** @description A non-blocking finding of a connection test (e.g. `/limits` refused, ADR 0210). */
+    SyncWarningDto: {
+      messageKey: string;
+      params: null | {
+        [key: string]: string;
+      };
     };
     SystemAccessDto: {
       /** Format: uuid */

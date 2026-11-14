@@ -63,7 +63,7 @@ RUN RID=linux-x64; if [ "$TARGETARCH" = "arm64" ]; then RID=linux-arm64; fi; \
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 # OCI image labels (ADR 0157): the install / upgrade scripts pass APP_VERSION, GIT_REVISION and BUILD_CREATED.
-ARG APP_VERSION=1.0.0
+ARG APP_VERSION=1.0.1
 ARG GIT_REVISION=
 ARG BUILD_CREATED=
 LABEL org.opencontainers.image.title="Integrated Strategy System" \

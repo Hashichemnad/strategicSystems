@@ -62,6 +62,20 @@ public sealed partial class MockSalesforceOrg : ISalesforceTransport
 
     public bool RejectToken { get; set; }
 
+    /// <summary>
+    /// Refuse <c>/limits</c> like an org whose integration user lacks <i>View Setup and Configuration</i> (the <i>Salesforce Integration</i>
+    /// licence; ADR 0210): e.g. <c>(Forbidden, "INSUFFICIENT_ACCESS")</c> or <c>(BadRequest, "FUNCTIONALITY_NOT_ENABLED")</c>.
+    /// </summary>
+    public (HttpStatusCode Status, string ErrorCode)? RefuseLimits { get; set; }
+
+    /// <summary>Daily API requests allowed (reported by <c>/limits</c> and the <c>Sforce-Limit-Info</c> header of every answer).</summary>
+    public int ApiMax { get; set; } = 100000;
+
+    /// <summary>Daily API requests used; null = 1 000 plus the requests seen so far.</summary>
+    public int? ApiUsed { get; set; }
+
+    private int Used => ApiUsed ?? 1000 + Requests.Count;
+
     public MockObject AddObject(string name, params (string Name, string Type)[] fields)
     {
         var o = new MockObject(name, fields.Select(f => new MockField(f.Name, f.Type)).ToList());
@@ -69,11 +83,77 @@ public sealed partial class MockSalesforceOrg : ISalesforceTransport
         return o;
     }
 
+    /// <summary>
+    /// An object with a describe recorded from a real org (<c>Infrastructure/SalesforceDescribes/{name}.json</c>: User without IsDeleted, Contact
+    /// without EmployeeNumber / FederationIdentifier), so CI catches queries of fields Salesforce does not have (ADR 0212).
+    /// </summary>
+    public MockObject AddRecordedObject(string name)
+    {
+        using var stream = typeof(MockSalesforceOrg).Assembly.GetManifestResourceStream($"Strategy.Host.SalesforceDescribes.{name}.json")
+            ?? throw new InvalidOperationException($"No recorded describe for {name}.");
+        using var json = JsonDocument.Parse(stream);
+        var fields = json.RootElement.GetProperty("fields").EnumerateArray().Select(f => new MockField(f.GetProperty("name").GetString()!, f.GetProperty("type").GetString()!)
+        {
+            ReferenceTo = f.TryGetProperty("referenceTo", out var r) && r.GetArrayLength() > 0 ? r[0].GetString() : null,
+            RelationshipName = f.TryGetProperty("relationshipName", out var rel) ? rel.GetString() : null,
+        }).ToList();
+        var o = new MockObject(json.RootElement.GetProperty("name").GetString()!, fields);
+        Objects[o.Name] = o;
+        return o;
+    }
+
+    /// <summary>The standard objects of files, attachments and approvals, with their real relationship fields (for Validate's full field check).</summary>
+    public void AddStandardObjects()
+    {
+        AddObject("ContentVersion", ("Id", "id"), ("ContentDocumentId", "reference"), ("Title", "string"), ("PathOnClient", "string"), ("FileExtension", "string"),
+            ("IsLatest", "boolean"), ("SystemModstamp", "datetime"), ("IsDeleted", "boolean"));
+        AddObject("ContentDocumentLink", ("Id", "id"), ("ContentDocumentId", "reference"), ("LinkedEntityId", "reference"), ("SystemModstamp", "datetime"), ("IsDeleted", "boolean"));
+        AddObject("Attachment", ("Id", "id"), ("ParentId", "reference"), ("Name", "string"), ("ContentType", "string"), ("IsDeleted", "boolean"), ("SystemModstamp", "datetime"));
+        AddObject("ProcessDefinition", ("Id", "id"), ("Name", "string"), ("DeveloperName", "string"));
+        AddObject("ProcessInstance", ("Id", "id"), ("TargetObjectId", "reference"), ("Status", "picklist"), ("ProcessDefinitionId", "reference"), ("CreatedDate", "datetime"),
+            ("SystemModstamp", "datetime"), ("IsDeleted", "boolean"))
+            .Reference("ProcessDefinitionId", "ProcessDefinition", "ProcessDefinition");
+        AddObject("ProcessInstanceStep", ("Id", "id"), ("ProcessInstanceId", "reference"), ("StepStatus", "picklist"), ("ActorId", "reference"), ("Comments", "textarea"),
+            ("CreatedDate", "datetime"), ("SystemModstamp", "datetime"))
+            .Reference("ProcessInstanceId", "ProcessInstance", "ProcessInstance")
+            .Reference("ActorId", "User", "Actor");
+    }
+
+    /// <summary>A <c>…__History</c> object (field history) with its real fields.</summary>
+    public MockObject AddHistoryObject(string name) =>
+        AddObject(name, ("Id", "id"), ("ParentId", "reference"), ("Field", "picklist"), ("OldValue", "anyType"), ("NewValue", "anyType"),
+            ("CreatedDate", "datetime"), ("CreatedById", "reference"), ("IsDeleted", "boolean"))
+            .Reference("CreatedById", "User", "CreatedBy");
+
     public string NewId(string prefix) => prefix + Interlocked.Increment(ref _ids).ToString("D12", CultureInfo.InvariantCulture) + "AAA";
 
     public Task DelayAsync(TimeSpan delay, CancellationToken cancellationToken) => Task.CompletedTask;
 
     public async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+    {
+        var response = await AnswerAsync(request, cancellationToken).ConfigureAwait(false);
+        if (request.RequestUri!.AbsoluteUri.StartsWith(InstanceUrl, StringComparison.Ordinal))
+        {
+            // Like Salesforce: the daily API usage on every REST answer (ADR 0210).
+            response.Headers.TryAddWithoutValidation("Sforce-Limit-Info", string.Create(CultureInfo.InvariantCulture, $"api-usage={Used}/{ApiMax}"));
+        }
+
+        return response;
+    }
+
+    private async Task<HttpResponseMessage> AnswerAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+    {
+        try
+        {
+            return await RouteAsync(request, cancellationToken).ConfigureAwait(false);
+        }
+        catch (MockSoqlException ex)
+        {
+            return Json(HttpStatusCode.BadRequest, JsonSerializer.Serialize(new[] { new { message = ex.Message, errorCode = ex.ErrorCode } }));
+        }
+    }
+
+    private async Task<HttpResponseMessage> RouteAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
         var uri = request.RequestUri!;
         Requests.Enqueue($"{request.Method} {uri.AbsolutePath}");
@@ -121,9 +201,26 @@ public sealed partial class MockSalesforceOrg : ISalesforceTransport
                 : Json(HttpStatusCode.NotFound, """[{"errorCode":"NOT_FOUND"}]""");
         }
 
+        if (path is Data or Data + "/")
+        {
+            return Json(HttpStatusCode.OK, $$"""{"sobjects":"{{Data}}/sobjects","query":"{{Data}}/query","limits":"{{Data}}/limits"}""");
+        }
+
         if (path == Data + "/limits")
         {
-            return Json(HttpStatusCode.OK, """{"DailyApiRequests":{"Max":100000,"Remaining":99000},"DailyBulkV2QueryJobs":{"Max":10000,"Remaining":9990}}""");
+            if (RefuseLimits is { } refusal)
+            {
+                return Json(refusal.Status, JsonSerializer.Serialize(new[]
+                {
+                    new { message = "The REST API resource /limits needs the View Setup and Configuration permission.", errorCode = refusal.ErrorCode },
+                }));
+            }
+
+            return Json(HttpStatusCode.OK, JsonSerializer.Serialize(new Dictionary<string, object>
+            {
+                ["DailyApiRequests"] = new { Max = ApiMax, Remaining = ApiMax - Used },
+                ["DailyBulkV2QueryJobs"] = new { Max = 10000, Remaining = 9990 },
+            }));
         }
 
         if (path == Data + "/queryAll")
@@ -147,6 +244,7 @@ public sealed partial class MockSalesforceOrg : ISalesforceTransport
 
             var id = "750" + Guid.NewGuid().ToString("N")[..12];
             _bulkJobs[id] = body.RootElement.GetProperty("query").GetString()!;
+            _ = Select(_bulkJobs[id]); // Salesforce validates the query when the job is created (INVALID_FIELD)
             return Json(HttpStatusCode.OK, JsonSerializer.Serialize(new { id, state = "UploadComplete" }));
         }
 
@@ -247,7 +345,8 @@ public sealed partial class MockSalesforceOrg : ISalesforceTransport
             throw new InvalidOperationException("unsupported SOQL: " + soql);
         }
 
-        var o = Objects.TryGetValue(match.Groups["from"].Value, out var found) ? found : throw new InvalidOperationException("unknown object " + soql);
+        var o = Objects.TryGetValue(match.Groups["from"].Value, out var found) ? found
+            : throw new MockSoqlException("INVALID_TYPE", $"sObject type '{match.Groups["from"].Value}' is not supported.");
         var select = match.Groups["select"].Value.Trim();
         string[]? fields = select == "COUNT()" ? null : [.. select.Split(',').Select(f => f.Trim())];
         if (fields is not null)
@@ -256,7 +355,9 @@ public sealed partial class MockSalesforceOrg : ISalesforceTransport
             {
                 if (!o.Fields.Any(x => string.Equals(x.Name, f, StringComparison.OrdinalIgnoreCase)))
                 {
-                    throw new InvalidOperationException($"No such column '{f}' on entity '{o.Name}'");
+                    // Salesforce's own answer (HTTP 400): the connector must report it with the call and the errorCode (ADR 0211).
+                    throw new MockSoqlException("INVALID_FIELD",
+                        $"\n{select} FROM {o.Name}\n^\nERROR at Row:1:Column:8\nNo such column '{f}' on entity '{o.Name}'. If you are attempting to use a custom field, be sure to append the '__c' after the custom field name. Please reference your WSDL or the describe call for the appropriate names.");
                 }
             }
         }
@@ -440,6 +541,12 @@ public sealed partial class MockSalesforceOrg : ISalesforceTransport
     private static partial Regex DownloadPath();
 }
 
+/// <summary>A SOQL error Salesforce answers with HTTP 400 (<c>INVALID_FIELD</c>, <c>INVALID_TYPE</c>).</summary>
+public sealed class MockSoqlException(string errorCode, string message) : Exception(message)
+{
+    public string ErrorCode { get; } = errorCode;
+}
+
 public sealed record MockField(string Name, string Type)
 {
     public string? ReferenceTo { get; init; }
@@ -486,7 +593,17 @@ public sealed class MockObject(string name, List<MockField> fields)
         var row = Rows.FirstOrDefault(r => (string?)r["Id"] == id);
         if (row is null)
         {
-            row = new Dictionary<string, object?>(StringComparer.Ordinal) { ["Id"] = id, ["IsDeleted"] = false, ["CreatedDate"] = NextStamp() };
+            row = new Dictionary<string, object?>(StringComparer.Ordinal) { ["Id"] = id, ["CreatedDate"] = NextStamp() };
+            if (Has("IsDeleted"))
+            {
+                row["IsDeleted"] = false; // User has no IsDeleted (users are deactivated, never deleted)
+            }
+
+            if (Has("IsActive"))
+            {
+                row["IsActive"] = true;
+            }
+
             Rows.Add(row);
         }
 
@@ -499,8 +616,15 @@ public sealed class MockObject(string name, List<MockField> fields)
         return row;
     }
 
+    public bool Has(string field) => Fields.Any(f => string.Equals(f.Name, field, StringComparison.OrdinalIgnoreCase));
+
     public void Delete(string id)
     {
+        if (!Has("IsDeleted"))
+        {
+            throw new InvalidOperationException($"{Name} records cannot be deleted in Salesforce (deactivate them).");
+        }
+
         var row = Rows.First(r => (string?)r["Id"] == id);
         row["IsDeleted"] = true;
         row["SystemModstamp"] = NextStamp();

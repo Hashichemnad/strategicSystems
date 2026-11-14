@@ -5,6 +5,11 @@
 set -uo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+# The release under test (deploy/VERSION) and two later patch versions for the upgrade cases: no test edit on a version bump.
+CURRENT="$(tr -d '[:space:]' < "$REPO/deploy/VERSION")"
+NEXT="${CURRENT%.*}.$(( ${CURRENT##*.} + 1 ))"
+AFTER="${CURRENT%.*}.$(( ${CURRENT##*.} + 2 ))"
+CURRENT_RE="${CURRENT//./\\.}"
 PYTHON="${PYTHON:-$(command -v python3 || command -v python)}"
 [ -n "$PYTHON" ] || { echo "python3 is needed for the fake docker" >&2; exit 2; }
 WORK="$(mktemp -d "${TMPDIR:-/tmp}/strategy-deploy-tests-XXXXXX")"
@@ -99,7 +104,7 @@ check "exit code 0 (was $CODE)" test "$CODE" = 0
 check "docker info checked" has_call "info"
 check "image built (compose build migrate)" has_call "compose build migrate"
 check "no .git: GIT_REVISION empty" test -z "$(call_env 'compose build migrate' GIT_REVISION)"
-check "APP_VERSION from deploy/VERSION" test "$(call_env 'compose build migrate' APP_VERSION)" = "1.0.0"
+check "APP_VERSION from deploy/VERSION" test "$(call_env 'compose build migrate' APP_VERSION)" = "$CURRENT"
 check "services started" has_call "compose up -d --no-build"
 check ".env is UTF-8 without BOM with LF" utf8_lf "$REL/deploy/.env"
 check "generated POSTGRES_PASSWORD" grep -Eq '^POSTGRES_PASSWORD=[0-9a-f]{48}$' "$REL/deploy/.env"
@@ -119,7 +124,7 @@ start "backup"
 run "$REL" backup.sh
 check "exit code 0 (was $CODE)" test "$CODE" = 0
 BACKUP="$(find "$REL/backups" -mindepth 1 -maxdepth 1 -type d | head -n 1)"
-check "backup folder strategy-<version>-<UTC>" test -n "$(basename "${BACKUP:-x}" | grep -E '^strategy-1\.0\.0-[0-9]{8}T[0-9]{6}Z$')"
+check "backup folder strategy-<version>-<UTC>" test -n "$(basename "${BACKUP:-x}" | grep -E "^strategy-${CURRENT_RE}-[0-9]{8}T[0-9]{6}Z\$")"
 check "database.dump byte-identical" cmp "$BACKUP/database.dump" "$STATE/emitted-pg_dump.bin"
 check "files.tar.gz byte-identical" cmp "$BACKUP/files.tar.gz" "$STATE/emitted-files.tar.gz"
 check "SHA256SUMS verifies" sums_ok "$BACKUP"
@@ -144,21 +149,21 @@ check "exit code 7 (was $CODE)" test "$CODE" = 7
 check "nothing stopped" test "$(cmds | grep -cxF 'compose stop app')" = 0
 show_on_failure
 
-start "upgrade to 1.0.1 (release folder without .git)"
-EXTRA="NEW_VERSION=1.0.1" run "$REL" upgrade.sh
+start "upgrade to $NEXT (release folder without .git)"
+EXTRA="NEW_VERSION=$NEXT" run "$REL" upgrade.sh
 check "exit code 0 (was $CODE)" test "$CODE" = 0
-check "new image built as 1.0.1" test "$(call_env 'compose build migrate' APP_VERSION)" = "1.0.1"
+check "new image built as $NEXT" test "$(call_env 'compose build migrate' APP_VERSION)" = "$NEXT"
 check "no revision" test -z "$(call_env 'compose build migrate' GIT_REVISION)"
 check "migrations as the owner" has_call "compose run --rm migrate"
-check "APP_VERSION=1.0.1 saved" test "$(env_line "$REL" APP_VERSION)" = 1.0.1
+check "APP_VERSION=$NEXT saved" test "$(env_line "$REL" APP_VERSION)" = "$NEXT"
 check "pre-upgrade backup written" test "$(find "$REL/backups" -mindepth 1 -maxdepth 1 -type d | wc -l)" = 2
 show_on_failure
 
 start "upgrade with failing migrations"
-FAIL="compose run --rm migrate=3" EXTRA="NEW_VERSION=1.0.2" run "$REL" upgrade.sh --no-build
+FAIL="compose run --rm migrate=3" EXTRA="NEW_VERSION=$AFTER" run "$REL" upgrade.sh --no-build
 check "exit code 7 (was $CODE)" test "$CODE" = 7
 check "rollback command printed" grep_out 'restore\.sh .* --yes'
-check "APP_VERSION unchanged" test "$(env_line "$REL" APP_VERSION)" = 1.0.1
+check "APP_VERSION unchanged" test "$(env_line "$REL" APP_VERSION)" = "$NEXT"
 show_on_failure
 
 start "install with a broken .git (git fails on stderr)"

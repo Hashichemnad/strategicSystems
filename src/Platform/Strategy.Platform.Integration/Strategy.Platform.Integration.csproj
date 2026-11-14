@@ -33,6 +33,7 @@
   <ItemGroup>
     <!-- The "ADoF Salesforce" mapping pack: pack.json (header) + one objects file per system, merged by name order (ADR 0203). -->
     <EmbeddedResource Include="Sync\Packs\adof-salesforce\*.json" LogicalName="sync-pack/adof-salesforce/%(Filename)%(Extension)" />
+    <EmbeddedResource Include="Sync\Packs\upgrades\*.json" LogicalName="sync-pack-upgrade/%(Filename)%(Extension)" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Strategy.UnitTests" />

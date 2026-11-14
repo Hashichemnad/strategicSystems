@@ -346,7 +346,8 @@
       "apiUsage": "Salesforce API usage today",
       "apiUsed": "{{used}} of {{max}} requests ({{percent}}%)",
       "limitsAt": "Reported {{date}}",
-      "bulkJobs": "Bulk query jobs left: {{remaining}} of {{max}}"
+      "bulkJobs": "Bulk query jobs left: {{remaining}} of {{max}}",
+      "limitsFromHeader": "from Salesforce's response headers"
     },
     "objects": {
       "object": "Object",
@@ -419,7 +420,8 @@
       "testTitle": "Test connection",
       "test": "Test connection",
       "testOk": "The connection works",
-      "testFailed": "The connection failed"
+      "testFailed": "The connection failed",
+      "testOkWarnings": "The connection works, with warnings"
     },
     "schedule": {
       "kind": "Runs",
@@ -737,14 +739,14 @@
       "readOnly": "This record is synced from {{source}} and is read-only while {{source}} is the primary system. Make the change in {{source}}.",
       "apiLimit": "The Salesforce API limit is almost used up; the run stopped and continues with the next run.",
       "apiVersion": "Give the API version as v and a number, e.g. v62.0.",
-      "authFailed": "Salesforce refused the sign-in: check the consumer key, the integration user, the certificate and that the user is pre-authorised for the Connected App.",
+      "authFailed": "Salesforce refused the sign-in: check the consumer key, the integration user, the certificate and that the user is pre-authorised for the External Client App (or Connected App).",
       "bulkFailed": "A Salesforce Bulk API query failed.",
       "conflictsPending": "{{count}} conflicts still wait for a decision.",
       "days": "Choose at least one day.",
       "duplicateKey": "Two objects of the pack have the same key.",
       "everyHours": "Give a number of hours from 1 to 24.",
       "externalIdTemplate": "The external ID template must contain {Id}.",
-      "http": "Salesforce answered with an error.",
+      "http": "Salesforce refused the request.",
       "invalidField": "This Salesforce field name is not valid.",
       "invalidKey": "The private key is not a valid PEM RSA key.",
       "invalidKind": "Unknown kind.",
@@ -779,17 +781,40 @@
       "unknownTarget": "The target field {{field}} does not exist."
     },
     "validation": {
-      "unknownField": "The Salesforce field {{field}} does not exist.",
+      "unknownField": "The Salesforce field {{field}} does not exist on {{object}} ({{usage}}).",
       "unknownTarget": "The target record type {{target}} does not exist.",
       "unknownTargetField": "The target field {{field}} does not exist.",
       "unmappedValues": "Active values of {{field}} without a code: {{values}}.",
       "kindMismatch": "{{field}} ({{sourceType}}) does not fit a {{targetKind}} field.",
       "requiredNotMapped": "The required field {{field}} is not mapped and has no default.",
-      "unmappedFields": "{{count}} custom fields are neither mapped nor ignored: {{fields}}."
+      "unmappedFields": "{{count}} custom fields are neither mapped nor ignored: {{fields}}.",
+      "valueNotConvertible": "The value map of {{field}} gives {{values}}, which do not fit a {{targetKind}} field."
     },
     "log": {
       "objectDone": "Done: {{read}} read, {{created}} created, {{updated}} updated, {{deleted}} deleted, {{failed}} failed ({{api}}).",
-      "cancelled": "The run was cancelled because this system became primary."
+      "cancelled": "The run was cancelled because this system became primary.",
+      "limitsUnavailable": "Salesforce refused the API limits (/limits); API usage is read from the response headers and the run continues.",
+      "fieldMissing": "{{object}} has no field {{field}}: it is not queried (people matching continues with the other keys)."
+    },
+    "errorDetails": {
+      "title": "What Salesforce answered",
+      "status": "HTTP status",
+      "call": "Call",
+      "errorCode": "Salesforce error code",
+      "message": "Salesforce message"
+    },
+    "queryUsage": {
+      "system": "system field",
+      "watermark": "change tracking (watermark)",
+      "mapped": "mapped field",
+      "externalId": "external ID template",
+      "people": "people matching",
+      "files": "files",
+      "approvals": "approval history",
+      "history": "field history"
+    },
+    "warnings": {
+      "limitsRefused": "Salesforce does not let the integration user read the API limits (/limits needs \"View Setup and Configuration\", which the Salesforce Integration licence cannot have). The sync works without it: API usage is read from Salesforce's response headers."
     }
   }
 }

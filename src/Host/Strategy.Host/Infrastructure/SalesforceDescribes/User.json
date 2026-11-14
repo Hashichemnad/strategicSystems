@@ -1,0 +1,986 @@
+{
+ "name": "User",
+ "label": "User",
+ "recorded": "Live describe of the standard User object (API v62.0), read-only through the Salesforce connector on 2026-11-13; field shapes only (no picklist values). Salesforce users have no IsDeleted: they are deactivated (IsActive), never deleted.",
+ "fields": [
+  {
+   "name": "Id",
+   "label": "User ID",
+   "type": "id",
+   "length": 18
+  },
+  {
+   "name": "Username",
+   "label": "Username",
+   "type": "string",
+   "length": 80
+  },
+  {
+   "name": "LastName",
+   "label": "Last Name",
+   "type": "string",
+   "length": 80
+  },
+  {
+   "name": "FirstName",
+   "label": "First Name",
+   "type": "string",
+   "length": 40
+  },
+  {
+   "name": "MiddleName",
+   "label": "Middle Name",
+   "type": "string",
+   "length": 40
+  },
+  {
+   "name": "Suffix",
+   "label": "Suffix",
+   "type": "string",
+   "length": 40
+  },
+  {
+   "name": "Name",
+   "label": "Full Name",
+   "type": "string",
+   "length": 121
+  },
+  {
+   "name": "CompanyName",
+   "label": "Company Name",
+   "type": "string",
+   "length": 80
+  },
+  {
+   "name": "Division",
+   "label": "Division",
+   "type": "string",
+   "length": 80
+  },
+  {
+   "name": "Department",
+   "label": "Department",
+   "type": "string",
+   "length": 80
+  },
+  {
+   "name": "Title",
+   "label": "Title",
+   "type": "string",
+   "length": 80
+  },
+  {
+   "name": "Street",
+   "label": "Street",
+   "type": "textarea",
+   "length": 255
+  },
+  {
+   "name": "City",
+   "label": "City",
+   "type": "string",
+   "length": 40
+  },
+  {
+   "name": "State",
+   "label": "State/Province",
+   "type": "string",
+   "length": 80
+  },
+  {
+   "name": "PostalCode",
+   "label": "Zip/Postal Code",
+   "type": "string",
+   "length": 20
+  },
+  {
+   "name": "Country",
+   "label": "Country",
+   "type": "string",
+   "length": 80
+  },
+  {
+   "name": "Latitude",
+   "label": "Latitude",
+   "type": "double"
+  },
+  {
+   "name": "Longitude",
+   "label": "Longitude",
+   "type": "double"
+  },
+  {
+   "name": "GeocodeAccuracy",
+   "label": "Geocode Accuracy",
+   "type": "picklist",
+   "length": 40
+  },
+  {
+   "name": "Address",
+   "label": "Address",
+   "type": "address"
+  },
+  {
+   "name": "Email",
+   "label": "Email",
+   "type": "email",
+   "length": 128
+  },
+  {
+   "name": "EmailPreferencesAutoBcc",
+   "label": "AutoBcc",
+   "type": "boolean"
+  },
+  {
+   "name": "EmailPreferencesAutoBccStayInTouch",
+   "label": "AutoBccStayInTouch",
+   "type": "boolean"
+  },
+  {
+   "name": "EmailPreferencesStayInTouchReminder",
+   "label": "StayInTouchReminder",
+   "type": "boolean"
+  },
+  {
+   "name": "SenderEmail",
+   "label": "Email Sender Address",
+   "type": "email",
+   "length": 80
+  },
+  {
+   "name": "SenderName",
+   "label": "Email Sender Name",
+   "type": "string",
+   "length": 80
+  },
+  {
+   "name": "Signature",
+   "label": "Email Signature",
+   "type": "textarea",
+   "length": 1333
+  },
+  {
+   "name": "StayInTouchSubject",
+   "label": "Stay-in-Touch Email Subject",
+   "type": "string",
+   "length": 80
+  },
+  {
+   "name": "StayInTouchSignature",
+   "label": "Stay-in-Touch Email Signature",
+   "type": "textarea",
+   "length": 512
+  },
+  {
+   "name": "StayInTouchNote",
+   "label": "Stay-in-Touch Email Note",
+   "type": "string",
+   "length": 512
+  },
+  {
+   "name": "Phone",
+   "label": "Phone",
+   "type": "phone",
+   "length": 40
+  },
+  {
+   "name": "Fax",
+   "label": "Fax",
+   "type": "phone",
+   "length": 40
+  },
+  {
+   "name": "MobilePhone",
+   "label": "Mobile",
+   "type": "phone",
+   "length": 40
+  },
+  {
+   "name": "Alias",
+   "label": "Alias",
+   "type": "string",
+   "length": 8
+  },
+  {
+   "name": "CommunityNickname",
+   "label": "Nickname",
+   "type": "string",
+   "length": 40
+  },
+  {
+   "name": "BadgeText",
+   "label": "User Photo badge text overlay",
+   "type": "string",
+   "length": 80
+  },
+  {
+   "name": "IsActive",
+   "label": "Active",
+   "type": "boolean"
+  },
+  {
+   "name": "TimeZoneSidKey",
+   "label": "Time Zone",
+   "type": "picklist",
+   "length": 40
+  },
+  {
+   "name": "LocaleSidKey",
+   "label": "Locale",
+   "type": "picklist",
+   "length": 40
+  },
+  {
+   "name": "ReceivesInfoEmails",
+   "label": "Info Emails",
+   "type": "boolean"
+  },
+  {
+   "name": "ReceivesAdminInfoEmails",
+   "label": "Admin Info Emails",
+   "type": "boolean"
+  },
+  {
+   "name": "EmailEncodingKey",
+   "label": "Email Encoding",
+   "type": "picklist",
+   "length": 40
+  },
+  {
+   "name": "DefaultCurrencyIsoCode",
+   "label": "Default Currency ISO Code",
+   "type": "picklist",
+   "length": 3
+  },
+  {
+   "name": "CurrencyIsoCode",
+   "label": "Currency ISO Code",
+   "type": "picklist",
+   "length": 3
+  },
+  {
+   "name": "UserType",
+   "label": "User Type",
+   "type": "picklist",
+   "length": 40
+  },
+  {
+   "name": "StartDay",
+   "label": "Start of Day",
+   "type": "picklist",
+   "length": 40
+  },
+  {
+   "name": "EndDay",
+   "label": "End of Day",
+   "type": "picklist",
+   "length": 40
+  },
+  {
+   "name": "LanguageLocaleKey",
+   "label": "Language",
+   "type": "picklist",
+   "length": 40
+  },
+  {
+   "name": "EmployeeNumber",
+   "label": "Employee Number",
+   "type": "string",
+   "length": 20
+  },
+  {
+   "name": "DelegatedApproverId",
+   "label": "Delegated Approver ID",
+   "type": "reference",
+   "length": 18,
+   "referenceTo": [
+    "Group",
+    "User"
+   ]
+  },
+  {
+   "name": "ManagerId",
+   "label": "Manager ID",
+   "type": "reference",
+   "length": 18,
+   "referenceTo": [
+    "User"
+   ],
+   "relationshipName": "Manager"
+  },
+  {
+   "name": "LastLoginDate",
+   "label": "Last Login",
+   "type": "datetime"
+  },
+  {
+   "name": "CreatedDate",
+   "label": "Created Date",
+   "type": "datetime"
+  },
+  {
+   "name": "CreatedById",
+   "label": "Created By ID",
+   "type": "reference",
+   "length": 18,
+   "referenceTo": [
+    "User"
+   ],
+   "relationshipName": "CreatedBy"
+  },
+  {
+   "name": "LastModifiedDate",
+   "label": "Last Modified Date",
+   "type": "datetime"
+  },
+  {
+   "name": "LastModifiedById",
+   "label": "Last Modified By ID",
+   "type": "reference",
+   "length": 18,
+   "referenceTo": [
+    "User"
+   ],
+   "relationshipName": "LastModifiedBy"
+  },
+  {
+   "name": "SystemModstamp",
+   "label": "System Modstamp",
+   "type": "datetime"
+  },
+  {
+   "name": "PasswordExpirationDate",
+   "label": "Password Expiration Date",
+   "type": "datetime"
+  },
+  {
+   "name": "SuAccessExpirationDate",
+   "label": "SU Access Expiration Date",
+   "type": "date"
+  },
+  {
+   "name": "OfflineTrialExpirationDate",
+   "label": "Offline Edition Trial Expiration Date",
+   "type": "datetime"
+  },
+  {
+   "name": "OfflinePdaTrialExpirationDate",
+   "label": "Sales Anywhere Trial Expiration Date",
+   "type": "datetime"
+  },
+  {
+   "name": "UserPermissionsMarketingUser",
+   "label": "Marketing User",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPermissionsOfflineUser",
+   "label": "Offline User",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPermissionsAvantgoUser",
+   "label": "AvantGo User",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPermissionsCallCenterAutoLogin",
+   "label": "Auto-login To Call Center",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPermissionsSFContentUser",
+   "label": "Salesforce CRM Content User",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPermissionsKnowledgeUser",
+   "label": "Knowledge User",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPermissionsInteractionUser",
+   "label": "Flow User",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPermissionsSupportUser",
+   "label": "Service Cloud User",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPermissionsLiveAgentUser",
+   "label": "Chat User",
+   "type": "boolean"
+  },
+  {
+   "name": "ForecastEnabled",
+   "label": "Allow Forecasting",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesActivityRemindersPopup",
+   "label": "ActivityRemindersPopup",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesEventRemindersCheckboxDefault",
+   "label": "EventRemindersCheckboxDefault",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesTaskRemindersCheckboxDefault",
+   "label": "TaskRemindersCheckboxDefault",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesReminderSoundOff",
+   "label": "ReminderSoundOff",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesDisableAllFeedsEmail",
+   "label": "DisableAllFeedsEmail",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesDisableFollowersEmail",
+   "label": "DisableFollowersEmail",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesDisableProfilePostEmail",
+   "label": "DisableProfilePostEmail",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesDisableChangeCommentEmail",
+   "label": "DisableChangeCommentEmail",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesDisableLaterCommentEmail",
+   "label": "DisableLaterCommentEmail",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesDisProfPostCommentEmail",
+   "label": "DisProfPostCommentEmail",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesHideCSNGetChatterMobileTask",
+   "label": "HideCSNGetChatterMobileTask",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesDisableMentionsPostEmail",
+   "label": "DisableMentionsPostEmail",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesDisMentionsCommentEmail",
+   "label": "DisMentionsCommentEmail",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesHideCSNDesktopTask",
+   "label": "HideCSNDesktopTask",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesHideChatterOnboardingSplash",
+   "label": "HideChatterOnboardingSplash",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesHideSecondChatterOnboardingSplash",
+   "label": "HideSecondChatterOnboardingSplash",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesDisCommentAfterLikeEmail",
+   "label": "DisCommentAfterLikeEmail",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesDisableLikeEmail",
+   "label": "DisableLikeEmail",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesSortFeedByComment",
+   "label": "SortFeedByComment",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesDisableMessageEmail",
+   "label": "DisableMessageEmail",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesDismissRecordChannelsSuggestedObjects",
+   "label": "DismissRecordChannelsSuggestedObjects",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesDisableBookmarkEmail",
+   "label": "DisableBookmarkEmail",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesDisableSharePostEmail",
+   "label": "DisableSharePostEmail",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesActionLauncherEinsteinGptConsent",
+   "label": "ActionLauncherEinsteinGptConsent",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesAssistiveActionsEnabledInActionLauncher",
+   "label": "AssistiveActionsEnabledInActionLauncher",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesEnableAutoSubForFeeds",
+   "label": "EnableAutoSubForFeeds",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesDisableFileShareNotificationsForApi",
+   "label": "DisableFileShareNotificationsForApi",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesEnableLwrLexPilot",
+   "label": "EnableLwrLexPilot",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesShowTitleToExternalUsers",
+   "label": "ShowTitleToExternalUsers",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesShowManagerToExternalUsers",
+   "label": "ShowManagerToExternalUsers",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesShowEmailToExternalUsers",
+   "label": "ShowEmailToExternalUsers",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesShowWorkPhoneToExternalUsers",
+   "label": "ShowWorkPhoneToExternalUsers",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesShowMobilePhoneToExternalUsers",
+   "label": "ShowMobilePhoneToExternalUsers",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesShowFaxToExternalUsers",
+   "label": "ShowFaxToExternalUsers",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesShowStreetAddressToExternalUsers",
+   "label": "ShowStreetAddressToExternalUsers",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesShowCityToExternalUsers",
+   "label": "ShowCityToExternalUsers",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesShowStateToExternalUsers",
+   "label": "ShowStateToExternalUsers",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesShowPostalCodeToExternalUsers",
+   "label": "ShowPostalCodeToExternalUsers",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesShowCountryToExternalUsers",
+   "label": "ShowCountryToExternalUsers",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesShowProfilePicToGuestUsers",
+   "label": "ShowProfilePicToGuestUsers",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesShowTitleToGuestUsers",
+   "label": "ShowTitleToGuestUsers",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesShowCityToGuestUsers",
+   "label": "ShowCityToGuestUsers",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesShowStateToGuestUsers",
+   "label": "ShowStateToGuestUsers",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesShowPostalCodeToGuestUsers",
+   "label": "ShowPostalCodeToGuestUsers",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesShowCountryToGuestUsers",
+   "label": "ShowCountryToGuestUsers",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesShowForecastingChangeSignals",
+   "label": "ShowForecastingChangeSignals",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesLiveAgentMiawSetupDeflection",
+   "label": "LiveAgentMiawSetupDeflection",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesHideS1BrowserUI",
+   "label": "HideS1BrowserUI",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesDisableEndorsementEmail",
+   "label": "DisableEndorsementEmail",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesPathAssistantCollapsed",
+   "label": "PathAssistantCollapsed",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesCacheDiagnostics",
+   "label": "CacheDiagnostics",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesShowEmailToGuestUsers",
+   "label": "ShowEmailToGuestUsers",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesShowManagerToGuestUsers",
+   "label": "ShowManagerToGuestUsers",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesShowWorkPhoneToGuestUsers",
+   "label": "ShowWorkPhoneToGuestUsers",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesShowMobilePhoneToGuestUsers",
+   "label": "ShowMobilePhoneToGuestUsers",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesShowFaxToGuestUsers",
+   "label": "ShowFaxToGuestUsers",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesShowStreetAddressToGuestUsers",
+   "label": "ShowStreetAddressToGuestUsers",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesLightningExperiencePreferred",
+   "label": "LightningExperiencePreferred",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesHideEndUserOnboardingAssistantModal",
+   "label": "HideEndUserOnboardingAssistantModal",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesHideLightningMigrationModal",
+   "label": "HideLightningMigrationModal",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesHideSfxWelcomeMat",
+   "label": "HideSfxWelcomeMat",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesHideBiggerPhotoCallout",
+   "label": "HideBiggerPhotoCallout",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesGlobalNavBarWTShown",
+   "label": "GlobalNavBarWTShown",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesGlobalNavGridMenuWTShown",
+   "label": "GlobalNavGridMenuWTShown",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesCreateLEXAppsWTShown",
+   "label": "CreateLEXAppsWTShown",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesFavoritesWTShown",
+   "label": "FavoritesWTShown",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesRecordHomeSectionCollapseWTShown",
+   "label": "RecordHomeSectionCollapseWTShown",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesRecordHomeReservedWTShown",
+   "label": "RecordHomeReservedWTShown",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesFavoritesShowTopFavorites",
+   "label": "FavoritesShowTopFavorites",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesExcludeMailAppAttachments",
+   "label": "ExcludeMailAppAttachments",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesSuppressTaskSFXReminders",
+   "label": "SuppressTaskSFXReminders",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesSuppressEventSFXReminders",
+   "label": "SuppressEventSFXReminders",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesPreviewCustomTheme",
+   "label": "PreviewCustomTheme",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesHasCelebrationBadge",
+   "label": "HasCelebrationBadge",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesUserDebugModePref",
+   "label": "UserDebugModePref",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesSRHOverrideActivities",
+   "label": "SRHOverrideActivities",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesHasSentWarningEmail",
+   "label": "HasSentWarningEmail",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesHasSentWarningEmail238",
+   "label": "HasSentWarningEmail238",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesHasSentWarningEmail240",
+   "label": "HasSentWarningEmail240",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesDismissPersonalSpaceLegalMessage",
+   "label": "DismissPersonalSpaceLegalMessage",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesDismissReuseUpdateReminderModal",
+   "label": "DismissReuseUpdateReminderModal",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesBRELookupTableWelcomeMat",
+   "label": "BRELookupTableWelcomeMat",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesHideBrowseProductRedirectConfirmation",
+   "label": "HideBrowseProductRedirectConfirmation",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesHideOnlineSalesAppTabVisibilityRequirementsModal",
+   "label": "HideOnlineSalesAppTabVisibilityRequirementsModal",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesHideOnlineSalesAppWelcomeMat",
+   "label": "HideOnlineSalesAppWelcomeMat",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesHideManagedEcaMobilePubModal",
+   "label": "HideManagedEcaMobilePubModal",
+   "type": "boolean"
+  },
+  {
+   "name": "UserPreferencesShowForecastingRoundedAmounts",
+   "label": "ShowForecastingRoundedAmounts",
+   "type": "boolean"
+  },
+  {
+   "name": "HasUserVerifiedPhone",
+   "label": "User Verified Mobile Number",
+   "type": "boolean"
+  },
+  {
+   "name": "HasUserVerifiedEmail",
+   "label": "User Verified Email",
+   "type": "boolean"
+  },
+  {
+   "name": "CallCenterId",
+   "label": "Call Center ID",
+   "type": "reference",
+   "length": 18,
+   "referenceTo": [
+    "CallCenter"
+   ]
+  },
+  {
+   "name": "Extension",
+   "label": "Extension",
+   "type": "phone",
+   "length": 40
+  },
+  {
+   "name": "FederationIdentifier",
+   "label": "SAML Federation ID",
+   "type": "string",
+   "length": 512
+  },
+  {
+   "name": "AboutMe",
+   "label": "About Me",
+   "type": "textarea",
+   "length": 1000
+  },
+  {
+   "name": "ProfilePhotoId",
+   "label": "Photo ID",
+   "type": "reference",
+   "length": 18,
+   "referenceTo": [
+    "Photo"
+   ]
+  },
+  {
+   "name": "FullPhotoUrl",
+   "label": "Url for full-sized Photo",
+   "type": "url",
+   "length": 1024
+  },
+  {
+   "name": "SmallPhotoUrl",
+   "label": "Photo",
+   "type": "url",
+   "length": 1024
+  },
+  {
+   "name": "IsExtIndicatorVisible",
+   "label": "Show external indicator",
+   "type": "boolean"
+  },
+  {
+   "name": "OutOfOfficeMessage",
+   "label": "Out of office message",
+   "type": "string",
+   "length": 40
+  },
+  {
+   "name": "MediumPhotoUrl",
+   "label": "URL for medium profile photo",
+   "type": "url",
+   "length": 1024
+  },
+  {
+   "name": "DigestFrequency",
+   "label": "Chatter Email Highlights Frequency",
+   "type": "picklist",
+   "length": 40
+  },
+  {
+   "name": "DefaultGroupNotificationFrequency",
+   "label": "Default Notification Frequency when Joining Groups",
+   "type": "picklist",
+   "length": 40
+  },
+  {
+   "name": "LastViewedDate",
+   "label": "Last Viewed Date",
+   "type": "datetime"
+  },
+  {
+   "name": "LastReferencedDate",
+   "label": "Last Referenced Date",
+   "type": "datetime"
+  },
+  {
+   "name": "BannerPhotoId",
+   "label": "Photo ID",
+   "type": "reference",
+   "length": 18,
+   "referenceTo": [
+    "Photo"
+   ]
+  },
+  {
+   "name": "BannerPhotoUrl",
+   "label": "URL for banner photo",
+   "type": "url",
+   "length": 1024
+  },
+  {
+   "name": "SmallBannerPhotoUrl",
+   "label": "URL for IOS banner photo",
+   "type": "url",
+   "length": 1024
+  },
+  {
+   "name": "MediumBannerPhotoUrl",
+   "label": "URL for Android banner photo",
+   "type": "url",
+   "length": 1024
+  },
+  {
+   "name": "IsProfilePhotoActive",
+   "label": "Has Profile Photo",
+   "type": "boolean"
+  }
+ ]
+}

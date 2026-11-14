@@ -136,18 +136,16 @@ public sealed class SalesforceSyncTests(PostgresFixture postgres) : IAsyncLifeti
                 new FieldMapping { Source = "Amount__c", Target = "amount", Kind = FieldMappingKinds.Direct },
             ],
         });
-        foreach (var o in objects.Where(o => o.Kind is ObjectMappingKinds.Record or ObjectMappingKinds.People))
+        // User and Contact: describes recorded from real orgs (User has no IsDeleted, Contact no EmployeeNumber / FederationIdentifier; ADR 0212).
+        _fake.AddRecordedObject("User");
+        _fake.AddRecordedObject("Contact");
+        foreach (var o in objects.Where(o => o.Kind is ObjectMappingKinds.Record && !_fake.Objects.ContainsKey(o.SourceObject)))
         {
-            FakeObjectFor(o, o.Kind == ObjectMappingKinds.People ? [("Email", "email"), ("EmployeeNumber", "string"), ("FederationIdentifier", "string")] : []);
+            FakeObjectFor(o);
         }
 
         _fake.Objects["Department__c"].Reference("Parent_Department__c", "Department__c", "Parent_Department__r");
-        _fake.AddObject("ContentVersion", ("Id", "id"), ("ContentDocumentId", "reference"), ("Title", "string"), ("PathOnClient", "string"), ("FileExtension", "string"),
-            ("IsLatest", "boolean"), ("SystemModstamp", "datetime"), ("IsDeleted", "boolean"));
-        _fake.AddObject("ContentDocumentLink", ("Id", "id"), ("ContentDocumentId", "reference"), ("LinkedEntityId", "reference"), ("SystemModstamp", "datetime"));
-        _fake.AddObject("ProcessInstance", ("Id", "id"), ("TargetObjectId", "reference"), ("Status", "picklist"), ("CreatedDate", "datetime"), ("SystemModstamp", "datetime"));
-        _fake.AddObject("ProcessInstanceStep", ("Id", "id"), ("ProcessInstanceId", "reference"), ("StepStatus", "picklist"), ("Comments", "textarea"),
-            ("CreatedDate", "datetime"));
+        _fake.AddStandardObjects();
 
         var import = await _admin.PostAsJsonAsync($"{Sync}/packs/import", adof with { Code = "tests-pack", Objects = objects });
         import.StatusCode.ShouldBe(HttpStatusCode.OK, await import.Content.ReadAsStringAsync());
@@ -193,6 +191,79 @@ public sealed class SalesforceSyncTests(PostgresFixture postgres) : IAsyncLifeti
         var run = await scope.ServiceProvider.GetRequiredService<SyncEngine>().RunAsync(_connection, full ? RunTriggers.Full : RunTriggers.Manual, full, null, null, CancellationToken.None);
         run.ShouldNotBeNull();
         return run;
+    }
+
+    /// <summary>Edits a mapping of the connection's pack through the API, validates it (must pass) and enables it again.</summary>
+    private async Task UpdateMappingAsync(string key, Func<ObjectMappingDto, ObjectMappingInput> change)
+    {
+        var mapping = await MappingAsync(key);
+        var updated = await _admin.PutAsJsonAsync($"{Sync}/mappings/{mapping.Id}", change(mapping));
+        updated.StatusCode.ShouldBe(HttpStatusCode.OK, await updated.Content.ReadAsStringAsync());
+        var validated = await ValidateAsync(key);
+        validated.Ok.ShouldBeTrue(string.Join("; ", validated.Issues.Select(i => i.MessageKey + " " + JsonSerializer.Serialize(i.Params))));
+        var current = (await _admin.GetFromJsonAsync<ObjectMappingDto>($"{Sync}/mappings/{mapping.Id}"))!;
+        (await _admin.PostAsJsonAsync($"{Sync}/mappings/{mapping.Id}/enabled", new ObjectMappingEnableInput(true, current.Version))).StatusCode.ShouldBe(HttpStatusCode.OK);
+    }
+
+    private static ObjectMappingInput InputOf(ObjectMappingDto m) => new(m.TargetType, m.LoadOrder, m.Where, m.WatermarkField, m.ExternalIdTemplate, m.UseBulk, [.. m.Fields],
+        m.Defaults.ToDictionary(), [.. m.Ignore], m.Options, m.NotesAr, m.NotesEn, m.Version);
+
+    private async Task<ObjectMappingDto> MappingAsync(string key)
+    {
+        var connection = (await _admin.GetFromJsonAsync<SyncConnectionDto>($"{Sync}/connections/{_connection}"))!;
+        return (await _admin.GetFromJsonAsync<List<ObjectMappingDto>>($"{Sync}/packs/{connection.MappingPackId}/mappings"))!.Single(m => m.Key == key);
+    }
+
+    private async Task<MappingValidationDto> ValidateAsync(string key)
+    {
+        var mapping = await MappingAsync(key);
+        var response = await _admin.PostAsync($"{Sync}/connections/{_connection}/mappings/{mapping.Id}/validate", null);
+        response.StatusCode.ShouldBe(HttpStatusCode.OK, await response.Content.ReadAsStringAsync());
+        return (await response.Content.ReadFromJsonAsync<MappingValidationDto>())!;
+    }
+
+    private async Task<SyncRunDetailDto> RunDetailAsync(Guid runId) =>
+        (await _admin.GetFromJsonAsync<SyncRunDetailDto>($"{Sync}/connections/{_connection}/runs/{runId}"))!;
+
+    private async Task<List<SyncExceptionDto>> OpenExceptionsAsync() =>
+        [.. (await _admin.GetFromJsonAsync<PagedResult<SyncExceptionDto>>($"{Sync}/connections/{_connection}/exceptions?status=open&pageSize=200"))!.Items];
+
+    /// <summary>An employee with a given employee number and e-mail (as imported from HR before the people sync).</summary>
+    private Task<Guid> EmployeeAsync(string number, string email) => InScopeAsync(async sp =>
+    {
+        var dispatcher = sp.GetRequiredService<IDispatcher>();
+        var unit = await dispatcher.SendAsync(new Strategy.Platform.Organisation.Application.CreateUnit("E-" + number, "وحدة", "Unit " + number, "organisation", null, null, null, null, null));
+        var employee = await dispatcher.SendAsync(new Strategy.Platform.Organisation.Application.CreateEmployee(number, "موظف", "Employee " + number, email, null, null, null, null,
+            unit.Value.Id, null, null));
+        employee.IsSuccess.ShouldBeTrue(employee.IsFailure ? employee.Error.Code : null);
+        return employee.Value.Id;
+    });
+
+    /// <summary>A program request and a project under it (the parents of project children such as risks).</summary>
+    private void SeedProject(string request, string project, (string Parent, string Child, string UserId, string ItemA, string ItemB, TestUser Employee) seed)
+    {
+        _fake.Objects["PMS_Project_Request__c"].Upsert(request, new()
+        {
+            ["Name"] = "PR-0043",
+            ["Status__c"] = "Approved",
+            ["Program_Name__c"] = "مخاطر",
+            ["Department__c"] = seed.Parent,
+            ["CreatedById"] = seed.UserId,
+            ["Does_it_require_Budget__c"] = "No",
+            ["Program_Type__c"] = "Digital"
+        });
+        _fake.Objects["PMS_Project__c"].Upsert(project, new()
+        {
+            ["Name"] = "PROJ-SPMO-2026-043",
+            ["PMS_Project_Request__c"] = request,
+            ["Project_Name__c"] = "مخاطر",
+            ["Program_Classification__c"] = "Project",
+            ["Project_Stage__c"] = "Planning",
+            ["Project_Status__c"] = "Active",
+            ["Approval_Status__c"] = "PM Office - Planning",
+            ["Project_Manager__c"] = seed.UserId,
+            ["Department_Concerned__c"] = seed.Parent
+        });
     }
 
     private static ObjectRunStats Stats(SyncRun run, string key) => JsonSerializer.Deserialize<Dictionary<string, ObjectRunStats>>(run.Objects, SyncJsonOptions)![key];
@@ -738,18 +809,319 @@ public sealed class SalesforceSyncTests(PostgresFixture postgres) : IAsyncLifeti
         failed.LastRun!.Status.ShouldBe(RunStatuses.Failed);
         failed.LastRun.MessageKey.ShouldBe("integration.sync.errors.authFailed");
         await InScopeAsync(async sp => await sp.GetRequiredService<Strategy.Platform.Scheduling.Application.OutboxDispatcher>().DispatchDueAsync(CancellationToken.None));
-        _factory.Emails.Sent.ShouldContain(m => m.TemplateKey == "integration.sync.failed");
+        await _factory.Emails.AnyAsync("integration.sync.failed");
         var count = _factory.Emails.Sent.Count;
 
         _clock.Frozen = next.AddHours(3);
         (await InScopeAsync(async sp => await sp.GetRequiredService<SyncScheduler>().MonitorAsync(CancellationToken.None))).ShouldBe(1);
         (await InScopeAsync(async sp => await sp.GetRequiredService<SyncScheduler>().MonitorAsync(CancellationToken.None))).ShouldBe(0);
         await InScopeAsync(async sp => await sp.GetRequiredService<Strategy.Platform.Scheduling.Application.OutboxDispatcher>().DispatchDueAsync(CancellationToken.None));
-        _factory.Emails.Sent.ShouldContain(m => m.TemplateKey == "integration.sync.late");
+        await _factory.Emails.AnyAsync("integration.sync.late");
 
         // The health page reports the failure.
         var checks = await InScopeAsync(async sp => await sp.GetRequiredService<SyncHealthContributor>().CheckAsync(CancellationToken.None));
         checks.ShouldContain(c => c.MessageKey == "health.salesforceSync.failed");
+    }
+
+    // ------------------------------------------------------------------ 1.0.1: fixes from the real sandbox (ADR 0210–0213)
+
+    [Fact]
+    public async Task Limits_refused_by_the_integration_licence_is_a_warning_and_usage_comes_from_the_response_header()
+    {
+        // The Salesforce Integration licence cannot have View Setup and Configuration, which /limits needs.
+        _fake.RefuseLimits = (HttpStatusCode.Forbidden, "INSUFFICIENT_ACCESS");
+        await ConfigureAsync("department", "user"); // asserts the test passes
+        var connection = (await _admin.GetFromJsonAsync<SyncConnectionDto>($"{Sync}/connections/{_connection}"))!;
+        connection.LastTest!.Ok.ShouldBeTrue();
+        connection.LastTest.Error.ShouldBeNull();
+        var warning = connection.LastTest.Warnings.Single();
+        warning.MessageKey.ShouldBe("integration.sync.warnings.limitsRefused");
+        warning.Params!["status"].ShouldBe("403");
+        warning.Params["call"].ShouldBe("GET /limits");
+        warning.Params["errorCode"].ShouldBe("INSUFFICIENT_ACCESS");
+        connection.Limits!.Source.ShouldBe(ApiLimitSources.Header);
+        connection.Limits.DailyApiMax.ShouldBe(100000);
+
+        await SeedOrgAsync();
+        var run = await RunAsync(full: true);
+        run.Status.ShouldBe(RunStatuses.Succeeded, run.MessageKey);
+        var detail = await RunDetailAsync(run.Id);
+        var log = detail.Log.Single(l => l.MessageKey == "integration.sync.log.limitsUnavailable");
+        log.Level.ShouldBe("warn");
+        log.Params!["errorCode"].ShouldBe("INSUFFICIENT_ACCESS");
+        connection = (await _admin.GetFromJsonAsync<SyncConnectionDto>($"{Sync}/connections/{_connection}"))!;
+        connection.Limits!.Source.ShouldBe(ApiLimitSources.Header);
+
+        // FUNCTIONALITY_NOT_ENABLED is the same: the run continues. The "stop below 10 % remaining" rule works from the header.
+        _fake.RefuseLimits = (HttpStatusCode.BadRequest, "FUNCTIONALITY_NOT_ENABLED");
+        _fake.ApiUsed = 95000;
+        var stopped = await RunAsync();
+        stopped.Status.ShouldBe(RunStatuses.Failed);
+        stopped.MessageKey.ShouldBe("integration.sync.errors.apiLimit");
+        (await RunDetailAsync(stopped.Id)).Log.ShouldContain(l => l.MessageKey == "integration.sync.log.limitsUnavailable");
+
+        // With /limits allowed again, its numbers are used as before.
+        _fake.RefuseLimits = null;
+        _fake.ApiUsed = 2000;
+        (await RunAsync()).Status.ShouldBe(RunStatuses.Succeeded);
+    }
+
+    [Fact]
+    public async Task Salesforce_errors_are_stored_with_status_call_error_code_and_message_without_tokens()
+    {
+        await ConfigureAsync("department", "user");
+        await SeedOrgAsync();
+
+        // A field removed in Salesforce after the mapping was validated: the object fails alone with Salesforce's own answer.
+        _fake.Objects["Sample_Item__c"].Fields.RemoveAll(f => f.Name == "Amount__c");
+        var run = await RunAsync(full: true);
+        run.Status.ShouldBe(RunStatuses.Partial);
+        var detail = await RunDetailAsync(run.Id);
+        var failed = detail.Log.Single(l => l.ObjectKey == "item" && l.Level == "error");
+        failed.MessageKey.ShouldBe("integration.sync.errors.http");
+        failed.Params!["status"].ShouldBe("400");
+        failed.Params["errorCode"].ShouldBe("INVALID_FIELD");
+        failed.Params["call"]!.ShouldStartWith("POST /jobs/query: SELECT Id, IsDeleted, SystemModstamp");
+        failed.Params["call"]!.ShouldEndWith("FROM Sample_Item__c");
+        failed.Params["message"]!.ShouldContain("No such column 'Amount__c' on entity 'Sample_Item__c'");
+
+        // Test connection: the OAuth refusal is kept and shown on the Connection tab.
+        _fake.RejectToken = true;
+        var tested = (await (await _admin.PostAsync($"{Sync}/connections/{_connection}/test", null)).Content.ReadFromJsonAsync<SyncConnectionDto>())!;
+        tested.LastTest!.Ok.ShouldBeFalse();
+        tested.LastTest.MessageKey.ShouldBe("integration.sync.errors.authFailed");
+        tested.LastTest.Error!.Status.ShouldBe(400);
+        tested.LastTest.Error.Call.ShouldBe("POST /services/oauth2/token");
+        tested.LastTest.Error.ErrorCode.ShouldBe("invalid_grant");
+        tested.LastTest.Error.Message.ShouldBe("user hasn't approved this consumer");
+
+        // A failed run keeps the details on the run itself (Status tab "last error").
+        var refused = await RunAsync();
+        refused.Status.ShouldBe(RunStatuses.Failed);
+        var parameters = JsonSerializer.Deserialize<Dictionary<string, string?>>(refused.MessageParams!)!;
+        parameters["errorCode"].ShouldBe("invalid_grant");
+
+        // Never a token, an assertion or a key in anything stored.
+        var stored = await InScopeAsync(async sp =>
+        {
+            var db = sp.GetRequiredService<IntegrationDbContext>();
+            var logs = await db.SyncRunLog.AsNoTracking().Select(l => l.Params).ToListAsync();
+            var runs = await db.SyncRuns.AsNoTracking().Select(r => r.MessageParams).ToListAsync();
+            var tests = await db.SyncConnections.AsNoTracking().Select(c => c.LastTestDetail).ToListAsync();
+            return string.Join('\n', logs.Concat(runs).Concat(tests));
+        });
+        stored.ShouldNotContain("fake-access-token");
+        stored.ShouldNotContain("assertion");
+        stored.ShouldNotContain("PRIVATE KEY");
+        stored.ShouldNotContain("Bearer");
+    }
+
+    [Fact]
+    public async Task Risk_probability_and_impact_picklists_map_to_numbers()
+    {
+        await ConfigureAsync("department", "user", "program-request", "project", "project-risk");
+        var seed = await SeedOrgAsync();
+        var request = _fake.NewId("a0R");
+        var project = _fake.NewId("a0P");
+        SeedProject(request, project, seed);
+        var risk = _fake.NewId("a0K");
+        _fake.Objects["PMS_Project_Risk__c"].Upsert(risk, new()
+        {
+            ["Name"] = "R-1",
+            ["PMS_Project__c"] = project,
+            ["Risk__c"] = "Insufficient financial resources to complete the project",
+            ["Probability_Level__c"] = "3",
+            ["Impact_Level__c"] = "5",
+            ["RMS_Status__c"] = "Active"
+        });
+        var unmapped = _fake.NewId("a0K");
+        _fake.Objects["PMS_Project_Risk__c"].Upsert(unmapped, new() { ["Name"] = "R-2", ["PMS_Project__c"] = project, ["Probability_Level__c"] = "7", ["Impact_Level__c"] = "1" });
+
+        var run = await RunAsync(full: true);
+        Stats(run, "project-risk").Created.ShouldBe(1, string.Join(", ", (await OpenExceptionsAsync()).Select(e => $"{e.SourceObject} {e.Reason} {e.Field} {e.Value} {e.MessageKey}"))
+            + " " + string.Join(", ", (await RunDetailAsync(run.Id)).Log.Select(l => $"{l.ObjectKey} {l.MessageKey} {JsonSerializer.Serialize(l.Params)}")));
+        var riskId = (await RecordOfAsync("portfolio.project-risk", risk))!.Value;
+        var saved = await InScopeAsync(async sp => await sp.GetRequiredService<PortfolioDbContext>().Set<Strategy.Modules.Portfolio.Domain.ProjectRisk>().AsNoTracking()
+            .FirstAsync(r => r.Id == riskId));
+        saved.Probability.ShouldBe(3);
+        saved.Impact.ShouldBe(5);
+        var exception = (await OpenExceptionsAsync()).Single(e => e.ExternalId == unmapped);
+        exception.Reason.ShouldBe(ExceptionReasons.UnmappedValue);
+        exception.Field.ShouldBe("probability");
+        exception.Value.ShouldBe("7");
+
+        // Validate: an active picklist value without a map is a warning; a map to a value that is not a number is an error.
+        _fake.Objects["PMS_Project_Risk__c"].Fields.Single(f => f.Name == "Probability_Level__c").Picklist.Add("6");
+        var validation = await ValidateAsync("project-risk");
+        validation.Ok.ShouldBeTrue();
+        validation.Issues.ShouldContain(i => i.Severity == "warning" && i.MessageKey == "integration.sync.validation.unmappedValues" && i.Params!["values"] == "6");
+
+        var mapping = await MappingAsync("project-risk");
+        var fields = mapping.Fields.Select(f => f.Source == "Impact_Level__c" ? f with { Values = new() { ["1"] = "low", ["5"] = "5" } } : f).ToList();
+        (await _admin.PutAsJsonAsync($"{Sync}/mappings/{mapping.Id}", InputOf(mapping) with { Fields = fields })).StatusCode.ShouldBe(HttpStatusCode.OK);
+        validation = await ValidateAsync("project-risk");
+        validation.Ok.ShouldBeFalse();
+        var error = validation.Issues.Single(i => i.MessageKey == "integration.sync.validation.valueNotConvertible");
+        error.Field.ShouldBe("impact");
+        error.Params!["values"].ShouldBe("low");
+        error.Params["targetKind"].ShouldBe("int");
+    }
+
+    [Fact]
+    public async Task Validate_checks_every_field_the_queries_use_and_users_are_never_deleted()
+    {
+        await ConfigureAsync("department", "user", "contact", "program-request", "project", "approval-history");
+
+        // People fields the object lacks: skipped at run time, a warning before.
+        _fake.Objects["Contact"].Fields.RemoveAll(f => f.Name == "Employee_Number__c");
+        var contact = await ValidateAsync("contact");
+        contact.Ok.ShouldBeTrue();
+        contact.Issues.ShouldContain(i => i.Severity == "warning" && i.Field == "options" && i.Params!["field"] == "Employee_Number__c" && i.Params["usage"] == "people");
+
+        // A field of the external-ID template, the watermark and a relationship path of the approval queries: errors before any run.
+        var project = await MappingAsync("project");
+        (await _admin.PutAsJsonAsync($"{Sync}/mappings/{project.Id}", InputOf(project) with { ExternalIdTemplate = "{Id}-{Legacy_Number__c}" })).StatusCode.ShouldBe(HttpStatusCode.OK);
+        var projectValidation = await ValidateAsync("project");
+        projectValidation.Ok.ShouldBeFalse();
+        projectValidation.Issues.ShouldContain(i => i.Field == "externalIdTemplate" && i.Params!["field"] == "Legacy_Number__c" && i.Params["usage"] == "externalId");
+
+        _fake.Objects["ProcessInstanceStep"].Fields.RemoveAll(f => f.Name == "ActorId");
+        var approvals = await ValidateAsync("approval-history");
+        approvals.Ok.ShouldBeFalse();
+        approvals.Issues.ShouldContain(i => i.MessageKey == "integration.sync.validation.unknownField" && i.Params!["object"] == "ProcessInstanceStep"
+            && i.Params["field"] == "Actor.Name" && i.Params["usage"] == "approvals");
+
+        var user = await MappingAsync("user");
+        (await _admin.PutAsJsonAsync($"{Sync}/mappings/{user.Id}", InputOf(user) with { WatermarkField = "LastLoginDate__x" })).StatusCode.ShouldBe(HttpStatusCode.OK);
+        var userValidation = await ValidateAsync("user");
+        userValidation.Issues.ShouldContain(i => i.Field == "watermarkField" && i.Severity == "error");
+        (await _admin.PutAsJsonAsync($"{Sync}/mappings/{user.Id}", InputOf(await MappingAsync("user")) with { WatermarkField = "SystemModstamp" })).StatusCode.ShouldBe(HttpStatusCode.OK);
+        await UpdateMappingAsync("user", InputOf);
+
+        // Users: the recorded describe has no IsDeleted; a deactivated user stays matched and is never "Deleted in source".
+        var seed = await SeedOrgAsync();
+        var first = await RunAsync(full: true);
+        Stats(first, "user").Failed.ShouldBe(0);
+        _fake.Objects["User"].Upsert(seed.UserId, new() { ["IsActive"] = false });
+        var second = await RunAsync();
+        Stats(second, "user").Deleted.ShouldBe(0);
+        var reference = await InScopeAsync(async sp => await sp.GetRequiredService<IExternalReferenceStore>().FindAsync("salesforce", "org.employee", seed.UserId));
+        reference!.RecordId.ShouldBe(seed.Employee.EmployeeId!.Value);
+        reference.SyncStatus.ShouldBe(SyncStatuses.Synced);
+        (await ItemAsync((await RecordOfAsync(SampleItem.EntityType, seed.ItemA))!.Value))!.OwnerEmployeeId.ShouldBe(seed.Employee.EmployeeId);
+    }
+
+    [Fact]
+    public async Task Unknown_person_exceptions_resolve_in_bulk_once_users_and_contacts_match_employees()
+    {
+        await ConfigureAsync("department", "user", "contact");
+
+        // As in 1.0.0: contacts matched by e-mail only (the employee-number field was never read).
+        await UpdateMappingAsync("contact", m => InputOf(m) with { Options = JsonSerializer.SerializeToElement(new { matchOrder = new[] { "email" }, emailField = "Email", nameField = "Name" }) });
+        var number = "EMP-" + Guid.CreateVersion7().ToString("N")[^6..];
+        var hrEmployee = await EmployeeAsync(number, $"hr.{number}@example.test");
+        var contact = _fake.NewId("003");
+        _fake.Objects["Contact"].Upsert(contact, new() { ["Name"] = "Project Manager", ["Email"] = "pm@elsewhere.test", ["Employee_Number__c"] = number });
+        var lateEmail = $"late.{number}@example.test";
+        var user = _fake.NewId("005");
+        _fake.Objects["User"].Upsert(user, new() { ["Name"] = "Late Joiner", ["Email"] = lateEmail });
+        string[] byContact = [_fake.NewId("a0X"), _fake.NewId("a0X")];
+        foreach (var (id, i) in byContact.Select((id, i) => (id, i)))
+        {
+            _fake.Objects["Sample_Item__c"].Upsert(id, new() { ["Name"] = $"ITEM-C{i}", ["Title__c"] = "Managed by a contact", ["Status__c"] = "Open", ["Owner__c"] = contact });
+        }
+
+        var byUser = _fake.NewId("a0X");
+        _fake.Objects["Sample_Item__c"].Upsert(byUser, new() { ["Name"] = "ITEM-U", ["Title__c"] = "Owned by a user", ["Status__c"] = "Open", ["Owner__c"] = user });
+
+        var first = await RunAsync(full: true);
+        first.Status.ShouldBe(RunStatuses.Partial);
+        var open = await OpenExceptionsAsync();
+        open.Where(e => e.Reason == ExceptionReasons.UnknownUser).Select(e => e.ExternalId).ShouldBe([contact, user, .. byContact, byUser], ignoreOrder: true);
+
+        // The late joiner's employee record is imported: one bulk re-process by reason resolves the user and the record pointing at it
+        // (people first), without a run. The contact's stored payload has no employee number yet, so it stays open with its records.
+        var lateEmployee = await EmployeeAsync("L" + number, lateEmail);
+        var bulk = await _admin.PostAsJsonAsync($"{Sync}/connections/{_connection}/exceptions/reprocess", new ReprocessInput(ExceptionReasons.UnknownUser));
+        bulk.StatusCode.ShouldBe(HttpStatusCode.OK, await bulk.Content.ReadAsStringAsync());
+        var result = (await bulk.Content.ReadFromJsonAsync<ReprocessResultDto>())!;
+        result.Processed.ShouldBe(5);
+        result.Resolved.ShouldBe(2);
+        result.StillOpen.ShouldBe(3);
+        (await ItemAsync((await RecordOfAsync(SampleItem.EntityType, byUser))!.Value))!.OwnerEmployeeId.ShouldBe(lateEmployee);
+
+        // The 1.0.1 fix: contacts match by e-mail, then Employee_Number__c. The next run matches the contact and resolves every record that
+        // pointed at it at the end of the run.
+        await UpdateMappingAsync("contact", m => InputOf(m) with
+        {
+            Options = JsonSerializer.SerializeToElement(new { matchOrder = new[] { "email", "employeeNo" }, emailField = "Email", employeeNoField = "Employee_Number__c", nameField = "Name" }),
+        });
+        var second = await RunAsync(full: true);
+        second.Status.ShouldBe(RunStatuses.Succeeded, second.MessageKey);
+        (await OpenExceptionsAsync()).Where(e => e.Reason == ExceptionReasons.UnknownUser).ShouldBeEmpty();
+        foreach (var id in byContact)
+        {
+            (await ItemAsync((await RecordOfAsync(SampleItem.EntityType, id))!.Value))!.OwnerEmployeeId.ShouldBe(hrEmployee);
+        }
+    }
+
+    [Fact]
+    public async Task Every_sync_target_can_carry_its_salesforce_id()
+    {
+        var missing = await InScopeAsync(sp =>
+        {
+            var store = sp.GetRequiredService<IExternalReferenceStore>();
+            return Task.FromResult(sp.GetRequiredService<SyncTargetRegistry>().All.Select(t => t.Code).Where(code => !store.IsReferenceable(code)).ToList());
+        });
+        missing.ShouldBeEmpty(); // 1.0.0: project risks failed with integration.errors.unknownType
+    }
+
+    [Fact]
+    public async Task Upgrading_from_pack_1_replaces_the_objects_an_administrator_did_not_change()
+    {
+        var shipped = await ShippedMappingPacks.AdofSalesforceAsync();
+        var previous = (await ShippedMappingPacks.AdofSalesforcePreviousAsync(1))!;
+        previous.Objects.Select(o => o.Key).ShouldBe(["user", "contact", "project-risk"]);
+
+        // An installation of 1.0.0: pack 1, and an administrator changed the user mapping.
+        await InScopeAsync(async sp =>
+        {
+            var admin = sp.GetRequiredService<SyncAdministration>();
+            var v1 = shipped with { Version = 1, Objects = [.. shipped.Objects.Select(o => previous.Objects.FirstOrDefault(p => p.Key == o.Key) ?? o)] };
+            (await admin.ImportPackAsync(v1, CancellationToken.None, audited: false)).IsSuccess.ShouldBeTrue();
+            var db = sp.GetRequiredService<IntegrationDbContext>();
+            var pack = await db.MappingPacks.SingleAsync(p => p.Code == "adof-salesforce");
+            var user = await db.ObjectMappings.SingleAsync(m => m.PackId == pack.Id && m.Key == "user");
+            user.Options = """{"matchOrder":["email"],"emailField":"Email","nameField":"Name"}""";
+            await db.SaveChangesAsync();
+            return true;
+        });
+
+        await InScopeAsync(async sp =>
+        {
+            foreach (var seeder in sp.GetServices<Strategy.Platform.Persistence.IDatabaseSeeder>().Where(s => s.GetType().Name == "SyncSeeder"))
+            {
+                await seeder.SeedAsync(sp, CancellationToken.None);
+            }
+
+            return true;
+        });
+
+        var (version, rows) = await InScopeAsync(async sp =>
+        {
+            var db = sp.GetRequiredService<IntegrationDbContext>();
+            var pack = await db.MappingPacks.AsNoTracking().SingleAsync(p => p.Code == "adof-salesforce");
+            return (pack.PackVersion, await db.ObjectMappings.AsNoTracking().Where(m => m.PackId == pack.Id).ToListAsync());
+        });
+        version.ShouldBe(2);
+        var contact = rows.Single(m => m.Key == "contact");
+        contact.Options.ShouldContain("Employee_Number__c");
+        contact.Enabled.ShouldBeFalse();
+        contact.ConfirmedAt.ShouldBeNull();
+        var riskFields = JsonSerializer.Deserialize<List<FieldMapping>>(rows.Single(m => m.Key == "project-risk").Fields, SyncJsonOptions)!;
+        riskFields.Single(f => f.Source == "Probability_Level__c").Kind.ShouldBe(FieldMappingKinds.Picklist);
+        riskFields.Single(f => f.Source == "Impact_Level__c").Values!["5"].ShouldBe("5");
+        JsonSerializer.Deserialize<PeopleOptions>(rows.Single(m => m.Key == "user").Options!, SyncJsonOptions)!.MatchOrder.ShouldBe(["email"]); // kept
     }
 
     private static byte[] MinimalPdf() => Encoding.ASCII.GetBytes(

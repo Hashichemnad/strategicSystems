@@ -47,6 +47,25 @@ public sealed partial class CapturingEmailTransport : IEmailTransport
         throw new ShouldAssertException($"No '{key}' e-mail to {to} was delivered.");
     }
 
+    /// <summary>
+    /// The first message from <paramref name="templateKey"/> to anyone, waiting up to 15 s: the host's own outbox worker may have claimed the
+    /// message (FOR UPDATE SKIP LOCKED) just before a test dispatches the outbox itself, and is then still sending it.
+    /// </summary>
+    public async Task<EmailMessage> AnyAsync(string templateKey)
+    {
+        for (var i = 0; i < 150; i++)
+        {
+            if (Sent.FirstOrDefault(e => e.TemplateKey == templateKey) is { } match)
+            {
+                return match;
+            }
+
+            await Task.Delay(100);
+        }
+
+        throw new ShouldAssertException($"No '{templateKey}' e-mail was delivered.");
+    }
+
     public int CountTo(string to) => Sent.Count(e => string.Equals(e.To, to, StringComparison.OrdinalIgnoreCase));
 
     /// <summary>The user id and token from a reset / invitation link.</summary>

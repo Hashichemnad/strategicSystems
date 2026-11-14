@@ -346,7 +346,8 @@
       "apiUsage": "استهلاك واجهة برمجة Salesforce اليوم",
       "apiUsed": "{{used}} من {{max}} طلب ({{percent}}%)",
       "limitsAt": "حسب بيانات {{date}}",
-      "bulkJobs": "مهام الاستعلام المجمّع المتبقية: {{remaining}} من {{max}}"
+      "bulkJobs": "مهام الاستعلام المجمّع المتبقية: {{remaining}} من {{max}}",
+      "limitsFromHeader": "من ترويسات ردود Salesforce"
     },
     "objects": {
       "object": "الكائن",
@@ -419,7 +420,8 @@
       "testTitle": "اختبار الربط",
       "test": "اختبار الربط",
       "testOk": "الربط يعمل",
-      "testFailed": "فشل الربط"
+      "testFailed": "فشل الربط",
+      "testOkWarnings": "الربط يعمل مع تنبيهات"
     },
     "schedule": {
       "kind": "التشغيل",
@@ -737,14 +739,14 @@
       "readOnly": "هذا السجل متزامن من {{source}} وهو للقراءة فقط ما دام {{source}} هو النظام الأساسي. أجرِ التعديل في {{source}}.",
       "apiLimit": "اقترب حد واجهة برمجة Salesforce من النفاد؛ توقف التشغيل وسيستكمل في التشغيل التالي.",
       "apiVersion": "اكتب إصدار واجهة البرمجة على شكل v ثم رقم، مثلاً v62.0.",
-      "authFailed": "رفض Salesforce تسجيل الدخول: تحقق من مفتاح المستهلك ومستخدم الربط والشهادة ومن أن المستخدم مصرّح له مسبقاً بالتطبيق المتصل.",
+      "authFailed": "رفض Salesforce تسجيل الدخول: تحقق من مفتاح المستهلك ومستخدم الربط والشهادة ومن أن المستخدم مصرّح له مسبقاً بتطبيق العميل الخارجي (External Client App) أو التطبيق المتصل.",
       "bulkFailed": "فشل استعلام Bulk API في Salesforce.",
       "conflictsPending": "ما زال {{count}} من التعارضات بانتظار القرار.",
       "days": "اختر يوماً واحداً على الأقل.",
       "duplicateKey": "يوجد كائنان في الحزمة بالمفتاح نفسه.",
       "everyHours": "اكتب عدد ساعات من 1 إلى 24.",
       "externalIdTemplate": "يجب أن يحتوي قالب المعرّف الخارجي على ‎{Id}.",
-      "http": "ردّ Salesforce بخطأ.",
+      "http": "رفض Salesforce الطلب.",
       "invalidField": "اسم حقل Salesforce هذا غير صالح.",
       "invalidKey": "المفتاح الخاص ليس مفتاح RSA صالحاً بصيغة PEM.",
       "invalidKind": "نوع غير معروف.",
@@ -779,17 +781,40 @@
       "unknownTarget": "حقل الهدف {{field}} غير موجود."
     },
     "validation": {
-      "unknownField": "حقل Salesforce ‏{{field}} غير موجود.",
+      "unknownField": "حقل Salesforce ‏{{field}} غير موجود في {{object}} ({{usage}}).",
       "unknownTarget": "نوع سجل الهدف {{target}} غير موجود.",
       "unknownTargetField": "حقل الهدف {{field}} غير موجود.",
       "unmappedValues": "قيم فعّالة في {{field}} دون رمز: {{values}}.",
       "kindMismatch": "الحقل {{field}} ({{sourceType}}) لا يناسب حقلاً من نوع {{targetKind}}.",
       "requiredNotMapped": "الحقل المطلوب {{field}} غير مطابَق وليس له قيمة افتراضية.",
-      "unmappedFields": "{{count}} من الحقول المخصصة غير مطابقة وغير متجاهلة: {{fields}}."
+      "unmappedFields": "{{count}} من الحقول المخصصة غير مطابقة وغير متجاهلة: {{fields}}.",
+      "valueNotConvertible": "تعطي مطابقة قيم {{field}} القيم {{values}} وهي لا تناسب حقلاً من نوع {{targetKind}}."
     },
     "log": {
       "objectDone": "اكتمل: {{read}} مقروء، {{created}} منشأ، {{updated}} محدَّث، {{deleted}} محذوف، {{failed}} فاشل ({{api}}).",
-      "cancelled": "أُلغي التشغيل لأن هذا النظام أصبح أساسياً."
+      "cancelled": "أُلغي التشغيل لأن هذا النظام أصبح أساسياً.",
+      "limitsUnavailable": "رفض Salesforce قراءة حدود واجهة البرمجة (‎/limits)؛ يُقرأ الاستهلاك من ترويسات الردود ويستمر التشغيل.",
+      "fieldMissing": "لا يحتوي {{object}} على الحقل {{field}}: لا يُستعلم عنه (تستمر مطابقة الأشخاص بالمفاتيح الأخرى)."
+    },
+    "errorDetails": {
+      "title": "ما أجاب به Salesforce",
+      "status": "رمز حالة HTTP",
+      "call": "الطلب",
+      "errorCode": "رمز خطأ Salesforce",
+      "message": "رسالة Salesforce"
+    },
+    "queryUsage": {
+      "system": "حقل نظام",
+      "watermark": "تتبّع التغييرات (العلامة الزمنية)",
+      "mapped": "حقل مطابَق",
+      "externalId": "قالب المعرّف الخارجي",
+      "people": "مطابقة الأشخاص",
+      "files": "الملفات",
+      "approvals": "سجل الاعتمادات",
+      "history": "سجل تغييرات الحقول"
+    },
+    "warnings": {
+      "limitsRefused": "لا يسمح Salesforce لمستخدم الربط بقراءة حدود واجهة البرمجة (يتطلب ‎/limits صلاحية «View Setup and Configuration» التي لا يمكن منحها لرخصة Salesforce Integration). تعمل المزامنة دونها: يُقرأ استهلاك واجهة البرمجة من ترويسات ردود Salesforce."
     }
   }
 }

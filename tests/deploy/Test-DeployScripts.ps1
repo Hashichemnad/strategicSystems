@@ -17,6 +17,12 @@ Set-StrictMode -Version 2.0
 $ErrorActionPreference = 'Stop'
 
 $repo = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
+# The release under test (deploy/VERSION) and two later patch versions for the upgrade cases: no test edit on a version bump.
+$current = ([IO.File]::ReadAllText((Join-Path (Join-Path $repo 'deploy') 'VERSION'))).Trim()
+$parts = $current.Split('.')
+$next = '{0}.{1}.{2}' -f $parts[0], $parts[1], ([int]$parts[2] + 1)
+$after = '{0}.{1}.{2}' -f $parts[0], $parts[1], ([int]$parts[2] + 2)
+$currentRe = [regex]::Escape($current)
 $onWindows = [Environment]::OSVersion.Platform -eq [PlatformID]::Win32NT
 $utf8 = New-Object Text.UTF8Encoding($false)
 $utf8Strict = New-Object Text.UTF8Encoding($false, $true)
@@ -178,7 +184,7 @@ try {
     Assert-True ($build.Count -eq 1) 'image built once (compose build migrate)'
     if ($build.Count -eq 1) {
         Assert-True ($build[0].env.GIT_REVISION -eq '') 'no .git: GIT_REVISION empty'
-        Assert-True ($build[0].env.APP_VERSION -eq '1.0.0') 'APP_VERSION from deploy/VERSION'
+        Assert-True ($build[0].env.APP_VERSION -eq $current) 'APP_VERSION from deploy/VERSION'
         # PowerShell 7's ConvertFrom-Json turns an ISO 8601 string into a DateTime (Kind Utc for a trailing Z); 5.1 keeps the string.
         $created = $build[0].env.BUILD_CREATED
         if ($created -is [datetime]) { $createdOk = $created.Kind -eq [DateTimeKind]::Utc -and $created.Millisecond -eq 0 }
@@ -191,7 +197,7 @@ try {
     Assert-True (Test-Utf8File $envFile) '.env is UTF-8 without BOM with LF line endings'
     Assert-True ((Get-EnvLine $release 'POSTGRES_PASSWORD') -match '^[0-9a-f]{48}$') 'generated POSTGRES_PASSWORD'
     Assert-True ((Get-EnvLine $release 'STRATEGY_APP_PASSWORD') -match '^[0-9a-f]{48}$') 'generated STRATEGY_APP_PASSWORD'
-    Assert-True ((Get-EnvLine $release 'APP_VERSION') -eq '1.0.0') 'APP_VERSION saved'
+    Assert-True ((Get-EnvLine $release 'APP_VERSION') -eq $current) 'APP_VERSION saved'
     Assert-True ((Get-EnvLine $release 'APP_PORT') -eq '18431') 'APP_PORT from the environment saved'
     $example = [IO.File]::ReadAllLines((Join-Path $release 'deploy/.env.example'), $utf8)
     $written = [IO.File]::ReadAllLines($envFile, $utf8)
@@ -226,7 +232,7 @@ try {
     Assert-True ($cmds -contains 'compose up -d --no-build --no-deps app') 'application started again'
     if ($backups.Count -eq 1) {
         $b = $backups[0].FullName
-        Assert-True ($backups[0].Name -match '^strategy-1\.0\.0-\d{8}T\d{6}Z$') "folder name strategy-<version>-<UTC> ($($backups[0].Name))"
+        Assert-True ($backups[0].Name -match "^strategy-$currentRe-\d{8}T\d{6}Z`$") "folder name strategy-<version>-<UTC> ($($backups[0].Name))"
         Assert-True (Test-SameBytes (Join-Path $b 'database.dump') (Join-Path $r.State 'emitted-pg_dump.bin')) 'database.dump byte-identical to pg_dump output'
         Assert-True (Test-SameBytes (Join-Path $b 'files.tar.gz') (Join-Path $r.State 'emitted-files.tar.gz')) 'files.tar.gz byte-identical to tar output'
         Assert-True (Test-SameBytes (Join-Path $b 'env') $envFile) 'env copied'
@@ -245,7 +251,7 @@ try {
         Assert-True ($bad -eq 0) 'SHA256SUMS lines in sha256sum format and correct'
         $manifest = $null
         if (Test-Path (Join-Path $b 'manifest.json')) { $manifest = [IO.File]::ReadAllText((Join-Path $b 'manifest.json'), $utf8) | ConvertFrom-Json }
-        Assert-True ($null -ne $manifest -and $manifest.version -eq '1.0.0' -and $manifest.format -eq 1 -and $manifest.consistent -eq $true) 'manifest version, format, consistent'
+        Assert-True ($null -ne $manifest -and $manifest.version -eq $current -and $manifest.format -eq 1 -and $manifest.consistent -eq $true) 'manifest version, format, consistent'
         Assert-True ($null -ne $manifest -and $manifest.tables -eq 2 -and $manifest.rows -eq 8) 'manifest tables 2, rows 8'
     }
     Show-OnFailure $r
@@ -281,31 +287,31 @@ try {
     }
 
     # -----------------------------------------------------------------------------------------------------------------------------
-    $script:Test = 'upgrade to 1.0.1 (release folder without .git)'
+    $script:Test = "upgrade to $next (release folder without .git)"
     Write-Host "  $($script:Test)"
-    $r = Invoke-Script $release 'upgrade.ps1' @() @{ NEW_VERSION = '1.0.1' }
+    $r = Invoke-Script $release 'upgrade.ps1' @() @{ NEW_VERSION = $next }
     Assert-True ($r.Code -eq 0) "exit code 0 (was $($r.Code))"
     Assert-True (Test-NoNativeErrors $r) 'no stderr turned into PowerShell errors'
     $cmds = @(Get-Cmds $r)
     $build = @(Find-Call $r 'compose build migrate')
-    Assert-True ($build.Count -eq 1 -and $build[0].env.APP_VERSION -eq '1.0.1' -and $build[0].env.GIT_REVISION -eq '') 'new image built as 1.0.1 without revision'
+    Assert-True ($build.Count -eq 1 -and $build[0].env.APP_VERSION -eq $next -and $build[0].env.GIT_REVISION -eq '') "new image built as $next without revision"
     $dump = [Array]::IndexOf($cmds, ($cmds | Where-Object { $_ -like 'compose exec -T postgres pg_dump *' } | Select-Object -First 1))
     Assert-True ($dump -gt [Array]::IndexOf($cmds, 'compose build migrate')) 'pre-upgrade backup after the build'
     Assert-True ($cmds -contains 'compose run --rm migrate') 'migrations as the owner'
-    Assert-True ((Get-EnvLine $release 'APP_VERSION') -eq '1.0.1') 'APP_VERSION=1.0.1 saved'
+    Assert-True ((Get-EnvLine $release 'APP_VERSION') -eq $next) "APP_VERSION=$next saved"
     Assert-True (Test-Utf8File $envFile) '.env still UTF-8 without BOM, LF'
     Assert-True (@(Get-ChildItem -Directory (Join-Path $release 'backups')).Count -eq 2) 'pre-upgrade backup written'
-    Assert-True ($r.Output -match 'Upgrade to 1\.0\.1 complete') 'success message unchanged'
+    Assert-True ($r.Output -match "Upgrade to $([regex]::Escape($next)) complete") 'success message unchanged'
     # (The child's console encoding decides how the non-ASCII part of the path is shown; the file round trip itself is UTF-8.)
-    Assert-True ($r.Output -match 'checked the application: .*strategy-1\.0\.0-\d{8}T\d{6}Z') 'pre-upgrade backup folder handed over from backup.ps1'
+    Assert-True ($r.Output -match "checked the application: .*strategy-$currentRe-\d{8}T\d{6}Z") 'pre-upgrade backup folder handed over from backup.ps1'
     Show-OnFailure $r
 
     $script:Test = 'upgrade with failing migrations'
     Write-Host "  $($script:Test)"
-    $r = Invoke-Script $release 'upgrade.ps1' @('-NoBuild') @{ NEW_VERSION = '1.0.2'; FAKE_DOCKER_FAIL = 'compose run --rm migrate=3' }
+    $r = Invoke-Script $release 'upgrade.ps1' @('-NoBuild') @{ NEW_VERSION = $after; FAKE_DOCKER_FAIL = 'compose run --rm migrate=3' }
     Assert-True ($r.Code -eq 7) "exit code 7 (was $($r.Code))"
     Assert-True ($r.Output -match 'restore\.ps1 -Backup') 'rollback command printed'
-    Assert-True ((Get-EnvLine $release 'APP_VERSION') -eq '1.0.1') 'APP_VERSION unchanged'
+    Assert-True ((Get-EnvLine $release 'APP_VERSION') -eq $next) 'APP_VERSION unchanged'
     Show-OnFailure $r
 
     # -----------------------------------------------------------------------------------------------------------------------------

@@ -18,7 +18,7 @@ function serverKeys(): string[] {
   const keys = new Set<string>();
   const read = (path: string) => {
     for (const match of readFileSync(path, 'utf8').matchAll(
-      /"((?:integration\.sync\.(?:errors|exceptions|validation|log)|health\.salesforceSync|auth\.errors)\.[A-Za-z]+)"/g,
+      /"((?:integration\.sync\.(?:errors|exceptions|validation|log|warnings)|health\.salesforceSync|auth\.errors)\.[A-Za-z]+)"/g,
     ))
       if (match[1]) keys.add(match[1]);
   };

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 using Strategy.Host.Infrastructure;
 using Strategy.Platform.Notifications;
 
@@ -29,6 +30,55 @@ public sealed class ApiFactory(
     }
 
     public string ConnectionString => connectionString;
+
+    // The started host's scheduler factory, taken while the host is alive: base.DisposeAsync disposes the host and then calls Dispose(true).
+    private Quartz.ISchedulerFactory? _schedulers;
+
+    protected override IHost CreateHost(IHostBuilder builder)
+    {
+        var host = base.CreateHost(builder);
+        _schedulers = host.Services.GetService<Quartz.ISchedulerFactory>();
+        return host;
+    }
+
+    /// <summary>
+    /// Stops the host as usual (its hosted service shuts Quartz down, waiting for running jobs), then shuts down any scheduler still running —
+    /// e.g. after a stop that timed out — so no scheduler thread outlives the host or keeps the test process alive.
+    /// </summary>
+    public override async ValueTask DisposeAsync()
+    {
+        try
+        {
+            await base.DisposeAsync();
+        }
+        finally
+        {
+            await StopSchedulersAsync();
+        }
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        try
+        {
+            base.Dispose(disposing);
+        }
+        finally
+        {
+            if (disposing)
+            {
+                StopSchedulersAsync().GetAwaiter().GetResult();
+            }
+        }
+    }
+
+    private async Task StopSchedulersAsync()
+    {
+        if (Interlocked.Exchange(ref _schedulers, null) is { } schedulers)
+        {
+            await TestSchedulers.ShutdownAsync(schedulers);
+        }
+    }
 
     /// <summary>This host's file store (local provider) in a temporary folder.</summary>
     public string FilesPath { get; } = Path.Combine(Path.GetTempPath(), "strategy-files-" + Guid.CreateVersion7().ToString("N"));

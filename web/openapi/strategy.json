@@ -54460,9 +54460,15 @@
           "at": {
             "type": "string",
             "format": "date-time"
+          },
+          "source": {
+            "type": [
+              "null",
+              "string"
+            ]
           }
         },
-        "description": "API limits of the source as last read."
+        "description": "API limits of the source as last read: from `/limits`, or from the `Sforce-Limit-Info` header of normal calls when `/limits`\nis refused (ADR 0210; then the Bulk job counts are unknown). string? ApiLimits.Source is null on values stored by 1.0.0 (= `limits`)."
       },
       "AppearanceSettings": {
         "type": "object",
@@ -100524,6 +100530,40 @@
         },
         "description": "A new credential after rotation; string RotatedCredentialDto.Secret is shown once."
       },
+      "SalesforceErrorDto": {
+        "required": [
+          "status",
+          "call",
+          "errorCode",
+          "message"
+        ],
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": [
+              "null",
+              "integer"
+            ],
+            "format": "int32"
+          },
+          "call": {
+            "type": "string"
+          },
+          "errorCode": {
+            "type": [
+              "null",
+              "string"
+            ]
+          },
+          "message": {
+            "type": [
+              "null",
+              "string"
+            ]
+          }
+        },
+        "description": "What Salesforce answered to a failed call (ADR 0211): HTTP status, sanitised call, Salesforce errorCode and message."
+      },
       "SampleEditorDto": {
         "required": [
           "employeeId",
@@ -105783,7 +105823,9 @@
         "required": [
           "at",
           "ok",
-          "messageKey"
+          "messageKey",
+          "error",
+          "warnings"
         ],
         "type": "object",
         "properties": {
@@ -105799,8 +105841,46 @@
               "null",
               "string"
             ]
+          },
+          "error": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "$ref": "#/components/schemas/SalesforceErrorDto"
+              }
+            ]
+          },
+          "warnings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SyncWarningDto"
+            }
           }
         }
+      },
+      "SyncWarningDto": {
+        "required": [
+          "messageKey",
+          "params"
+        ],
+        "type": "object",
+        "properties": {
+          "messageKey": {
+            "type": "string"
+          },
+          "params": {
+            "type": [
+              "null",
+              "object"
+            ],
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        },
+        "description": "A non-blocking finding of a connection test (e.g. `/limits` refused, ADR 0210)."
       },
       "SystemAccessDto": {
         "required": [

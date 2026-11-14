@@ -1,0 +1,129 @@
+{
+  "format": "strategy.sync-pack/1",
+  "code": "adof-salesforce",
+  "version": 1,
+  "description": "The objects of the ADoF Salesforce pack 1 (release 1.0.0) that pack 2 (release 1.0.1) changes: the upgrade replaces an installed object only while it still equals this content (ADR 0213).",
+  "connector": "salesforce",
+  "objects": [
+    {
+      "key": "user",
+      "sourceObject": "User",
+      "kind": "people",
+      "loadOrder": 20,
+      "useBulk": true,
+      "options": {
+        "matchOrder": [
+          "email",
+          "employeeNo",
+          "federationId"
+        ],
+        "emailField": "Email",
+        "employeeNoField": "EmployeeNumber",
+        "federationIdField": "FederationIdentifier",
+        "nameField": "Name"
+      },
+      "notesAr": "مستخدمو Salesforce يطابَقون مع الموظفين بالبريد ثم رقم الموظف ثم معرّف الاتحاد؛ لا يُنشأ موظف جديد.",
+      "notesEn": "Salesforce users are matched to employees by e-mail, then employee number, then Federation ID; no employee is created."
+    },
+    {
+      "key": "contact",
+      "sourceObject": "Contact",
+      "kind": "people",
+      "loadOrder": 21,
+      "useBulk": true,
+      "provisional": true,
+      "options": {
+        "matchOrder": [
+          "email"
+        ],
+        "emailField": "Email",
+        "nameField": "Name"
+      },
+      "notesAr": "حقول الأشخاص في PMS (مدير المشروع، مالك الخطر…) تشير إلى جهات الاتصال؛ المطابقة بالبريد.",
+      "notesEn": "PMS people fields (project manager, risk owner, …) point at Contacts; matched by e-mail."
+    },
+    {
+      "key": "project-risk",
+      "sourceObject": "PMS_Project_Risk__c",
+      "kind": "record",
+      "targetType": "portfolio.project-risk",
+      "loadOrder": 44,
+      "fields": [
+        {
+          "source": "PMS_Project__c",
+          "target": "projectId",
+          "kind": "reference",
+          "referenceType": "portfolio.project",
+          "required": true
+        },
+        {
+          "source": "Risk__c",
+          "target": "title",
+          "kind": "direct"
+        },
+        {
+          "source": "Risk_Specific__c",
+          "target": "riskFactor",
+          "kind": "direct"
+        },
+        {
+          "source": "Probability_Level__c",
+          "target": "probability",
+          "kind": "direct"
+        },
+        {
+          "source": "Impact_Level__c",
+          "target": "impact",
+          "kind": "direct"
+        },
+        {
+          "source": "Inherent_Risk_Score__c",
+          "target": "sourceScore",
+          "kind": "direct"
+        },
+        {
+          "source": "Mitigation_Actions_to_control_the_risks__c",
+          "target": "mitigationActions",
+          "kind": "direct"
+        },
+        {
+          "source": "Implementation_Percentage__c",
+          "target": "implementationPct",
+          "kind": "direct",
+          "transform": "percentToRatio"
+        },
+        {
+          "source": "Implementation_Date__c",
+          "target": "implementationEnd",
+          "kind": "direct"
+        },
+        {
+          "source": "Risk_Owner__c",
+          "target": "ownerEmployeeId",
+          "kind": "person"
+        },
+        {
+          "source": "RMS_Status__c",
+          "target": "rmsStatus",
+          "kind": "direct"
+        },
+        {
+          "source": "RMS_Status__c",
+          "target": "status",
+          "kind": "picklist",
+          "values": {
+            "Draft": "draft",
+            "Active": "active",
+            "Inactive": "inactive",
+            "Closed": "closed"
+          }
+        }
+      ],
+      "ignore": [
+        "Actions_Specific__c"
+      ],
+      "notesAr": "درجة Salesforce الجمعية تُحفظ كدرجة المصدر، ويعيد إطار المخاطر هنا التقييم (الاحتمال × الأثر).",
+      "notesEn": "The Salesforce additive score is kept as the source score; the risk framework here re-rates the risk (probability × impact)."
+    }
+  ]
+}
