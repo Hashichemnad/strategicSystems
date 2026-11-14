@@ -41,8 +41,10 @@ Every record (project, KPI result, risk, team, task, request, remark, finding…
 - **Stage stepper**: where the record is in its lifecycle.
 - **Current-status banner**: what is waiting, *who* must act, and the buttons for the actions **you** may take now. If you see no button,
   nothing is waiting for you.
-- **Tabs**: Overview, related items, **Documents** (upload, versions, preview), **History** (every change: who, when, old → new value,
-  channel; filter by field or user; view the record *as of a date*).
+- **Side menu of sections** (beside the content, same order in every theme): Overview, related items with their counts, **Documents**
+  (upload, versions, preview), **History** (every change: who, when, old → new value, channel; filter by field or user; view the record
+  *as of a date*). One section shows at a time and the page's link keeps opening the same section. On a phone the **Sections** button in
+  the record header opens the menu as a drawer. Where these guides say a record page's "tab", they mean a section of this menu.
 
 ![History tab](../../screenshots/phase-3/en-record-history.png)
 

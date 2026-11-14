@@ -50,7 +50,7 @@ Rules: a task cannot be submitted / done while a sub-task or a predecessor (depe
 cannot approve someone else's task). Time is tracked automatically from accept / start to submit, with pauses and their reasons
 (**Timeline**, with the timesheet).
 
-Task page tabs: **Overview** (description, checklist, sub-tasks, dependencies, linked record), **Timeline** (events and timesheet), **Comments**
+Task page sections (side menu): **Overview** (description, checklist, sub-tasks, dependencies, linked record), **Timeline** (events and timesheet), **Comments**
 (@mention participants), **Documents**, **Follow-up** (add employees who follow the task; they can comment), **History**.
 
 ![Task page](../../screenshots/phase-6/en-task-page-timeline.png)

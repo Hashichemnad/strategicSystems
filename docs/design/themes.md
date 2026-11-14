@@ -104,19 +104,20 @@ an admin-chosen accent below 3 : 1 gets a warning on the Appearance screen, like
 |---|---|---|---|
 | **Navigation** (`AppShell`) | single sidebar with every system (today) | top bar with **app launcher** (grid icon) + app name; **horizontal tab bar of the current app**; utility bar at the bottom | top bar with launcher; **collapsible sidebar inside the current app**: app tabs, favourites (pinned apps), recent items; collapsed state remembered |
 | **Global search** | top-bar box (Phase 19) | top-bar box | top-bar button + **command palette (Ctrl+K)**: records (Phase 19 search), pages (apps and tabs the user can open), actions (new request / risk / task…, switch language, mode, theme when allowed) |
-| **Record page** (`RecordLayout`) | stack: header · stepper · status banner · tabs (today) | **highlights panel** (title, chips, key fields, primary actions) · **path bar** (chevron stages with "current stage" guidance) · status banner · **two columns**: tabs (details) at the start, **related lists** (count cards linking to the related tabs) at the end | **card layout**: header card with progress ring, stepper inside a card, key facts card beside the tabs on wide screens, sticky action bar on small screens |
+| **Record page** (`RecordLayout`, ADR 0221) | stack: header · stepper · status banner · summary · **side menu of sections** + the active section | **highlights panel** (title, chips, key fields, primary actions) · **path bar** (chevron stages with "current stage" guidance) · status banner · **side menu** (top accent bar, accent marker on the active section) + the active section in a card | **card layout**: header card, stepper inside a card, status, summary · **side menu** (rounded, accent marker) with the **key facts card** under it + the active section |
+| **Record sections** (`RecordSideMenu`, ADR 0221) — all themes | One menu, no header tab strip and no separate related lists: every section in the page's order with its count, `aria-current="page"` on the active one, arrow keys / Home / End, one Tab stop. Clicking writes `?tab=<key>` (router schemas unchanged). From `md` up it sits at the inline start (12 rem, 14 rem from `lg`); **below `md` (tested at 360 px) it is a drawer** (Radix Dialog sheet from the inline-start edge) opened by the **Sections** button in the record header, which names the current section; choosing a section closes it and focus returns to the button | | |
 | **List page** (`SplitView`) | table (today) | table; **split view** toggle (list + preview) | **split view by default** on wide screens (list + preview card), table below `lg` |
 | **Page header** (`PageHeader`) | today | compact, on a white highlights strip | larger title in the heading font |
-| **Tabs** (`TabsList`) | underline tabs | boxed tabs with a top accent bar | pill tabs on a muted track |
+| **Tabs** (`TabsList`) — tab sets inside a section and on non-record pages | underline tabs | boxed tabs with a top accent bar | pill tabs on a muted track |
 | **Stage stepper** | circles and lines | **path**: chevron segments, completed / current / upcoming | circles with a filled progress track |
 | **Cards / tiles** | bordered | bordered + light shadow, square corners | rounded, soft shadow, generous padding |
 | **Utility bar** | — | bottom bar: *Recent items*, *Quick note* (drafts in the browser only) | — |
 
 Implementation: `useAppearance()` exposes `{ theme, mode, layout }`. Only these shared components read it: `AppShell`, `RecordLayout`,
-`SplitView`, `StageStepper`, `TabsList`, `PageHeader` (and the launcher / palette themselves). Everything else follows the tokens. Pages opt
-into the richer layouts by using `RecordLayout` / `SplitView`; Phase 20 adopts them on the project record page and the project list
-(the screens of the acceptance screenshots); every other record page already gets the theme's header, path bar, tabs and cards through the
-shared components. Wider adoption is mechanical and listed as a known gap where not done.
+`RecordSideMenu`, `SplitView`, `StageStepper`, `TabsList`, `PageHeader` (and the launcher / palette themselves). Everything else follows the
+tokens. Pages opt into the richer layouts by using `RecordLayout` / `SplitView`. Since release 1.0.2 every record page (17) uses
+`RecordLayout` with `sections` (`{ key, label, count?, hidden?, testId?, content }`), `activeSection` and `onSectionChange` (ADR 0221); a new
+record page does the same — there is no tab-strip variant.
 
 ## 5. Application workspaces (ADR 0172)
 
