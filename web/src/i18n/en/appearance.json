@@ -264,7 +264,8 @@
   },
   "record": {
     "highlights": "Highlights",
-    "related": "Related",
+    "sections": "Record sections",
+    "sectionsButton": "Sections",
     "keyFacts": "Key facts",
     "path": "Path",
     "guidance": "Current stage: {{stage}}",

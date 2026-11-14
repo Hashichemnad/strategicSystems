@@ -10,6 +10,7 @@ import {
   tr,
   unitIdByCode,
   useMailpit,
+  recordSection,
 } from './fixtures';
 
 /** Phase 3: audit trail (History tab, Audit Log, verification), documents, notifications, templates and the job dashboard. */
@@ -47,9 +48,9 @@ test.describe('as a sample editor', () => {
     expect(updated.status()).toBe(200);
 
     await page.goto(`/sample/items/${item.id}?tab=history`);
-    await expect(page.getByRole('tab', { name: tr(language, 'audit:history.tab') })).toHaveAttribute(
-      'aria-selected',
-      'true',
+    await expect(recordSection(page, language, tr(language, 'audit:history.tab'))).toHaveAttribute(
+      'aria-current',
+      'page',
     );
     const timeline = page.getByRole('list', { name: tr(language, 'audit:history.timeline') });
     await expect(timeline.getByText(`Digital transformation plan ${tag}`)).toBeVisible();
@@ -72,7 +73,7 @@ test.describe('as a sample editor', () => {
     expect(pdf.status()).toBe(200);
     expect(pdf.headers()['content-type']).toContain('application/pdf');
 
-    await page.getByRole('tab', { name: tr(language, 'files:tab') }).click();
+    await recordSection(page, language, tr(language, 'files:tab')).click();
     await page.getByRole('button', { name: tr(language, 'files:upload') }).click();
     const dialog = page.getByRole('dialog');
     await dialog.locator('input[type="file"]').setInputFiles({

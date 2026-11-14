@@ -1,5 +1,15 @@
 import type { APIRequestContext, Page } from '@playwright/test';
-import { apiPost, apiPut, expect, signInViaApi, test, tr, unitIdByCode, type Language } from './fixtures';
+import {
+  apiPost,
+  apiPut,
+  expect,
+  recordSection,
+  signInViaApi,
+  test,
+  tr,
+  unitIdByCode,
+  type Language,
+} from './fixtures';
 
 /**
  * Phase 9 — Project lifecycle (docs/design/portfolio.md §15–§28): Take Ownership → charter (gate) → approval → LPO → team formation
@@ -88,9 +98,9 @@ async function waitFor(api: APIRequestContext, id: string, check: (p: ProjectDto
 
 async function openTab(page: Page, language: Language, id: string, tab: string) {
   await page.goto(`/portfolio/projects/${id}?tab=${tab}`);
-  await expect(page.getByRole('tab', { name: k(language, `project.tabs.${tab}`) })).toHaveAttribute(
-    'aria-selected',
-    'true',
+  await expect(recordSection(page, language, k(language, `project.tabs.${tab}`))).toHaveAttribute(
+    'aria-current',
+    'page',
   );
 }
 
@@ -274,7 +284,7 @@ test.describe('portfolio — project lifecycle', () => {
     await expect(page.getByTestId('project-gate')).toContainText(
       k(language, 'errors.gateMembers', { min: 3, count: 2 }),
     );
-    await page.getByRole('tab', { name: k(language, 'project.tabs.risks') }).click();
+    await recordSection(page, language, k(language, 'project.tabs.risks')).click();
     await expect(page.getByTestId('project-risks')).toContainText(k(language, 'project.risk.bands.high'));
     await shot('charter-risks', { fullPage: true });
     await openTab(page, language, id, 'overview');

@@ -191,3 +191,4 @@ Write an ADR for every choice the SPEC or CLAUDE.md leaves open (CLAUDE.md §2 r
 | [0218](0218-request-and-record-pairs.md) | One Salesforce record → a Request Framework request and its registry record | Proposed |
 | [0219](0219-release-images-on-ghcr.md) | Release images on ghcr.io (public) and an offline archive with checksum; install / upgrade pull by default, `--build` from source | Proposed |
 | [0220](0220-display-numbers-are-labels.md) | Display numbers of synced records are labels; real database errors in exceptions | Proposed |
+| [0221](0221-record-pages-side-menu-only.md) | Record pages keep only the side menu: sections with counts, drawer below `md`, no header tab strip | Proposed |

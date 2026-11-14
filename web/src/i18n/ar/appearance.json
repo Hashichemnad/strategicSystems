@@ -264,7 +264,8 @@
   },
   "record": {
     "highlights": "أبرز المعلومات",
-    "related": "السجلات المرتبطة",
+    "sections": "أقسام السجل",
+    "sectionsButton": "الأقسام",
     "keyFacts": "معلومات أساسية",
     "path": "المسار",
     "guidance": "المرحلة الحالية: {{stage}}",

@@ -24,10 +24,6 @@ import {
   StatusBanner,
   StatusChip,
   Switch,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
   Textarea,
   Wizard,
   Chart,
@@ -76,8 +72,6 @@ function ResultView({ result }: { result: KpiResult }) {
   const onError = (e: unknown) => toast({ tone: 'error', title: errorMessage(tc, e) });
   const current = tab ?? (result.can.review ? 'review' : 'result');
 
-  const go = (next: 'result' | 'review' | 'approvals' | 'tasks' | 'history') =>
-    void navigate({ search: { tab: next } });
   return (
     <RecordLayout
       testId="kpi-result-page"
@@ -122,11 +116,6 @@ function ResultView({ result }: { result: KpiResult }) {
           value: t('result.evidenceCount', { count: result.evidenceCount }),
         },
       ]}
-      related={(['review', 'approvals', 'tasks', 'history'] as const).map((key) => ({
-        key,
-        label: t(`result.tabs.${key}`),
-        onOpen: () => go(key),
-      }))}
       header={
         <PageHeader
           title={pickText(language, result.card.nameAr, result.card.nameEn)}
@@ -192,46 +181,55 @@ function ResultView({ result }: { result: KpiResult }) {
           }}
         />
       }
-    >
-      <Tabs value={current} onValueChange={(value) => void navigate({ search: { tab: value as 'result' } })}>
-        <TabsList className="flex-wrap">
-          {(['result', 'review', 'approvals', 'tasks', 'history'] as const).map((key) => (
-            <TabsTrigger key={key} value={key}>
-              {t(`result.tabs.${key}`)}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-        <TabsContent value="result">
-          <div className="grid gap-6 xl:grid-cols-[2fr_1fr]">
-            {result.can.submit ? <SubmitWizard result={result} /> : <ResultSummary result={result} />}
-            <History result={result} />
-          </div>
-        </TabsContent>
-        <TabsContent value="review">
-          <div className="grid gap-6 xl:grid-cols-[2fr_1fr]">
-            <div className="flex flex-col gap-6">
-              <ResultSummary result={result} />
-              {result.can.review && <ReviewPanel result={result} />}
-              <DocumentsPanel ownerType="kpi.result" ownerId={result.id} canEdit={false} />
-            </div>
-            <div className="flex flex-col gap-6">
-              <Anomalies result={result} />
-              <EvidenceCheck result={result} />
+      activeSection={current}
+      onSectionChange={(key) => void navigate({ search: { tab: key as 'result' } })}
+      sections={[
+        {
+          key: 'result',
+          label: t('result.tabs.result'),
+          content: (
+            <div className="grid gap-6 xl:grid-cols-[2fr_1fr]">
+              {result.can.submit ? <SubmitWizard result={result} /> : <ResultSummary result={result} />}
               <History result={result} />
-              <ExternalReferencesSection type="kpi.result" id={result.id} />
             </div>
-          </div>
-        </TabsContent>
-        <TabsContent value="approvals">
-          <ApprovalPanel resourceType="kpi.result" resourceId={result.id} />
-        </TabsContent>
-        <TabsContent value="tasks">
-          <LinkedTasksPanel type="kpi.result" id={result.id} />
-        </TabsContent>
-        <TabsContent value="history">
-          <HistoryTab record="kpiResult" id={result.id} />
-        </TabsContent>
-      </Tabs>
+          ),
+        },
+        {
+          key: 'review',
+          label: t('result.tabs.review'),
+          content: (
+            <div className="grid gap-6 xl:grid-cols-[2fr_1fr]">
+              <div className="flex flex-col gap-6">
+                <ResultSummary result={result} />
+                {result.can.review && <ReviewPanel result={result} />}
+                <DocumentsPanel ownerType="kpi.result" ownerId={result.id} canEdit={false} />
+              </div>
+              <div className="flex flex-col gap-6">
+                <Anomalies result={result} />
+                <EvidenceCheck result={result} />
+                <History result={result} />
+                <ExternalReferencesSection type="kpi.result" id={result.id} />
+              </div>
+            </div>
+          ),
+        },
+        {
+          key: 'approvals',
+          label: t('result.tabs.approvals'),
+          content: <ApprovalPanel resourceType="kpi.result" resourceId={result.id} />,
+        },
+        {
+          key: 'tasks',
+          label: t('result.tabs.tasks'),
+          content: <LinkedTasksPanel type="kpi.result" id={result.id} />,
+        },
+        {
+          key: 'history',
+          label: t('result.tabs.history'),
+          content: <HistoryTab record="kpiResult" id={result.id} />,
+        },
+      ]}
+    >
       {reopen && <ReopenDialog result={result} onClose={() => setReopen(false)} />}
     </RecordLayout>
   );

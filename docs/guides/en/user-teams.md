@@ -26,7 +26,7 @@ Cancelled*.
 
 ## 2. Running the team
 
-Team page tabs: **Overview**, **Members** (with history), **Meetings**, **Recommendations**, **Tasks**, **Reports**, **Documents**,
+Team page sections (side menu): **Overview**, **Members** (with history), **Meetings**, **Recommendations**, **Tasks**, **Reports**, **Documents**,
 **Evaluations**, **Approvals**, **Activity**.
 
 - **Members** (administrator): add, leave (date, reason), replace, change role — every change is kept.

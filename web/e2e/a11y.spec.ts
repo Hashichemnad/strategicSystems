@@ -1,4 +1,4 @@
-import { apiPut, expect, test, tr } from './fixtures';
+import { apiPut, expect, recordSection, test, tr } from './fixtures';
 import { expectAccessible, settle } from './a11y';
 import type { Page } from '@playwright/test';
 
@@ -177,11 +177,12 @@ async function firstRecordHref(page: Page, list: string, href: RegExp, skip = 0)
   return hrefs.filter((h) => href.test(h))[skip] ?? null;
 }
 
-/** Audits the record page, then each of its tabs in turn. */
+/** Audits the record page, then each section of its side menu (ADR 0221) — or each tab, on pages without one — in turn. */
 async function auditRecord(page: Page, name: string, path: string) {
   await page.goto(path);
   await expectAccessible(page, name);
-  const tabs = page.getByRole('tab');
+  const menu = page.getByTestId('record-side-menu');
+  const tabs = (await menu.count()) > 0 ? menu.getByRole('button') : page.getByRole('tab');
   const count = await tabs.count();
   for (let i = 1; i < count; i++) {
     const tab = tabs.nth(i);
@@ -250,10 +251,9 @@ test.describe('accessibility — WCAG 2.1 AA (axe-core)', () => {
       if (!href) break;
       await page.goto(`${href}?tab=board`);
       await settle(page);
-      const selected = page.getByRole('tab', {
-        selected: true,
-        name: tr(language, 'portfolio:project.tabs.board'),
-      });
+      const selected = recordSection(page, language, tr(language, 'portfolio:project.tabs.board')).and(
+        page.locator('[aria-current="page"]'),
+      );
       if (await selected.count()) {
         await auditRecord(page, 'portfolio-agile-project', `${href}?tab=board`);
         break;

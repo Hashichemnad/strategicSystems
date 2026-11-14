@@ -17,10 +17,6 @@ import {
   Skeleton,
   StatusBanner,
   StatusChip,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
   Textarea,
   Section,
 } from '@/ui';
@@ -92,12 +88,6 @@ export function CapSourcePage() {
         { key: 'owner', label: t('fields.sourceOwner'), value: names.person(s.owner) },
         { key: 'origin', label: t('fields.origin'), value: k(`origin.${s.origin}`) },
       ]}
-      related={(['remarks', 'documents', 'history'] as const).map((key) => ({
-        key,
-        label: t(`tabs.${key}`),
-        count: key === 'remarks' ? remarks.data?.totalCount : undefined,
-        onOpen: () => setTab(key),
-      }))}
       header={
         <PageHeader
           title={names.text(v.titleAr, v.titleEn) || s.number}
@@ -134,46 +124,61 @@ export function CapSourcePage() {
           }
         />
       }
+      activeSection={tab}
+      onSectionChange={(key) => setTab(key as SourceTab)}
+      sections={[
+        {
+          key: 'remarks',
+          label: t('tabs.remarks'),
+          count: remarks.data?.totalCount,
+          content: (
+            <>
+              {!remarks.data ? (
+                <Skeleton className="h-48" />
+              ) : remarks.data.items.length === 0 ? (
+                <p className="rounded-lg border bg-card p-6 text-sm text-muted-foreground">
+                  {t('sources.noRemarks')}
+                </p>
+              ) : (
+                <RemarksTable rows={remarks.data.items} showSource={false} />
+              )}
+            </>
+          ),
+        },
+        {
+          key: 'overview',
+          label: t('tabs.overview'),
+          content: (
+            <>
+              <Rows
+                rows={[
+                  [t('fields.sourceType'), labels.lookup(lookupTypes.sourceType, v.sourceTypeCode)],
+                  [t('fields.receivedOn'), date(v.receivedOn)],
+                  [t('fields.unit'), names.unit(s.unit)],
+                  [t('fields.sourceOwner'), names.person(s.owner)],
+                  [t('fields.origin'), k(`origin.${s.origin}`)],
+                  [t('fields.viewers'), s.viewers.map((p) => names.person(p)).join('، ')],
+                  [t('fields.description'), v.description],
+                ]}
+              />
+              <ExternalReferencesSection type="cap.source" id={s.id} />
+            </>
+          ),
+        },
+        {
+          key: 'documents',
+          label: t('tabs.documents'),
+          content: (
+            <DocumentsPanel ownerType="cap.source" ownerId={s.id} canEdit={s.can.edit || s.can.addRemark} />
+          ),
+        },
+        {
+          key: 'history',
+          label: t('tabs.history'),
+          content: <HistoryTab record="capSource" id={s.id} />,
+        },
+      ]}
     >
-      <Tabs value={tab} onValueChange={(value) => setTab(value as SourceTab)}>
-        <TabsList>
-          <TabsTrigger value="remarks">{t('tabs.remarks')}</TabsTrigger>
-          <TabsTrigger value="overview">{t('tabs.overview')}</TabsTrigger>
-          <TabsTrigger value="documents">{t('tabs.documents')}</TabsTrigger>
-          <TabsTrigger value="history">{t('tabs.history')}</TabsTrigger>
-        </TabsList>
-        <TabsContent value="remarks">
-          {!remarks.data ? (
-            <Skeleton className="h-48" />
-          ) : remarks.data.items.length === 0 ? (
-            <p className="rounded-lg border bg-card p-6 text-sm text-muted-foreground">
-              {t('sources.noRemarks')}
-            </p>
-          ) : (
-            <RemarksTable rows={remarks.data.items} showSource={false} />
-          )}
-        </TabsContent>
-        <TabsContent value="overview">
-          <Rows
-            rows={[
-              [t('fields.sourceType'), labels.lookup(lookupTypes.sourceType, v.sourceTypeCode)],
-              [t('fields.receivedOn'), date(v.receivedOn)],
-              [t('fields.unit'), names.unit(s.unit)],
-              [t('fields.sourceOwner'), names.person(s.owner)],
-              [t('fields.origin'), k(`origin.${s.origin}`)],
-              [t('fields.viewers'), s.viewers.map((p) => names.person(p)).join('، ')],
-              [t('fields.description'), v.description],
-            ]}
-          />
-          <ExternalReferencesSection type="cap.source" id={s.id} />
-        </TabsContent>
-        <TabsContent value="documents">
-          <DocumentsPanel ownerType="cap.source" ownerId={s.id} canEdit={s.can.edit || s.can.addRemark} />
-        </TabsContent>
-        <TabsContent value="history">
-          <HistoryTab record="capSource" id={s.id} />
-        </TabsContent>
-      </Tabs>
       {adding && <RemarkDialog sourceId={s.id} initial={adding} onClose={() => setAdding(null)} />}
       {extracting && (
         <ExtractDialog

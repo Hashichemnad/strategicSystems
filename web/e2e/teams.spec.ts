@@ -15,6 +15,7 @@ import {
   tr,
   unitIdByCode,
   type Language,
+  recordSection,
 } from './fixtures';
 
 /** Phase 7 — Teams Management (docs/design/teams.md): screenshots go to docs/screenshots/phase-7 (E2E_SCREENSHOTS=phase-7). */
@@ -248,7 +249,7 @@ test.describe('teams management', () => {
     await page.goto(`/teams/${draft.id}`);
     await expect(page.getByTestId('memo-download')).toBeVisible();
     await shot('team-page-overview', { fullPage: true });
-    await page.getByRole('tab', { name: k(language, 'tabs.members') }).click();
+    await recordSection(page, language, k(language, 'tabs.members')).click();
     await expect(page.getByTestId('team-members')).toContainText('Dr. Lina Haddad');
     await shot('team-page-members');
 
@@ -373,14 +374,14 @@ test.describe('teams management', () => {
 
     // 6. HR review with the approval panel and previous cycles, then approval.
     await page.goto(`/teams/evaluations/${opened.id}`);
-    await page.getByRole('tab', { name: k(language, 'evaluation.review') }).click();
+    await recordSection(page, language, k(language, 'evaluation.review')).click();
     await expect(page.getByTestId('evaluation-summary').first()).toBeVisible();
     await shot('team-hr-review', { fullPage: true });
     await approve(adminApi, draft.id);
 
     // 7. Rewards from the matrix, HR submits, the owning unit's head approves, certificates are issued.
     await page.reload();
-    await page.getByRole('tab', { name: k(language, 'rewards.title') }).click();
+    await recordSection(page, language, k(language, 'rewards.title')).click();
     await expect(page.getByTestId('evaluation-rewards')).toBeVisible();
     await shot('team-rewards', { fullPage: true });
     const withRewards = await json<{ version: number }>(
@@ -405,7 +406,7 @@ test.describe('teams management', () => {
     if (!certificate?.certificateFileId) throw new Error('No certificate');
     await pdfShot(adminApi, certificate.certificateFileId, language, 'team-certificate-pdf');
     await page.reload();
-    await page.getByRole('tab', { name: k(language, 'rewards.title') }).click();
+    await recordSection(page, language, k(language, 'rewards.title')).click();
     await expect(page.getByTestId('evaluation-rewards')).toContainText('CERT-');
     await shot('team-rewards-certificates', { fullPage: true });
 

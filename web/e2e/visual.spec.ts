@@ -1,9 +1,10 @@
 import { apiPut, expect, test } from './fixtures';
 
 /**
- * Visual-regression baseline per theme (SPEC-ADDENDUM §C5, ADR 0175): the UI kit (every shared component, static content) and the app
- * launcher in Classic / Enterprise / Modern × light / dark, per language project (`visual-ar`, `visual-en`). Opt-in (E2E_VISUAL=1):
- * pixel baselines depend on the machine's font rendering — re-baseline with `--update-snapshots` on the reference machine.
+ * Visual-regression baseline per theme (SPEC-ADDENDUM §C5, ADR 0175): the UI kit (every shared component, static content), its record
+ * page with the sections side menu and the 360 px sections drawer (ADR 0221), and the app launcher in Classic / Enterprise / Modern ×
+ * light / dark, per language project (`visual-ar`, `visual-en`). Opt-in (E2E_VISUAL=1): pixel baselines depend on the machine's font
+ * rendering — re-baseline with `--update-snapshots` on the reference machine.
  */
 
 test.use({ signedInAs: 'mariam' });
@@ -42,6 +43,24 @@ for (const theme of ['classic', 'enterprise', 'modern'] as const) {
         animations: 'disabled',
         maxDiffPixelRatio: 0.01,
       });
+      // The record page layout (ADR 0221): header slots and the side menu of sections, then the phone drawer at 360 px. The UI kit's
+      // static record (no live data, so the pixels do not depend on the database).
+      await expect(page.getByTestId('ui-kit-record')).toHaveScreenshot(`record-${theme}-${mode}.png`, {
+        animations: 'disabled',
+        maxDiffPixelRatio: 0.01,
+      });
+      const viewport = page.viewportSize();
+      await page.setViewportSize({ width: 360, height: 780 });
+      const sections = page.getByTestId('ui-kit-record').getByTestId('record-sections-button');
+      await sections.scrollIntoViewIfNeeded();
+      await sections.click();
+      await expect(page.getByTestId('record-sections-drawer')).toHaveScreenshot(
+        `record-drawer-${theme}-${mode}.png`,
+        { animations: 'disabled', maxDiffPixelRatio: 0.01 },
+      );
+      await page.keyboard.press('Escape');
+      await expect(sections).toBeFocused();
+      if (viewport) await page.setViewportSize(viewport);
       if (theme !== 'classic') {
         await page.getByTestId('app-launcher').click();
         await expect(page.getByTestId('app-launcher-dialog')).toHaveScreenshot(

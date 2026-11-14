@@ -29,10 +29,6 @@ import {
   StageStepper,
   StatusBanner,
   StatusChip,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
   Textarea,
   useToast,
 } from '@/ui';
@@ -97,7 +93,6 @@ export function RequestPage() {
     );
 
   const when = (value: string | null) => (value ? formatDateTime(value, lang) : '—');
-  const goTab = (value: (typeof requestTabs)[number]) => void navigate({ search: { tab: value } });
   return (
     <RecordLayout
       back={
@@ -259,40 +254,46 @@ export function RequestPage() {
         />
       }
       summary={<Subject request={data} />}
-      related={(['approvals', 'timeline', 'documents', 'tasks'] as const).map((key) => ({
-        key,
-        label: t(`request.tabs.${key}`),
-        onOpen: () => goTab(key),
-      }))}
+      activeSection={tab}
+      onSectionChange={(key) => void navigate({ search: { tab: key as 'overview' } })}
+      sections={[
+        {
+          key: 'overview',
+          label: t('request.tabs.overview'),
+          content: (
+            <>
+              <Overview request={data} />
+              <ExternalReferencesSection type="requests.request" id={data.id} />
+            </>
+          ),
+        },
+        {
+          key: 'approvals',
+          label: t('request.tabs.approvals'),
+          content: <ApprovalPanel resourceType={requestResource} resourceId={data.id} />,
+        },
+        {
+          key: 'timeline',
+          label: t('request.tabs.timeline'),
+          content: <Timeline request={data} />,
+        },
+        {
+          key: 'documents',
+          label: t('request.tabs.documents'),
+          content: <DocumentsPanel ownerType={requestResource} ownerId={data.id} canEdit={data.can.upload} />,
+        },
+        {
+          key: 'tasks',
+          label: t('request.tabs.tasks'),
+          content: <LinkedTasksPanel type={requestResource} id={data.id} />,
+        },
+        {
+          key: 'history',
+          label: t('request.tabs.history'),
+          content: <HistoryTab record="serviceRequest" id={data.id} />,
+        },
+      ]}
     >
-      <Tabs value={tab} onValueChange={(value) => void navigate({ search: { tab: value as 'overview' } })}>
-        <TabsList className="flex-wrap">
-          {requestTabs.map((key) => (
-            <TabsTrigger key={key} value={key}>
-              {t(`request.tabs.${key}`)}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-        <TabsContent value="overview">
-          <Overview request={data} />
-          <ExternalReferencesSection type="requests.request" id={data.id} />
-        </TabsContent>
-        <TabsContent value="approvals">
-          <ApprovalPanel resourceType={requestResource} resourceId={data.id} />
-        </TabsContent>
-        <TabsContent value="timeline">
-          <Timeline request={data} />
-        </TabsContent>
-        <TabsContent value="documents">
-          <DocumentsPanel ownerType={requestResource} ownerId={data.id} canEdit={data.can.upload} />
-        </TabsContent>
-        <TabsContent value="tasks">
-          <LinkedTasksPanel type={requestResource} id={data.id} />
-        </TabsContent>
-        <TabsContent value="history">
-          <HistoryTab record="serviceRequest" id={data.id} />
-        </TabsContent>
-      </Tabs>
       {dialog?.kind === 'submit' && <SubmitDialog request={data} onClose={() => setDialog(undefined)} />}
       {dialog?.kind === 'cancel' && <CancelDialog request={data} onClose={() => setDialog(undefined)} />}
       {dialog?.kind === 'decide' && (

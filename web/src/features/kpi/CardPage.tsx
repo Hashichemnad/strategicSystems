@@ -32,10 +32,6 @@ import {
   TableHead,
   TableHeaderCell,
   TableRow,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
   Textarea,
   Section,
   token,
@@ -97,7 +93,6 @@ export function KpiCardPage() {
   const data = card.data;
   const plan = plans.data?.find((p) => p.cardId === data.id);
 
-  const goTab = (value: (typeof cardTabs)[number]) => void navigate({ search: { tab: value } });
   // KpiPage's secondary navigation comes first (Classic keeps the same order); the record layout adds the theme's slots.
   return (
     <RecordLayout
@@ -215,53 +210,66 @@ export function KpiCardPage() {
             : '—',
         },
       ]}
-      related={(
-        ['plans', 'performance', 'alignment', 'linked', 'documents', 'versions', 'tasks'] as const
-      ).map((key) => ({ key, label: t(`card.tabs.${key}`), onOpen: () => goTab(key) }))}
+      activeSection={tab ?? 'details'}
+      onSectionChange={(key) => void navigate({ search: { tab: key as 'details' } })}
+      sections={[
+        {
+          key: 'details',
+          label: t('card.tabs.details'),
+          content: (
+            <>
+              <Details card={data} />
+              <ExternalReferencesSection type="kpi.card" id={data.id} />
+            </>
+          ),
+        },
+        {
+          key: 'measuring',
+          label: t('card.tabs.measuring'),
+          content: <Measuring card={data} />,
+        },
+        {
+          key: 'alignment',
+          label: t('card.tabs.alignment'),
+          content: <Alignment card={data} />,
+        },
+        {
+          key: 'plans',
+          label: t('card.tabs.plans'),
+          content: <PlansTab card={data} />,
+        },
+        {
+          key: 'performance',
+          label: t('card.tabs.performance'),
+          content: <PerformanceTab card={data} />,
+        },
+        {
+          key: 'documents',
+          label: t('card.tabs.documents'),
+          content: <DocumentsPanel ownerType="kpi.card" ownerId={data.id} canEdit={data.canManage} />,
+        },
+        {
+          key: 'linked',
+          label: t('card.tabs.linked'),
+          content: <LinkedTab cardId={data.id} />,
+        },
+        {
+          key: 'versions',
+          label: t('card.tabs.versions'),
+          content: <VersionsTab card={data} />,
+        },
+        {
+          key: 'tasks',
+          label: t('card.tabs.tasks'),
+          content: <LinkedTasksPanel type="kpi.card" id={data.id} />,
+        },
+        {
+          key: 'history',
+          label: t('card.tabs.history'),
+          content: <HistoryTab record="kpiCard" id={data.id} />,
+        },
+      ]}
     >
-      <Tabs
-        value={tab ?? 'details'}
-        onValueChange={(value) => void navigate({ search: { tab: value as 'details' } })}
-      >
-        <TabsList className="flex-wrap">
-          {cardTabs.map((key) => (
-            <TabsTrigger key={key} value={key}>
-              {t(`card.tabs.${key}`)}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-        <TabsContent value="details">
-          <Details card={data} />
-          <ExternalReferencesSection type="kpi.card" id={data.id} />
-        </TabsContent>
-        <TabsContent value="measuring">
-          <Measuring card={data} />
-        </TabsContent>
-        <TabsContent value="alignment">
-          <Alignment card={data} />
-        </TabsContent>
-        <TabsContent value="plans">
-          <PlansTab card={data} />
-        </TabsContent>
-        <TabsContent value="performance">
-          <PerformanceTab card={data} />
-        </TabsContent>
-        <TabsContent value="documents">
-          <DocumentsPanel ownerType="kpi.card" ownerId={data.id} canEdit={data.canManage} />
-        </TabsContent>
-        <TabsContent value="linked">
-          <LinkedTab cardId={data.id} />
-        </TabsContent>
-        <TabsContent value="versions">
-          <VersionsTab card={data} />
-        </TabsContent>
-        <TabsContent value="tasks">
-          <LinkedTasksPanel type="kpi.card" id={data.id} />
-        </TabsContent>
-        <TabsContent value="history">
-          <HistoryTab record="kpiCard" id={data.id} />
-        </TabsContent>
-      </Tabs>
       {dialog === 'targets' && <TargetsDialog card={data} onClose={() => setDialog(undefined)} />}
       {dialog === 'change' && <ChangeDialog card={data} onClose={() => setDialog(undefined)} />}
       {dialog === 'smart' && <SmartDialog cardId={data.id} onClose={() => setDialog(undefined)} />}

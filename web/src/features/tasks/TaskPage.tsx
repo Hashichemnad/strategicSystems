@@ -26,10 +26,6 @@ import {
   StageStepper,
   StatusBanner,
   StatusChip,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
   Textarea,
   useToast,
 } from '@/ui';
@@ -97,8 +93,6 @@ export function TaskPage() {
     Confidential: t('fields.confidentialShort'),
   };
 
-  const openTab = (next: 'comments' | 'documents' | 'followUps' | 'timeline') =>
-    void navigate({ search: { tab: next } });
   return (
     <RecordLayout
       back={
@@ -184,42 +178,48 @@ export function TaskPage() {
           )}
         </>
       }
-      related={[
-        { key: 'timeline', label: t('detail.tabs.timeline'), onOpen: () => openTab('timeline') },
-        { key: 'comments', label: t('detail.tabs.comments'), onOpen: () => openTab('comments') },
-        { key: 'documents', label: tf('tab'), onOpen: () => openTab('documents') },
-        { key: 'followUps', label: t('detail.tabs.followUps'), onOpen: () => openTab('followUps') },
+      activeSection={tab}
+      onSectionChange={(key) => void navigate({ search: { tab: key as 'overview' } })}
+      sections={[
+        {
+          key: 'overview',
+          label: t('detail.tabs.overview'),
+          content: (
+            <>
+              <Overview task={data} />
+              <ExternalReferencesSection type="tasks.task" id={data.id} />
+            </>
+          ),
+        },
+        {
+          key: 'timeline',
+          label: t('detail.tabs.timeline'),
+          content: <TimelineTab taskId={data.id} template={data.template} />,
+        },
+        {
+          key: 'comments',
+          label: t('detail.tabs.comments'),
+          content: <CommentsTab task={data} />,
+        },
+        {
+          key: 'documents',
+          label: tf('tab'),
+          content: (
+            <DocumentsPanel ownerType="tasks.task" ownerId={data.id} canEdit={data.capabilities.canUpload} />
+          ),
+        },
+        {
+          key: 'followUps',
+          label: t('detail.tabs.followUps'),
+          content: <FollowUpsTab task={data} />,
+        },
+        {
+          key: 'history',
+          label: ta('history.tab'),
+          content: <HistoryTab record="task" id={data.id} fieldLabels={fieldLabels} />,
+        },
       ]}
     >
-      <Tabs value={tab} onValueChange={(value) => void navigate({ search: { tab: value as 'overview' } })}>
-        <TabsList>
-          <TabsTrigger value="overview">{t('detail.tabs.overview')}</TabsTrigger>
-          <TabsTrigger value="timeline">{t('detail.tabs.timeline')}</TabsTrigger>
-          <TabsTrigger value="comments">{t('detail.tabs.comments')}</TabsTrigger>
-          <TabsTrigger value="documents">{tf('tab')}</TabsTrigger>
-          <TabsTrigger value="followUps">{t('detail.tabs.followUps')}</TabsTrigger>
-          <TabsTrigger value="history">{ta('history.tab')}</TabsTrigger>
-        </TabsList>
-        <TabsContent value="overview">
-          <Overview task={data} />
-          <ExternalReferencesSection type="tasks.task" id={data.id} />
-        </TabsContent>
-        <TabsContent value="timeline">
-          <TimelineTab taskId={data.id} template={data.template} />
-        </TabsContent>
-        <TabsContent value="comments">
-          <CommentsTab task={data} />
-        </TabsContent>
-        <TabsContent value="documents">
-          <DocumentsPanel ownerType="tasks.task" ownerId={data.id} canEdit={data.capabilities.canUpload} />
-        </TabsContent>
-        <TabsContent value="followUps">
-          <FollowUpsTab task={data} />
-        </TabsContent>
-        <TabsContent value="history">
-          <HistoryTab record="task" id={data.id} fieldLabels={fieldLabels} />
-        </TabsContent>
-      </Tabs>
       {action && (
         <TaskActionDialog
           task={data}

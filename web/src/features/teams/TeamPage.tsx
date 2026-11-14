@@ -25,10 +25,6 @@ import {
   StageStepper,
   StatusBanner,
   StatusChip,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
   Textarea,
   useToast,
 } from '@/ui';
@@ -105,7 +101,6 @@ export function TeamPage() {
 
   const person = (x: { nameAr: string | null; nameEn: string | null } | null) =>
     x ? pickText(i18n.language, x.nameAr, x.nameEn) || '—' : '—';
-  const openTab = (next: (typeof teamTabs)[number]) => void navigate({ search: { tab: next } });
   return (
     <RecordLayout
       back={
@@ -210,77 +205,80 @@ export function TeamPage() {
           }}
         />
       }
-      related={[
+      activeSection={tab}
+      onSectionChange={(key) => void navigate({ search: { tab: key as 'overview' } })}
+      sections={[
+        {
+          key: 'overview',
+          label: t('tabs.overview'),
+          content: (
+            <>
+              <Overview team={data} />
+              <ExternalReferencesSection type="teams.team" id={data.id} />
+            </>
+          ),
+        },
         {
           key: 'members',
           label: t('tabs.members'),
           count: data.stats.activeMembers,
-          onOpen: () => openTab('members'),
+          content: <MembersPanel team={data} />,
         },
         {
           key: 'meetings',
           label: t('tabs.meetings'),
           count: data.stats.meetingsHeld,
-          onOpen: () => openTab('meetings'),
+          content: (
+            <MeetingsPanel
+              team={data}
+              onOpen={(id) => void go({ to: '/teams/meetings/$meetingId', params: { meetingId: id } })}
+            />
+          ),
         },
         {
           key: 'recommendations',
           label: t('tabs.recommendations'),
           count: data.stats.recommendationsOpen,
-          onOpen: () => openTab('recommendations'),
+          content: <RecommendationsPanel team={data} />,
         },
-        { key: 'tasks', label: t('tabs.tasks'), onOpen: () => openTab('tasks') },
-        { key: 'documents', label: t('tabs.documents'), onOpen: () => openTab('documents') },
-        { key: 'approvals', label: t('tabs.approvals'), onOpen: () => openTab('approvals') },
+        {
+          key: 'tasks',
+          label: t('tabs.tasks'),
+          content: <LinkedTasksPanel type="teams.team" id={data.id} />,
+        },
+        {
+          key: 'reports',
+          label: t('tabs.reports'),
+          content: <ReportsPanel team={data} />,
+        },
+        {
+          key: 'documents',
+          label: t('tabs.documents'),
+          content: (
+            <DocumentsPanel
+              ownerType="teams.team"
+              ownerId={data.id}
+              canEdit={data.permissions.canManage || data.permissions.canOperate}
+            />
+          ),
+        },
+        {
+          key: 'evaluations',
+          label: t('tabs.evaluations'),
+          content: <EvaluationsPanel team={data} />,
+        },
+        {
+          key: 'approvals',
+          label: t('tabs.approvals'),
+          content: <ApprovalPanel resourceType="teams.team" resourceId={data.id} />,
+        },
+        {
+          key: 'history',
+          label: t('tabs.history'),
+          content: <HistoryTab record="team" id={data.id} fieldLabels={fieldLabels} />,
+        },
       ]}
     >
-      <Tabs value={tab} onValueChange={(value) => void navigate({ search: { tab: value as 'overview' } })}>
-        <TabsList className="flex-wrap">
-          {teamTabs.map((key) => (
-            <TabsTrigger key={key} value={key}>
-              {t(`tabs.${key}`)}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-        <TabsContent value="overview">
-          <Overview team={data} />
-          <ExternalReferencesSection type="teams.team" id={data.id} />
-        </TabsContent>
-        <TabsContent value="members">
-          <MembersPanel team={data} />
-        </TabsContent>
-        <TabsContent value="meetings">
-          <MeetingsPanel
-            team={data}
-            onOpen={(id) => void go({ to: '/teams/meetings/$meetingId', params: { meetingId: id } })}
-          />
-        </TabsContent>
-        <TabsContent value="recommendations">
-          <RecommendationsPanel team={data} />
-        </TabsContent>
-        <TabsContent value="tasks">
-          <LinkedTasksPanel type="teams.team" id={data.id} />
-        </TabsContent>
-        <TabsContent value="reports">
-          <ReportsPanel team={data} />
-        </TabsContent>
-        <TabsContent value="documents">
-          <DocumentsPanel
-            ownerType="teams.team"
-            ownerId={data.id}
-            canEdit={data.permissions.canManage || data.permissions.canOperate}
-          />
-        </TabsContent>
-        <TabsContent value="evaluations">
-          <EvaluationsPanel team={data} />
-        </TabsContent>
-        <TabsContent value="approvals">
-          <ApprovalPanel resourceType="teams.team" resourceId={data.id} />
-        </TabsContent>
-        <TabsContent value="history">
-          <HistoryTab record="team" id={data.id} fieldLabels={fieldLabels} />
-        </TabsContent>
-      </Tabs>
       {action && <ActionDialog team={data} action={action} onClose={() => setAction(undefined)} />}
     </RecordLayout>
   );

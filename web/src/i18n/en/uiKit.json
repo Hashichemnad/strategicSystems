@@ -7,7 +7,8 @@
     "stepper": "Stage stepper and current status",
     "wizard": "Wizard",
     "tabs": "Tabs",
-    "feedback": "Feedback"
+    "feedback": "Feedback",
+    "record": "Record page"
   },
   "demo": {
     "stages": {
@@ -52,6 +53,23 @@
     "dialogDescription": "Dialogs trap focus, close on Escape and mirror in Arabic.",
     "skeleton": "Loading placeholder",
     "emptyTitle": "Nothing here yet",
-    "emptyDescription": "Empty states explain what will appear and offer the next step."
+    "emptyDescription": "Empty states explain what will appear and offer the next step.",
+    "record": {
+      "title": "Digital services roadmap",
+      "owner": "Project manager",
+      "ownerValue": "Mariam Al Mansoori",
+      "unit": "Unit",
+      "unitValue": "Strategy office",
+      "due": "Planned end",
+      "dueValue": "31 Dec 2026",
+      "sections": {
+        "overview": "Overview",
+        "milestones": "Milestones",
+        "risks": "Risks",
+        "documents": "Documents",
+        "history": "History"
+      },
+      "content": "Content of the {{section}} section. The side menu lists every section with its count; on phones it opens as a drawer."
+    }
   }
 }

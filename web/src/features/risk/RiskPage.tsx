@@ -39,10 +39,6 @@ import {
   TableHead,
   TableHeaderCell,
   TableRow,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
   Textarea,
   Chart,
   lineOption,
@@ -304,57 +300,82 @@ export function RiskPage() {
           )}
         </>
       }
-      related={(['assessment', 'controls', 'actions', 'kris', 'events', 'reviews', 'documents'] as const).map(
-        (key) => ({
-          key,
-          label: t(`tabs.${key}`),
-          onOpen: () => go(key),
-        }),
-      )}
+      activeSection={tab ?? 'overview'}
+      onSectionChange={(key) => go(key as RiskTab)}
+      sections={[
+        {
+          key: 'overview',
+          label: t('tabs.overview'),
+          testId: 'risk-tab-overview',
+          content: (
+            <>
+              <div className="grid gap-6 xl:grid-cols-[2fr_1fr]">
+                <Overview risk={r} />
+                <div id="risk-approvals" className="flex flex-col gap-3" data-testid="risk-approval-panel">
+                  <h2 className="font-semibold">{t('risk.approvals')}</h2>
+                  <ApprovalPanel resourceType="risk.risk" resourceId={r.id} />
+                </div>
+              </div>
+              <ExternalReferencesSection type="risk.risk" id={r.id} />
+            </>
+          ),
+        },
+        {
+          key: 'assessment',
+          label: t('tabs.assessment'),
+          testId: 'risk-tab-assessment',
+          content: <AssessmentTab risk={r} />,
+        },
+        {
+          key: 'controls',
+          label: t('tabs.controls'),
+          testId: 'risk-tab-controls',
+          content: <ControlsTab risk={r} />,
+        },
+        {
+          key: 'actions',
+          label: t('tabs.actions'),
+          testId: 'risk-tab-actions',
+          content: <ActionsTab risk={r} />,
+        },
+        {
+          key: 'kris',
+          label: t('tabs.kris'),
+          testId: 'risk-tab-kris',
+          content: <KrisTab risk={r} />,
+        },
+        {
+          key: 'events',
+          label: t('tabs.events'),
+          testId: 'risk-tab-events',
+          content: <EventsTab risk={r} />,
+        },
+        {
+          key: 'reviews',
+          label: t('tabs.reviews'),
+          testId: 'risk-tab-reviews',
+          content: <ReviewsTab risk={r} />,
+        },
+        {
+          key: 'documents',
+          label: t('tabs.documents'),
+          testId: 'risk-tab-documents',
+          content: (
+            <DocumentsPanel
+              ownerType="risk.risk"
+              ownerId={r.id}
+              canEdit={r.can.edit || r.can.manageChildren}
+            />
+          ),
+        },
+        {
+          key: 'activity',
+          label: t('tabs.activity'),
+          testId: 'risk-tab-activity',
+          content: <HistoryTab record="risk" id={r.id} />,
+        },
+      ]}
     >
-      <Tabs value={tab ?? 'overview'} onValueChange={(value) => go(value as RiskTab)}>
-        <TabsList className="flex-wrap" data-testid="risk-tabs">
-          {riskTabs.map((key) => (
-            <TabsTrigger key={key} value={key} data-testid={`risk-tab-${key}`}>
-              {t(`tabs.${key}`)}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-        <TabsContent value="overview">
-          <div className="grid gap-6 xl:grid-cols-[2fr_1fr]">
-            <Overview risk={r} />
-            <div id="risk-approvals" className="flex flex-col gap-3" data-testid="risk-approval-panel">
-              <h2 className="font-semibold">{t('risk.approvals')}</h2>
-              <ApprovalPanel resourceType="risk.risk" resourceId={r.id} />
-            </div>
-          </div>
-          <ExternalReferencesSection type="risk.risk" id={r.id} />
-        </TabsContent>
-        <TabsContent value="assessment">
-          <AssessmentTab risk={r} />
-        </TabsContent>
-        <TabsContent value="controls">
-          <ControlsTab risk={r} />
-        </TabsContent>
-        <TabsContent value="actions">
-          <ActionsTab risk={r} />
-        </TabsContent>
-        <TabsContent value="kris">
-          <KrisTab risk={r} />
-        </TabsContent>
-        <TabsContent value="events">
-          <EventsTab risk={r} />
-        </TabsContent>
-        <TabsContent value="reviews">
-          <ReviewsTab risk={r} />
-        </TabsContent>
-        <TabsContent value="documents">
-          <DocumentsPanel ownerType="risk.risk" ownerId={r.id} canEdit={r.can.edit || r.can.manageChildren} />
-        </TabsContent>
-        <TabsContent value="activity">
-          <HistoryTab record="risk" id={r.id} />
-        </TabsContent>
-      </Tabs>
       {dialog === 'submit' && <SubmitDialog risk={r} onClose={() => setDialog(undefined)} />}
       {dialog === 'closure' && <ClosureDialog risk={r} onClose={() => setDialog(undefined)} />}
       {dialog === 'reopen' && <ReopenDialog risk={r} onClose={() => setDialog(undefined)} />}

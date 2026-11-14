@@ -1,5 +1,5 @@
 import type { APIRequestContext, Page } from '@playwright/test';
-import { apiPut, expect, test, tr, type Language } from './fixtures';
+import { apiPut, expect, recordSection, test, tr, type Language } from './fixtures';
 
 /**
  * Phase 20 — Themes and application workspaces (SPEC-ADDENDUM §C, docs/design/themes.md). The administrator lets users choose their
@@ -139,12 +139,24 @@ for (const theme of themes) {
         await page.setViewportSize({ width: 360, height: 760 });
         await settle(page);
         await expectNoHorizontalScroll(page, `${theme} ${mode} ${screen.name}`);
+        if (screen.name === 'record' && projectId) {
+          // Phones: the record's sections are a drawer behind the Sections button (ADR 0221); choosing one closes it.
+          const sections = page.getByTestId('record-sections-button');
+          await sections.click();
+          const drawer = page.getByTestId('record-sections-drawer');
+          await expect(drawer).toBeVisible();
+          await shot(`${theme}-${mode}-record-sections-360`);
+          await drawer.getByTestId('record-section-milestones').click();
+          await expect(drawer).toBeHidden();
+          await expect(page).toHaveURL(/tab=milestones/);
+          await expect(sections).toBeFocused();
+        }
       }
     });
   }
 }
 
-test('Enterprise: highlights panel, path bar, related lists and per-app tabs; deep links keep working', async ({
+test('Enterprise: highlights panel, path bar, record side menu and per-app tabs; deep links keep working', async ({
   page,
   language,
   shot,
@@ -154,16 +166,16 @@ test('Enterprise: highlights panel, path bar, related lists and per-app tabs; de
   await page.goto(`/portfolio/projects/${projectId}?tab=risks`);
   await expect(page.getByTestId('record-highlights')).toBeVisible();
   await expect(page.getByTestId('path-guidance')).toBeVisible();
-  // The deep link still opens the Risks tab.
-  await expect(page.getByRole('tab', { name: tr(language, 'portfolio:project.tabs.risks') })).toHaveAttribute(
-    'aria-selected',
-    'true',
+  // The deep link still opens the Risks section of the side menu (ADR 0221).
+  await expect(recordSection(page, language, tr(language, 'portfolio:project.tabs.risks'))).toHaveAttribute(
+    'aria-current',
+    'page',
   );
   // App tabs of Portfolio only, Projects active.
   const tabs = page.getByTestId('app-tabs');
   await expect(tabs.getByTestId('app-tab-projects')).toHaveAttribute('aria-current', 'page');
   await expect(tabs.getByTestId('app-tab-cards')).toHaveCount(0);
-  await page.getByTestId('related-milestones').click();
+  await recordSection(page, language, tr(language, 'portfolio:project.tabs.milestones')).click();
   await expect(page).toHaveURL(/tab=milestones/);
   await expect(page.getByTestId('utility-bar')).toBeVisible();
   await shot('enterprise-light-record-milestones');

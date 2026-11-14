@@ -29,10 +29,6 @@ import {
   TableHead,
   TableHeaderCell,
   TableRow,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
   Textarea,
   ProgressBar,
   Section,
@@ -172,67 +168,97 @@ export function BenchStudyPage() {
           )}
         </>
       }
-      related={(['search', 'visit', 'analysis', 'actions', 'tasks', 'documents'] as const).map((key) => ({
-        key,
-        label: t(`tabs.${key}`),
-        onOpen: () => go(key),
-      }))}
+      activeSection={tab ?? 'overview'}
+      onSectionChange={(key) => go(key as StudyTab)}
+      sections={[
+        {
+          key: 'overview',
+          label: t('tabs.overview'),
+          testId: 'bench-tab-overview',
+          content: (
+            <>
+              <Overview study={s} />
+              <ExternalReferencesSection type="bench.study" id={s.id} />
+            </>
+          ),
+        },
+        {
+          key: 'search',
+          label: t('tabs.search'),
+          testId: 'bench-tab-search',
+          content: <SearchTab study={s} />,
+        },
+        {
+          key: 'visit',
+          label: t('tabs.visit'),
+          testId: 'bench-tab-visit',
+          content: <VisitsTab study={s} />,
+        },
+        {
+          key: 'analysis',
+          label: t('tabs.analysis'),
+          testId: 'bench-tab-analysis',
+          content: <AnalysisTab study={s} />,
+        },
+        {
+          key: 'actions',
+          label: t('tabs.actions'),
+          testId: 'bench-tab-actions',
+          content: <LinkedActions study={s} onClosure={() => setDialog('closure')} />,
+        },
+        {
+          key: 'impact',
+          label: t('tabs.impact'),
+          testId: 'bench-tab-impact',
+          content: <ImpactTab study={s} />,
+        },
+        {
+          key: 'approvals',
+          label: t('tabs.approvals'),
+          testId: 'bench-tab-approvals',
+          content: (
+            <>
+              {s.stage === 'plan' ? (
+                <Link
+                  to="/requests/$requestId"
+                  params={{ requestId: s.requestId }}
+                  search={{ tab: 'overview' }}
+                  className="text-primary hover:underline"
+                >
+                  {t('study.planRequest')}: <bdi>{s.requestNumber}</bdi>
+                </Link>
+              ) : (
+                <ApprovalPanel resourceType="bench.study" resourceId={s.id} />
+              )}
+            </>
+          ),
+        },
+        {
+          key: 'tasks',
+          label: t('tabs.tasks'),
+          testId: 'bench-tab-tasks',
+          content: <LinkedTasksPanel type="bench.study" id={s.id} />,
+        },
+        {
+          key: 'documents',
+          label: t('tabs.documents'),
+          testId: 'bench-tab-documents',
+          content: (
+            <DocumentsPanel
+              ownerType="bench.study"
+              ownerId={s.id}
+              canEdit={s.can.editSearch || s.can.editVisits || s.can.editAnalysis}
+            />
+          ),
+        },
+        {
+          key: 'history',
+          label: t('tabs.history'),
+          testId: 'bench-tab-history',
+          content: <HistoryTab record="benchStudy" id={s.id} />,
+        },
+      ]}
     >
-      <Tabs value={tab ?? 'overview'} onValueChange={(value) => go(value as StudyTab)}>
-        <TabsList className="flex-wrap" data-testid="bench-study-tabs">
-          {studyTabs.map((key) => (
-            <TabsTrigger key={key} value={key} data-testid={`bench-tab-${key}`}>
-              {t(`tabs.${key}`)}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-        <TabsContent value="overview">
-          <Overview study={s} />
-          <ExternalReferencesSection type="bench.study" id={s.id} />
-        </TabsContent>
-        <TabsContent value="search">
-          <SearchTab study={s} />
-        </TabsContent>
-        <TabsContent value="visit">
-          <VisitsTab study={s} />
-        </TabsContent>
-        <TabsContent value="analysis">
-          <AnalysisTab study={s} />
-        </TabsContent>
-        <TabsContent value="actions">
-          <LinkedActions study={s} onClosure={() => setDialog('closure')} />
-        </TabsContent>
-        <TabsContent value="impact">
-          <ImpactTab study={s} />
-        </TabsContent>
-        <TabsContent value="approvals">
-          {s.stage === 'plan' ? (
-            <Link
-              to="/requests/$requestId"
-              params={{ requestId: s.requestId }}
-              search={{ tab: 'overview' }}
-              className="text-primary hover:underline"
-            >
-              {t('study.planRequest')}: <bdi>{s.requestNumber}</bdi>
-            </Link>
-          ) : (
-            <ApprovalPanel resourceType="bench.study" resourceId={s.id} />
-          )}
-        </TabsContent>
-        <TabsContent value="tasks">
-          <LinkedTasksPanel type="bench.study" id={s.id} />
-        </TabsContent>
-        <TabsContent value="documents">
-          <DocumentsPanel
-            ownerType="bench.study"
-            ownerId={s.id}
-            canEdit={s.can.editSearch || s.can.editVisits || s.can.editAnalysis}
-          />
-        </TabsContent>
-        <TabsContent value="history">
-          <HistoryTab record="benchStudy" id={s.id} />
-        </TabsContent>
-      </Tabs>
       {dialog === 'closure' && <ClosureDialog study={s} onClose={() => setDialog(undefined)} />}
       {dialog === 'cancel' && (
         <ReasonDialog
