@@ -24,10 +24,6 @@ import {
   TableHead,
   TableHeaderCell,
   TableRow,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
   useToast,
   type Stage,
 } from '@/ui';
@@ -167,55 +163,62 @@ export function IpRecordPage() {
           {(can.file || can.register || can.registerInternally) && <OfficeHint record={data} />}
         </>
       }
-      related={[
+      activeSection={tab}
+      onSectionChange={(key) => void navigate({ search: { tab: key as RecordTab } })}
+      sections={[
+        {
+          key: 'overview',
+          label: t('record.tabs.overview'),
+          testId: 'ip-tab-overview',
+          content: (
+            <>
+              <Overview record={data} />
+              <ExternalReferencesSection type="ip.record" id={data.id} />
+            </>
+          ),
+        },
         {
           key: 'contributors',
           label: t('record.tabs.contributors'),
+          testId: 'ip-tab-contributors',
           count: data.contributors.length,
-          onOpen: () => void navigate({ search: { tab: 'contributors' } }),
+          content: <ContributorsTab record={data} />,
         },
-        ...(['registration', 'documents', 'linked'] as const).map((key) => ({
-          key,
-          label: t(`record.tabs.${key}`),
-          onOpen: () => void navigate({ search: { tab: key } }),
-        })),
+        {
+          key: 'registration',
+          label: t('record.tabs.registration'),
+          testId: 'ip-tab-registration',
+          content: <Registration record={data} />,
+        },
+        {
+          key: 'documents',
+          label: t('record.tabs.documents'),
+          testId: 'ip-tab-documents',
+          content: (
+            <div className="flex flex-col gap-3">
+              <p className="text-sm text-muted-foreground">{t('record.documentsHint')}</p>
+              <DocumentsPanel
+                ownerType={IP_OWNER_TYPE}
+                ownerId={data.id}
+                canEdit={can.file || can.register || can.renew || can.editContributors}
+              />
+            </div>
+          ),
+        },
+        {
+          key: 'linked',
+          label: t('record.tabs.linked'),
+          testId: 'ip-tab-linked',
+          content: <Linked record={data} />,
+        },
+        {
+          key: 'history',
+          label: t('record.tabs.history'),
+          testId: 'ip-tab-history',
+          content: <HistoryTab record="ipRecord" id={data.id} />,
+        },
       ]}
     >
-      <Tabs value={tab} onValueChange={(value) => void navigate({ search: { tab: value as RecordTab } })}>
-        <TabsList className="flex-wrap">
-          {recordTabs.map((key) => (
-            <TabsTrigger key={key} value={key} data-testid={`ip-tab-${key}`}>
-              {t(`record.tabs.${key}`)}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-        <TabsContent value="overview">
-          <Overview record={data} />
-          <ExternalReferencesSection type="ip.record" id={data.id} />
-        </TabsContent>
-        <TabsContent value="contributors">
-          <ContributorsTab record={data} />
-        </TabsContent>
-        <TabsContent value="registration">
-          <Registration record={data} />
-        </TabsContent>
-        <TabsContent value="documents">
-          <div className="flex flex-col gap-3">
-            <p className="text-sm text-muted-foreground">{t('record.documentsHint')}</p>
-            <DocumentsPanel
-              ownerType={IP_OWNER_TYPE}
-              ownerId={data.id}
-              canEdit={can.file || can.register || can.renew || can.editContributors}
-            />
-          </div>
-        </TabsContent>
-        <TabsContent value="linked">
-          <Linked record={data} />
-        </TabsContent>
-        <TabsContent value="history">
-          <HistoryTab record="ipRecord" id={data.id} />
-        </TabsContent>
-      </Tabs>
       <RecordActionDialog kind={dialog} record={data} onClose={() => setDialog(undefined)} />
     </RecordLayout>
   );

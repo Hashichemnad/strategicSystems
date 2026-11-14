@@ -1,4 +1,4 @@
-import { test as base, expect, type APIRequestContext, type Page } from '@playwright/test';
+import { test as base, expect, type APIRequestContext, type Locator, type Page } from '@playwright/test';
 import { createHmac } from 'node:crypto';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -122,6 +122,18 @@ export async function nextTotp(base32Key: string): Promise<string> {
     }
     await new Promise((resolve) => setTimeout(resolve, wait));
   }
+}
+
+/**
+ * A section of a record page in its side menu (ADR 0221: no header tab strip). `label` is the section's label; its count, when
+ * shown, follows it in the accessible name. The active section has `aria-current="page"`. Wide viewports only (below `md` the menu
+ * is a drawer behind the "Sections" button, `record-sections-button`).
+ */
+export function recordSection(page: Page, language: Language, label: string): Locator {
+  const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return page
+    .getByRole('navigation', { name: tr(language, 'appearance:record.sections') })
+    .getByRole('button', { name: new RegExp(`^${escaped}`) });
 }
 
 /** A page (its browser session) or a separate API session. */

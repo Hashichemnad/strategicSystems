@@ -5,7 +5,9 @@ import i18n from '@/i18n';
 
 // jsdom lacks these browser APIs used by Radix and the theme provider.
 function polyfill(target: object, key: string, value: unknown): void {
-  if (!(key in target)) Object.defineProperty(target, key, { value, writable: true, configurable: true });
+  // jsdom can list a key whose value is undefined (matchMedia): test the value, not the key.
+  if ((target as Record<string, unknown>)[key] === undefined)
+    Object.defineProperty(target, key, { value, writable: true, configurable: true });
 }
 
 polyfill(

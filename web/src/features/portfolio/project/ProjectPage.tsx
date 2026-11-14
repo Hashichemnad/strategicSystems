@@ -1,6 +1,6 @@
 import { getRouteApi, Link } from '@tanstack/react-router';
 import { ArrowLeft, CircleCheck, CircleX, Pencil, Pause, Play, Ban, Undo2 } from 'lucide-react';
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { errorMessage, translateMessageKey } from '@/api/problem';
 import { HistoryTab } from '@/features/audit/HistoryTab';
@@ -26,10 +26,6 @@ import {
   StageStepper,
   StatusBanner,
   StatusChip,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
   Textarea,
   useToast,
 } from '@/ui';
@@ -186,19 +182,95 @@ export function ProjectPage() {
   const live = p.status === 'active' || p.status === 'on-hold';
   const person = (x: typeof p.pm) => (x ? pickText(lang, x.nameAr, x.nameEn) : '—');
   const date = (value: string | null) => (value ? formatDate(value, lang) : '—');
-  // Related lists of the Enterprise / Modern record layout: count cards that open the related tab (ADR 0170).
-  const relatedTabs: { key: ProjectTab; count?: number }[] = [
-    { key: 'milestones', count: p.counts.milestones },
-    { key: 'risks', count: p.counts.risks },
-    { key: 'kpis', count: p.counts.kpis },
-    { key: 'stakeholders', count: p.counts.stakeholders },
-    { key: 'team', count: p.counts.members },
-    { key: 'meetings', count: p.counts.meetings },
-    { key: 'contracts', count: p.counts.contracts },
-    { key: 'changes', count: p.counts.changeRequests },
-    { key: 'documents' },
-    { key: 'approvals' },
-  ];
+  // Counts beside the related sections in the record side menu (ADR 0170, ADR 0221).
+  const relatedCounts: Partial<Record<ProjectTab, number>> = {
+    milestones: p.counts.milestones,
+    risks: p.counts.risks,
+    kpis: p.counts.kpis,
+    stakeholders: p.counts.stakeholders,
+    team: p.counts.members,
+    meetings: p.counts.meetings,
+    contracts: p.counts.contracts,
+    changes: p.counts.changeRequests,
+  };
+  const sectionContent: Partial<Record<ProjectTab, ReactNode>> = {
+    overview: (
+      <>
+        <Overview project={p} options={options.data} onEdit={() => setDialog({ kind: 'charter' })} />
+        <ExternalReferencesSection type="portfolio.project" id={p.id} />
+      </>
+    ),
+    kpis: <KpisTab project={p} options={options.data} />,
+    risks: <RisksTab project={p} options={options.data} />,
+    stakeholders: <StakeholdersTab project={p} options={options.data} />,
+    team: <TeamTab project={p} options={options.data} />,
+    scope: <PlanningTab project={p} options={options.data} group="scope" />,
+    assumptions: <PlanningTab project={p} options={options.data} group="assumptions" />,
+    values: <PlanningTab project={p} options={options.data} group="values" />,
+    milestones: (
+      <>
+        <MilestonesTab
+          project={p}
+          today={options.data.today}
+          canUpdate={p.permissions.canEdit && p.subState === 'execution'}
+        />
+      </>
+    ),
+    backlog: <BacklogTab project={p} />,
+    board: <BoardTab project={p} />,
+    sprints: <SprintsTab project={p} />,
+    gantt: <ProjectGanttTab project={p} />,
+    health: <HealthTab project={p} />,
+    raid: <RaidTab project={p} />,
+    raci: <RaciTab project={p} />,
+    communication: <CommunicationTab project={p} />,
+    benefits: <BenefitsTab project={p} />,
+    monthly: <MonthlyTab project={p} />,
+    tasks: <LinkedTasksPanel type={projectResource} id={p.id} />,
+    challenges: <ChallengesTab project={p} options={options.data} />,
+    meetings: <MeetingsTab project={p} options={options.data} />,
+    lessons: <LessonsTab project={p} options={options.data} />,
+    contracts: <ContractsTab project={p} options={options.data} />,
+    vendors: <WaselTab project={p} />,
+    changes: <ChangesTab project={p} />,
+    closure: (
+      <>
+        <ClosureTab
+          project={p}
+          options={options.data}
+          onSubmit={() => setDialog({ kind: 'submit', stage: 'closure' })}
+        />
+      </>
+    ),
+    impact: <ImpactTab project={p} onSubmit={() => setDialog({ kind: 'submit', stage: 'impact' })} />,
+    approvals: (
+      <>
+        {p.permissions.canRecall && (
+          <div className="mb-3 flex justify-end">
+            <Button
+              variant="outline"
+              onClick={() => setDialog({ kind: 'recall' })}
+              data-testid="recall-approval"
+            >
+              <Undo2 aria-hidden />
+              {t('actions.recall')}
+            </Button>
+          </div>
+        )}
+        <ApprovalPanel resourceType={projectResource} resourceId={p.id} />
+      </>
+    ),
+    documents: (
+      <>
+        <DocumentsPanel
+          ownerType={projectResource}
+          ownerId={p.id}
+          canEdit={p.permissions.canEdit && p.status === 'active'}
+        />
+      </>
+    ),
+    history: <HistoryTab record="project" id={p.id} />,
+  };
   return (
     <RecordLayout
       testId="project-page"
@@ -307,142 +379,15 @@ export function ProjectPage() {
         />
       }
       summary={<ProgressStrip project={p} />}
-      related={relatedTabs
-        .filter((item) => tabs.includes(item.key))
-        .map((item) => ({
-          key: item.key,
-          label: t(`project.tabs.${item.key}`),
-          count: item.count,
-          onOpen: () => go(item.key),
-        }))}
+      activeSection={tab}
+      onSectionChange={(key) => go(key as ProjectTab)}
+      sections={tabs.map((key) => ({
+        key,
+        label: t(`project.tabs.${key}`),
+        count: relatedCounts[key],
+        content: sectionContent[key],
+      }))}
     >
-      <Tabs value={tab} onValueChange={(value) => go(value as ProjectTab)}>
-        <TabsList className="flex-wrap">
-          {tabs.map((key) => (
-            <TabsTrigger key={key} value={key}>
-              {t(`project.tabs.${key}`)}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-        <TabsContent value="overview">
-          <Overview project={p} options={options.data} onEdit={() => setDialog({ kind: 'charter' })} />
-          <ExternalReferencesSection type="portfolio.project" id={p.id} />
-        </TabsContent>
-        <TabsContent value="kpis">
-          <KpisTab project={p} options={options.data} />
-        </TabsContent>
-        <TabsContent value="risks">
-          <RisksTab project={p} options={options.data} />
-        </TabsContent>
-        <TabsContent value="stakeholders">
-          <StakeholdersTab project={p} options={options.data} />
-        </TabsContent>
-        <TabsContent value="team">
-          <TeamTab project={p} options={options.data} />
-        </TabsContent>
-        <TabsContent value="scope">
-          <PlanningTab project={p} options={options.data} group="scope" />
-        </TabsContent>
-        <TabsContent value="assumptions">
-          <PlanningTab project={p} options={options.data} group="assumptions" />
-        </TabsContent>
-        <TabsContent value="values">
-          <PlanningTab project={p} options={options.data} group="values" />
-        </TabsContent>
-        <TabsContent value="milestones">
-          <MilestonesTab
-            project={p}
-            today={options.data.today}
-            canUpdate={p.permissions.canEdit && p.subState === 'execution'}
-          />
-        </TabsContent>
-        <TabsContent value="backlog">
-          <BacklogTab project={p} />
-        </TabsContent>
-        <TabsContent value="board">
-          <BoardTab project={p} />
-        </TabsContent>
-        <TabsContent value="sprints">
-          <SprintsTab project={p} />
-        </TabsContent>
-        <TabsContent value="gantt">
-          <ProjectGanttTab project={p} />
-        </TabsContent>
-        <TabsContent value="health">
-          <HealthTab project={p} />
-        </TabsContent>
-        <TabsContent value="raid">
-          <RaidTab project={p} />
-        </TabsContent>
-        <TabsContent value="raci">
-          <RaciTab project={p} />
-        </TabsContent>
-        <TabsContent value="communication">
-          <CommunicationTab project={p} />
-        </TabsContent>
-        <TabsContent value="benefits">
-          <BenefitsTab project={p} />
-        </TabsContent>
-        <TabsContent value="monthly">
-          <MonthlyTab project={p} />
-        </TabsContent>
-        <TabsContent value="tasks">
-          <LinkedTasksPanel type={projectResource} id={p.id} />
-        </TabsContent>
-        <TabsContent value="challenges">
-          <ChallengesTab project={p} options={options.data} />
-        </TabsContent>
-        <TabsContent value="meetings">
-          <MeetingsTab project={p} options={options.data} />
-        </TabsContent>
-        <TabsContent value="lessons">
-          <LessonsTab project={p} options={options.data} />
-        </TabsContent>
-        <TabsContent value="contracts">
-          <ContractsTab project={p} options={options.data} />
-        </TabsContent>
-        <TabsContent value="vendors">
-          <WaselTab project={p} />
-        </TabsContent>
-        <TabsContent value="changes">
-          <ChangesTab project={p} />
-        </TabsContent>
-        <TabsContent value="closure">
-          <ClosureTab
-            project={p}
-            options={options.data}
-            onSubmit={() => setDialog({ kind: 'submit', stage: 'closure' })}
-          />
-        </TabsContent>
-        <TabsContent value="impact">
-          <ImpactTab project={p} onSubmit={() => setDialog({ kind: 'submit', stage: 'impact' })} />
-        </TabsContent>
-        <TabsContent value="approvals">
-          {p.permissions.canRecall && (
-            <div className="mb-3 flex justify-end">
-              <Button
-                variant="outline"
-                onClick={() => setDialog({ kind: 'recall' })}
-                data-testid="recall-approval"
-              >
-                <Undo2 aria-hidden />
-                {t('actions.recall')}
-              </Button>
-            </div>
-          )}
-          <ApprovalPanel resourceType={projectResource} resourceId={p.id} />
-        </TabsContent>
-        <TabsContent value="documents">
-          <DocumentsPanel
-            ownerType={projectResource}
-            ownerId={p.id}
-            canEdit={p.permissions.canEdit && p.status === 'active'}
-          />
-        </TabsContent>
-        <TabsContent value="history">
-          <HistoryTab record="project" id={p.id} />
-        </TabsContent>
-      </Tabs>
       {dialog?.kind === 'submit' && (
         <SubmitDialog project={p} stage={dialog.stage} onClose={() => setDialog(undefined)} />
       )}

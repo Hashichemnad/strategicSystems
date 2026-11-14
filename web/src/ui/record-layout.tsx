@@ -1,8 +1,13 @@
-import type { ReactNode } from 'react';
+import { useId, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAppearance } from '@/app/theme';
 import { cn } from '@/lib/cn';
-import { formatNumber } from '@/lib/format';
+import {
+  RecordSectionsDrawer,
+  RecordSideMenu,
+  useNarrowViewport,
+  type RecordMenuItem,
+} from './record-side-menu';
 
 export interface Highlight {
   key: string;
@@ -10,15 +15,13 @@ export interface Highlight {
   value: ReactNode;
 }
 
-export interface RelatedList {
-  key: string;
-  label: string;
-  count?: number;
-  onOpen: () => void;
+/** A section of a record page (ADR 0221): one side-menu item and the content shown while it is active. */
+export interface RecordSection extends RecordMenuItem {
+  content: ReactNode;
 }
 
-interface RecordLayoutProps {
-  /** Link back to the list. */
+export interface RecordLayoutProps {
+  /** Link back to the list (and a module's secondary navigation). */
   back?: ReactNode;
   /** The record's PageHeader (title, number, chips, primary actions). */
   header: ReactNode;
@@ -28,20 +31,26 @@ interface RecordLayoutProps {
   path?: ReactNode;
   /** Current-status banner. */
   status?: ReactNode;
-  /** Progress strip or other summary above the tabs. */
+  /** Progress strip or other summary above the sections. */
   summary?: ReactNode;
-  /** Related lists (Enterprise / Modern side column): count cards that open the related tab. */
-  related?: readonly RelatedList[];
-  /** The tabs (details and related records). */
-  children: ReactNode;
+  /** Every section of the record in menu order (details first, then related records, documents, history). */
+  sections: readonly RecordSection[];
+  /** Key of the section shown (the page's `?tab=`); an unknown or hidden key shows the first visible section. */
+  activeSection: string;
+  /** Called with the chosen section's key; pages navigate to `?tab=<key>` (or set local state). */
+  onSectionChange: (key: string) => void;
+  /** Rendered after the layout, outside the content area (dialogs opened from the header). */
+  children?: ReactNode;
   testId?: string;
 }
 
 /**
- * Record page layout slots (SPEC-ADDENDUM §C3–C4, docs/design/themes.md §4): one record page, three arrangements.
- * Classic: stack (header · stepper · status · summary · tabs) — unchanged. Enterprise: highlights panel (header + key fields), path bar,
- * status, then two columns — tabs at the start, related lists at the end. Modern: header card with key facts chips, path card, status,
- * then tabs beside a key-facts / related card on wide screens.
+ * Record page layout slots (SPEC-ADDENDUM §C3–C4, docs/design/themes.md §4, ADR 0221): one record page, three arrangements, and in
+ * every theme a single side menu of the record's sections (no header tab strip). The menu sits at the inline start on `md` and wider;
+ * below `md` it is a drawer opened by the "Sections" button in the record header. Only the active section's content is rendered, in
+ * a region named after it.
+ * Classic: stack (header · stepper · status · summary) then menu + content. Enterprise: highlights panel (header + key fields), path
+ * bar, status, then menu + content card. Modern: header card, path card, status, summary, then menu and key-facts card + content.
  */
 export function RecordLayout({
   back,
@@ -50,21 +59,58 @@ export function RecordLayout({
   path,
   status,
   summary,
-  related = [],
+  sections,
+  activeSection,
+  onSectionChange,
   children,
   testId,
 }: RecordLayoutProps) {
   const { uiTheme } = useAppearance();
-  const { t, i18n } = useTranslation('appearance');
+  const { t } = useTranslation('appearance');
+  const narrow = useNarrowViewport();
+  const contentId = useId();
+  const visible = sections.filter((section) => !section.hidden);
+  const active = visible.find((section) => section.key === activeSection) ?? visible[0];
+  const items: RecordMenuItem[] = visible.map(({ key, label, count, testId: itemTestId }) => ({
+    key,
+    label,
+    count,
+    testId: itemTestId,
+  }));
+
+  const sectionsButton = narrow && active && (
+    <RecordSectionsDrawer items={items} active={active.key} onSelect={onSectionChange} controls={contentId} />
+  );
+  const menu = !narrow && active && (
+    <RecordSideMenu items={items} active={active.key} onSelect={onSectionChange} controls={contentId} />
+  );
+  const content = (
+    <div
+      id={contentId}
+      role="region"
+      aria-label={active?.label}
+      className={cn('min-w-0', uiTheme === 'enterprise' && 'rounded-lg border bg-card p-3')}
+      data-testid="record-section-content"
+      data-section={active?.key}
+    >
+      {active?.content}
+    </div>
+  );
+  const grid = 'grid md:grid-cols-[12rem_minmax(0,1fr)] md:items-start lg:grid-cols-[14rem_minmax(0,1fr)]';
 
   if (uiTheme === 'classic') {
     return (
-      <div className="flex flex-col gap-6" data-testid={testId}>
+      <div className="flex flex-col gap-6" data-testid={testId} data-record-layout="classic">
         {back}
         {header}
+        {sectionsButton}
         {path}
         {status}
         {summary}
+        <div className={cn(grid, 'gap-6')}>
+          {menu}
+          {content}
+        </div>
         {children}
       </div>
     );
@@ -76,7 +122,7 @@ export function RecordLayout({
         'grid gap-x-6 gap-y-3',
         uiTheme === 'enterprise'
           ? 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-6'
-          : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-1',
+          : 'grid-cols-1 sm:grid-cols-2 md:grid-cols-1',
       )}
     >
       {highlights.map((item) => (
@@ -86,34 +132,6 @@ export function RecordLayout({
         </div>
       ))}
     </dl>
-  );
-
-  const relatedLists = related.length > 0 && (
-    <section aria-labelledby="record-related" className="flex flex-col gap-2 rounded-lg border bg-card p-4">
-      <h2 id="record-related" className="text-sm font-semibold">
-        {t('record.related')}
-      </h2>
-      <ul className="flex flex-col gap-1">
-        {related.map((item) => (
-          <li key={item.key}>
-            <button
-              type="button"
-              onClick={item.onOpen}
-              className="flex w-full items-center justify-between gap-2 rounded-md border px-3 py-2 text-start text-sm hover:border-app-accent hover:bg-muted/40"
-              data-testid={`related-${item.key}`}
-            >
-              <span className="font-medium">{item.label}</span>
-              {item.count !== undefined && (
-                <span className="rounded-full bg-muted px-2 text-xs tabular-nums text-muted-foreground">
-                  {formatNumber(item.count, i18n.language)}
-                  <span className="sr-only"> — {t('record.items', { count: item.count })}</span>
-                </span>
-              )}
-            </button>
-          </li>
-        ))}
-      </ul>
-    </section>
   );
 
   if (uiTheme === 'enterprise') {
@@ -127,46 +145,53 @@ export function RecordLayout({
         >
           {header}
           {facts && <div className="border-t pt-3">{facts}</div>}
+          {sectionsButton}
         </section>
         {path && <div className="rounded-lg border bg-card p-3">{path}</div>}
         {status}
-        <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_18rem]">
+        <div className={cn(grid, 'gap-3')}>
+          {menu}
           <div className="flex min-w-0 flex-col gap-3">
             {summary}
-            <div className="rounded-lg border bg-card p-3">{children}</div>
+            {content}
           </div>
-          {relatedLists && <aside className="flex flex-col gap-3">{relatedLists}</aside>}
         </div>
+        {children}
       </div>
     );
   }
 
+  const factsCard = facts && (
+    <section aria-labelledby="record-facts" className="flex flex-col gap-3 rounded-xl border bg-card p-4">
+      <h2 id="record-facts" className="text-sm font-semibold">
+        {t('record.keyFacts')}
+      </h2>
+      {facts}
+    </section>
+  );
+
   return (
     <div className="flex flex-col gap-5" data-testid={testId} data-record-layout="modern">
       {back}
-      <div className="rounded-xl border bg-card p-6">{header}</div>
+      <div className="flex flex-col gap-4 rounded-xl border bg-card p-6">
+        {header}
+        {sectionsButton}
+      </div>
       {path && <div className="rounded-xl border bg-card px-6 py-4">{path}</div>}
       {status}
       {summary}
-      <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_17rem]">
-        <div className="min-w-0">{children}</div>
-        {(facts || relatedLists) && (
-          <aside className="flex flex-col gap-4">
-            {facts && (
-              <section
-                aria-labelledby="record-facts"
-                className="flex flex-col gap-3 rounded-xl border bg-card p-4"
-              >
-                <h2 id="record-facts" className="text-sm font-semibold">
-                  {t('record.keyFacts')}
-                </h2>
-                {facts}
-              </section>
-            )}
-            {relatedLists}
-          </aside>
+      <div className={cn(grid, 'gap-5')}>
+        {narrow ? (
+          factsCard
+        ) : (
+          <div className="flex min-w-0 flex-col gap-4">
+            {menu}
+            {factsCard}
+          </div>
         )}
+        {content}
       </div>
+      {children}
     </div>
   );
 }

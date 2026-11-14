@@ -25,10 +25,6 @@ import {
   RichTextView,
   StatusBanner,
   StatusChip,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
   Textarea,
   useToast,
 } from '@/ui';
@@ -137,10 +133,6 @@ export function RequestPage() {
     ]),
   );
 
-  const goTab = (value: 'assessment' | 'files' | 'documents' | 'approvals' | 'tasks') => {
-    setBenefitsTab(false);
-    void navigate({ search: { tab: value } });
-  };
   return (
     <RecordLayout
       back={
@@ -280,74 +272,76 @@ export function RequestPage() {
           }}
         />
       }
-      related={[
+      activeSection={benefitsOn && benefitsTab ? 'benefits' : tab}
+      onSectionChange={(key) => {
+        if (key === 'benefits') {
+          setBenefitsTab(true);
+          return;
+        }
+        setBenefitsTab(false);
+        void navigate({ search: { tab: key as 'overview' } });
+      }}
+      sections={[
+        {
+          key: 'overview',
+          label: t('tabs.overview'),
+          content: (
+            <>
+              <Overview request={data} options={options.data} />
+              <ExternalReferencesSection type="portfolio.request" id={data.id} />
+            </>
+          ),
+        },
         {
           key: 'assessment',
           label: t('tabs.assessment'),
           count: data.assessmentCount,
-          onOpen: () => goTab('assessment'),
+          content: <AssessmentPanel request={data} options={options.data} />,
         },
-        { key: 'files', label: t('tabs.files'), onOpen: () => goTab('files') },
-        { key: 'documents', label: t('tabs.documents'), onOpen: () => goTab('documents') },
-        { key: 'approvals', label: t('tabs.approvals'), onOpen: () => goTab('approvals') },
-        { key: 'tasks', label: t('tabs.tasks'), onOpen: () => goTab('tasks') },
+        {
+          key: 'approvals',
+          label: t('tabs.approvals'),
+          content: <ApprovalPanel resourceType={requestResource} resourceId={data.id} />,
+        },
+        {
+          key: 'files',
+          label: t('tabs.files'),
+          content: (
+            <CostFiles request={data} options={options.data} onUpload={setDialog} onHandOff={doHandOff} />
+          ),
+        },
+        {
+          key: 'documents',
+          label: t('tabs.documents'),
+          content: (
+            <DocumentsPanel
+              ownerType={requestResource}
+              ownerId={data.id}
+              canEdit={data.can.edit || data.can.manage}
+            />
+          ),
+        },
+        {
+          key: 'tasks',
+          label: t('tabs.tasks'),
+          content: <LinkedTasksPanel type={requestResource} id={data.id} />,
+        },
+        {
+          key: 'history',
+          label: t('tabs.history'),
+          content: <HistoryTab record="request" id={data.id} fieldLabels={fieldLabels} />,
+        },
+        {
+          key: 'benefits',
+          label: ts('benefits.tab'),
+          testId: 'request-tab-benefits',
+          hidden: !benefitsOn,
+          content: (
+            <RequestBenefitsPanel requestId={data.id} canEdit={data.can.edit && data.status === 'draft'} />
+          ),
+        },
       ]}
     >
-      <Tabs
-        value={benefitsOn && benefitsTab ? 'benefits' : tab}
-        onValueChange={(value) => {
-          if (value === 'benefits') {
-            setBenefitsTab(true);
-            return;
-          }
-          setBenefitsTab(false);
-          void navigate({ search: { tab: value as 'overview' } });
-        }}
-      >
-        <TabsList className="flex-wrap">
-          {requestTabs.map((key) => (
-            <TabsTrigger key={key} value={key}>
-              {t(`tabs.${key}`)}
-            </TabsTrigger>
-          ))}
-          {benefitsOn && (
-            <TabsTrigger value="benefits" data-testid="request-tab-benefits">
-              {ts('benefits.tab')}
-            </TabsTrigger>
-          )}
-        </TabsList>
-        <TabsContent value="overview">
-          <Overview request={data} options={options.data} />
-          <ExternalReferencesSection type="portfolio.request" id={data.id} />
-        </TabsContent>
-        <TabsContent value="assessment">
-          <AssessmentPanel request={data} options={options.data} />
-        </TabsContent>
-        <TabsContent value="approvals">
-          <ApprovalPanel resourceType={requestResource} resourceId={data.id} />
-        </TabsContent>
-        <TabsContent value="files">
-          <CostFiles request={data} options={options.data} onUpload={setDialog} onHandOff={doHandOff} />
-        </TabsContent>
-        <TabsContent value="documents">
-          <DocumentsPanel
-            ownerType={requestResource}
-            ownerId={data.id}
-            canEdit={data.can.edit || data.can.manage}
-          />
-        </TabsContent>
-        <TabsContent value="tasks">
-          <LinkedTasksPanel type={requestResource} id={data.id} />
-        </TabsContent>
-        <TabsContent value="history">
-          <HistoryTab record="request" id={data.id} fieldLabels={fieldLabels} />
-        </TabsContent>
-        {benefitsOn && (
-          <TabsContent value="benefits">
-            <RequestBenefitsPanel requestId={data.id} canEdit={data.can.edit && data.status === 'draft'} />
-          </TabsContent>
-        )}
-      </Tabs>
       {dialog === 'submit' && <SubmitDialog request={data} onClose={() => setDialog(undefined)} />}
       {dialog === 'cancel' && <CancelDialog request={data} onClose={() => setDialog(undefined)} />}
       {dialog === 'override' && <OverrideDialog request={data} onClose={() => setDialog(undefined)} />}

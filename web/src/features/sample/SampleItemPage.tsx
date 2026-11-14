@@ -23,10 +23,6 @@ import {
   Skeleton,
   StatusBanner,
   StatusChip,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
   Textarea,
   useToast,
   type Tone,
@@ -81,8 +77,6 @@ export function SampleItemPage() {
         ? 'approved'
         : data.approvalStatus;
 
-  const openTab = (next: 'approvals' | 'tasks' | 'teams' | 'documents') =>
-    void navigate({ search: { tab: next } });
   return (
     <RecordLayout
       back={
@@ -163,72 +157,78 @@ export function SampleItemPage() {
           }}
         />
       }
-      related={[
-        { key: 'approvals', label: t('tabs.approvals'), onOpen: () => openTab('approvals') },
-        { key: 'tasks', label: tk('linked.title'), onOpen: () => openTab('tasks') },
-        { key: 'teams', label: tt('linked.title'), onOpen: () => openTab('teams') },
-        { key: 'documents', label: tf('tab'), onOpen: () => openTab('documents') },
+      activeSection={tab}
+      onSectionChange={(key) => void navigate({ search: { tab: key as 'overview' } })}
+      sections={[
+        {
+          key: 'overview',
+          label: t('tabs.overview'),
+          content: (
+            <>
+              <dl className="grid gap-4 rounded-lg border bg-card p-6 md:grid-cols-2">
+                {(
+                  [
+                    ['nameAr', data.nameAr, 'ar'],
+                    ['nameEn', data.nameEn, 'en'],
+                    ['descriptionAr', data.descriptionAr, 'ar'],
+                    ['descriptionEn', data.descriptionEn, 'en'],
+                  ] as const
+                ).map(([key, value, lang]) => (
+                  <div key={key}>
+                    <dt className="text-sm text-muted-foreground">{t(`fields.${key}`)}</dt>
+                    <dd lang={lang} dir={lang === 'ar' ? 'rtl' : 'ltr'} className="mt-1 text-start">
+                      {value ?? '—'}
+                    </dd>
+                  </div>
+                ))}
+                <div>
+                  <dt className="text-sm text-muted-foreground">{t('fields.amount')}</dt>
+                  <dd className="mt-1 tabular-nums">
+                    {data.amount === null ? '—' : formatNumber(data.amount, i18n.language)}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-sm text-muted-foreground">{t('fields.updatedAt')}</dt>
+                  <dd className="mt-1">{formatDateTime(data.updatedAt, i18n.language)}</dd>
+                </div>
+              </dl>
+              <ExternalReferencesSection type="sample.item" id={data.id} />
+            </>
+          ),
+        },
+        {
+          key: 'approvals',
+          label: t('tabs.approvals'),
+          content: <ApprovalPanel resourceType="sample.item" resourceId={data.id} />,
+        },
+        {
+          key: 'tasks',
+          label: tk('linked.title'),
+          content: <LinkedTasksPanel type="sample.item" id={data.id} />,
+        },
+        {
+          key: 'teams',
+          label: tt('linked.title'),
+          content: <LinkedTeamsPanel type="sample.item" id={data.id} />,
+        },
+        {
+          key: 'documents',
+          label: tf('tab'),
+          content: (
+            <DocumentsPanel
+              ownerType="sample.item"
+              ownerId={data.id}
+              canEdit={canEdit && data.status === 'active'}
+            />
+          ),
+        },
+        {
+          key: 'history',
+          label: ta('history.tab'),
+          content: <HistoryTab record="sample" id={data.id} fieldLabels={fieldLabels} />,
+        },
       ]}
     >
-      <Tabs value={tab} onValueChange={(value) => void navigate({ search: { tab: value as 'overview' } })}>
-        <TabsList>
-          <TabsTrigger value="overview">{t('tabs.overview')}</TabsTrigger>
-          <TabsTrigger value="approvals">{t('tabs.approvals')}</TabsTrigger>
-          <TabsTrigger value="tasks">{tk('linked.title')}</TabsTrigger>
-          <TabsTrigger value="teams">{tt('linked.title')}</TabsTrigger>
-          <TabsTrigger value="documents">{tf('tab')}</TabsTrigger>
-          <TabsTrigger value="history">{ta('history.tab')}</TabsTrigger>
-        </TabsList>
-        <TabsContent value="overview">
-          <dl className="grid gap-4 rounded-lg border bg-card p-6 md:grid-cols-2">
-            {(
-              [
-                ['nameAr', data.nameAr, 'ar'],
-                ['nameEn', data.nameEn, 'en'],
-                ['descriptionAr', data.descriptionAr, 'ar'],
-                ['descriptionEn', data.descriptionEn, 'en'],
-              ] as const
-            ).map(([key, value, lang]) => (
-              <div key={key}>
-                <dt className="text-sm text-muted-foreground">{t(`fields.${key}`)}</dt>
-                <dd lang={lang} dir={lang === 'ar' ? 'rtl' : 'ltr'} className="mt-1 text-start">
-                  {value ?? '—'}
-                </dd>
-              </div>
-            ))}
-            <div>
-              <dt className="text-sm text-muted-foreground">{t('fields.amount')}</dt>
-              <dd className="mt-1 tabular-nums">
-                {data.amount === null ? '—' : formatNumber(data.amount, i18n.language)}
-              </dd>
-            </div>
-            <div>
-              <dt className="text-sm text-muted-foreground">{t('fields.updatedAt')}</dt>
-              <dd className="mt-1">{formatDateTime(data.updatedAt, i18n.language)}</dd>
-            </div>
-          </dl>
-          <ExternalReferencesSection type="sample.item" id={data.id} />
-        </TabsContent>
-        <TabsContent value="approvals">
-          <ApprovalPanel resourceType="sample.item" resourceId={data.id} />
-        </TabsContent>
-        <TabsContent value="tasks">
-          <LinkedTasksPanel type="sample.item" id={data.id} />
-        </TabsContent>
-        <TabsContent value="teams">
-          <LinkedTeamsPanel type="sample.item" id={data.id} />
-        </TabsContent>
-        <TabsContent value="documents">
-          <DocumentsPanel
-            ownerType="sample.item"
-            ownerId={data.id}
-            canEdit={canEdit && data.status === 'active'}
-          />
-        </TabsContent>
-        <TabsContent value="history">
-          <HistoryTab record="sample" id={data.id} fieldLabels={fieldLabels} />
-        </TabsContent>
-      </Tabs>
       <SampleItemDialog open={editing} onOpenChange={setEditing} item={data} />
       {submitting && <SubmitDialog item={data} onClose={() => setSubmitting(false)} />}
     </RecordLayout>

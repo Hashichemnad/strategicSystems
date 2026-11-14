@@ -1,5 +1,5 @@
 import type { APIRequestContext, Page } from '@playwright/test';
-import { apiPost, apiPut, expect, signInViaApi, test, tr, type Language } from './fixtures';
+import { apiPost, apiPut, expect, recordSection, signInViaApi, test, tr, type Language } from './fixtures';
 
 /** Phase 8 — Program Requests (docs/design/portfolio.md): screenshots go to docs/screenshots/phase-8 (E2E_SCREENSHOTS=phase-8). */
 
@@ -111,9 +111,9 @@ async function act(
 
 async function openTab(page: Page, language: Language, id: string, tab: string) {
   await page.goto(`/portfolio/requests/${id}?tab=${tab}`);
-  await expect(page.getByRole('tab', { name: k(language, `tabs.${tab}`) })).toHaveAttribute(
-    'aria-selected',
-    'true',
+  await expect(recordSection(page, language, k(language, `tabs.${tab}`))).toHaveAttribute(
+    'aria-current',
+    'page',
   );
 }
 

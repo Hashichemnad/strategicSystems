@@ -28,10 +28,6 @@ import {
   TableHead,
   TableHeaderCell,
   TableRow,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
   Textarea,
   ProgressBar,
   Section,
@@ -134,14 +130,6 @@ export function CapActionPage() {
         },
         { key: 'actualStart', label: t('fields.actualStart'), value: date(a.actualStart) },
       ]}
-      related={actionTabs
-        .filter((key) => key !== 'overview')
-        .map((key) => ({
-          key,
-          label: t(`tabs.${key}`),
-          count: key === 'evidence' ? a.evidenceCount : undefined,
-          onOpen: () => go(key),
-        }))}
       header={
         <PageHeader
           title={<bdi data-testid="cap-action-number">{a.number}</bdi>}
@@ -303,45 +291,68 @@ export function CapActionPage() {
           </Section>
         )
       }
+      activeSection={tab ?? 'overview'}
+      onSectionChange={(key) => go(key as ActionTab)}
+      sections={[
+        {
+          key: 'overview',
+          label: t('tabs.overview'),
+          testId: 'cap-action-tab-overview',
+          content: (
+            <>
+              <Overview action={a} />
+              <ExternalReferencesSection type="cap.action" id={a.id} />
+            </>
+          ),
+        },
+        {
+          key: 'progress',
+          label: t('tabs.progress'),
+          testId: 'cap-action-tab-progress',
+          content: <ProgressHistory action={a} />,
+        },
+        {
+          key: 'evidence',
+          label: t('tabs.evidence'),
+          testId: 'cap-action-tab-evidence',
+          count: a.evidenceCount,
+          content: (
+            <div className="flex flex-col gap-3">
+              <p className="text-sm text-muted-foreground">{t('evidence.hint')}</p>
+              <DocumentsPanel
+                ownerType="cap.action"
+                ownerId={a.id}
+                canEdit={a.can.progress || a.can.requestCompletion}
+              />
+            </div>
+          ),
+        },
+        {
+          key: 'extensions',
+          label: t('tabs.extensions'),
+          testId: 'cap-action-tab-extensions',
+          content: <Extensions action={a} />,
+        },
+        {
+          key: 'approvals',
+          label: t('tabs.approvals'),
+          testId: 'cap-action-tab-approvals',
+          content: <ApprovalPanel resourceType="cap.action" resourceId={a.id} />,
+        },
+        {
+          key: 'tasks',
+          label: t('tabs.tasks'),
+          testId: 'cap-action-tab-tasks',
+          content: <LinkedTasksPanel type="cap.action" id={a.id} />,
+        },
+        {
+          key: 'history',
+          label: t('tabs.history'),
+          testId: 'cap-action-tab-history',
+          content: <HistoryTab record="capAction" id={a.id} />,
+        },
+      ]}
     >
-      <Tabs value={tab ?? 'overview'} onValueChange={(value) => go(value as ActionTab)}>
-        <TabsList className="flex-wrap" data-testid="cap-action-tabs">
-          {actionTabs.map((key) => (
-            <TabsTrigger key={key} value={key} data-testid={`cap-action-tab-${key}`}>
-              {t(`tabs.${key}`)}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-        <TabsContent value="overview">
-          <Overview action={a} />
-          <ExternalReferencesSection type="cap.action" id={a.id} />
-        </TabsContent>
-        <TabsContent value="progress">
-          <ProgressHistory action={a} />
-        </TabsContent>
-        <TabsContent value="evidence">
-          <div className="flex flex-col gap-3">
-            <p className="text-sm text-muted-foreground">{t('evidence.hint')}</p>
-            <DocumentsPanel
-              ownerType="cap.action"
-              ownerId={a.id}
-              canEdit={a.can.progress || a.can.requestCompletion}
-            />
-          </div>
-        </TabsContent>
-        <TabsContent value="extensions">
-          <Extensions action={a} />
-        </TabsContent>
-        <TabsContent value="approvals">
-          <ApprovalPanel resourceType="cap.action" resourceId={a.id} />
-        </TabsContent>
-        <TabsContent value="tasks">
-          <LinkedTasksPanel type="cap.action" id={a.id} />
-        </TabsContent>
-        <TabsContent value="history">
-          <HistoryTab record="capAction" id={a.id} />
-        </TabsContent>
-      </Tabs>
       {dialog === 'edit' && (
         <ActionDialog actionId={a.id} initial={a.values} version={a.version} onClose={close} />
       )}

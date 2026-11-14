@@ -43,10 +43,6 @@ import {
   TableHead,
   TableHeaderCell,
   TableRow,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
   Textarea,
   useToast,
 } from '@/ui';
@@ -80,7 +76,7 @@ import {
 import { ExternalReferencesSection, OriginBadge } from '@/features/integration/ExternalReferences';
 
 const route = getRouteApi('/app/documents/$documentId');
-const tabs = ['overview', 'versions', 'validity', 'linked', 'tasks', 'history'] as const;
+type DocumentTab = 'overview' | 'versions' | 'validity' | 'linked' | 'tasks' | 'history';
 
 /** Document page (docs/design/requests.md §3.6): header, validity banner with the owner's actions, and the record tabs. */
 export function DocumentPage() {
@@ -106,7 +102,6 @@ export function DocumentPage() {
   const can = doc.can;
 
   const day = (value: string | null) => (value ? formatDate(value, i18n.language) : '—');
-  const goTab = (value: (typeof tabs)[number]) => void navigate({ search: { tab: value } });
   // DocRegPage's secondary navigation comes first (Classic keeps the same order); the record layout adds the theme's slots.
   return (
     <RecordLayout
@@ -222,70 +217,72 @@ export function DocumentPage() {
           <AckLine doc={doc} />
         </>
       }
-      related={[
+      activeSection={tab}
+      onSectionChange={(key) => void navigate({ search: { tab: key as DocumentTab } })}
+      sections={[
+        {
+          key: 'overview',
+          label: t('document.tabs.overview'),
+          testId: 'document-tab-overview',
+          content: (
+            <>
+              <Overview doc={doc} name={name} />
+              <ExternalReferencesSection type="docreg.document" id={doc.id} />
+            </>
+          ),
+        },
         {
           key: 'versions',
           label: t('document.tabs.versions'),
+          testId: 'document-tab-versions',
           count: doc.versions.length,
-          onOpen: () => goTab('versions'),
+          content: <Versions doc={doc} />,
         },
         {
           key: 'validity',
           label: t('document.tabs.validity'),
+          testId: 'document-tab-validity',
           count: doc.validity.length,
-          onOpen: () => goTab('validity'),
+          content: <ValidityTimeline doc={doc} />,
         },
         {
           key: 'linked',
           label: t('document.tabs.linked'),
+          testId: 'document-tab-linked',
           count: doc.linked.length,
-          onOpen: () => goTab('linked'),
+          content: (
+            <>
+              {doc.linked.length === 0 ? (
+                <EmptyState title={t('linked.empty')} />
+              ) : (
+                <ul
+                  className="flex flex-col gap-3 rounded-lg border bg-card p-4"
+                  data-testid="document-linked"
+                >
+                  {doc.linked.map((view) => (
+                    <li key={`${view.type}:${view.id}`}>
+                      <LinkBadge view={view} />
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </>
+          ),
         },
-        { key: 'tasks', label: t('document.tabs.tasks'), onOpen: () => goTab('tasks') },
+        {
+          key: 'tasks',
+          label: t('document.tabs.tasks'),
+          testId: 'document-tab-tasks',
+          content: <>{tab === 'tasks' && <LinkedTasksPanel type="docreg.document" id={doc.id} />}</>,
+        },
+        {
+          key: 'history',
+          label: t('document.tabs.history'),
+          testId: 'document-tab-history',
+          content: <>{tab === 'history' && <HistoryTab record="document" id={doc.id} />}</>,
+        },
       ]}
     >
-      <Tabs
-        value={tab}
-        onValueChange={(value) => void navigate({ search: { tab: value as (typeof tabs)[number] } })}
-      >
-        <TabsList className="flex-wrap">
-          {tabs.map((key) => (
-            <TabsTrigger key={key} value={key} data-testid={`document-tab-${key}`}>
-              {t(`document.tabs.${key}`)}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-        <TabsContent value="overview">
-          <Overview doc={doc} name={name} />
-          <ExternalReferencesSection type="docreg.document" id={doc.id} />
-        </TabsContent>
-        <TabsContent value="versions">
-          <Versions doc={doc} />
-        </TabsContent>
-        <TabsContent value="validity">
-          <ValidityTimeline doc={doc} />
-        </TabsContent>
-        <TabsContent value="linked">
-          {doc.linked.length === 0 ? (
-            <EmptyState title={t('linked.empty')} />
-          ) : (
-            <ul className="flex flex-col gap-3 rounded-lg border bg-card p-4" data-testid="document-linked">
-              {doc.linked.map((view) => (
-                <li key={`${view.type}:${view.id}`}>
-                  <LinkBadge view={view} />
-                </li>
-              ))}
-            </ul>
-          )}
-        </TabsContent>
-        <TabsContent value="tasks">
-          {tab === 'tasks' && <LinkedTasksPanel type="docreg.document" id={doc.id} />}
-        </TabsContent>
-        <TabsContent value="history">
-          {tab === 'history' && <HistoryTab record="document" id={doc.id} />}
-        </TabsContent>
-      </Tabs>
-
       {dialog === 'confirm' && <ConfirmDialog doc={doc} onClose={() => setDialog(undefined)} />}
       {dialog === 'expiry' && <ExpiryDialog doc={doc} onClose={() => setDialog(undefined)} />}
     </RecordLayout>

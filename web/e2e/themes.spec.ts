@@ -1,5 +1,5 @@
 import type { APIRequestContext, Page } from '@playwright/test';
-import { apiPut, expect, test, tr, type Language } from './fixtures';
+import { apiPut, expect, recordSection, test, tr, type Language } from './fixtures';
 
 /**
  * Phase 20 — Themes and application workspaces (SPEC-ADDENDUM §C, docs/design/themes.md). The administrator lets users choose their
@@ -155,15 +155,15 @@ test('Enterprise: highlights panel, path bar, related lists and per-app tabs; de
   await expect(page.getByTestId('record-highlights')).toBeVisible();
   await expect(page.getByTestId('path-guidance')).toBeVisible();
   // The deep link still opens the Risks tab.
-  await expect(page.getByRole('tab', { name: tr(language, 'portfolio:project.tabs.risks') })).toHaveAttribute(
-    'aria-selected',
-    'true',
+  await expect(recordSection(page, language, tr(language, 'portfolio:project.tabs.risks'))).toHaveAttribute(
+    'aria-current',
+    'page',
   );
   // App tabs of Portfolio only, Projects active.
   const tabs = page.getByTestId('app-tabs');
   await expect(tabs.getByTestId('app-tab-projects')).toHaveAttribute('aria-current', 'page');
   await expect(tabs.getByTestId('app-tab-cards')).toHaveCount(0);
-  await page.getByTestId('related-milestones').click();
+  await recordSection(page, language, tr(language, 'portfolio:project.tabs.milestones')).click();
   await expect(page).toHaveURL(/tab=milestones/);
   await expect(page.getByTestId('utility-bar')).toBeVisible();
   await shot('enterprise-light-record-milestones');

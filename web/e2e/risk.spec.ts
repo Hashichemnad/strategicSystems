@@ -437,7 +437,7 @@ test.describe('risk management', () => {
     const tab = async (name: string) => {
       await page.goto(`/risk/risks/${payment.id}?tab=${name}`);
       await expect(page.getByTestId('risk-page')).toBeVisible();
-      await expect(page.getByTestId(`risk-tab-${name}`)).toHaveAttribute('data-state', 'active');
+      await expect(page.getByTestId(`risk-tab-${name}`)).toHaveAttribute('aria-current', 'page');
     };
     await tab('overview');
     await expect(page.getByTestId('risk-number')).toHaveText(payment.number);

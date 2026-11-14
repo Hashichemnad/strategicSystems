@@ -26,10 +26,6 @@ import {
   TableHead,
   TableHeaderCell,
   TableRow,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
   Textarea,
   useToast,
   Wizard,
@@ -66,13 +62,6 @@ export function EvaluationPage() {
   const e = evaluation.data;
   const cycle = e.summary.cycle === 'completion' ? t('evaluations.completion') : e.summary.cycle;
   const lang = i18n.language;
-  const tabs = ['evaluation', 'review', ...(e.summary.rewardStatus !== 'none' ? ['rewards'] : [])];
-  const tabLabel = (key: string) =>
-    key === 'evaluation'
-      ? t('evaluation.steps.criteria')
-      : key === 'review'
-        ? t('evaluation.review')
-        : t('rewards.title');
   return (
     <RecordLayout
       back={
@@ -111,9 +100,6 @@ export function EvaluationPage() {
           value: e.summary.score !== null ? formatNumber(e.summary.score, lang) : '—',
         },
       ]}
-      related={tabs
-        .filter((key) => key !== 'evaluation')
-        .map((key) => ({ key, label: tabLabel(key), onOpen: () => setTab(key) }))}
       header={
         <PageHeader
           title={t('evaluation.title', { cycle })}
@@ -151,36 +137,43 @@ export function EvaluationPage() {
           <StatusBanner tone="warning" title={t('evaluation.returnComment', { comment: e.returnComment })} />
         )
       }
-    >
-      <Tabs value={tab} onValueChange={setTab}>
-        <TabsList>
-          <TabsTrigger value="evaluation">{t('evaluation.steps.criteria')}</TabsTrigger>
-          <TabsTrigger value="review">{t('evaluation.review')}</TabsTrigger>
-          {e.summary.rewardStatus !== 'none' && (
-            <TabsTrigger value="rewards">{t('rewards.title')}</TabsTrigger>
-          )}
-        </TabsList>
-        <TabsContent value="evaluation">
-          {e.permissions.canEvaluate ? (
-            <EvaluationWizard evaluation={e} />
-          ) : (
-            <EvaluationSummary evaluation={e} />
-          )}
-        </TabsContent>
-        <TabsContent value="review">
-          <div className="grid gap-4 lg:grid-cols-[2fr_1fr]">
-            <div className="flex flex-col gap-4">
-              <EvaluationSummary evaluation={e} />
-              <ApprovalPanel resourceType="teams.team" resourceId={e.summary.teamId} />
+      activeSection={tab}
+      onSectionChange={setTab}
+      sections={[
+        {
+          key: 'evaluation',
+          label: t('evaluation.steps.criteria'),
+          content: (
+            <>
+              {e.permissions.canEvaluate ? (
+                <EvaluationWizard evaluation={e} />
+              ) : (
+                <EvaluationSummary evaluation={e} />
+              )}
+            </>
+          ),
+        },
+        {
+          key: 'review',
+          label: t('evaluation.review'),
+          content: (
+            <div className="grid gap-4 lg:grid-cols-[2fr_1fr]">
+              <div className="flex flex-col gap-4">
+                <EvaluationSummary evaluation={e} />
+                <ApprovalPanel resourceType="teams.team" resourceId={e.summary.teamId} />
+              </div>
+              <PreviousCycles evaluation={e} />
             </div>
-            <PreviousCycles evaluation={e} />
-          </div>
-        </TabsContent>
-        <TabsContent value="rewards">
-          <RewardsPanel evaluation={e} />
-        </TabsContent>
-      </Tabs>
-    </RecordLayout>
+          ),
+        },
+        {
+          key: 'rewards',
+          label: t('rewards.title'),
+          hidden: e.summary.rewardStatus === 'none',
+          content: <RewardsPanel evaluation={e} />,
+        },
+      ]}
+    ></RecordLayout>
   );
 }
 

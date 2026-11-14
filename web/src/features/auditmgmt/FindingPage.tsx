@@ -27,10 +27,6 @@ import {
   Skeleton,
   StatusBanner,
   StatusChip,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
   ProgressBar,
   Section,
 } from '@/ui';
@@ -210,75 +206,85 @@ export function AuditFindingPage() {
           )}
         </>
       }
-      related={[
+      activeSection={tab ?? 'overview'}
+      onSectionChange={(key) => go(key as FindingTab)}
+      sections={[
+        {
+          key: 'overview',
+          label: t('tabs.overview'),
+          testId: 'audit-tab-overview',
+          content: (
+            <>
+              <Overview finding={f} />
+              <ExternalReferencesSection type="auditmgmt.finding" id={f.id} />
+            </>
+          ),
+        },
         {
           key: 'recommendations',
           label: t('tabs.recommendations'),
+          testId: 'audit-tab-recommendations',
           count: recommendations.length,
-          onOpen: () => go('recommendations'),
+          content: (
+            <>
+              <Section
+                title={`${t('tabs.recommendations')} (${recommendations.length})`}
+                testId="audit-recommendations"
+                actions={
+                  f.can.addRecommendation && (
+                    <Button
+                      size="sm"
+                      onClick={() => setDialog({ kind: 'add-rec' })}
+                      data-testid="audit-add-recommendation"
+                    >
+                      <Plus aria-hidden />
+                      {t('recommendation.add')}
+                    </Button>
+                  )
+                }
+              >
+                {recs.isPending ? (
+                  <Skeleton className="h-40" />
+                ) : recommendations.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">{t('recommendation.none')}</p>
+                ) : (
+                  recommendations.map((r) => (
+                    <RecommendationCard
+                      key={r.id}
+                      rec={r}
+                      canAct={f.can.followUp}
+                      onDialog={(kind) => setDialog({ kind, rec: r })}
+                    />
+                  ))
+                )}
+                <p className="text-xs text-muted-foreground">
+                  {t('finding.completion')}: {pct(f.completion)}
+                </p>
+              </Section>
+            </>
+          ),
         },
-        { key: 'evidence', label: t('tabs.evidence'), onOpen: () => go('evidence') },
-        { key: 'links', label: t('tabs.links'), count: f.risks.length, onOpen: () => go('links') },
+        {
+          key: 'evidence',
+          label: t('tabs.evidence'),
+          testId: 'audit-tab-evidence',
+          content: <EvidenceTab recommendations={recommendations} canEdit={f.can.followUp} />,
+        },
+        {
+          key: 'links',
+          label: t('tabs.links'),
+          testId: 'audit-tab-links',
+          count: f.risks.length,
+          content: <LinksTab finding={f} onLink={() => setDialog({ kind: 'risk' })} />,
+        },
+        {
+          key: 'history',
+          label: t('tabs.history'),
+          testId: 'audit-tab-history',
+          content: <HistoryTab record="auditFinding" id={f.id} />,
+        },
       ]}
     >
-      <Tabs value={tab ?? 'overview'} onValueChange={(value) => go(value as FindingTab)}>
-        <TabsList className="flex-wrap" data-testid="audit-finding-tabs">
-          {findingTabs.map((key) => (
-            <TabsTrigger key={key} value={key} data-testid={`audit-tab-${key}`}>
-              {t(`tabs.${key}`)}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-        <TabsContent value="overview">
-          <Overview finding={f} />
-          <ExternalReferencesSection type="auditmgmt.finding" id={f.id} />
-        </TabsContent>
-        <TabsContent value="recommendations">
-          <Section
-            title={`${t('tabs.recommendations')} (${recommendations.length})`}
-            testId="audit-recommendations"
-            actions={
-              f.can.addRecommendation && (
-                <Button
-                  size="sm"
-                  onClick={() => setDialog({ kind: 'add-rec' })}
-                  data-testid="audit-add-recommendation"
-                >
-                  <Plus aria-hidden />
-                  {t('recommendation.add')}
-                </Button>
-              )
-            }
-          >
-            {recs.isPending ? (
-              <Skeleton className="h-40" />
-            ) : recommendations.length === 0 ? (
-              <p className="text-sm text-muted-foreground">{t('recommendation.none')}</p>
-            ) : (
-              recommendations.map((r) => (
-                <RecommendationCard
-                  key={r.id}
-                  rec={r}
-                  canAct={f.can.followUp}
-                  onDialog={(kind) => setDialog({ kind, rec: r })}
-                />
-              ))
-            )}
-            <p className="text-xs text-muted-foreground">
-              {t('finding.completion')}: {pct(f.completion)}
-            </p>
-          </Section>
-        </TabsContent>
-        <TabsContent value="evidence">
-          <EvidenceTab recommendations={recommendations} canEdit={f.can.followUp} />
-        </TabsContent>
-        <TabsContent value="links">
-          <LinksTab finding={f} onLink={() => setDialog({ kind: 'risk' })} />
-        </TabsContent>
-        <TabsContent value="history">
-          <HistoryTab record="auditFinding" id={f.id} />
-        </TabsContent>
-      </Tabs>
       {dialog?.kind === 'edit' && (
         <FindingDialog findingId={f.id} initial={f.values} version={f.version} onClose={close} />
       )}

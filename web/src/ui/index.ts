@@ -22,7 +22,13 @@ export { isBlank as isRichTextBlank, isHtml, sanitizeHtml, toPlainText } from '.
 export { ScrollRegion } from './scroll-region';
 export { Select, type SelectOption } from './select';
 export { StageStepper, type Stage } from './stage-stepper';
-export { RecordLayout, type Highlight, type RelatedList } from './record-layout';
+export { RecordLayout, type Highlight, type RecordLayoutProps, type RecordSection } from './record-layout';
+export {
+  RecordSectionsDrawer,
+  RecordSideMenu,
+  useNarrowViewport,
+  type RecordMenuItem,
+} from './record-side-menu';
 export { ListViewToggle, SplitCard, SplitPreview, SplitView, useListView } from './split-view';
 export { StatusBanner } from './status-banner';
 export {

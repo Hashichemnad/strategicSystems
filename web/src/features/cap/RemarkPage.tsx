@@ -19,10 +19,6 @@ import {
   StageStepper,
   StatusBanner,
   StatusChip,
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
   Textarea,
   Section,
 } from '@/ui';
@@ -194,44 +190,58 @@ export function CapRemarkPage() {
           )}
         </>
       }
-      related={(['root-cause', 'actions', 'tasks', 'documents'] as const).map((key) => ({
-        key,
-        label: t(`tabs.${key}`),
-        onOpen: () => go(key),
-      }))}
+      activeSection={tab ?? 'overview'}
+      onSectionChange={(key) => go(key as RemarkTab)}
+      sections={[
+        {
+          key: 'overview',
+          label: t('tabs.overview'),
+          testId: 'cap-tab-overview',
+          content: (
+            <>
+              <Overview remark={r} />
+              <ExternalReferencesSection type="cap.remark" id={r.id} />
+            </>
+          ),
+        },
+        {
+          key: 'root-cause',
+          label: t('tabs.root-cause'),
+          testId: 'cap-tab-root-cause',
+          content: <RootCauseTab remark={r} />,
+        },
+        {
+          key: 'actions',
+          label: t('tabs.actions'),
+          testId: 'cap-tab-actions',
+          content: <RemarkActionsTab remark={r} onSubmit={() => setDialog('submit')} />,
+        },
+        {
+          key: 'tasks',
+          label: t('tabs.tasks'),
+          testId: 'cap-tab-tasks',
+          content: <LinkedTasksPanel type="cap.remark" id={r.id} />,
+        },
+        {
+          key: 'documents',
+          label: t('tabs.documents'),
+          testId: 'cap-tab-documents',
+          content: (
+            <DocumentsPanel
+              ownerType="cap.remark"
+              ownerId={r.id}
+              canEdit={r.can.rootCause || r.can.manageActions || r.can.edit}
+            />
+          ),
+        },
+        {
+          key: 'history',
+          label: t('tabs.history'),
+          testId: 'cap-tab-history',
+          content: <HistoryTab record="capRemark" id={r.id} />,
+        },
+      ]}
     >
-      <Tabs value={tab ?? 'overview'} onValueChange={(value) => go(value as RemarkTab)}>
-        <TabsList className="flex-wrap" data-testid="cap-remark-tabs">
-          {remarkTabs.map((key) => (
-            <TabsTrigger key={key} value={key} data-testid={`cap-tab-${key}`}>
-              {t(`tabs.${key}`)}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-        <TabsContent value="overview">
-          <Overview remark={r} />
-          <ExternalReferencesSection type="cap.remark" id={r.id} />
-        </TabsContent>
-        <TabsContent value="root-cause">
-          <RootCauseTab remark={r} />
-        </TabsContent>
-        <TabsContent value="actions">
-          <RemarkActionsTab remark={r} onSubmit={() => setDialog('submit')} />
-        </TabsContent>
-        <TabsContent value="tasks">
-          <LinkedTasksPanel type="cap.remark" id={r.id} />
-        </TabsContent>
-        <TabsContent value="documents">
-          <DocumentsPanel
-            ownerType="cap.remark"
-            ownerId={r.id}
-            canEdit={r.can.rootCause || r.can.manageActions || r.can.edit}
-          />
-        </TabsContent>
-        <TabsContent value="history">
-          <HistoryTab record="capRemark" id={r.id} />
-        </TabsContent>
-      </Tabs>
       {dialog === 'edit' && (
         <RemarkDialog remarkId={r.id} initial={r.values} version={r.version} onClose={close} />
       )}

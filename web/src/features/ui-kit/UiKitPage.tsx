@@ -7,10 +7,12 @@ import {
   DialogContent,
   DialogTrigger,
   DatePicker,
+  EmbeddedPage,
   EmptyState,
   FormField,
   Input,
   PageHeader,
+  RecordLayout,
   Select,
   Skeleton,
   StageStepper,
@@ -31,6 +33,50 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
       <h2 className="text-base font-semibold">{title}</h2>
       {children}
     </section>
+  );
+}
+
+/** Record page layout (ADR 0221): the theme's header slots and the side menu of sections (a drawer below `md`), static content. */
+function RecordDemo({ stages }: { stages: { key: string; label: string }[] }) {
+  const { t } = useTranslation('uiKit');
+  const [active, setActive] = useState('overview');
+  const counts: Record<string, number | undefined> = { milestones: 12, risks: 3, documents: 4 };
+  return (
+    <EmbeddedPage>
+      <div data-testid="ui-kit-record">
+        <RecordLayout
+          header={
+            <PageHeader
+              title={t('demo.record.title')}
+              meta={
+                <div className="flex flex-wrap items-center gap-2">
+                  <bdi className="text-sm text-muted-foreground">PROJ-0001</bdi>
+                  <StatusChip tone="success">{t('demo.stages.execution')}</StatusChip>
+                </div>
+              }
+            />
+          }
+          highlights={[
+            { key: 'owner', label: t('demo.record.owner'), value: t('demo.record.ownerValue') },
+            { key: 'unit', label: t('demo.record.unit'), value: t('demo.record.unitValue') },
+            { key: 'due', label: t('demo.record.due'), value: t('demo.record.dueValue') },
+          ]}
+          path={<StageStepper stages={stages} current="execution" />}
+          sections={(['overview', 'milestones', 'risks', 'documents', 'history'] as const).map((key) => ({
+            key,
+            label: t(`demo.record.sections.${key}`),
+            count: counts[key],
+            content: (
+              <p className="text-sm text-muted-foreground">
+                {t('demo.record.content', { section: t(`demo.record.sections.${key}`) })}
+              </p>
+            ),
+          }))}
+          activeSection={active}
+          onSectionChange={setActive}
+        />
+      </div>
+    </EmbeddedPage>
   );
 }
 
@@ -72,6 +118,10 @@ export function UiKitPage() {
             </>
           }
         />
+      </Section>
+
+      <Section title={t('sections.record')}>
+        <RecordDemo stages={stages} />
       </Section>
 
       <Section title={t('sections.buttons')}>

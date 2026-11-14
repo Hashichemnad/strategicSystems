@@ -3,7 +3,17 @@ import { mkdtempSync, readdirSync, renameSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import type { APIRequestContext, Page } from '@playwright/test';
-import { apiPost, apiPut, expect, screenshotPath, signInViaApi, test, tr, type Language } from './fixtures';
+import {
+  apiPost,
+  apiPut,
+  expect,
+  recordSection,
+  screenshotPath,
+  signInViaApi,
+  test,
+  tr,
+  type Language,
+} from './fixtures';
 
 /**
  * Phase 10 — Agile / hybrid, PM standards, Gantt and portfolio views (docs/design/portfolio.md §29–§45), in Arabic (RTL) and English (LTR).
@@ -89,9 +99,9 @@ async function employeeId(api: APIRequestContext, number: string): Promise<strin
 
 async function openTab(page: Page, language: Language, id: string, tab: string) {
   await page.goto(`/portfolio/projects/${id}?tab=${tab}`);
-  await expect(page.getByRole('tab', { name: k(language, `project.tabs.${tab}`) })).toHaveAttribute(
-    'aria-selected',
-    'true',
+  await expect(recordSection(page, language, k(language, `project.tabs.${tab}`))).toHaveAttribute(
+    'aria-current',
+    'page',
   );
 }
 
